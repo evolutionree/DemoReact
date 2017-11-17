@@ -1,15 +1,26 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+node_modules
+bower_components
 
 # production
-/dist
+dist
+crmweb.zip
 
 # misc
 .DS_Store
 npm-debug.log*
 
-remote
+# ide
+.idea
+.vscode
+.tern-project
 
-/distsvn
+# logs
+logs
+*.log
+npm-debug.log*
+
+# other
+.svn
