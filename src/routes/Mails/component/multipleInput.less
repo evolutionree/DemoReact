@@ -1,0 +1,26 @@
+.inputWrap{
+  min-height: 44px;
+  height: auto;
+  padding-left: 10px;
+  font-size:14px;
+  color:#333333;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  >span:first-of-type {
+    display: inline-block;
+    width: 50px;
+  }
+  :global{
+    input{
+      //max-width: 300px;
+      border: none;
+      padding: 0;
+      height: 24px;
+    }
+    .ant-input:focus{
+      border: none;
+      box-shadow: none;
+    }
+  }
+}

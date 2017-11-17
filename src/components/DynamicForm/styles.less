@@ -1,0 +1,91 @@
+@import "../../styles/_mixins";
+
+.dyformview {
+  :global {
+    .ant-form-item {
+      margin-bottom: 18px;
+    }
+    .ant-form-item-label {
+      line-height: 26px;
+    }
+    .ant-form-item-label label {
+      color: #9b9b9b;
+    }
+  }
+}
+
+.templatelist {
+  padding: 10px 15px;
+
+  .templateitem {
+
+  }
+  .templatetitle {
+    line-height: 1;
+    padding-left: 10px;
+    border-left: 3px solid #b9c1c8;
+    margin-bottom: 8px;
+  }
+  .templatecontent {
+    margin-bottom: 10px;
+    word-wrap: break-word;
+    white-space: normal;
+  }
+}
+
+.mainfields {
+  .clearfix();
+  padding-left: 42px;
+  background: #f9f9f9;
+  font-size: 12px;
+  padding-bottom: 12px;
+
+  .field {
+    float: left;
+    margin-right: 2.5em;
+
+    .label {
+      display: inline-block;
+      color: #9b9b9b;
+      margin-right: .75em;
+      max-width: 340px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .value {
+      display: inline-block;
+      color: #333;
+      max-width: 340px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
+.dyformviewlight {
+
+  .field {
+    .clearfix();
+    margin: 5px 0;
+
+    .label {
+      float: left;
+      //width: 25%;
+      color: #878f98;
+      margin-right: .75em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .value {
+      float: left;
+      //width: 75%;
+      color: #333;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}

@@ -1,0 +1,151 @@
+import { message } from 'antd';
+import { routerRedux } from 'dva/router';
+import { getListData } from '../services/entcomm';
+import { queryMenus } from '../services/entity';
+
+export default {
+  namespace: 'affairList',
+  state: {
+    entityId: '00000000-0000-0000-0000-000000000001',
+    menus: [],
+    queries: {},
+    list: [],
+    total: 0,
+    currItems: [],
+    showModals: ''
+  },
+  subscriptions: {
+    setup({ dispatch, history }) {
+      return history.listen(location => {
+        const pathReg = /^\/affair-list/;
+        const match = location.pathname.match(pathReg);
+        if (match) {
+          const entityId = match[1];
+          dispatch({ type: 'queryList', payload: entityId });
+        } else {
+          dispatch({ type: 'resetState' });
+        }
+      });
+    }
+  },
+  effects: {
+    *search({ payload }, { select, call, put }) {
+      const location = yield select(({ routing }) => routing.locationBeforeTransitions);
+      const { pathname, query } = location;
+      yield put(routerRedux.push({
+        pathname,
+        query: {
+          ...query,
+          pageIndex: 1,
+          ...payload
+        }
+      }));
+    },
+    *queryList(action, { select, call, put }) {
+      const { query } = yield select(({ routing }) => routing.locationBeforeTransitions);
+      let { menus, entityId } = yield select(({ affairList }) => affairList);
+
+      if (!menus.length) {
+        try {
+          // 获取下拉菜单
+          const { data: { rulemenu } } = yield call(queryMenus, entityId);
+          menus = rulemenu.sort((a, b) => a.recorder - b.recorder)
+            .map(item => ({ menuName: item.menuname, menuId: item.menuid }));
+          yield put({ type: 'menus', payload: menus });
+        } catch (e) {
+          message.error(e.message || '获取菜单失败');
+          return;
+        }
+      }
+
+      const queries = {
+        entityId,
+        pageIndex: 1,
+        pageSize: 10,
+        menuId: menus[0].menuId,
+        auditStatus: '0',
+        ...query
+      };
+      queries.pageIndex = parseInt(queries.pageIndex);
+      queries.pageSize = parseInt(queries.pageSize);
+      yield put({ type: 'queries', payload: queries });
+      try {
+        const params = {
+          viewType: 0,
+          searchOrder: '',
+          ...queries,
+          searchData: {},
+          isAdvanceQuery: 1
+        };
+        if (queries.auditStatus !== '-1') {
+          params.searchData.auditstatus = +queries.auditStatus;
+        }
+        if (queries.searchBegin || queries.searchEnd) {
+          params.searchData.reccreated = (queries.searchBegin || '') + ',' + (queries.searchEnd || '');
+        }
+        if (queries.flowName) {
+          params.searchData.flowname = queries.flowName;
+        }
+        if (queries.creatorName) {
+          params.searchData.reccreator = queries.creatorName;
+        }
+        delete params.auditStatus;
+        delete params.searchBegin;
+        delete params.searchEnd;
+        delete params.flowName;
+        delete params.creatorName;
+        const { data } = yield call(getListData, params);
+        yield put({
+          type: 'queryListSuccess',
+          payload: {
+            list: data.pagedata,
+            total: data.pagecount[0].total
+          }
+        });
+      } catch (e) {
+        message.error(e.message || '获取列表数据失败');
+      }
+    },
+    *addDone(action, { select, put }) {
+      yield put({ type: 'showModals', payload: '' });
+      const { pageIndex } = yield select(state => state.affairList.queries);
+      yield put({ type: 'search', payload: { pageIndex } });
+    }
+  },
+  reducers: {
+    protocol(state, { payload: protocol }) {
+      return { ...state, protocol };
+    },
+    menus(state, { payload: menus }) {
+      return { ...state, menus };
+    },
+    queries(state, { payload: queries }) {
+      return { ...state, queries };
+    },
+    queryListSuccess(state, { payload: { list, total } }) {
+      return {
+        ...state,
+        list,
+        total,
+        currItems: []
+      };
+    },
+    showModals(state, { payload: showModals }) {
+      return {
+        ...state,
+        showModals
+      };
+    },
+    resetState() {
+      return {
+        entityId: '00000000-0000-0000-0000-000000000001',
+        menus: [],
+        queries: {},
+        list: [],
+        total: 0,
+        currItems: [],
+        showModals: ''
+      };
+    }
+  }
+};

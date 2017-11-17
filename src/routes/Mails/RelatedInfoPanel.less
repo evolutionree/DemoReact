@@ -1,0 +1,76 @@
+.wrap {
+  height: 100%;
+
+  .header {
+    height: 50px;
+    padding: 15px 10px 15px 32px;
+    border-bottom: 1px solid #ddd;
+
+    .actions {
+      float: right;
+    }
+  }
+
+  .content {
+
+  }
+
+  :global {
+    .ant-tabs {
+      height: 100%;
+    }
+    .ant-tabs-content {
+      height: ~"calc(100% - 34px)";
+      overflow: auto;
+    }
+    .ant-tabs-tabpane {
+      position: relative;
+    }
+    .ant-tabs-bar {
+      margin-top: 0;
+    }
+    .ant-tabs-tab {
+      font-size: 12px;
+      border-right: 1px solid #dfdfdf;
+
+      &:last-child {
+        border-right: none;
+      }
+    }
+    .ant-tabs-ink-bar {
+      display: none!important;
+    }
+  }
+
+  .infobox {
+    padding: 10px;
+    .infotitle {
+      color: #333;
+    }
+    .infometa {
+      color: #333;
+      & > span:first-child {
+        color: #878f98;
+        margin-right: 5px;
+      }
+    }
+  }
+}
+
+.checkableMenu {
+  box-shadow: rgba(0, 0, 0, 0.2) 0 1px 6px!important;
+  :global {
+    .ant-menu-item-group:first-child .ant-menu-item-group-title {
+      border-bottom: none;
+    }
+    .ant-menu-item-group-title {
+      padding: 5px 0;
+      border-bottom: 1px solid #f1f1f1;
+    }
+    .ant-menu-item {
+      height: 32px;
+      line-height: 32px;
+      padding-left: 16px;
+    }
+  }
+}

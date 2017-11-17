@@ -1,0 +1,192 @@
+@import './_variables';
+
+body {
+  background-color: #e7ecef;
+}
+
+
+
+.app {
+  min-width: @app-min-width;
+  padding-top: @header-height;
+  padding-left: @sider-width;
+  transition: @transition-ease-out;
+  height: 100%;
+
+  &.fold {
+    padding-left: @sider-fold-width;
+  }
+}
+
+.main {
+
+}
+
+:global {
+
+  .uke {
+    .ant-input,
+    .ant-input-number {
+      line-height: 1.5;
+    }
+
+    // fix bug 1075 隐藏删除掉的选项
+    .ant-select-dropdown-menu-item-disabled {
+      display: none;
+    }
+
+    .ant-checkbox-checked .ant-checkbox-inner,
+    .ant-checkbox-indeterminate .ant-checkbox-inner,
+    .ant-tree-checkbox-checked .ant-tree-checkbox-inner,
+    .ant-tree-checkbox-indeterminate .ant-tree-checkbox-inner {
+      background-color: #00a659;
+      border-color: #00a659;
+    }
+    .ant-checkbox-wrapper:hover .ant-checkbox .ant-checkbox-inner,
+    .ant-checkbox:hover .ant-checkbox-inner,
+    .ant-checkbox-focused .ant-checkbox-inner,
+    .ant-tree-checkbox-wrapper:hover .ant-tree-checkbox .ant-tree-checkbox-inner,
+    .ant-tree-checkbox:hover .ant-tree-checkbox-inner,
+    .ant-tree-checkbox-focused .ant-tree-checkbox-inner{
+      border-color: #00a659;
+    }
+
+    .ant-table {
+      .ant-checkbox-inner {
+        width: 18px;
+        height: 18px;
+      }
+      .ant-checkbox-indeterminate .ant-checkbox-inner:after {
+        //display: none;
+        content: ' ';
+        -webkit-transform: scale(1);
+        -ms-transform: scale(1);
+        transform: scale(1);
+        position: absolute;
+        left: 4px;
+        top: 7px;
+        width: 8px;
+        height: 1px;
+      }
+      .ant-checkbox-checked .ant-checkbox-inner:after {
+        left: 5px;
+        top: 2px;
+        display: table;
+        width: 6px;
+        height: 9px;
+      }
+    }
+
+    .ant-radio-checked .ant-radio-inner {
+      border-color: #00a659;
+    }
+    .ant-radio-inner:after {
+      background-color: #00a659;
+    }
+    .ant-radio-wrapper:hover .ant-radio .ant-radio-inner,
+    .ant-radio:hover .ant-radio-inner,
+    .ant-radio-focused .ant-radio-inner {
+      border-color: #00a659;
+    }
+
+    .ant-select-selection__rendered {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+
+    // 表格和分页
+    .ant-table-thead > tr > th {
+      padding: 10px 10px;
+      font-weight: normal;
+      background-color: #fff;
+      white-space: nowrap;
+    }
+    .ant-table-tbody > tr > td {
+      padding: 10px 10px;
+    }
+    .ant-table-tbody > tr:nth-child(2n+1) > td {
+      background-color: #f9f9f9;
+    }
+    .ant-pagination-prev,
+    .ant-pagination-next,
+    .ant-pagination-item {
+      height: 31px;
+      min-width: 31px;
+    }
+    .ant-pagination-total-text {
+      line-height: 31px;
+    }
+
+    .ant-modal {
+      padding-bottom: 80px;
+    }
+    .ant-modal-header {
+      padding-left: 22px;
+      padding-right: 22px;
+      background-color: #fafafa;
+      border-color: #f4f4f4;
+    }
+    .ant-modal-title {
+      font-weight: normal;
+    }
+    .ant-modal-close-x {
+      //width: 18px;
+      //height: 18px;
+      font-size: 18px;
+    }
+    .ant-modal-footer {
+      border-color: #f4f4f4;
+      text-align: center;
+      padding-top: 14px;
+      padding-bottom: 14px;
+    }
+    .ant-modal-footer .ant-btn {
+      margin: 0 20px;
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+    .ant-modal-body {
+      padding-left: 22px;
+      padding-right: 22px;
+    }
+    .ant-modal-mask {
+      background-color: rgba(55, 55, 55, 0.15);
+    }
+    .ant-modal-custom-large {
+      .ant-modal {
+        width: 850px!important;
+      }
+    }
+
+    .code-editor-modal .ant-modal-body {
+      padding: 0 22px 0 0;
+    }
+  }
+
+  .ant-modal {
+    .dynamic-form-field .ant-col-20 .ant-form-item-control {
+      max-width: 500px;
+    }
+    .dynamic-form-field.dynamic-form-field-24 .ant-col-20 .ant-form-item-control {
+      max-width: none;
+    }
+  }
+
+  /**
+    fix 树形控件选项错位
+   */
+  .ant-select-tree li .ant-select-tree-node-content-wrapper {
+    vertical-align: middle;
+  }
+
+
+  /*
+    fix codeMirror autocomplete
+   */
+  .CodeMirror-hints {
+    z-index: 9999!important;
+  }
+  .CodeMirror-lint-tooltip {
+    z-index: 9999!important;
+  }
+}

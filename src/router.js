@@ -1,0 +1,148 @@
+/* eslint-disable import/no-dynamic-require */
+import React from 'react';
+import { Router, Route, IndexRoute, Redirect, IndexRedirect } from 'dva/router';
+
+import connectPermission from './models/connectPermission';
+
+import App from './routes/App';
+import NoFoundPage from './routes/NoFoundPage';
+
+import Home from './routes/Home/index';
+
+import AttendanceList from './routes/AttendanceList';
+
+import NoticeList from './routes/NoticeList';
+import NoticeHome from './routes/NoticeHome';
+import NoticeDetail from './routes/NoticeHome/views/NoticeDetail';
+import NoticeRecords from './routes/NoticeHome/views/NoticeRecords';
+import SalesTarget from './routes/SalesTarget/index';
+
+import Knowledge from './routes/Knowledge';
+
+import EntcommList from './routes/EntcommList';
+import EntcommApplication from './routes/EntcommApplication';
+import EntcommHome from './routes/EntcommHome';
+import EntcommActivities from './routes/EntcommHome/views/EntcommActivities';
+import EntcommInfo from './routes/EntcommHome/views/EntcommInfo';
+import EntcommDocs from './routes/EntcommHome/views/EntcommDocs';
+import EntcommRel from './routes/EntcommHome/views/EntcommRel';
+
+import ContractReceivePay from './routes/ContractHome/ReceivePay';
+
+import CustomerRelationTree from './routes/CustomerHome/RelationTree';
+
+import ProductManager from './routes/ProductManager';
+
+import AffairList from './routes/AffairList';
+import AffairDetail from './routes/AffairDetail';
+
+import ReportForm from './routes/ReportForm/index';
+
+import Weekly from './routes/office/weekly/index';
+import MyWeekly from './routes/office/weekly/myWeekly';
+import ReceiveWeekly from './routes/office/weekly/receiveWeekly';
+import AllWeekly from './routes/office/weekly/allWeekly';
+import ReceiveWeeklyDetail from './routes/office/weekly/ReceiveWeeklyDetail';
+import AllWeeklyDetail from './routes/office/weekly/AllWeeklyDetail';
+
+import Daily from './routes/office/daily/index';
+import myDaily from './routes/office/daily/myDaily';
+import ReceiveDaily from './routes/office/daily/receiveDaily';
+import AllDaily from './routes/office/daily/allDaily';
+import ReceiveDailyDetail from './routes/office/daily/ReceiveDailyDetail';
+import AllDailyDetail from './routes/office/daily/AllDailyDetail';
+
+import Mails from './routes/Mails';
+
+const appRoutes = [
+  { path: 'home', comp: Home },
+  { path: 'attendance', comp: AttendanceList, entid: '969d32b6-d81c-43a3-bc0d-124ffc26855c' },
+  { path: 'notice-list', comp: NoticeList, entid: '00000000-0000-0000-0000-000000000002' },
+  { path: 'notice/:id/:title',
+    comp: NoticeHome,
+    children: [
+      { path: 'detail', comp: NoticeDetail },
+      { path: 'records', comp: NoticeRecords }
+    ] },
+  { path: 'salestarget', comp: SalesTarget, entid: '8e45e238-df0e-44e0-80d6-14445269f6de', model: require('./models/salesTarget') },
+  { path: 'knowledge', comp: Knowledge, entid: 'a3500e78-fe1c-11e6-aee4-005056ae7f49', model: require('./models/knowledge') },
+  { path: 'entcomm-list/:id', comp: EntcommList, model: require('./models/entcommList') },
+  { path: 'entcomm-application/:id', comp: EntcommApplication, model: require('./models/entcommApplication') },
+  { path: 'entcomm/:entityId/:recordId',
+    comp: EntcommHome,
+    model: require('./models/entcommHome'),
+    children: [
+      { path: 'activities', comp: EntcommActivities, model: require('./models/entcommActivities') },
+      { path: 'info', comp: EntcommInfo, model: require('./models/entcommInfo') },
+      { path: 'docs', comp: EntcommDocs, model: require('./models/entcommDocs') },
+      { path: 'receivepay', comp: ContractReceivePay, model: require('./models/contractReceivePay') },
+      { path: 'relationtree', comp: CustomerRelationTree, model: require('./models/customerRelationTree') },
+      { path: 'rel/:relId/:relEntityId', comp: EntcommRel, model: require('./models/entcommRel') }
+    ] },
+  { path: 'products', comp: ProductManager, entid: '33240d14-a543-4357-b696-c8cc77f82f7c', model: require('./models/productManager') },
+  { path: 'affair-list', comp: AffairList, entid: '00000000-0000-0000-0000-000000000001', model: require('./models/affairList') },
+  { path: 'affair/:id', comp: AffairDetail, model: require('./models/affairDetail') },
+  { path: 'reportform/:id', comp: ReportForm, model: require('./models/reportForm') },
+  { path: 'weekly', comp: Weekly, entid: '0b81d536-3817-4cbc-b882-bc3e935db845', model: require('./models/weekly'),
+    children: [
+      { path: 'myweekly', comp: MyWeekly, model: require('./models/weekly') },
+      { path: 'receiveweekly', comp: ReceiveWeekly, model: require('./models/weekly') },
+      { path: 'allweekly', comp: AllWeekly, entid: '0b81d536-3817-4cbc-b882-bc3e935db845', model: require('./models/weekly') },
+      { path: 'receiveweekly/:recid', comp: ReceiveWeeklyDetail, model: require('./models/weekly') }
+    ] },
+  { path: 'allweekly/detail/:recid', comp: AllWeeklyDetail, model: require('./models/weekly') },
+  { path: 'daily', comp: Daily, entid: '601cb738-a829-4a7b-a3d9-f8914a5d90f2', model: require('./models/daily'),
+    children: [
+      { path: 'mydaily', comp: myDaily, model: require('./models/daily') },
+      { path: 'receivedaily', comp: ReceiveDaily, model: require('./models/daily') },
+      { path: 'alldaily', comp: AllDaily, entid: '601cb738-a829-4a7b-a3d9-f8914a5d90f2', model: require('./models/daily') },
+      { path: 'receivedaily/:recid', comp: ReceiveDailyDetail, model: require('./models/daily') }
+    ] },
+  { path: 'alldaily/detail/:recid', comp: AllDailyDetail, model: require('./models/daily') },
+  { path: 'mails', comp: Mails, model: require('./models/mails') },
+  { path: '*', comp: NoFoundPage }
+];
+
+const modelCached = {};
+function registerModel(app, model) {
+  if (!modelCached[model.namespace]) {
+    app.model(model);
+    modelCached[model.namespace] = 1;
+  }
+}
+
+function renderRoutes(routes, app) {
+  if (!routes.length) return null;
+  const resultRoutes = routes.map(route => {
+    const { path, comp, children, entid, model } = route;
+
+    const component = entid ? connectPermission(entid, comp) : comp;
+    const props = {
+      key: path,
+      path,
+      getComponent: (location, cb) => {
+        if (model) {
+          registerModel(app, model);
+        }
+        cb(null, component);
+      }
+    };
+    if (children && children.length) {
+      props.children = renderRoutes(children, app);
+    }
+    return React.createElement(Route, props);
+  });
+  const indexRedirect = <IndexRedirect to={routes[0].path} key={'redirect-' + routes[0].path} />;
+  return [indexRedirect, ...resultRoutes];
+}
+
+export default function RouterConfig({ history, app }) {
+  return (
+    <Router history={history}>
+      <Route path="/" component={App}>
+        {renderRoutes(appRoutes, app)}
+        <Route path="*" component={NoFoundPage} />
+      </Route>
+    </Router>
+  );
+}

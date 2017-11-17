@@ -1,0 +1,38 @@
+@import "../../styles/_mixins";
+
+.title {
+  margin: 0 0 10px;
+}
+.rulelistwrap {
+  padding-bottom: 20px;
+}
+.ruleitem {
+  position: relative;
+  margin-bottom: 10px;
+  padding-left: 28px;
+  padding-right: 28px;
+
+  .ruleindex {
+    position: absolute;
+    top: 0;
+    left: 5px;
+  }
+
+  .ruleremove {
+    position: absolute;
+    right: 5px;
+    top: 0;
+    cursor: pointer;
+    line-height: 31px;
+    font-size: 16px;
+  }
+
+  .rulecontent {
+
+  }
+}
+.rulecol {
+  & > :global(.ant-select) {
+    width: 100%;
+  }
+}

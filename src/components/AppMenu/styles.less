@@ -1,0 +1,76 @@
+@import "../../styles/_variables";
+
+.sider {
+  z-index: @sider-z-index;
+  position: fixed;
+  top: @header-height;
+  left: 0;
+  bottom: 0;
+  width: @sider-width;
+  transition: width 0.15s ease-out;
+  overflow-y: auto;
+  background: #404040;
+
+  .siderInner {
+    height: 100%;
+    :global {
+      .ant-menu-root {
+        min-height: 100%;
+      }
+    }
+    .siderBottom {
+      display: none;
+    }
+  }
+
+  &.hasBottom .siderBottom {
+    display: block;
+  }
+  &.hasBottom.fold .siderBottom {
+    display: none;
+  }
+
+  &.fold {
+    width: @sider-fold-width;
+    overflow: visible;
+
+    :global {
+      .ant-menu-root {
+        height: 100%;
+        overflow: visible;
+      }
+
+      .ant-menu-root > .ant-menu-item {
+        padding: 0;
+        text-align: center;
+
+        .anticon {
+          font-size: 14px;
+          margin-right: 0;
+
+          & + span {
+            display: none;
+          }
+        }
+      }
+
+      .ant-menu-root > .ant-menu-submenu > .ant-menu-submenu-title {
+        padding: 0;
+        text-align: center;
+
+        .anticon {
+          font-size: 14px;
+          margin-right: 0;
+
+          & + span {
+            display: none;
+          }
+        }
+
+        &:after {
+          display: none;
+        }
+      }
+    }
+  }
+}

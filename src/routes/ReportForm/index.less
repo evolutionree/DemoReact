@@ -1,0 +1,91 @@
+:global{
+  .scroll{
+    /*定义滚动条宽高及背景，宽高分别对应横竖滚动条的尺寸*/
+    scrollBar-face-color:green;
+    scrollBar-hightLight-color:red;
+    scrollBar-3dLight-color:orange;
+    scrollBar-darkshadow-color:blue;
+    scrollBar-shadow-color:yellow;
+    scrollBar-arrow-color:purple;
+    scrollBar-track-color:black;
+    scrollBar-base-color:pink;
+  }
+}
+
+.reportDataGridWrap{
+  :global{
+    // 表格和分页
+    .ant-table-thead > tr > th {
+      white-space: normal;
+      text-align: center;
+    }
+  }
+}
+
+.textEllipsis{
+  width: 56px;//有一个固定的宽度
+  white-space: nowrap;//不允许换行
+  overflow: hidden;//超出宽度不显示
+  text-overflow: ellipsis;//规定当文本溢出包含元素时显示省略号。
+  display: inline-block;
+  color: #00a0eb;
+}
+
+
+:global{
+  .collapseCheckBox .ant-checkbox-inner{
+    width: 22px;
+    height: 22px;
+  }
+  .collapseCheckBox .ant-checkbox-checked .ant-checkbox-inner {
+    width: 22px;
+    height: 22px;
+    background-color: rgb(106, 199, 129);
+    border-color: rgb(106, 199, 129);
+  }
+
+  .collapseCheckBox .ant-checkbox-checked .ant-checkbox-inner:after{
+    left: 7px;
+    top: 1px;
+    width: 7px;
+    height: 14px;
+  }
+
+  .collapseCheckBox .ant-checkbox-checked:after{
+    border: 1px solid rgb(106, 199, 129);
+  }
+}
+
+
+.collapsewrap{
+  :global{
+    .ant-collapse{
+      border: none;
+    }
+  }
+}
+
+
+.iconDownload{
+  text-align: right;
+  font-size: 16px;
+  :global{
+    i{
+      cursor: pointer;
+    };
+    i:hover{
+      color: #388bc8;
+    }
+  }
+}
+
+
+.datagridTdWrap{
+  :global{
+    div{
+      white-space: nowrap!important;
+      word-wrap: normal!important;
+      display: inline-block!important;
+    }
+  }
+}

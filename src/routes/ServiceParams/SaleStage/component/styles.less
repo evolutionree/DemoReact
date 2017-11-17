@@ -1,0 +1,61 @@
+.board {
+  :global {
+    .ant-form-item-with-help {
+      margin-bottom: 0;
+    }
+    .ant-form-explain {
+      display: none;
+    }
+    .has-error .ant-input,
+    .has-error .ant-input:hover {
+      border-color: #d9d9d9;
+    }
+    .has-error .ant-input:focus {
+      border-color: #49a9ee;
+      outline: 0;
+      box-shadow: 0 0 0 2px rgba(16, 142, 233, 0.2);
+    }
+  }
+}
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.row {
+  height: 48px;
+  line-height: 48px;
+  border-left: 6px solid #596372;
+  padding-left: 15px;
+  color: #4a4a4a;
+  font-size: 14px;
+}
+.row:nth-child(2n+1) {
+  background-color: #f9f9f9;
+}
+.order {
+  display: inline-block;
+  width: 2em;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+.text {
+  display: inline-block;
+  width: 200px; /* 页面重写width */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+.actions {
+
+  display: inline-block;
+  vertical-align: middle;
+
+  & > :global(.anticon) {
+    color: #acb3bd;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+}

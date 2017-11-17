@@ -1,0 +1,30 @@
+.wrap {
+  background-color: #f1f1f1;
+  color: #9ba1ad;
+  font-size: 14px;
+  padding: 7px 12px;
+  text-align: right;
+
+  .left {
+    display: inline-block;
+    margin-right: 20px;
+    line-height: 25px;
+    vertical-align: middle;
+  }
+
+  :global {
+    .ant-pagination {
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .ant-pagination-prev, .ant-pagination-next {
+      background-color: transparent;
+    }
+    .ant-pagination-prev .ant-pagination-item-link, .ant-pagination-next .ant-pagination-item-link {
+      background-color: transparent;
+    }
+    .ant-pagination-prev a:after, .ant-pagination-next a:after {
+      font-size: 18px;
+    }
+  }
+}

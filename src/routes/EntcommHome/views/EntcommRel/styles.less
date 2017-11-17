@@ -1,0 +1,137 @@
+@import "../../../../styles/_mixins";
+
+.pagecontainer {
+
+}
+.list {
+  border: 1px solid #f4f4f4;
+  & > li {
+    .clearfix();
+    padding: 12px 15px 10px 15px;
+    border: 1px solid #f4f4f4;
+    cursor: pointer;
+    transition: all .3s ease;
+
+    &:nth-child(2n+1) {
+      background-color: #f9f9f9;
+    }
+    &:nth-child(2n):hover {
+      //background-color: #eff7fc;
+    }
+    &:last-child {
+      border: none;
+    }
+
+    span {
+      //display: inline-block;
+      float: left;
+      min-height: 12px;
+      //margin-bottom: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      &:nth-of-type(2n+1) {
+        width: 220px;
+        margin-right: 20px;
+        clear: left;
+      }
+      &:nth-child(2n) {
+      }
+    }
+  }
+
+  & > li.hasIcon {
+    position: relative;
+    padding-left: 80px;
+    min-height: 70px;
+
+    .listIcon {
+      position: absolute;
+      top: 50%;
+      left: 15px;
+      transform: translateY(-50%);
+    }
+  }
+}
+
+.modal {
+  .modaltitle {
+    color: #fff;
+    .titlebtns {
+      position: absolute;
+      right: 20px;
+      bottom: 12px;
+      font-size: 14px;
+      color: #fff;
+
+      & > span {
+        cursor: pointer;
+        margin-left: 1.5em;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  :global {
+    .ant-modal {
+      position: absolute;
+      top: 50px;
+      right: 0;
+      bottom: 1px;
+      padding-bottom: 0;
+      overflow: hidden;
+      width: 600px!important;
+    }
+    .ant-modal-content {
+      height: 100%;
+      background:#ffffff;
+      box-shadow:0 20px 40px 0 rgba(126,126,126,0.80);
+    }
+    .ant-modal-header {
+      background-image:linear-gradient(-180deg, #6788e2 0%, #6fb1ee 100%);
+      border:1px solid #eaeaea;
+      color: #ffffff;
+      font-size: 18px;
+      padding-top: 33px;
+      padding-bottom: 33px;
+      padding-left: 30px;
+      letter-spacing: 1px;
+      border-radius: 0;
+      position: relative;
+    }
+    .ant-modal-close-x {
+      color: #ffffff;
+      font-size: 22px;
+      width: 22px;
+      height: 22px;
+      margin-right: 16px;
+      font-weight: 100;
+    }
+    .ant-modal-body {
+      height: 100%;
+      overflow: auto;
+      border-radius: 0;
+    }
+    .ant-form {
+      margin-bottom: 150px;
+    }
+    .ant-form-item {
+      margin-bottom: 10px;
+    }
+    .ant-form-item-label {
+      line-height: 18px;
+    }
+    .ant-form-item-control {
+      color: #000;
+    }
+  }
+}
+
+.call{
+  color: #0694ef;
+  width: 40px;
+  font-size: 18px;
+}

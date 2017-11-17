@@ -1,0 +1,85 @@
+{
+  "Dept": [
+      {
+        "deptid": "7f74192d-b937-403f-ac2a-8be34714278b",
+        "deptname": "CRM Top Organize Company",
+        "recorder": 1,
+        "ancestor": "00000000-0000-0000-0000-000000000000",
+        "descendant": "7f74192d-b937-403f-ac2a-8be34714278b",
+        "nodepath": 0,
+        "nodes": 8
+      },
+      {
+        "deptid": "fef6d6b2-a648-40bf-8f50-4801dc96bbbd",
+        "deptname": "一级销售团队",
+        "recorder": 1,
+        "ancestor": "7f74192d-b937-403f-ac2a-8be34714278b",
+        "descendant": "fef6d6b2-a648-40bf-8f50-4801dc96bbbd",
+        "nodepath": 1,
+        "nodes": 0
+      },
+      {
+        "deptid": "538bc626-3784-4077-a429-3247e8e840ec",
+        "deptname": "一级管理团队",
+        "recorder": 1,
+        "ancestor": "7f74192d-b937-403f-ac2a-8be34714278b",
+        "descendant": "538bc626-3784-4077-a429-3247e8e840ec",
+        "nodepath": 1,
+        "nodes": 0
+      },
+      {
+        "deptid": "36f80e4c-e5f9-42df-b734-b3c2a84d6a6c",
+        "deptname": "一级技术团队",
+        "recorder": 1,
+        "ancestor": "7f74192d-b937-403f-ac2a-8be34714278b",
+        "descendant": "36f80e4c-e5f9-42df-b734-b3c2a84d6a6c",
+        "nodepath": 1,
+        "nodes": 0
+      },
+      {
+        "deptid": "839f6217-d847-4dae-b230-c9cd8229cc1e",
+        "deptname": "一级代理团队",
+        "recorder": 1,
+        "ancestor": "7f74192d-b937-403f-ac2a-8be34714278b",
+        "descendant": "839f6217-d847-4dae-b230-c9cd8229cc1e",
+        "nodepath": 1,
+        "nodes": 0
+      },
+      {
+        "deptid": "c4584e8d-2f7c-4bb2-b4c4-9a353f34fede",
+        "deptname": "一级财务团队",
+        "recorder": 1,
+        "ancestor": "7f74192d-b937-403f-ac2a-8be34714278b",
+        "descendant": "c4584e8d-2f7c-4bb2-b4c4-9a353f34fede",
+        "nodepath": 1,
+        "nodes": 3
+      },
+      {
+        "deptid": "0c01a965-bad6-4e65-b90a-b0cdb677344f",
+        "deptname": "二级财务团队",
+        "recorder": 1,
+        "ancestor": "c4584e8d-2f7c-4bb2-b4c4-9a353f34fede",
+        "descendant": "0c01a965-bad6-4e65-b90a-b0cdb677344f",
+        "nodepath": 2,
+        "nodes": 0
+      },
+      {
+        "deptid": "9c0a701e-1e10-4749-979d-1e212edbf5b2",
+        "deptname": "二级工资团队",
+        "recorder": 1,
+        "ancestor": "c4584e8d-2f7c-4bb2-b4c4-9a353f34fede",
+        "descendant": "9c0a701e-1e10-4749-979d-1e212edbf5b2",
+        "nodepath": 2,
+        "nodes": 0
+      },
+      {
+        "deptid": "3d522e8a-ab3a-4f8d-87a0-d6e1017b8348",
+        "deptname": "二级出纳团队",
+        "recorder": 1,
+        "ancestor": "c4584e8d-2f7c-4bb2-b4c4-9a353f34fede",
+        "descendant": "3d522e8a-ab3a-4f8d-87a0-d6e1017b8348",
+        "nodepath": 2,
+        "nodes": 0
+      }
+    ]
+}

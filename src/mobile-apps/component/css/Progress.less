@@ -1,0 +1,59 @@
+.progressWrap{
+  display: inline-block;
+  width: 33.3333333%;
+  background: #ffffff;
+  text-align: center;
+  position: relative;
+  padding: .5rem 0;
+  .progress{
+    display: inline-block;
+    margin: 0 10px;
+    position: relative;
+    width: .4rem;
+    height: 2.1rem;
+    background: transparent;
+    border-radius: .79rem;
+
+    .active{
+      width: .4rem;
+      border: .06rem solid #d2e7ff;
+      background: #50a4e7;
+      border-radius: .79rem;
+      height: 0;
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      transition: 0.5s;
+      -moz-transition: 0.5s; /* Firefox 4 */
+      -webkit-transition: 0.5s; /* Safari 和 Chrome */
+      -o-transition: 0.5s; /* Opera */
+    }
+  }
+
+  .showPercent{
+    position: absolute;
+    width: 100%;
+    left: 0;
+    font-size:23px;
+    color:#596372;
+    text-align:center;
+  }
+
+  .category{
+    position: absolute;
+    left: 0;
+    font-size:13px;
+    color:#596372;
+    text-align: center;
+    bottom: 0;
+
+    max-width: 100%;//有一个固定的宽度
+    white-space: nowrap;//不允许换行
+    overflow: hidden;//超出宽度不显示
+    text-overflow: ellipsis;//规定当文本溢出包含元素时显示省略号。
+
+    padding: 0 .2rem;
+  }
+
+}
+

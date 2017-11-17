@@ -1,0 +1,53 @@
+.listContent{
+  margin-top: 20px;
+}
+
+
+.listContent>Button{
+  width: 130px;
+  margin-bottom: 30px;
+}
+
+.listContent>div{
+  min-height: 150px;
+}
+
+
+.keyInfoWrap{
+  display: inline-block;
+}
+.keyInfoWrap>li{
+  float: left;
+  background:#f9f9f9;
+  border:1px solid #e5e5ea;
+  border-radius:100px;
+  width:148px;
+  height:38px;
+  line-height: 38px;
+  text-align: center;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  position: relative;
+}
+.keyInfoWrap>li>span{
+  display: inline-block;
+  max-width: 90px;//有一个固定的宽度
+  white-space: nowrap;//不允许换行
+  overflow: hidden;//超出宽度不显示
+  text-overflow: ellipsis;//规定当文本溢出包含元素时显示省略号。
+}
+.keyInfoWrap>li>i{
+  font-size: 20px;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity:0.2;
+  filter:Alpha(opacity=2); /* IE8 以及更早的浏览器 */
+  transition: 0.3s;
+  cursor: pointer;
+}
+.keyInfoWrap>li>i:hover{
+  opacity:1;
+  filter:Alpha(opacity=100); /* IE8 以及更早的浏览器 */
+}

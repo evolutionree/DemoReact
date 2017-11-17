@@ -1,0 +1,23 @@
+.search {
+  position: relative;
+  display: inline-block;
+  width: 240px;
+  padding-right: 68px;
+
+  :global {
+    .ant-input {
+      width: 100%;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    .ant-btn {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+      width: 68px;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+    }
+  }
+}

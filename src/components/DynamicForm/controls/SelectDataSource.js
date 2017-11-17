@@ -1,0 +1,166 @@
+import React, { PropTypes } from 'react';
+import { Link } from 'dva/router';
+import { Icon, message } from 'antd';
+import classnames from 'classnames';
+import DataSourceSelectModal from './DataSourceSelectModal';
+import styles from './SelectUser.less';
+import { checkHasPermission } from '../../../services/entcomm';
+
+class SelectDataSource extends React.Component {
+  static propTypes = {
+    value: PropTypes.oneOfType([PropTypes.string, PropTypes.object]), // JSON格式, { id, name }
+    // value_name: PropTypes.string,
+    onChange: PropTypes.func.isRequired,
+    onFocus: PropTypes.func,
+    dataSource: PropTypes.shape({
+      sourceId: PropTypes.string.isRequired,
+      type: PropTypes.string
+    }),
+    designateDataSource: PropTypes.object,
+    multiple: PropTypes.oneOf([0, 1]),
+    isReadOnly: PropTypes.oneOf([0, 1]),
+    placeholder: PropTypes.string
+  };
+  static defaultProps = {
+    dataRange: 0
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      modalVisible: false
+    };
+  }
+
+  setValue = val => {
+    if (!val || !Array.isArray(val)) {
+      this.props.onChange('', true);
+      return;
+    }
+    const name = val.map(item => item.name).join(',');
+    const id = val.map(item => item.id).join(',');
+    const _val = JSON.stringify({ name, id });
+    this.props.onChange(_val, true);
+  };
+
+  handleOk = (arrIdName) => {
+    this.hideModal();
+    const id = arrIdName.map(obj => obj.id).join(',');
+    const name = arrIdName.map(obj => obj.name).join(',');
+    this.props.onChange(JSON.stringify({ id, name }));
+  };
+
+  showModal = () => {
+    if (this.props.isReadOnly === 1) return;
+    if (this.props.onFocus) {
+      this.props.onFocus();
+    }
+    this.setState({ modalVisible: true });
+  };
+
+  hideModal = () => {
+    this.setState({ modalVisible: false });
+  };
+
+  parseValue = () => {
+    const { value } = this.props;
+    if (!value) return { text: '', array: [] };
+    try {
+      const { id, name } = typeof value === 'string' ? JSON.parse(value) : value;
+      const arrIdName = [];
+      if (id) {
+        const arrId = id.split(',');
+        const arrName = name.split(',');
+        arrId.forEach((item, index) => {
+          arrIdName.push({
+            id: item,
+            name: arrName[index]
+          });
+        });
+      }
+      return {
+        text: name,
+        array: arrIdName
+      };
+    } catch (e) {
+      console.error(e);
+      return { text: '', array: [] };
+    }
+  };
+
+  iconClearHandler = (e) => {
+    e.stopPropagation();
+    this.props.onChange();
+  };
+
+  render() {
+    const { text, array } = this.parseValue();
+    const cls = classnames([styles.wrap, {
+      [styles.empty]: !text,
+      [styles.disabled]: this.props.isReadOnly === 1
+    }]);
+
+    const iconCls = classnames([styles.iconClose, {//非禁用状态且有值得时候  支持删除操作
+      [styles.iconCloseShow]: text !== '' && this.props.isReadOnly !== 1
+    }]);
+
+    return (
+      <div className={cls} style={{ ...this.props.style }}>
+        <div
+          className="ant-input"
+          onClick={this.showModal}
+          title={text}
+        >
+          {text || this.props.placeholder}
+          <Icon type="close-circle" className={iconCls} onClick={this.iconClearHandler} />
+        </div>
+        <DataSourceSelectModal
+          visible={this.state.modalVisible}
+          designateDataSource={this.props.designateDataSource}
+          selected={array}
+          sourceId={this.props.dataSource && this.props.dataSource.sourceId}
+          onOk={this.handleOk}
+          onCancel={this.hideModal}
+          multiple={this.props.multiple === 1}
+        />
+      </div>
+    );
+  }
+}
+
+SelectDataSource.View = ({ value, value_name, entityId }) => {
+  if (!entityId) { // 没有entityid，以普通文本显示
+    const emptyText = <span style={{ color: '#999999' }}>(空)</span>;
+    const text = value_name !== undefined ? value_name : value;
+    return <div>{text ? (text + '') : emptyText}</div>;
+  }
+
+  if (!value || !value_name) return null;
+  const linkUrl = `/entcomm/${entityId}/${value.id}`;
+
+  function redirect() {
+    checkHasPermission({
+      entityid: entityId,
+      recid: value.id
+    }).then(result => {
+      if (result.data === '0') {
+        message.error('您没有权限查看该数据');
+      } else if (result.data === '2') {
+        message.error('该数据已删除，无法查看');
+      } else {
+        window.open('#' + linkUrl);
+      }
+    }, err => {
+      message.error('获取超时，请检查网络!');
+    });
+  }
+
+  return (
+    <div>
+      <a href="javascript:;" onClick={redirect}>{value_name}</a>
+      {/*<Link to={linkUrl} target="_blank">{value_name}</Link>*/}
+    </div>
+  );
+};
+
+export default SelectDataSource;

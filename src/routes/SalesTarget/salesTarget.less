@@ -1,0 +1,38 @@
+.yearTargetModal{
+  :global{
+    .ant-modal-body{
+      height: 600px;
+      overflow: auto;
+    }
+  }
+}
+
+
+.targetModal{
+  :global{
+    table>thead>tr>th:first-child,table>tbody>tr>td:first-child{
+      border-right-color: transparent;
+    }
+    .ant-modal-body{
+      text-align: center;
+    }
+    .ant-form-item{
+      margin-bottom: 6px;
+    }
+    .ant-form-item>div:first-child{
+      width: 130px;
+    }
+    .ant-form-item>div:last-child{
+      width: 180px;
+    }
+  }
+}
+
+
+.overEllipsis{
+  max-width: 200px;
+  display: inline-block;
+  white-space: nowrap;//不允许换行
+  overflow: hidden;//超出宽度不显示
+  text-overflow: ellipsis;//规定当文本溢出包含元素时显示省略号。
+}

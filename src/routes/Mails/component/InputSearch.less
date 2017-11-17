@@ -1,0 +1,30 @@
+.inputSearchWrap {
+  position: relative;
+  width: 200px;
+}
+
+.inputSearchWrap > ul {
+  position: absolute;
+  z-index: 99999999;
+  background: #ffffff;
+  max-width: 450px;
+  border-radius: 3px;
+  box-shadow: 0px 0px 4px #c6c4c4;
+  max-height: 340px;
+  overflow: auto;
+
+  >li {
+    height: 34px;
+    line-height: 34px;
+    padding: 0 8px;
+    cursor: pointer;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+
+.inputSearchWrap > ul > li:hover{
+  background: #eff7fc;
+}

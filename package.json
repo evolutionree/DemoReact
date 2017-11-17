@@ -1,0 +1,63 @@
+{
+  "private": true,
+  "entry": {
+    "app": "./src/index.js"
+  },
+  "scripts": {
+    "start": "roadhog server",
+    "build": "roadhog build",
+    "lint": "eslint --ext .js src test",
+    "publish": "roadhog build&&node ./scripts/publish.js -d -t",
+    "publish:dev": "roadhog build&&node ./scripts/publish.js -d",
+    "publish:test": "roadhog build&&node ./scripts/publish.js -t",
+    "deploy": "node ./scripts/publish.js -s -d -t",
+    "deploy:dev": "node ./scripts/publish.js -s -d",
+    "deploy:test": "node ./scripts/publish.js -s -t"
+  },
+  "engines": {
+    "install-node": "6.9.2"
+  },
+  "dependencies": {
+    "antd": "^2.13.6",
+    "axios": "^0.15.3",
+    "babel-runtime": "^6.9.2",
+    "codemirror": "^5.30.0",
+    "draft-js": "^0.10.0",
+    "draftjs-to-html": "^0.7.0",
+    "dva": "^1.2.1",
+    "echarts": "^3.7.0",
+    "element-resize-event": "^2.0.9",
+    "html-to-draftjs": "0.1.0-beta7",
+    "js-base64": "^2.1.9",
+    "js-cookie": "^2.1.4",
+    "jsoneditor": "^5.9.6",
+    "jsplumb": "2.3.5",
+    "lodash": "^4.17.4",
+    "qs": "^6.3.1",
+    "react": "^15.4.0",
+    "react-codemirror": "^1.0.0",
+    "react-dom": "^15.4.0",
+    "react-draft-wysiwyg": "^1.7.7",
+    "react-sortable-hoc": "^0.5.0",
+    "ua-parser-js": "^0.7.12",
+    "uuid": "^3.1.0"
+  },
+  "devDependencies": {
+    "archiver": "^2.0.3",
+    "babel-eslint": "^7.1.1",
+    "babel-plugin-dva-hmr": "^0.3.2",
+    "babel-plugin-import": "^1.1.1",
+    "babel-plugin-transform-runtime": "^6.9.0",
+    "eslint": "^3.12.2",
+    "eslint-config-airbnb": "^13.0.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "eslint-plugin-react": "^6.8.0",
+    "expect": "^1.20.2",
+    "husky": "^0.12.0",
+    "md5": "^2.2.1",
+    "redbox-react": "^1.3.2",
+    "roadhog": "^0.5.2",
+    "ssh2": "^0.5.5"
+  }
+}

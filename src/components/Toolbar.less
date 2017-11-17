@@ -1,0 +1,50 @@
+@import "../styles/_mixins";
+@import "../styles/_variables";
+//@toobar-height: 64px;
+@toolbar-padding: 15px;
+
+.toolbar {
+  .clearfix();
+  padding-bottom: @toolbar-padding;
+  overflow: hidden;
+  background-color: #ffffff;
+  //border-bottom: 1px solid @border-color-grey;
+
+  .toolbarContent > :global(.ant-btn) {
+    margin: 0 5px 5px;
+  }
+  .toolbarContent > :global(.ant-select) {
+    margin: 0 5px;
+  }
+
+  .toolbarToggle {
+    display: none;
+    line-height: 31px;
+
+    .count {
+      cursor: default;
+      margin-right: 18px;
+      border-right: 1px solid #d9d9d9;
+      padding-right: 10px;
+    }
+    .action {
+      margin-right: 15px;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+.toolbar.active {
+  .toolbarToggle {
+    display: block;
+  }
+  .toolbarContent {
+    display: none;
+  }
+}
+
+.toolbarRight {
+  .clearfix();
+  float: right;
+}

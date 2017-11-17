@@ -1,0 +1,42 @@
+.wrap{
+  position: relative;
+  display: inline-block;
+  height: 26px;
+  line-height: 26px;
+  margin: 0 10px;
+
+  >span{
+    padding-left: 30px;
+  }
+}
+
+.checkbox{
+  width: 26px;
+  height: 26px;
+  border: 1px solid #e3e4e5;
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  margin-top: -13px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+.checkbox.active{
+  background: #3398db;
+}
+.checkbox.active:after{
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 7px;
+  background: transparent;
+  top: 6px;
+  left: 5px;
+  border: 2px solid #ffffff;
+  border-top: none;
+  border-right: none;
+  -webkit-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}

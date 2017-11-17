@@ -1,0 +1,41 @@
+.entrylist {
+  height: 400px;
+  overflow: auto;
+  border: 1px solid #ddd;
+}
+.entry {
+  position: relative;
+  border: 1px solid #ddd;
+  padding: 5px 25px 5px 10px;
+  margin-bottom: -1px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  &.selected {
+    background-color: #3398db;
+    color: #ffffff;
+  }
+
+  .entryctrl {
+    display: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+  &:hover .entryctrl {
+    display: block;
+  }
+}
+.controlcol {
+  button {
+    width: 100%;
+
+    &:first-child {
+      margin-top: 120px;
+      margin-bottom: 40px;
+    }
+  }
+}

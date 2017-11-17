@@ -1,0 +1,29 @@
+.wrap {
+  :global {
+    .ant-tree li {
+      font-size: 14px;
+    }
+    .ant-tree-node-content-wrapper {
+      max-width: 20em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+.title {
+  .titleText {
+
+  }
+  .titleCtrl {
+    display: none;
+    font-size: 12px;
+    margin-left: 1em;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  &:hover .titleCtrl {
+    display: inline;
+  }
+}

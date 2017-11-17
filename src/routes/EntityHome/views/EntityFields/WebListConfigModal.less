@@ -1,0 +1,40 @@
+.wrap {
+
+}
+.list {
+  margin-top: 6px;
+  height: 400px;
+  overflow: auto;
+  border: 1px solid #ddd;
+}
+.title {
+  padding-left: 11px;
+}
+.item {
+  position: relative;
+  border: 1px solid #ddd;
+  padding: 5px 25px 5px 10px;
+  margin-bottom: -1px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  i:last-child {
+    position: absolute;
+    cursor: pointer;
+    top: 50%;
+    right: 5px;
+    padding: 5px;
+    transform: translateY(-50%);
+  }
+}
+.item.active {
+  background-color: #3398db;
+  color: #fff;
+}
+.btn:first-child {
+  margin-top: 100px;
+}
+.btn {
+  margin-top: 20px;
+}

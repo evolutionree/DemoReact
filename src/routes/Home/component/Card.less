@@ -1,0 +1,49 @@
+.Card{
+  width: 100%;
+  height: 100%;
+}
+
+.Card{
+  >ul{
+    width: 100%;
+    height: 120px;
+    zoom:1;
+
+    >li{
+      float: left;
+      width: 33.33333%;
+      height: 100%;
+      padding: 30px 0;
+      text-align: center;
+      position: relative;
+      >div:first-of-type{
+        height: 36px;
+        line-height: 36px;
+        font-size: 30px;
+        color: #4ae1ef;
+      }
+      >div:nth-of-type(2){
+        height: 24px;
+        line-height: 24px;
+        font-size: 14px;
+        color: #9b9b9b;
+      }
+      >span:first-of-type{
+        display: inline-block;
+        width: 1px;
+        height: 56px;
+        background: #373d4c;
+        position: absolute;
+        right: 0;
+        top: 50%;
+        margin-top: -28px;
+      }
+    }
+
+  }
+  >ul:after{
+    content:"";
+    display:block;
+    clear:both;
+  }
+}

@@ -1,0 +1,36 @@
+.contentwrap {
+  position: relative;
+  margin-top: 10px;
+
+  textarea {
+    width: 75%;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    resize: vertical;
+  }
+
+  .list {
+    position: absolute;
+    top: 0;
+    left: 75%;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    border: 1px solid #d9d9d9;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-left: 0;
+
+    li {
+      padding: 2px 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #eff7fc;
+      }
+    }
+  }
+}

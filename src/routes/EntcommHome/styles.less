@@ -1,0 +1,99 @@
+@import "../../styles/_mixins";
+
+.stages {
+  background-color: #f9f9f9;
+  position: relative;
+  z-index: 10;
+}
+.stagelist {
+  .clearfix();
+  padding: 20px 30px 0;
+  border-top: 1px solid #efeff4;
+
+  .stageitem {
+    position: relative;
+    float: left;
+    margin-right: 36px;
+    padding-bottom: 10px;
+
+    &.laststage .stagearrow {
+      display: none;
+    }
+    &.currentstage .stagetext {
+      background-color: #3398db;
+      color: #ffffff;
+    }
+    &.restart {
+      padding: 6px 15px;
+      cursor: pointer;
+      background-color: #7ccc35;
+      color: #fff;
+      border-radius: 20px;
+    }
+  }
+  .stagearrow {
+    position: absolute;
+    top: 10px;
+    right: -25px;
+    color: #b3b3b3;
+  }
+  .stagemark {
+    position: absolute;
+    left: 50%;
+    bottom: -6px;
+    line-height: 1;
+    font-size: 14px;
+    margin-left: -7px;
+    color: #3398db;
+  }
+  .stagetext {
+    cursor: pointer;
+    line-height: 38px;
+    background-color: #e7e7e7;
+    color: #4a4a4a;
+    text-align: center;
+    min-width: 140px;
+    border: 1px solid #efeff4;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+  }
+  .stageicon {
+    cursor: pointer;
+    background-color: #fff;
+    color: #4990e2;
+    text-align: center;
+    line-height: 18px;
+    border: 1px solid #efeff4;
+  }
+}
+
+.stagedropdown {
+  border-top: 2px solid #3398db;
+  padding: 23px 30px;
+  position: absolute;
+  background: #f9f9f9;
+  left: 0;
+  right: 0;
+  border-bottom: 1px solid #efeff4;
+}
+.detailsection {
+  padding-bottom: 15px;
+
+  .title {
+    padding: 0 10px;
+    line-height: 16px;
+    border-left: 4px solid #00a659;
+    color: #417505;
+    margin-bottom: 14px;
+  }
+
+  .stageform {
+    width: 600px;
+
+    :global {
+      .ant-form-item {
+        margin-bottom: 15px;
+      }
+    }
+  }
+}

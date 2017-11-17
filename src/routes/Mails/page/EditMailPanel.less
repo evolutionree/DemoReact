@@ -1,0 +1,136 @@
+.editMailWrap{
+  z-index: 10;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  margin-left: 10px;
+  margin-top: 10px;
+  background: #ffffff;
+  zoom:1;
+
+  :global{
+    button{
+      width: 110px;
+      margin: 0 5px 0 0!important;
+    }
+    .ant-btn-background-ghost{
+      border:none;
+    }
+    .grayBtn{
+      background: #f5f5f6;
+      color: #767f8b;
+      border: none;
+    }
+    .edui-container, .edui-body-container{
+      width: 100%!important;
+    }
+  }
+}
+.editMailWrap:after{
+  content:"";
+  display:block;
+  clear:both;
+}
+
+.head{
+  height: 42px;
+  line-height: 42px;
+  padding-left: 10px;
+  font-size:18px;
+  color:#333333;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.recipients{
+  min-height: 44px;
+  height: auto;
+  padding-left: 10px;
+  font-size:14px;
+  color:#333333;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  >span:first-of-type {
+    display: inline-block;
+    width: 50px;
+  }
+  :global{
+    input{
+      //max-width: 300px;
+      border: none;
+      padding: 0;
+      height: 24px;
+    }
+    .ant-input:focus{
+      border: none;
+      box-shadow: none;
+    }
+  }
+}
+
+
+.infoList{
+  height: 44px;
+  line-height: 44px;
+  padding-left: 10px;
+  font-size:14px;
+  color:#333333;
+  border-bottom: 1px solid #f0f0f0;
+  >span:first-of-type {
+    display: inline-block;
+    width: 50px;
+  }
+
+  :global{
+    input{
+      //max-width: 300px;
+      border: none;
+      padding: 0;
+    }
+    .ant-input:focus{
+      border: none;
+      box-shadow: none;
+    }
+  }
+}
+
+
+.attachmentWrap{
+  height: 44px;
+  line-height: 44px;
+  padding-left: 10px;
+  >span:first-of-type {
+    padding-left: 12px;
+    padding-right: 4px;
+    font-size: 14px;
+    color: #333333;
+  }
+  >span:nth-of-type(2){
+    font-size:14px;
+    color:#47d243;
+  }
+}
+
+.UMEditorWrap{
+  :global{
+    .edui-container{
+      box-shadow: none;
+      border-right: none;
+    }
+    .edui-container .edui-toolbar{
+      box-shadow: none;
+      background: #f1f1f1
+    }
+  }
+}
+
+
+.footer{
+  :global{
+    .ant-select-selection{
+      border: none;
+      box-shadow: none;
+    }
+  }
+}
+

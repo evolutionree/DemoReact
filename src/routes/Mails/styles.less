@@ -1,0 +1,134 @@
+.container {
+  position: relative;
+  height: 100%;
+
+  .left,
+  .right,
+  .mid {
+    background-color: #fff;
+  }
+
+  .left {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    overflow: auto;
+  }
+  .right {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    overflow: auto;
+  }
+  .mid {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    //border-left: 1px solid #ddd;
+    //border-right: 1px solid #ddd;
+    .midtop {
+      position: relative;
+      overflow: auto;
+    }
+    .midbottom {
+      position: relative;
+      overflow: auto;
+    }
+  }
+
+  .split {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    min-width: 1px;
+    min-height: 1px;
+    background-color: #ddd;
+    border: 1px solid #ddd;
+    z-index: 10;
+  }
+
+  :global {
+    // 表格和分页
+    .ant-table-thead > tr > th {
+      padding: 10px 10px;
+      font-weight: normal;
+      background-color: #f7f7f7;
+      white-space: nowrap;
+    }
+    .ant-table-tbody > tr > td {
+      padding: 10px 10px;
+    }
+    .ant-table-tbody > tr:nth-child(2n+1) > td {
+      background-color: #fff;
+    }
+    .ant-table-tbody > tr:nth-child(2n+1):hover > td {
+      background-color: #eff7fc;
+    }
+  }
+}
+
+.left {
+  button {
+    margin-right: 8px;
+    font-size: 12px;
+    height: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  :global {
+    .ant-collapse-header {
+      background-color: #f7f7f7;
+    }
+    .ant-collapse-content {
+      height: calc(~"100% - 38px");
+      overflow: auto;
+    }
+    .ant-input-search input {
+      height: 28px;
+    }
+  }
+}
+
+.midtop {
+  .selectedrow {
+    :global {
+      td {
+        background-color: #eff7fc!important;
+      }
+    }
+  }
+  :global {
+    .ant-input-search input {
+      height: 28px;
+    }
+  }
+}
+
+.mailList {
+  :global {
+    .ant-table {
+      .ant-checkbox-inner {
+        width: 14px;
+        height: 14px;
+      }
+      .ant-checkbox-indeterminate .ant-checkbox-inner:after {
+        left: 2px;
+        top: 5px;
+        width: 8px;
+        height: 1px;
+      }
+      .ant-checkbox-checked .ant-checkbox-inner:after {
+        left: 4px;
+        top: 1px;
+        display: table;
+        width: 5px;
+        height: 8px;
+      }
+    }
+  }
+}
+
