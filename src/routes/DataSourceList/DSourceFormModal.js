@@ -117,6 +117,17 @@ function DSourceFormModal({
             </Radio.Group>
           )}
         </FormItem>
+        <FormItem label="脚本类型">
+          {decorate('ispro', {
+            initialValue: 0,
+            rules: [{ required: true, message: '请选择脚本类型' }]
+          })(
+            <Radio.Group>
+              <Radio value={0}>函数</Radio>
+              <Radio value={1}>sql语句</Radio>
+            </Radio.Group>
+          )}
+        </FormItem>
         <FormItem label="描述">
           {decorate('srcmark', {
             initialValue: ''
