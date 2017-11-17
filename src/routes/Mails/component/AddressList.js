@@ -7,6 +7,7 @@ const Search = Input.Search;
 const TreeNode = Tree.TreeNode;
 import Styles from './AddressList.less';
 import request from '../../../utils/request';
+import { connect } from 'dva';
 
 class AddressList extends Component {
   static propTypes = {
@@ -19,12 +20,14 @@ class AddressList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-
+      innerContact: this.props.innerContact
     };
   }
 
   componentWillReceiveProps(nextProps) {
-
+    this.setState({
+      innerContact: nextProps.innerContact
+    });
   }
 
   componentDidMount() {
@@ -35,6 +38,39 @@ class AddressList extends Component {
 
   }
 
+  onLoadData = (treeNode) => {
+    return new Promise((resolve) => {
+      if (treeNode.props.children) {
+        resolve();
+        return;
+      }
+
+
+      setTimeout(() => {
+        treeNode.props.dataRef.children = [
+          { treename: 'Child Node', treeid: `${treeNode.props.eventKey}-0` },
+          { treename: 'Child Node', treeid: `${treeNode.props.eventKey}-1` }
+        ];
+        this.setState({
+          innerContact: [...this.state.innerContact]
+        });
+        resolve();
+      }, 1000);
+    });
+  }
+
+  renderTreeNodes(data) {
+    return data.map((item) => {
+      if (item.children) {
+        return (
+          <TreeNode title={item.treename} key={item.treeid} dataRef={item}>
+            {this.renderTreeNodes(item.children)}
+          </TreeNode>
+        );
+      }
+      return <TreeNode title={item.treename} key={item.treeid} dataRef={item} />;
+    });
+  }
 
   render() {
     return (
@@ -56,17 +92,8 @@ class AddressList extends Component {
         </div>
         <div className={Styles.categoryWrap}>
           <div className={Styles.title}>客户联系人</div>
-          <Tree>
-            <TreeNode title="客户A" key="0-0">
-              <TreeNode title="陈佳明" />
-              <TreeNode title="张三" />
-              <TreeNode title="李四" />
-            </TreeNode>
-            <TreeNode title="客户B" key="0-1">
-              <TreeNode title="陈佳明" />
-              <TreeNode title="张三" />
-              <TreeNode title="李四" />
-            </TreeNode>
+          <Tree loadData={this.onLoadData}>
+            {this.renderTreeNodes(this.state.innerContact)}
           </Tree>
         </div>
       </div>
@@ -74,4 +101,6 @@ class AddressList extends Component {
   }
 }
 
-export default AddressList;
+export default connect(
+  state => state.mails
+)(AddressList);

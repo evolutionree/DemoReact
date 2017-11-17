@@ -212,6 +212,19 @@ export async function queryCustomerContact() {
   });
 }
 
+/**
+ * 获取企业内部通讯录
+ * @param params
+ * { treeid }  //部门id
+ * @returns {Promise.<Object>}
+ */
+export async function queryInnerContact(params) {
+  return request('api/mail/getinnercontact', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
 
 /**
  * 发送邮箱

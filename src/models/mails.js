@@ -8,6 +8,7 @@ import {
   queryMailContacts,
   queryMailBoxList,
   queryCustomerContact,
+  queryInnerContact,
   saveMailCatalog,
   updateMailCatalog,
   delMailCatalog,
@@ -87,7 +88,8 @@ export default {
     showingModals: '',
     mailContacts: [],
     mailBoxList: [],
-    customerContact: []
+    customerContact: [],
+    innerContact: []
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -121,6 +123,7 @@ export default {
       yield put({ type: 'fetchMailContacts' });
       yield put({ type: 'fetchMailboxlist' });
       yield put({ type: 'fetchCustomerContact' });
+      yield put({ type: 'fetchInnerContact' }); //获取企业内部通讯录
     },
     *fetchMailContacts(action, { call, put }) {
       try {
@@ -153,6 +156,17 @@ export default {
         });
       } catch (e) {
         message.error(e.message || '获取客户联系人数据失败');
+      }
+    },
+    *fetchInnerContact(action, { call, put }) {
+      try {
+        const { data: innerContact } = yield call(queryInnerContact, { treeid: '' });
+        yield put({
+          type: 'putState',
+          payload: { innerContact }
+        });
+      } catch (e) {
+        message.error(e.message || '获取企业内部通讯录失败');
       }
     },
     *queryCatalogTree(action, { select, call, put }) {
@@ -396,7 +410,8 @@ export default {
         showingModals: '',
         mailContacts: [],
         mailBoxList: [],
-        customerContact: []
+        customerContact: [],
+        innerContact: []
       };
     }
   }

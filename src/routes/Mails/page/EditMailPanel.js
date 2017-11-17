@@ -15,23 +15,6 @@ import {
   sendemail
 } from '../../../services/mails';
 
-const parseValue = (value) => {
-  if (!value) return [];
-
-  if (typeof value === 'string') {
-    let files = [];
-    try {
-      files = JSON.parse(value);
-      return files;
-    } catch (e) {
-      console.error('附件value格式出错');
-      return files;
-    }
-  } else {
-    return value;
-  }
-};
-
 class EditMailPanel extends Component {
   static propTypes = {
 
@@ -58,7 +41,7 @@ class EditMailPanel extends Component {
         },
         {
           label: '密送',
-          name: 'MCAddress',
+          name: 'BCCAddress',
           type: 'multipleInput',
           show: false
         },
@@ -109,7 +92,8 @@ class EditMailPanel extends Component {
 
       ],
       UMEditorContent: 'aaa',
-      fromAddress: this.getFromAddress(this.props.mailBoxList)
+      fromAddress: this.getFromAddress(this.props.mailBoxList),
+      AttachmentFile: []
     };
   }
 
@@ -120,7 +104,7 @@ class EditMailPanel extends Component {
   }
 
   componentDidMount() {
-   this.umEditor.setContent(this.state.UMEditorContent);
+    this.umEditor.setContent(this.state.UMEditorContent);
   }
 
   componentDidUpdate() {
@@ -223,6 +207,7 @@ class EditMailPanel extends Component {
       }
     }
 
+    formData.AttachmentFile = this.state.AttachmentFile;
     formData.bodycontent = this.state.UMEditorContent;
     sendemail(formData).then(result => {
       message.success('发送成功');
@@ -264,7 +249,19 @@ class EditMailPanel extends Component {
   };
 
   handleUploadChange = ({ file, fileList }) => {
-
+    console.log(file)
+    console.log(fileList)
+    if (file.response && file.response.error_code === 0) {
+      // 上传成功，拿uuid
+      this.setState({
+        AttachmentFile: fileList && fileList instanceof Array && fileList.map((item) => {
+          return {
+            fileid: item.response.data, //附件人
+            filetype: 1 //新文件
+          };
+        })
+      });
+    }
   };
 
   handleRemove = file => {
@@ -277,9 +274,16 @@ class EditMailPanel extends Component {
     });
   }
 
+  getUploadParams = (file) => {
+    return {
+      filename: file.name
+    };
+  };
+
   render() {
     const props = {
       name: 'data',
+      data: this.getUploadParams,
       action: '/api/fileservice/upload',
       headers: {
         ...getDeviceHeaders(),
