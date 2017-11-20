@@ -138,7 +138,7 @@ export default {
     },
     *fetchMailboxlist(action, { call, put }) {
       try {
-        const { data: mailBoxList } = yield call(queryMailBoxList);
+        const { data: { datalist: mailBoxList } } = yield call(queryMailBoxList);
         yield put({
           type: 'putState',
           payload: { mailBoxList }

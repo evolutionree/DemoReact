@@ -194,7 +194,10 @@ export async function saveMailLayout(params) {
 export async function queryMailBoxList() {
   return request('api/mailset/getmailboxlist', {
     method: 'post',
-    body: JSON.stringify({})
+    body: JSON.stringify({
+      PageIndex: 1,
+      pageSize: 9999
+    })
   });
 }
 
