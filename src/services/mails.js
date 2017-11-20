@@ -242,3 +242,15 @@ export async function sendemail(params) {
   });
 }
 
+/**
+ * 获取往来邮件
+ * @param params
+ * { relatedMySelf, relatedSendOrReceive }
+ * @returns {Promise.<Object>}
+ */
+export async function queryRelatedMails(params) {
+  return request('api/mail/gettoandfromail', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
