@@ -10,6 +10,7 @@ import MailCatalogMenuSelect from './MailCatalogMenuSelect';
 import Toolbar from '../../components/Toolbar';
 import ActionButton from '../../components/ActionButton';
 import Search from '../../components/Search';
+import ImgIcon from '../../components/ImgIcon';
 import EditMailPanel from './page/EditMailPanel';
 import MailDetailPanel from './page/MailDetailPanel';
 import { treeForEach } from '../../utils';
@@ -90,6 +91,7 @@ class Mails extends Component {
       paddingBottom: '40px'
     };
     const { myCatalogData, selectedCatalogNode: cat, queries: { catalogType, searchKey } } = this.props;
+    const catName = cat ? cat.recname : (catalogType === 'dept' ? '下属邮箱' : '--');
     const renderOverlay = dropdownCallback => (
       <div style={{
         background: '#fff',
@@ -159,16 +161,16 @@ class Mails extends Component {
           <ActionButton icon="folder-move" actions={[]} onAction={this.onAction} renderOverlay={renderOverlay}>移动到</ActionButton>
         </Toolbar>
         <Toolbar style={{ paddingLeft: '10px', paddingRight: '30px' }}>
-          {cat ? (
-            <span>{cat.recname} (未读 {cat.unreadcount} 封)</span>
-          ) : (catalogType === 'dept' ? '下属邮箱' : '--')}
+          <span>{catName}</span>
+          {!!cat && <span>(未读 {cat.unreadcount} 封)</span>}
           <Toolbar.Right>
             <Search
               mode="icon"
-              placeholder="输入标题搜索"
+              placeholder={`搜索 ${catName}`}
               value={searchKey}
               onSearch={val => this.props.search({ searchKey: val })}
             />
+            <ImgIcon name="refresh" onClick={this.props.refreshList} style={{ marginLeft: '8px', height: '20px' }} />
           </Toolbar.Right>
         </Toolbar>
         <MailList />
@@ -225,6 +227,9 @@ export default connect(
       },
       search(searchObj) {
         dispatch({ type: 'mails/search', payload: searchObj });
+      },
+      refreshList() {
+        dispatch({ type: 'mails/queryMailList' });
       },
       dispatch
     };

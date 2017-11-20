@@ -93,7 +93,8 @@ class MailContent extends Component {
               <ul className={styles.attachlist} style={{ paddingLeft: isPreview ? '170px' : '70px' }}>
                 {(attachinfo || []).map(item => (
                   <li key={item.fileid}>
-                    <Icon type="paper-clip" style={{ marginRight: '5px', verticalAlign: 'middle', color: '#999' }} />
+                    {/*<Icon type="paper-clip" style={{ marginRight: '5px', verticalAlign: 'middle', color: '#999' }} />*/}
+                    <ImgIcon name="attachment" style={{ marginRight: '3px' }} />
                     <span style={{ marginRight: '5px', verticalAlign: 'middle' }}>{item.filename}</span>
                     <ImgIcon style={{ height: '14px' }} name="download" onClick={this.download.bind(this, item)} />
                   </li>

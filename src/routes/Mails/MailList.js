@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
-import { Table, Pagination, Select } from 'antd';
+import { Table, Pagination, Select, Icon } from 'antd';
 import { connect } from 'dva';
+import classnames from 'classnames';
 import ImgIcon from '../../components/ImgIcon';
 import TinyPager from '../../components/TinyPager';
 import styles from './styles.less';
@@ -27,7 +28,10 @@ class MailList extends Component {
           rowKey="mailid"
           dataSource={mailList}
           pagination={false}
-          rowClassName={record => mailDetailData && mailDetailData.mailId === record.mailid ? styles.selectedrow : ''}
+          rowClassName={record => classnames({
+            [styles.selectedrow]: !!(mailDetailData && mailDetailData.mailId === record.mailid),
+            [styles.readrow]: !!record.isread
+          })}
           rowSelection={{
             selectedRowKeys: mailSelected.map(item => item.mailid),
             onChange: (keys, items) => this.props.dispatch({ type: 'mails/putState', payload: { mailSelected: items } })
@@ -42,13 +46,19 @@ class MailList extends Component {
             width={34}
           />
           <Column
-            title={<ImgIcon marginLess name="status" />}
+            title={<ImgIcon marginLess name="attachment" />}
             dataIndex="attachcount"
             render={val => (val ? <ImgIcon marginLess name="attachment" /> : null)}
             width={34}
           />
+          {/*<Column*/}
+            {/*title={<Icon type="paper-clip" style={{}} />}*/}
+            {/*dataIndex="attachcount"*/}
+            {/*render={val => (val ? <Icon type="paper-clip" style={{}} /> : null)}*/}
+            {/*width={34}*/}
+          {/*/>*/}
           <Column title="主题" dataIndex="title" />
-          <Column title="发件人地址" dataIndex="sender.displayname" />
+          <Column title="发件人" dataIndex="sender.displayname" />
           <Column
             title="收件人"
             dataIndex="receivers"
