@@ -203,6 +203,21 @@ export async function queryMailBoxList() {
 
 
 /**
+ * 获取最近联系人
+ * @param params
+ * { PageIndex
+  * pageSize}
+ * @returns {Promise.<Object>}
+ */
+export async function queryRecentcontact() {
+  return request('api/mail/getrecentcontact', {
+    method: 'post',
+    body: JSON.stringify({ PageIndex: 1, pageSize: 999999 })
+  });
+}
+
+
+/**
  * 获取客户联系人
  * @param params
  * {  }

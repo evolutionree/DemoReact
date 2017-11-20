@@ -5,6 +5,7 @@ import {
   queryMailCatalog,
   queryDeptMailCatalog,
   queryMailList,
+  queryRecentcontact,
   queryMailContacts,
   queryMailBoxList,
   queryCustomerContact,
@@ -88,8 +89,10 @@ export default {
     showingModals: '',
     mailContacts: [],
     mailBoxList: [],
+    recentContact: [],
     customerContact: [],
-    innerContact: []
+    innerContact: [],
+    editEmailFormData: null
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -122,6 +125,7 @@ export default {
       if (hasInitialized) return;
       yield put({ type: 'fetchMailContacts' });
       yield put({ type: 'fetchMailboxlist' });
+      yield put({ type: 'fetchRecentcontact' }); //获取最近联系人
       yield put({ type: 'fetchCustomerContact' });
       yield put({ type: 'fetchInnerContact' }); //获取企业内部通讯录
     },
@@ -145,6 +149,17 @@ export default {
         });
       } catch (e) {
         message.error(e.message || '获取我的邮箱列表数据失败');
+      }
+    },
+    *fetchRecentcontact(action, { call, put }) {
+      try {
+        const { data: { datalist: recentContact } } = yield call(queryRecentcontact);
+        yield put({
+          type: 'putState',
+          payload: { recentContact }
+        });
+      } catch (e) {
+        message.error(e.message || '获取最近联系人数据失败');
       }
     },
     *fetchCustomerContact(action, { call, put }) {
@@ -380,6 +395,7 @@ export default {
   },
   reducers: {
     putState(state, { payload }) {
+      console.log('putstate')
       return { ...state, ...payload };
     },
     modalPending(state, { payload }) {
@@ -410,8 +426,10 @@ export default {
         showingModals: '',
         mailContacts: [],
         mailBoxList: [],
+        recentContact: [],
         customerContact: [],
-        innerContact: []
+        innerContact: [],
+        editEmailFormData: null
       };
     }
   }

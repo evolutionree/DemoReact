@@ -16,23 +16,29 @@
   }
 }
 
-
-.recentContacts{
-  .title{
-    background:#f1f1f1;
-    height:34px;
-    line-height: 34px;
-    padding-left: 12px;
-    font-size:14px;
-    color:#767f8b;
+.addressListWrap {
+  :global {
+    .ant-collapse{
+      border: none;
+    }
+    .ant-collapse-content > .ant-collapse-content-box {
+      padding: 6px 0;
+    }
+    .ant-collapse > .ant-collapse-item{
+      border-bottom: 1px solid #f0f0f0;
+    }
   }
-  .body{
-    >li{
-      height: 26px;
-      line-height: 26px;
-      padding-left: 12px;
-      font-size:14px;
-      color:#333333;
+}
+
+.recentContactsWrap{
+  >li{
+    height: 26px;
+    line-height: 26px;
+    font-size:14px;
+    color:#333333;
+    cursor: pointer;
+    &:hover{
+      background: #eff6f8;
     }
   }
 }

@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import ListInput from './multipleInput';
 import NormalInput from './normalInput';
+import { connect } from 'dva';
 
 class Form extends Component {
   static propTypes = {
@@ -44,16 +45,32 @@ class Form extends Component {
     return returnData;
   }
 
+  changeFormData(name, data) {
+    const editEmailFormData = this.props.editEmailFormData || {};
+    const newEditEmailFormData = {
+      ...editEmailFormData,
+      [name]: data
+    };
+
+    console.log(JSON.stringify(newEditEmailFormData))
+    this.props.dispatch({ type: 'mails/putState', payload: {editEmailFormData: newEditEmailFormData} })
+  }
 
   render() {
+    const editEmailFormData = this.props.editEmailFormData;
+
     return (
       <div>
         {
           this.state.model && this.state.model instanceof Array && this.state.model.map((item, index) => {
             if (item.type === 'multipleInput') {
-              return <ListInput label={item.label} ref={item.name} key={index} />;
+              return <ListInput label={item.label}
+                                changeData={this.changeFormData.bind(this, item.name)}
+                                ref={item.name} key={index} data={(editEmailFormData && editEmailFormData[item.name]) || []} />;
             } else if (item.type === 'normalInput') {
-              return <NormalInput label={item.label} ref={item.name} key={index} />;
+              return <NormalInput label={item.label}
+                                  changeData={this.changeFormData.bind(this, item.name)}
+                                  ref={item.name} key={index} data={(editEmailFormData && editEmailFormData[item.name]) || ''} />;
             }
           })
         }
@@ -62,4 +79,13 @@ class Form extends Component {
   }
 }
 
-export default Form;
+export default connect(
+  state => {
+    return { ...state.mails };
+  },
+  dispatch => {
+    return {
+      dispatch
+    }
+  }
+)(Form);

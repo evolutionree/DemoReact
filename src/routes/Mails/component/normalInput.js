@@ -16,12 +16,14 @@ class NormalInput extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      inputValue: ''
+      inputValue: this.props.data
     };
   }
 
   componentWillReceiveProps(nextProps) {
-
+    this.setState({
+      inputValue: nextProps.data
+    })
   }
 
   inputFocus() {
@@ -29,9 +31,7 @@ class NormalInput extends Component {
   }
 
   inputChangeHandler(e) {
-    this.setState({
-      inputValue: e.target.value
-    });
+    this.props.changeData && this.props.changeData(e.target.value);
   }
 
 

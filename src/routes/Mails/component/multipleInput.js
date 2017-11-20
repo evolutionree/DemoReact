@@ -28,26 +28,33 @@ class MultipleInput extends Component {
     document.addEventListener('keydown', this.docKeyDownHandler.bind(this));
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      data: nextProps.data
+    });
+  }
+
+
   componentWillUnmount() {
     document.removeEventListener('keydown', this.docKeyDownHandler);
   }
 
   docKeyDownHandler(e) {
-    if (e.keyCode === 8) {
+    if (e.keyCode === 8) { //删除最后一条数据
       if (document.activeElement.tagName && document.activeElement.tagName.toUpperCase() === 'BODY') {
+        const newData = this.state.data.filter((item, index) => {
+          return index !== this.state.dataBlockSelectIndex;
+        });
+
         this.setState({
-          data: this.state.data.filter((item, index) => {
-            return index !== this.state.dataBlockSelectIndex;
-          }),
           dataBlockSelectIndex: ''
         });
+
+        this.props.changeData && this.props.changeData(newData)
       }
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-
-  }
 
   inputFocus() {
     try {
@@ -60,16 +67,11 @@ class MultipleInput extends Component {
 
   completeInput(value, type) {
     if (value && value.email) {
-      this.setState({
-        data: [
-          ...this.state.data,
-          value
-        ]
-      });
+      this.props.changeData && this.props.changeData([
+        ...this.state.data,
+        value
+      ])
     }
-
-    console.log(type)
-    //this.InputRef.focus();
   }
 
   getData() {
@@ -77,11 +79,11 @@ class MultipleInput extends Component {
   }
 
   deleteData() {
-    this.setState({
-      data: this.state.data.filter((item, index) => {
-        return index !== this.state.data.length - 1;
-      })
+    const newData = this.state.data.filter((item, index) => {
+      return index !== this.state.data.length - 1;
     });
+
+    this.props.changeData && this.props.changeData(newData)
   }
 
   dataBlockSelect(index, e) {
@@ -100,8 +102,9 @@ class MultipleInput extends Component {
     if (value && value.email) {
       newData[index] = value;
     }
+
+    this.props.changeData && this.props.changeData(newData)
     this.setState({
-      data: newData,
       dataBlockSelectIndex: ''
     });
   }

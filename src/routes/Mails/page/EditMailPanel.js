@@ -15,6 +15,7 @@ import {
   sendemail
 } from '../../../services/mails';
 
+
 class EditMailPanel extends Component {
   static propTypes = {
 
@@ -91,7 +92,7 @@ class EditMailPanel extends Component {
         }
 
       ],
-      UMEditorContent: 'aaa',
+      UMEditorContent: '',
       fromAddress: this.getFromAddress(this.props.mailBoxList),
       AttachmentFile: []
     };
@@ -106,6 +107,11 @@ class EditMailPanel extends Component {
   componentDidMount() {
     this.umEditor.setContent(this.state.UMEditorContent);
   }
+
+  componentWillUnmount() {
+
+  }
+
 
   componentDidUpdate() {
 
@@ -186,7 +192,7 @@ class EditMailPanel extends Component {
   sendMail() {
     const mailBoxList = this.props.mailBoxList;
     const formData = _.cloneDeep(this.FormRef.getData());
-    console.log(this.FormRef.getData());
+
 
     for (let key in formData) {
       if (key !== 'subject') {
@@ -216,7 +222,6 @@ class EditMailPanel extends Component {
       this.setState({ confirmLoading: false });
     });
 
-    console.log(JSON.stringify(formData));
 
     function getAddress(data) {
       let returnData = [];
@@ -233,7 +238,6 @@ class EditMailPanel extends Component {
   }
 
   UMEditorContentChangeHandler(content) {
-    console.log(content)
     this.setState({
       UMEditorContent: content
     });
@@ -249,8 +253,6 @@ class EditMailPanel extends Component {
   };
 
   handleUploadChange = ({ file, fileList }) => {
-    console.log(file)
-    console.log(fileList)
     if (file.response && file.response.error_code === 0) {
       // 上传成功，拿uuid
       this.setState({
@@ -295,7 +297,6 @@ class EditMailPanel extends Component {
     };
 
     const formModel = this.state.formModel && this.state.formModel instanceof Array && this.state.formModel.filter((item) => item.show);
-
     return (
       <div className={Styles.editMailWrap} style={{ width: 'calc(100% - 10px)', height: 'calc(100% - 10px)', display: this.props.visible ? 'block' : 'none' }}>
         <div className={Styles.head}>
