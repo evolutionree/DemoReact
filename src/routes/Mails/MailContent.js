@@ -50,7 +50,7 @@ class MailContent extends Component {
     if (!data) return null;
     const isLoading = data.status === 'loading';
     const detailData = isLoading ? data.mailInfo : data.maildetail;
-    const { title, receivers, ccers, receivetime, attachinfo, summary, attachcount } = detailData;
+    const { title, receivers, ccers, receivetime, attachinfo, summary, mailbody, attachcount } = detailData;
     const strPersons = persons => persons && persons.map(item => item.displayname).join(', ');
     return (
       <div className={styles.wrap}>
@@ -102,7 +102,7 @@ class MailContent extends Component {
             )}
           </div>
         </div>}
-        <div className={styles.body} dangerouslySetInnerHTML={{ __html: summary }} />
+        <div className={styles.body} dangerouslySetInnerHTML={{ __html: mailbody || summary }} />
       </div>
     );
   }

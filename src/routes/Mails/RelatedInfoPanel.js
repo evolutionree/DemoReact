@@ -206,23 +206,23 @@ class RelatedInfoPanel extends Component {
   renderRelatedInfo = () => {
     const { mailDetailData } = this.props;
     if (!(mailDetailData && mailDetailData.status === 'loaded')) return null;
-    const { sender } = mailDetailData;
+    const { sender, custinfo } = mailDetailData;
     return (
       <div>
-        <div className={styles.infobox}>
+        {sender && sender.length > 0 && <div className={styles.infobox}>
           <div className={styles.infotitle}>发件人信息</div>
           <div className={styles.infometa}><Avatar image={sender[0].headicon} /></div>
           <div className={styles.infometa}><span>姓名：</span><span>{sender[0].recname}</span></div>
           <div className={styles.infometa}><span>电话：</span><span>{sender[0].phone}</span></div>
           <div className={styles.infometa}><span>邮箱：</span><span>{sender[0].email}</span></div>
-        </div>
-        <div className={styles.infobox}>
+        </div>}
+        {custinfo && custinfo.length > 0 && <div className={styles.infobox}>
           <div className={styles.infotitle}>客户信息</div>
           <DynamicFormViewLight
             fields={this.state.custProtocols[mailDetailData.custinfo[0].rectype] || []}
-            value={mailDetailData.custinfo[0]}
+            value={custinfo[0]}
           />
-        </div>
+        </div>}
       </div>
     );
   };
