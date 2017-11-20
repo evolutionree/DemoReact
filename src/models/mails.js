@@ -249,17 +249,17 @@ export default {
       yield put({ type: 'putState', payload: { selectedCatalogNode: catalogNode } });
     },
     *saveCatalog({ payload: data }, { call, put }) {
+      const isEdit = !!data.recid;
       try {
-        const isEdit = !!data.recid;
         const fn = isEdit ? updateMailCatalog : saveMailCatalog;
         const params = isEdit ? _.pick(data, ['recid', 'recname']) : _.pick(data, ['pid', 'recname']);
         yield put({ type: 'modalPending', payload: true });
         yield call(fn, params);
-        message.success('保存成功');
+        message.success(isEdit ? '编辑成功' : '新增成功');
         yield put({ type: 'showModals', payload: '' });
         yield put({ type: 'queryCatalogTree' });
       } catch (e) {
-        message.error(e.message || '保存失败');
+        message.error(e.message || (isEdit ? '编辑失败' : '编辑成功'));
       }
     },
     *delCatalog({ payload: catalogId }, { select, call, put }) {
