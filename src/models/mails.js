@@ -338,6 +338,23 @@ export default {
           }
         }
       });
+
+      // 标记已读
+      try {
+        yield call(markMails, { mailids: mail.mailid, mark: 3 });
+        const { mailList } = yield select(state => state.mails);
+        mail.isread = 1;
+        yield put({
+          type: 'putState',
+          payload: {
+            mailList: [...mailList]
+          }
+        });
+      } catch (e) {
+        console.error('标记已读失败', e);
+      }
+
+      // 查看详情，相关信息等
       try {
         const { data } = yield call(queryMailDetail, mail.mailid);
         const { mailDetailData: { mailId } } = yield select(state => state.mails);
