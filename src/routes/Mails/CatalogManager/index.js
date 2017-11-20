@@ -48,8 +48,8 @@ class CatalogManager extends Component {
           <Button ghost onClick={this.props.editCatalog} disabled={!isPersonalCat}>编辑</Button>
           <Button ghost onClick={this.props.delCatalog} disabled={!isPersonalCat}>删除</Button>
           <ImgIcon name="refresh" onClick={this.props.refreshCatalog} />
-          <ImgIcon name="arrow-down-bordered" onClick={this.onOrderDown} />
-          <ImgIcon name="arrow-up-bordered" onClick={this.onOrderUp} />
+          <ImgIcon name="arrow-down-bordered" onClick={this.onOrderDown} disabled={!isPersonalCat} />
+          <ImgIcon name="arrow-up-bordered" onClick={this.onOrderUp} disabled={!isPersonalCat} />
         </div>
         <div style={{ position: 'relative', background: '#f7f7f7', height: '44px', paddingLeft: '10px' }}>
           <span style={{ lineHeight: '44px' }}>{openedCatalog === 'my' ? '用户文件夹' : '下属员工'}</span>

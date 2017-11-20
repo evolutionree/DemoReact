@@ -1,6 +1,6 @@
 import React from 'react';
 
-function ImgIcon({ marginLess = false, name, size = 'default', style = {}, onClick, ...rest }) {
+function ImgIcon({ marginLess = false, name, size = 'default', style = {}, onClick, disabled = false, ...rest }) {
   const sizeMap = {
     large: 18,
     'default': 16,
@@ -15,10 +15,10 @@ function ImgIcon({ marginLess = false, name, size = 'default', style = {}, onCli
     height: sizeMap[size] + 'px'
   };
   if (onClick) {
-    styl.cursor = 'pointer';
+    styl.cursor = disabled ? 'not-allowed' : 'pointer';
   }
   return (
-    <img src={'/icon/' + name + '.png'} alt="" style={{ ...styl, ...style }} onClick={onClick} {...rest} />
+    <img src={'/icon/' + name + '.png'} alt="" style={{ ...styl, ...style }} onClick={disabled ? undefined : onClick } {...rest} />
   );
 }
 
