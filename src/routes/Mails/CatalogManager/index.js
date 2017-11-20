@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import { Button, Collapse, Col, Row, Input } from 'antd';
+import { Button, Collapse, Modal, Input } from 'antd';
 import { connect } from 'dva';
 import CatalogTree from './CatalogTree';
 import CatalogModal from './CatalogModal';
@@ -120,7 +120,12 @@ export default connect(
         dispatch({ type: 'mails/showModals', payload: 'editCatalog' });
       },
       delCatalog() {
-        dispatch({ type: 'mails/delCatalog' });
+        Modal.confirm({
+          title: '确定删除选中的文件夹吗？',
+          onOk() {
+            dispatch({ type: 'mails/delCatalog' });
+          }
+        });
       },
       orderCatalog(catalog, type) {
         dispatch({ type: 'mails/orderCatalog', payload: { catalog, type } });
