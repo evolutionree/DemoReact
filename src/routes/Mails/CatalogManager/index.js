@@ -40,7 +40,9 @@ class CatalogManager extends Component {
   render() {
     const { openedCatalog, myCatalogData, deptCatalogData, selectedCatalogNode, catSearchKey, putState } = this.props;
     const panelHeight = key => (openedCatalog === key ? 'calc(100% - 38px)' : '38px');
-    const isPersonalCat = openedCatalog === 'my' && selectedCatalogNode && selectedCatalogNode.ctype === 3001;
+    const isMyCat = openedCatalog === 'my';
+    const isPersonalCat = isMyCat && selectedCatalogNode && selectedCatalogNode.ctype === 3002;
+    const isCustCat = isMyCat && selectedCatalogNode && selectedCatalogNode.ctype === 4001;
     return (
       <div style={{ height: '100%', minWidth: '300px' }}>
         <div style={{ padding: '10px' }}>
@@ -48,8 +50,8 @@ class CatalogManager extends Component {
           <Button ghost onClick={this.props.editCatalog} disabled={!isPersonalCat}>编辑</Button>
           <Button ghost onClick={this.props.delCatalog} disabled={!isPersonalCat}>删除</Button>
           <ImgIcon name="refresh" onClick={this.props.refreshCatalog} />
-          <ImgIcon name="arrow-down-bordered" onClick={this.onOrderDown} disabled={!isPersonalCat} />
-          <ImgIcon name="arrow-up-bordered" onClick={this.onOrderUp} disabled={!isPersonalCat} />
+          <ImgIcon name="arrow-down-bordered" onClick={this.onOrderDown} disabled={!isPersonalCat && !isCustCat} />
+          <ImgIcon name="arrow-up-bordered" onClick={this.onOrderUp} disabled={!isPersonalCat && !isCustCat} />
         </div>
         <div style={{ position: 'relative', background: '#f7f7f7', height: '44px', paddingLeft: '10px' }}>
           <span style={{ lineHeight: '44px' }}>{openedCatalog === 'my' ? '用户文件夹' : '下属员工'}</span>
