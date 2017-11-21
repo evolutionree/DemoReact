@@ -2,7 +2,7 @@
  * Created by 0291 on 2017/11/14.
  */
 import React, { Component } from 'react';
-import { Icon, Input } from 'antd';
+import { Input } from 'antd';
 import { connect } from 'dva';
 import Styles from './InputSearch.less';
 import request from '../../../utils/request';
@@ -19,7 +19,6 @@ class InputSearch extends Component {
     super(props);
     this.state = {
       value: this.props.value,
-      show: false,
       listData: []
     };
   }
@@ -28,7 +27,10 @@ class InputSearch extends Component {
     this.setState({
       value: nextProps.value
     });
-    this.queryListData(nextProps.value);
+
+    if (nextProps.value !== this.state.value) {
+      this.queryListData(nextProps.value);
+    }
   }
 
   componentWillMount() {
@@ -64,10 +66,10 @@ class InputSearch extends Component {
   }
 
   completeInput(type) {
+    console.log('inse:blur')
     this.props.completeInput && this.props.completeInput(this.getMatchAllContacts(this.state.value), type);
     this.setState({
-      value: '',
-      show: false
+      value: ''
     });
   }
 
@@ -75,9 +77,6 @@ class InputSearch extends Component {
     if (e.keyCode === 8) {
       if (!e.target.value) {
         this.props.deleteData && this.props.deleteData();
-        this.setState({
-          show: false
-        });
       }
     }
   }
@@ -86,38 +85,27 @@ class InputSearch extends Component {
     if ((e.target.value.toString().indexOf(';') > -1) || (e.target.value.toString().indexOf('；') > -1)) {
       this.props.completeInput && this.props.completeInput(this.getMatchAllContacts(this.state.value), 'change');
       this.setState({
-        value: '',
-        show: false
+        value: ''
       });
     } else {
       this.queryListData(e.target.value);
       this.setState({
-        value: e.target.value,
-        show: true
+        value: e.target.value
       });
     }
   }
 
   focus() {
     this.InputSearchRef.focus();
-    this.setState({
-      show: true
-    });
   }
 
   blur() {
     this.InputSearchRef.blur();
-    this.setState({
-      show: false
-    });
   }
 
   inputClickHandler(e) {
     e.stopPropagation();
     this.props.onClick && this.props.onClick(e);
-    this.setState({
-      show: true
-    });
   }
 
   selectItem(item, e) {
@@ -127,8 +115,7 @@ class InputSearch extends Component {
       email: item.emailaddress
     }, 'select');
     this.setState({
-      value: '',
-      show: false
+      value: ''
     });
     setTimeout(() => { //会触发blur事件  所以延时处理
       try {
@@ -137,17 +124,22 @@ class InputSearch extends Component {
     }, 300);
   }
 
+  focusHandler() {
+    this.props.onFocus && this.props.onFocus();
+  }
+
   render() {
     return (
       <div className={Styles.inputSearchWrap}>
         <Input ref={(ref) => this.InputSearchRef = ref}
                onBlur={this.completeInput.bind(this, 'blur')}
+               onFocus={this.focusHandler.bind(this)}
                onPressEnter={this.completeInput.bind(this, 'enter')}
                value={this.state.value}
                onKeyDown={this.keyDownHandler.bind(this)}
                onClick={this.inputClickHandler.bind(this)}
                onChange={this.inputChangeHandler.bind(this)} />
-        <ul style={{ display: this.state.show ? 'block' : 'none' }}>
+        <ul style={{ display: this.state.value ? 'block' : 'none' }}>
           {
             this.state.listData && this.state.listData instanceof Array && this.state.listData.map((item, index) => {
               return (
@@ -167,5 +159,12 @@ class InputSearch extends Component {
 export default connect(
   state => {
     return { ...state.mails };
-  }
+  },
+  dispatch => {
+    return {
+      dispatch
+    };
+  },
+  undefined,
+  { withRef: true }
 )(InputSearch);

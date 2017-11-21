@@ -37,11 +37,15 @@ class DataBlock extends Component {
   }
 
 
-  completeEdit(value) {
+  completeEdit(value, type) {
     this.setState({
       isEditing: false
     });
     this.props.onChange && this.props.onChange(value);
+
+    if (type === 'blur') {
+      this.props.onBlur && this.props.onBlur();
+    }
   }
 
 
@@ -60,7 +64,7 @@ class DataBlock extends Component {
   componentDidUpdate() {
     if (this.state.isEditing) {
       try {
-        this.dataBlockInput.focus();
+        this.dataBlockInput.refs.wrappedInstance.focus();
       } catch (e) {}
     }
   }
@@ -78,11 +82,16 @@ class DataBlock extends Component {
     e.stopPropagation();
   }
 
+  focusHandler() {
+    this.props.onFocus && this.props.onFocus();
+  }
+
   render() {
     if (this.state.isEditing) {
       return (
         <div style={{ display: 'inline-block', maxWidth: '300px', margin: '0 10px' }}>
           <InputSearch ref={(ref) => this.dataBlockInput = ref}
+                       onFocus={this.focusHandler.bind(this)}
                        value={this.state.value && this.state.value.email}
                        completeInput={this.completeEdit.bind(this)}
                        onClick={this.stopPropagation.bind(this)}

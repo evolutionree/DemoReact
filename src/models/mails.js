@@ -10,6 +10,7 @@ import {
   queryMailBoxList,
   queryCustomerContact,
   queryInnerContact,
+  querySignature,
   saveMailCatalog,
   updateMailCatalog,
   delMailCatalog,
@@ -92,7 +93,8 @@ export default {
     recentContact: [],
     customerContact: [],
     innerContact: [],
-    editEmailFormData: null
+    editEmailFormData: null,
+    focusTargetName: ''
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -128,6 +130,7 @@ export default {
       yield put({ type: 'fetchRecentcontact' }); //获取最近联系人
       yield put({ type: 'fetchCustomerContact' });
       yield put({ type: 'fetchInnerContact' }); //获取企业内部通讯录
+      yield put({ type: 'fetchSignature' }); //获取签名
     },
     *fetchMailContacts(action, { call, put }) {
       try {
@@ -179,6 +182,17 @@ export default {
         yield put({
           type: 'putState',
           payload: { innerContact }
+        });
+      } catch (e) {
+        message.error(e.message || '获取企业内部通讯录失败');
+      }
+    },
+    *fetchSignature(action, { call, put }) {
+      try {
+        const { data: signature } = yield call(querySignature, { treeid: '' });
+        yield put({
+          type: 'putState',
+          payload: { signature }
         });
       } catch (e) {
         message.error(e.message || '获取企业内部通讯录失败');
@@ -446,7 +460,8 @@ export default {
         recentContact: [],
         customerContact: [],
         innerContact: [],
-        editEmailFormData: null
+        editEmailFormData: null,
+        focusTargetName: ''
       };
     }
   }

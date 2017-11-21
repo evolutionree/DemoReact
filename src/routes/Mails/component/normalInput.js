@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import Styles from './multipleInput.less';
 import { Input } from 'antd';
+import { connect } from 'dva';
 
 class NormalInput extends Component {
   static propTypes = {
@@ -54,4 +55,13 @@ class NormalInput extends Component {
   }
 }
 
-export default NormalInput;
+export default connect(
+  state => state.mails,
+  dispatch => {
+    return {
+      dispatch
+    };
+  },
+  undefined,
+  { withRef: true }
+)(NormalInput);

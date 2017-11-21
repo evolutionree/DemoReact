@@ -4,13 +4,13 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Button, Input, Icon, Upload, message, Checkbox, Select } from 'antd';
-import request, { getDeviceHeaders } from '../../../utils/request';
+import { getDeviceHeaders } from '../../../utils/request';
 import Toolbar from '../../../components/Toolbar';
 import Styles from './EditMailPanel.less';
 import UMEditor from '../../../components/UMEditor';
 import Form from '../component/Form';
 import AddressList from '../component/AddressList';
-import _ from 'lodash';
+
 import {
   sendemail
 } from '../../../services/mails';
@@ -92,15 +92,16 @@ class EditMailPanel extends Component {
         }
 
       ],
-      UMEditorContent: '',
-      fromAddress: this.getFromAddress(this.props.mailBoxList),
-      AttachmentFile: []
+      UMEditorContent: 'aaa',
+      fromAddress: this.getDefaultFromAddress(this.props.mailBoxList),
+      AttachmentFile: [],
+      totalFileSize: 0
     };
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      fromAddress: this.getFromAddress(nextProps.mailBoxList)
+      fromAddress: this.getDefaultFromAddress(nextProps.mailBoxList)
     });
   }
 
@@ -108,16 +109,7 @@ class EditMailPanel extends Component {
     this.umEditor.setContent(this.state.UMEditorContent);
   }
 
-  componentWillUnmount() {
-
-  }
-
-
-  componentDidUpdate() {
-
-  }
-
-  getFromAddress(mailBoxList) {
+  getDefaultFromAddress(mailBoxList) {
     let returnData = '';
     if (mailBoxList && mailBoxList instanceof Array && mailBoxList.length > 0) {
       returnData = mailBoxList[0].recid;
@@ -190,40 +182,35 @@ class EditMailPanel extends Component {
   }
 
   sendMail() {
-    const mailBoxList = this.props.mailBoxList;
-    const formData = _.cloneDeep(this.FormRef.getData());
-
+    const mailBoxList = this.props.mailBoxList; //发件人列表数据
+    const formData = this.props.editEmailFormData;
 
     for (let key in formData) {
       if (key !== 'subject') {
-        formData[key] = getAddress(formData[key]);
+        formData[key] = getTransformAddress(formData[key]);  //转换成后端要求的格式
       }
     }
-
 
     if (mailBoxList && mailBoxList instanceof Array) {
       for (let i = 0; i < mailBoxList.length; i++) {
         if (mailBoxList[i].recid === this.state.fromAddress) {
-          // formData.fromaddress = mailBoxList[i].accountid;
-          // formData.fromname = mailBoxList[i].recname;
-          formData.fromaddress = 'yjytest8@customer.local';
-          formData.fromname = '销售1';
+          formData.fromaddress = mailBoxList[i].accountid;
+          formData.fromname = mailBoxList[i].recname;
           break;
         }
       }
     }
 
-    formData.AttachmentFile = this.state.AttachmentFile;
-    formData.bodycontent = this.state.UMEditorContent;
+    formData.AttachmentFile = this.state.AttachmentFile; //附件数据
+    formData.bodycontent = this.state.UMEditorContent; //富文本框数据
+
     sendemail(formData).then(result => {
       message.success('发送成功');
     }).catch(e => {
-      message.error(e.message || '新增失败');
-      this.setState({ confirmLoading: false });
+      message.error(e.message || '发送失败');
     });
 
-
-    function getAddress(data) {
+    function getTransformAddress(data) {
       let returnData = [];
       if (data && data instanceof Array) {
         for (let i = 0; i < data.length; i++) {
@@ -243,9 +230,8 @@ class EditMailPanel extends Component {
     });
   }
 
-
-  beforeUpload = file => {
-    if (file.size > 1024 * 1024 * 1024 * 4) {
+  beforeUpload = (file) => {
+    if (this.state.totalFileSize + file.size > 1024 * 1024 * 1024 * 4) {
       message.error('文件大小不可超过4G');
       return false;
     }
@@ -261,20 +247,19 @@ class EditMailPanel extends Component {
             fileid: item.response.data, //附件人
             filetype: 1 //新文件
           };
-        })
+        }),
+        totalFileSize: fileList.reduce((prev, cur) => cur.size + prev, 0)
       });
     }
   };
 
-  handleRemove = file => {
 
-  };
-
-  fromAddressSelectHandler(value) {
+  fromAddressSelectHandler(value) { //更新发送人
     this.setState({
       fromAddress: value
     });
   }
+
 
   getUploadParams = (file) => {
     return {
@@ -292,8 +277,7 @@ class EditMailPanel extends Component {
         Authorization: 'Bearer ' + this.props.token
       },
       beforeUpload: this.beforeUpload,
-      onChange: this.handleUploadChange,
-      onRemove: this.handleRemove
+      onChange: this.handleUploadChange
     };
 
     const formModel = this.state.formModel && this.state.formModel instanceof Array && this.state.formModel.filter((item) => item.show);
@@ -351,7 +335,7 @@ class EditMailPanel extends Component {
           </div>
         </div>
         <div style={{ width: 220, float: 'left', height: 'calc(100% - 42px)' }}>
-          <AddressList />
+          <AddressList model={formModel} />
         </div>
       </div>
     );
@@ -361,10 +345,5 @@ class EditMailPanel extends Component {
 export default connect(
   state => {
     return { ...state.mails, ...state.app };
-  },
-  dispatch => {
-    return {
-
-    };
   }
 )(EditMailPanel);

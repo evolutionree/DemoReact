@@ -3,10 +3,10 @@
  */
 import React, { Component } from 'react';
 import Styles from './multipleInput.less';
-import { Input } from 'antd';
 import DataBlock from './DataBlock';
 import InputSearch from './InputSearch';
 import _ from 'lodash';
+import { connect } from 'dva';
 
 class MultipleInput extends Component {
   static propTypes = {
@@ -34,7 +34,6 @@ class MultipleInput extends Component {
     });
   }
 
-
   componentWillUnmount() {
     document.removeEventListener('keydown', this.docKeyDownHandler);
   }
@@ -50,15 +49,14 @@ class MultipleInput extends Component {
           dataBlockSelectIndex: ''
         });
 
-        this.props.changeData && this.props.changeData(newData)
+        this.props.changeData && this.props.changeData(newData);
       }
     }
   }
 
-
   inputFocus() {
     try {
-      this.InputRef.focus();
+      this.InputRef.refs.wrappedInstance.focus();
     } catch (e) {}
     this.setState({
       dataBlockSelectIndex: ''
@@ -70,7 +68,11 @@ class MultipleInput extends Component {
       this.props.changeData && this.props.changeData([
         ...this.state.data,
         value
-      ])
+      ]);
+    }
+
+    if (type === 'blur') {
+      this.props.onBlur && this.props.onBlur();
     }
   }
 
@@ -83,7 +85,7 @@ class MultipleInput extends Component {
       return index !== this.state.data.length - 1;
     });
 
-    this.props.changeData && this.props.changeData(newData)
+    this.props.changeData && this.props.changeData(newData);
   }
 
   dataBlockSelect(index, e) {
@@ -92,7 +94,7 @@ class MultipleInput extends Component {
       dataBlockSelectIndex: index
     });
     try {
-      this.InputRef.blur();
+      this.InputRef.refs.wrappedInstance.blur();
     } catch (e) {}
   }
 
@@ -109,6 +111,16 @@ class MultipleInput extends Component {
     });
   }
 
+  focusHandler() {
+    this.props.onFocus && this.props.onFocus();
+    this.setState({
+      dataBlockSelectIndex: ''
+    });
+  }
+
+  blurHandler() {
+    this.props.onBlur && this.props.onBlur();
+  }
 
   render() {
     let listData = this.state.data;
@@ -126,6 +138,8 @@ class MultipleInput extends Component {
                   <DataBlock key={index}
                              isSelect={this.state.dataBlockSelectIndex === index}
                              value={item}
+                             onFocus={this.focusHandler.bind(this)}
+                             onBlur={this.blurHandler.bind(this)}
                              onChange={this.dataChangeHandler.bind(this, index)}
                              onSelect={this.dataBlockSelect.bind(this, index)} />
                 );
@@ -134,6 +148,7 @@ class MultipleInput extends Component {
           }
           <div style={{ maxWidth: '200px', display: 'inline-block' }}>
             <InputSearch ref={(ref) => this.InputRef = ref}
+                         onFocus={this.focusHandler.bind(this)}
                          completeInput={this.completeInput.bind(this)}
                          deleteData={this.deleteData.bind(this)}
             />
@@ -144,4 +159,13 @@ class MultipleInput extends Component {
   }
 }
 
-export default MultipleInput;
+export default connect(
+  state => state.mails,
+  dispatch => {
+    return {
+      dispatch
+    };
+  },
+  undefined,
+  { withRef: true }
+)(MultipleInput);

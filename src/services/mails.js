@@ -243,6 +243,18 @@ export async function queryInnerContact(params) {
   });
 }
 
+/**
+ * 获取个性化签名列表
+ * @param params
+ * {  }
+ * @returns {Promise.<Object>}
+ */
+export async function querySignature() {
+  return request('api/mailset/getsignature', {
+    method: 'post',
+    body: JSON.stringify({})
+  });
+}
 
 /**
  * 发送邮箱

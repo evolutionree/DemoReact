@@ -17,7 +17,8 @@ class Form extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      model: this.props.model
+      model: this.props.model,
+      updateFocus: false
     };
   }
 
@@ -25,35 +26,62 @@ class Form extends Component {
     this.setState({
       model: nextProps.model
     });
+
+    if (JSON.stringify(this.state.model) !== JSON.stringify(nextProps.model)) {
+      this.setState({
+        updateFocus: true
+      });
+    }
   }
 
   componentDidMount() {
-
+    if (this.state.model && this.state.model instanceof Array && this.state.model.length > 0) {
+      setTimeout(() => {
+        this.refs[this.state.model[0].name].refs.wrappedInstance.inputFocus();
+      }, 3000);
+    }
   }
 
   componentDidUpdate() {
-    // if (this.props.model && this.props.model instanceof Array && this.props.model.length > 0) {
-    //   this.refs[this.props.model[0].name].inputFocus();
-    // }
+    if (this.state.updateFocus) {
+      if (this.state.model && this.state.model instanceof Array && this.state.model.length > 0) {
+        this.refs[this.state.model[0].name].refs.wrappedInstance.inputFocus();
+      }
+      this.setState({
+        updateFocus: false
+      });
+    }
   }
 
   getData() {
     let returnData = {};
     for (let v in this.refs) {
-      returnData[v] = this.refs[v].getData();
+      returnData[v] = this.refs[v].refs.wrappedInstance.getData();
     }
     return returnData;
   }
 
-  changeFormData(name, data) {
+  changeFormData(name, data) { //更新最新的表单数据到Modal State中
     const editEmailFormData = this.props.editEmailFormData || {};
     const newEditEmailFormData = {
       ...editEmailFormData,
       [name]: data
     };
 
-    console.log(JSON.stringify(newEditEmailFormData))
-    this.props.dispatch({ type: 'mails/putState', payload: {editEmailFormData: newEditEmailFormData} })
+    let filterEditEmailFormData = {};
+    this.state.model && this.state.model instanceof Array && this.state.model.map((item) => { //筛选出当前表单显示的数据
+      filterEditEmailFormData[item.name] = newEditEmailFormData[item.name];
+    });
+
+    this.props.dispatch({ type: 'mails/putState', payload: { editEmailFormData: filterEditEmailFormData } });
+  }
+
+  focusHandler(name) { //监听用户最后一次焦点在哪个输入框中
+    this.props.dispatch({ type: 'mails/putState', payload: { focusTargetName: name } });
+  }
+
+  blurHandler(name) {
+    //this.props.dispatch({ type: 'mails/putState', payload: { focusTargetName: '' } });
   }
 
   render() {
@@ -64,9 +92,13 @@ class Form extends Component {
         {
           this.state.model && this.state.model instanceof Array && this.state.model.map((item, index) => {
             if (item.type === 'multipleInput') {
-              return <ListInput label={item.label}
-                                changeData={this.changeFormData.bind(this, item.name)}
-                                ref={item.name} key={index} data={(editEmailFormData && editEmailFormData[item.name]) || []} />;
+              return (
+                <ListInput label={item.label}
+                           changeData={this.changeFormData.bind(this, item.name)}
+                           onFocus={this.focusHandler.bind(this, item.name)}
+                           onBlur={this.blurHandler.bind(this, item.name)}
+                           ref={item.name} key={index} data={(editEmailFormData && editEmailFormData[item.name]) || []} />
+              );
             } else if (item.type === 'normalInput') {
               return <NormalInput label={item.label}
                                   changeData={this.changeFormData.bind(this, item.name)}
@@ -82,10 +114,5 @@ class Form extends Component {
 export default connect(
   state => {
     return { ...state.mails };
-  },
-  dispatch => {
-    return {
-      dispatch
-    }
   }
 )(Form);
