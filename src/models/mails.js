@@ -22,7 +22,7 @@ import {
 import { treeForEach } from '../utils';
 
 function getDefaultCatalog(catalogData) {
-  return catalogData[0].recid;
+  return catalogData[0];
 }
 
 /* eslint-disable */
@@ -75,32 +75,37 @@ function getCatalogNode(treeData, catalogId) {
 export default {
   namespace: 'mails',
   state: {
-    hasInitialized: false,
-    queries: {},
+    /* 邮件目录 */
     openedCatalog: 'my', // my/dept
     selectedCatalogNode: null,
     catSearchKey: '',
     myCatalogData: [],
     deptCatalogData: [],
+
+    /* 邮件列表 */
+    mailPageIndex: 1,
+    mailPageSize: 10,
+    mailSearchKey: '',
     mailList: [],
     mailTotal: 0,
     mailSelected: [],
     mailDetailData: null,
-    showingModals: '',
+
+    /* 写邮件 */
     mailContacts: [],
     mailBoxList: [],
     recentContact: [],
     customerContact: [],
     innerContact: [],
-    editEmailFormData: null
+    editEmailFormData: null,
+
+    showingModals: ''
   },
   subscriptions: {
     setup({ dispatch, history }) {
       return history.listen(location => {
         if (location.pathname === '/mails') {
-          dispatch({ type: 'queryMailList' });
           dispatch({ type: 'init' });
-          dispatch({ type: 'putState', payload: { hasInitialized: true } });
         } else {
           dispatch({ type: 'resetState' });
         }
@@ -108,21 +113,8 @@ export default {
     }
   },
   effects: {
-    *search({ payload }, { select, put }) {
-      const location = yield select(({ routing }) => routing.locationBeforeTransitions);
-      const { pathname, query } = location;
-      yield put(routerRedux.push({
-        pathname,
-        query: {
-          ...query,
-          pageIndex: 1,
-          ...payload
-        }
-      }));
-    },
-    *init(action, { select, call, put }) {
-      const { hasInitialized } = yield select(state => state.mails);
-      if (hasInitialized) return;
+    *init(action, { put }) {
+      yield put({ type: 'queryMyCatalogTree', payload: true });
       yield put({ type: 'fetchMailContacts' });
       yield put({ type: 'fetchMailboxlist' });
       yield put({ type: 'fetchRecentcontact' }); //获取最近联系人
@@ -184,59 +176,57 @@ export default {
         message.error(e.message || '获取企业内部通讯录失败');
       }
     },
-    *queryCatalogTree(action, { select, call, put }) {
+    *queryMyCatalogTree({ payload: isInit }, { select, call, put }) {
       try {
-        const { user } = yield select(state => state.app);
-        const { openedCatalog, selectedCatalogNode, queries, catSearchKey } = yield select(state => state.mails);
-        if (openedCatalog === 'my') {
-          const params = {
-            catalogname: catSearchKey || ''
-          };
-          const { data } = yield call(queryMailCatalog, params);
-          yield put({ type: 'putState', payload: { myCatalogData: data } });
-          if (!selectedCatalogNode) {
-            yield put({
-              type: 'putState',
-              payload: { selectedCatalogNode: getCatalogNode(data, queries.catalog) }
-            });
-          }
-        } else if (openedCatalog === 'dept') {
-          const { data } = yield call(queryDeptMailCatalog, { treeid: '' });
-          yield put({ type: 'putState', payload: { deptCatalogData: data } });
+        const { catSearchKey } = yield select(state => state.mails);
+        const params = {
+          catalogname: catSearchKey || ''
+        };
+        const { data } = yield call(queryMailCatalog, params);
+        yield put({ type: 'putState', payload: { myCatalogData: data } });
+
+        // 初始化，默认选中目录
+        if (isInit) {
+          const selectedCatalogNode = getDefaultCatalog(data);
+          yield put({ type: 'putState', payload: { selectedCatalogNode } });
+          yield put({ type: 'queryMailList' });
         }
       } catch (e) {
         message.error(e.message || '获取邮件目录数据失败');
       }
     },
-    *queryMailList(action, { select, call, put }) {
-      const location = yield select(state => state.routing.locationBeforeTransitions);
-      const { query } = location;
-      const queries = {
-        pageIndex: 1,
-        pageSize: 10,
-        searchKey: '',
-        // catalog: getDefaultCatalog(openTabs[0] === '0' ? myCatalogData : deptCatalogData),
-        catalog: 'f91fe27e-77ac-45de-aeb6-d3ea5a050a01',
-        catalogType: 'my',
-        ...query
-      };
-      queries.pageIndex = parseInt(queries.pageIndex, 10);
-      queries.pageSize = parseInt(queries.pageSize, 10);
-      yield put({ type: 'putState', payload: { queries } });
-
-      const { hasInitialized } = yield select(state => state.mails);
-      if (!hasInitialized) {
-        yield put({
-          type: 'putState',
-          payload: {
-            openedCatalog: queries.catalogType
-          }
-        });
-        yield put({ type: 'queryCatalogTree' });
-      }
-
+    *queryDeptCatalogTree(action, { call, put }) {
       try {
-        const params = { ...queries };
+        const { data } = yield call(queryDeptMailCatalog, { treeid: '' });
+        yield put({ type: 'putState', payload: { deptCatalogData: data } });
+      } catch (e) {
+        message.error(e.message || '获取邮件目录数据失败');
+      }
+    },
+    *reloadCatalogTree(action, { select, put }) {
+      const { openedCatalog } = yield select(state => state.mails);
+      yield put({ type: openedCatalog === 'my' ? 'queryMyCatalogTree' : 'queryDeptCatalogTree' });
+    },
+    *search({ payload: searchObj }, { put }) {
+      yield put({
+        type: 'putState',
+        payload: {
+          mailPageIndex: 1,
+          ...searchObj
+        }
+      });
+      yield put({ type: 'queryMailList' });
+    },
+    *queryMailList(action, { select, call, put }) {
+      try {
+        const { mailPageIndex, mailPageSize, mailSearchKey, selectedCatalogNode } = yield select(state => state.mails);
+        const params = {
+          pageIndex: mailPageIndex,
+          pageSize: mailPageSize,
+          searchKey: mailSearchKey,
+          catalog: selectedCatalogNode.recid,
+          fetchuserid: selectedCatalogNode.userid
+        };
         const { data } = yield call(queryMailList, params);
         yield put({
           type: 'putState',
@@ -251,17 +241,23 @@ export default {
       }
     },
     *toggleOpenedCatalog({ payload: openedCatalog }, { select, put }) {
-      yield put({ type: 'putState', payload: { openedCatalog, catSearchKey: '' } });
+      yield put({
+        type: 'putState',
+        payload: { openedCatalog, catSearchKey: '' }
+      });
       const { myCatalogData, deptCatalogData } = yield select(state => state.mails);
-      if ((openedCatalog === 'my' && !myCatalogData.length) || (openedCatalog === 'dept' && !deptCatalogData.length)) {
-        yield put({ type: 'queryCatalogTree' });
+      if ((openedCatalog === 'my' && !myCatalogData.length)
+        || (openedCatalog === 'dept' && !deptCatalogData.length)) {
+        yield put({ type: 'reloadCatalogTree' });
       }
     },
     *selectCatalog({ payload: catalogNode }, { select, put }) {
       if (!catalogNode.recid) return;
-      const { openedCatalog } = yield select(state => state.mails);
-      yield put({ type: 'search', payload: { catalog: catalogNode.recid, catalogType: openedCatalog } });
-      yield put({ type: 'putState', payload: { selectedCatalogNode: catalogNode } });
+      yield put({
+        type: 'putState',
+        payload: { selectedCatalogNode: catalogNode }
+      });
+      yield put({ type: 'queryMailList' });
     },
     *saveCatalog({ payload: data }, { call, put }) {
       const isEdit = !!data.recid;
@@ -272,7 +268,7 @@ export default {
         yield call(fn, params);
         message.success(isEdit ? '编辑成功' : '新增成功');
         yield put({ type: 'showModals', payload: '' });
-        yield put({ type: 'queryCatalogTree' });
+        yield put({ type: 'reloadCatalogTree' });
       } catch (e) {
         message.error(e.message || (isEdit ? '编辑失败' : '编辑成功'));
       }
@@ -282,7 +278,7 @@ export default {
         const { selectedCatalogNode } = yield select(state => state.mails);
         yield call(delMailCatalog, selectedCatalogNode.recid);
         message.success('删除成功');
-        yield put({ type: 'queryCatalogTree' });
+        yield put({ type: 'reloadCatalogTree' });
       } catch (e) {
         message.error(e.message || '删除失败');
       }
@@ -293,7 +289,7 @@ export default {
         const params = { recid: selectedCatalogNode.recid, dotype: type === 'up' ? 1 : 0 };
         yield call(orderMailCatalog, params);
         message.success('操作成功');
-        yield put({ type: 'queryCatalogTree' });
+        yield put({ type: 'reloadCatalogTree' });
       } catch (e) {
         message.error(e.message || '操作失败');
       }
@@ -430,8 +426,6 @@ export default {
     },
     resetState() {
       return {
-        hasInitialized: false,
-        queries: {},
         openedCatalog: 'my', // my/dept
         selectedCatalogNode: null,
         myCatalogData: [],

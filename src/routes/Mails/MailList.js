@@ -18,8 +18,7 @@ class MailList extends Component {
   }
 
   render() {
-    const { mailList, mailTotal, mailSelected, queries, mailDetailData } = this.props;
-    const { pageIndex, pageSize } = queries;
+    const { mailList, mailTotal, mailSelected, mailPageIndex, mailPageSize, mailDetailData } = this.props;
     return (
       <div className={styles.mailList}>
         <Table
@@ -34,10 +33,10 @@ class MailList extends Component {
           })}
           rowSelection={{
             selectedRowKeys: mailSelected.map(item => item.mailid),
-            onChange: (keys, items) => this.props.dispatch({ type: 'mails/putState', payload: { mailSelected: items } })
+            onChange: (keys, items) => this.props.selectMails(items)
           }}
-          onRowClick={record => this.props.dispatch({ type: 'mails/mailPreview__', payload: record })}
-          onRowDoubleClick={record => this.props.dispatch({ type: 'mails/showMailDetail', payload: record })}
+          onRowClick={this.props.preview}
+          onRowDoubleClick={this.props.showMailDetail}
         >
           <Column
             title={<ImgIcon marginLess name="mail" />}
@@ -72,11 +71,11 @@ class MailList extends Component {
         </Table>
         <TinyPager
           style={{ position: 'absolute', left: '0', right: '0', bottom: '0' }}
-          current={pageIndex}
-          pageSize={pageSize}
+          current={mailPageIndex}
+          pageSize={mailPageSize}
           total={mailTotal}
-          onChange={page => this.props.dispatch({ type: 'mails/search', payload: { pageIndex: page } })}
-          onPageSizeChange={val => this.props.dispatch({ type: 'mails/search', payload: { pageIndex: 1, pageSize: val } })}
+          onChange={page => this.props.search({ mailPageIndex: page })}
+          onPageSizeChange={val => this.props.search({ mailPageIndex: 1, mailPageSize: val })}
         />
       </div>
     );
@@ -84,6 +83,22 @@ class MailList extends Component {
 }
 
 export default connect(
-  state => state.mails
+  state => state.mails,
+  dispatch => {
+    return {
+      search(obj) {
+        dispatch({ type: 'mails/search', payload: obj });
+      },
+      selectMails(mails) {
+        dispatch({ type: 'mails/putState', payload: { mailSelected: mails } });
+      },
+      preview(mail) {
+        dispatch({ type: 'mails/mailPreview__', payload: mail });
+      },
+      showMailDetail(mail) {
+        dispatch({ type: 'mails/showMailDetail', payload: mail });
+      }
+    };
+  }
 )(MailList);
 
