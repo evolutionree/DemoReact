@@ -16,7 +16,8 @@ import {
   moveMails,
   markMails,
   orderMailCatalog,
-  queryMailDetail
+  queryMailDetail,
+  queryHistoryUsers
 } from '../services/mails';
 import { treeForEach } from '../utils';
 
@@ -28,11 +29,12 @@ export default {
   namespace: 'mails',
   state: {
     /* 邮件目录 */
-    openedCatalog: 'my', // my/dept
+    openedCatalog: 'my', // my/dept/user
     selectedCatalogNode: null,
     catSearchKey: '',
     myCatalogData: [],
     deptCatalogData: [],
+    userCatalogData: [],
 
     /* 邮件列表 */
     mailPageIndex: 1,
@@ -155,9 +157,21 @@ export default {
         message.error(e.message || '获取邮件目录数据失败');
       }
     },
+    *queryUserCatalog(action, { call, put }) {
+      try {
+        const { data } = yield call(queryHistoryUsers);
+        yield put({ type: 'putState', payload: { userCatalogData: data } });
+      } catch (e) {
+        message.error(e.message || '获取邮件目录数据失败');
+      }
+    },
     *reloadCatalogTree(action, { select, put }) {
       const { openedCatalog } = yield select(state => state.mails);
-      yield put({ type: openedCatalog === 'my' ? 'queryMyCatalogTree' : 'queryDeptCatalogTree' });
+      yield put({
+        type: openedCatalog === 'my'
+          ? 'queryMyCatalogTree'
+          : openedCatalog === 'dept' ? 'queryDeptCatalogTree' : 'queryUserCatalog'
+      });
     },
     *search({ payload: searchObj }, { put }) {
       yield put({
@@ -197,9 +211,10 @@ export default {
         type: 'putState',
         payload: { openedCatalog, catSearchKey: '' }
       });
-      const { myCatalogData, deptCatalogData } = yield select(state => state.mails);
+      const { myCatalogData, deptCatalogData, userCatalogData } = yield select(state => state.mails);
       if ((openedCatalog === 'my' && !myCatalogData.length)
-        || (openedCatalog === 'dept' && !deptCatalogData.length)) {
+        || (openedCatalog === 'dept' && !deptCatalogData.length)
+        || (openedCatalog === 'user' && !userCatalogData.length)) {
         yield put({ type: 'reloadCatalogTree' });
       }
     },

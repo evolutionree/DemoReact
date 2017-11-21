@@ -1,0 +1,19 @@
+.userCatalog {
+  li {
+    padding-left: 20px;
+
+    span:first-child {
+      display: inline-block;
+      padding: 0 6px;
+      margin-right: 5px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #eff7fc;
+      }
+    }
+    &.selected span {
+      background-color: #d8ecf8;
+    }
+  }
+}

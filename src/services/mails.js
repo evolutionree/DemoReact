@@ -269,3 +269,15 @@ export async function queryRelatedMails(params) {
     body: JSON.stringify(params)
   });
 }
+
+/**
+ * 获取内部往来人员
+ * @param keyword
+ * @returns {Promise.<Object>}
+ */
+export async function queryHistoryUsers(keyword) {
+  return request('api/mail/getinnertoandfrouser', {
+    method: 'post',
+    body: JSON.stringify({ keyword })
+  });
+}

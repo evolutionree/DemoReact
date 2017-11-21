@@ -1,8 +1,10 @@
 import React, { PropTypes, Component } from 'react';
 import { Button, Collapse, Modal, Input } from 'antd';
 import { connect } from 'dva';
+import classnames from 'classnames';
 import CatalogTree from './CatalogTree';
 import CatalogModal from './CatalogModal';
+import styles from './styles.less';
 import ImgIcon from '../../../components/ImgIcon';
 
 class CatalogManager extends Component {
@@ -23,6 +25,10 @@ class CatalogManager extends Component {
     });
   };
 
+  onUserCatalogDataChange = () => {
+
+  };
+
   onOrderDown = () => {
     const { selectedCatalogNode } = this.props;
     this.props.orderCatalog(selectedCatalogNode, 'down');
@@ -38,11 +44,12 @@ class CatalogManager extends Component {
   };
 
   render() {
-    const { openedCatalog, myCatalogData, deptCatalogData, selectedCatalogNode, catSearchKey, putState } = this.props;
+    const { openedCatalog, myCatalogData, deptCatalogData, userCatalogData, selectedCatalogNode, catSearchKey, putState } = this.props;
     const panelHeight = key => (openedCatalog === key ? 'calc(100% - 38px)' : '38px');
+    const selected = selectedCatalogNode || {};
     const isMyCat = openedCatalog === 'my';
-    const isPersonalCat = isMyCat && selectedCatalogNode && selectedCatalogNode.ctype === 3002;
-    const isCustCat = isMyCat && selectedCatalogNode && selectedCatalogNode.ctype === 4001;
+    const isPersonalCat = isMyCat && selected.ctype === 3002;
+    const isCustCat = isMyCat && selected.ctype === 4001;
     return (
       <div style={{ height: '100%', minWidth: '300px' }}>
         <div style={{ padding: '10px' }}>
@@ -72,7 +79,7 @@ class CatalogManager extends Component {
           bordered={false}
           activeKey={openedCatalog}
           onChange={this.props.toggleOpenedCatalog}
-          style={{ height: 'calc(100% - 86px)' }}
+          style={{ height: 'calc(100% - 129px)' }}
         >
           <Collapse.Panel
             header={<div><ImgIcon name="user" /><span>用户文件夹</span></div>}
@@ -81,7 +88,7 @@ class CatalogManager extends Component {
           >
             <CatalogTree
               data={myCatalogData}
-              selected={selectedCatalogNode && selectedCatalogNode.recid}
+              selected={selected.recid}
               onSelect={this.props.selectCatalog}
             />
           </Collapse.Panel>
@@ -94,9 +101,27 @@ class CatalogManager extends Component {
               isDeptTree
               data={deptCatalogData}
               onDataChange={this.onDeptCatalogDataChange}
-              selected={selectedCatalogNode && selectedCatalogNode.recid}
+              selected={selected.recid}
               onSelect={this.props.selectCatalog}
             />
+          </Collapse.Panel>
+          <Collapse.Panel
+            header={<div><ImgIcon name="structure" /><span>内部往来</span></div>}
+            key="user"
+            style={{ transition: 'all .2s', height: panelHeight('user') }}
+          >
+            <ul className={styles.userCatalog}>
+              {userCatalogData.map(item => (
+                <li
+                  key={item.userid}
+                  className={classnames({ selected: selected.recid === item.userid })}
+                  onClick={() => this.props.selectCatalog(item.userid, item)}
+                >
+                  <span>{item.username}</span>
+                  {!!item.unread && <span style={{ color: '#3398db' }}>({item.unread})</span>}
+                </li>
+              ))}
+            </ul>
           </Collapse.Panel>
         </Collapse>
         <CatalogModal />
