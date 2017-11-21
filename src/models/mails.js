@@ -53,12 +53,8 @@ export default {
     customerContact: [],
     innerContact: [],
     editEmailFormData: null,
-<<<<<<< HEAD
-    focusTargetName: ''
-=======
-
+    focusTargetName: '',
     showingModals: ''
->>>>>>> c0dff958e2ebe82be5dbc5fe3681035acdb31a08
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -136,7 +132,6 @@ export default {
         message.error(e.message || '获取企业内部通讯录失败');
       }
     },
-<<<<<<< HEAD
     *fetchSignature(action, { call, put }) {
       try {
         const { data: signature } = yield call(querySignature, { treeid: '' });
@@ -148,10 +143,7 @@ export default {
         message.error(e.message || '获取企业内部通讯录失败');
       }
     },
-    *queryCatalogTree(action, { select, call, put }) {
-=======
     *queryMyCatalogTree({ payload: isInit }, { select, call, put }) {
->>>>>>> c0dff958e2ebe82be5dbc5fe3681035acdb31a08
       try {
         const { catSearchKey } = yield select(state => state.mails);
         const params = {
