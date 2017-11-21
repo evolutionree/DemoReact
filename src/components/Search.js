@@ -57,7 +57,7 @@ class Search extends React.Component {
         </Button>
       </div>
     ) : (
-      <div style={width ? { width } : {}}>
+      <div style={{ display: 'inline-block', verticalAlign: 'middle', width: width || '160px' }}>
         <Input.Search
           value={this.state.innerVal}
           onChange={this.handleInput}

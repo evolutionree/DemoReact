@@ -50,7 +50,7 @@ class MailContent extends Component {
     if (!data) return null;
     const isLoading = data.status === 'loading';
     const detailData = isLoading ? data.mailInfo : data.maildetail;
-    const { title, receivers, ccers, receivetime, attachinfo, summary, attachcount } = detailData;
+    const { title, receivers, ccers, receivetime, attachinfo, summary, mailbody, attachcount } = detailData;
     const strPersons = persons => persons && persons.map(item => item.displayname).join(', ');
     return (
       <div className={styles.wrap}>
@@ -93,7 +93,8 @@ class MailContent extends Component {
               <ul className={styles.attachlist} style={{ paddingLeft: isPreview ? '170px' : '70px' }}>
                 {(attachinfo || []).map(item => (
                   <li key={item.fileid}>
-                    <Icon type="paper-clip" style={{ marginRight: '5px', verticalAlign: 'middle', color: '#999' }} />
+                    {/*<Icon type="paper-clip" style={{ marginRight: '5px', verticalAlign: 'middle', color: '#999' }} />*/}
+                    <ImgIcon name="attachment" style={{ marginRight: '3px' }} />
                     <span style={{ marginRight: '5px', verticalAlign: 'middle' }}>{item.filename}</span>
                     <ImgIcon style={{ height: '14px' }} name="download" onClick={this.download.bind(this, item)} />
                   </li>
@@ -102,7 +103,7 @@ class MailContent extends Component {
             )}
           </div>
         </div>}
-        <div className={styles.body} dangerouslySetInnerHTML={{ __html: summary }} />
+        <div className={styles.body} dangerouslySetInnerHTML={{ __html: mailbody || summary }} />
       </div>
     );
   }

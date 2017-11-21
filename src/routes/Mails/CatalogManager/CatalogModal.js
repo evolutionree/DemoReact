@@ -62,7 +62,7 @@ class CatalogModal extends Component {
               initialValue: '',
               rules: [{ required: true, message: '请输入文件夹名称' }]
             })(
-              <Input placeholder="请输入文件夹名称" />
+              <Input placeholder="请输入文件夹名称" maxLength="50" />
             )}
           </FormItem>
           {!isEdit && <FormItem label="上级文件夹">

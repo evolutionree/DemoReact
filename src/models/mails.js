@@ -264,17 +264,17 @@ export default {
       yield put({ type: 'putState', payload: { selectedCatalogNode: catalogNode } });
     },
     *saveCatalog({ payload: data }, { call, put }) {
+      const isEdit = !!data.recid;
       try {
-        const isEdit = !!data.recid;
         const fn = isEdit ? updateMailCatalog : saveMailCatalog;
         const params = isEdit ? _.pick(data, ['recid', 'recname']) : _.pick(data, ['pid', 'recname']);
         yield put({ type: 'modalPending', payload: true });
         yield call(fn, params);
-        message.success('保存成功');
+        message.success(isEdit ? '编辑成功' : '新增成功');
         yield put({ type: 'showModals', payload: '' });
         yield put({ type: 'queryCatalogTree' });
       } catch (e) {
-        message.error(e.message || '保存失败');
+        message.error(e.message || (isEdit ? '编辑失败' : '编辑成功'));
       }
     },
     *delCatalog({ payload: catalogId }, { select, call, put }) {
@@ -353,6 +353,23 @@ export default {
           }
         }
       });
+
+      // 标记已读
+      try {
+        yield call(markMails, { mailids: mail.mailid, mark: 3 });
+        const { mailList } = yield select(state => state.mails);
+        mail.isread = 1;
+        yield put({
+          type: 'putState',
+          payload: {
+            mailList: [...mailList]
+          }
+        });
+      } catch (e) {
+        console.error('标记已读失败', e);
+      }
+
+      // 查看详情，相关信息等
       try {
         const { data } = yield call(queryMailDetail, mail.mailid);
         const { mailDetailData: { mailId } } = yield select(state => state.mails);
