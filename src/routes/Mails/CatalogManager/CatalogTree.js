@@ -77,6 +77,21 @@ class CatalogTree extends Component {
     this.props.onSelect(value, this.getNodeById(value));
   };
 
+  getDefaultExpandedKeys = () => {
+    const { isDeptTree, data, selected } = this.props;
+    if (isDeptTree) return [];
+    const expandedKeys = [];
+    const nodes = [];
+    treeForEach(data, item => {
+      if (item.ctype === 1001 || item.ctype === 2001 || item.ctype === 2002) {
+        nodes.push(item);
+        expandedKeys.push(item.recid);
+      }
+    }, 'subcatalogs');
+    if (selected) expandedKeys.push(selected);
+    return expandedKeys;
+  };
+
   renderTreeNodes = data => {
     return data.map(item => {
       if (this.props.isDeptTree && item.treeid) {
@@ -117,7 +132,7 @@ class CatalogTree extends Component {
             <Tree
               loadData={this.onLoadData}
               selectedKeys={[this.props.selected]}
-              defaultExpandedKeys={[treeNodes[0].productsetid]}
+              defaultExpandedKeys={this.getDefaultExpandedKeys()}
               onSelect={this.handleSelect}
             >
               {this.renderTreeNodes(treeNodes)}
