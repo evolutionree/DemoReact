@@ -1,5 +1,4 @@
 import { message } from 'antd';
-import { routerRedux } from 'dva/router';
 import * as _ from 'lodash';
 import {
   queryMailCatalog,
@@ -23,53 +22,6 @@ import { treeForEach } from '../utils';
 
 function getDefaultCatalog(catalogData) {
   return catalogData[0];
-}
-
-/* eslint-disable */
-const MailMock = {
-  "mailid": "eeddbba7-4cae-4cce-a042-89b34060f8c1",
-  "sender": {
-    "mailaddress": "zhongguanhui@renqiankeji.com",
-    "displayname": "钟冠辉"
-  },
-  "receivers": [
-    {
-      "mailaddress": "zhongguanhui@renqiankeji.com",
-      "displayname": "钟冠辉"
-    }
-  ],
-  "ccers": [
-    {
-      "mailaddress": "zhongguanhui@renqiankeji.com",
-      "displayname": "钟冠辉"
-    }
-  ],
-  "bccers": [
-    {
-      "mailaddress": "zhongguanhui@renqiankeji.com",
-      "displayname": "钟冠辉"
-    }
-  ],
-  "title": "测试邮件001",
-  "summary": "邮件概要001",
-  "content": "邮件概要001",
-  "receivetime": "2017-11-0112: 31: 11",
-  "sendtime": "2017-11-0110: 31: 11",
-  "istag": 1,
-  "isread": 0,
-  "attachcount": 0,
-  "attachments": [
-    { fileid: 'xxx', filename: '十九大精神概要.pdf', filesize: 999 }
-  ]
-};
-/* eslint-enable */
-
-function getCatalogNode(treeData, catalogId) {
-  let catalogNode;
-  treeForEach(treeData, node => {
-    if (node.recid === catalogId) catalogNode = node;
-  }, 'subcatalogs');
-  return catalogNode;
 }
 
 export default {
