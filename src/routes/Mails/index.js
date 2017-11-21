@@ -90,8 +90,8 @@ class Mails extends Component {
       minHeight: '100%',
       paddingBottom: '40px'
     };
-    const { myCatalogData, selectedCatalogNode: cat, queries: { catalogType, searchKey } } = this.props;
-    const catName = cat ? cat.recname : (catalogType === 'dept' ? '下属邮箱' : '--');
+    const { myCatalogData, selectedCatalogNode: cat, mailSearchKey } = this.props;
+    const catName = cat ? cat.recname : '--';
     const renderOverlay = dropdownCallback => (
       <div style={{
         background: '#fff',
@@ -167,8 +167,8 @@ class Mails extends Component {
             <Search
               mode="icon"
               placeholder={`搜索 ${catName}`}
-              value={searchKey}
-              onSearch={val => this.props.search({ searchKey: val })}
+              value={mailSearchKey}
+              onSearch={val => this.props.search({ mailSearchKey: val })}
             />
             <ImgIcon name="refresh" onClick={this.props.refreshList} style={{ marginLeft: '8px', height: '20px' }} />
           </Toolbar.Right>
