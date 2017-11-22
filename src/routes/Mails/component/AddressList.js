@@ -90,12 +90,7 @@ class AddressList extends Component {
         ]
       };
 
-      let filterEditEmailFormData = {};
-      this.props.model && this.props.model instanceof Array && this.props.model.map((item) => { //筛选出当前表单显示的数据
-        filterEditEmailFormData[item.name] = newEditEmailFormData[item.name];
-      });
-
-      this.props.dispatch({ type: 'mails/putState', payload: { editEmailFormData: filterEditEmailFormData } });
+      this.props.dispatch({ type: 'mails/putState', payload: { editEmailFormData: newEditEmailFormData } });
     }
   }
 
@@ -160,7 +155,7 @@ class AddressList extends Component {
         <div>通讯录</div>
         <div>
           <Input
-            placeholder="Enter your userName"
+            placeholder="查找联系人..."
             suffix={suffix}
             value={queryString}
             onChange={this.onChangeQueryString.bind(this)}
@@ -168,15 +163,15 @@ class AddressList extends Component {
           />
         </div>
         {
-          this.state.queryString ? <div>
-            <span>查找的数据:</span>
-            <ul className={Styles.recentContactsWrap}>
+          this.state.queryString ? <div className={Styles.queryListDataWrap}>
+            <div>查找的数据:</div>
+            <ul>
               {
                 this.state.listData && this.state.listData instanceof Array && this.state.listData.length > 0 ? this.state.listData.map((item, index) => {
                   return (
                     <li key={index} onClick={this.selectContact.bind(this, item)}>{item.name ? item.name : item.emailaddress}</li>
                   );
-                }) : <li>未匹配到数据</li>
+                }) : <li>没有符合条件的联系人</li>
               }
             </ul>
           </div> :

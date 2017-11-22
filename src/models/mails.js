@@ -18,7 +18,8 @@ import {
   markMails,
   orderMailCatalog,
   queryMailDetail,
-  queryHistoryUsers
+  queryHistoryUsers,
+  sendemail
 } from '../services/mails';
 import { treeForEach } from '../utils';
 
@@ -384,6 +385,17 @@ export default {
           showingModals: 'mailDetail'
         }
       });
+    },
+    *sendemail({ payload: submitData }, { call, put }) {
+      try {
+        yield call(sendemail, submitData);
+        yield put({
+          type: 'putState',
+          payload: { showingModals: 'sendMailSuccess' }
+        });
+      } catch (e) {
+        message.error(e.message || '发送邮件失败');
+      }
     }
   },
   reducers: {

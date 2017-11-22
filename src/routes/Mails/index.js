@@ -12,6 +12,7 @@ import ActionButton from '../../components/ActionButton';
 import Search from '../../components/Search';
 import ImgIcon from '../../components/ImgIcon';
 import EditMailPanel from './page/EditMailPanel';
+import SendMailSuccess from './page/SendMailSuccess';
 import MailDetailPanel from './page/MailDetailPanel';
 import { treeForEach } from '../../utils';
 
@@ -35,11 +36,19 @@ class Mails extends Component {
   onAction = type => {
     const { mailSelected } = this.props;
     if (type === 'editMail') {
-      this.props.openEditMail();
+      this.props.openEditMail(type);
       return;
     }
     if (!mailSelected.length) {
       return message.error('请选择邮件');
+    }
+    if (type === 'replay' || type === 'replay-attach' || type === 'reply-all' || type === 'replay-all-attach' || type === 'send' || type === 'send-attach') {
+      if (mailSelected.length === 1) {
+        this.props.openEditMail(type);
+        return;
+      } else {
+        return message.warning('请选择一封邮件进行操作');
+      }
     }
     switch (type) {
       case 'delete':
@@ -190,6 +199,49 @@ class Mails extends Component {
     );
   };
 
+  getTransformReceivers(data) {
+    let returnString = '';
+    data && data instanceof Array && data.map((item) => {
+      returnString += item.displayname + " '&nbsp; &lt;'" + item.mailaddress + "'&gt;";
+    });
+
+    return returnString;
+  }
+
+  getInitMailContent() {
+    const { mailSelected } = this.props;
+    let mailbody = '';
+    let senttime = '';
+    let sender = {};
+    let title = '';
+    let receivers = '';
+    let ccers = '';
+
+    if (mailSelected && mailSelected instanceof Array && mailSelected.length === 1) {
+      senttime = mailSelected[0].senttime;
+      sender = mailSelected[0].sender;
+      title = mailSelected[0].title;
+      mailbody = mailSelected[0].mailbody;
+      receivers = this.getTransformReceivers(mailSelected[0].receivers);
+      ccers = this.getTransformReceivers(mailSelected[0].ccers);
+    }
+
+    let initHtmlString = '<br/><br/><br/><br/><br/><br/>' +
+      '<div style="background: #f2f2f2; padding: 10px">' +
+      '<h4><span style="font-size:12px"></span></h4>' +
+      '<h4><span style="font-size:12px"></span></h4>' +
+      '<h4 style="white-space: normal;">-------------------<span style="font-size:12px">原始邮件</span>-------------------</h4>' +
+      '<h4><span style="font-size:12px"></span>' +
+      '<span style="font-size:12px"><strong>发件人: </strong>&quot;' + sender.displayname + '&nbsp; &lt;' + sender.mailaddress + '&gt;&quot;;<br/></span>' +
+      '<span style="font-size:12px"><strong>发送时间: </strong>' + senttime + '<br/></span>' +
+      '<span style="font-size:12px"><strong>收件人: </strong>&quot;' + receivers + ';<br/></span>' +
+      '<span style="font-size:12px"><strong>抄送: </strong>&quot;' + ccers + ';<br/></span>' +
+      '<span style="font-size:12px"><strong>主题:</strong> ' + title + '</span><br/></h4></div>';
+
+    initHtmlString += mailbody;
+    return initHtmlString;
+  }
+
   render() {
     return (
       <div style={{ height: 'calc(100vh - 60px)', padding: '10px 10px 0' }}>
@@ -199,7 +251,8 @@ class Mails extends Component {
           midtop={this.renderMidtop()}
           midbottom={this.renderMidbottom()}
         />
-        <EditMailPanel visible={this.props.showingModals === 'editMailPanel' ? true : false} />
+        <EditMailPanel type={this.props.showingModals} initContent={this.getInitMailContent()} />
+        <SendMailSuccess visible={this.props.showingModals === 'sendMailSuccess' ? true : false} />
         <MailDetailPanel />
       </div>
     );
@@ -210,8 +263,8 @@ export default connect(
   state => state.mails,
   dispatch => {
     return {
-      openEditMail() {
-        dispatch({ type: 'mails/showModals', payload: 'editMailPanel' });
+      openEditMail(showModalsName) {
+        dispatch({ type: 'mails/showModals', payload: showModalsName });
       },
       delMails(mails, completely) {
         dispatch({ type: 'mails/delMails', payload: { mails, completely } });

@@ -68,12 +68,7 @@ class Form extends Component {
       [name]: data
     };
 
-    let filterEditEmailFormData = {};
-    this.state.model && this.state.model instanceof Array && this.state.model.map((item) => { //筛选出当前表单显示的数据
-      filterEditEmailFormData[item.name] = newEditEmailFormData[item.name];
-    });
-
-    this.props.dispatch({ type: 'mails/putState', payload: { editEmailFormData: filterEditEmailFormData } });
+    this.props.dispatch({ type: 'mails/putState', payload: { editEmailFormData: newEditEmailFormData } });
   }
 
   focusHandler(name) { //监听用户最后一次焦点在哪个输入框中
