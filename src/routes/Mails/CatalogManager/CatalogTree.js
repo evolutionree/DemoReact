@@ -3,7 +3,7 @@ import { Tree } from 'antd';
 import * as _ from 'lodash';
 import ImgIcon from '../../../components/ImgIcon';
 import { queryDeptMailCatalog, queryMailCatalog } from '../../../services/mails';
-import { treeForEach } from '../../../utils';
+import { treeForEach, treeFilter2 } from '../../../utils';
 import styles from '../styles.less';
 
 const TreeNode = Tree.TreeNode;
@@ -32,11 +32,13 @@ class CatalogTree extends Component {
     data: PropTypes.array,
     onDataChange: PropTypes.func,
     selected: PropTypes.string,
-    onSelect: PropTypes.func
+    onSelect: PropTypes.func,
+    searchString: PropTypes.string
   };
   static defaultProps = {
     isDeptTree: false,
-    data: []
+    data: [],
+    searchString: ''
   };
 
   constructor(props) {
@@ -124,7 +126,19 @@ class CatalogTree extends Component {
   };
 
   render() {
-    const treeNodes = this.props.data;
+    let treeNodes = this.props.data;
+    if (treeNodes && treeNodes.length && this.props.searchString) {
+      treeNodes = treeFilter2(treeNodes, node => {
+        return node.recname.indexOf(this.props.searchString) !== -1;
+      }, { reservePath: true, childrenKey: 'subcatalogs' });
+      if (!treeNodes.length) {
+        return (
+          <div className={styles.treewrap}>
+            <div>(暂无数据)</div>
+          </div>
+        );
+      }
+    }
     return (
       <div className={styles.treewrap}>
         {(treeNodes && treeNodes.length)

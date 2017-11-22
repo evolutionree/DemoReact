@@ -2,7 +2,7 @@ import draftToHtml from 'draftjs-to-html';
 import moment from 'moment';
 import htmlToDraft from 'html-to-draftjs';
 import { convertToRaw, EditorState, ContentState } from 'draft-js';
-import _ from 'lodash';
+import * as _ from 'lodash';
 
 export function checkIsDev() {
   let uke_dev = window.uke_dev;
@@ -129,6 +129,36 @@ export function treeFilter(nodes, filter) {
       return false;
     }
   });
+}
+
+export function treeFilter2(nodes, predicate, options) {
+  const opt = {
+    childrenKey: 'children',
+    reservePath: false,
+    ...options
+  };
+  const { childrenKey, reservePath } = opt;
+  const retNodes = [];
+  nodes.forEach(node => {
+    if (predicate(node)) {
+      const _node = _.clone(node);
+      if (_node[childrenKey]) {
+        _node[childrenKey] = treeFilter2(_node[childrenKey], predicate, opt);
+      }
+      retNodes.push(_node);
+    } else if (reservePath) {
+      let children = node[childrenKey];
+      if (children) {
+        children = treeFilter2(children, predicate, opt);
+        if (children.length) {
+          const _node = _.clone(node);
+          _node[childrenKey] = children;
+          retNodes.push(_node);
+        }
+      }
+    }
+  });
+  return retNodes;
 }
 
 /**
