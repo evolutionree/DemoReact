@@ -122,12 +122,12 @@ class CatalogManager extends Component {
             <ul className={styles.userCatalog}>
               {userCatalogData.map(item => (
                 <li
-                  key={item.userid}
-                  className={classnames({ selected: selected.recid === item.userid })}
-                  onClick={() => this.props.selectCatalog(item.userid, item)}
+                  key={item.treeid}
+                  className={classnames({ selected: selected.recid === item.treeid })}
+                  onClick={() => this.props.selectCatalog(item.treeid, item)}
                 >
-                  <span>{item.username}</span>
-                  {!!item.unread && <span style={{ color: '#3398db' }}>({item.unread})</span>}
+                  <span>{item.treename}</span>
+                  {!!item.unreadcount && <span style={{ color: '#3398db' }}>({item.unreadcount})</span>}
                 </li>
               ))}
             </ul>
