@@ -1,6 +1,7 @@
 import { message } from 'antd';
-import _ from 'lodash';
-import { queryFlowJSON, saveFlowJSON } from '../services/workflow';
+import * as _ from 'lodash';
+import uuid from 'uuid';
+import { queryFlowJSONv2, saveFlowJSON } from '../services/workflow';
 import { queryFields } from '../services/entity';
 
 // 654209d5-3506-48eb-b5d2-0e0ea2ba7c84
@@ -16,12 +17,13 @@ function parseFlowJSON(data) {
   }
 
   const nodesByIdCollection = data.nodes.reduce((collect, curr) => {
-    return { ...collect, [curr.nodenum]: curr };
+    return { ...collect, [curr.nodeid]: curr };
   }, {});
   const nodesByPositionCollection = {};
 
   // 用 position 标记层级
-  nodesByIdCollection[0].position = 0;
+  const startNode = _.find(data.nodes, node => node.steptypeid === 0);
+  startNode.position = 0;
   let restLines = data.lines;
   while (restLines.length) {
     restLines = loopRestLines(restLines);
@@ -78,7 +80,7 @@ function parseFlowJSON(data) {
   function loopRestLines(lines) {
     const nextRest = [...lines];
     lines.forEach((line, index) => {
-      const { fromnode: fromId, endnode: endId } = line;
+      const { fromnodeid: fromId, tonodeid: endId } = line;
       const fromNode = nodesByIdCollection[fromId];
       const endNode = nodesByIdCollection[endId];
       if (fromNode.position === undefined) return;
@@ -91,15 +93,15 @@ function parseFlowJSON(data) {
   }
 
   const flowSteps = data.nodes.map(item => ({
-    id: item.nodenum,
+    id: item.nodeid,
     name: item.nodename,
     x: item.x,
     y: item.y,
     rawNode: item
   }));
   const flowPaths = data.lines.map(item => ({
-    from: item.fromnode,
-    to: item.endnode,
+    from: item.fromnodeid,
+    to: item.tonodeid,
     ruleid: item.ruleid
   })).map(markBranch);
   const flowStepsByIdCollection = flowSteps.reduce((collect, curr) => {
@@ -108,11 +110,14 @@ function parseFlowJSON(data) {
   return { flowSteps, flowPaths, flowStepsByIdCollection };
 }
 function getInitialFlowJSON() {
+  const startNodeId = uuid.v1();
+  const endNodeId = uuid.v1();
+  const nextNodeId = uuid.v1();
   return {
     nodes: [
       {
         nodename: '发起审批',
-        nodenum: 0,
+        nodeid: startNodeId,
         auditnum: 0,
         nodetype: 0,
         steptypeid: 0,
@@ -122,7 +127,7 @@ function getInitialFlowJSON() {
       },
       {
         nodename: '结束审批',
-        nodenum: -1,
+        nodeid: endNodeId,
         auditnum: 0,
         nodetype: 0,
         steptypeid: -1,
@@ -132,7 +137,7 @@ function getInitialFlowJSON() {
       },
       {
         nodename: '审批节点',
-        nodenum: 1,
+        nodeid: nextNodeId,
         // auditnum: 1,
         // nodetype: 0,
         // steptypeid: 9,
@@ -142,13 +147,13 @@ function getInitialFlowJSON() {
     ],
     lines: [
       {
-        fromnode: 0,
-        endnode: 1,
+        fromnodeid: startNodeId,
+        tonodeid: nextNodeId,
         ruleid: null
       },
       {
-        fromnode: 1,
-        endnode: -1,
+        fromnodeid: nextNodeId,
+        tonodeid: endNodeId,
         ruleid: null
       }
     ]
@@ -227,16 +232,16 @@ export default {
   effects: {
     *queryFlowJSON(action, { select, put, call }) {
       const { flowId } = yield select(state => state.workflowHome);
-      try {
-        const { data } = yield call(queryFlowJSON, flowId);
+      // try {
+        const { data } = yield call(queryFlowJSONv2, flowId);
         const { flowSteps, flowPaths } = parseFlowJSON(data);
         yield put({ type: 'putState', payload: { flowSteps, flowPaths } });
 
         const flowInfo = data.flow[0];
         yield put({ type: 'queryFlowEntity', payload: flowInfo });
-      } catch (e) {
-        message.error(e.message || '获取流程数据失败');
-      }
+      // } catch (e) {
+      //   message.error(e.message || '获取流程数据失败');
+      // }
     },
     *queryFlowEntity({ payload: flowInfo }, { select, put, call }) {
       try {
@@ -303,7 +308,7 @@ export default {
       const flowStep = _.find(flowSteps, ['id', stepId]);
       // const allPathsToThisFlowStep = flowPaths.filter(path => path.to === stepId);
       const allPathsFromThisFlowStep = flowPaths.filter(path => path.from === stepId);
-      const newStepId = getMaxStepId(flowSteps) + 1;
+      const newStepId = uuid.v1();
       const newFlowStep = {
         id: newStepId,
         name: '新的审批节点',
@@ -341,7 +346,7 @@ export default {
       const flowStep = _.find(flowSteps, ['id', stepId]);
       const allPathsToThisFlowStep = flowPaths.filter(path => path.to === stepId);
       const allPathsFromThisFlowStep = flowPaths.filter(path => path.from === stepId);
-      const newStepId = getMaxStepId(flowSteps) + 1;
+      const newStepId = uuid.v1();
       const newFlowStep = {
         id: newStepId,
         name: '新的审批节点',
@@ -477,21 +482,11 @@ export default {
         return;
       }
       try {
-        // {
-        //   "nodename": "结束审批",
-        //   "nodenum": -1,
-        //   "auditnum": 0,
-        //   "nodetype": 0,
-        //   "steptypeid": -1,
-        //   "ruleconfig": {},
-        //   "columnconfig": {},
-        //   "auditsucc": 1
-        // }
         const nodes = flowSteps.map(({ id, name, rawNode }) => {
           const { nodetype, steptypeid, ruleconfig, columnconfig, auditnum, auditsucc } = rawNode;
           return {
             nodename: name,
-            nodenum: id,
+            nodeid: id,
             auditnum,
             nodetype,
             steptypeid,
@@ -501,8 +496,8 @@ export default {
           };
         });
         const lines = flowPaths.map(path => ({
-          fromnode: path.from,
-          endnode: path.to,
+          fromnodeid: path.from,
+          tonodeid: path.to,
           ruleid: null
         }));
         const params = { flowId, nodes, lines };

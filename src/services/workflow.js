@@ -25,6 +25,18 @@ export async function queryFlowJSON(flowid) {
 }
 
 /**
+ * 获取流程图json数据
+ * @param flowid
+ * @returns {Promise.<Object>}
+ */
+export async function queryFlowJSONv2(flowid) {
+  return request('/api/workflow/getnodelinesinfo', {
+    method: 'POST',
+    body: JSON.stringify({ flowid })
+  });
+}
+
+/**
  * 获取流程分支条件
  * @param ruleid
  * @returns {Promise.<Object>}

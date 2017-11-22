@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { queryFlowJSON } from '../services/workflow';
+import { queryFlowJSONv2 } from '../services/workflow';
 
 export default {
   namespace: 'workflowHome',
@@ -26,7 +26,7 @@ export default {
       const { flowId } = yield select(state => state.workflowHome);
       try {
         // TODO 获取流程详情
-        const { data } = yield call(queryFlowJSON, flowId);
+        const { data } = yield call(queryFlowJSONv2, flowId);
         const flowInfo = data.flow[0];
         yield put({ type: 'putState', payload: { flowName: flowInfo && flowInfo.flowname } });
       } catch (e) {

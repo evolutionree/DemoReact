@@ -9,7 +9,7 @@ const END_NODE = -1;
 
 class FlowNode extends Component {
   static propTypes = {
-    id: PropTypes.number,
+    id: PropTypes.string,
     title: PropTypes.node,
     nodeData: PropTypes.object,
     changeStepName: PropTypes.func,
@@ -159,13 +159,13 @@ class FlowNode extends Component {
   };
 
   render() {
-    const { id, title } = this.props;
+    const { id, title, nodeData } = this.props;
 
-    if (id === END_NODE) {
+    if (nodeData && nodeData.steptypeid === END_NODE) {
       return <div className={styles.START}>{title}</div>;
     }
 
-    if (id === START_NODE) {
+    if (nodeData && nodeData.steptypeid === START_NODE) {
       return (
         <div className={styles.REVIEW}>
           {this.renderStartNodeTitle()}
