@@ -272,7 +272,9 @@ export async function sendemail(params) {
 /**
  * 获取往来邮件
  * @param params
- * { relatedMySelf, relatedSendOrReceive }
+ * { mailid, pageindex, pagesize, relatedMySelf, relatedSendOrReceive }
+ *  relatedMySelf 0=仅查看与自己的往来邮件，1=查看与所有用户往来邮件
+ *  relatedSendOrReceive 0=查看所有收到与发出的邮件，1=查看收到的邮件，2=查看发出的邮件
  * @returns {Promise.<Object>}
  */
 export async function queryRelatedMails(params) {

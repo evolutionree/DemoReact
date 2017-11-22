@@ -12,7 +12,9 @@
   }
 
   .content {
-
+    height: ~"calc(100% - 50px)";
+    overflow: auto;
+    padding-bottom: 39px;
   }
 
   :global {
@@ -22,6 +24,9 @@
     .ant-tabs-content {
       height: ~"calc(100% - 34px)";
       overflow: auto;
+      .ant-tabs-tabpane {
+        height: 100%;
+      }
     }
     .ant-tabs-tabpane {
       position: relative;
@@ -52,6 +57,21 @@
       & > span:first-child {
         color: #878f98;
         margin-right: 5px;
+      }
+    }
+  }
+
+  .selectedrow {
+    :global {
+      td {
+        background-color: #eff7fc!important;
+      }
+    }
+  }
+  .readrow {
+    :global {
+      td {
+        color: #767f8b!important;
       }
     }
   }

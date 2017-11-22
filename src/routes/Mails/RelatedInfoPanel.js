@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import { Tabs, Table, Dropdown, Menu } from 'antd';
+import { Tabs, Table, Dropdown, Menu, message } from 'antd';
 import { connect } from 'dva';
 import * as _ from 'lodash';
 import classnames from 'classnames';
@@ -8,6 +8,10 @@ import ImgIcon from '../../components/ImgIcon';
 import Avatar from '../../components/Avatar';
 import styles from './RelatedInfoPanel.less';
 import { getGeneralProtocol } from '../../services/entcomm';
+import {
+  queryRelatedMails,
+  queryMailDetail
+} from '../../services/mails';
 import { DynamicFormViewLight } from '../../components/DynamicForm';
 
 const Column = Table.Column;
@@ -55,26 +59,17 @@ const CheckableMenu = ({ items, checkedKeys, onCheckedChange }) => {
 };
 
 class RelatedInfoPanel extends Component {
-  static propTypes = {
-    mailId: PropTypes.string,
-    narrow: PropTypes.bool,
-    settings: PropTypes.shape({
-      mailTypes: PropTypes.array,
-      attachTypes: PropTypes.array
-    })
-  };
-  static defaultProps = {
-    narrow: false,
-    settings: {}
-  };
+  static propTypes = {};
+  static defaultProps = {};
 
   constructor(props) {
     super(props);
     const { mailTypes, attachTypes } = this.getLastSettings();
     this.state = {
       currentTab: '1',
-      relInfo: null,
-      mailTypes: mailTypes || [],
+      sender: null,
+      custInfo: null,
+      mailTypes: mailTypes || ['1', '2'],
       mailList: null,
       mailTotal: 0,
       mailPageIndex: 1,
@@ -95,12 +90,8 @@ class RelatedInfoPanel extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const detailData = this.props.mailDetailData || {};
-    const nextDetailData = nextProps.mailDetailData || {};
-    if (detailData !== nextDetailData) {
-      if (detailData.custinfo !== nextDetailData.custinfo && nextDetailData.custinfo && nextDetailData.custinfo.length) {
-        this.fetchCustProtocol(nextDetailData.custinfo[0].rectype);
-      }
+    if (this.props.mailCurrent !== nextProps.mailCurrent) {
+      this.resetData(this.fetchRelInfo);
     }
     // if (nextProps.mailId !== this.props.mailId) {
     //   this.setState({
@@ -131,27 +122,31 @@ class RelatedInfoPanel extends Component {
     localStorage.setItem('uke100_mail_settings', JSON.stringify({ ...lastSettings, ...settings }));
   };
 
-  // resetData = callback => {
-  //   this.setState({
-  //     currentTab: '1',
-  //     relInfo: null,
-  //     mailList: [],
-  //     mailTotal: 0,
-  //     mailPageIndex: 1,
-  //     attachList: [],
-  //     attachTotal: 0,
-  //     attachPageIndex: 1
-  //   }, callback);
-  // };
+  resetData = callback => {
+    this.setState({
+      currentTab: '1',
+      sender: null,
+      custInfo: null,
+      mailList: null,
+      mailTotal: 0,
+      mailPageIndex: 1,
+      attachList: null,
+      attachTotal: 0,
+      attachPageIndex: 1,
+      transferRecords: null,
+      custProtocols: {}
+    }, callback);
+  };
 
   refreshCurrentTab = checkNeeded => {
+    if (!this.props.mailCurrent) return;
     switch (this.state.currentTab) {
       case '1':
-        if (checkNeeded && this.state.relInfo) return;
+        if (checkNeeded && this.state.sender) return;
         return this.fetchRelInfo();
       case '2':
         if (checkNeeded && this.state.mailList) return;
-        return this.fetchMailList();
+        return this.setState({ mailPageIndex: 1 }, this.fetchMailList);
       case '3':
         if (checkNeeded && this.state.attachList) return;
         return this.fetchAttachList();
@@ -172,15 +167,39 @@ class RelatedInfoPanel extends Component {
   };
 
   fetchRelInfo = () => {
-    setTimeout(() => {
-      this.setState({ relInfo: RelInfoMock });
-    }, 100);
+    queryMailDetail(this.props.mailCurrent.mailid).then(result => {
+      const { sender, custinfo } = result.data;
+      this.setState({
+        sender,
+        custInfo: custinfo
+      });
+      if (custinfo && custinfo.length) {
+        this.fetchCustProtocol(custinfo[0].rectype);
+      }
+    }, err => {
+      message.error(err.message || '获取相关信息失败');
+    });
   };
 
-  fetchMailList = (pageIndex, pageSize) => {
-    setTimeout(() => {
-      this.setState({ mailList: [] });
-    }, 100);
+  fetchMailList = () => {
+    const { mailTypes, mailPageIndex, mailPageSize } = this.state;
+    const relatedMySelf = _.includes(mailTypes, '0') ? 0 : 1;
+    const relatedSendOrReceive = _.includes(mailTypes, '2') ? 0 : _.includes(mailTypes, '3') ? 1 : 2;
+    const params = {
+      pageIndex: mailPageIndex,
+      pageSize: mailPageSize,
+      mailid: this.props.mailCurrent.mailid,
+      relatedMySelf,
+      relatedSendOrReceive
+    };
+    queryRelatedMails(params).then(result => {
+      this.setState({
+        mailList: result.data.datalist,
+        mailTotal: result.data.pageinfo.totalcount
+      });
+    }, err => {
+      message.error(err.message || '获取往来邮件数据失败');
+    });
   };
 
   fetchAttachList = (pageIndex, pageSize) => {
@@ -204,9 +223,7 @@ class RelatedInfoPanel extends Component {
   };
 
   renderRelatedInfo = () => {
-    const { mailDetailData } = this.props;
-    if (!(mailDetailData && mailDetailData.status === 'loaded')) return null;
-    const { sender, custinfo } = mailDetailData;
+    const { sender, custInfo } = this.state;
     return (
       <div>
         {sender && sender.length > 0 && <div className={styles.infobox}>
@@ -216,11 +233,11 @@ class RelatedInfoPanel extends Component {
           <div className={styles.infometa}><span>电话：</span><span>{sender[0].phone}</span></div>
           <div className={styles.infometa}><span>邮箱：</span><span>{sender[0].email}</span></div>
         </div>}
-        {custinfo && custinfo.length > 0 && <div className={styles.infobox}>
+        {custInfo && custInfo.length > 0 && <div className={styles.infobox}>
           <div className={styles.infotitle}>客户信息</div>
           <DynamicFormViewLight
-            fields={this.state.custProtocols[mailDetailData.custinfo[0].rectype] || []}
-            value={custinfo[0]}
+            fields={this.state.custProtocols[custInfo[0].rectype] || []}
+            value={custInfo[0]}
           />
         </div>}
       </div>
@@ -228,6 +245,7 @@ class RelatedInfoPanel extends Component {
   };
 
   render() {
+    const { mailDetailData } = this.props;
     return (
       <div className={styles.wrap} style={{ minWidth: '300px' }}>
         <Tabs
@@ -275,8 +293,12 @@ class RelatedInfoPanel extends Component {
                 rowKey="mailid"
                 dataSource={this.state.mailList || []}
                 pagination={false}
-                onRowClick={record => this.props.dispatch({ type: 'mails/mailPreview__', payload: record })}
-                onRowDoubleClick={record => this.props.dispatch({ type: 'mails/mailDetail', payload: record })}
+                rowClassName={record => classnames({
+                  [styles.selectedrow]: !!(mailDetailData && mailDetailData.mailId === record.mailid),
+                  [styles.readrow]: !!record.isread
+                })}
+                onRowClick={this.props.preview}
+                onRowDoubleClick={this.props.showMailDetail}
               >
                 <Column
                   title={<ImgIcon marginLess name="mail" />}
@@ -285,7 +307,7 @@ class RelatedInfoPanel extends Component {
                   width={34}
                 />
                 <Column title="主题" dataIndex="title" />
-                <Column title="日期" dataIndex="sendtime" />
+                <Column title="日期" dataIndex="senttime" />
               </Table>
               <TinyPager
                 noText
@@ -294,8 +316,8 @@ class RelatedInfoPanel extends Component {
                 current={this.state.mailPageIndex}
                 pageSize={this.state.mailPageSize}
                 total={this.state.mailTotal}
-                onChange={this.fetchMailList}
-                onPageSizeChange={pageSize => this.fetchMailList({ pageIndex: 1, pageSize })}
+                onChange={pageIndex => this.setState({ mailPageIndex: pageIndex }, this.fetchMailList)}
+                onPageSizeChange={pageSize => this.setState({ mailPageIndex: 1, mailPageSize: pageSize }, this.fetchMailList)}
               />
             </div>
           </Tabs.TabPane>
@@ -339,6 +361,16 @@ class RelatedInfoPanel extends Component {
 }
 
 export default connect(
-  state => state.mails
+  state => state.mails,
+  dispatch => {
+    return {
+      preview(mail) {
+        dispatch({ type: 'mails/mailPreview__', payload: mail });
+      },
+      showMailDetail(mail) {
+        dispatch({ type: 'mails/showMailDetail', payload: mail });
+      }
+    };
+  }
 )(RelatedInfoPanel);
 

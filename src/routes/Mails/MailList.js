@@ -35,7 +35,7 @@ class MailList extends Component {
             selectedRowKeys: mailSelected.map(item => item.mailid),
             onChange: (keys, items) => this.props.selectMails(items)
           }}
-          onRowClick={this.props.preview}
+          onRowClick={this.props.toggleMailCurrent}
           onRowDoubleClick={this.props.showMailDetail}
         >
           <Column
@@ -92,7 +92,8 @@ export default connect(
       selectMails(mails) {
         dispatch({ type: 'mails/putState', payload: { mailSelected: mails } });
       },
-      preview(mail) {
+      toggleMailCurrent(mail) {
+        dispatch({ type: 'mails/putState', payload: { mailCurrent: mail } });
         dispatch({ type: 'mails/mailPreview__', payload: mail });
       },
       showMailDetail(mail) {
