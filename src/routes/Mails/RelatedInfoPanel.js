@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import { Tabs, Table, Dropdown, Menu, message } from 'antd';
+import { Tabs, Table, Dropdown, Menu, message, Spin } from 'antd';
 import { connect } from 'dva';
 import * as _ from 'lodash';
 import classnames from 'classnames';
@@ -10,15 +10,13 @@ import styles from './RelatedInfoPanel.less';
 import { getGeneralProtocol } from '../../services/entcomm';
 import {
   queryRelatedMails,
+  queryRelatedAttachments,
+  queryMailTransferRecords,
   queryMailDetail
 } from '../../services/mails';
 import { DynamicFormViewLight } from '../../components/DynamicForm';
 
 const Column = Table.Column;
-
-const RelInfoMock = {
-  a: 'b'
-};
 
 const CheckableMenu = ({ items, checkedKeys, onCheckedChange }) => {
   const itemGroups = [];
@@ -67,6 +65,7 @@ class RelatedInfoPanel extends Component {
     const { mailTypes, attachTypes } = this.getLastSettings();
     this.state = {
       currentTab: '1',
+      loading: false,
       sender: null,
       custInfo: null,
       mailTypes: mailTypes || ['1', '2'],
@@ -74,11 +73,13 @@ class RelatedInfoPanel extends Component {
       mailTotal: 0,
       mailPageIndex: 1,
       mailPageSize: 10,
-      attachTypes: attachTypes || [],
+      // mailLoading: false,
+      attachTypes: attachTypes || ['1', '2'],
       attachList: null,
       attachTotal: 0,
       attachPageIndex: 1,
       attachPageSize: 10,
+      // attachLoading: false,
       transferRecords: null,
 
       custProtocols: {}
@@ -130,9 +131,11 @@ class RelatedInfoPanel extends Component {
       mailList: null,
       mailTotal: 0,
       mailPageIndex: 1,
+      // mailLoading: false,
       attachList: null,
       attachTotal: 0,
       attachPageIndex: 1,
+      // attachLoading: false,
       transferRecords: null,
       custProtocols: {}
     }, callback);
@@ -142,16 +145,16 @@ class RelatedInfoPanel extends Component {
     if (!this.props.mailCurrent) return;
     switch (this.state.currentTab) {
       case '1':
-        if (checkNeeded && this.state.sender) return;
+        if (checkNeeded === true && this.state.sender) return;
         return this.fetchRelInfo();
       case '2':
-        if (checkNeeded && this.state.mailList) return;
+        if (checkNeeded === true && this.state.mailList) return;
         return this.setState({ mailPageIndex: 1 }, this.fetchMailList);
       case '3':
-        if (checkNeeded && this.state.attachList) return;
+        if (checkNeeded === true && this.state.attachList) return;
         return this.fetchAttachList();
       case '4':
-        if (checkNeeded && this.state.transferRecords) return;
+        if (checkNeeded === true && this.state.transferRecords) return;
         return this.fetchTransferRecords();
       default:
     }
@@ -161,22 +164,26 @@ class RelatedInfoPanel extends Component {
     if (this.state.custProtocols[rectype]) return;
     getGeneralProtocol({ typeid: rectype, operatetype: 2 }).then(result => {
       this.setState({
-        custProtocols: { ...this.state.custProtocols, [rectype]: result.data }
+        custProtocols: { ...this.state.custProtocols, [rectype]: result.data },
+        loading: false
       });
     });
   };
 
   fetchRelInfo = () => {
+    this.setState({ loading: true });
     queryMailDetail(this.props.mailCurrent.mailid).then(result => {
       const { sender, custinfo } = result.data;
       this.setState({
         sender,
-        custInfo: custinfo
+        custInfo: custinfo,
+        loading: false
       });
       if (custinfo && custinfo.length) {
         this.fetchCustProtocol(custinfo[0].rectype);
       }
     }, err => {
+      this.setState({ loading: false });
       message.error(err.message || '获取相关信息失败');
     });
   };
@@ -192,26 +199,59 @@ class RelatedInfoPanel extends Component {
       relatedMySelf,
       relatedSendOrReceive
     };
+    this.setState({ loading: true });
     queryRelatedMails(params).then(result => {
       this.setState({
         mailList: result.data.datalist,
-        mailTotal: result.data.pageinfo.totalcount
+        mailTotal: result.data.pageinfo.totalcount,
+        loading: false
       });
     }, err => {
+      this.setState({ loading: false });
       message.error(err.message || '获取往来邮件数据失败');
     });
   };
 
-  fetchAttachList = (pageIndex, pageSize) => {
-    setTimeout(() => {
-      this.setState({ attachList: [] });
-    }, 100);
+  fetchAttachList = () => {
+    const { attachTypes, attachPageIndex, attachPageSize } = this.state;
+    const relatedMySelf = _.includes(attachTypes, '0') ? 0 : 1;
+    const relatedSendOrReceive = _.includes(attachTypes, '2') ? 0 : _.includes(attachTypes, '3') ? 1 : 2;
+    const params = {
+      pageIndex: attachPageIndex,
+      pageSize: attachPageSize,
+      mailid: this.props.mailCurrent.mailid,
+      relatedMySelf,
+      relatedSendOrReceive
+    };
+    this.setState({ loading: true });
+    queryRelatedAttachments(params).then(result => {
+      this.setState({
+        attachList: result.data.datalist,
+        attachTotal: result.data.pageinfo.totalcount,
+        loading: false
+      });
+    }, err => {
+      this.setState({ loading: false });
+      message.error(err.message || '获取往来附件数据失败');
+    });
   };
 
   fetchTransferRecords = () => {
-    setTimeout(() => {
-      this.setState({ transferRecords: [] });
-    }, 100);
+    const params = {
+      mailid: this.props.mailCurrent.mailid,
+      pageIndex: 1,
+      pageSize: 99999
+    };
+    this.setState({ loading: true });
+    queryMailTransferRecords(params).then(result => {
+      this.setState({
+        transferRecords: result.data.datalist,
+        loading: false
+      });
+    }, err => {
+      this.setState({ loading: false });
+      message.error(err.message || '获取内部分发记录失败');
+    });
   };
 
   onTabChange = key => {
@@ -219,7 +259,17 @@ class RelatedInfoPanel extends Component {
   };
 
   onMailTypesChange = mailTypes => {
-    this.setState({ mailTypes }, () => this.saveSettings({ mailTypes }));
+    this.setState({ mailTypes }, () => {
+      this.saveSettings({ mailTypes });
+      this.refreshCurrentTab();
+    });
+  };
+
+  onAttachTypesChange = attachTypes => {
+    this.setState({ attachTypes }, () => {
+      this.saveSettings({ attachTypes });
+      this.refreshCurrentTab();
+    });
   };
 
   renderRelatedInfo = () => {
@@ -248,113 +298,160 @@ class RelatedInfoPanel extends Component {
     const { mailDetailData } = this.props;
     return (
       <div className={styles.wrap} style={{ minWidth: '300px' }}>
-        <Tabs
-          animated={false}
-          activeKey={this.state.currentTab}
-          tabPosition="bottom"
-          size="small"
-          onChange={this.onTabChange}
-          tabBarStyle={{ background: '#f1f1f1' }}
-        >
-          <Tabs.TabPane tab="联系人" key="1">
-            <div className={styles.header}>
-              <span>邮件联系人信息</span>
-            </div>
-            <div className={styles.content}>
-              {this.renderRelatedInfo()}
-            </div>
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="往来邮件" key="2">
-            <div className={styles.header}>
-              <span>往来邮件</span>
-              <div className={styles.actions}>
-                <ImgIcon name="refresh" />
-                <Dropdown overlay={(
-                  <CheckableMenu
-                    items={[
-                      { key: '0', group: 1, label: '仅查看与自己的往来邮件' },
-                      { key: '1', group: 1, label: '查看与所有用户的往来邮件' },
-                      { key: '2', group: 2, label: '查看所有收到与发出的邮件' },
-                      { key: '3', group: 2, label: '查看收到的邮件' },
-                      { key: '4', group: 2, label: '查看发出的邮件' }
-                    ]}
-                    checkedKeys={this.state.mailTypes}
-                    onCheckedChange={this.onMailTypesChange}
-                  />
-                )}>
-                  <ImgIcon name="arrow-down" />
-                </Dropdown>
+        <Spin spinning={this.state.loading}>
+          <Tabs
+            animated={false}
+            activeKey={this.state.currentTab}
+            tabPosition="bottom"
+            size="small"
+            onChange={this.onTabChange}
+            tabBarStyle={{ background: '#f1f1f1' }}
+          >
+            <Tabs.TabPane tab="联系人" key="1">
+              <div className={styles.header}>
+                <span>邮件联系人信息</span>
               </div>
-            </div>
-            <div className={styles.content}>
-              <Table
-                size="middle"
-                bordered={false}
-                rowKey="mailid"
-                dataSource={this.state.mailList || []}
-                pagination={false}
-                rowClassName={record => classnames({
-                  [styles.selectedrow]: !!(mailDetailData && mailDetailData.mailId === record.mailid),
-                  [styles.readrow]: !!record.isread
-                })}
-                onRowClick={this.props.preview}
-                onRowDoubleClick={this.props.showMailDetail}
-              >
-                <Column
-                  title={<ImgIcon marginLess name="mail" />}
-                  dataIndex="isread"
-                  render={val => <ImgIcon marginLess name={val ? 'mail-read' : 'mail-new'} />}
-                  width={34}
+              <div className={styles.content}>
+                {this.renderRelatedInfo()}
+              </div>
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="往来邮件" key="2">
+              <div className={styles.header}>
+                <span>往来邮件</span>
+                <div className={styles.actions}>
+                  <ImgIcon name="refresh" onClick={this.refreshCurrentTab} />
+                  <Dropdown
+                    trigger={['click']}
+                    overlay={(
+                      <CheckableMenu
+                        items={[
+                          { key: '0', group: 1, label: '仅查看与自己的往来邮件' },
+                          { key: '1', group: 1, label: '查看与所有用户的往来邮件' },
+                          { key: '2', group: 2, label: '查看所有收到与发出的邮件' },
+                          { key: '3', group: 2, label: '查看收到的邮件' },
+                          { key: '4', group: 2, label: '查看发出的邮件' }
+                        ]}
+                        checkedKeys={this.state.mailTypes}
+                        onCheckedChange={this.onMailTypesChange}
+                      />
+                    )}
+                  >
+                    <ImgIcon name="arrow-down" />
+                  </Dropdown>
+                </div>
+              </div>
+              <div className={styles.content}>
+                <Table
+                  size="middle"
+                  bordered={false}
+                  rowKey="mailid"
+                  dataSource={this.state.mailList || []}
+                  pagination={false}
+                  rowClassName={record => classnames({
+                    [styles.selectedrow]: !!(mailDetailData && mailDetailData.mailId === record.mailid),
+                    [styles.readrow]: !!record.isread
+                  })}
+                  onRowClick={this.props.preview}
+                  onRowDoubleClick={this.props.showMailDetail}
+                >
+                  <Column
+                    title={<ImgIcon marginLess name="mail" />}
+                    dataIndex="isread"
+                    render={val => <ImgIcon marginLess name={val ? 'mail-read' : 'mail-new'} />}
+                    width={34}
+                  />
+                  <Column title="主题" dataIndex="title" />
+                  <Column title="日期" dataIndex="senttime" />
+                </Table>
+                <TinyPager
+                  noText
+                  style={{ position: 'absolute', left: '0', right: '0', bottom: '0' }}
+                  current={this.state.mailPageIndex}
+                  pageSize={this.state.mailPageSize}
+                  total={this.state.mailTotal}
+                  onChange={pageIndex => this.setState({ mailPageIndex: pageIndex }, this.fetchMailList)}
+                  onPageSizeChange={pageSize => this.setState({ mailPageIndex: 1, mailPageSize: pageSize }, this.fetchMailList)}
                 />
-                <Column title="主题" dataIndex="title" />
-                <Column title="日期" dataIndex="senttime" />
-              </Table>
-              <TinyPager
-                noText
-                showSizeChanger={!this.props.narrow}
-                style={{ position: 'absolute', left: '0', right: '0', bottom: '0' }}
-                current={this.state.mailPageIndex}
-                pageSize={this.state.mailPageSize}
-                total={this.state.mailTotal}
-                onChange={pageIndex => this.setState({ mailPageIndex: pageIndex }, this.fetchMailList)}
-                onPageSizeChange={pageSize => this.setState({ mailPageIndex: 1, mailPageSize: pageSize }, this.fetchMailList)}
-              />
-            </div>
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="往来附件" key="3">
-            <div className={styles.header}>
-              <span>往来附件</span>
-            </div>
-            <div className={styles.content}>
-              <Table
-                size="middle"
-                bordered={false}
-                rowKey="recid"
-                dataSource={this.state.attachList || []}
-                pagination={false}
-                onRowClick={record => this.props.dispatch({ type: 'mails/mailPreview__', payload: record })}
-                onRowDoubleClick={record => this.props.dispatch({ type: 'mails/mailDetail', payload: record })}
-              >
-                <Column title="附件名" dataIndex="filename" />
-                <Column title="大小" dataIndex="filesize" />
-                <Column title="日期" dataIndex="sendtime" />
-              </Table>
-              <TinyPager
-                noText
-                showSizeChanger={!this.props.narrow}
-                style={{ position: 'absolute', left: '0', right: '0', bottom: '0' }}
-                current={this.state.attachPageIndex}
-                pageSize={this.state.attachPageSize}
-                total={this.state.attachTotal}
-                onChange={this.fetchAttachList}
-                onPageSizeChange={pageSize => this.fetchAttachList({ pageIndex: 1, pageSize })}
-              />
-            </div>
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="内部分发" key="4">
-            hello
-          </Tabs.TabPane>
-        </Tabs>
+              </div>
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="往来附件" key="3">
+              <div className={styles.header}>
+                <span>往来附件</span>
+                <div className={styles.actions}>
+                  <ImgIcon name="refresh" onClick={this.refreshCurrentTab} />
+                  <Dropdown
+                    trigger={['click']}
+                    overlay={(
+                      <CheckableMenu
+                        items={[
+                          { key: '0', group: 1, label: '仅查看与自己的往来附件' },
+                          { key: '1', group: 1, label: '查看与所有用户的往来附件' },
+                          { key: '2', group: 2, label: '查看所有收到与发出的附件' },
+                          { key: '3', group: 2, label: '查看收到的附件' },
+                          { key: '4', group: 2, label: '查看发出的附件' }
+                        ]}
+                        checkedKeys={this.state.attachTypes}
+                        onCheckedChange={this.onAttachTypesChange}
+                      />
+                    )}
+                  >
+                    <ImgIcon name="arrow-down" />
+                  </Dropdown>
+                </div>
+              </div>
+              <div className={styles.content}>
+                <Table
+                  size="middle"
+                  bordered={false}
+                  rowKey="mailid"
+                  dataSource={this.state.attachList || []}
+                  pagination={false}
+                >
+                  <Column
+                    title={<ImgIcon marginLess name="mail" />}
+                    dataIndex="isread"
+                    render={val => <ImgIcon marginLess name={val ? 'mail-read' : 'mail-new'} />}
+                    width={34}
+                  />
+                  <Column title="主题" dataIndex="title" />
+                  <Column title="日期" dataIndex="senttime" />
+                </Table>
+                <TinyPager
+                  noText
+                  style={{ position: 'absolute', left: '0', right: '0', bottom: '0' }}
+                  current={this.state.attachPageIndex}
+                  pageSize={this.state.attachPageSize}
+                  total={this.state.attachTotal}
+                  onChange={pageIndex => this.setState({ attachPageIndex: pageIndex }, this.fetchMailList)}
+                  onPageSizeChange={pageSize => this.setState({ attachPageIndex: 1, attachPageSize: pageSize }, this.fetchMailList)}
+                />
+              </div>
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="内部分发" key="4">
+              <div className={styles.header}>
+                <span>内部分发记录</span>
+              </div>
+              <div className={styles.content}>
+                <Table
+                  size="middle"
+                  bordered={false}
+                  rowKey="mailid"
+                  dataSource={this.state.transferRecords || []}
+                  pagination={false}
+                >
+                  <Column
+                    title={<ImgIcon marginLess name="mail" />}
+                    dataIndex="isread"
+                    render={val => <ImgIcon marginLess name={val ? 'mail-read' : 'mail-new'} />}
+                    width={34}
+                  />
+                  <Column title="主题" dataIndex="title" />
+                  <Column title="日期" dataIndex="senttime" />
+                </Table>
+              </div>
+            </Tabs.TabPane>
+          </Tabs>
+        </Spin>
       </div>
     );
   }
