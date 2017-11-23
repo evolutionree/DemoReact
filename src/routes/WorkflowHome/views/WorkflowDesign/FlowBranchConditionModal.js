@@ -81,8 +81,8 @@ class FlowBranchConditionModal extends Component {
       this.setState({ allFields: [...allFields, ...workflowFields] });
 
       const ruleId = nextProps.editingPath.ruleid;
-      if (ruleId) {
-        this.fetchRuleDetail();
+      if (ruleId && ruleId !== '00000000-0000-0000-0000-000000000000') {
+        this.fetchRuleDetail(ruleId);
       }
     } else if (isClosing) {
       this.setState({
@@ -98,7 +98,7 @@ class FlowBranchConditionModal extends Component {
   fetchRuleDetail = ruleId => {
     this.setState({ loading: true });
     queryBranchRule(ruleId).then(result => {
-      const { ruleList, ruleSet } = parseRuleDetail(result.data);
+      const { ruleList, ruleSet } = parseRuleDetail(result.data && result.data[0]);
       this.setState({
         loading: false,
         ruleList,
@@ -115,7 +115,7 @@ class FlowBranchConditionModal extends Component {
     const { ruleList, ruleSet, allFields } = this.state;
     const { editingPath, flowEntities, ruleDetail } = this.props;
     const params = {
-      typeid: 0,
+      typeid: 3,
       entityid: flowEntities[0].entityid,
       rulename: '',
       // ruleitems: ruleList.map(ruleToItem),
