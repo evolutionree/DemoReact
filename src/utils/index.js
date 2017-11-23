@@ -44,6 +44,11 @@ export function convertEditorStateToHtml(editorState) {
   return draftToHtml(convertToRaw(editorState.getCurrentContent()));
 }
 
+/**
+ * 格式化文件大小
+ * @param bitLength
+ * @returns {*}
+ */
 export function formatFileSize(bitLength) {
   if (!bitLength) return '0KB';
   if (bitLength < (1 * 1024 * 1024)) return fmNumber(bitLength / 1024) + 'KB';

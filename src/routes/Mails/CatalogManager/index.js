@@ -97,7 +97,7 @@ class CatalogManager extends Component {
             <CatalogTree
               data={myCatalogData}
               selected={selected.recid}
-              onSelect={this.props.selectCatalog}
+              onSelect={(id, node) => this.props.selectCatalog(node, 'my')}
               searchString={catSearchKey}
             />
           </Collapse.Panel>
@@ -111,7 +111,7 @@ class CatalogManager extends Component {
               data={deptCatalogData}
               onDataChange={this.onDeptCatalogDataChange}
               selected={selected.recid}
-              onSelect={this.props.selectCatalog}
+              onSelect={(id, node) => this.props.selectCatalog(node, 'dept')}
             />
           </Collapse.Panel>
           <Collapse.Panel
@@ -123,8 +123,8 @@ class CatalogManager extends Component {
               {userCatalogData.map(item => (
                 <li
                   key={item.treeid}
-                  className={classnames({ selected: selected.recid === item.treeid })}
-                  onClick={() => this.props.selectCatalog(item.treeid, item)}
+                  className={classnames({ [styles.selected]: selected.treeid === item.treeid })}
+                  onClick={() => this.props.selectCatalog(item, 'user')}
                 >
                   <span>{item.treename}</span>
                   {!!item.unreadcount && <span style={{ color: '#3398db' }}>({item.unreadcount})</span>}
@@ -146,8 +146,8 @@ export default connect(
       toggleOpenedCatalog(catalogKey) {
         dispatch({ type: 'mails/toggleOpenedCatalog', payload: catalogKey });
       },
-      selectCatalog(catalog, catalogNode) {
-        dispatch({ type: 'mails/selectCatalog', payload: catalogNode });
+      selectCatalog(catalogNode, catalogType) {
+        dispatch({ type: 'mails/selectCatalog', payload: { catalogNode, catalogType } });
       },
       addCatalog() {
         dispatch({ type: 'mails/showModals', payload: 'addCatalog' });
@@ -170,7 +170,7 @@ export default connect(
         dispatch({ type: 'mails/putState', payload: assignment });
       },
       refreshCatalog() {
-        dispatch({ type: 'mails/queryCatalogTree' });
+        dispatch({ type: 'mails/reloadCatalogTree' });
       },
       dispatch
     };

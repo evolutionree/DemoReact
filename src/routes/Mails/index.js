@@ -113,7 +113,7 @@ class Mails extends Component {
       paddingBottom: '40px'
     };
     const { myCatalogData, selectedCatalogNode: cat, mailSearchKey } = this.props;
-    const catName = cat ? cat.recname : '--';
+    const catName = cat ? (cat.recname || cat.treename) : '--';
     const renderOverlay = dropdownCallback => (
       <div style={{
         background: '#fff',
