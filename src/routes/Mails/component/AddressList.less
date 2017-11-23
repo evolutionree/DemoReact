@@ -21,6 +21,9 @@
     .ant-collapse{
       border: none;
     }
+    .ant-collapse-content {
+      padding: 0px;
+    }
     .ant-collapse-content > .ant-collapse-content-box {
       padding: 6px 0;
     }
@@ -37,6 +40,7 @@
     font-size:14px;
     color:#333333;
     cursor: pointer;
+    padding: 0 10px;
     &:hover{
       background: #eff6f8;
     }
@@ -61,4 +65,28 @@
     //}
   }
 
+}
+
+
+.queryListDataWrap {
+  >div{
+    height: 38px;
+    line-height: 38px;
+    padding-left: 20px;
+    color: rgba(0, 0, 0, 0.85);
+    background: #f7f7f7;
+  }
+  >ul{
+    >li {
+      height: 26px;
+      line-height: 26px;
+      font-size:14px;
+      color:#333333;
+      cursor: pointer;
+      padding: 0 10px;
+      &:hover{
+        background: #eff6f8;
+      }
+    }
+  }
 }
