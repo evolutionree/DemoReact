@@ -45,6 +45,7 @@ export default {
     mailList: [],
     mailTotal: 0,
     mailSelected: [],
+    mailCurrent: null,
     mailDetailData: null,
 
     /* 写邮件 */

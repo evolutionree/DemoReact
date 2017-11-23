@@ -6,6 +6,7 @@ import CatalogTree from './CatalogTree';
 import CatalogModal from './CatalogModal';
 import styles from './styles.less';
 import ImgIcon from '../../../components/ImgIcon';
+import Search from '../../../components/Search';
 
 class CatalogManager extends Component {
   static propTypes = {};
@@ -63,14 +64,21 @@ class CatalogManager extends Component {
         <div style={{ position: 'relative', background: '#f7f7f7', height: '44px', paddingLeft: '10px' }}>
           <span style={{ lineHeight: '44px' }}>{openedCatalog === 'my' ? '用户文件夹' : '下属员工'}</span>
           {openedCatalog === 'my' && <div style={{ position: 'absolute', right: '10px', top: '8px', width: '180px' }}>
-            <Input.Search
-              size="default"
+            {/*<Input.Search*/}
+              {/*size="default"*/}
+              {/*placeholder="搜索文件夹"*/}
+              {/*style={{ width: '100%', height: '28px' }}*/}
+              {/*value={catSearchKey}*/}
+              {/*maxLength="20"*/}
+              {/*onChange={evt => putState({ catSearchKey: evt.target.value })}*/}
+              {/*onSearch={this.props.refreshCatalog}*/}
+            {/*/>*/}
+
+            <Search
+              mode="icon"
               placeholder="搜索文件夹"
-              style={{ width: '100%', height: '28px' }}
               value={catSearchKey}
-              maxLength="20"
-              onChange={evt => putState({ catSearchKey: evt.target.value })}
-              onSearch={this.props.refreshCatalog}
+              onSearch={val => putState({ catSearchKey: val })}
             />
           </div>}
         </div>
@@ -90,6 +98,7 @@ class CatalogManager extends Component {
               data={myCatalogData}
               selected={selected.recid}
               onSelect={this.props.selectCatalog}
+              searchString={catSearchKey}
             />
           </Collapse.Panel>
           <Collapse.Panel
@@ -113,12 +122,12 @@ class CatalogManager extends Component {
             <ul className={styles.userCatalog}>
               {userCatalogData.map(item => (
                 <li
-                  key={item.userid}
-                  className={classnames({ selected: selected.recid === item.userid })}
-                  onClick={() => this.props.selectCatalog(item.userid, item)}
+                  key={item.treeid}
+                  className={classnames({ selected: selected.recid === item.treeid })}
+                  onClick={() => this.props.selectCatalog(item.treeid, item)}
                 >
-                  <span>{item.username}</span>
-                  {!!item.unread && <span style={{ color: '#3398db' }}>({item.unread})</span>}
+                  <span>{item.treename}</span>
+                  {!!item.unreadcount && <span style={{ color: '#3398db' }}>({item.unreadcount})</span>}
                 </li>
               ))}
             </ul>

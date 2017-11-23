@@ -116,7 +116,7 @@ export async function delMails(params) {
 }
 
 /**
- * 删除邮件
+ * 获取邮件详情
  * @param mailid
  * @returns {Promise.<Object>}
  */
@@ -272,11 +272,41 @@ export async function sendemail(params) {
 /**
  * 获取往来邮件
  * @param params
- * { relatedMySelf, relatedSendOrReceive }
+ * { mailid, pageindex, pagesize, relatedMySelf, relatedSendOrReceive }
+ *  relatedMySelf 0=仅查看与自己的往来邮件，1=查看与所有用户往来邮件
+ *  relatedSendOrReceive 0=查看所有收到与发出的邮件，1=查看收到的邮件，2=查看发出的邮件
  * @returns {Promise.<Object>}
  */
 export async function queryRelatedMails(params) {
   return request('api/mail/gettoandfromail', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
+ * 获取往来附件
+ * @param params
+ * { mailid, pageindex, pagesize, relatedMySelf, relatedSendOrReceive }
+ *  relatedMySelf 0=仅查看与自己的往来邮件附件，1=查看与所有用户往来邮件附件
+ *  relatedSendOrReceive 0=查看所有收到与发出的邮件附件，1=查看收到的邮件附件，2=查看发出的邮件附件
+ * @returns {Promise.<Object>}
+ */
+export async function queryRelatedAttachments(params) {
+  return request('api/mail/gettoandfroatt', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
+ * 获取内部分发记录
+ * @param params
+ * { mailid, pageindex, pagesize }
+ * @returns {Promise.<Object>}
+ */
+export async function queryMailTransferRecords(params) {
+  return request('api/mail/transferrecrod', {
     method: 'post',
     body: JSON.stringify(params)
   });
