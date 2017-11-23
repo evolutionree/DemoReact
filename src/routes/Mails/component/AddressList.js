@@ -162,47 +162,49 @@ class AddressList extends Component {
             ref={node => this.userNameInput = node}
           />
         </div>
-        {
-          this.state.queryString ? <div className={Styles.queryListDataWrap}>
-            <div>查找的数据:</div>
-            <ul>
-              {
-                this.state.listData && this.state.listData instanceof Array && this.state.listData.length > 0 ? this.state.listData.map((item, index) => {
-                  return (
-                    <li key={index} onClick={this.selectContact.bind(this, item)}>{item.name ? item.name : item.emailaddress}</li>
-                  );
-                }) : <li>没有符合条件的联系人</li>
-              }
-            </ul>
-          </div> :
-            <div style={{ borderTop: '1px solid #f0f0f0' }}>
-              <Collapse defaultActiveKey={['1']}>
-                <Panel header="最近联系人" key="1">
-                  <ul className={Styles.recentContactsWrap}>
-                    {
-                      this.props.recentContact && this.props.recentContact instanceof Array && this.props.recentContact.map((item, index) => {
-                        return <li key={index} onClick={this.selectContact.bind(this, item)}>{item.name ? item.name : item.emailaddress}</li>;
-                      })
-                    }
-                  </ul>
-                </Panel>
-                <Panel header="客户联系人" key="2">
-                  <ul className={Styles.recentContactsWrap}>
-                    {
-                      customerContact && customerContact instanceof Array && customerContact.map((item, index) => {
-                        return <li key={index} onClick={this.selectContact.bind(this, item)}>{item.customer ? item.customer : item.emailaddress}</li>;
-                      })
-                    }
-                  </ul>
-                </Panel>
-                <Panel header="企业内部联系人" key="3">
-                  <Tree loadData={this.onLoadData} onSelect={this.treeSelectHandler.bind(this)}>
-                    {this.renderTreeNodes(this.state.innerContact)}
-                  </Tree>
-                </Panel>
-              </Collapse>
-            </div>
-        }
+        <div style={{ overflow: 'auto', height: 'calc(100% - 84px)' }}>
+          {
+            this.state.queryString ? <div className={Styles.queryListDataWrap}>
+              <div>查找的数据:</div>
+              <ul>
+                {
+                  this.state.listData && this.state.listData instanceof Array && this.state.listData.length > 0 ? this.state.listData.map((item, index) => {
+                    return (
+                      <li key={index} onClick={this.selectContact.bind(this, item)}>{item.name ? item.name : item.emailaddress}</li>
+                    );
+                  }) : <li>没有符合条件的联系人</li>
+                }
+              </ul>
+            </div> :
+              <div style={{ borderTop: '1px solid #f0f0f0' }}>
+                <Collapse defaultActiveKey={['1']}>
+                  <Panel header="最近联系人" key="1">
+                    <ul className={Styles.recentContactsWrap}>
+                      {
+                        this.props.recentContact && this.props.recentContact instanceof Array && this.props.recentContact.map((item, index) => {
+                          return <li key={index} onClick={this.selectContact.bind(this, item)}>{item.name ? item.name : item.emailaddress}</li>;
+                        })
+                      }
+                    </ul>
+                  </Panel>
+                  <Panel header="客户联系人" key="2">
+                    <ul className={Styles.recentContactsWrap}>
+                      {
+                        customerContact && customerContact instanceof Array && customerContact.map((item, index) => {
+                          return <li key={index} onClick={this.selectContact.bind(this, item)}>{item.customer ? item.customer : item.emailaddress}</li>;
+                        })
+                      }
+                    </ul>
+                  </Panel>
+                  <Panel header="企业内部联系人" key="3">
+                    <Tree loadData={this.onLoadData} onSelect={this.treeSelectHandler.bind(this)}>
+                      {this.renderTreeNodes(this.state.innerContact)}
+                    </Tree>
+                  </Panel>
+                </Collapse>
+              </div>
+          }
+        </div>
       </div>
     );
   }
