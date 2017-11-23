@@ -15,6 +15,7 @@ import {
   queryMailDetail
 } from '../../services/mails';
 import { DynamicFormViewLight } from '../../components/DynamicForm';
+import { formatFileSize } from '../../utils';
 
 const Column = Table.Column;
 
@@ -407,14 +408,12 @@ class RelatedInfoPanel extends Component {
                   dataSource={this.state.attachList || []}
                   pagination={false}
                 >
-                  <Column
-                    title={<ImgIcon marginLess name="mail" />}
-                    dataIndex="isread"
-                    render={val => <ImgIcon marginLess name={val ? 'mail-read' : 'mail-new'} />}
-                    width={34}
-                  />
-                  <Column title="主题" dataIndex="title" />
-                  <Column title="日期" dataIndex="senttime" />
+                  <Column title="附件名" dataIndex="filename" />
+                  <Column title="大小" dataIndex="filesize" render={formatFileSize} />
+                  <Column title="日期" dataIndex="receivedtime" render={val => val} />
+                  <Column title="操作" dataIndex="mongoid" render={mongoid => (
+                    <a href={`/api/fileservice/download?fileid=${mongoid}`} download>下载</a>
+                  )} />
                 </Table>
                 <TinyPager
                   noText
@@ -422,8 +421,8 @@ class RelatedInfoPanel extends Component {
                   current={this.state.attachPageIndex}
                   pageSize={this.state.attachPageSize}
                   total={this.state.attachTotal}
-                  onChange={pageIndex => this.setState({ attachPageIndex: pageIndex }, this.fetchMailList)}
-                  onPageSizeChange={pageSize => this.setState({ attachPageIndex: 1, attachPageSize: pageSize }, this.fetchMailList)}
+                  onChange={pageIndex => this.setState({ attachPageIndex: pageIndex }, this.fetchAttachList)}
+                  onPageSizeChange={pageSize => this.setState({ attachPageIndex: 1, attachPageSize: pageSize }, this.fetchAttachList)}
                 />
               </div>
             </Tabs.TabPane>

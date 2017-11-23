@@ -323,3 +323,16 @@ export async function queryHistoryUsers(keyword) {
     body: JSON.stringify({ keyword })
   });
 }
+
+/**
+ * 获取内部往来人员邮件
+ * @param params
+ * { fromuserid, keyword, pageindex, pagesize }
+ * @returns {Promise.<Object>}
+ */
+export async function queryHistoryUserMails(params) {
+  return request('api/mail/intoandfrolstmail', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}

@@ -19,6 +19,7 @@ import {
   orderMailCatalog,
   queryMailDetail,
   queryHistoryUsers,
+  queryHistoryUserMails,
   sendemail
 } from '../services/mails';
 import { treeForEach } from '../utils';
@@ -201,19 +202,32 @@ export default {
     *queryMailList(action, { select, call, put }) {
       try {
         const { mailPageIndex, mailPageSize, mailSearchKey, selectedCatalogNode } = yield select(state => state.mails);
-        const params = {
-          pageIndex: mailPageIndex,
-          pageSize: mailPageSize,
-          searchKey: mailSearchKey,
-          catalog: selectedCatalogNode.recid,
-          fetchuserid: selectedCatalogNode.userid
-        };
-        const { data } = yield call(queryMailList, params);
+        let result;
+        if (selectedCatalogNode.recid) {
+          // 收件箱邮件
+          const params = {
+            pageIndex: mailPageIndex,
+            pageSize: mailPageSize,
+            searchKey: mailSearchKey,
+            catalog: selectedCatalogNode.recid,
+            fetchuserid: selectedCatalogNode.userid
+          };
+          result = yield call(queryMailList, params);
+        } else {
+          // 内部往来人员邮件
+          const params = {
+            pageIndex: mailPageIndex,
+            pageSize: mailPageSize,
+            keyword: mailSearchKey,
+            fromuserid: selectedCatalogNode.treeid
+          };
+          result = yield call(queryHistoryUserMails, params);
+        }
         yield put({
           type: 'putState',
           payload: {
-            mailList: data.datalist,
-            mailTotal: data.pageinfo.totalcount,
+            mailList: result.data.datalist,
+            mailTotal: result.data.pageinfo.totalcount,
             mailSelected: []
           }
         });
@@ -233,8 +247,8 @@ export default {
         yield put({ type: 'reloadCatalogTree' });
       }
     },
-    *selectCatalog({ payload: catalogNode }, { select, put }) {
-      if (!catalogNode.recid) return;
+    *selectCatalog({ payload: { catalogNode, catalogType } }, { select, put }) {
+      if (catalogType === 'dept' && !catalogNode.recid) return;
       yield put({
         type: 'putState',
         payload: { selectedCatalogNode: catalogNode }
