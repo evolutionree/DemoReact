@@ -30,7 +30,7 @@ class Mails extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-
+///aaaaaa
   }
 
   onAction = type => {
