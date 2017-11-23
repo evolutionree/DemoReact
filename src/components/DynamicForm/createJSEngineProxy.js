@@ -392,6 +392,14 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       }
     };
 
+    setRowFieldReadOnly = (tableFieldName, rowIndex, columnFieldName, isReadonly) => {
+      if (this.getFieldControlType(tableFieldName) !== 24) return [];
+      const instance = this.getFieldComponentInstance(tableFieldName);
+      if (instance && instance.setRowFieldReadOnly) {
+        return instance.setRowFieldReadOnly(columnFieldName, isReadonly);
+      }
+    };
+
     getFieldConfig = fieldName => {
       const field = this.getFieldByName(fieldName);
       return field && field.fieldconfig;

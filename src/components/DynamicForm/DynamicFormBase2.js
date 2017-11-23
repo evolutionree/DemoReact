@@ -281,7 +281,6 @@ class DynamicFormBase extends Component {
         isReadOnly: fieldconfig.isReadOnlyJS
       };
     }
-
     const fieldDecorator = this.state.fieldsDecorator[fieldname];
     return fieldDecorator(
       <DynamicField

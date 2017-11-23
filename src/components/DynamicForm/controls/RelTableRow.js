@@ -33,7 +33,6 @@ class RelTableRow extends DynamicFormBase {
   };
   renderFieldsView = fields => {
     const { value } = this.props;
-
     return this.processFields(fields).map(field => {
       const val = value[field.fieldname] && value[field.fieldname].value;
       const value_name = value[field.fieldname + '_name'] && value[field.fieldname + '_name'].value;
@@ -59,7 +58,6 @@ class RelTableRow extends DynamicFormBase {
   render() {
     const { fields: allFields, selected, onSelect, mode } = this.props;
     const fields = allFields.filter(item => item.controltype !== 20);
-
     return (
       <div className={styles.tr}>
         {mode !== 'DETAIL' && <div className={classnames([styles.td, styles.selectionCell])}>

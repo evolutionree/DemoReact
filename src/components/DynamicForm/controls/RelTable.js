@@ -207,6 +207,19 @@ class RelTable extends Component {
     }
   };
 
+  setRowFieldReadOnly = (fieldName, isReadonly) => {
+    const newFields = [...this.state.fields];
+    const fieldIndex = _.findIndex(newFields, ['fieldname', fieldName]);
+    if (fieldIndex !== -1) {
+      const field = this.state.fields[fieldIndex];
+      field.fieldconfig = {
+        ...field.fieldconfig,
+        isReadOnlyJS: isReadonly ? 1 : 0
+      };
+      this.setState({ fields: newFields });
+    }
+  };
+
 
   // 渲染表格列头
   renderTableHeader = () => {
