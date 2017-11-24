@@ -212,54 +212,12 @@ class Mails extends Component {
     );
   };
 
-  getTransformReceivers(data) {
-    let returnString = '';
-    data && data instanceof Array && data.map((item) => {
-      returnString += item.displayname + " '&nbsp; &lt;'" + item.mailaddress + "'&gt;";
-    });
-
-    return returnString;
-  }
-
-  getInitMailContent() {
-    if (this.props.showingModals === 'editMail') {
-      return '';
-    }
-
+  getMailId() {
     const { mailSelected } = this.props;
-    let mailbody = '';
-    let senttime = '';
-    let sender = {};
-    let title = '';
-    let receivers = '';
-    let ccers = '';
-
     if (mailSelected && mailSelected instanceof Array && mailSelected.length === 1) {
-      senttime = mailSelected[0].senttime;
-      sender = mailSelected[0].sender;
-      title = mailSelected[0].title;
-      mailbody = mailSelected[0].mailbody;
-      receivers = this.getTransformReceivers(mailSelected[0].receivers);
-      ccers = this.getTransformReceivers(mailSelected[0].ccers);
+      return mailSelected[0].mailid;
     }
-
-    let initHtmlString = '<br/><br/><br/><br/><br/><br/>' +
-      '<div style="background: #f2f2f2; padding: 10px">' +
-      '<h4><span style="font-size:12px"></span></h4>' +
-      '<h4><span style="font-size:12px"></span></h4>' +
-      '<h4 style="white-space: normal;">-------------------<span style="font-size:12px">原始邮件</span>-------------------</h4>' +
-      '<h4><span style="font-size:12px"></span>' +
-      '<span style="font-size:12px"><strong>发件人: </strong>&quot;' + sender.displayname + '&nbsp; &lt;' + sender.mailaddress + '&gt;&quot;;<br/></span>' +
-      '<span style="font-size:12px"><strong>发送时间: </strong>' + senttime + '<br/></span>' +
-      '<span style="font-size:12px"><strong>收件人: </strong>&quot;' + receivers + ';<br/></span>';
-
-    if (ccers) {
-      initHtmlString += '<span style="font-size:12px"><strong>抄送: </strong>&quot;' + ccers + ';<br/></span>';
-    }
-    initHtmlString += '<span style="font-size:12px"><strong>主题:</strong> ' + title + '</span><br/></h4></div>';
-
-    initHtmlString += mailbody;
-    return initHtmlString;
+    return '';
   }
 
   render() {
@@ -271,7 +229,7 @@ class Mails extends Component {
           midtop={this.renderMidtop()}
           midbottom={this.renderMidbottom()}
         />
-        <EditMailPanel type={this.props.showingModals} initContent={this.getInitMailContent()} />
+        <EditMailPanel type={this.props.showingModals} mailId={this.getMailId()} />
         <SendMailSuccess visible={this.props.showingModals === 'sendMailSuccess' ? true : false} />
         <MailDetailPanel />
       </div>

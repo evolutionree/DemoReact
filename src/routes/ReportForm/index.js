@@ -245,8 +245,6 @@ class ReportForm extends React.Component {
       }
     });
 
-    console.log(JSON.stringify(returnColumns))
-
     return returnColumns;
   }
 

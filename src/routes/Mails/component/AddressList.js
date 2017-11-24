@@ -128,7 +128,7 @@ class AddressList extends Component {
 
   queryListData(value) {
     request('/api/mail/getcontactbykeyword', {
-      method: 'post', body: JSON.stringify({ keyword: value, count: 9999 })
+      method: 'post', body: JSON.stringify({ keyword: value, count: 50 })
     }).then((result) => {
       this.setState({
         listData: result && result.data
@@ -138,7 +138,9 @@ class AddressList extends Component {
 
 
   onChangeQueryString(e) {
-    this.setState({ queryString: e.target.value }, this.queryListData(e.target.value));
+    if (e.target.value.length < 21) {
+      this.setState({ queryString: e.target.value }, this.queryListData(e.target.value));
+    }
   }
 
   emitEmptyQueryString() {
@@ -146,7 +148,6 @@ class AddressList extends Component {
   }
 
   render() {
-    console.log(this.state.listData)
     const { queryString } = this.state;
     const customerContact = this.props.customerContact && this.props.customerContact instanceof Array && this.props.customerContact.sort(compare);
     const suffix = queryString ? <Icon type="close-circle" onClick={this.emitEmptyQueryString.bind(this)} /> : null;

@@ -57,7 +57,9 @@ export default {
     innerContact: [],
     editEmailFormData: null,
     focusTargetName: '',
-    showingModals: ''
+    showingModals: '',
+    editEmailPageFormModel: null,
+    editEmailPageBtn: null
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -406,7 +408,7 @@ export default {
         yield call(sendemail, submitData);
         yield put({
           type: 'putState',
-          payload: { showingModals: 'sendMailSuccess' }
+          payload: { showingModals: 'sendMailSuccess', editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null }
         });
       } catch (e) {
         message.error(e.message || '发送邮件失败');
@@ -415,7 +417,6 @@ export default {
   },
   reducers: {
     putState(state, { payload }) {
-      console.log('putstate')
       return { ...state, ...payload };
     },
     modalPending(state, { payload }) {
@@ -433,22 +434,35 @@ export default {
     },
     resetState() {
       return {
-        openedCatalog: 'my', // my/dept
+        /* 邮件目录 */
+        openedCatalog: 'my', // my/dept/user
         selectedCatalogNode: null,
+        catSearchKey: '',
         myCatalogData: [],
         deptCatalogData: [],
+        userCatalogData: [],
+
+        /* 邮件列表 */
+        mailPageIndex: 1,
+        mailPageSize: 10,
+        mailSearchKey: '',
         mailList: [],
         mailTotal: 0,
         mailSelected: [],
-        previewData: MailMock,
-        showingModals: '',
+        mailCurrent: null,
+        mailDetailData: null,
+
+        /* 写邮件 */
         mailContacts: [],
         mailBoxList: [],
         recentContact: [],
         customerContact: [],
         innerContact: [],
         editEmailFormData: null,
-        focusTargetName: ''
+        focusTargetName: '',
+        showingModals: '',
+        editEmailPageFormModel: null,
+        editEmailPageBtn: null
       };
     }
   }
