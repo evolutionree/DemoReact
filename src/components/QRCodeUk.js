@@ -15,7 +15,7 @@ class QRCodeUk extends Component {
     loading: false
   };
   componentDidMount() {
-    // this.loadUrl();
+    this.loadUrl();
   }
   loadUrl = () => {
     this.setState({ loading: true });
