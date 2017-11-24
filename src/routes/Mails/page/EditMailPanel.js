@@ -4,15 +4,72 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Button, Modal, Icon, Upload, message, Checkbox, Select } from 'antd';
-import { getDeviceHeaders } from '../../../utils/request';
+import request, { getDeviceHeaders } from '../../../utils/request';
 import Toolbar from '../../../components/Toolbar';
 import Styles from './EditMailPanel.less';
 import UMEditor from '../../../components/UMEditor';
 import Form from '../component/Form';
 import AddressList from '../component/AddressList';
+import _ from 'lodash';
 
 const confirm = Modal.confirm;
 
+const formDataField = {
+  ToAddress: 'ToAddress',
+  CCAddress: 'CCAddress',
+  BCCAddress: 'BCCAddress',
+  subject: 'subject'
+}
+
+const formModel = [
+  {
+    label: '收件人',
+    name: formDataField.ToAddress,
+    type: 'multipleInput',
+    show: true
+  },
+  {
+    label: '抄送',
+    name: formDataField.CCAddress,
+    type: 'multipleInput',
+    show: false
+  },
+  {
+    label: '密送',
+    name: formDataField.BCCAddress,
+    type: 'multipleInput',
+    show: false
+  },
+  {
+    label: '主题',
+    name: formDataField.subject,
+    type: 'normalInput',
+    show: true
+  }
+];
+
+const dynamicOperateBtn = [
+  {
+    label: '添加抄送',
+    name: 'addCS',
+    show: true
+  },
+  {
+    label: '删除抄送',
+    name: 'delCS',
+    show: false
+  },
+  {
+    label: '添加密送',
+    name: 'addMS',
+    show: true
+  },
+  {
+    label: '删除密送',
+    name: 'delMS',
+    show: false
+  }
+];
 
 class EditMailPanel extends Component {
   static propTypes = {
@@ -25,76 +82,37 @@ class EditMailPanel extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      formModel: [
-        {
-          label: '收件人',
-          name: 'ToAddress',
-          type: 'multipleInput',
-          show: true
-        },
-        {
-          label: '抄送',
-          name: 'CCAddress',
-          type: 'multipleInput',
-          show: false
-        },
-        {
-          label: '密送',
-          name: 'BCCAddress',
-          type: 'multipleInput',
-          show: false
-        },
-        {
-          label: '主题',
-          name: 'subject',
-          type: 'normalInput',
-          show: true
-        }
-      ],
-      dynamicOperateBtn: [
-        {
-          label: '添加抄送',
-          name: 'addCS',
-          show: true
-        },
-        {
-          label: '删除抄送',
-          name: 'delCS',
-          show: false
-        },
-        {
-          label: '添加密送',
-          name: 'addMS',
-          show: true
-        },
-        {
-          label: '删除密送',
-          name: 'delMS',
-          show: false
-        }
-      ],
-      UMEditorContent: this.props.initContent,
+      formModel: this.props.editEmailPageFormModel === null ? formModel : this.props.editEmailPageFormModel,
+      dynamicOperateBtn: this.props.editEmailPageBtn === null ? dynamicOperateBtn : this.props.editEmailPageBtn,
+      UMEditorContent: '',
       fromAddress: this.getDefaultFromAddress(this.props.mailBoxList),
-      AttachmentFile: [],
       totalFileSize: 0,
       height: document.body.clientHeight - 60 - 10,
-      fileList: []
+      fileList: [],
+      uploadingFiles: [],
+      fileUploadLimit: false
     };
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
       fromAddress: this.getDefaultFromAddress(nextProps.mailBoxList),
-      UMEditorContent: nextProps.initContent
+      formModel: nextProps.editEmailPageFormModel === null ? formModel : nextProps.editEmailPageFormModel,
+      dynamicOperateBtn: nextProps.editEmailPageBtn === null ? dynamicOperateBtn : nextProps.editEmailPageBtn
     });
+
+    if (nextProps.mailId !== this.props.mailId) {
+      this.queryMailDetail(nextProps.mailId, nextProps.type);
+    }
     if (nextProps.type !== this.props.type) {
-      this.umEditor.setContent(nextProps.initContent);
+      this.queryMailDetail(nextProps.mailId, nextProps.type);
     }
   }
 
   componentDidMount() {
     this.umEditor.setContent(this.state.UMEditorContent);
     window.addEventListener('resize', this.onWindowResize.bind(this));
+    this.queryMailDetail(this.props.mailId, this.props.type);
   }
 
   componentWillUnmount() {
@@ -109,6 +127,82 @@ class EditMailPanel extends Component {
     const formModel = this.state.formModel && this.state.formModel instanceof Array && this.state.formModel.filter((item) => item.show);
     this.umEditor.setHeight(document.body.clientHeight - 60 - 10 - formModel.length * 44 - 285);
   }
+
+
+  queryMailDetail(mailid, editMailType) {
+    if (mailid) {
+      request('/api/mail/maildetail', {
+        method: 'post', body: JSON.stringify({ mailid: mailid })
+      }).then((result) => {
+        const { data: { maildetail } } = result;
+        this.umEditor.setContent(this.getInitMailContent(maildetail));
+
+        this.setFormData(maildetail, editMailType);
+
+        this.setState({
+          fileList: maildetail.attachinfo && maildetail.attachinfo instanceof Array && maildetail.attachinfo.map((item) => {
+            return {
+              fileid: item.fileid,
+              filename: item.filename,
+              filelength: 0
+            };
+          })
+        });
+      });
+    }
+  }
+
+  setFormData(mailDetailData, editMailType) {
+    if (editMailType === 'replay' || editMailType === 'replay-attach' || editMailType === 'reply-all' || editMailType === 'replay-all-attach') {
+      this.props.dispatch({ type: 'mails/putState',
+        payload: { editEmailFormData: {
+          [formDataField.subject]: '回复: ' + mailDetailData.title
+        } } });
+    } else if (editMailType === 'send' || editMailType === 'send-attach') {
+      this.props.dispatch({ type: 'mails/putState',
+        payload: { editEmailFormData: {
+          [formDataField.subject]: '转发: ' + mailDetailData.title
+        } } });
+    }
+  }
+
+
+  getInitMailContent(mailDetailData) {
+    let sendtime = mailDetailData.sendtime;
+    let sender = mailDetailData.sender;
+    let title = mailDetailData.title;
+    let mailbody = mailDetailData.mailbody;
+    let receivers = this.getTransformReceivers(mailDetailData.receivers);
+    let ccers = this.getTransformReceivers(mailDetailData.ccers);
+
+    let initHtmlString = '<br/><br/><br/><br/><br/><br/>' +
+      '<div style="background: #f2f2f2; padding: 10px">' +
+      '<h4><span style="font-size:12px"></span></h4>' +
+      '<h4><span style="font-size:12px"></span></h4>' +
+      '<h4 style="white-space: normal;">-------------------<span style="font-size:12px">原始邮件</span>-------------------</h4>' +
+      '<h4><span style="font-size:12px"></span>' +
+      '<span style="font-size:12px"><strong>发件人: </strong>&quot;' + sender.displayname + '&nbsp; &lt;' + sender.address + '&gt;&quot;;<br/></span>' +
+      '<span style="font-size:12px"><strong>发送时间: </strong>' + sendtime + '<br/></span>' +
+      '<span style="font-size:12px"><strong>收件人: </strong>' + receivers + ';<br/></span>';
+
+    if (ccers) {
+      initHtmlString += '<span style="font-size:12px"><strong>抄送: </strong>&quot;' + ccers + ';<br/></span>';
+    }
+    initHtmlString += '<span style="font-size:12px"><strong>主题:</strong> ' + title + '</span><br/></h4></div>';
+
+    initHtmlString += mailbody;
+    return initHtmlString;
+  }
+
+  getTransformReceivers(data) {
+    let returnString = '';
+    data && data instanceof Array && data.map((item) => {
+      returnString += '&quot;' + item.displayname + ' &nbsp; &lt;' + item.address + '&gt;&quot;';
+    });
+
+    return returnString;
+  }
+
 
   getDefaultFromAddress(mailBoxList) {
     let returnData = '';
@@ -128,8 +222,8 @@ class EditMailPanel extends Component {
   }
 
   changeFormModal(type) {
-    let formModel = this.state.formModel;
-    let dynamicOperateBtn = this.state.dynamicOperateBtn;
+    let formModel = _.cloneDeep(this.state.formModel);
+    let dynamicOperateBtn = _.cloneDeep(this.state.dynamicOperateBtn);
     switch (type) {
       case 'addCS':
         dynamicOperateBtn[0].show = false;
@@ -155,10 +249,11 @@ class EditMailPanel extends Component {
 
     const showFormModel = formModel && formModel instanceof Array && formModel.filter((item) => item.show);
     this.umEditor.setHeight(document.body.clientHeight - 60 - 10 - showFormModel.length * 44 - 285);
-    this.setState({
-      formModel: formModel,
-      dynamicOperateBtn: dynamicOperateBtn
-    });
+
+    this.props.dispatch({ type: 'mails/putState', payload: {
+      editEmailPageFormModel: formModel,
+      editEmailPageBtn: dynamicOperateBtn
+    } });
   }
 
   sendMail() {
@@ -166,9 +261,14 @@ class EditMailPanel extends Component {
     const formData = this.props.editEmailFormData;
     let formModel = this.state.formModel && this.state.formModel instanceof Array && this.state.formModel.filter((item) => item.show);
 
+    if (!formData || !formData.ToAddress || formData.ToAddress.length === 0) {
+      message.warning('收件人不能为空');
+      return false;
+    }
+
     let submitData = {};
     formModel && formModel instanceof Array && formModel.map((item) => { //筛选出当前表单显示的数据
-      submitData[item.name] = formData[item.name];
+      submitData[item.name] = formData && formData[item.name];
     });
 
     for (let key in submitData) {
@@ -192,7 +292,12 @@ class EditMailPanel extends Component {
       }
     }
 
-    submitData.AttachmentFile = this.state.AttachmentFile; //附件数据
+    submitData.AttachmentFile = this.state.fileList.map((item) => {
+      return {
+        fileid: item.fileid, //附件人
+        filetype: 1 //新文件
+      };
+    }); //附件数据
     submitData.bodycontent = this.state.UMEditorContent; //富文本框数据
 
     if (submitData.subject === 0 || !submitData.subject) {
@@ -241,35 +346,39 @@ class EditMailPanel extends Component {
   beforeUpload = (file) => {
     if (file.type === 'application/x-msdownload') {
       message.error('抱歉，暂时不支持此类型的附件上传');
-      return false;
+      //return false;
     }
-    if (this.state.totalFileSize + file.size > 1024 * 1024 * 1024 * 4) {
+    if (this.state.totalFileSize + file.size > 1024 * 1024 * 1024 * 4) { //1024 * 1024 * 1024 * 4
       message.error('文件大小不可超过4G');
-      return false;
+      this.setState({
+        fileUploadLimit: true
+      });
     }
     return true;
   };
 
   handleUploadChange = ({ file, fileList }) => {
-    console.log(file)
     //debugger;
-    if (file.response && file.response.error_code === 0) {
+    if (file.response && file.response.error_code === 0 && file.type !== 'application/x-msdownload' && !this.state.fileUploadLimit) {
+      const fileId = file.response.data;
       // 上传成功，拿uuid
       this.setState({
-        AttachmentFile: [
-          ...this.state.AttachmentFile,
-          {
-            fileid: file.response && file.response.data, //附件人
-            filetype: 1 //新文件
-          }
-        ],
         fileList: [
           ...this.state.fileList,
-          file
+          {
+            fileid: fileId,
+            filename: file.name,
+            filelength: file.size
+          }
         ],
-        totalFileSize: fileList.reduce((prev, cur) => cur.size + prev, 0)
+        uploadingFiles: []
+        // totalFileSize: fileList.reduce((prev, cur) => cur.size + prev, 0)
       });
     }
+
+
+    const uploadingFiles = fileList.filter(item => item.status !== 'done');
+    this.setState({ uploadingFiles });
   };
 
 
@@ -286,6 +395,23 @@ class EditMailPanel extends Component {
     };
   };
 
+  getFileList = () => {
+    const files = this.state.fileList;
+    let completedFileList = [];
+    if (files) {
+      completedFileList = files.map(file => {
+        return {
+          uid: file.fileid,
+          name: file.filename,
+          status: 'done',
+          url: `/api/fileservice/download?fileid=${file.fileid}`
+        };
+      });
+    }
+    const fileList = [...completedFileList, ...this.state.uploadingFiles];
+    return fileList;
+  };
+
   render() {
     const props = {
       name: 'data',
@@ -296,7 +422,8 @@ class EditMailPanel extends Component {
         Authorization: 'Bearer ' + this.props.token
       },
       beforeUpload: this.beforeUpload,
-      onChange: this.handleUploadChange
+      onChange: this.handleUploadChange,
+      fileList: this.getFileList()
     };
 
     const formModel = this.state.formModel && this.state.formModel instanceof Array && this.state.formModel.filter((item) => item.show);

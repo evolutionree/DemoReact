@@ -35,7 +35,7 @@ class SendMailSuccess extends Component {
   }
 
   openEditEmailPanel() {
-    this.props.dispatch({ type: 'mails/putState', payload: { showingModals: 'editMailPanel' } });
+    this.props.dispatch({ type: 'mails/putState', payload: { showingModals: 'editMail' } });
   }
 
   render() {
