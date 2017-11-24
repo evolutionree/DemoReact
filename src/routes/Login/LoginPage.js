@@ -1,8 +1,8 @@
 import React from 'react';
 import { Alert, Row, Col } from 'antd';
-import QRCode from 'qrcode.react';
 import LoginForm from './LoginForm';
 import styles from './Login.less';
+import QRCodeUk from '../../components/QRCodeUk';
 
 function LoginPage({ login, pending, authCompany, rememberedPwd, loginError }) {
   function handleSubmit(data) {
@@ -26,8 +26,8 @@ function LoginPage({ login, pending, authCompany, rememberedPwd, loginError }) {
           <Col span={9}>
             <div className={styles.qrcode}>
               <p>打开手机，扫描二维码下载</p>
-              <img src="/qrcode.png" alt="二维码" />
-              {/*<QRCode value="http://116.62.174.138/mcrm/download.html" size={160} fgColor="#666" />*/}
+              {/*<img src="/qrcode.png" alt="二维码" />*/}
+              <QRCodeUk size={160} fgColor="#666" />
             </div>
           </Col>
         </Row>

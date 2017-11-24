@@ -161,3 +161,9 @@ export function setRememberedPwd(rememberedPwd) {
   const jsonStr = JSON.stringify(rememberedPwd);
   storage.setLocalItem('uke100_pwd', Base64.encode(jsonStr));
 }
+
+export function getAppDownloadUrl() {
+  return request('/api/account/downloadapp', {
+    method: 'get'
+  });
+}
