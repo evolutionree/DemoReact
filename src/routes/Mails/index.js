@@ -22,11 +22,24 @@ class Mails extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      height: document.body.clientHeight
+    };
   }
 
   componentDidMount() {
     this.props.dispatch({ type: 'app/toggleSider', payload: true });
+    window.addEventListener('resize', this.onWindowResize.bind(this));
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onWindowResize);
+  }
+
+  onWindowResize(e) {
+    this.setState({
+      height: document.body.clientHeight
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -209,6 +222,10 @@ class Mails extends Component {
   }
 
   getInitMailContent() {
+    if (this.props.showingModals === 'editMail') {
+      return '';
+    }
+
     const { mailSelected } = this.props;
     let mailbody = '';
     let senttime = '';
@@ -234,9 +251,12 @@ class Mails extends Component {
       '<h4><span style="font-size:12px"></span>' +
       '<span style="font-size:12px"><strong>发件人: </strong>&quot;' + sender.displayname + '&nbsp; &lt;' + sender.mailaddress + '&gt;&quot;;<br/></span>' +
       '<span style="font-size:12px"><strong>发送时间: </strong>' + senttime + '<br/></span>' +
-      '<span style="font-size:12px"><strong>收件人: </strong>&quot;' + receivers + ';<br/></span>' +
-      '<span style="font-size:12px"><strong>抄送: </strong>&quot;' + ccers + ';<br/></span>' +
-      '<span style="font-size:12px"><strong>主题:</strong> ' + title + '</span><br/></h4></div>';
+      '<span style="font-size:12px"><strong>收件人: </strong>&quot;' + receivers + ';<br/></span>';
+
+    if (ccers) {
+      initHtmlString += '<span style="font-size:12px"><strong>抄送: </strong>&quot;' + ccers + ';<br/></span>';
+    }
+    initHtmlString += '<span style="font-size:12px"><strong>主题:</strong> ' + title + '</span><br/></h4></div>';
 
     initHtmlString += mailbody;
     return initHtmlString;
@@ -244,7 +264,7 @@ class Mails extends Component {
 
   render() {
     return (
-      <div style={{ height: 'calc(100vh - 60px)', padding: '10px 10px 0' }}>
+      <div style={{ height: this.state.height - 60, padding: '10px 10px 0' }}>
         <MainLayout
           left={<CatalogManager />}
           right={<RelatedInfoPanel />}

@@ -76,7 +76,9 @@ class EditMailPanel extends Component {
       UMEditorContent: this.props.initContent,
       fromAddress: this.getDefaultFromAddress(this.props.mailBoxList),
       AttachmentFile: [],
-      totalFileSize: 0
+      totalFileSize: 0,
+      height: document.body.clientHeight - 60 - 10,
+      fileList: []
     };
   }
 
@@ -92,6 +94,20 @@ class EditMailPanel extends Component {
 
   componentDidMount() {
     this.umEditor.setContent(this.state.UMEditorContent);
+    window.addEventListener('resize', this.onWindowResize.bind(this));
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onWindowResize);
+  }
+
+  onWindowResize(e) {
+    this.setState({
+      height: document.body.clientHeight - 60 - 10
+    });
+
+    const formModel = this.state.formModel && this.state.formModel instanceof Array && this.state.formModel.filter((item) => item.show);
+    this.umEditor.setHeight(document.body.clientHeight - 60 - 10 - formModel.length * 44 - 285);
   }
 
   getDefaultFromAddress(mailBoxList) {
@@ -136,6 +152,9 @@ class EditMailPanel extends Component {
         formModel[2].show = false;
         break;
     }
+
+    const showFormModel = formModel && formModel instanceof Array && formModel.filter((item) => item.show);
+    this.umEditor.setHeight(document.body.clientHeight - 60 - 10 - showFormModel.length * 44 - 285);
     this.setState({
       formModel: formModel,
       dynamicOperateBtn: dynamicOperateBtn
@@ -220,6 +239,10 @@ class EditMailPanel extends Component {
   }
 
   beforeUpload = (file) => {
+    if (file.type === 'application/x-msdownload') {
+      message.error('抱歉，暂时不支持此类型的附件上传');
+      return false;
+    }
     if (this.state.totalFileSize + file.size > 1024 * 1024 * 1024 * 4) {
       message.error('文件大小不可超过4G');
       return false;
@@ -228,16 +251,22 @@ class EditMailPanel extends Component {
   };
 
   handleUploadChange = ({ file, fileList }) => {
-    console.log(JSON.stringify(fileList))
+    console.log(file)
+    //debugger;
     if (file.response && file.response.error_code === 0) {
       // 上传成功，拿uuid
       this.setState({
-        AttachmentFile: fileList && fileList instanceof Array && fileList.map((item) => {
-          return {
-            fileid: item.response.data, //附件人
+        AttachmentFile: [
+          ...this.state.AttachmentFile,
+          {
+            fileid: file.response && file.response.data, //附件人
             filetype: 1 //新文件
-          };
-        }),
+          }
+        ],
+        fileList: [
+          ...this.state.fileList,
+          file
+        ],
         totalFileSize: fileList.reduce((prev, cur) => cur.size + prev, 0)
       });
     }
@@ -258,7 +287,6 @@ class EditMailPanel extends Component {
   };
 
   render() {
-    console.log(JSON.stringify(this.props.mailSelected));
     const props = {
       name: 'data',
       data: this.getUploadParams,
@@ -279,7 +307,7 @@ class EditMailPanel extends Component {
     }
 
     return (
-      <div className={Styles.editMailWrap} style={{ width: 'calc(100% - 10px)', height: 'calc(100% - 10px)', display: visible ? 'block' : 'none' }}>
+      <div className={Styles.editMailWrap} style={{ width: 'calc(100% - 10px)', height: this.state.height, display: visible ? 'block' : 'none' }}>
         <div className={Styles.head}>
           新邮件
         </div>
@@ -304,7 +332,7 @@ class EditMailPanel extends Component {
             </div>
           </Upload>
           <div className={Styles.UMEditorWrap}>
-            <UMEditor useImageBase64 ref={this.umEditorRef} loading={false} onChange={this.UMEditorContentChangeHandler.bind(this)} />
+            <UMEditor style={{ width: '100%', height: this.state.height - formModel.length * 44 - 285 }} useImageBase64 ref={this.umEditorRef} loading={false} onChange={this.UMEditorContentChangeHandler.bind(this)} />
           </div>
           <div>
             <div className={Styles.footer}>

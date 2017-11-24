@@ -45,6 +45,16 @@ class RichEditorInForm extends React.Component {
     }
   };
 
+  setHeight = (height) => {
+    if (this.editor) {
+      this.editor.setHeight(height);
+    } else {
+      this.onEditorReady = () => {
+        this.editor.setHeight(height);
+      };
+    }
+  };
+
   onContainerDomReady = (container) => {
     const editor = this.editor = UM.getEditor(this.state.id, { x_img_base64: this.props.useImageBase64 });
     this.onEditorReady && this.onEditorReady();
