@@ -14,6 +14,8 @@ import ImgIcon from '../../components/ImgIcon';
 import EditMailPanel from './page/EditMailPanel';
 import SendMailSuccess from './page/SendMailSuccess';
 import MailDetailPanel from './page/MailDetailPanel';
+import DistributeMailsModal from './component/DistributeMailsModal';
+import TransferCatalogModal from './component/TransferCatalogModal';
 import { treeForEach } from '../../utils';
 
 class Mails extends Component {
@@ -47,9 +49,16 @@ class Mails extends Component {
   }
 
   onAction = type => {
-    const { mailSelected } = this.props;
+    const { mailSelected, selectedCatalogNode } = this.props;
     if (type === 'editMail') {
       this.props.openEditMail(type);
+      return;
+    }
+    if (type === 'transfer-catalog') {
+      if (!selectedCatalogNode) return message.error('请选择要转移的邮件目录');
+      if (selectedCatalogNode.catalogtype !== 'my') return message.error('只允许选择自己的邮件目录');
+      if (selectedCatalogNode.ctype < 2000) return message.error('只允许转移收件箱里的邮件目录');
+      this.props.showModals('transferCatalog');
       return;
     }
     if (!mailSelected.length) {
@@ -64,6 +73,9 @@ class Mails extends Component {
       }
     }
     switch (type) {
+      case 'distribute':
+        this.props.showModals('distributeMails');
+        break;
       case 'delete':
         Modal.confirm({
           title: '确定要删除选中的邮件吗？',
@@ -164,10 +176,10 @@ class Mails extends Component {
           >
             转发
           </ActionButton>
-          <ActionButton icon="share-g" actions="share" onAction={this.onAction}>内部分发</ActionButton>
+          <ActionButton icon="share-g" actions="distribute" onAction={this.onAction}>内部分发</ActionButton>
           <ActionButton icon="delete" actions="delete" onAction={this.onAction}>删除</ActionButton>
           <ActionButton icon="delete-danger" actions="delete-completely" onAction={this.onAction}>彻底删除</ActionButton>
-          <ActionButton icon="transfer" actions="transfer" onAction={this.onAction}>转移</ActionButton>
+          <ActionButton icon="transfer" actions="transfer-catalog" onAction={this.onAction}>转移</ActionButton>
           <ActionButton
             icon="mark"
             actions={[
@@ -230,8 +242,10 @@ class Mails extends Component {
           midbottom={this.renderMidbottom()}
         />
         <EditMailPanel type={this.props.showingModals} mailId={this.getMailId()} />
-        <SendMailSuccess visible={this.props.showingModals === 'sendMailSuccess' ? true : false} />
+        <SendMailSuccess visible={this.props.showingModals === 'sendMailSuccess'} />
         <MailDetailPanel />
+        <DistributeMailsModal />
+        <TransferCatalogModal />
       </div>
     );
   }
@@ -255,6 +269,9 @@ export default connect(
       },
       showMailDetail(mail) {
         dispatch({ type: 'mails/showMailDetail', payload: mail });
+      },
+      showModals(modalName) {
+        dispatch({ type: 'mails/showModals', payload: modalName });
       },
       search(searchObj) {
         dispatch({ type: 'mails/search', payload: searchObj });
