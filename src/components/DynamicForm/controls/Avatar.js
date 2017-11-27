@@ -85,11 +85,12 @@ class Avatar extends Component {
   }
 }
 
-Avatar.View = ({ value, headShape }) => (
+Avatar.View = ({ value, headShape, size = 80 }) => (
   <img
+    className="dynamic-form-item__avatar-img"
     style={{
-      width: '80px',
-      height: '80px',
+      width: size + 'px',
+      height: size + 'px',
       borderRadius: headShape === 1 ? '100%' : '0'
     }}
     src={`/api/fileservice/read?fileid=${value}`}
