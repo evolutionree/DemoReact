@@ -68,7 +68,7 @@ function EntityButtons({
               onSelect={handleSelect}
               useDragHandle
             >
-              {buttons.map((item, index) => {
+              {buttons && buttons instanceof Array && buttons.map((item, index) => {
                 return (
                   <SortableMenuItem key={item.id} index={index} className={styles.btnitem}>
                     <DragHandle>

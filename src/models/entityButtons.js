@@ -61,6 +61,7 @@ export default {
           });
         }
       } catch (e) {
+        console.error(e)
         message.error(e.message || '获取按钮列表失败');
       }
     },

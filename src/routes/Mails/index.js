@@ -213,6 +213,9 @@ class Mails extends Component {
   };
 
   getMailId() {
+    if (this.props.showingModals === 'editMail') {
+      return '';
+    }
     const { mailSelected } = this.props;
     if (mailSelected && mailSelected instanceof Array && mailSelected.length === 1) {
       return mailSelected[0].mailid;
@@ -242,6 +245,7 @@ export default connect(
   dispatch => {
     return {
       openEditMail(showModalsName) {
+        dispatch({ type: 'mails/putState', payload: { editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null } });
         dispatch({ type: 'mails/showModals', payload: showModalsName });
       },
       delMails(mails, completely) {

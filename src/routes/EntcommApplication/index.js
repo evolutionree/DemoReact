@@ -12,7 +12,7 @@ import RecordEditModal from './RecordEditModal';
 import TransferModal from './TransferModal';
 import connectPermission from '../../models/connectPermission';
 import AdvanceSearchModal from './AdvanceSearchModal';
-import SetWhiteListModal from './SetWhiteListModal';
+import SetOwner from './SetOwner';
 
 const Option = Select.Option;
 
@@ -30,7 +30,8 @@ function EntcommList({
     currentUser,
     simpleSearchKey,
     extraButtonData,
-    extraToolbarData
+    extraToolbarData,
+    showModals
   }) {
   function selectItems(items) {
     dispatch({ type: 'entcommApplication/currItems', payload: items });
@@ -52,10 +53,17 @@ function EntcommList({
     });
   }
   function extraToolbarClickHandler(item) {
-    dispatch({
-      type: 'entcommApplication/extraToolbarClick',
-      payload: item
-    });
+    if (item.buttoncode === 'CallService') {
+      dispatch({
+        type: 'entcommApplication/extraToolbarClick',
+        payload: item
+      });
+    } else if (item.buttoncode === 'CallService_showModal') {
+      dispatch({
+        type: 'entcommApplication/showModals',
+        payload: item.extradata && item.extradata.componentname
+      });
+    }
   }
 
   function extraButtonClickHandler(item) {
@@ -206,7 +214,7 @@ function EntcommList({
       <RecordDetailModal />
       <RecordEditModal />
       <AdvanceSearchModal />
-      <SetWhiteListModal />
+      <SetOwner />
     </Page>
   );
 }

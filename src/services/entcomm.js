@@ -690,4 +690,14 @@ export async function extraToolbarClickSendData(url, params) {
 }
 
 
-
+/**
+ *NewUserId
+  RecIds
+ * @returns {Promise.<Object>}
+ */
+export async function savemailowner(params) {
+  return request('/api/mailset/savemailowner', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}

@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
-import { getGeneralListProtocol, getListData, delEntcomm, transferEntcomm, getFunctionbutton, extraToolbarClickSendData } from '../services/entcomm';
+import { getGeneralListProtocol, getListData, delEntcomm, transferEntcomm, getFunctionbutton, extraToolbarClickSendData, savemailowner } from '../services/entcomm';
 import { queryMenus, queryEntityDetail, queryTypes, queryListFilter } from '../services/entity';
 
 export default {
@@ -172,7 +172,7 @@ export default {
       try {
         const { data: functionbutton } = yield call(getFunctionbutton, { entityid: entityId, RecIds: currItems.map((item) => item.recid) });
         const extraButtonData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'ShowModals');
-        const extraToolbarData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'CallService');
+        const extraToolbarData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'CallService' || item.buttoncode === 'CallService_showModal');
         yield put({ type: 'functionbutton', payload: { extraButtonData, extraToolbarData } });
       } catch (e) {
         message.error(e.message);
@@ -224,7 +224,23 @@ export default {
         Recids: currItems.map(item => item.recid),
         ...item.extradata
       };
-      yield call(extraToolbarClickSendData, item.routepath, params);
+      try {
+        yield call(extraToolbarClickSendData, item.routepath, params);
+        yield put({ type: 'queryList' });
+        message.success('更新成功');
+      } catch (e) {
+        message.error(e.message);
+      }
+    },
+    *savemailowner({ payload: submitData }, { select, call, put }) {
+      try {
+        yield call(savemailowner, submitData);
+        yield put({ type: 'showModals', payload: '' });
+        yield put({ type: 'queryList' });
+        message.success('设置成功');
+      } catch (e) {
+        message.error(e.message);
+      }
     }
   },
   reducers: {

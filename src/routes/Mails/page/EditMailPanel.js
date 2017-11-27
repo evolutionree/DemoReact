@@ -136,33 +136,263 @@ class EditMailPanel extends Component {
       }).then((result) => {
         const { data: { maildetail } } = result;
         this.umEditor.setContent(this.getInitMailContent(maildetail));
-
         this.setFormData(maildetail, editMailType);
 
-        this.setState({
-          fileList: maildetail.attachinfo && maildetail.attachinfo instanceof Array && maildetail.attachinfo.map((item) => {
-            return {
-              fileid: item.fileid,
-              filename: item.filename,
-              filelength: 0
-            };
-          })
-        });
+        if (editMailType === 'replay-attach' || editMailType === 'replay-all-attach' || editMailType === 'send-attach') {
+          this.setState({
+            fileList: maildetail.attachinfo && maildetail.attachinfo instanceof Array && maildetail.attachinfo.map((item) => {
+              return {
+                fileid: item.fileid,
+                filename: item.filename,
+                filelength: 0
+              };
+            })
+          });
+        } else {
+          this.setState({
+            fileList: []
+          });
+        }
+      });
+    } else {
+      this.umEditor.setContent('');
+      this.setState({
+        fileList: []
       });
     }
   }
 
-  setFormData(mailDetailData, editMailType) {
-    if (editMailType === 'replay' || editMailType === 'replay-attach' || editMailType === 'reply-all' || editMailType === 'replay-all-attach') {
-      this.props.dispatch({ type: 'mails/putState',
-        payload: { editEmailFormData: {
-          [formDataField.subject]: '回复: ' + mailDetailData.title
-        } } });
-    } else if (editMailType === 'send' || editMailType === 'send-attach') {
-      this.props.dispatch({ type: 'mails/putState',
-        payload: { editEmailFormData: {
-          [formDataField.subject]: '转发: ' + mailDetailData.title
-        } } });
+
+  transformFornEndData(data) {
+    const returnData = data && data instanceof Array && data.map((item) => {
+        return {
+          email: item.address,
+          name: item.displayname
+        };
+      });
+    return returnData;
+  }
+
+  getMail(maildetail, type) {
+    const mailBoxList = this.props.mailBoxList;
+    let filterMailAddress = '';
+    if (mailBoxList && mailBoxList instanceof Array) {
+      for (let i = 0; i < mailBoxList.length; i++) {
+        if (maildetail && maildetail.receivers && maildetail.receivers instanceof Array) {
+          for (let j=0; j < maildetail.receivers.length; j++) {
+            if (mailBoxList[i].accountid === maildetail.receivers[j].address) {
+              filterMailAddress = maildetail.receivers[j].address;
+              break;
+            }
+          }
+        }
+
+        if (maildetail && maildetail.ccers && maildetail.ccers instanceof Array) {
+          for (let j=0; j < maildetail.ccers.length; j++) {
+            if (mailBoxList[i].accountid === maildetail.ccers[j].address) {
+              filterMailAddress = maildetail.ccers[j].address;
+              break;
+            }
+          }
+        }
+
+
+        if (maildetail && maildetail.bccers && maildetail.bccers instanceof Array) {
+          for (let j=0; j < maildetail.bccers.length; j++) {
+            if (mailBoxList[i].accountid === maildetail.bccers[j].address) {
+              filterMailAddress = maildetail.bccers[j].address;
+              break;
+            }
+          }
+        }
+      }
+    }
+
+
+    if (type === 'getReceivers') {
+      const returnData = [...maildetail.receivers, maildetail.sender].filter((item) => {
+        return item.address !== filterMailAddress;
+      });
+      return this.transformFornEndData(returnData);
+    } else if (type === 'getCcers') {
+      const returnData = maildetail && maildetail instanceof Array && maildetail.ccers.filter((item) => {
+        return item.address !== filterMailAddress;
+      });
+      return this.transformFornEndData(returnData);
+    }
+
+    let fromAddress = '';
+
+    mailBoxList && mailBoxList instanceof Array && mailBoxList.map((item) => {
+      if (item.accountid === filterMailAddress) {
+        fromAddress = item.recid;
+      }
+    })
+
+    this.setState({
+      fromAddress: fromAddress
+    });
+  }
+
+  setFormData(maildetail, editMailType) {
+    const filteData = this.props.mailBoxList && this.props.mailBoxList instanceof Array && this.props.mailBoxList.filter((item) => {
+      return item.accountid === maildetail.sender.address;
+    });
+    if (filteData && filteData instanceof Array && filteData.length > 0) { //发件箱 数据
+      if (editMailType === 'replay' || editMailType === 'replay-attach') {
+        this.props.dispatch({ type: 'mails/putState',
+          payload: {
+            editEmailFormData: {
+              [formDataField.subject]: '回复: ' + maildetail.title
+            },
+            editEmailPageBtn: null,
+            editEmailPageFormModel: null
+        } });
+      } else if (editMailType === 'reply-all' || editMailType === 'replay-all-attach') {
+        this.props.dispatch({ type: 'mails/putState',
+          payload: {
+            editEmailFormData: {
+              [formDataField.ToAddress]: this.transformFornEndData(maildetail.receivers),
+              [formDataField.CCAddress]: this.transformFornEndData(maildetail.ccers),
+              [formDataField.subject]: '回复: ' + maildetail.title
+            },
+            editEmailPageBtn: [
+              {
+                label: '添加抄送',
+                name: 'addCS',
+                show: this.transformFornEndData(maildetail.ccers) ? false : true
+              },
+              {
+                label: '删除抄送',
+                name: 'delCS',
+                show: this.transformFornEndData(maildetail.ccers) ? true : false
+              },
+              {
+                label: '添加密送',
+                name: 'addMS',
+                show: true
+              },
+              {
+                label: '删除密送',
+                name: 'delMS',
+                show: false
+              }
+            ],
+            editEmailPageFormModel: [
+              {
+                label: '收件人',
+                name: formDataField.ToAddress,
+                type: 'multipleInput',
+                show: true
+              },
+              {
+                label: '抄送',
+                name: formDataField.CCAddress,
+                type: 'multipleInput',
+                show: this.transformFornEndData(maildetail.ccers) ? true : false
+              },
+              {
+                label: '密送',
+                name: formDataField.BCCAddress,
+                type: 'multipleInput',
+                show: false
+              },
+              {
+                label: '主题',
+                name: formDataField.subject,
+                type: 'normalInput',
+                show: true
+              }
+            ]
+        } });
+      } else if (editMailType === 'send' || editMailType === 'send-attach') {
+        this.props.dispatch({ type: 'mails/putState',
+          payload: {
+            editEmailFormData: {
+              [formDataField.subject]: '转发: ' + maildetail.title
+            },
+            editEmailPageBtn: null,
+            editEmailPageFormModel: null
+        } });
+      }
+    } else { //收件箱 数据
+      if (editMailType === 'replay' || editMailType === 'replay-attach') {
+        this.props.dispatch({ type: 'mails/putState',
+          payload: {
+            editEmailFormData: {
+              [formDataField.ToAddress]: this.transformFornEndData(maildetail.sender),
+              [formDataField.subject]: '回复: ' + maildetail.title
+            },
+            editEmailPageBtn: null,
+            editEmailPageFormModel: null
+          } });
+      } else if (editMailType === 'reply-all' || editMailType === 'replay-all-attach') {
+        this.props.dispatch({ type: 'mails/putState',
+          payload: {
+            editEmailFormData: {
+              [formDataField.ToAddress]: this.getMail(maildetail, 'getReceivers'),
+              [formDataField.CCAddress]: this.getMail(maildetail, 'getCcers'),
+              [formDataField.subject]: '回复: ' + maildetail.title
+            },
+            editEmailPageBtn: [
+              {
+                label: '添加抄送',
+                name: 'addCS',
+                show: this.transformFornEndData(maildetail.ccers) ? false : true
+              },
+              {
+                label: '删除抄送',
+                name: 'delCS',
+                show: this.transformFornEndData(maildetail.ccers) ? true : false
+              },
+              {
+                label: '添加密送',
+                name: 'addMS',
+                show: true
+              },
+              {
+                label: '删除密送',
+                name: 'delMS',
+                show: false
+              }
+            ],
+            editEmailPageFormModel: [
+              {
+                label: '收件人',
+                name: formDataField.ToAddress,
+                type: 'multipleInput',
+                show: true
+              },
+              {
+                label: '抄送',
+                name: formDataField.CCAddress,
+                type: 'multipleInput',
+                show: this.transformFornEndData(maildetail.ccers) ? true : false
+              },
+              {
+                label: '密送',
+                name: formDataField.BCCAddress,
+                type: 'multipleInput',
+                show: false
+              },
+              {
+                label: '主题',
+                name: formDataField.subject,
+                type: 'normalInput',
+                show: true
+              }
+            ]
+          } });
+      } else if (editMailType === 'send' || editMailType === 'send-attach') {
+        this.props.dispatch({ type: 'mails/putState',
+          payload: {
+            editEmailFormData: {
+              [formDataField.subject]: '转发: ' + maildetail.title
+            },
+            editEmailPageBtn: null,
+            editEmailPageFormModel: null
+          } });
+      }
     }
   }
 
