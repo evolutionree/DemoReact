@@ -16,8 +16,16 @@ function DynamicFormViewLight({
   }) {
   return (
     <div className={styles.dyformviewlight}>
-      {fields && fields instanceof Array && fields.map(field => {
+      {fields && Array.isArray(fields) && fields.map(field => {
         const { fieldname, displayname, controltype } = field;
+        // 分组
+        if (controltype === 20) {
+          return (
+            <div className={styles.field} key={fieldname}>
+              <div className={styles.label}>{displayname}</div>
+            </div>
+          );
+        }
         return (
           <div className={styles.field} key={fieldname}>
             <div className={styles.label}>{displayname}：</div>

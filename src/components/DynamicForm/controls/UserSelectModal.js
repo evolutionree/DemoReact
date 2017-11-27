@@ -16,12 +16,16 @@ class UserSelectModal extends React.Component {
     })),
     onOk: React.PropTypes.func,
     onCancel: React.PropTypes.func,
-    multiple: React.PropTypes.bool
+    multiple: React.PropTypes.bool,
+    title: React.PropTypes.string,
+    modalPending: React.PropTypes.bool
   };
   static defaultProps = {
     visible: false,
     selectedUsers: [],
-    multiple: true
+    multiple: true,
+    title: '选择人员',
+    modalPending: false
   };
 
   constructor(props) {
@@ -173,18 +177,19 @@ class UserSelectModal extends React.Component {
   };
 
   render() {
-    const { visible, onCancel, multiple } = this.props;
+    const { visible, onCancel, multiple, title, modalPending } = this.props;
     let { currentSelected, deptId, searchName, userList } = this.state;
     userList = userList.filter(opt => {
       return this.filterOption(opt.userid);
     });
     return (
       <Modal
-        title="选择人员"
+        title={title}
         visible={visible}
         onOk={this.handleOk}
         onCancel={onCancel}
         wrapClassName={multiple ? 'ant-modal-custom-large' : ''}
+        confirmLoading={modalPending}
       >
         <Toolbar>
           <DepartmentSelect value={deptId} onChange={this.onDeptChange} width="200px" />

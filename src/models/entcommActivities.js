@@ -1,7 +1,7 @@
 import { message, Modal } from 'antd';
 import _ from 'lodash';
 import { query,queryTypes } from '../services/entity';
-import { getEntcommDetail, getEntcommAtivities, commentEntcommActivity, getActivityDetail, likeEntcommActivity, queryPlugins,dynamicRequest } from '../services/entcomm';
+import { getEntcommDetail, getEntcommAtivities, commentEntcommActivity, getActivityDetail, likeEntcommActivity, queryPlugins,dynamicRequest, extraToolbarClickSendData } from '../services/entcomm';
 
 
 const confirmModal = (title, callback) => {
@@ -146,6 +146,17 @@ export default {
         case 'transform': //单据转化按钮
           break;
         case 'copybutton': //复制按钮
+          break;
+        case 'CallService'://直接调用服务
+          const { entityId, recordId } = yield select(state => state.entcommActivities);
+          let params = {};
+          params = {
+            Recids: [recordId],
+            EntityId:entityId,
+            ...plugins[pluginIndex].extradata
+          };
+          yield call(extraToolbarClickSendData, plugins[pluginIndex].routepath, params);
+          message.success('提交成功');
           break;
         case 'upatebutton': //更新事件按钮
             const confirmed = yield cps(

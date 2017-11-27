@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import classnames from 'classnames';
 import TinyPager from '../../components/TinyPager';
 import ImgIcon from '../../components/ImgIcon';
-import Avatar from '../../components/Avatar';
+import Avatar from '../../components/DynamicForm/controls/Avatar';
 import styles from './RelatedInfoPanel.less';
 import { getGeneralProtocol } from '../../services/entcomm';
 import {
@@ -82,6 +82,9 @@ class RelatedInfoPanel extends Component {
       attachPageSize: 10,
       // attachLoading: false,
       transferRecords: null,
+      transferTotal: 0,
+      transferPageIndex: 1,
+      transferPageSize: 10,
 
       custProtocols: {}
     };
@@ -240,13 +243,14 @@ class RelatedInfoPanel extends Component {
   fetchTransferRecords = () => {
     const params = {
       mailid: this.props.mailCurrent.mailid,
-      pageIndex: 1,
-      pageSize: 99999
+      pageIndex: this.state.transferPageIndex,
+      pageSize: this.state.transferPageSize
     };
     this.setState({ loading: true });
     queryMailTransferRecords(params).then(result => {
       this.setState({
         transferRecords: result.data.datalist,
+        transferTotal: result.data.pageinfo.totalcount,
         loading: false
       });
     }, err => {
@@ -279,7 +283,7 @@ class RelatedInfoPanel extends Component {
       <div>
         {sender && sender.length > 0 && <div className={styles.infobox}>
           <div className={styles.infotitle}>发件人信息</div>
-          <div className={styles.infometa}><Avatar image={sender[0].headicon} /></div>
+          <div className={styles.infometa}><Avatar.View value={sender[0].headicon} headShape={1} size={50} /></div>
           <div className={styles.infometa}><span>姓名：</span><span>{sender[0].recname}</span></div>
           <div className={styles.infometa}><span>电话：</span><span>{sender[0].phone}</span></div>
           <div className={styles.infometa}><span>邮箱：</span><span>{sender[0].email}</span></div>
@@ -438,15 +442,20 @@ class RelatedInfoPanel extends Component {
                   dataSource={this.state.transferRecords || []}
                   pagination={false}
                 >
-                  <Column
-                    title={<ImgIcon marginLess name="mail" />}
-                    dataIndex="isread"
-                    render={val => <ImgIcon marginLess name={val ? 'mail-read' : 'mail-new'} />}
-                    width={34}
-                  />
-                  <Column title="主题" dataIndex="title" />
-                  <Column title="日期" dataIndex="senttime" />
+                  <Column title="工号" dataIndex="userid" />
+                  <Column title="接收人" dataIndex="username" />
+                  <Column title="转发来源" dataIndex="fromuser" />
+                  <Column title="日期" dataIndex="transfertime" />
                 </Table>
+                <TinyPager
+                  noText
+                  style={{ position: 'absolute', left: '0', right: '0', bottom: '0' }}
+                  current={this.state.transferPageIndex}
+                  pageSize={this.state.transferPageSize}
+                  total={this.state.transferTotal}
+                  onChange={pageIndex => this.setState({ transferPageIndex: pageIndex }, this.fetchTransferRecords)}
+                  onPageSizeChange={pageSize => this.setState({ transferPageIndex: 1, transferPageSize: pageSize }, this.fetchTransferRecords)}
+                />
               </div>
             </Tabs.TabPane>
           </Tabs>

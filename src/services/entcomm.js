@@ -350,6 +350,16 @@ export async function queryPlugins({ entityid, recid }) {
         });
 
         buttons.forEach(item => {
+          if (item.buttoncode === 'CallService') {
+
+            plugins.push({
+              type: 'CallService',
+              name: item.title,
+              icon: item.icon,
+              routepath:item.routepath,
+              entity:item
+            });
+          }else{
           if(item.extradata)
           {
             if(item.extradata.type=='transform'){
@@ -374,6 +384,7 @@ export async function queryPlugins({ entityid, recid }) {
                 entity:item
               });
             }
+          }
           }
         });
         return plugins;

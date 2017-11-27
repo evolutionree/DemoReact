@@ -83,6 +83,8 @@ class PluginAddModal extends Component {
           });
       }else if (currPlugin.type === 'upatebutton'){
         this.props.cancel();
+      }else if (currPlugin.type === 'CallService'){
+        this.props.cancel();
       }else {
         this.setState({
           showDetailModal: true

@@ -8,6 +8,12 @@ import styles from './styles.less';
 import ImgIcon from '../../../components/ImgIcon';
 import Search from '../../../components/Search';
 
+const catTitle = {
+  my: '我的邮箱',
+  dept: '我下属的邮箱',
+  user: '内部往来'
+};
+
 class CatalogManager extends Component {
   static propTypes = {};
   static defaultProps = {};
@@ -40,8 +46,8 @@ class CatalogManager extends Component {
     this.props.orderCatalog(selectedCatalogNode, 'up');
   };
 
-  onSearch = () => {
-
+  onSearch = val => {
+    this.props.searchCatalog(val);
   };
 
   render() {
@@ -49,21 +55,22 @@ class CatalogManager extends Component {
     const panelHeight = key => (openedCatalog === key ? 'calc(100% - 38px)' : '38px');
     const selected = selectedCatalogNode || {};
     const isMyCat = openedCatalog === 'my';
-    const isPersonalCat = isMyCat && selected.ctype === 3002;
+    const isPersonalCat = isMyCat && selected.ctype === 2002;
+    const isPersonalSubCat = isMyCat && selected.ctype === 3002;
     const isCustCat = isMyCat && selected.ctype === 4001;
     return (
       <div style={{ height: '100%', minWidth: '300px' }}>
         <div style={{ padding: '10px' }}>
-          <Button ghost onClick={this.props.addCatalog} disabled={!isPersonalCat}>新增</Button>
-          <Button ghost onClick={this.props.editCatalog} disabled={!isPersonalCat}>编辑</Button>
-          <Button ghost onClick={this.props.delCatalog} disabled={!isPersonalCat}>删除</Button>
+          <Button ghost onClick={this.props.addCatalog} disabled={!isPersonalCat && !isPersonalSubCat}>新增</Button>
+          <Button ghost onClick={this.props.editCatalog} disabled={!isPersonalSubCat}>编辑</Button>
+          <Button ghost onClick={this.props.delCatalog} disabled={!isPersonalSubCat}>删除</Button>
           <ImgIcon name="refresh" onClick={this.props.refreshCatalog} />
-          <ImgIcon name="arrow-down-bordered" onClick={this.onOrderDown} disabled={!isPersonalCat && !isCustCat} />
-          <ImgIcon name="arrow-up-bordered" onClick={this.onOrderUp} disabled={!isPersonalCat && !isCustCat} />
+          <ImgIcon name="arrow-down-bordered" onClick={this.onOrderDown} disabled={!isPersonalSubCat && !isCustCat} />
+          <ImgIcon name="arrow-up-bordered" onClick={this.onOrderUp} disabled={!isPersonalSubCat && !isCustCat} />
         </div>
         <div style={{ position: 'relative', background: '#f7f7f7', height: '44px', paddingLeft: '10px' }}>
-          <span style={{ lineHeight: '44px' }}>{openedCatalog === 'my' ? '用户文件夹' : '下属员工'}</span>
-          {openedCatalog === 'my' && <div style={{ position: 'absolute', right: '10px', top: '8px', width: '180px' }}>
+          <span style={{ lineHeight: '44px' }}>{catTitle[openedCatalog] || '邮箱'}</span>
+          <div style={{ position: 'absolute', right: '10px', top: '8px', width: '180px' }}>
             {/*<Input.Search*/}
               {/*size="default"*/}
               {/*placeholder="搜索文件夹"*/}
@@ -76,11 +83,11 @@ class CatalogManager extends Component {
 
             <Search
               mode="icon"
-              placeholder="搜索文件夹"
+              placeholder={openedCatalog === 'my' ? '搜索文件夹' : '搜索人员'}
               value={catSearchKey}
-              onSearch={val => putState({ catSearchKey: val })}
+              onSearch={this.onSearch}
             />
-          </div>}
+          </div>
         </div>
         <Collapse
           accordion
@@ -90,7 +97,7 @@ class CatalogManager extends Component {
           style={{ height: 'calc(100% - 129px)' }}
         >
           <Collapse.Panel
-            header={<div><ImgIcon name="user" /><span>用户文件夹</span></div>}
+            header={<div><ImgIcon name="user" /><span>{catTitle.my}</span></div>}
             key="my"
             style={{ transition: 'all .2s', height: panelHeight('my') }}
           >
@@ -102,7 +109,7 @@ class CatalogManager extends Component {
             />
           </Collapse.Panel>
           <Collapse.Panel
-            header={<div><ImgIcon name="structure" /><span>下属员工</span></div>}
+            header={<div><ImgIcon name="structure" /><span>{catTitle.dept}</span></div>}
             key="dept"
             style={{ transition: 'all .2s', height: panelHeight('dept') }}
           >
@@ -115,7 +122,7 @@ class CatalogManager extends Component {
             />
           </Collapse.Panel>
           <Collapse.Panel
-            header={<div><ImgIcon name="structure" /><span>内部往来</span></div>}
+            header={<div><ImgIcon name="structure" /><span>{catTitle.user}</span></div>}
             key="user"
             style={{ transition: 'all .2s', height: panelHeight('user') }}
           >
@@ -171,6 +178,9 @@ export default connect(
       },
       refreshCatalog() {
         dispatch({ type: 'mails/reloadCatalogTree' });
+      },
+      searchCatalog(searchKey) {
+        dispatch({ type: 'mails/searchCatalog', payload: searchKey });
       },
       dispatch
     };

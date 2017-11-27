@@ -1,6 +1,17 @@
 import request from '../utils/request';
 
 /**
+ * 发起收取邮件请求
+ * @returns {Promise.<Object>}
+ */
+export async function syncMails() {
+  return request('api/mail/receiveemail', {
+    method: 'post',
+    body: JSON.stringify({})
+  });
+}
+
+/**
  * 获取邮箱目录树
  * @param params
  * { searchuserid }
@@ -28,7 +39,7 @@ export async function queryMailContacts() {
 /**
  * 获取部门下属邮箱目录树
  * @param params
- * { treeid }
+ * { treeid, keyword }
  * @returns {Promise.<Object>}
  */
 export async function queryDeptMailCatalog(params) {
@@ -307,6 +318,32 @@ export async function queryRelatedAttachments(params) {
  */
 export async function queryMailTransferRecords(params) {
   return request('api/mail/transferrecrod', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
+ * 内部分发
+ * @param params
+ * { mailids, deptids, TransferUserIds }
+ * @returns {Promise.<Object>}
+ */
+export async function distributeMails(params) {
+  return request('api/mail/innertransfermail', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
+ * 转移目录
+ * @param params
+ * { recid, newuserid }
+ * @returns {Promise.<Object>}
+ */
+export async function transferMailCatalog(params) {
+  return request('api/mailset/transfercatalog', {
     method: 'post',
     body: JSON.stringify(params)
   });

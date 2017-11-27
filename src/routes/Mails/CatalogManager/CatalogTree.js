@@ -75,6 +75,10 @@ class CatalogTree extends Component {
 
   handleSelect = (selectedKeys, event) => {
     const { selectedNodes } = event;
+    if (!selectedKeys.length) {
+      this.props.onSelect();
+      return;
+    }
     const value = selectedNodes[0].key;
     this.props.onSelect(value, this.getNodeById(value));
   };
@@ -139,21 +143,25 @@ class CatalogTree extends Component {
         );
       }
     }
+    if (!treeNodes) {
+      return (
+        <div className={styles.treewrap}>加载中...</div>
+      );
+    } else if (!treeNodes.length) {
+      return (
+        <div className={styles.treewrap}>(暂无数据)</div>
+      );
+    }
     return (
       <div className={styles.treewrap}>
-        {(treeNodes && treeNodes.length)
-          ? (
-            <Tree
-              loadData={this.onLoadData}
-              selectedKeys={[this.props.selected]}
-              defaultExpandedKeys={this.getDefaultExpandedKeys()}
-              onSelect={this.handleSelect}
-            >
-              {this.renderTreeNodes(treeNodes)}
-            </Tree>
-          )
-          : 'loading...'
-        }
+        <Tree
+          loadData={this.onLoadData}
+          selectedKeys={[this.props.selected]}
+          defaultExpandedKeys={this.getDefaultExpandedKeys()}
+          onSelect={this.handleSelect}
+        >
+          {this.renderTreeNodes(treeNodes)}
+        </Tree>
       </div>
     );
   }

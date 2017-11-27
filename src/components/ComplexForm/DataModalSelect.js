@@ -12,7 +12,7 @@ class DataModalSelect extends React.Component {
   static propTypes = {
     value: React.PropTypes.array,
     onChange: React.PropTypes.func,
-    type: React.PropTypes.string.required
+    type: React.PropTypes.string.isRequired
   };
   static defaultProps = {};
 
