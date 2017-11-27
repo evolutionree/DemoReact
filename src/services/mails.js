@@ -39,7 +39,7 @@ export async function queryMailContacts() {
 /**
  * 获取部门下属邮箱目录树
  * @param params
- * { treeid }
+ * { treeid, keyword }
  * @returns {Promise.<Object>}
  */
 export async function queryDeptMailCatalog(params) {
