@@ -176,17 +176,19 @@ export default {
         message.error(e.message || '获取邮件目录数据失败');
       }
     },
-    *queryDeptCatalogTree(action, { call, put }) {
+    *queryDeptCatalogTree(action, { select, call, put }) {
       try {
-        const { data } = yield call(queryDeptMailCatalog, { treeid: '' });
+        const { catSearchKey } = yield select(state => state.mails);
+        const { data } = yield call(queryDeptMailCatalog, { treeid: '', keyword: catSearchKey });
         yield put({ type: 'putState', payload: { deptCatalogData: data } });
       } catch (e) {
         message.error(e.message || '获取邮件目录数据失败');
       }
     },
-    *queryUserCatalog(action, { call, put }) {
+    *queryUserCatalog(action, { select, call, put }) {
       try {
-        const { data } = yield call(queryHistoryUsers);
+        const { catSearchKey } = yield select(state => state.mails);
+        const { data } = yield call(queryHistoryUsers, catSearchKey);
         yield put({ type: 'putState', payload: { userCatalogData: data } });
       } catch (e) {
         message.error(e.message || '获取邮件目录数据失败');
@@ -209,6 +211,10 @@ export default {
         }
       });
       yield put({ type: 'queryMailList' });
+    },
+    *searchCatalog({ payload: searchKey }, { select, put }) {
+      yield put({ type: 'putState', payload: { catSearchKey: searchKey } });
+      yield put({ type: 'reloadCatalogTree' });
     },
     *queryMailList(action, { select, call, put }) {
       try {

@@ -30,7 +30,7 @@ class DistributeMailsModal extends Component {
     this.ComplexFormRef.validateFields((err, values) => {
       if (err) return;
       const { dept, users } = values;
-      if (!dept.length && !user.length) {
+      if (!dept.length && !users.length) {
         message.error('请选择分发对象');
         return;
       }
