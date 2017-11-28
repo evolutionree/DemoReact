@@ -23,7 +23,7 @@ class MailCatalogMenuSelect extends Component {
   }
 
   getTreeData = catalogData => {
-    const treeData = _.cloneDeep(catalogData);
+    const treeData = _.cloneDeep(catalogData[0].subcatalogs);
     treeForEach(treeData, item => {
       item.value = item.recid;
       item.label = item.recname;

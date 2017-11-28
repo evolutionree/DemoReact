@@ -38,6 +38,7 @@ export default {
     openedCatalog: 'my', // my/dept/user
     selectedCatalogNode: null,
     catSearchKey: '',
+    myCatalogDataAll: null,
     myCatalogData: null,
     deptCatalogData: null,
     userCatalogData: [],
@@ -169,7 +170,13 @@ export default {
         if (isInit) {
           const selectedCatalogNode = getDefaultCatalog(data);
           selectedCatalogNode.catalogtype = 'my';
-          yield put({ type: 'putState', payload: { selectedCatalogNode } });
+          yield put({
+            type: 'putState',
+            payload: {
+              selectedCatalogNode,
+              myCatalogDataAll: data
+            }
+          });
           yield put({ type: 'queryMailList' });
         }
       } catch (e) {
