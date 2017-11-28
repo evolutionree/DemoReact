@@ -279,6 +279,9 @@ class RelatedInfoPanel extends Component {
 
   renderRelatedInfo = () => {
     const { sender, custInfo } = this.state;
+    if (!(sender && sender.length) && !(custInfo && custInfo.length)) {
+      return <div style={{ padding: '10px 15px', color: '#999' }}>暂无数据</div>;
+    }
     return (
       <div>
         {sender && sender.length > 0 && <div className={styles.infobox}>
