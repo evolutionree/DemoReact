@@ -56,7 +56,12 @@ class MailList extends Component {
             {/*render={val => (val ? <Icon type="paper-clip" style={{}} /> : null)}*/}
             {/*width={34}*/}
           {/*/>*/}
-          <Column title="主题" dataIndex="title" />
+          <Column title="主题" dataIndex="title" render={(val, record) => (
+            <div>
+              {!!record.istag && <Icon type="star" style={{ color: '#ff9a2e', marginRight: '5px' }} />}
+              <span>{val}</span>
+            </div>
+          )} />
           <Column title="发件人" dataIndex="sender.displayname" />
           <Column
             title="收件人"
