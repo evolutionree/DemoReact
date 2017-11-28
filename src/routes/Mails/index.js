@@ -179,7 +179,7 @@ class Mails extends Component {
           <ActionButton icon="share-g" actions="distribute" onAction={this.onAction}>内部分发</ActionButton>
           <ActionButton icon="delete" actions="delete" onAction={this.onAction}>删除</ActionButton>
           <ActionButton icon="delete-danger" actions="delete-completely" onAction={this.onAction}>彻底删除</ActionButton>
-          <ActionButton icon="transfer" actions="transfer-catalog" onAction={this.onAction}>转移</ActionButton>
+          {/*<ActionButton icon="transfer" actions="transfer-catalog" onAction={this.onAction}>转移</ActionButton>*/}
           <ActionButton
             icon="mark"
             actions={[

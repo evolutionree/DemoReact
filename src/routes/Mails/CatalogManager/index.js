@@ -63,6 +63,7 @@ class CatalogManager extends Component {
         <div style={{ padding: '10px' }}>
           <Button ghost onClick={this.props.addCatalog} disabled={!isPersonalCat && !isPersonalSubCat}>新增</Button>
           <Button ghost onClick={this.props.editCatalog} disabled={!isPersonalSubCat}>编辑</Button>
+          <Button ghost onClick={this.props.transferCatalog} disabled={!isPersonalSubCat && !isCustCat}>转移</Button>
           <Button ghost onClick={this.props.delCatalog} disabled={!isPersonalSubCat}>删除</Button>
           <ImgIcon name="refresh" onClick={this.props.refreshCatalog} />
           <ImgIcon name="arrow-down-bordered" onClick={this.onOrderDown} disabled={!isPersonalSubCat && !isCustCat} />
@@ -71,16 +72,6 @@ class CatalogManager extends Component {
         <div style={{ position: 'relative', background: '#f7f7f7', height: '44px', paddingLeft: '10px' }}>
           <span style={{ lineHeight: '44px' }}>{catTitle[openedCatalog] || '邮箱'}</span>
           <div style={{ position: 'absolute', right: '10px', top: '8px', width: '180px' }}>
-            {/*<Input.Search*/}
-              {/*size="default"*/}
-              {/*placeholder="搜索文件夹"*/}
-              {/*style={{ width: '100%', height: '28px' }}*/}
-              {/*value={catSearchKey}*/}
-              {/*maxLength="20"*/}
-              {/*onChange={evt => putState({ catSearchKey: evt.target.value })}*/}
-              {/*onSearch={this.props.refreshCatalog}*/}
-            {/*/>*/}
-
             <Search
               mode="icon"
               placeholder={openedCatalog === 'my' ? '搜索文件夹' : '搜索人员'}
@@ -181,6 +172,9 @@ export default connect(
       },
       searchCatalog(searchKey) {
         dispatch({ type: 'mails/searchCatalog', payload: searchKey });
+      },
+      transferCatalog() {
+        dispatch({ type: 'mails/showModals', payload: 'transferCatalog' });
       },
       dispatch
     };
