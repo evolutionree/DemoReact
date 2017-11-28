@@ -6,11 +6,11 @@ import { connect } from 'dva';
 import { Button, Modal, Icon, Upload, message, Checkbox, Select } from 'antd';
 import request, { getDeviceHeaders } from '../../../utils/request';
 import Toolbar from '../../../components/Toolbar';
-import Styles from './EditMailPanel.less';
 import UMEditor from '../../../components/UMEditor';
 import Form from '../component/Form';
-import AddressList from '../component/AddressList';
+import AddressList from '../component/AddressList'; //通讯录
 import _ from 'lodash';
+import Styles from './EditMailPanel.less';
 
 const confirm = Modal.confirm;
 
@@ -71,6 +71,7 @@ const dynamicOperateBtn = [
   }
 ];
 
+
 class EditMailPanel extends Component {
   static propTypes = {
 
@@ -79,38 +80,41 @@ class EditMailPanel extends Component {
 
   };
 
+  getDefaultFromAddress(mailBoxList) {
+    let fromAddress = '';
+    if (mailBoxList && mailBoxList instanceof Array && mailBoxList.length > 0) {
+      fromAddress = mailBoxList[0].recid;
+    }
+    return fromAddress;
+  }
+
   constructor(props) {
     super(props);
     this.state = {
       formModel: this.props.editEmailPageFormModel === null ? formModel : this.props.editEmailPageFormModel,
       dynamicOperateBtn: this.props.editEmailPageBtn === null ? dynamicOperateBtn : this.props.editEmailPageBtn,
+      fileList: [],
+      uploadingFiles: [],
+      fileUploadLimit: false,
       UMEditorContent: '',
       fromAddress: this.getDefaultFromAddress(this.props.mailBoxList),
       totalFileSize: 0,
-      height: document.body.clientHeight - 60 - 10,
-      fileList: [],
-      uploadingFiles: [],
-      fileUploadLimit: false
+      height: document.body.clientHeight - 60 - 10
     };
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      fromAddress: this.getDefaultFromAddress(nextProps.mailBoxList),
       formModel: nextProps.editEmailPageFormModel === null ? formModel : nextProps.editEmailPageFormModel,
       dynamicOperateBtn: nextProps.editEmailPageBtn === null ? dynamicOperateBtn : nextProps.editEmailPageBtn
     });
 
-    if (nextProps.mailId !== this.props.mailId) {
-      this.queryMailDetail(nextProps.mailId, nextProps.type);
-    }
-    if (nextProps.type !== this.props.type) {
-      this.queryMailDetail(nextProps.mailId, nextProps.type);
+    if (nextProps.type && nextProps.type !== this.props.type) {
+      this.queryMailDetail(nextProps.mailId, nextProps.mailBoxList, nextProps.type);
     }
   }
 
   componentDidMount() {
-    this.umEditor.setContent(this.state.UMEditorContent);
     window.addEventListener('resize', this.onWindowResize.bind(this));
     this.queryMailDetail(this.props.mailId, this.props.type);
   }
@@ -123,22 +127,21 @@ class EditMailPanel extends Component {
     this.setState({
       height: document.body.clientHeight - 60 - 10
     });
-
     const formModel = this.state.formModel && this.state.formModel instanceof Array && this.state.formModel.filter((item) => item.show);
-    this.umEditor.setHeight(document.body.clientHeight - 60 - 10 - formModel.length * 44 - 285);
+    this.umEditor.setHeight(document.body.clientHeight - 60 - 10 - formModel.length * 44 - 205);
   }
 
 
-  queryMailDetail(mailid, editMailType) {
+  queryMailDetail(mailid, mailBoxList, editMailType) {
     if (mailid) {
       request('/api/mail/maildetail', {
         method: 'post', body: JSON.stringify({ mailid: mailid })
       }).then((result) => {
         const { data: { maildetail } } = result;
-        this.umEditor.setContent(this.getInitMailContent(maildetail));
-        this.setFormData(maildetail, editMailType);
+        this.umEditor.setContent(this.getInitMailContent(maildetail)); //设置初始富文本内容
+        this.setFormData(maildetail, mailBoxList, editMailType);  //设置表单初始数据
 
-        if (editMailType === 'replay-attach' || editMailType === 'replay-all-attach' || editMailType === 'send-attach') {
+        if (editMailType === 'replay-attach' || editMailType === 'replay-all-attach' || editMailType === 'send-attach') { //显示附件初始数据
           this.setState({
             fileList: maildetail.attachinfo && maildetail.attachinfo instanceof Array && maildetail.attachinfo.map((item) => {
               return {
@@ -155,9 +158,10 @@ class EditMailPanel extends Component {
         }
       });
     } else {
-      this.umEditor.setContent('');
+      this.umEditor.setContent(''); //写邮件  清空富文本内容
       this.setState({
-        fileList: []
+        fileList: [],
+        fromAddress: this.getDefaultFromAddress(mailBoxList)
       });
     }
   }
@@ -169,45 +173,75 @@ class EditMailPanel extends Component {
           email: item.address,
           name: item.displayname
         };
-      });
+    });
     return returnData;
   }
 
-  getMail(maildetail, type) {
-    const mailBoxList = this.props.mailBoxList;
+  getMail(maildetail, mailBoxList, type) { //原邮件的收件人 抄送人 密送人是否跟 mailBoxList 数据有匹配
     let filterMailAddress = '';
     if (mailBoxList && mailBoxList instanceof Array) {
       for (let i = 0; i < mailBoxList.length; i++) {
         if (maildetail && maildetail.receivers && maildetail.receivers instanceof Array) {
+          let stop = false;
           for (let j=0; j < maildetail.receivers.length; j++) {
             if (mailBoxList[i].accountid === maildetail.receivers[j].address) {
               filterMailAddress = maildetail.receivers[j].address;
+              console.log('0000000000')
+              stop = true;
               break;
             }
           }
+
+          if (stop) {
+            break;
+          }
         }
 
+        console.log(1111111111)
+
         if (maildetail && maildetail.ccers && maildetail.ccers instanceof Array) {
+          let stop = false;
           for (let j=0; j < maildetail.ccers.length; j++) {
             if (mailBoxList[i].accountid === maildetail.ccers[j].address) {
               filterMailAddress = maildetail.ccers[j].address;
+              stop = true;
               break;
             }
           }
+          if (stop) {
+            break;
+          }
         }
 
+        console.log(22222);
 
         if (maildetail && maildetail.bccers && maildetail.bccers instanceof Array) {
+          let stop = false;
           for (let j=0; j < maildetail.bccers.length; j++) {
             if (mailBoxList[i].accountid === maildetail.bccers[j].address) {
               filterMailAddress = maildetail.bccers[j].address;
+              stop = true;
               break;
             }
+          }
+          if (stop) {
+            break;
           }
         }
       }
     }
 
+    let fromAddress = '';
+    mailBoxList && mailBoxList instanceof Array && mailBoxList.map((item) => {
+      if (item.accountid === filterMailAddress) {
+        fromAddress = item.recid;
+      }
+    })
+
+
+    this.setState({
+      fromAddress: fromAddress
+    });
 
     if (type === 'getReceivers') {
       const returnData = [...maildetail.receivers, maildetail.sender].filter((item) => {
@@ -220,30 +254,33 @@ class EditMailPanel extends Component {
       });
       return this.transformFornEndData(returnData);
     }
+  }
 
+  setFormAddress(maildetail, mailBoxList) { //设置默认发件箱
     let fromAddress = '';
 
     mailBoxList && mailBoxList instanceof Array && mailBoxList.map((item) => {
-      if (item.accountid === filterMailAddress) {
+      if (item.accountid === maildetail.sender.address) {
         fromAddress = item.recid;
       }
-    })
+    });
 
     this.setState({
       fromAddress: fromAddress
     });
   }
 
-  setFormData(maildetail, editMailType) {
-    const filteData = this.props.mailBoxList && this.props.mailBoxList instanceof Array && this.props.mailBoxList.filter((item) => {
+  setFormData(maildetail, mailBoxList, editMailType) {
+    const filteData = mailBoxList && mailBoxList instanceof Array && mailBoxList.filter((item) => {
       return item.accountid === maildetail.sender.address;
     });
     if (filteData && filteData instanceof Array && filteData.length > 0) { //发件箱 数据
+      this.setFormAddress(maildetail, mailBoxList);
       if (editMailType === 'replay' || editMailType === 'replay-attach') {
         this.props.dispatch({ type: 'mails/putState',
           payload: {
             editEmailFormData: {
-              [formDataField.subject]: '回复: ' + maildetail.title
+              [formDataField.subject]: 'Re：' + maildetail.title
             },
             editEmailPageBtn: null,
             editEmailPageFormModel: null
@@ -254,7 +291,7 @@ class EditMailPanel extends Component {
             editEmailFormData: {
               [formDataField.ToAddress]: this.transformFornEndData(maildetail.receivers),
               [formDataField.CCAddress]: this.transformFornEndData(maildetail.ccers),
-              [formDataField.subject]: '回复: ' + maildetail.title
+              [formDataField.subject]: 'Re：' + maildetail.title
             },
             editEmailPageBtn: [
               {
@@ -309,19 +346,20 @@ class EditMailPanel extends Component {
         this.props.dispatch({ type: 'mails/putState',
           payload: {
             editEmailFormData: {
-              [formDataField.subject]: '转发: ' + maildetail.title
+              [formDataField.subject]: 'Fw：' + maildetail.title
             },
             editEmailPageBtn: null,
             editEmailPageFormModel: null
         } });
       }
     } else { //收件箱 数据
+      this.getMail(maildetail, mailBoxList); //设置默认发件箱
       if (editMailType === 'replay' || editMailType === 'replay-attach') {
         this.props.dispatch({ type: 'mails/putState',
           payload: {
             editEmailFormData: {
               [formDataField.ToAddress]: this.transformFornEndData(maildetail.sender),
-              [formDataField.subject]: '回复: ' + maildetail.title
+              [formDataField.subject]: 'Re：' + maildetail.title
             },
             editEmailPageBtn: null,
             editEmailPageFormModel: null
@@ -330,9 +368,9 @@ class EditMailPanel extends Component {
         this.props.dispatch({ type: 'mails/putState',
           payload: {
             editEmailFormData: {
-              [formDataField.ToAddress]: this.getMail(maildetail, 'getReceivers'),
-              [formDataField.CCAddress]: this.getMail(maildetail, 'getCcers'),
-              [formDataField.subject]: '回复: ' + maildetail.title
+              [formDataField.ToAddress]: this.getMail(maildetail, mailBoxList, 'getReceivers'),
+              [formDataField.CCAddress]: this.getMail(maildetail, mailBoxList, 'getCcers'),
+              [formDataField.subject]: 'Re：' + maildetail.title
             },
             editEmailPageBtn: [
               {
@@ -387,7 +425,7 @@ class EditMailPanel extends Component {
         this.props.dispatch({ type: 'mails/putState',
           payload: {
             editEmailFormData: {
-              [formDataField.subject]: '转发: ' + maildetail.title
+              [formDataField.subject]: 'Fw：' + maildetail.title
             },
             editEmailPageBtn: null,
             editEmailPageFormModel: null
@@ -434,14 +472,6 @@ class EditMailPanel extends Component {
   }
 
 
-  getDefaultFromAddress(mailBoxList) {
-    let returnData = '';
-    if (mailBoxList && mailBoxList instanceof Array && mailBoxList.length > 0) {
-      returnData = mailBoxList[0].recid;
-    }
-    return returnData;
-  }
-
   umEditorRef = umEditor => {
     this.umEditor = umEditor;
     this.onUMEditorReady && this.onUMEditorReady();
@@ -478,7 +508,7 @@ class EditMailPanel extends Component {
     }
 
     const showFormModel = formModel && formModel instanceof Array && formModel.filter((item) => item.show);
-    this.umEditor.setHeight(document.body.clientHeight - 60 - 10 - showFormModel.length * 44 - 285);
+    this.umEditor.setHeight(document.body.clientHeight - 60 - 10 - showFormModel.length * 44 - 205);
 
     this.props.dispatch({ type: 'mails/putState', payload: {
       editEmailPageFormModel: formModel,
@@ -576,7 +606,6 @@ class EditMailPanel extends Component {
   beforeUpload = (file) => {
     if (file.type === 'application/x-msdownload') {
       message.error('抱歉，暂时不支持此类型的附件上传');
-      //return false;
     }
     if (this.state.totalFileSize + file.size > 1024 * 1024 * 1024 * 4) { //1024 * 1024 * 1024 * 4
       message.error('文件大小不可超过4G');
@@ -601,8 +630,8 @@ class EditMailPanel extends Component {
             filelength: file.size
           }
         ],
-        uploadingFiles: []
-        // totalFileSize: fileList.reduce((prev, cur) => cur.size + prev, 0)
+        uploadingFiles: [],
+        totalFileSize: fileList.reduce((prev, cur) => cur.filelength + prev, 0)
       });
     }
 
@@ -662,7 +691,7 @@ class EditMailPanel extends Component {
     if (editMailType === 'editMail' || editMailType === 'replay' || editMailType === 'replay-attach' || editMailType === 'reply-all' || editMailType === 'replay-all-attach' || editMailType === 'send' || editMailType === 'send-attach') {
       visible = true;
     }
-
+    console.log(this.state.fromAddress)
     return (
       <div className={Styles.editMailWrap} style={{ width: 'calc(100% - 10px)', height: this.state.height, display: visible ? 'block' : 'none' }}>
         <div className={Styles.head}>
@@ -689,7 +718,7 @@ class EditMailPanel extends Component {
             </div>
           </Upload>
           <div className={Styles.UMEditorWrap}>
-            <UMEditor style={{ width: '100%', height: this.state.height - formModel.length * 44 - 285 }} useImageBase64 ref={this.umEditorRef} loading={false} onChange={this.UMEditorContentChangeHandler.bind(this)} />
+            <UMEditor style={{ width: '100%', height: this.state.height - formModel.length * 44 - 205 }} useImageBase64 ref={this.umEditorRef} loading={false} onChange={this.UMEditorContentChangeHandler.bind(this)} />
           </div>
           <div>
             <div className={Styles.footer}>
@@ -706,12 +735,6 @@ class EditMailPanel extends Component {
                 <Checkbox>带签名</Checkbox>
               </span>
             </div>
-          </div>
-          <div>
-            <Toolbar style={{ paddingTop: '10px', paddingLeft: '10px' }}>
-              <Button onClick={this.sendMail.bind(this)}>发送</Button>
-              <Button className="grayBtn" onClick={this.closePanel.bind(this)}>取消</Button>
-            </Toolbar>
           </div>
         </div>
         <div style={{ width: 220, float: 'left', height: 'calc(100% - 42px)' }}>
