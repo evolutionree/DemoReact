@@ -17,10 +17,18 @@ const Title = ({ text, type, count }) => {
     1006: 'trash'
   };
   const icon = iconMap[type];
+  const textStyl = {
+    display: 'inline-block',
+    maxWidth: '14em',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    verticalAlign: 'middle'
+  };
   return (
     <div>
       {!!icon && <ImgIcon name={icon} />}
-      <span>{text}</span>
+      <span style={textStyl} title={text}>{text}</span>
       {!!count && <span style={{ color: '#3398db' }}>({count})</span>}
     </div>
   );
