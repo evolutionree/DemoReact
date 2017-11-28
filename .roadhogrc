@@ -15,7 +15,7 @@
       ],
       "proxy": {
         "/api": {
-          "target": "http://10.187.134.10:80/",
+          "target": "http://47.96.179.63/",
           //"target": "http://127.0.0.1:8880/",
           //"target": "http://113.108.198.122:10080/",
           "changeOrigin": true
