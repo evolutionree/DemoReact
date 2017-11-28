@@ -120,11 +120,11 @@ class Mails extends Component {
   renderMidtop = () => {
     const styl = {
       position: 'relative',
-      minWidth: '860px',
+      minWidth: '800px',
       minHeight: '100%',
       paddingBottom: '40px'
     };
-    const { myCatalogData, selectedCatalogNode: cat, mailSearchKey } = this.props;
+    const { myCatalogData, selectedCatalogNode: cat, mailSearchKey, mailTotal } = this.props;
     const catName = cat ? (cat.recname || cat.treename) : '--';
     const renderOverlay = dropdownCallback => (
       <div style={{
@@ -195,12 +195,14 @@ class Mails extends Component {
           <ActionButton icon="folder-move" actions={[]} onAction={this.onAction} renderOverlay={renderOverlay}>移动到</ActionButton>
         </Toolbar>
         <Toolbar style={{ paddingLeft: '10px', paddingRight: '30px' }}>
-          <span>{catName}</span>
-          {!!cat && <span>(未读 {cat.unreadcount} 封)</span>}
+          <span style={{ marginRight: '5px' }}>{catName}</span>
+          {!!cat && <span>
+            (共<span style={{ color: '#3499db' }}>{mailTotal}</span>封 / 未读<span style={{ color: '#ff6c68' }}>{cat.unreadcount}</span>封)
+          </span>}
           <Toolbar.Right>
             <Search
               mode="icon"
-              placeholder={`搜索 ${catName}`}
+              placeholder={`搜索 ${'主题' || catName}`}
               value={mailSearchKey}
               onSearch={val => this.props.search({ mailSearchKey: val })}
             />

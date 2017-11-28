@@ -59,7 +59,7 @@ class CatalogManager extends Component {
     const isPersonalSubCat = isMyCat && selected.ctype === 3002;
     const isCustCat = isMyCat && selected.ctype === 4001;
     return (
-      <div style={{ height: '100%', minWidth: '300px' }}>
+      <div style={{ height: '100%', minWidth: '330px' }}>
         <div style={{ padding: '10px' }}>
           <Button ghost onClick={this.props.addCatalog} disabled={!isPersonalCat && !isPersonalSubCat}>新增</Button>
           <Button ghost onClick={this.props.editCatalog} disabled={!isPersonalSubCat}>编辑</Button>
@@ -71,14 +71,14 @@ class CatalogManager extends Component {
         </div>
         <div style={{ position: 'relative', background: '#f7f7f7', height: '44px', paddingLeft: '10px' }}>
           <span style={{ lineHeight: '44px' }}>{catTitle[openedCatalog] || '邮箱'}</span>
-          <div style={{ position: 'absolute', right: '10px', top: '8px', width: '180px' }}>
+          {!!catTitle[openedCatalog] && <div style={{ position: 'absolute', right: '10px', top: '8px', width: '180px' }}>
             <Search
               mode="icon"
               placeholder={openedCatalog === 'my' ? '搜索文件夹' : '搜索人员'}
               value={catSearchKey}
               onSearch={this.onSearch}
             />
-          </div>
+          </div>}
         </div>
         <Collapse
           accordion
