@@ -309,10 +309,10 @@ export default {
         message.error(e.message || '操作失败');
       }
     },
-    *delMail({ payload: { mails, completely } }, { select, call, put }) {
+    *delMails({ payload: { mails, completely } }, { select, call, put }) {
       try {
         const params = {
-          IsTruncate: completely,
+          IsTruncate: completely || false,
           mailids: mails.map(item => item.mailid).join(','),
           recstatus: 0
         };

@@ -120,11 +120,11 @@ class Mails extends Component {
   renderMidtop = () => {
     const styl = {
       position: 'relative',
-      minWidth: '860px',
+      minWidth: '800px',
       minHeight: '100%',
       paddingBottom: '40px'
     };
-    const { myCatalogData, selectedCatalogNode: cat, mailSearchKey } = this.props;
+    const { myCatalogData, selectedCatalogNode: cat, mailSearchKey, mailTotal } = this.props;
     const catName = cat ? (cat.recname || cat.treename) : '--';
     const renderOverlay = dropdownCallback => (
       <div style={{
@@ -179,7 +179,7 @@ class Mails extends Component {
           <ActionButton icon="share-g" actions="distribute" onAction={this.onAction}>内部分发</ActionButton>
           <ActionButton icon="delete" actions="delete" onAction={this.onAction}>删除</ActionButton>
           <ActionButton icon="delete-danger" actions="delete-completely" onAction={this.onAction}>彻底删除</ActionButton>
-          <ActionButton icon="transfer" actions="transfer-catalog" onAction={this.onAction}>转移</ActionButton>
+          {/*<ActionButton icon="transfer" actions="transfer-catalog" onAction={this.onAction}>转移</ActionButton>*/}
           <ActionButton
             icon="mark"
             actions={[
@@ -195,12 +195,14 @@ class Mails extends Component {
           <ActionButton icon="folder-move" actions={[]} onAction={this.onAction} renderOverlay={renderOverlay}>移动到</ActionButton>
         </Toolbar>
         <Toolbar style={{ paddingLeft: '10px', paddingRight: '30px' }}>
-          <span>{catName}</span>
-          {!!cat && <span>(未读 {cat.unreadcount} 封)</span>}
+          <span style={{ marginRight: '5px' }}>{catName}</span>
+          {!!cat && <span>
+            (共<span style={{ color: '#3499db' }}>{mailTotal}</span>封 / 未读<span style={{ color: '#ff6c68' }}>{cat.unreadcount}</span>封)
+          </span>}
           <Toolbar.Right>
             <Search
               mode="icon"
-              placeholder={`搜索 ${catName}`}
+              placeholder={`搜索 ${'主题' || catName}`}
               value={mailSearchKey}
               onSearch={val => this.props.search({ mailSearchKey: val })}
             />
