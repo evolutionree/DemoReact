@@ -124,7 +124,7 @@ class Mails extends Component {
       minHeight: '100%',
       paddingBottom: '40px'
     };
-    const { myCatalogData, selectedCatalogNode: cat, mailSearchKey, mailTotal } = this.props;
+    const { myCatalogDataAll, selectedCatalogNode: cat, mailSearchKey, mailTotal } = this.props;
     const catName = cat ? (cat.recname || cat.treename) : '--';
     const renderOverlay = dropdownCallback => (
       <div style={{
@@ -137,7 +137,7 @@ class Mails extends Component {
         padding: '0 15px 0 10px'
       }}>
         <MailCatalogMenuSelect
-          catalogData={myCatalogData}
+          catalogData={myCatalogDataAll}
           onSelect={catalogId => { dropdownCallback(); this.handleMoveMail(catalogId); }}
         />
       </div>
