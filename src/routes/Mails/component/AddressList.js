@@ -25,13 +25,15 @@ class AddressList extends Component {
     this.state = {
       innerContact: this.props.innerContact,
       queryString: '',
-      listData: []
+      listData: [],
+      foldAddress: true
     };
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      innerContact: nextProps.innerContact
+      innerContact: nextProps.innerContact,
+      foldAddress: true
     });
   }
 
@@ -147,6 +149,12 @@ class AddressList extends Component {
     this.setState({ queryString: '' }, this.queryListData(''));
   }
 
+  setFoldAddress() {
+    this.setState({
+      foldAddress: false
+    });
+  }
+
   render() {
     const { queryString } = this.state;
     const customerContact = this.props.customerContact && this.props.customerContact instanceof Array && this.props.customerContact.sort(compare);
@@ -183,7 +191,15 @@ class AddressList extends Component {
                     <ul className={Styles.recentContactsWrap}>
                       {
                         this.props.recentContact && this.props.recentContact instanceof Array && this.props.recentContact.map((item, index) => {
-                          return <li key={index} onClick={this.selectContact.bind(this, item)}>{item.name ? item.name : item.emailaddress}</li>;
+                          if (index === 9 && this.state.foldAddress) {
+                            return (
+                              <li key={index} onClick={this.setFoldAddress.bind(this)} style={{ textAlign: 'center', fontWeight: 'bold' }}>点击显示更多...</li>
+                            );
+                          } else if (index > 9 && this.state.foldAddress) {
+                            return null;
+                          } else {
+                            return <li key={index} onClick={this.selectContact.bind(this, item)}>{item.name ? item.name : item.emailaddress}</li>;
+                          }
                         })
                       }
                     </ul>

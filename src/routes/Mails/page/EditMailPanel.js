@@ -96,7 +96,7 @@ class EditMailPanel extends Component {
       fileList: [],
       uploadingFiles: [],
       fileUploadLimit: false,
-      UMEditorContent: '<iframe>11</iframe>',
+      UMEditorContent: '',
       fromAddress: this.getDefaultFromAddress(this.props.mailBoxList),
       totalFileSize: 0,
       height: document.body.clientHeight - 60 - 10
@@ -115,21 +115,13 @@ class EditMailPanel extends Component {
   }
 
   componentDidMount() {
-    console.log('asfdjkkkkkkkkkkkkkkfjasldkjfsajfjaslf')
-   // document.getElementById('iframeId').contentWindow.test('袁志荣');
-    //console.log(document.getElementById('iframeId').contentWindow)
     window.addEventListener('resize', this.onWindowResize.bind(this));
-    window.addEventListener('message', this.onMessage.bind(this));
     this.queryMailDetail(this.props.mailId, this.props.type);
   }
 
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.onWindowResize);
-  }
-
-  onMessage(e) {
-    console.log(e);
   }
 
   onWindowResize(e) {
@@ -143,29 +135,34 @@ class EditMailPanel extends Component {
 
   queryMailDetail(mailid, mailBoxList, editMailType) {
     if (mailid) {
-      request('/api/mail/maildetail', {
-        method: 'post', body: JSON.stringify({ mailid: mailid })
-      }).then((result) => {
-        const { data: { maildetail } } = result;
-        this.umEditor.setContent(this.getInitMailContent(maildetail)); //设置初始富文本内容
-        this.setFormData(maildetail, mailBoxList, editMailType);  //设置表单初始数据
+      try {
+        request('/api/mail/maildetail', {
+          method: 'post', body: JSON.stringify({ mailid: mailid })
+        }).then((result) => {
+          const { data: { maildetail } } = result;
+          this.umEditor.setContent(this.getInitMailContent(maildetail)); //设置初始富文本内容
+          this.setFormData(maildetail, mailBoxList, editMailType);  //设置表单初始数据
 
-        if (editMailType === 'replay-attach' || editMailType === 'replay-all-attach' || editMailType === 'send-attach') { //显示附件初始数据
-          this.setState({
-            fileList: maildetail.attachinfo && maildetail.attachinfo instanceof Array && maildetail.attachinfo.map((item) => {
-              return {
-                fileid: item.fileid,
-                filename: item.filename,
-                filelength: 0
-              };
-            })
-          });
-        } else {
-          this.setState({
-            fileList: []
-          });
-        }
-      });
+          if (editMailType === 'replay-attach' || editMailType === 'replay-all-attach' || editMailType === 'send-attach') { //显示附件初始数据
+            this.setState({
+              fileList: maildetail.attachinfo && maildetail.attachinfo instanceof Array && maildetail.attachinfo.map((item) => {
+                return {
+                  fileid: item.fileid,
+                  filename: item.filename,
+                  filelength: 0
+                };
+              })
+            });
+          } else {
+            this.setState({
+              fileList: []
+            });
+          }
+        });
+      } catch (e) {
+        console.error(e);
+        message.error(e);
+      }
     } else {
       this.umEditor.setContent(''); //写邮件  清空富文本内容
       this.setState({
@@ -195,7 +192,6 @@ class EditMailPanel extends Component {
           for (let j=0; j < maildetail.receivers.length; j++) {
             if (mailBoxList[i].accountid === maildetail.receivers[j].address) {
               filterMailAddress = maildetail.receivers[j].address;
-              console.log('0000000000')
               stop = true;
               break;
             }
@@ -206,7 +202,6 @@ class EditMailPanel extends Component {
           }
         }
 
-        console.log(1111111111)
 
         if (maildetail && maildetail.ccers && maildetail.ccers instanceof Array) {
           let stop = false;
@@ -222,7 +217,6 @@ class EditMailPanel extends Component {
           }
         }
 
-        console.log(22222);
 
         if (maildetail && maildetail.bccers && maildetail.bccers instanceof Array) {
           let stop = false;
@@ -445,10 +439,10 @@ class EditMailPanel extends Component {
 
 
   getInitMailContent(mailDetailData) {
-    let sendtime = mailDetailData.sendtime;
+    let senttime = mailDetailData.senttime;
     let sender = mailDetailData.sender;
     let title = mailDetailData.title;
-    let mailbody = mailDetailData.mailbody;
+    let mailbody = mailDetailData.mailbody.replace(/body{/, '.edui-body-container{');
     let receivers = this.getTransformReceivers(mailDetailData.receivers);
     let ccers = this.getTransformReceivers(mailDetailData.ccers);
 
@@ -459,7 +453,7 @@ class EditMailPanel extends Component {
       '<h4 style="white-space: normal;">-------------------<span style="font-size:12px">原始邮件</span>-------------------</h4>' +
       '<h4><span style="font-size:12px"></span>' +
       '<span style="font-size:12px"><strong>发件人: </strong>&quot;' + sender.displayname + '&nbsp; &lt;' + sender.address + '&gt;&quot;;<br/></span>' +
-      '<span style="font-size:12px"><strong>发送时间: </strong>' + sendtime + '<br/></span>' +
+      '<span style="font-size:12px"><strong>发送时间: </strong>' + senttime + '<br/></span>' +
       '<span style="font-size:12px"><strong>收件人: </strong>' + receivers + ';<br/></span>';
 
     if (ccers) {
@@ -607,7 +601,6 @@ class EditMailPanel extends Component {
   }
 
   UMEditorContentChangeHandler(content) {
-    console.log(JSON.stringify(content))
     this.setState({
       UMEditorContent: content
     });
@@ -703,9 +696,6 @@ class EditMailPanel extends Component {
     }
 
 
-   // <div className={Styles.UMEditorWrap}>
-      //<UMEditor style={{ width: '100%', height: this.state.height - formModel.length * 44 - 205 }} useImageBase64 ref={this.umEditorRef} loading={false} onChange={this.UMEditorContentChangeHandler.bind(this)} />
-   // </div>
     return (
       <div className={Styles.editMailWrap} style={{ width: 'calc(100% - 10px)', height: this.state.height, display: visible ? 'block' : 'none' }}>
         <div className={Styles.head}>
