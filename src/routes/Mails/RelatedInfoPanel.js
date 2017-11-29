@@ -188,7 +188,7 @@ class RelatedInfoPanel extends Component {
       }
     }, err => {
       this.setState({ loading: false });
-      message.error(err.message || '获取相关信息失败');
+      message.error('获取邮件详情失败, ' + err.message);
     });
   };
 

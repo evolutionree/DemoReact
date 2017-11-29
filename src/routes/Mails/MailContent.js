@@ -48,8 +48,8 @@ class MailContent extends Component {
   render() {
     const { isPreview, data } = this.props;
     if (!data) return null;
-    const isLoading = data.status === 'loading';
-    const detailData = isLoading ? data.mailInfo : data.maildetail;
+    const isLoaded = data.status === 'loaded';
+    const detailData = isLoaded ? data.maildetail : data.mailInfo;
     const { title, receivers, ccers, receivetime, attachinfo, summary, mailbody, attachcount } = detailData;
     const strPersons = persons => persons && persons.map(item => item.displayname).join(', ');
     return (
