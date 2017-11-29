@@ -2,6 +2,7 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Button } from 'antd';
 import MailContent from '../MailContent';
+import MailActionBar from '../MailActionBar';
 import styles from './MailDetailPanel.less';
 
 class MailDetailPanel extends Component {
@@ -14,16 +15,25 @@ class MailDetailPanel extends Component {
   }
 
   render() {
+    const { status, maildetail, mailInfo } = this.props.mailDetailData || {};
+    const mailData = status === 'loaded' ? maildetail : mailInfo;
+    const actionBarStyle = {
+      padding: '0',
+      fontSize: '14px',
+      display: 'inline-block',
+      verticalAlign: 'middle',
+      lineHeight: '1',
+      marginLeft: '10px'
+    };
     return (
       <div className={styles.wrap} style={{ display: this.props.visible ? 'block' : 'none' }}>
         <div className={styles.head}>
           <Button type="default" icon="left" onClick={this.props.cancel}>
             返回
           </Button>
+          <MailActionBar mails={[mailInfo]} style={actionBarStyle} />
         </div>
-        <MailContent
-          data={this.props.mailDetailData}
-        />
+        <MailContent data={mailData} />
       </div>
     );
   }
@@ -31,16 +41,17 @@ class MailDetailPanel extends Component {
 
 export default connect(
   state => {
-    const { showingModals, mailDetailData } = state.mails;
+    const { showingPanel, mailDetailData, myCatalogDataAll } = state.mails;
     return {
-      visible: /mailDetail/.test(showingModals),
-      mailDetailData
+      visible: /mailDetail/.test(showingPanel),
+      mailDetailData,
+      myCatalogDataAll
     };
   },
   dispatch => {
     return {
       cancel() {
-        dispatch({ type: 'mails/showModals', payload: '' });
+        dispatch({ type: 'mails/putState', payload: { showingPanel: '' } });
       }
     };
   }
