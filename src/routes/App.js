@@ -21,7 +21,7 @@ const App = ({ children, location, siderFold, loading, dispatch, user }) => {
       <AppHeader />
       <AppMenu location={location} />
       <Spin spinning={loading}>
-        <div className={styles.main}>
+        <div className={styles.main} style={{ minHeight: '200px' }}>
           {user.userid !== undefined && children}
         </div>
       </Spin>
