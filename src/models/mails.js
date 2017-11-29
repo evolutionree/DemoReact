@@ -212,12 +212,13 @@ export default {
         message.error(e.message || '获取邮件目录数据失败');
       }
     },
-    *reloadCatalogTree(action, { select, put }) {
+    *reloadCatalogTree({ payload: resetSelected }, { select, put }) {
       const { openedCatalog } = yield select(state => state.mails);
       yield put({
         type: openedCatalog === 'my'
           ? 'queryMyCatalogTree'
-          : openedCatalog === 'dept' ? 'queryDeptCatalogTree' : 'queryUserCatalog'
+          : openedCatalog === 'dept' ? 'queryDeptCatalogTree' : 'queryUserCatalog',
+        payload: resetSelected
       });
     },
     *search({ payload: searchObj }, { put }) {
@@ -301,8 +302,16 @@ export default {
     *saveCatalog({ payload: data }, { call, put }) {
       const isEdit = !!data.recid;
       try {
-        const fn = isEdit ? updateMailCatalog : saveMailCatalog;
-        const params = isEdit ? _.pick(data, ['recid', 'recname']) : _.pick(data, ['pid', 'recname']);
+        let fn;
+        let params;
+        if (isEdit) {
+          fn = updateMailCatalog;
+          params = _.pick(data, ['recid', 'recname']);
+          params.newpid = data.pid;
+        } else {
+          fn = saveMailCatalog;
+          params = _.pick(data, ['pid', 'recname']);
+        }
         yield put({ type: 'modalPending', payload: true });
         yield call(fn, params);
         message.success(isEdit ? '编辑成功' : '新增成功');
@@ -311,6 +320,7 @@ export default {
         yield put({ type: 'updateMyCatalogData' });
       } catch (e) {
         message.error(e.message || (isEdit ? '编辑失败' : '编辑成功'));
+        yield put({ type: 'modalPending', payload: false });
       }
     },
     *delCatalog({ payload: catalogId }, { select, call, put }) {
@@ -318,7 +328,7 @@ export default {
         const { selectedCatalogNode } = yield select(state => state.mails);
         yield call(delMailCatalog, selectedCatalogNode.recid);
         message.success('删除成功');
-        yield put({ type: 'reloadCatalogTree' });
+        yield put({ type: 'reloadCatalogTree', payload: true });
       } catch (e) {
         message.error(e.message || '删除失败');
       }
@@ -484,6 +494,7 @@ export default {
         yield call(transferMailCatalog, params);
         message.success('转移成功');
         yield put({ type: 'showModals', payload: '' });
+        yield put({ type: 'reloadCatalogTree', payload: true });
       } catch (e) {
         message.error(e.message || '转移失败');
         yield put({ type: 'modalPending', payload: false });

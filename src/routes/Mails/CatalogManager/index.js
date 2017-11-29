@@ -9,8 +9,8 @@ import ImgIcon from '../../../components/ImgIcon';
 import Search from '../../../components/Search';
 
 const catTitle = {
-  my: '我的邮箱',
-  dept: '我下属的邮箱',
+  my: '邮件文件夹',
+  dept: '下属员工',
   user: '内部往来'
 };
 

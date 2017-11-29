@@ -65,11 +65,11 @@ export async function saveMailCatalog(params) {
 /**
  * 编辑目录文件夹
  * @param params
- * { recid, recname }
+ * { recid, recname, newpid }
  * @returns {Promise.<Object>}
  */
 export async function updateMailCatalog(params) {
-  return request('api/mailset/updatepersonalcatalog', {
+  return request('api/mailset/movecatalog', {
     method: 'post',
     body: JSON.stringify(params)
   });
