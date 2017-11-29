@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import classnames from 'classnames';
 import ImgIcon from '../../components/ImgIcon';
 import TinyPager from '../../components/TinyPager';
+import { formatTime} from '../../utils';
 import styles from './styles.less';
 
 const Column = Table.Column;
@@ -70,8 +71,8 @@ class MailList extends Component {
           />
           <Column
             title="时间"
-            dataIndex="sendtime"
-            render={val => val}
+            dataIndex="senttime"
+            render={(val, record) => formatTime(record.receivedtime) || formatTime(record.senttime)}
           />
         </Table>
         <TinyPager

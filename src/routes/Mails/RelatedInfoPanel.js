@@ -15,7 +15,7 @@ import {
   queryMailDetail
 } from '../../services/mails';
 import { DynamicFormViewLight } from '../../components/DynamicForm';
-import { formatFileSize } from '../../utils';
+import { formatFileSize, formatTime } from '../../utils';
 
 const Column = Table.Column;
 
@@ -369,7 +369,7 @@ class RelatedInfoPanel extends Component {
                     width={34}
                   />
                   <Column title="主题" dataIndex="title" />
-                  <Column title="日期" dataIndex="senttime" />
+                  <Column title="日期" dataIndex="senttime" render={(val, record) => formatTime(record.receivedtime) || formatTime(record.senttime)} />
                 </Table>
                 <TinyPager
                   noText
@@ -417,7 +417,7 @@ class RelatedInfoPanel extends Component {
                 >
                   <Column title="附件名" dataIndex="filename" />
                   <Column title="大小" dataIndex="filesize" render={formatFileSize} />
-                  <Column title="日期" dataIndex="receivedtime" render={val => val} />
+                  <Column title="日期" dataIndex="receivedtime" render={(val, record) => formatTime(record.receivedtime) || formatTime(record.senttime)} />
                   <Column title="操作" dataIndex="mongoid" render={mongoid => (
                     <a href={`/api/fileservice/download?fileid=${mongoid}`} download>下载</a>
                   )} />
@@ -448,7 +448,7 @@ class RelatedInfoPanel extends Component {
                   <Column title="工号" dataIndex="userid" />
                   <Column title="接收人" dataIndex="username" />
                   <Column title="转发来源" dataIndex="fromuser" />
-                  <Column title="日期" dataIndex="transfertime" />
+                  <Column title="日期" dataIndex="transfertime" render={formatTime} />
                 </Table>
                 <TinyPager
                   noText
