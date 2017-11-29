@@ -96,7 +96,7 @@ class EditMailPanel extends Component {
       fileList: [],
       uploadingFiles: [],
       fileUploadLimit: false,
-      UMEditorContent: '',
+      UMEditorContent: '<iframe>11</iframe>',
       fromAddress: this.getDefaultFromAddress(this.props.mailBoxList),
       totalFileSize: 0,
       height: document.body.clientHeight - 60 - 10
@@ -115,12 +115,21 @@ class EditMailPanel extends Component {
   }
 
   componentDidMount() {
+    console.log('asfdjkkkkkkkkkkkkkkfjasldkjfsajfjaslf')
+   // document.getElementById('iframeId').contentWindow.test('袁志荣');
+    //console.log(document.getElementById('iframeId').contentWindow)
     window.addEventListener('resize', this.onWindowResize.bind(this));
+    window.addEventListener('message', this.onMessage.bind(this));
     this.queryMailDetail(this.props.mailId, this.props.type);
   }
 
+
   componentWillUnmount() {
     window.removeEventListener('resize', this.onWindowResize);
+  }
+
+  onMessage(e) {
+    console.log(e);
   }
 
   onWindowResize(e) {
@@ -598,6 +607,7 @@ class EditMailPanel extends Component {
   }
 
   UMEditorContentChangeHandler(content) {
+    console.log(JSON.stringify(content))
     this.setState({
       UMEditorContent: content
     });
@@ -691,7 +701,11 @@ class EditMailPanel extends Component {
     if (editMailType === 'editMail' || editMailType === 'replay' || editMailType === 'replay-attach' || editMailType === 'reply-all' || editMailType === 'replay-all-attach' || editMailType === 'send' || editMailType === 'send-attach') {
       visible = true;
     }
-    console.log(this.state.fromAddress)
+
+
+   // <div className={Styles.UMEditorWrap}>
+      //<UMEditor style={{ width: '100%', height: this.state.height - formModel.length * 44 - 205 }} useImageBase64 ref={this.umEditorRef} loading={false} onChange={this.UMEditorContentChangeHandler.bind(this)} />
+   // </div>
     return (
       <div className={Styles.editMailWrap} style={{ width: 'calc(100% - 10px)', height: this.state.height, display: visible ? 'block' : 'none' }}>
         <div className={Styles.head}>
