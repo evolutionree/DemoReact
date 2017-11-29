@@ -20,9 +20,9 @@ class MainLayout extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pleft: 25,
-      pright: 25,
-      pbottom: 50,
+      pleft: 0.25,
+      pright: 0.25,
+      pbottom: 0.50,
       showBottom: true,
       showRight: true
     };
