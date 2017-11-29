@@ -227,7 +227,7 @@ class Mails extends Component {
   };
 
   getMailId() {
-    if (this.props.showingModals === 'editMail') {
+    if (this.props.showingModals === 'editMail') { //清空id  新增邮件没有邮件详情可查（editMailPanel通过判断mailId 是否存在 确定为新增邮件还是 转发回复）
       return '';
     }
     const { mailSelected } = this.props;
