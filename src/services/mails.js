@@ -167,7 +167,7 @@ export async function markMails(params) {
   } else if (mark === 2 || mark === 3) {
     return request('api/mail/readmail', {
       method: 'post',
-      body: JSON.stringify({ mailids, recstatus: mark === 2 ? 0 : 1 })
+      body: JSON.stringify({ mailids, isread: mark === 2 ? 0 : 1 })
     });
   }
   return Promise.reject('参数错误');
