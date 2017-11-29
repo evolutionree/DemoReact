@@ -75,7 +75,7 @@ class CatalogManager extends Component {
             <Search
               mode="icon"
               placeholder={openedCatalog === 'my' ? '搜索文件夹' : '搜索人员'}
-              value={catSearchKey}
+              value={catSearchKey[openedCatalog] || ''}
               onSearch={this.onSearch}
             />
           </div>}
