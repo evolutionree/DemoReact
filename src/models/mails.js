@@ -265,10 +265,11 @@ export default {
           };
           result = yield call(queryHistoryUserMails, params);
         }
+        const mailList = result.data.datalist.map(item => ({ ...item, catalogtype: selectedCatalogNode.catalogtype }));
         yield put({
           type: 'putState',
           payload: {
-            mailList: result.data.datalist,
+            mailList,
             mailTotal: result.data.pageinfo.totalcount,
             mailSelected: []
           }

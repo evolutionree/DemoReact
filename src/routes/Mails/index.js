@@ -49,33 +49,18 @@ class Mails extends Component {
   }
 
   onAction = type => {
-    const { mailSelected, selectedCatalogNode } = this.props;
-    if (type === 'editMail') {
-      this.props.openEditMail(type);
-      return;
-    }
-    if (type === 'transfer-catalog') {
-      if (!selectedCatalogNode) return message.error('请选择要转移的邮件目录');
-      if (selectedCatalogNode.catalogtype !== 'my') return message.error('只允许选择自己的邮件目录');
-      if (selectedCatalogNode.ctype < 2000) return message.error('只允许转移收件箱里的邮件目录');
-      this.props.showModals('transferCatalog');
-      return;
-    }
-    if (!mailSelected.length) {
-      return message.error('请选择邮件');
-    }
+    const { mailSelected } = this.props;
+    const hasDeptCatalogMail = mailSelected.some(item => item.catalogtype === 'dept');
+    if (type === 'editMail') return this.props.openEditMail(type);
+    if (!mailSelected.length) return message.error('请选择邮件');
     if (type === 'replay' || type === 'replay-attach' || type === 'reply-all' || type === 'replay-all-attach' || type === 'send' || type === 'send-attach') {
-      if (mailSelected.length === 1) {
-        this.props.openEditMail(type);
-        return;
-      } else {
-        return message.warning('请选择一封邮件进行操作');
-      }
+      if (hasDeptCatalogMail) return message.error('只能对属于自己的邮件执行此项操作');
+      if (mailSelected.length === 1) return this.props.openEditMail(type);
+      return message.warning('请选择一封邮件进行操作');
     }
+    if (type === 'distribute') return this.props.showModals('distributeMails');
+    if (hasDeptCatalogMail) return message.error('只能对属于自己的邮件执行此项操作');
     switch (type) {
-      case 'distribute':
-        this.props.showModals('distributeMails');
-        break;
       case 'delete':
         Modal.confirm({
           title: '确定要删除选中的邮件吗？',
@@ -113,6 +98,9 @@ class Mails extends Component {
     const { mailSelected } = this.props;
     if (!mailSelected.length) {
       return message.error('请选择邮件');
+    }
+    if (mailSelected.some(item => item.catalogtype === 'dept')) {
+      return message.error('只能对属于自己的邮件执行此项操作');
     }
     this.props.moveMails(mailSelected, catalogId);
   };
@@ -179,7 +167,6 @@ class Mails extends Component {
           <ActionButton icon="share-g" actions="distribute" onAction={this.onAction}>内部分发</ActionButton>
           <ActionButton icon="delete" actions="delete" onAction={this.onAction}>删除</ActionButton>
           <ActionButton icon="delete-danger" actions="delete-completely" onAction={this.onAction}>彻底删除</ActionButton>
-          {/*<ActionButton icon="transfer" actions="transfer-catalog" onAction={this.onAction}>转移</ActionButton>*/}
           <ActionButton
             icon="mark"
             actions={[
