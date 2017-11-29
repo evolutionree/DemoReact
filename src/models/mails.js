@@ -185,6 +185,15 @@ export default {
         message.error(e.message || '获取邮件目录数据失败');
       }
     },
+    *updateMyCatalogData(action, { call, put }) {
+      try {
+        const { data } = yield call(queryMailCatalog, { catalogname: '' });
+        yield put({ type: 'putState', payload: { myCatalogDataAll: data } });
+      } catch (e) {
+        console.error('更新我的邮件目录失败', e);
+        // message.error(e.message || '获取邮件目录数据失败');
+      }
+    },
     *queryDeptCatalogTree(action, { select, call, put }) {
       try {
         const { catSearchKey } = yield select(state => state.mails);
@@ -299,6 +308,7 @@ export default {
         message.success(isEdit ? '编辑成功' : '新增成功');
         yield put({ type: 'showModals', payload: '' });
         yield put({ type: 'reloadCatalogTree' });
+        yield put({ type: 'updateMyCatalogData' });
       } catch (e) {
         message.error(e.message || (isEdit ? '编辑失败' : '编辑成功'));
       }

@@ -96,7 +96,6 @@ class CatalogManager extends Component {
               data={myCatalogData}
               selected={selected.recid}
               onSelect={(id, node) => this.props.selectCatalog(node, 'my')}
-              searchString={catSearchKey}
             />
           </Collapse.Panel>
           <Collapse.Panel
