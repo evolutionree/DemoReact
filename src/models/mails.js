@@ -464,6 +464,7 @@ export default {
           deptids: depts,
           TransferUserIds: users
         };
+        yield put({ type: 'modalPending', payload: true });
         yield call(distributeMails, params);
         message.success('内部分发成功');
         yield put({ type: 'showModals', payload: '' });
@@ -479,6 +480,7 @@ export default {
           newuserid: userId,
           recid: selectedCatalogNode.recid
         };
+        yield put({ type: 'modalPending', payload: true });
         yield call(transferMailCatalog, params);
         message.success('转移成功');
         yield put({ type: 'showModals', payload: '' });

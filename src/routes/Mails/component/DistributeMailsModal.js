@@ -59,6 +59,7 @@ class DistributeMailsModal extends Component {
           visible={this.props.visible}
           onCancel={this.onFormModalCancel}
           onOk={this.onFormModalConfirm}
+          confirmLoading={this.props.modalPending}
         >
           <ComplexForm ref={(ref) => this.ComplexFormRef = ref} model={model} />
         </Modal>
