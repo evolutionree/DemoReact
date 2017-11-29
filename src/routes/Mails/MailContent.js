@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { Icon } from 'antd';
 import ImgIcon from '../../components/ImgIcon';
+import { formatTime } from '../../utils';
 import styles from './MailContent.less';
 
 class MailContent extends Component {
@@ -48,9 +49,7 @@ class MailContent extends Component {
   render() {
     const { isPreview, data } = this.props;
     if (!data) return null;
-    const isLoaded = data.status === 'loaded';
-    const detailData = isLoaded ? data.maildetail : data.mailInfo;
-    const { title, receivers, ccers, receivetime, attachinfo, summary, mailbody, attachcount } = detailData;
+    const { title, sender, receivers, ccers, bccers, receivedtime, senttime, attachinfo, summary, mailbody, attachcount } = data;
     const strPersons = persons => persons && persons.map(item => item.displayname).join(', ');
     return (
       <div className={styles.wrap}>
@@ -63,16 +62,24 @@ class MailContent extends Component {
         <div className={styles.title}>{title}</div>
         {this.state.headerVisible && <div className={styles.header}>
           <p className={styles.meta}>
+            <span>发件人</span>
+            <span>{strPersons(sender && [sender])}</span>
+          </p>
+          <p className={styles.meta}>
             <span>收件人</span>
             <span>{strPersons(receivers)}</span>
           </p>
-          <p className={styles.meta}>
+          {!!(ccers && ccers.length) && <p className={styles.meta}>
             <span>抄送人</span>
             <span>{strPersons(ccers)}</span>
-          </p>
+          </p>}
+          {bccers && <p className={styles.meta}>
+            <span>密送人</span>
+            <span>{strPersons(bccers)}</span>
+          </p>}
           <p className={styles.meta}>
             <span>时&nbsp;&nbsp;&nbsp;&nbsp;间</span>
-            <span>{receivetime}</span>
+            <span>{formatTime(receivedtime) || formatTime(senttime)}</span>
           </p>
           <div className={styles.stuff}>
             {isPreview && (

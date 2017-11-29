@@ -59,6 +59,17 @@ export function formatFileSize(bitLength) {
   }
 }
 
+/**
+ * 格式化时间（邮件）
+ * @param time
+ * @returns {string}
+ */
+export function formatTime(time) {
+  if (!time || time === '0001-01-01 00:00:00') return '';
+  moment.locale('zh-cn');
+  return moment(time, 'YYYY-MM-DD HH:mm:ss').calendar();
+}
+
 export function getCurrentMonthFirstDay() {
   return moment().startOf('month').format('YYYY-MM-DD');
 }

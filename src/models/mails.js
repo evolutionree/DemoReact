@@ -62,6 +62,8 @@ export default {
     editEmailFormData: null,
     focusTargetName: '',
     showingModals: '',
+    showingPanel: '',
+    modalMailsData: [],
     modalPending: false,
     editEmailPageFormModel: null,
     editEmailPageBtn: null
@@ -79,6 +81,7 @@ export default {
   },
   effects: {
     *init(action, { put }) {
+      yield put({ type: 'app/toggleSider', payload: true });
       yield put({ type: 'syncMails__' });
       yield put({ type: 'queryMyCatalogTree', payload: true });
       yield put({ type: 'fetchMailContacts' });
@@ -265,10 +268,11 @@ export default {
           };
           result = yield call(queryHistoryUserMails, params);
         }
+        const mailList = result.data.datalist.map(item => ({ ...item, catalogtype: selectedCatalogNode.catalogtype }));
         yield put({
           type: 'putState',
           payload: {
-            mailList: result.data.datalist,
+            mailList,
             mailTotal: result.data.pageinfo.totalcount,
             mailSelected: []
           }
@@ -453,7 +457,7 @@ export default {
       yield put({
         type: 'putState',
         payload: {
-          showingModals: 'mailDetail'
+          showingPanel: 'mailDetail'
         }
       });
     },
@@ -469,10 +473,10 @@ export default {
       }
     },
     *distributeMails({ payload: { users, depts } }, { select, call, put }) {
-      const { mailSelected } = yield select(state => state.mails);
+      const { modalMailsData } = yield select(state => state.mails);
       try {
         const params = {
-          mailids: mailSelected.map(i => i.mailid),
+          mailids: modalMailsData.map(i => i.mailid),
           deptids: depts,
           TransferUserIds: users
         };
@@ -549,7 +553,9 @@ export default {
         editEmailFormData: null,
         focusTargetName: '',
         showingModals: '',
+        showingPanel: '',
         modalPending: false,
+        modalMailsData: [],
         editEmailPageFormModel: null,
         editEmailPageBtn: null
       };
