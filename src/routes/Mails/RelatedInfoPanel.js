@@ -69,6 +69,7 @@ class RelatedInfoPanel extends Component {
       loading: false,
       sender: null,
       custInfo: null,
+      contacts: null,
       mailTypes: mailTypes || ['1', '2'],
       mailList: null,
       mailTotal: 0,
@@ -132,6 +133,7 @@ class RelatedInfoPanel extends Component {
       currentTab: '1',
       sender: null,
       custInfo: null,
+      contacts: null,
       mailList: null,
       mailTotal: 0,
       mailPageIndex: 1,
@@ -177,10 +179,11 @@ class RelatedInfoPanel extends Component {
   fetchRelInfo = () => {
     this.setState({ loading: true });
     queryMailDetail(this.props.mailCurrent.mailid).then(result => {
-      const { sender, custinfo } = result.data;
+      const { sender, custinfo, contacts } = result.data;
       this.setState({
         sender,
         custInfo: custinfo,
+        contacts,
         loading: false
       });
       if (custinfo && custinfo.length) {
@@ -278,7 +281,7 @@ class RelatedInfoPanel extends Component {
   };
 
   renderRelatedInfo = () => {
-    const { sender, custInfo } = this.state;
+    const { sender, custInfo, contacts } = this.state;
     if (!(sender && sender.length) && !(custInfo && custInfo.length)) {
       return <div style={{ padding: '10px 15px', color: '#999' }}>暂无数据</div>;
     }
@@ -297,6 +300,12 @@ class RelatedInfoPanel extends Component {
             fields={this.state.custProtocols[custInfo[0].rectype] || []}
             value={custInfo[0]}
           />
+        </div>}
+        {contacts && contacts.length > 0 && <div className={styles.infobox}>
+          <div className={styles.infotitle}>客户联系人信息</div>
+          <div className={styles.infometa}><span>姓名：</span><span>{contacts[0].recname}</span></div>
+          <div className={styles.infometa}><span>电话：</span><span>{contacts[0].phone}</span></div>
+          <div className={styles.infometa}><span>邮箱：</span><span>{contacts[0].email}</span></div>
         </div>}
       </div>
     );
