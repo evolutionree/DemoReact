@@ -22,11 +22,11 @@ class MailActionBar extends Component {
   onAction = type => {
     const mailSelected = this.props.mails;
     const hasDeptCatalogMail = mailSelected.some(item => item.catalogtype === 'dept');
-    if (type === 'editMail') return this.props.openEditMail(type, mailSelected);
+    if (type === 'editMail') return this.props.openEditMail(type, mailSelected, '');
     if (!mailSelected.length) return message.error('请选择邮件');
     if (type === 'replay' || type === 'replay-attach' || type === 'reply-all' || type === 'replay-all-attach' || type === 'send' || type === 'send-attach') {
       if (hasDeptCatalogMail) return message.error('只能对属于自己的邮件执行此项操作');
-      if (mailSelected.length === 1) return this.props.openEditMail(type, mailSelected);
+      if (mailSelected.length === 1) return this.props.openEditMail(type, mailSelected, mailSelected[0].mailid);
       return message.warning('请选择一封邮件进行操作');
     }
     if (type === 'distribute') return this.props.showModals('distributeMails', mailSelected);
@@ -155,9 +155,9 @@ export default connect(
   },
   dispatch => {
     return {
-      openEditMail(showModalsName, mails) {
-        dispatch({ type: 'mails/putState', payload: { modalMailsData: mails, editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null } });
-        dispatch({ type: 'mails/showModals', payload: showModalsName });
+      openEditMail(showModalsName, mails, currentMailId) {
+        dispatch({ type: 'mails/putState',
+          payload: { showingPanel: showModalsName, currentMailId: currentMailId, modalMailsData: mails, editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null } });
       },
       delMails(mails, completely) {
         dispatch({ type: 'mails/delMails', payload: { mails, completely } });

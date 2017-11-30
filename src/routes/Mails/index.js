@@ -87,17 +87,6 @@ class Mails extends Component {
     );
   };
 
-  getMailId() {
-    if (this.props.showingModals === 'editMail') { //清空id  新增邮件没有邮件详情可查（editMailPanel通过判断mailId 是否存在 确定为新增邮件还是 转发回复）
-      return '';
-    }
-    const { mailSelected } = this.props;
-    if (mailSelected && mailSelected instanceof Array && mailSelected.length === 1) {
-      return mailSelected[0].mailid;
-    }
-    return '';
-  }
-
   render() {
     return (
       <div style={{ height: this.state.height - 60, padding: '10px 10px 0' }}>
@@ -107,8 +96,8 @@ class Mails extends Component {
           midtop={this.renderMidtop()}
           midbottom={this.renderMidbottom()}
         />
-        <EditMailPanel type={this.props.showingModals} mailId={this.getMailId()} />
-        <SendMailSuccess visible={this.props.showingModals === 'sendMailSuccess'} />
+        <EditMailPanel type={this.props.showingPanel} mailId={this.props.currentMailId} />
+        <SendMailSuccess visible={this.props.showingPanel === 'sendMailSuccess'} />
         <MailDetailPanel />
         <DistributeMailsModal />
         <TransferCatalogModal />

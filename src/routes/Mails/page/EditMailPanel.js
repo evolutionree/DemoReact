@@ -481,7 +481,7 @@ class EditMailPanel extends Component {
   }
 
   closePanel() {
-    this.props.dispatch({ type: 'mails/putState', payload: { showingModals: '' } });
+    this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: '' } });
   }
 
   changeFormModal(type) {
