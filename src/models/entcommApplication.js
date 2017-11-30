@@ -325,7 +325,9 @@ export default {
         currItems: [],
         showModals: '',
         modalPending: false,
-        simpleSearchKey: 'recname'
+        simpleSearchKey: 'recname',
+        extraButtonData: [], //页面动态 按钮数据源
+        extraToolbarData: [] //页面toolbar 动态按钮数据源
       };
     }
   }
