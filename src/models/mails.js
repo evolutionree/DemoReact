@@ -66,7 +66,8 @@ export default {
     modalMailsData: [],
     modalPending: false,
     editEmailPageFormModel: null,
-    editEmailPageBtn: null
+    editEmailPageBtn: null,
+    currentMailId: ''
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -496,7 +497,7 @@ export default {
         yield call(sendemail, submitData);
         yield put({
           type: 'putState',
-          payload: { showingModals: 'sendMailSuccess', editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null }
+          payload: { showingPanel: 'sendMailSuccess', editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null }
         });
       } catch (e) {
         message.error(e.message || '发送邮件失败');
@@ -587,7 +588,8 @@ export default {
         modalPending: false,
         modalMailsData: [],
         editEmailPageFormModel: null,
-        editEmailPageBtn: null
+        editEmailPageBtn: null,
+        currentMailId: ''
       };
     }
   }

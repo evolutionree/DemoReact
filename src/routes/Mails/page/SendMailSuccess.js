@@ -31,11 +31,11 @@ class SendMailSuccess extends Component {
   }
 
   closePage() {
-    this.props.dispatch({ type: 'mails/putState', payload: { showingModals: '' } });
+    this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: '' } });
   }
 
   openEditEmailPanel() {
-    this.props.dispatch({ type: 'mails/putState', payload: { showingModals: 'editMail' } });
+    this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: 'editMail' } });
   }
 
   render() {
