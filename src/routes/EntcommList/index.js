@@ -151,7 +151,7 @@ function EntcommList({
       return { label: item.title, handler: extraToolbarClickHandler.bind(this, item), single: single, multiple: multiple, show: true };
   });
   ajaxToolbarActions = ajaxToolbarActions || [];
-
+console.log(111);
   return (
     <Page title={entityName}>
       <Toolbar
