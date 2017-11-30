@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
-import { getGeneralListProtocol, getListData, delEntcomm, transferEntcomm,getEntcommDetail } from '../services/entcomm';
+import { getGeneralListProtocol, getListData, delEntcomm, transferEntcomm, getFunctionbutton, extraToolbarClickSendData, getEntcommDetail } from '../services/entcomm';
 import { queryMenus, queryEntityDetail, queryTypes, queryListFilter} from '../services/entity';
 
 export default {
@@ -20,7 +20,9 @@ export default {
     showModals: '',
     modalPending: false,
     simpleSearchKey: 'recname',
-    copyData: {}
+    copyData: {},
+    extraButtonData: [], //页面动态 按钮数据源
+    extraToolbarData: [] //页面toolbar 动态按钮数据源
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -57,6 +59,9 @@ export default {
         // 获取协议
         const { data: protocol } = yield call(getGeneralListProtocol, { typeId: entityId });
         yield put({ type: 'protocol', payload: protocol });
+
+        // 获取页面操作按钮
+        yield put({ type: 'queryFuntionbutton__', payload: {} });
 
         // 获取下拉菜单
         const { data: { rulemenu } } = yield call(queryMenus, entityId);
@@ -160,6 +165,17 @@ export default {
         message.error(e.message || '获取列表数据失败');
       }
     },
+    *queryFuntionbutton__({ payload }, { select, call, put }) {
+      const { entityId, currItems } = yield select(state => state.entcommList);
+      try {
+        const { data: functionbutton } = yield call(getFunctionbutton, { entityid: entityId, RecIds: currItems.map((item) => item.recid) });
+        const extraButtonData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'ShowModals');
+        const extraToolbarData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'CallService' || item.buttoncode === 'CallService_showModal');
+        yield put({ type: 'putState', payload: { extraButtonData, extraToolbarData } });
+      } catch (e) {
+        message.error(e.message);
+      }
+    },
     *addDone(action, { select, put }) {
       yield put({ type: 'showModals', payload: '' });
       const { pageIndex } = yield select(state => state.entcommList.queries);
@@ -214,6 +230,21 @@ export default {
       } catch (e) {
         yield put({ type: 'modalPending', payload: false });
         message.error(e.message || '转移失败');
+      }
+    },
+    *extraToolbarClick({ payload: item }, { select, call, put }) {
+      const { currItems } = yield select(state => state.entcommList);
+      let params = {};
+      params = {
+        Recids: currItems.map(item => item.recid),
+        ...item.extradata
+      };
+      try {
+        yield call(extraToolbarClickSendData, item.routepath, params);
+        yield put({ type: 'queryList' });
+        message.success('更新成功');
+      } catch (e) {
+        message.error(e.message);
       }
     }
   },
@@ -304,7 +335,9 @@ export default {
         showModals: '',
         modalPending: false,
         simpleSearchKey: 'recname',
-        copyData: {}
+        copyData: {},
+        extraButtonData: [], //页面动态 按钮数据源
+        extraToolbarData: [] //页面toolbar 动态按钮数据源
       };
     }
   }
