@@ -424,7 +424,9 @@ class RelatedInfoPanel extends Component {
                   dataSource={this.state.attachList || []}
                   pagination={false}
                 >
-                  <Column title="附件名" dataIndex="filename" />
+                  <Column title="附件名" dataIndex="filename" render={val => (
+                    <span title={val} style={{ display: 'block', maxWidth: '270px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{val}</span>
+                  )} />
                   <Column title="大小" dataIndex="filesize" render={formatFileSize} />
                   <Column title="日期" dataIndex="receivedtime" render={(val, record) => formatTime(record.receivedtime) || formatTime(record.senttime)} />
                   <Column title="操作" dataIndex="mongoid" render={mongoid => (
