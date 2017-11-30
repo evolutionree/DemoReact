@@ -66,8 +66,18 @@ export function formatFileSize(bitLength) {
  */
 export function formatTime(time) {
   if (!time || time === '0001-01-01 00:00:00') return '';
-  moment.locale('zh-cn');
-  return moment(time, 'YYYY-MM-DD HH:mm:ss').calendar();
+  const mtime = moment(time);
+  if (!mtime.isValid()) return '';
+  const now = moment();
+  if (mtime.isSame(now, 'day')) {
+    return '今天' + mtime.format('HH:mm');
+  } else if (mtime.isSame(now.subtract(1, 'd'), 'day')) {
+    return '昨天' + mtime.format('HH:mm');
+  } else {
+    const days = ['日', '一', '二', '三', '四', '五', '六'];
+    moment.locale('zh-cn');
+    return mtime.format(`MM-DD(周${days[mtime.day()]})`);
+  }
 }
 
 export function getCurrentMonthFirstDay() {
