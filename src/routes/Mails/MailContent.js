@@ -128,7 +128,7 @@ class MailContent extends Component {
                    onClick={isPreview ? this.showMailDetail : this.toggleAttachments}>查看附件</a>
               </p>
             )}
-            {this.state.attachmentsVisible && data.status === 'loaded' && (
+            {this.state.attachmentsVisible && (
               <ul className={styles.attachlist} style={{ paddingLeft: isPreview ? '170px' : '70px' }}>
                 {(attachinfo || []).map(item => (
                   <li key={item.fileid}>
