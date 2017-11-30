@@ -73,8 +73,10 @@ export default {
       return history.listen(location => {
         if (location.pathname === '/mails') {
           dispatch({ type: 'init' });
+          dispatch({ type: 'app/putState', payload: { noMinWidth: true } });
         } else {
           dispatch({ type: 'resetState' });
+          dispatch({ type: 'app/putState', payload: { noMinWidth: false } });
         }
       });
     }
