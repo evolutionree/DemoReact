@@ -15,6 +15,7 @@ class MailDetailPanel extends Component {
   }
 
   render() {
+    if (!this.props.visible) return null;
     const { status, maildetail, mailInfo } = this.props.mailDetailData || {};
     const mailData = status === 'loaded' ? maildetail : mailInfo;
     const actionBarStyle = {

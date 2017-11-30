@@ -26,7 +26,8 @@ class MailContent extends Component {
     super(props);
     this.state = {
       attachmentsVisible: false,
-      headerVisible: true
+      headerVisible: true,
+      iframeHeight: 100
     };
   }
 
@@ -51,6 +52,21 @@ class MailContent extends Component {
 
   showMailDetail = () => {
     this.props.onShowDetail(this.props.data);
+  };
+
+  onIframeLoad = (event) => {
+    const iframe = event.target;
+    const idoc = (iframe.contentWindow || iframe.contentDocument.parentWindow).document;
+    let height = 300;
+    // if (idoc.body) {
+    //   height = Math.max(idoc.body.scrollHeight, idoc.body.offsetHeight);
+    // } else if (idoc.documentElement) {
+    //   height = Math.max(idoc.documentElement.scrollHeight, idoc.documentElement.offsetHeight);
+    // }
+    if (idoc.documentElement) {
+      height = idoc.documentElement.offsetHeight;
+    }
+    this.setState({ iframeHeight: height });
   };
 
   render() {
@@ -126,7 +142,18 @@ class MailContent extends Component {
             )}
           </div>
         </div>}
-        <div className={styles.body} dangerouslySetInnerHTML={{ __html: mailbody || summary }} />
+        {/*<div className={styles.body} dangerouslySetInnerHTML={{ __html: mailbody || summary }} />*/}
+        <div className={styles.iframewrap}>
+          <iframe
+            className={styles.iframe}
+            frameBorder={0}
+            scrolling="no"
+            height={this.state.iframeHeight}
+            width="100%"
+            srcDoc={mailbody || summary}
+            onLoad={this.onIframeLoad}
+          />
+        </div>
       </div>
     );
   }
