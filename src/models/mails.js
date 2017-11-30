@@ -74,8 +74,10 @@ export default {
       return history.listen(location => {
         if (location.pathname === '/mails') {
           dispatch({ type: 'init' });
+          dispatch({ type: 'app/putState', payload: { noMinWidth: true } });
         } else {
           dispatch({ type: 'resetState' });
+          dispatch({ type: 'app/putState', payload: { noMinWidth: false } });
         }
       });
     }
@@ -389,6 +391,33 @@ export default {
         message.error(e.message || '标记失败');
       }
     },
+    *tagMailsInDetail__({ payload: tag }, { select, call, put }) {
+      try {
+        const { mailDetailData } = yield select(state => state.mails);
+        const params = {
+          mailids: mailDetailData.mailId,
+          mark: tag
+        };
+        yield call(markMails, params);
+
+        // 更新数据
+        const newMailDetailData = {
+          ...mailDetailData,
+          mailInfo: { ...mailDetailData.mailInfo, istag: tag }
+        };
+        if (newMailDetailData.maildetail) {
+          newMailDetailData.maildetail = { ...mailDetailData.maildetail, istag: tag };
+        }
+        yield put({
+          type: 'putState',
+          payload: {
+            mailDetailData: newMailDetailData
+          }
+        });
+      } catch (e) {
+        message.error(e.message || '标记失败');
+      }
+    },
     *mailPreview__({ payload: mail }, { select, call, put }) {
       const { mailDetailData } = yield select(state => state.mails);
       if (mailDetailData && mailDetailData.mailId === mail.mailid
@@ -427,6 +456,7 @@ export default {
         const { data } = yield call(queryMailDetail, mail.mailid);
         const { mailDetailData: { mailId } } = yield select(state => state.mails);
         if (mailId !== mail.mailid) return;
+        data.maildetail.catalogtype = mail.catalogtype;
         yield put({
           type: 'putState',
           payload: {

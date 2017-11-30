@@ -1,7 +1,9 @@
 import React, { PropTypes, Component } from 'react';
-import { Icon } from 'antd';
+import { Icon, message } from 'antd';
+import { connect } from 'dva';
 import ImgIcon from '../../components/ImgIcon';
 import { formatTime } from '../../utils';
+import { markMails } from '../../services/mails';
 import styles from './MailContent.less';
 
 class MailContent extends Component {
@@ -24,7 +26,8 @@ class MailContent extends Component {
     super(props);
     this.state = {
       attachmentsVisible: false,
-      headerVisible: true
+      headerVisible: true,
+      iframeHeight: 100
     };
   }
 
@@ -42,14 +45,35 @@ class MailContent extends Component {
     this.setState({ headerVisible: !this.state.headerVisible });
   };
 
+  toggleTag = () => {
+    const tag = this.props.data.istag ? 0 : 1;
+    this.props.tagMailsInDetail(tag);
+  };
+
   showMailDetail = () => {
     this.props.onShowDetail(this.props.data);
+  };
+
+  onIframeLoad = (event) => {
+    const iframe = event.target;
+    const idoc = (iframe.contentWindow || iframe.contentDocument.parentWindow).document;
+    let height = 300;
+    // if (idoc.body) {
+    //   height = Math.max(idoc.body.scrollHeight, idoc.body.offsetHeight);
+    // } else if (idoc.documentElement) {
+    //   height = Math.max(idoc.documentElement.scrollHeight, idoc.documentElement.offsetHeight);
+    // }
+    if (idoc.documentElement) {
+      height = idoc.documentElement.offsetHeight;
+    }
+    this.setState({ iframeHeight: height });
   };
 
   render() {
     const { isPreview, data } = this.props;
     if (!data) return null;
-    const { title, sender, receivers, ccers, bccers, receivedtime, senttime, attachinfo, summary, mailbody, attachcount } = data;
+    const { title, sender, receivers, ccers, bccers, receivedtime,
+      senttime, attachinfo, summary, mailbody, attachcount, istag, catalogtype } = data;
     const strPersons = persons => persons && persons.map(item => item.displayname).join(', ');
     return (
       <div className={styles.wrap}>
@@ -59,7 +83,15 @@ class MailContent extends Component {
           style={{ position: 'absolute', top: '10px', right: '10px' }}
           onClick={this.toggleHeader}
         />
-        <div className={styles.title}>{title}</div>
+        <div className={styles.title}>
+          {catalogtype !== 'dept' &&
+            <Icon
+              type={istag ? 'star' : 'star-o'}
+              style={{ color: '#ff9a2e', marginRight: '5px', cursor: 'pointer' }}
+              onClick={this.toggleTag}
+            />}
+          {title}
+        </div>
         {this.state.headerVisible && <div className={styles.header}>
           <p className={styles.meta}>
             <span>发件人</span>
@@ -96,7 +128,7 @@ class MailContent extends Component {
                    onClick={isPreview ? this.showMailDetail : this.toggleAttachments}>查看附件</a>
               </p>
             )}
-            {this.state.attachmentsVisible && data.status === 'loaded' && (
+            {this.state.attachmentsVisible && (
               <ul className={styles.attachlist} style={{ paddingLeft: isPreview ? '170px' : '70px' }}>
                 {(attachinfo || []).map(item => (
                   <li key={item.fileid}>
@@ -110,11 +142,31 @@ class MailContent extends Component {
             )}
           </div>
         </div>}
-        <div className={styles.body} dangerouslySetInnerHTML={{ __html: mailbody || summary }} />
+        {/*<div className={styles.body} dangerouslySetInnerHTML={{ __html: mailbody || summary }} />*/}
+        <div className={styles.iframewrap}>
+          <iframe
+            className={styles.iframe}
+            frameBorder={0}
+            scrolling="no"
+            height={this.state.iframeHeight}
+            width="100%"
+            srcDoc={mailbody || summary}
+            onLoad={this.onIframeLoad}
+          />
+        </div>
       </div>
     );
   }
 }
 
-export default MailContent;
+export default connect(
+  state => ({}),
+  dispatch => {
+    return {
+      tagMailsInDetail(tag) {
+        dispatch({ type: 'mails/tagMailsInDetail__', payload: tag });
+      }
+    };
+  }
+)(MailContent);
 

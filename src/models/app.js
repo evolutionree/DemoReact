@@ -25,7 +25,8 @@ export default {
     token: '',
     permissionLevel: 3,
     imageGallery: {},
-    mapModal: {}
+    mapModal: {},
+    noMinWidth: false
   },
   subscriptions: {
     setup({ dispatch, history }) {
