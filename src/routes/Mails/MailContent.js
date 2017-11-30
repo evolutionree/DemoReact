@@ -1,7 +1,9 @@
 import React, { PropTypes, Component } from 'react';
-import { Icon } from 'antd';
+import { Icon, message } from 'antd';
+import { connect } from 'dva';
 import ImgIcon from '../../components/ImgIcon';
 import { formatTime } from '../../utils';
+import { markMails } from '../../services/mails';
 import styles from './MailContent.less';
 
 class MailContent extends Component {
@@ -42,6 +44,11 @@ class MailContent extends Component {
     this.setState({ headerVisible: !this.state.headerVisible });
   };
 
+  toggleTag = () => {
+    const tag = this.props.data.istag ? 0 : 1;
+    this.props.tagMailsInDetail(tag);
+  };
+
   showMailDetail = () => {
     this.props.onShowDetail(this.props.data);
   };
@@ -49,7 +56,8 @@ class MailContent extends Component {
   render() {
     const { isPreview, data } = this.props;
     if (!data) return null;
-    const { title, sender, receivers, ccers, bccers, receivedtime, senttime, attachinfo, summary, mailbody, attachcount } = data;
+    const { title, sender, receivers, ccers, bccers, receivedtime,
+      senttime, attachinfo, summary, mailbody, attachcount, istag, catalogtype } = data;
     const strPersons = persons => persons && persons.map(item => item.displayname).join(', ');
     return (
       <div className={styles.wrap}>
@@ -59,7 +67,15 @@ class MailContent extends Component {
           style={{ position: 'absolute', top: '10px', right: '10px' }}
           onClick={this.toggleHeader}
         />
-        <div className={styles.title}>{title}</div>
+        <div className={styles.title}>
+          {catalogtype !== 'dept' &&
+            <Icon
+              type={istag ? 'star' : 'star-o'}
+              style={{ color: '#ff9a2e', marginRight: '5px', cursor: 'pointer' }}
+              onClick={this.toggleTag}
+            />}
+          {title}
+        </div>
         {this.state.headerVisible && <div className={styles.header}>
           <p className={styles.meta}>
             <span>发件人</span>
@@ -116,5 +132,14 @@ class MailContent extends Component {
   }
 }
 
-export default MailContent;
+export default connect(
+  state => ({}),
+  dispatch => {
+    return {
+      tagMailsInDetail(tag) {
+        dispatch({ type: 'mails/tagMailsInDetail__', payload: tag });
+      }
+    };
+  }
+)(MailContent);
 
