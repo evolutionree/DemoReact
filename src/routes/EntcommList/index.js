@@ -53,31 +53,6 @@ function EntcommList({
     });
   }
 
-  function extraToolbarClickHandler(item) {
-    if (item.buttoncode === 'CallService') {
-      dispatch({
-        type: 'entcommList/extraToolbarClick',
-        payload: item
-      });
-    } else if (item.buttoncode === 'CallService_showModal') {
-      dispatch({
-        type: 'entcommList/putState',
-        payload: {
-          showModals: item.extradata && item.extradata.componentname
-        }
-      });
-    }
-  }
-
-  function extraButtonClickHandler(item) {
-    dispatch({
-      type: 'entcommList/putState',
-      payload: {
-        showModals: item.extradata && item.extradata.componentname
-      }
-    });
-  }
-
   function importData() {
     dispatch({
       type: 'task/impModals',
@@ -111,6 +86,27 @@ function EntcommList({
   }
   function openTransfer() {
     dispatch({ type: 'entcommList/showModals', payload: 'transfer' });
+  }
+
+  function extraToolbarClickHandler(item) {
+    if (item.buttoncode === 'CallService') {
+      dispatch({
+        type: 'entcommList/extraToolbarClick',
+        payload: item
+      });
+    } else if (item.buttoncode === 'CallService_showModal') {
+      dispatch({
+        type: 'entcommList/showModals',
+        payload: item.extradata && item.extradata.componentname
+      });
+    }
+  }
+
+  function extraButtonClickHandler(item) {
+    dispatch({
+      type: 'entcommList/showModals',
+      payload: item.extradata && item.extradata.componentname
+    });
   }
 
   function shouldShowTransfer() {
