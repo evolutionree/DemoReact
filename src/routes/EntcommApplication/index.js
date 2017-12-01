@@ -12,7 +12,7 @@ import RecordEditModal from './RecordEditModal';
 import TransferModal from './TransferModal';
 import connectPermission from '../../models/connectPermission';
 import AdvanceSearchModal from './AdvanceSearchModal';
-import SetOwner from './SetOwner';
+import DynamicModal from './DynamicModal';
 
 const Option = Select.Option;
 
@@ -60,16 +60,22 @@ function EntcommList({
       });
     } else if (item.buttoncode === 'CallService_showModal') {
       dispatch({
-        type: 'entcommApplication/showModals',
-        payload: item.extradata && item.extradata.componentname
+        type: 'entcommApplication/putState',
+        payload: {
+          showModals: 'dynamicModal',
+          dynamicModalData: item
+        }
       });
     }
   }
 
   function extraButtonClickHandler(item) {
     dispatch({
-      type: 'entcommApplication/showModals',
-      payload: item.extradata && item.extradata.componentname
+      type: 'entcommApplication/putState',
+      payload: {
+        showModals: 'dynamicModal',
+        dynamicModalData: item
+      }
     });
   }
 
@@ -177,6 +183,11 @@ function EntcommList({
         {checkFunc('EntityDataAdd') && <Button onClick={openAdd}>新增</Button>}
         {shouldShowImport() && <Button onClick={importData}>导入</Button>}
         {shouldShowExport() && <Button onClick={exportData}>导出</Button>}
+        {
+          extraButtonData && extraButtonData instanceof Array && extraButtonData.map((item, index) => {
+            return <Button onClick={extraButtonClickHandler} key={index}>{item.title}</Button>;
+          })
+        }
         <Toolbar.Right>
           <Search
             placeholder="请输入关键字"
@@ -214,7 +225,7 @@ function EntcommList({
       <RecordDetailModal />
       <RecordEditModal />
       <AdvanceSearchModal />
-      <SetOwner />
+      <DynamicModal />
     </Page>
   );
 }

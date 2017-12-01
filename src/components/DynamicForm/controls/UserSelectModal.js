@@ -38,6 +38,14 @@ class UserSelectModal extends React.Component {
     };
   }
 
+  componentWillMount() {
+    this.setState({
+      searchName: '',
+      deptId: '7f74192d-b937-403f-ac2a-8be34714278b',
+      currentSelected: this.props.selectedUsers
+    }, this.fetchUserList);
+  }
+
   componentWillReceiveProps(nextProps) {
     if (!this.props.visible && nextProps.visible) {
       this.setState({

@@ -13,6 +13,7 @@ import MerageModal from './MerageModal';
 import AdvanceSearchModal from './AdvanceSearchModal';
 import AllocateModal from './AllocateModal';
 import connectPermission from '../../models/connectPermission';
+import DynamicModal from './DynamicModal';
 
 
 const Option = Select.Option;
@@ -29,10 +30,13 @@ function EntcommList({
     currItems,
     entityId,
     currentUser,
-    simpleSearchKey
+    simpleSearchKey,
+    extraButtonData,
+    extraToolbarData
   }) {
   function selectItems(items) {
     dispatch({ type: 'entcommList/currItems', payload: items });
+    dispatch({ type: 'entcommList/queryFuntionbutton__', payload: {} });
   }
   function search(payload) {
     dispatch({ type: 'entcommList/search', payload });
@@ -49,6 +53,7 @@ function EntcommList({
       payload: 'add'
     });
   }
+
   function importData() {
     dispatch({
       type: 'task/impModals',
@@ -84,6 +89,33 @@ function EntcommList({
     dispatch({ type: 'entcommList/showModals', payload: 'transfer' });
   }
 
+  function extraToolbarClickHandler(item) {
+    if (item.buttoncode === 'CallService') {
+      dispatch({
+        type: 'entcommList/extraToolbarClick',
+        payload: item
+      });
+    } else if (item.buttoncode === 'CallService_showModal') {
+      dispatch({
+        type: 'entcommList/putState',
+        payload: {
+          showModals: 'dynamicModal',
+          dynamicModalData: item
+        }
+      });
+    }
+  }
+
+  function extraButtonClickHandler(item) {
+    dispatch({
+      type: 'entcommList/putState',
+      payload: {
+        showModals: 'dynamicModal',
+        dynamicModalData: item
+      }
+    });
+  }
+
   function shouldShowTransfer() {
     if (!checkFunc('EntityDataTransfer')) return;
     const menu = _.find(menus, ['menuId', menuId]);
@@ -103,14 +135,37 @@ function EntcommList({
 
   const { menuId, searchData, pageIndex, pageSize, isAdvanceQuery } = queries;
   const keyword = (!isAdvanceQuery && searchData && searchData[simpleSearchKey]) || '';
+
+  const defaultToolbarActions = [
+    { label: '删除', handler: del, show: checkFunc('EntityDataDelete') },
+    { label: entityId === '1ce5e2d5-6cf7-440d-83f4-0d500c4a2cd9' ? '分配' : '转移', handler: openTransfer, show: shouldShowTransfer },
+    { label: '分配线索', handler: allocate, show: shouldShowAllocate }//db330ae1-b78c-4e39-bbb5-cc3c4a0c2e3b 销售线索批量分配
+  ];
+
+  let ajaxToolbarActions = extraToolbarData && extraToolbarData instanceof Array && extraToolbarData.map((item) => {
+      let single = true;
+      let multiple = false;
+      if (item.selecttype === 0) {
+        single = false;
+        multiple = false;
+      } else if (item.selecttype === 1) {
+        single = true;
+        multiple = false;
+      } else if (item.selecttype === 2) {
+        single = false;
+        multiple = true;
+      }
+      return { label: item.title, handler: extraToolbarClickHandler.bind(this, item), single: single, multiple: multiple, show: true };
+  });
+  ajaxToolbarActions = ajaxToolbarActions || [];
+
   return (
     <Page title={entityName}>
       <Toolbar
         selectedCount={currItems.length}
         actions={[
-          { label: '删除', handler: del, show: checkFunc('EntityDataDelete') },
-          { label: entityId === '1ce5e2d5-6cf7-440d-83f4-0d500c4a2cd9' ? '分配' : '转移', handler: openTransfer, show: shouldShowTransfer },
-          { label: '分配线索', handler: allocate, show: shouldShowAllocate }//db330ae1-b78c-4e39-bbb5-cc3c4a0c2e3b 销售线索批量分配
+          ...defaultToolbarActions,
+          ...ajaxToolbarActions
         ]}
       >
         <Select style={{ minWidth: '120px' }} value={menuId} onChange={onMenuChange}>
@@ -122,6 +177,11 @@ function EntcommList({
         {checkFunc('EntityDataMerge') && <Button onClick={merageCustom}>客户合并</Button>}
         {shouldShowImport() && <Button onClick={importData}>导入</Button>}
         {shouldShowExport() && <Button onClick={exportData}>导出</Button>}
+        {
+          extraButtonData && extraButtonData instanceof Array && extraButtonData.map((item, index) => {
+            return <Button onClick={extraButtonClickHandler} key={index}>{item.title}</Button>;
+          })
+        }
         <Toolbar.Right>
           <Search
             placeholder="请输入关键字"
@@ -157,6 +217,7 @@ function EntcommList({
       <MerageModal />
       <AdvanceSearchModal />
       <AllocateModal />
+      <DynamicModal />
     </Page>
   );
 }

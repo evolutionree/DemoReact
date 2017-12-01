@@ -534,8 +534,14 @@ class EditMailPanel extends Component {
       submitData[item.name] = formData && formData[item.name];
     });
 
+    for (let key in formDataField) { //抄送 密送没值得时候 传[]
+      if (key !== formDataField.subject) {
+        submitData[key] = submitData[key] ? submitData[key] : [];
+      }
+    }
+
     for (let key in submitData) {
-      if (key !== 'subject') {
+      if (key !== formDataField.subject) {
         if (getTransformAddress(submitData[key])) {
           submitData[key] = getTransformAddress(submitData[key]);  //转换成后端要求的格式
         } else {
