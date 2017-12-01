@@ -22,7 +22,8 @@ export default {
     simpleSearchKey: 'recname',
     copyData: {},
     extraButtonData: [], //页面动态 按钮数据源
-    extraToolbarData: [] //页面toolbar 动态按钮数据源
+    extraToolbarData: [], //页面toolbar 动态按钮数据源
+    dynamicModalData: {}
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -246,6 +247,18 @@ export default {
       } catch (e) {
         message.error(e.message);
       }
+    },
+    *dynamicModalSendData({ payload: submitData }, { select, call, put }) {
+      const { dynamicModalData } = yield select(state => state.entcommList);
+      const url = dynamicModalData.routepath;
+      try {
+        yield call(extraToolbarClickSendData, url, submitData);
+        yield put({ type: 'showModals', payload: '' });
+        yield put({ type: 'putState', payload: { dynamicModalData: {} } });
+        yield put({ type: 'queryList' });
+      } catch (e) {
+        message.error(e.message);
+      }
     }
   },
   reducers: {
@@ -337,7 +350,8 @@ export default {
         simpleSearchKey: 'recname',
         copyData: {},
         extraButtonData: [], //页面动态 按钮数据源
-        extraToolbarData: [] //页面toolbar 动态按钮数据源
+        extraToolbarData: [], //页面toolbar 动态按钮数据源
+        dynamicModalData: {}
       };
     }
   }

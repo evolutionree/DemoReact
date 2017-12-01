@@ -21,7 +21,8 @@ export default {
     modalPending: false,
     simpleSearchKey: 'recname',
     extraButtonData: [], //页面动态 按钮数据源
-    extraToolbarData: [] //页面toolbar 动态按钮数据源
+    extraToolbarData: [], //页面toolbar 动态按钮数据源
+    dynamicModalData: {}
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -232,12 +233,14 @@ export default {
         message.error(e.message);
       }
     },
-    *savemailowner({ payload: submitData }, { select, call, put }) {
+    *dynamicModalSendData({ payload: submitData }, { select, call, put }) {
+      const { dynamicModalData } = yield select(state => state.entcommApplication);
+      const url = dynamicModalData.routepath;
       try {
-        yield call(savemailowner, submitData);
+        yield call(extraToolbarClickSendData, url, submitData);
         yield put({ type: 'showModals', payload: '' });
+        yield put({ type: 'putState', payload: { dynamicModalData: {} } });
         yield put({ type: 'queryList' });
-        message.success('设置成功');
       } catch (e) {
         message.error(e.message);
       }
@@ -327,7 +330,8 @@ export default {
         modalPending: false,
         simpleSearchKey: 'recname',
         extraButtonData: [], //页面动态 按钮数据源
-        extraToolbarData: [] //页面toolbar 动态按钮数据源
+        extraToolbarData: [], //页面toolbar 动态按钮数据源
+        dynamicModalData: {}
       };
     }
   }

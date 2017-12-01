@@ -13,6 +13,7 @@ import MerageModal from './MerageModal';
 import AdvanceSearchModal from './AdvanceSearchModal';
 import AllocateModal from './AllocateModal';
 import connectPermission from '../../models/connectPermission';
+import DynamicModal from './DynamicModal';
 
 
 const Option = Select.Option;
@@ -96,16 +97,22 @@ function EntcommList({
       });
     } else if (item.buttoncode === 'CallService_showModal') {
       dispatch({
-        type: 'entcommList/showModals',
-        payload: item.extradata && item.extradata.componentname
+        type: 'entcommList/putState',
+        payload: {
+          showModals: 'dynamicModal',
+          dynamicModalData: item
+        }
       });
     }
   }
 
   function extraButtonClickHandler(item) {
     dispatch({
-      type: 'entcommList/showModals',
-      payload: item.extradata && item.extradata.componentname
+      type: 'entcommList/putState',
+      payload: {
+        showModals: 'dynamicModal',
+        dynamicModalData: item
+      }
     });
   }
 
@@ -151,7 +158,7 @@ function EntcommList({
       return { label: item.title, handler: extraToolbarClickHandler.bind(this, item), single: single, multiple: multiple, show: true };
   });
   ajaxToolbarActions = ajaxToolbarActions || [];
-console.log(111);
+
   return (
     <Page title={entityName}>
       <Toolbar
@@ -210,6 +217,7 @@ console.log(111);
       <MerageModal />
       <AdvanceSearchModal />
       <AllocateModal />
+      <DynamicModal />
     </Page>
   );
 }

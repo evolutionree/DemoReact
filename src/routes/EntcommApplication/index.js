@@ -12,7 +12,7 @@ import RecordEditModal from './RecordEditModal';
 import TransferModal from './TransferModal';
 import connectPermission from '../../models/connectPermission';
 import AdvanceSearchModal from './AdvanceSearchModal';
-import SetOwner from './SetOwner';
+import DynamicModal from './DynamicModal';
 
 const Option = Select.Option;
 
@@ -60,16 +60,22 @@ function EntcommList({
       });
     } else if (item.buttoncode === 'CallService_showModal') {
       dispatch({
-        type: 'entcommApplication/showModals',
-        payload: item.extradata && item.extradata.componentname
+        type: 'entcommApplication/putState',
+        payload: {
+          showModals: 'dynamicModal',
+          dynamicModalData: item
+        }
       });
     }
   }
 
   function extraButtonClickHandler(item) {
     dispatch({
-      type: 'entcommApplication/showModals',
-      payload: item.extradata && item.extradata.componentname
+      type: 'entcommApplication/putState',
+      payload: {
+        showModals: 'dynamicModal',
+        dynamicModalData: item
+      }
     });
   }
 
@@ -219,7 +225,7 @@ function EntcommList({
       <RecordDetailModal />
       <RecordEditModal />
       <AdvanceSearchModal />
-      <SetOwner />
+      <DynamicModal />
     </Page>
   );
 }
