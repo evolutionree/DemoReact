@@ -71,7 +71,7 @@ export async function queryBranchRule(ruleid) {
  * @returns {Promise.<Object>}
  */
 export async function saveFlowJSON(params) {
-  return request('/api/workflow/nodelinesconfig', {
+  return request('/api/workflow/savenodesconfig', {
     method: 'POST',
     body: JSON.stringify(params)
   });

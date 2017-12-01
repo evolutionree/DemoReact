@@ -27,8 +27,9 @@ export const ruleTypes = {
   系统字段: 0,
   其他字段: 1,
   SQL: 2,
-  全部实体字段: 10,
-  流程字段: 11
+  关联实体字段: 10,
+  关联独立实体字段: 11,
+  流程字段: 20
 };
 
 export const ruleCategories = [{
