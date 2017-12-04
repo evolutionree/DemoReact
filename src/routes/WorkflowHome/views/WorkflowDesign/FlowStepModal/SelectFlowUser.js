@@ -1,7 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { Radio, Select } from 'antd';
 import classnames from 'classnames';
-import * as _ from 'lodash';
+import _ from 'lodash';
 import { queryRoles } from '../../../../../services/role';
 import SelectNumber from '../../../../../components/SelectNumber';
 import SelectUser from '../../../../../components/DynamicForm/controls/SelectUser';
@@ -13,6 +13,7 @@ const Option = Select.Option;
 const SelectRole = ({ value, value_name, onChange, isReadOnly, allRoles }) => {
   let val = value ? value.split(',') : [];
   function onSelectChange(arrVal) {
+    debugger;
     onChange(arrVal.join(','));
   }
   return (
@@ -32,7 +33,7 @@ const SelectRole = ({ value, value_name, onChange, isReadOnly, allRoles }) => {
         ))}
       </Select>
     </div>
-  );
+  )
 };
 /**
  * 1	让用户自己选择审批人	0
@@ -161,7 +162,7 @@ class SelectFlowUser extends Component {
             style={{ width: '240px' }}
           >
             <Option key="5">指定审批人所在团队(特定)</Option>
-            <Option key="8">上一步处理人所在团队</Option>
+            <Option key="8">当前审批人所在团队(非下级)</Option>
             <Option key="11">当前审批人所在团队的上级团队(非下级)</Option>
           </SelectNumber>
           <DepartmentSelect
