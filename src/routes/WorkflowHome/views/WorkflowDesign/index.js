@@ -54,12 +54,12 @@ const jsPlumbConfig = {
 class WorkflowDesign extends Component {
   static propTypes = {
     flowSteps: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.string.isRequired,
+      id: PropTypes.number.isRequired,
       name: PropTypes.string.isRequired
     })).isRequired,
     flowPaths: PropTypes.arrayOf(PropTypes.shape({
-      from: PropTypes.string.isRequired,
-      to: PropTypes.string.isRequired
+      from: PropTypes.number.isRequired,
+      to: PropTypes.number.isRequired
     })).isRequired
   };
   static defaultProps = {};
@@ -117,8 +117,8 @@ class WorkflowDesign extends Component {
   createPathLabel = component => {
     const { flowPaths } = this.props;
     const { sourceId, targetId } = component;
-    const fromNodeId = sourceId.replace('workflow-', '');
-    const toNodeId = targetId.replace('workflow-', '');
+    const fromNodeId = +sourceId.replace('workflow-', '');
+    const toNodeId = +targetId.replace('workflow-', '');
     const isBranch = flowPaths.some(path => path.from === fromNodeId && path.to !== toNodeId);
 
     const customElem = document.createElement('div');
