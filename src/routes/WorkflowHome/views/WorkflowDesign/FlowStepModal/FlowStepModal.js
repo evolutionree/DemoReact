@@ -10,7 +10,7 @@ class SelectFlowUserAll extends Component {
   render() {
     const { nodeType, value, onChange } = this.props;
     return nodeType === 0 ? (
-      <SelectFlowUser value={value} onChange={onChange} entities={this.props.entities} />
+      <SelectFlowUser value={value} onChange={onChange} />
     ) : (
       <SelectFlowUserMultiple value={value} onChange={onChange} />
     );
@@ -73,7 +73,7 @@ class FlowStepModal extends Component {
             {getFieldDecorator('stepUser', {
               rules: [{ required: true, message: '请设置审批人' }]
             })(
-              <SelectFlowUserAll nodeType={nodeType} entities={this.props.flowEntities} />
+              <SelectFlowUserAll nodeType={nodeType} />
             )}
           </FormItem>
           {nodeType === 1 && <FormItem label="设置会审通过人数">

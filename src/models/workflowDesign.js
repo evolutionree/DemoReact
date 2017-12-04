@@ -232,16 +232,16 @@ export default {
   effects: {
     *queryFlowJSON(action, { select, put, call }) {
       const { flowId } = yield select(state => state.workflowHome);
-      try {
+      // try {
         const { data } = yield call(queryFlowJSONv2, flowId);
         const { flowSteps, flowPaths } = parseFlowJSON(data);
         yield put({ type: 'putState', payload: { flowSteps, flowPaths } });
 
         const flowInfo = data.flow[0];
         yield put({ type: 'queryFlowEntity', payload: flowInfo });
-      } catch (e) {
-        message.error(e.message || '获取流程数据失败');
-      }
+      // } catch (e) {
+      //   message.error(e.message || '获取流程数据失败');
+      // }
     },
     *queryFlowEntity({ payload: flowInfo }, { select, put, call }) {
       try {
@@ -431,18 +431,15 @@ export default {
         const data = editingFlowStepForm.stepUser.data;
         const type = editingFlowStepForm.stepUser.type;
         if (data) {
-          const { userid, roleid, deptid, fieldname } = data;
+          const { userid, roleid, deptid } = data;
           if ((type === 5 || type === 6) && !deptid) {
             message.error('请选择团队');
             return;
-          } else if ([4, 6, 9, 901, 902, 10, 101, 102].includes(type) && !roleid) {
+          } else if ((type === 4 || type === 6) && !roleid) {
             message.error('请选择角色');
             return;
           } else if (type === 2 && !userid) {
             message.error('请选择人员');
-            return;
-          } else if ([802, 112, 902, 102].includes(type) && !fieldname) {
-            message.error('请选择表单用户字段');
             return;
           }
         }
