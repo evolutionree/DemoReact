@@ -18,8 +18,7 @@ export const parseRuleDetail = ruleDetail => {
       fieldId: item.fieldid,
       operator: item.operate,
       ruleData: item.ruledata,
-      ruleType: item.ruletype,
-      entityId: item.entityid
+      ruleType: item.ruletype
     };
     ruleList.push(rule);
   });

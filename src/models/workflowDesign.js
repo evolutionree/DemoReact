@@ -482,13 +482,11 @@ export default {
         return;
       }
       try {
-        const nodeIdCollect = {};
         const nodes = flowSteps.map(({ id, name, rawNode }) => {
           const { nodetype, steptypeid, ruleconfig, columnconfig, auditnum, auditsucc } = rawNode;
-          const newNodeId = nodeIdCollect[id] = uuid.v1();
           return {
             nodename: name,
-            nodeid: newNodeId,
+            nodeid: id,
             auditnum,
             nodetype,
             steptypeid,
@@ -498,9 +496,9 @@ export default {
           };
         });
         const lines = flowPaths.map(path => ({
-          fromnodeid: nodeIdCollect[path.from] || '',
-          tonodeid: nodeIdCollect[path.to] || '',
-          ruleid: path.isBranch ? path.ruleid : null
+          fromnodeid: path.from,
+          tonodeid: path.to,
+          ruleid: null
         }));
         const params = { flowId, nodes, lines };
         yield call(saveFlowJSON, params);
