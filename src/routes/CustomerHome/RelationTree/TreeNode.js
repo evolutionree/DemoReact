@@ -36,7 +36,7 @@ class TreeNode extends  React.Component {
     if (this.state.data.children instanceof Array && this.state.data.children.length > 0)
     {
       this.state.data.children.map((item, index) => {
-        nodeControl.push(<TreeNode key={item[this.props.itemKey]} data={item} custid={this.props.custid} />);
+        nodeControl.push(<TreeNode {...this.props} key={item[this.props.itemKey]} data={item} custid={this.props.custid} />);
       });
     }
 
