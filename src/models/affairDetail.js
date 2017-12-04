@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { routerRedux } from 'dva/router';
 import { getEntcommDetail, getGeneralProtocol, editEntcomm } from '../services/entcomm';
 import { queryFields } from '../services/entity';
-import { queryCaseItem, auditCaseItem, queryCaseDetail, submitCaseItem } from '../services/workflow';
+import { queryCaseItem, auditCaseItem } from '../services/workflow';
 
 export default {
   namespace: 'affairDetail',
@@ -24,9 +24,7 @@ export default {
     showModals: '',
     columnConfigForms: {},
     columnConfigFormProtocols: {},
-    columnConfigFormInstance: {},
-    suggest: '',
-    selectedOperate: undefined
+    columnConfigFormInstance: {}
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -53,12 +51,18 @@ export default {
       } = yield select(state => state.affairDetail);
 
       // 获取审批详情
-      const { data } = yield call(queryCaseDetail, caseId);
+      const { data } = yield call(getEntcommDetail, {
+        entityId,
+        recId: caseId,
+        needPower: 0 // TODO 跑权限
+      });
 
-      const flowDetail = data.casedetail;
-      const entityDetail = data.entitydetail;
-      const flowOperates = _.mapKeys(data.caseitem, (value, key) => key.replace('iscan', ''));
-      const relentityDetail = data.relatedetail || {};
+      const hasRelentity = data.relatedetail.length > 0;
+
+      const flowDetail = data.detail[0];
+      const entityDetail = data.entitydetail[0];
+      const flowOperates = data.operate[0];
+      const relentityDetail = hasRelentity ? data.relatedetail[0] : {};
 
       if (flowDetail.columnconfig && flowDetail.columnconfig.config && flowDetail.columnconfig.config.length) {
         yield put({ type: 'handleColumnConfig', payload: flowDetail.columnconfig.config });
@@ -90,7 +94,7 @@ export default {
         }
       }
 
-      if (data.relatedetail && !relentityDetailProtocol.length) {
+      if (hasRelentity && !relentityDetailProtocol.length) {
         // 获取相关实体查看协议
         try {
           const result = yield call(getGeneralProtocol, {
@@ -234,37 +238,32 @@ export default {
         message.error(e.message || '保存失败');
       }
     },
-    *submitAuditCase(action, { select, call, put }) {
-      const {
-        selectedOperate, suggest,
-        caseId, flowDetail,
-        columnConfigForms, columnConfigFormProtocols
-      } = yield select(state => state.affairDetail);
-
-      if (selectedOperate === 1 || selectedOperate === 4) {
-        yield put({ type: 'showModals', payload: 'workflowCase' });
-        return;
-      }
+    *submitAuditCase({ payload: { operate, suggest } }, { select, call, put }) {
+      const { caseId, flowDetail, columnConfigForms, columnConfigFormProtocols } = yield select(state => state.affairDetail);
       try {
         const params = {
           caseId,
-          nodenum: flowDetail.nodenum,
-          nodeid: flowDetail.nodeid,
+          nodeNum: flowDetail.nodenum,
           suggest,
-          choicestatus: selectedOperate,
+          ChoiceStatus: operate,
           casedata: getCaseData()
         };
-        const { data, error_msg } = yield call(submitCaseItem, params);
-        message.success(error_msg || '提交成功');
+        const { data, error_msg } = yield call(auditCaseItem, params);
+        if (data === '0') { // 不用选审批人
+          message.success(error_msg || '提交成功');
+          // yield put({ type: 'init', payload: caseId });
 
-        // 提交完审批后，返回列表
-        const { navStack } = yield select(state => state.navHistory);
-        if (navStack.length >= 2) {
-          yield put(routerRedux.goBack());
-        } else {
-          yield put(routerRedux.push({
-            pathname: 'affair-list'
-          }));
+
+          const { navStack } = yield select(state => state.navHistory);
+          if (navStack.length >= 2) {
+            yield put(routerRedux.goBack());
+          } else {
+            yield put(routerRedux.push({
+              pathname: 'affair-list'
+            }));
+          }
+        } else { // 需要选审批人
+          yield put({ type: 'showModals', payload: 'workflowCase' });
         }
       } catch (e) {
         message.error(e.message || '提交数据失败');
@@ -336,9 +335,7 @@ export default {
         showModals: '',
         columnConfigForms: {},
         columnConfigFormProtocols: {},
-        columnConfigFormInstance: {},
-        suggest: '',
-        selectedOperate: undefined
+        columnConfigFormInstance: {}
       };
     }
   }
