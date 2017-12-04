@@ -1,14 +1,7 @@
 import React, { PropTypes, Component } from 'react';
-import * as _ from 'lodash';
-import { Modal, Form, message, Radio, Button } from 'antd';
-import { queryNextNodeData, addCaseItem, addCaseItemMultiple, auditCaseItem, submitCaseItem } from '../../services/workflow';
-import { queryUsers } from '../../services/structure';
-import { queryFields } from '../../services/entity';
-import CaseUserSelect from './CaseUserSelect';
-import { DynamicFormAdd } from '../DynamicForm';
-// import { getGeneralProtocol } from '../../services/entcomm';
-
-const FormItem = Form.Item;
+import { Modal, Form, message, Button } from 'antd';
+import { queryNextNodeData, submitCaseItem } from '../../services/workflow';
+import WorkflowCaseForm from './WorkflowCaseForm';
 
 class WorkflowCaseModal extends Component {
   static propTypes = {
@@ -29,18 +22,13 @@ class WorkflowCaseModal extends Component {
     suggest: ''
   };
 
-  dynamicFormInstances = {};
+  form = {};
 
   constructor(props) {
     super(props);
     this.state = {
-      allUsers: [],
       nextNodes: [], // [{ nodeinfo, approvers }] 会有多个节点(分支)
       selectedNode: null, // 保存选中的nextNodes元素
-      // caseUsers: [],
-      // nodeInfo: null,
-      dynamicForms: {},
-      dynamicFormProtocols: {},
       modalPending: false
     };
   }
@@ -50,21 +38,16 @@ class WorkflowCaseModal extends Component {
     const isClosing = this.props.visible && !nextProps.visible;
     if (isOpening) {
       this.props.form.resetFields();
-      Promise.all([
-        this.fetchNextNodeData(nextProps.caseId),
-        this.fetchAllUsers()
-      ]).then(([nextNodeData, allUsers]) => {
+      this.fetchNextNodeData(nextProps.caseId).then((nextNodeData) => {
         this.setState({
           nextNodes: nextNodeData,
-          selectedNode: nextNodeData[0],
-          allUsers
+          selectedNode: nextNodeData[0]
         }, () => {
           if (this.checkFlowIsEnd(nextNodeData)) {
             // this.props.onDone();
             this.submitDirectly();
             return;
           }
-          this.initFormData();
         });
       });
     } else if (isClosing) {
@@ -73,13 +56,10 @@ class WorkflowCaseModal extends Component {
   }
 
   resetState = () => {
-    this.props.form.resetFields();
+    this.form.resetFields();
     this.setState({
-      allUsers: [],
       nextNodes: [],
       selectedNode: null,
-      dynamicForms: {},
-      dynamicFormProtocols: {},
       modalPending: false
     });
   };
@@ -89,115 +69,18 @@ class WorkflowCaseModal extends Component {
     return queryNextNodeData(_caseId).then(result => result.data);
   };
 
-  fetchAllUsers = () => {
-    const params = {
-      userName: '',
-      deptId: '7f74192d-b937-403f-ac2a-8be34714278b',
-      userPhone: '',
-      pageSize: 99999,
-      pageIndex: 1,
-      recStatus: 1
-    };
-    return queryUsers(params).then(result => result.data.pagedata);
-  };
-
   // 根据node数据，检查流程是否结束
   checkFlowIsEnd = nextNodes => {
     return nextNodes[0].nodeinfo.nodestate === 2;
   };
 
-  // 切换节点时，初始化表单数据
-  initFormData = () => {
-    this.props.form.resetFields();
-
-    const { nodeinfo, approvers } = this.state.selectedNode;
-    if (nodeinfo.nodetype === 1) { // 会审，列出所有审批人
-      this.props.form.setFieldsValue({
-        handleuser: approvers.map(u => u.userid)
-      });
-    } else if (approvers.length === 1) {
-      this.props.form.setFieldsValue({
-        handleuser: approvers.map(u => u.userid)
-      });
-    }
-    const showFields = nodeinfo.columnconfig && nodeinfo.columnconfig.config;
-    if (showFields) {
-      // this.handleShowFields(showFields);
-    }
-  };
-
-  handleShowFields = (showFields) => {
-    const promises = showFields.map(item => queryFields(item.entityId).then(result => {
-      const allFields = result.data.entityfieldpros;
-      const _fields = item.fields.map(_item => {
-        const { fieldId, isRequired } = _item;
-        const match = _.find(allFields, ['fieldid', fieldId]);
-        if (!match) return null;
-        return {
-          ...match,
-          fieldconfig: match.fieldconfig ? { ...match.fieldconfig, isVisible: 1 } : { isVisible: 1 },
-          isrequire: !!isRequired
-        };
-      });
-      return {
-        entityId: item.entityId,
-        fields: _fields.filter(i => !!i)
-      };
-    }));
-    Promise.all(promises).then(result => {
-      const dynamicForms = {};
-      const dynamicFormProtocols = {};
-      result.forEach(item => {
-        dynamicForms[item.entityId] = {};
-        dynamicFormProtocols[item.entityId] = item.fields;
-      });
-      this.setState({ dynamicForms, dynamicFormProtocols });
-    }, error => {
-      message.error('获取动态表单字段出错');
-    });
-  };
-
-  getDynamicFormArray = () => {
-    return _.map(this.state.dynamicFormProtocols, (val, key) => ({ entityId: key, protocols: val }));
-  };
-
   getCaseData = () => {
     return this.props.caseData || { data: [] };
-    // const formArray = this.getDynamicFormArray();
-    // const data = formArray.map(item => {
-    //   const { entityId } = item;
-    //   return {
-    //     entityid: entityId,
-    //     fields: this.state.dynamicForms[entityId]
-    //   };
-    // });
-    // return { data };
-  };
-
-  validateDynamicForm = () => {
-    const self = this;
-    const formArray = this.getDynamicFormArray();
-    let result = true;
-    validateNext();
-    return result;
-
-    function validateNext() {
-      const item = formArray[0];
-      if (!item) return;
-
-      const formInstance = self.dynamicFormInstances[item.entityId];
-      formArray.shift();
-      formInstance.validateFields((err, values) => {
-        if (err) result = false;
-        validateNext();
-      });
-    }
   };
 
   onOk = () => {
-    this.props.form.validateFields((err, values) => {
+    this.form.validateFields((err, values) => {
       if (err) return;
-      if (!this.validateDynamicForm()) return message.error('请检查表单');
 
       const params = {
         caseid: this.props.caseId,
@@ -267,82 +150,33 @@ class WorkflowCaseModal extends Component {
     });
   };
 
-  checkHandleUser = (rule, value, callback) => {
-    if (!value || !value.length) {
-      callback('请选择审批人');
-    }
-    callback();
-  };
-
-  onRadioChange = event => {
-    this.setState({ selectedNode: event.target.value }, this.initFormData);
+  onSelectedNodeChange = selectedNode => {
+    this.setState({ selectedNode });
   };
 
   render() {
-    const { form, visible, onCancel } = this.props;
-    const { nextNodes, selectedNode, allUsers, dynamicForms } = this.state;
-    const { nodeinfo, approvers } = selectedNode || {};
-    const isFreeFlow = nodeinfo && nodeinfo.flowtype === 0; // 自由流程
-
+    const { nodeinfo = {} } = this.state.selectedNode || {};
     const footer = [
-      <Button key="cancel" onClick={onCancel}>取消</Button>,
+      <Button key="cancel" onClick={this.props.onCancel}>取消</Button>,
       <Button key="ok" onClick={this.onOk}>确定</Button>
     ];
-    if (isFreeFlow) { // 自由流程
+    if (nodeinfo.flowtype === 0) { // 自由流程
       footer.push(<Button key="custom" onClick={this.onCloseFlow}>关闭流程</Button>);
     }
-
     return (
       <Modal
-        title={nodeinfo ? nodeinfo.nodename : '选择审批和抄送人'}
-        visible={visible}
-        onCancel={onCancel}
+        title={nodeinfo.nodename || '选择审批和抄送人'}
+        visible={this.props.visible}
+        onCancel={this.props.onCancel}
         onOk={this.onOk}
         footer={footer}
       >
-        {nextNodes.length > 1 && (
-          <Radio.Group value={selectedNode} onChange={this.onRadioChange}>
-            {nextNodes.map(item => (
-              <Radio key={item.nodeinfo.nodeid} value={item}>{item.nodeinfo.nodename}</Radio>
-            ))}
-          </Radio.Group>
-        )}
-        {!!nodeinfo && <Form>
-          <FormItem label="审批人">
-            {form.getFieldDecorator('handleuser', {
-              initialValue: [],
-              rules: [{ validator: this.checkHandleUser }, { required: true }]
-            })(
-              <CaseUserSelect
-                users={isFreeFlow ? allUsers : approvers}
-                disabled={nodeinfo.nodetype === 1}
-                filterUsers={form.getFieldValue('copyuser')}
-                limit={1}
-              />
-            )}
-          </FormItem>
-          <FormItem label="抄送人">
-            {form.getFieldDecorator('copyuser', {
-              initialValue: []
-            })(
-              <CaseUserSelect
-                users={allUsers}
-                filterUsers={form.getFieldValue('handleuser')}
-                limit={0}
-              />
-            )}
-          </FormItem>
-        </Form>}
-        {this.getDynamicFormArray().map(item => (
-          <DynamicFormAdd
-            key={item.entityId}
-            entityTypeId={item.entityId}
-            fields={item.protocols}
-            value={dynamicForms[item.entityId] || {}}
-            onChange={value => this.setState({ dynamicForms: { ...dynamicForms, [item.entityId]: value } })}
-            ref={inst => this.dynamicFormInstances[item.entityId] = inst}
-          />
-        ))}
+        <WorkflowCaseForm
+          ref={ref => this.form = ref}
+          caseNodes={this.state.nextNodes}
+          selectedNode={this.state.selectedNode}
+          onSelectedNodeChange={this.onSelectedNodeChange}
+        />
       </Modal>
     );
   }

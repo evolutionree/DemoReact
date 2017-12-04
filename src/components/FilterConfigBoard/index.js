@@ -21,6 +21,9 @@ export const parseRuleDetail = ruleDetail => {
       ruleType: item.ruletype,
       entityId: item.entityid
     };
+    if (rule.ruleType > 2000) {
+      rule.ruleType = 20;
+    }
     ruleList.push(rule);
   });
   return {
@@ -32,14 +35,16 @@ export const parseRuleDetail = ruleDetail => {
 export const ruleListToItems = (ruleList, fields, entityId) => {
   return ruleList.map(function ruleToItem(rule, index) {
     const defaultUUID = '00000000-0000-0000-0000-000000000000';
+    const controltype = getControlType(rule.fieldId, fields);
+    const ruletype = rule.ruleType === 20 ? controltype : rule.ruleType;
     return {
       itemname: `规则${index + 1}`,
       entityid: entityId,
-      controltype: getControlType(rule.fieldId, fields),
+      controltype,
       fieldid: rule.fieldId || defaultUUID,
       operate: rule.operator || '',
       ruledata: JSON.stringify(rule.ruleData),
-      ruletype: rule.ruleType,
+      ruletype,
       usetype: 0,
       relation: {
         userid: 0,

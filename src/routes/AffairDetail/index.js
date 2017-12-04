@@ -5,6 +5,7 @@ import { Radio, Input, Button, Icon, message, Checkbox, Table } from 'antd';
 import Page from '../../components/Page';
 import { DynamicFormEdit, DynamicFormAdd, DynamicFormView } from '../../components/DynamicForm';
 import WorkflowCaseModal from '../../components/WorkflowCaseModal';
+import WorkflowCaseForm from '../../components/WorkflowCaseModal/WorkflowCaseForm';
 import styles from './styles.less';
 
 const Column = Table.Column;
@@ -22,6 +23,7 @@ class AffairDetail extends Component {
     operate: undefined
   };
   columnConfigFormInstance = {};
+  workflowCaseFormRef = null;
   validateColumnConfigForms = () => {
     const { columnConfigFormProtocols } = this.props;
     const formArray = _.map(columnConfigFormProtocols, (val, key) => ({ entityId: key, protocols: val }));
@@ -41,6 +43,25 @@ class AffairDetail extends Component {
       });
     }
   };
+  validateWorkflowCaseForm = () => {
+    let result = true;
+    const node = this.props.selectedNextNode;
+    if (!node) {
+      result = false;
+    } else if (node.nodeinfo.nodestate !== 2 && [1, 4].includes(this.props.selectedOperate)) {
+      this.workflowCaseFormRef.validateFields(err => err && (result = false));
+    }
+    return result;
+  };
+  getWorkflowCaseFormValue = () => {
+    if (this.props.selectedNextNode.nodeinfo.nodestate !== 2 && [1, 4].includes(this.props.selectedOperate)) {
+      return {
+        handleuser: this.workflowCaseFormRef.getFieldValue('handleuser').join(','),
+        copyuser: this.workflowCaseFormRef.getFieldValue('copyuser').join(',')
+      };
+    }
+    return {};
+  };
   onNextClick = () => {
     // 0拒绝 1通过 2退回 3中止';
     if (this.props.selectedOperate === undefined) {
@@ -48,6 +69,18 @@ class AffairDetail extends Component {
     }
     if (!this.validateColumnConfigForms()) return message.error('请检查表单');
     this.props.submitAuditCase();
+  };
+  onSubmitAudit = () => {
+    // 0拒绝 1通过 2退回 3中止';
+    const op = this.props.selectedOperate;
+    if (op === undefined) {
+      return message.error('请选择操作');
+    }
+    if (this.validateWorkflowCaseForm() && this.validateColumnConfigForms()) {
+      this.props.submitAuditCase(this.getWorkflowCaseFormValue());
+    } else {
+      message.error('请检查表单');
+    }
   };
   getCaseData = () => {
     const { columnConfigForms, columnConfigFormProtocols } = this.props;
@@ -91,7 +124,10 @@ class AffairDetail extends Component {
       columnConfigFormProtocols,
       putState,
       suggest,
-      selectedOperate
+      selectedOperate,
+
+      nextNodesData,
+      selectedNextNode
     } = this.props;
 
     // 判断是不是用户没选择下一步审批人
@@ -156,6 +192,14 @@ class AffairDetail extends Component {
               ))}
             </div>
 
+            {selectedNextNode && selectedNextNode.nodeinfo.nodestate !== 2 && selectedOperate === 1 && (
+              <WorkflowCaseForm
+                ref={ref => this.workflowCaseFormRef = ref}
+                caseNodes={nextNodesData}
+                selectedNode={selectedNextNode}
+                onSelectedNodeChange={val => putState({ selectedNextNode: val })}
+              />
+            )}
             <div className={styles.comment}>
               <div className={styles.commentinput}>
                 <Input.TextArea
@@ -165,7 +209,10 @@ class AffairDetail extends Component {
                 />
               </div>
               <div className={styles.commentfooter}>
-                <Button onClick={this.onNextClick}>下一步</Button>
+                {selectedNextNode && selectedNextNode.nodeinfo.flowtype === 0 && (
+                  <Button onClick={this.props.closeFlow}>关闭流程</Button>
+                )}
+                <Button onClick={this.onSubmitAudit}>下一步</Button>
               </div>
             </div>
           </div>
@@ -234,15 +281,15 @@ class AffairDetail extends Component {
             <Column title="意见" key="suggest" dataIndex="suggest" />
           </Table>
         </div>
-        <WorkflowCaseModal
-          visible={/workflowCase/.test(showModals)}
-          caseId={caseId}
-          onCancel={onCaseModalCancel}
-          onDone={onCaseModalDone}
-          suggest={suggest}
-          choiceStatus={selectedOperate}
-          caseData={/workflowCase/.test(showModals) ? this.getCaseData() : {}}
-        />
+        {/*<WorkflowCaseModal*/}
+          {/*visible={/workflowCase/.test(showModals)}*/}
+          {/*caseId={caseId}*/}
+          {/*onCancel={onCaseModalCancel}*/}
+          {/*onDone={onCaseModalDone}*/}
+          {/*suggest={suggest}*/}
+          {/*choiceStatus={selectedOperate}*/}
+          {/*caseData={/workflowCase/.test(showModals) ? this.getCaseData() : {}}*/}
+        {/*/>*/}
       </Page>
     );
   }
@@ -275,8 +322,11 @@ export default connect(
       editFormRef(editForm) {
         dispatch({ type: 'affairDetail/putState', payload: { editForm } });
       },
-      submitAuditCase() {
-        dispatch({ type: 'affairDetail/submitAuditCase' });
+      submitAuditCase(data) {
+        dispatch({ type: 'affairDetail/submitAuditCase', payload: data });
+      },
+      closeFlow() {
+        dispatch({ type: 'affairDetail/closeFlow' });
       },
       onCaseModalCancel() {
         dispatch({ type: 'affairDetail/onCaseModalCancel' });

@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { routerRedux } from 'dva/router';
 import { getEntcommDetail, getGeneralProtocol, editEntcomm } from '../services/entcomm';
 import { queryFields } from '../services/entity';
-import { queryCaseItem, auditCaseItem, queryCaseDetail, submitCaseItem } from '../services/workflow';
+import { queryCaseItem, queryNextNodeData, queryCaseDetail, submitCaseItem } from '../services/workflow';
 
 export default {
   namespace: 'affairDetail',
@@ -26,7 +26,10 @@ export default {
     columnConfigFormProtocols: {},
     columnConfigFormInstance: {},
     suggest: '',
-    selectedOperate: undefined
+    selectedOperate: undefined,
+
+    nextNodesData: [],
+    selectedNextNode: null
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -60,6 +63,7 @@ export default {
       const flowOperates = _.mapKeys(data.caseitem, (value, key) => key.replace('iscan', ''));
       const relentityDetail = data.relatedetail || {};
 
+      // 处理“审批可改字段”
       if (flowDetail.columnconfig && flowDetail.columnconfig.config && flowDetail.columnconfig.config.length) {
         yield put({ type: 'handleColumnConfig', payload: flowDetail.columnconfig.config });
       } else {
@@ -75,6 +79,22 @@ export default {
           relentityDetail
         }
       });
+
+      // 获取下一步节点
+      if (flowDetail.nodenum !== -1) {
+        try {
+          const { data: nextNodesData } = yield call(queryNextNodeData, caseId);
+          yield put({
+            type: 'putState',
+            payload: {
+              nextNodesData,
+              selectedNextNode: nextNodesData[0]
+            }
+          });
+        } catch (e) {
+          message.error(e.message || '获取下一步节点数据失败');
+        }
+      }
 
       // 获取实体查看协议
       if (!entityDetailProtocol.length) {
@@ -234,24 +254,32 @@ export default {
         message.error(e.message || '保存失败');
       }
     },
-    *submitAuditCase(action, { select, call, put }) {
+    *submitAuditCase({ payload: { handleuser, copyuser } }, { select, call, put }) {
       const {
-        selectedOperate, suggest,
-        caseId, flowDetail,
-        columnConfigForms, columnConfigFormProtocols
+        selectedOperate,
+        suggest,
+        caseId,
+        flowDetail,
+        selectedNextNode,
+        columnConfigForms,
+        columnConfigFormProtocols
       } = yield select(state => state.affairDetail);
 
+      let nodeid = '00000000-0000-0000-0000-000000000000';
+      let nodenum = flowDetail.nodenum;
       if (selectedOperate === 1 || selectedOperate === 4) {
-        yield put({ type: 'showModals', payload: 'workflowCase' });
-        return;
+        nodeid = selectedNextNode.nodeinfo.nodeid || '00000000-0000-0000-0000-000000000000';
+        nodenum = selectedNextNode.nodeinfo.nodenum;
       }
       try {
         const params = {
           caseId,
-          nodenum: flowDetail.nodenum,
-          nodeid: flowDetail.nodeid,
-          suggest,
+          nodeid,
+          nodenum,
           choicestatus: selectedOperate,
+          suggest,
+          handleuser,
+          copyuser,
           casedata: getCaseData()
         };
         const { data, error_msg } = yield call(submitCaseItem, params);
@@ -284,24 +312,29 @@ export default {
         return { data };
       }
     },
-    *onCaseModalCancel(action, { select, call, put }) {
-      yield put({ type: 'showModals', payload: '' });
-      const { caseId } = yield select(state => state.affairDetail);
-      yield put({ type: 'init', payload: caseId });
-    },
-    *onCaseModalDone(action, { select, call, put }) {
-      // message.success('提交成功');
-      yield put({ type: 'showModals', payload: '' });
-      const { caseId } = yield select(state => state.affairDetail);
-      // yield put({ type: 'init', payload: caseId });
+    *closeFlow(action, { select, put, call }) {
+      try {
+        const { caseId } = yield select(state => state.affairDetail);
+        const params = {
+          caseid: caseId,
+          nodenum: -1,
+          suggest: '',
+          ChoiceStatus: 1
+        };
+        yield call(submitCaseItem, params);
+        message.success('提交成功');
 
-      const { navStack } = yield select(state => state.navHistory);
-      if (navStack.length >= 2) {
-        yield put(routerRedux.goBack());
-      } else {
-        yield put(routerRedux.push({
-          pathname: 'affair-list'
-        }));
+        // 提交完审批后，返回列表
+        const { navStack } = yield select(state => state.navHistory);
+        if (navStack.length >= 2) {
+          yield put(routerRedux.goBack());
+        } else {
+          yield put(routerRedux.push({
+            pathname: 'affair-list'
+          }));
+        }
+      } catch (e) {
+        message.error(e.message || '提交失败');
       }
     }
   },
