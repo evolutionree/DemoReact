@@ -54,18 +54,15 @@ class WorkflowCaseModal extends Component {
         this.fetchNextNodeData(nextProps.caseId),
         this.fetchAllUsers()
       ]).then(([nextNodeData, allUsers]) => {
+        if (this.checkFlowIsEnd(nextNodeData)) {
+          this.props.onDone();
+          return;
+        }
         this.setState({
           nextNodes: nextNodeData,
           selectedNode: nextNodeData[0],
           allUsers
-        }, () => {
-          if (this.checkFlowIsEnd(nextNodeData)) {
-            // this.props.onDone();
-            this.submitDirectly();
-            return;
-          }
-          this.initFormData();
-        });
+        }, this.initFormData);
       });
     } else if (isClosing) {
       this.resetState();
@@ -103,7 +100,7 @@ class WorkflowCaseModal extends Component {
 
   // 根据node数据，检查流程是否结束
   checkFlowIsEnd = nextNodes => {
-    return nextNodes[0].nodeinfo.nodestate === 2;
+    return nextNodes[0].nodeinfo.nodenum === -1;
   };
 
   // 切换节点时，初始化表单数据
@@ -221,32 +218,6 @@ class WorkflowCaseModal extends Component {
         message.error(err.message || '提交审批数据失败');
         this.setState({ modalPending: false });
       });
-    });
-  };
-
-  // 不用选审批人，直接提交数据
-  submitDirectly = () => {
-    const params = {
-      caseid: this.props.caseId,
-      nodeid: this.state.selectedNode.nodeinfo.nodeid || '00000000-0000-0000-0000-000000000000',
-      nodenum: this.state.selectedNode.nodeinfo.nodenum,
-      choiceStatus: this.props.choiceStatus,
-      suggest: this.props.suggest,
-      handleuser: '',
-      copyuser: '',
-      // reamark: values.reamark,
-      casedata: this.getCaseData()
-    };
-    this.setState({ modalPending: true });
-    // TODO addCaseItemMultiple
-    // const execFn = typeof this.props.caseId === 'string' ? addCaseItem : addCaseItemMultiple;
-    submitCaseItem(params).then(result => {
-      this.setState({ modalPending: false });
-      message.success('提交成功');
-      this.props.onDone(result);
-    }, err => {
-      message.error(err.message || '提交审批数据失败');
-      this.setState({ modalPending: false });
     });
   };
 
