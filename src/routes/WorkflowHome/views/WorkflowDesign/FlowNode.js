@@ -166,8 +166,18 @@ class FlowNode extends Component {
     );
   };
 
+  renderHelperNode = () => {
+    return (
+      <div style={{ width: '30px', height: '30px', background: '#333' }}>&nbsp;</div>
+    );
+  };
+
   render() {
     const { id, title, nodeData } = this.props;
+
+    if (/__helper/.test(id)) {
+      return this.renderHelperNode();
+    }
 
     if (nodeData && nodeData.steptypeid === END_NODE) {
       return <div className={styles.START}>{title}</div>;

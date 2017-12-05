@@ -28,7 +28,7 @@ class WorkflowCaseForm extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.selectedNode !== nextProps.selectedNode) {
-      this.initFormData();
+      this.setState({ formKey: +new Date() }, this.initFormData); // FIXME 切换节点bug？
     }
   }
 

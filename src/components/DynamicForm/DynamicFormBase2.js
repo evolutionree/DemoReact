@@ -39,6 +39,7 @@ class CustomFormItem extends FormItem {
 
 class DynamicFormBase extends Component {
   static propTypes = {
+    entityId: PropTypes.string,
     entityTypeId: PropTypes.string,
     fields: PropTypes.array,
     value: PropTypes.object,
@@ -272,7 +273,7 @@ class DynamicFormBase extends Component {
   };
 
   renderFieldControl = field => {
-    const { entityTypeId, value } = this.props;
+    const { entityTypeId, entityId, value } = this.props;
     let { fieldconfig, fieldid, fieldname, displayname, controltype } = field;
     const value_name = value[fieldname + '_name'] && value[fieldname + '_name'].value;
     if (fieldconfig && fieldconfig.isReadOnly !== 1 && (fieldconfig.isReadOnlyJS === 0 || fieldconfig.isReadOnlyJS === 1)) {
@@ -281,11 +282,13 @@ class DynamicFormBase extends Component {
         isReadOnly: fieldconfig.isReadOnlyJS
       };
     }
+
     const fieldDecorator = this.state.fieldsDecorator[fieldname];
     return fieldDecorator(
       <DynamicField
         isCommonForm
         onChange={this.onFieldValueChange.bind(this, fieldname)}
+        entityId={entityId}
         entityTypeId={entityTypeId}
         usage={this.usage}
         isTable={this.isTable}

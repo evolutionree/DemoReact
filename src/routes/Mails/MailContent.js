@@ -74,7 +74,17 @@ class MailContent extends Component {
     if (!data) return null;
     const { title, sender, receivers, ccers, bccers, receivedtime,
       senttime, attachinfo, summary, mailbody, attachcount, istag, catalogtype } = data;
-    const strPersons = persons => persons && persons.map(item => item.displayname).join(', ');
+    const strPersons = persons => {
+      if (!persons) return null;
+      return persons.map((item, index) => {
+        const name = item.displayname || item.nickname || item.address;
+        // const address = item.address ? <span style={{ color: '#7f7f7f', paddingLeft: '3px' }}>&lt;{item.address}&gt;</span> : null;
+        const address = null;
+        return (
+          <span key={index} style={{ marginLeft: '3px' }}>{name}{address};</span>
+        );
+      });
+    };
     return (
       <div className={styles.wrap}>
         <ImgIcon
@@ -83,7 +93,7 @@ class MailContent extends Component {
           style={{ position: 'absolute', top: '10px', right: '10px' }}
           onClick={this.toggleHeader}
         />
-        <div className={styles.title}>
+        <div className={styles.title} title={title}>
           {catalogtype !== 'dept' &&
             <Icon
               type={istag ? 'star' : 'star-o'}
@@ -95,7 +105,7 @@ class MailContent extends Component {
         {this.state.headerVisible && <div className={styles.header}>
           <p className={styles.meta}>
             <span>发件人</span>
-            <span>{strPersons(sender && [sender])}</span>
+            <span>{strPersons(sender && (Array.isArray(sender) ? sender : [sender]))}</span>
           </p>
           <p className={styles.meta}>
             <span>收件人</span>

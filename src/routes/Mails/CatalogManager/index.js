@@ -58,23 +58,24 @@ class CatalogManager extends Component {
     const isPersonalCat = isMyCat && selected.ctype === 2002;
     const isPersonalSubCat = isMyCat && selected.ctype === 3002;
     const isCustCat = isMyCat && selected.ctype === 4001;
+    const isInboxCat = isMyCat && selected.ctype > 2000; // 收件箱子文件夹
     return (
       <div style={{ height: '100%', minWidth: '330px' }}>
         <div style={{ padding: '10px' }}>
           <Button ghost onClick={this.props.addCatalog} disabled={!isPersonalCat && !isPersonalSubCat}>新增</Button>
           <Button ghost onClick={this.props.editCatalog} disabled={!isPersonalSubCat}>编辑</Button>
-          <Button ghost onClick={this.props.transferCatalog} disabled={!isPersonalSubCat && !isCustCat}>转移</Button>
+          <Button ghost onClick={this.props.transferCatalog} disabled={!isInboxCat}>转移</Button>
           <Button ghost onClick={this.props.delCatalog} disabled={!isPersonalSubCat}>删除</Button>
           <ImgIcon name="refresh" onClick={this.props.refreshCatalog} />
-          <ImgIcon name="arrow-down-bordered" onClick={this.onOrderDown} disabled={!isPersonalSubCat && !isCustCat} />
-          <ImgIcon name="arrow-up-bordered" onClick={this.onOrderUp} disabled={!isPersonalSubCat && !isCustCat} />
+          {(isPersonalSubCat || isCustCat) && <ImgIcon name="arrow-down-bordered" onClick={this.onOrderDown} />}
+          {(isPersonalSubCat || isCustCat) && <ImgIcon name="arrow-up-bordered" onClick={this.onOrderUp} />}
         </div>
         <div style={{ position: 'relative', background: '#f7f7f7', height: '44px', paddingLeft: '10px' }}>
           <span style={{ lineHeight: '44px' }}>{catTitle[openedCatalog] || '邮箱'}</span>
           {!!catTitle[openedCatalog] && <div style={{ position: 'absolute', right: '10px', top: '8px', width: '180px' }}>
             <Search
               mode="icon"
-              placeholder={openedCatalog === 'my' ? '搜索文件夹' : '搜索人员'}
+              placeholder={openedCatalog === 'my' ? '搜索文件夹' : '搜索下属员工'}
               value={catSearchKey[openedCatalog] || ''}
               onSearch={this.onSearch}
             />

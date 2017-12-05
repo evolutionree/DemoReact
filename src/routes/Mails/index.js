@@ -44,7 +44,7 @@ class Mails extends Component {
   renderMidtop = () => {
     const styl = {
       position: 'relative',
-      minWidth: '800px',
+      minWidth: '820px',
       minHeight: '100%',
       paddingBottom: '40px'
     };

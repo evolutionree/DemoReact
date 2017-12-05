@@ -25,13 +25,7 @@ class AffairDetail extends Component {
   columnConfigFormInstance = {};
   workflowCaseFormRef = null;
   validateColumnConfigForms = () => {
-    const { columnConfigFormProtocols } = this.props;
-    const formArray = _.map(columnConfigFormProtocols, (val, key) => ({ entityId: key, protocols: val }));
-    let result = true;
-    validateNext();
-    return result;
-
-    function validateNext() {
+    const validateNext = () => {
       const item = formArray[0];
       if (!item) return;
 
@@ -41,20 +35,26 @@ class AffairDetail extends Component {
         if (err) result = false;
         validateNext();
       });
-    }
+    };
+
+    const { columnConfigFormProtocols } = this.props;
+    const formArray = _.map(columnConfigFormProtocols, (val, key) => ({ entityId: key, protocols: val }));
+    let result = true;
+    validateNext();
+    return result;
   };
   validateWorkflowCaseForm = () => {
     let result = true;
     const node = this.props.selectedNextNode;
     if (!node) {
       result = false;
-    } else if (node.nodeinfo.nodestate !== 2 && [1, 4].includes(this.props.selectedOperate)) {
+    } else if (this.shouldShowUserForm()) {
       this.workflowCaseFormRef.validateFields(err => err && (result = false));
     }
     return result;
   };
   getWorkflowCaseFormValue = () => {
-    if (this.props.selectedNextNode.nodeinfo.nodestate !== 2 && [1, 4].includes(this.props.selectedOperate)) {
+    if (this.shouldShowUserForm()) {
       return {
         handleuser: this.workflowCaseFormRef.getFieldValue('handleuser').join(','),
         copyuser: this.workflowCaseFormRef.getFieldValue('copyuser').join(',')
@@ -95,6 +95,11 @@ class AffairDetail extends Component {
       };
     });
     return { data };
+  };
+  shouldShowUserForm = () => {
+    const { selectedNextNode: node, selectedOperate } = this.props;
+    return node && node.nodeinfo.nodestate !== 2 && (selectedOperate === 1 || selectedOperate === 4)
+              && !(node.nodeinfo.nodetype === 1 && node.nodeinfo.needsuccauditcount > 1);
   };
   render() {
     const {
@@ -192,7 +197,7 @@ class AffairDetail extends Component {
               ))}
             </div>
 
-            {selectedNextNode && selectedNextNode.nodeinfo.nodestate !== 2 && selectedOperate === 1 && (
+            {this.shouldShowUserForm() && (
               <WorkflowCaseForm
                 ref={ref => this.workflowCaseFormRef = ref}
                 caseNodes={nextNodesData}

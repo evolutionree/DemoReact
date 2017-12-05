@@ -64,8 +64,8 @@ export default {
       const relentityDetail = data.relatedetail || {};
 
       // 处理“审批可改字段”
-      if (flowDetail.columnconfig && flowDetail.columnconfig.config && flowDetail.columnconfig.config.length) {
-        yield put({ type: 'handleColumnConfig', payload: flowDetail.columnconfig.config });
+      if (data.caseitem.columnconfig && data.caseitem.columnconfig.config && data.caseitem.columnconfig.config.length) {
+        yield put({ type: 'handleColumnConfig', payload: data.caseitem.columnconfig.config });
       } else {
         yield put({ type: 'putState', payload: { columnConfigForms: {}, columnConfigFormProtocols: {} } });
       }
