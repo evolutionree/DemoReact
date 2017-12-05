@@ -58,12 +58,13 @@ class CatalogManager extends Component {
     const isPersonalCat = isMyCat && selected.ctype === 2002;
     const isPersonalSubCat = isMyCat && selected.ctype === 3002;
     const isCustCat = isMyCat && selected.ctype === 4001;
+    const isInboxCat = isMyCat && selected.ctype > 2000; // 收件箱子文件夹
     return (
       <div style={{ height: '100%', minWidth: '330px' }}>
         <div style={{ padding: '10px' }}>
           <Button ghost onClick={this.props.addCatalog} disabled={!isPersonalCat && !isPersonalSubCat}>新增</Button>
           <Button ghost onClick={this.props.editCatalog} disabled={!isPersonalSubCat}>编辑</Button>
-          <Button ghost onClick={this.props.transferCatalog} disabled={!isPersonalSubCat && !isCustCat}>转移</Button>
+          <Button ghost onClick={this.props.transferCatalog} disabled={!isInboxCat}>转移</Button>
           <Button ghost onClick={this.props.delCatalog} disabled={!isPersonalSubCat}>删除</Button>
           <ImgIcon name="refresh" onClick={this.props.refreshCatalog} />
           {(isPersonalSubCat || isCustCat) && <ImgIcon name="arrow-down-bordered" onClick={this.onOrderDown} />}
