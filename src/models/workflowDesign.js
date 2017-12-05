@@ -9,7 +9,7 @@ import { queryFields } from '../services/entity';
 /**
  * 格式化服务端数据，并为节点初始化坐标
  * @param data { lines, nodes }
- * @returns {{flowNodes: Array, flowLines: Array}}
+ * @returns {{flowSteps: Array, flowPaths: Array, flowStepsByIdCollection: Object}}
  */
 function parseFlowJSON(data) {
   if (!data.nodes || !data.nodes.length) {
@@ -201,6 +201,43 @@ function markBranch(path, index, allPaths) {
   };
 }
 
+// 针对 { node1, node2 ... } => { node3, node4 ... } 添加分支辅助节点
+function addBranchHelpers({ flowSteps, flowPaths }) {
+  let retFlowSteps = [...flowSteps];
+  let retFlowPaths = [...flowPaths];
+  const nextSteps = {};
+  flowSteps.forEach(step => nextSteps[step.id] = getNextSteps(step.id, flowSteps, flowPaths));
+  const groupBySameNextSteps = _.groupBy(flowSteps, step => {
+    return nextSteps[step.id].map(item => item.id).join(',');
+  });
+  Object.keys(groupBySameNextSteps).forEach(key => {
+    const grouped = groupBySameNextSteps[key];
+    if (grouped.length <= 1) return;
+    const nexts = nextSteps[grouped[0].id];
+    if (nexts.length <= 1) return;
+
+    const helperStepId = uuid.v4();
+    const helperStep = {
+      id: helperStepId,
+      name: '__helper',
+      x: grouped[0].x,
+      y: grouped[0].y,
+      rawNode: null
+    };
+    const helperPaths = grouped.map(step => ({ from: step.id, to: helperStepId, ruleid: null }));
+    const helperPaths2 = nexts.map(step => ({ from: helperStepId, to: step.id, ruleid: _.find(flowPaths, ['to', step.id]).ruleid }));
+    retFlowPaths = retFlowPaths.filter(path => !_.includes(grouped.map(i => i.id), path.from));
+    retFlowPaths = [...retFlowPaths, ...helperPaths, ...helperPaths2];
+    retFlowSteps = [...retFlowSteps, helperStep];
+  });
+  return { flowSteps: retFlowSteps, flowPaths: retFlowPaths };
+}
+function getNextSteps(stepId, flowSteps, flowPaths) {
+  const paths = flowPaths.filter(item => item.from === stepId);
+  const nextStepsId = paths.map(item => item.to);
+  return nextStepsId.map(id => _.find(flowSteps, ['id', id])).filter(item => !!item);
+}
+
 export default {
   namespace: 'workflowDesign',
   state: {
@@ -329,14 +366,6 @@ export default {
           flowPaths: [...flowPaths, newPath].map(markBranch)
         }
       });
-
-      function getMaxStepId(steps) {
-        let max = 0;
-        steps.forEach(step => {
-          max = Math.max(max, step.id);
-        });
-        return max;
-      }
     },
     *addBranchStep({ payload: stepId }, { select, put }) {
       const {
@@ -363,14 +392,6 @@ export default {
           flowPaths: [...flowPaths, ...newPathsToNewFlowStep, ...newPathsFromNewFlowStep].map(markBranch)
         }
       });
-
-      function getMaxStepId(steps) {
-        let max = 0;
-        steps.forEach(step => {
-          max = Math.max(max, step.id);
-        });
-        return max;
-      }
     },
     *delStep({ payload: stepId }, { select, put }) {
       const {
