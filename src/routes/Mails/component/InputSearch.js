@@ -38,11 +38,26 @@ class InputSearch extends Component {
   }
 
   queryListData(value) {
-    request('/api/mail/getcontactbykeyword', {
-      method: 'post', body: JSON.stringify({ keyword: value })
-    }).then((result) => {
+    Promise.all([
+      request('/api/mail/getcontactbykeyword', {
+        method: 'post', body: JSON.stringify({ keyword: value, count: 50 })
+      }),
+      request('/api/mail/getinnerpersoncontact', {
+        method: 'post', body: JSON.stringify({ keyword: value, PageIndex: 1, pageSize: 50 })
+      })
+    ]).then((result) => {
+      const [customContact, innerContact] = result;
+      const innerContactData = innerContact.data.datalist.map((item) => {
+        return {
+          name: item.treename,
+          emailaddress: item.mail
+        };
+      });
       this.setState({
-        listData: result && result.data
+        listData: [
+          ...customContact.data,
+          ...innerContactData
+        ]
       });
     });
   }
@@ -66,7 +81,6 @@ class InputSearch extends Component {
   }
 
   completeInput(type) {
-    console.log('inse:blur')
     this.props.completeInput && this.props.completeInput(this.getMatchAllContacts(this.state.value), type);
     this.setState({
       value: ''

@@ -1,5 +1,14 @@
 /**
  * Created by 0291 on 2017/11/6.
+ * 收件箱
+ * 原收件人回复  收件人为原发件人 抄送人/密送人为空
+ * 原收件人回复全部  收件人为原发件人+原收件人列表-当前账号绑定的邮箱  抄送人还是原抄送人-当前账号绑定的邮箱 密送人为空
+ * 原收件人转发  收件人/抄送人/密送人为空
+ *
+ * 发件箱
+ * 原发件人回复  收件人/抄送人/密送人为空
+ * 原发件人全部回复  收件人为原收件人 抄送人为原抄送人 密送人为空
+ * 原发件人转发  收件人/抄送人/密送人为空
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
@@ -11,6 +20,9 @@ import Form from '../component/Form';
 import AddressList from '../component/AddressList'; //通讯录
 import _ from 'lodash';
 import Styles from './EditMailPanel.less';
+import {
+  validsendmaildata
+} from '../../../services/mails';
 
 const confirm = Modal.confirm;
 
@@ -129,7 +141,10 @@ class EditMailPanel extends Component {
       height: document.body.clientHeight - 60 - 10
     });
     const formModel = this.state.formModel && this.state.formModel instanceof Array && this.state.formModel.filter((item) => item.show);
-    this.umEditor.setHeight(document.body.clientHeight - 60 - 10 - formModel.length * 44 - 205);
+    try {
+      const clientWidth = document.body.clientWidth;
+      this.umEditor.setHeight(document.body.clientHeight - 60 - 10 - formModel.length * 44 - 215);
+    } catch (e) {}
   }
 
 
@@ -149,7 +164,7 @@ class EditMailPanel extends Component {
                 return {
                   fileid: item.fileid,
                   filename: item.filename,
-                  filelength: 0
+                  size: 0
                 };
               })
             });
@@ -511,7 +526,7 @@ class EditMailPanel extends Component {
     }
 
     const showFormModel = formModel && formModel instanceof Array && formModel.filter((item) => item.show);
-    this.umEditor.setHeight(document.body.clientHeight - 60 - 10 - showFormModel.length * 44 - 205);
+    this.umEditor.setHeight(document.body.clientHeight - 60 - 10 - showFormModel.length * 44 - 215);
 
     this.props.dispatch({ type: 'mails/putState', payload: {
       editEmailPageFormModel: formModel,
@@ -524,11 +539,6 @@ class EditMailPanel extends Component {
     const formData = this.props.editEmailFormData;
     let formModel = this.state.formModel && this.state.formModel instanceof Array && this.state.formModel.filter((item) => item.show);
 
-    if (!formData || !formData.ToAddress || formData.ToAddress.length === 0) {
-      message.warning('收件人不能为空');
-      return false;
-    }
-
     let submitData = {};
     formModel && formModel instanceof Array && formModel.map((item) => { //筛选出当前表单显示的数据
       submitData[item.name] = formData && formData[item.name];
@@ -540,12 +550,22 @@ class EditMailPanel extends Component {
       }
     }
 
+    if (submitData[formDataField.ToAddress].length === 0 && submitData[formDataField.CCAddress].length === 0 && submitData[formDataField.BCCAddress].length === 0) {
+      message.warning('收件人、抄送、密送不能都为空');
+      return false;
+    }
+
     for (let key in submitData) {
       if (key !== formDataField.subject) {
         if (getTransformAddress(submitData[key])) {
           submitData[key] = getTransformAddress(submitData[key]);  //转换成后端要求的格式
         } else {
-          message.warning('收件人邮箱格式存在错误,请修正后再发送');
+          const info = {
+            [formDataField.ToAddress] : '收件人',
+            [formDataField.CCAddress] : '抄送人',
+            [formDataField.BCCAddress] : '密送人'
+          }
+          message.warning(info[key] + '邮箱格式存在错误,请修正后再发送');
           return;
         }
       }
@@ -581,7 +601,26 @@ class EditMailPanel extends Component {
         }
       });
     } else {
-      this.props.dispatch({ type: 'mails/sendemail', payload: submitData });
+      validsendmaildata(submitData).then((result) => { //校验发送邮件白名单
+        const { data } = result;
+        if (data.flag === 0) {
+          confirm({
+            title: '确定继续发送吗?',
+            content: data.tipmsg,
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
+            onOk: () => {
+              this.props.dispatch({ type: 'mails/sendemail', payload: submitData });
+            },
+            onCancel: () => {
+
+            }
+          });
+        } else if(data.flag === 1) { //校验通过  邮件发送成功
+          this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: 'sendMailSuccess', editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null } });
+        }
+      })
     }
 
     function getTransformAddress(data) {
@@ -616,8 +655,8 @@ class EditMailPanel extends Component {
     if (file.type === 'application/x-msdownload') {
       message.error('抱歉，暂时不支持此类型的附件上传');
     }
-    if (this.state.totalFileSize + file.size > 1024 * 1024 * 1024 * 4) { //1024 * 1024 * 1024 * 4
-      message.error('文件大小不可超过4G');
+    if (this.state.totalFileSize + file.size > 1024 * 1024 * 20) { //1024 * 1024 * 1024 * 1
+      message.error('文件大小不可超过20M');
       this.setState({
         fileUploadLimit: true
       });
@@ -625,7 +664,11 @@ class EditMailPanel extends Component {
     return true;
   };
 
-  handleUploadChange = ({ file, fileList }) => {
+  handleUploadChange = ({ file, fileList, event }) => {
+    console.log(file)
+    console.log(fileList)
+    console.log(event)
+    console.log(this.state.totalFileSize)
     //debugger;
     if (file.response && file.response.error_code === 0 && file.type !== 'application/x-msdownload' && !this.state.fileUploadLimit) {
       const fileId = file.response.data;
@@ -636,12 +679,18 @@ class EditMailPanel extends Component {
           {
             fileid: fileId,
             filename: file.name,
-            filelength: file.size
+            size: file.size
           }
         ],
         uploadingFiles: [],
-        totalFileSize: fileList.reduce((prev, cur) => cur.filelength + prev, 0)
+        totalFileSize: fileList.reduce((prev, cur) => cur.size + prev, 0)
       });
+    } else if (file.status === "removed") { //移除附件
+      this.setState({
+        fileList: this.state.fileList.filter((item) => {
+          item.fieldid !== item.uid;
+        })
+      })
     }
 
 
@@ -672,6 +721,7 @@ class EditMailPanel extends Component {
           uid: file.fileid,
           name: file.filename,
           status: 'done',
+          size: file.size,
           url: `/api/fileservice/download?fileid=${file.fileid}`
         };
       });
@@ -724,11 +774,11 @@ class EditMailPanel extends Component {
           <Form model={formModel} ref={ref => this.FormRef = ref} />
           <Upload {...props}>
             <div className={Styles.attachmentWrap}>
-              <Icon type="link" /><span>添加附件</span><span>(4GB)</span>
+              <Icon type="link" /><span>添加附件</span><span>(20M)</span>
             </div>
           </Upload>
           <div className={Styles.UMEditorWrap}>
-            <UMEditor style={{ width: '100%', height: this.state.height - formModel.length * 44 - 205 }} useImageBase64 ref={this.umEditorRef} loading={false} onChange={this.UMEditorContentChangeHandler.bind(this)} />
+            <UMEditor style={{ width: '100%', height: this.state.height - formModel.length * 44 - 215 }} useImageBase64 ref={this.umEditorRef} loading={false} onChange={this.UMEditorContentChangeHandler.bind(this)} />
           </div>
           <div>
             <div className={Styles.footer}>

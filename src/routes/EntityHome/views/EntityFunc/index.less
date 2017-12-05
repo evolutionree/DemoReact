@@ -1,0 +1,29 @@
+.Wrap {
+  :global {
+    button {
+      margin-right: 10px;
+    }
+  }
+
+  .clearfix {
+    zoom:1
+  }
+  .clearfix:after{
+    content:"";
+    display:block;
+    clear:both;
+  }
+}
+
+
+.Wrap > ul > li:first-of-type {
+  float: left;
+}
+
+.Wrap > ul > li:last-of-type {
+  float: left;
+  display: block;
+  width: 100%;
+  height: 100px;
+  background: red;
+}
