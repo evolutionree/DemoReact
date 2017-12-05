@@ -216,11 +216,11 @@ function addBranchHelpers({ flowSteps, flowPaths }) {
     const nexts = nextSteps[grouped[0].id];
     if (nexts.length <= 1) return;
 
-    const helperStepId = uuid.v4();
+    const helperStepId = '__helper_' + uuid.v4();
     const helperStep = {
       id: helperStepId,
       name: '__helper',
-      x: grouped[0].x,
+      x: grouped[0].x + 100,
       y: grouped[0].y,
       rawNode: null
     };
@@ -229,6 +229,12 @@ function addBranchHelpers({ flowSteps, flowPaths }) {
     retFlowPaths = retFlowPaths.filter(path => !_.includes(grouped.map(i => i.id), path.from));
     retFlowPaths = [...retFlowPaths, ...helperPaths, ...helperPaths2];
     retFlowSteps = [...retFlowSteps, helperStep];
+
+    const afterSteps = getAfterSteps(helperStepId, retFlowSteps, retFlowPaths);
+    afterSteps.forEach(step => {
+      // step.x += 50;
+      // step.y += 50;
+    });
   });
   return { flowSteps: retFlowSteps, flowPaths: retFlowPaths };
 }
@@ -236,6 +242,16 @@ function getNextSteps(stepId, flowSteps, flowPaths) {
   const paths = flowPaths.filter(item => item.from === stepId);
   const nextStepsId = paths.map(item => item.to);
   return nextStepsId.map(id => _.find(flowSteps, ['id', id])).filter(item => !!item);
+}
+function getAfterSteps(stepId, flowSteps, flowPaths) {
+  let allNexts = [];
+  let nextSteps = getNextSteps(stepId, flowSteps, flowPaths);
+  while (nextSteps.length) {
+    allNexts = [...allNexts, ...nextSteps];
+    nextSteps = nextSteps.map(step => getNextSteps(step.id, flowSteps, flowPaths));
+    nextSteps = _.flatten(nextSteps);
+  }
+  return _.uniqBy(allNexts, 'id');
 }
 
 export default {
