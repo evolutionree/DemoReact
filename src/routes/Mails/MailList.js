@@ -63,7 +63,7 @@ class MailList extends Component {
               <span>{val}</span>
             </div>
           )} />
-          <Column title="发件人" dataIndex="sender.displayname" />
+          <Column title="发件人" dataIndex="sender" render={val => val.displayname || val.address} />
           <Column
             title="收件人"
             dataIndex="receivers"
