@@ -66,8 +66,8 @@ class CatalogManager extends Component {
           <Button ghost onClick={this.props.transferCatalog} disabled={!isPersonalSubCat && !isCustCat}>转移</Button>
           <Button ghost onClick={this.props.delCatalog} disabled={!isPersonalSubCat}>删除</Button>
           <ImgIcon name="refresh" onClick={this.props.refreshCatalog} />
-          <ImgIcon name="arrow-down-bordered" onClick={this.onOrderDown} disabled={!isPersonalSubCat && !isCustCat} />
-          <ImgIcon name="arrow-up-bordered" onClick={this.onOrderUp} disabled={!isPersonalSubCat && !isCustCat} />
+          {(isPersonalSubCat || isCustCat) && <ImgIcon name="arrow-down-bordered" onClick={this.onOrderDown} />}
+          {(isPersonalSubCat || isCustCat) && <ImgIcon name="arrow-up-bordered" onClick={this.onOrderUp} />}
         </div>
         <div style={{ position: 'relative', background: '#f7f7f7', height: '44px', paddingLeft: '10px' }}>
           <span style={{ lineHeight: '44px' }}>{catTitle[openedCatalog] || '邮箱'}</span>
