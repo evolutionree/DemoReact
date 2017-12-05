@@ -169,6 +169,9 @@ export default {
         const params = {
           catalogname: catSearchKey.my || ''
         };
+        if (catSearchKey.my) {
+          params.catalogtype = 1001;
+        }
         const { data } = yield call(queryMailCatalog, params);
         yield put({ type: 'putState', payload: { myCatalogData: data } });
         if (!catSearchKey.my) {
