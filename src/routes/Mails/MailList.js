@@ -4,7 +4,7 @@ import { connect } from 'dva';
 import classnames from 'classnames';
 import ImgIcon from '../../components/ImgIcon';
 import TinyPager from '../../components/TinyPager';
-import { formatTime} from '../../utils';
+import { formatTime } from '../../utils';
 import styles from './styles.less';
 
 const Column = Table.Column;
@@ -46,6 +46,7 @@ class MailList extends Component {
             width={34}
           />
           <Column
+            className={styles.titleColumn}
             title={<ImgIcon marginLess name="attachment" />}
             dataIndex="attachcount"
             render={val => (val ? <ImgIcon marginLess name="attachment" /> : null)}
@@ -57,22 +58,49 @@ class MailList extends Component {
             {/*render={val => (val ? <Icon type="paper-clip" style={{}} /> : null)}*/}
             {/*width={34}*/}
           {/*/>*/}
-          <Column title="主题" dataIndex="title" render={(val, record) => (
-            <div>
-              {!!record.istag && <Icon type="star" style={{ color: '#ff9a2e', marginRight: '5px' }} />}
-              <span>{val}</span>
-            </div>
-          )} />
-          <Column title="发件人" dataIndex="sender" render={val => val.displayname || val.address} />
+          <Column
+            title="主题"
+            dataIndex="title"
+            render={(val, record) => {
+              const style = { maxWidth: '220px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
+              return (
+                <div style={style} title={val}>
+                  {!!record.istag && <Icon type="star" style={{ color: '#ff9a2e', marginRight: '5px' }} />}
+                  <span>{val}</span>
+                </div>
+              );
+            }}
+          />
+          <Column
+            title="发件人"
+            dataIndex="sender"
+            width={145}
+            render={val => {
+              const style = { width: '145px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
+              return <div style={style}>{val.displayname || val.address}</div>;
+            }}
+          />
           <Column
             title="收件人"
             dataIndex="receivers"
-            render={val => val.map(item => item.displayname || item.mailaddress).join(', ')}
+            width={145}
+            render={val => {
+              if (!(val && val.length)) return '';
+              const title = val.map(item => item.displayname || item.address).join(', ');
+              const ect = val.length > 1 ? `等${val.length}个人` : '';
+              const style = { width: '145px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
+              return <div title={title} style={style}>{val[0].displayname || val[0].address}{ect}</div>;
+            }}
           />
           <Column
             title="时间"
             dataIndex="senttime"
-            render={(val, record) => formatTime(record.receivedtime) || formatTime(record.senttime)}
+            width={100}
+            render={(val, record) => {
+              const correctTime = time => ((!time || time === '0001-01-01 00:00:00') ? '' : time);
+              const time = correctTime(record.receivedtime) || correctTime(record.senttime);
+              return <span title={time}>{formatTime(time)}</span>;
+            }}
           />
         </Table>
         <TinyPager
