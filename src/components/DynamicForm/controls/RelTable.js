@@ -145,7 +145,18 @@ class RelTable extends Component {
   };
 
   getShowFields = () => {
-    return this.state.fields.filter(item => !!(item.fieldconfig && item.fieldconfig.isVisible && (item.fieldconfig.isVisibleJS !== 0)));
+    // return this.state.fields.filter(item => !!(item.fieldconfig && item.fieldconfig.isVisible && (item.fieldconfig.isVisibleJS !== 0)));
+    return this.state.fields.filter(field => {
+      if ((field.controltype === 31) || (field.controltype > 1000 && field.controltype !== 1012 && field.controltype !== 1006)) {
+        return false;
+      }
+      if (field.fieldconfig.isVisible !== 1) {
+        return false;
+      } else if (field.fieldconfig.isVisibleJS === 0) {
+        return false;
+      }
+      return true;
+    });
   };
 
   getTableHeader = () => {
