@@ -93,7 +93,7 @@ class MailContent extends Component {
           style={{ position: 'absolute', top: '10px', right: '10px' }}
           onClick={this.toggleHeader}
         />
-        <div className={styles.title}>
+        <div className={styles.title} title={title}>
           {catalogtype !== 'dept' &&
             <Icon
               type={istag ? 'star' : 'star-o'}
