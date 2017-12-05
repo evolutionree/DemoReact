@@ -75,7 +75,7 @@ class CatalogManager extends Component {
           {!!catTitle[openedCatalog] && <div style={{ position: 'absolute', right: '10px', top: '8px', width: '180px' }}>
             <Search
               mode="icon"
-              placeholder={openedCatalog === 'my' ? '搜索文件夹' : '搜索人员'}
+              placeholder={openedCatalog === 'my' ? '搜索文件夹' : '搜索下属员工'}
               value={catSearchKey[openedCatalog] || ''}
               onSearch={this.onSearch}
             />
