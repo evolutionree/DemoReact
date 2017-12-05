@@ -24,7 +24,8 @@ class MainLayout extends Component {
       pright: 0.25,
       pbottom: 0.50,
       showBottom: true,
-      showRight: true
+      showRight: true,
+      showLeft: true
     };
   }
 
@@ -35,13 +36,14 @@ class MainLayout extends Component {
 
   initLayout = () => {
     queryMailLayout().then(result => {
-      const { bottomprecent, leftprecent, rightprecent, showbottom, showright } = result.data;
+      const { bottomprecent, leftprecent, rightprecent, showbottom, showright, showleft } = result.data;
       this.setState({
         pleft: leftprecent,
         pright: rightprecent,
         pbottom: bottomprecent,
         showBottom: showbottom,
-        showRight: showright
+        showRight: showright,
+        showLeft: true || showleft
       });
     });
   };
@@ -52,7 +54,8 @@ class MainLayout extends Component {
       leftprecent: this.state.pleft,
       rightprecent: this.state.pright,
       showbottom: this.state.showBottom,
-      showright: this.state.showRight
+      showright: this.state.showRight,
+      showleft: this.state.showLeft
     };
     saveMailLayout(params).catch(e => console.error(e));
   };
@@ -112,6 +115,10 @@ class MainLayout extends Component {
     this.setState({ showRight: !this.state.showRight }, this.saveLayout);
   };
 
+  toggleLeft = () => {
+    this.setState({ showLeft: !this.state.showLeft }, this.saveLayout);
+  };
+
   getContainerOffset = () => {
     let left = 0;
     let top = 0;
@@ -125,28 +132,38 @@ class MainLayout extends Component {
   };
 
   render() {
-    const { pleft, pright, pbottom, showRight, showBottom } = this.state;
-    const wleft = pleft * 100 + '%';
+    const { pleft, pright, pbottom, showLeft, showRight, showBottom } = this.state;
+    const wleft = showLeft ? (pleft * 100 + '%') : '30px';
     const wright = showRight ? (pright * 100 + '%') : '30px';
     const htop = showBottom ? ((1 - pbottom) * 100 + '%') : 'calc(100% - 30px)';
     const hbottom = showBottom ? (pbottom * 100 + '%') : '30px';
     return (
       <div className={styles.container} ref={el => this.container = el}>
         <div className={styles.left} style={{ width: wleft }}>
-          {this.props.left}
+          {showLeft ? this.props.left : (
+            <div style={{ height: '100%', background: '#f1f1f1' }} />
+          )}
         </div>
         <div className={styles.right} style={{ width: wright }}>
           {showRight ? this.props.right : (
             <div style={{ height: '100%', background: '#f1f1f1' }} />
           )}
-          {!showRight && <ImgIcon
+          <ImgIcon
             name="arrow-up-bordered"
             size="small"
-            style={{ position: 'absolute', top: '20px', left: '10px', transform: 'rotate(-90deg)' }}
+            className={styles.panelToggle}
+            style={{ top: '20px', left: '10px', transform: 'rotate(90deg)' }}
             onClick={this.toggleRight}
-          />}
+          />
         </div>
         <div className={styles.mid} style={{ left: wleft, right: wright }}>
+          <ImgIcon
+            name="arrow-up-bordered"
+            size="small"
+            className={styles.panelToggle}
+            style={{ top: '15px', left: '-20px', transform: 'rotate(-90deg)' }}
+            onClick={this.toggleLeft}
+          />
           <div className={styles.midtop} style={{ height: htop }}>
             {this.props.midtop}
           </div>
