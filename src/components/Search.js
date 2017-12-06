@@ -17,9 +17,12 @@ class Search extends React.Component {
     mode: 'button'
   };
 
-  state = {
-    innerVal: ''
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      innerVal: props.value || ''
+    };
+  }
 
   componentWillReceiveProps(nextProps) {
     const value = nextProps.value;
