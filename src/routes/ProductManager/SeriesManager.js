@@ -20,14 +20,15 @@ function SeriesManager({
 }) {
   const currentSeries = _.find(series, ['productsetid', queries.productSeriesId]);
   const disableDel = currentSeries && currentSeries.nodepath === 0; // 不允许删除顶级产品系列
+  const isDisabledSeries = currentSeries && currentSeries.recstatus === 0;
   return (
     <div className={styles.leftContent}>
       <div className={styles.subtitle}>
         产品系列
       </div>
       <div>
-        {checkFunc('ProductSeriseAdd') && <Button size="default" onClick={add}>新增</Button>}
-        {checkFunc('ProductSeriseEdit') && <Button size="default" onClick={edit}>编辑</Button>}
+        {checkFunc('ProductSeriseAdd') && !isDisabledSeries && <Button size="default" onClick={add}>新增</Button>}
+        {checkFunc('ProductSeriseEdit') && !isDisabledSeries && <Button size="default" onClick={edit}>编辑</Button>}
         {checkFunc('ProductSeriseImport') && <Button onClick={importData}>导入</Button>}
         {/*{checkFunc('ProductSeriseDelete') && <Button type="danger" size="default" onClick={enable} disabled={disableDel}>删除</Button>}*/}
         {checkFunc('ProductSeriseDelete') && (currentSeries && !currentSeries.recstatus) && <Button size="default" onClick={() => enable(1)}>启用</Button>}
