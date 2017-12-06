@@ -58,7 +58,7 @@ class CatalogManager extends Component {
     const isPersonalCat = isMyCat && selected.ctype === 2002;
     const isPersonalSubCat = isMyCat && selected.ctype === 3002;
     const isCustCat = isMyCat && selected.ctype === 4001;
-    const isInboxCat = isMyCat && selected.ctype > 2000; // 收件箱子文件夹
+    const isInboxCat = selected.ctype > 2000; // 收件箱子文件夹(包括下属)
     return (
       <div style={{ height: '100%', minWidth: '330px' }}>
         <div style={{ padding: '10px' }}>
