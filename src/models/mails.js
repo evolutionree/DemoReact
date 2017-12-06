@@ -382,16 +382,24 @@ export default {
       }
     },
     *markMails({ payload: { mails, mark } }, { select, call, put }) {
+      // 0取消星标 1星标 2设置未读 3设置已读
+      const actionNames = {
+        0: '取消星标',
+        1: '标星',
+        2: '标记为未读',
+        3: '标记为已读'
+      };
+      const actionName = actionNames[mark] || '标记';
       try {
         const params = {
           mailids: mails.map(item => item.mailid).join(','),
           mark
         };
         yield call(markMails, params);
-        message.success('标记成功');
+        message.success(`${actionName}成功`);
         yield put({ type: 'queryMailList' });
       } catch (e) {
-        message.error(e.message || '标记失败');
+        message.error(e.message || `${actionName}失败`);
       }
     },
     *tagMailsInDetail__({ payload: tag }, { select, call, put }) {
