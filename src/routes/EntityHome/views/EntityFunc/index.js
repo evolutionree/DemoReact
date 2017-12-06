@@ -1,0 +1,2492 @@
+import React from 'react';
+import { connect } from 'dva';
+import { Button } from 'antd';
+import SeriesTree from '../../../ProductManager/SeriesTree';
+import Styles from './index.less';
+
+const data = [
+  {
+    "productsetid":"7f74192d-b937-403f-ac2a-8be34714278b",
+    "pproductsetid":"00000000-0000-0000-0000-000000000000",
+    "productsetname":"CRM产品",
+    "productsetcode":"S0000",
+    "recorder":0,
+    "nodepath":0,
+    "nodes":46,
+    "reccreator":0,
+    "reccreatorname":null,
+    "reccreated":"2017-04-11 15:10:50",
+    "recstatus":1,
+    "children":[
+      {
+        "productsetid":"9ff60bea-02c2-427d-a820-13d7eefc3304",
+        "pproductsetid":"7f74192d-b937-403f-ac2a-8be34714278b",
+        "productsetname":"玄武产品系列A",
+        "productsetcode":null,
+        "recorder":0,
+        "nodepath":1,
+        "nodes":4,
+        "reccreator":1,
+        "reccreatorname":"系统管理员",
+        "reccreated":"2017-04-11 15:29:40",
+        "recstatus":1,
+        "children":[
+          {
+            "productsetid":"bac2f310-16b6-4155-acd8-4dcedb0c2d76",
+            "pproductsetid":"9ff60bea-02c2-427d-a820-13d7eefc3304",
+            "productsetname":"sub",
+            "productsetcode":null,
+            "recorder":0,
+            "nodepath":2,
+            "nodes":0,
+            "reccreator":7,
+            "reccreatorname":"xch",
+            "reccreated":"2017-04-25 14:37:59",
+            "recstatus":1,
+            "children":[
+
+            ]
+          }
+        ]
+      },
+      {
+        "productsetid":"3112e835-3c96-4a8e-823a-3aadea65cd4b",
+        "pproductsetid":"7f74192d-b937-403f-ac2a-8be34714278b",
+        "productsetname":"即信产品系列b",
+        "productsetcode":"00000",
+        "recorder":0,
+        "nodepath":1,
+        "nodes":0,
+        "reccreator":1,
+        "reccreatorname":"系统管理员",
+        "reccreated":"2017-04-11 15:30:23",
+        "recstatus":1,
+        "children":[
+
+        ]
+      },
+      {
+        "productsetid":"f2075107-0b95-4710-b481-808802c790f8",
+        "pproductsetid":"7f74192d-b937-403f-ac2a-8be34714278b",
+        "productsetname":"chj系列",
+        "productsetcode":"S00001",
+        "recorder":0,
+        "nodepath":1,
+        "nodes":17,
+        "reccreator":1,
+        "reccreatorname":"系统管理员",
+        "reccreated":"2017-04-25 15:14:13",
+        "recstatus":1,
+        "children":[
+          {
+            "productsetid":"a1479333-7916-424e-8989-312f8df410ed",
+            "pproductsetid":"f2075107-0b95-4710-b481-808802c790f8",
+            "productsetname":"test02",
+            "productsetcode":"0002",
+            "recorder":0,
+            "nodepath":2,
+            "nodes":12,
+            "reccreator":14,
+            "reccreatorname":"wty商管",
+            "reccreated":"2017-05-08 15:51:04",
+            "recstatus":1,
+            "children":[
+              {
+                "productsetid":"ef515f1f-76af-447c-a15f-ac3d7000912f",
+                "pproductsetid":"a1479333-7916-424e-8989-312f8df410ed",
+                "productsetname":"test03",
+                "productsetcode":"S00003",
+                "recorder":0,
+                "nodepath":3,
+                "nodes":11,
+                "reccreator":14,
+                "reccreatorname":"wty商管",
+                "reccreated":"2017-05-08 15:51:04",
+                "recstatus":1,
+                "children":[
+                  {
+                    "productsetid":"3f2a61be-b4f6-402d-83c4-6a51de72802a",
+                    "pproductsetid":"ef515f1f-76af-447c-a15f-ac3d7000912f",
+                    "productsetname":"55551",
+                    "productsetcode":"0004",
+                    "recorder":0,
+                    "nodepath":4,
+                    "nodes":10,
+                    "reccreator":14,
+                    "reccreatorname":"wty商管",
+                    "reccreated":"2017-05-08 15:51:04",
+                    "recstatus":1,
+                    "children":[
+                      {
+                        "productsetid":"c75394de-d150-4edb-8932-53f308f59fbc",
+                        "pproductsetid":"3f2a61be-b4f6-402d-83c4-6a51de72802a",
+                        "productsetname":"test05",
+                        "productsetcode":"S00005",
+                        "recorder":0,
+                        "nodepath":5,
+                        "nodes":9,
+                        "reccreator":14,
+                        "reccreatorname":"wty商管",
+                        "reccreated":"2017-05-08 15:51:04",
+                        "recstatus":1,
+                        "children":[
+                          {
+                            "productsetid":"5cf83457-2d7c-4dc7-9580-369ca7039253",
+                            "pproductsetid":"c75394de-d150-4edb-8932-53f308f59fbc",
+                            "productsetname":"test06",
+                            "productsetcode":"S00006",
+                            "recorder":0,
+                            "nodepath":6,
+                            "nodes":8,
+                            "reccreator":14,
+                            "reccreatorname":"wty商管",
+                            "reccreated":"2017-05-08 15:51:04",
+                            "recstatus":1,
+                            "children":[
+                              {
+                                "productsetid":"a21f25bc-5893-4daa-94f6-aac6da9cd2c3",
+                                "pproductsetid":"5cf83457-2d7c-4dc7-9580-369ca7039253",
+                                "productsetname":"test07",
+                                "productsetcode":"S00007",
+                                "recorder":0,
+                                "nodepath":7,
+                                "nodes":7,
+                                "reccreator":14,
+                                "reccreatorname":"wty商管",
+                                "reccreated":"2017-05-08 15:51:04",
+                                "recstatus":1,
+                                "children":[
+                                  {
+                                    "productsetid":"78d6cb16-6a97-4d16-810a-5e3d34f913d6",
+                                    "pproductsetid":"a21f25bc-5893-4daa-94f6-aac6da9cd2c3",
+                                    "productsetname":"test08",
+                                    "productsetcode":"S00008",
+                                    "recorder":0,
+                                    "nodepath":8,
+                                    "nodes":6,
+                                    "reccreator":14,
+                                    "reccreatorname":"wty商管",
+                                    "reccreated":"2017-05-08 15:51:04",
+                                    "recstatus":1,
+                                    "children":[
+                                      {
+                                        "productsetid":"d1233a0d-7bf2-4311-9bd6-10c6d6b09475",
+                                        "pproductsetid":"78d6cb16-6a97-4d16-810a-5e3d34f913d6",
+                                        "productsetname":"test09",
+                                        "productsetcode":"S00009",
+                                        "recorder":0,
+                                        "nodepath":9,
+                                        "nodes":5,
+                                        "reccreator":14,
+                                        "reccreatorname":"wty商管",
+                                        "reccreated":"2017-05-08 15:51:04",
+                                        "recstatus":1,
+                                        "children":[
+                                          {
+                                            "productsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+                                            "pproductsetid":"d1233a0d-7bf2-4311-9bd6-10c6d6b09475",
+                                            "productsetname":"test10",
+                                            "productsetcode":"S00010",
+                                            "recorder":0,
+                                            "nodepath":10,
+                                            "nodes":4,
+                                            "reccreator":14,
+                                            "reccreatorname":"wty商管",
+                                            "reccreated":"2017-05-08 15:51:04",
+                                            "recstatus":1,
+                                            "children":[
+                                              {
+                                                "productsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+                                                "pproductsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+                                                "productsetname":"test11",
+                                                "productsetcode":"S00011",
+                                                "recorder":0,
+                                                "nodepath":11,
+                                                "nodes":3,
+                                                "reccreator":14,
+                                                "reccreatorname":"wty商管",
+                                                "reccreated":"2017-05-08 15:51:04",
+                                                "recstatus":1,
+                                                "children":[
+                                                  {
+                                                    "productsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+                                                    "pproductsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+                                                    "productsetname":"test12",
+                                                    "productsetcode":"S00012",
+                                                    "recorder":0,
+                                                    "nodepath":12,
+                                                    "nodes":2,
+                                                    "reccreator":14,
+                                                    "reccreatorname":"wty商管",
+                                                    "reccreated":"2017-05-08 15:51:04",
+                                                    "recstatus":1,
+                                                    "children":[
+                                                      {
+                                                        "productsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                                                        "pproductsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+                                                        "productsetname":"test13",
+                                                        "productsetcode":"S00013",
+                                                        "recorder":0,
+                                                        "nodepath":13,
+                                                        "nodes":1,
+                                                        "reccreator":14,
+                                                        "reccreatorname":"wty商管",
+                                                        "reccreated":"2017-05-08 15:51:04",
+                                                        "recstatus":1,
+                                                        "children":[
+                                                          {
+                                                            "productsetid":"fcf747db-576d-45fd-9ace-f1c19f45a0b9",
+                                                            "pproductsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                                                            "productsetname":"test14",
+                                                            "productsetcode":"S00014",
+                                                            "recorder":0,
+                                                            "nodepath":14,
+                                                            "nodes":0,
+                                                            "reccreator":14,
+                                                            "reccreatorname":"wty商管",
+                                                            "reccreated":"2017-05-08 15:51:04",
+                                                            "recstatus":1,
+                                                            "children":[
+
+                                                            ]
+                                                          }
+                                                        ]
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "productsetid":"2a762299-e455-4537-9c90-070c81f58a54",
+            "pproductsetid":"f2075107-0b95-4710-b481-808802c790f8",
+            "productsetname":"55551",
+            "productsetcode":"0001",
+            "recorder":0,
+            "nodepath":2,
+            "nodes":0,
+            "reccreator":1,
+            "reccreatorname":"系统管理员",
+            "reccreated":"2017-05-10 09:12:31",
+            "recstatus":1,
+            "children":[
+
+            ]
+          },
+          {
+            "productsetid":"620a733c-14fe-4a62-8aa2-f22f8b2b9a83",
+            "pproductsetid":"f2075107-0b95-4710-b481-808802c790f8",
+            "productsetname":"test322",
+            "productsetcode":"000021",
+            "recorder":0,
+            "nodepath":2,
+            "nodes":0,
+            "reccreator":1,
+            "reccreatorname":"系统管理员",
+            "reccreated":"2017-07-28 13:54:55",
+            "recstatus":1,
+            "children":[
+
+            ]
+          }
+        ]
+      },
+      {
+        "productsetid":"488b77f0-f415-482f-9c50-533a5a053fb6",
+        "pproductsetid":"7f74192d-b937-403f-ac2a-8be34714278b",
+        "productsetname":"U客100系列产品",
+        "productsetcode":"no0719",
+        "recorder":0,
+        "nodepath":1,
+        "nodes":0,
+        "reccreator":25,
+        "reccreatorname":"H测试1",
+        "reccreated":"2017-05-16 16:53:39",
+        "recstatus":1,
+        "children":[
+
+        ]
+      },
+      {
+        "productsetid":"eef6f88c-bbee-4171-a3b5-7c4cbf4ce2b5",
+        "pproductsetid":"7f74192d-b937-403f-ac2a-8be34714278b",
+        "productsetname":"测试编码",
+        "productsetcode":"111122",
+        "recorder":0,
+        "nodepath":1,
+        "nodes":3,
+        "reccreator":5,
+        "reccreatorname":"大酒神",
+        "reccreated":"2017-06-07 13:46:20",
+        "recstatus":1,
+        "children":[
+          {
+            "productsetid":"348a5284-18d1-4e3c-a4b5-a3c961b4bef8",
+            "pproductsetid":"eef6f88c-bbee-4171-a3b5-7c4cbf4ce2b5",
+            "productsetname":"测试编码2",
+            "productsetcode":"22222",
+            "recorder":0,
+            "nodepath":2,
+            "nodes":0,
+            "reccreator":5,
+            "reccreatorname":"大酒神",
+            "reccreated":"2017-06-07 14:02:50",
+            "recstatus":1,
+            "children":[
+
+            ]
+          },
+          {
+            "productsetid":"9044b211-efac-4fad-af8d-8c72c12f79d2",
+            "pproductsetid":"eef6f88c-bbee-4171-a3b5-7c4cbf4ce2b5",
+            "productsetname":"测试编码333",
+            "productsetcode":"3334",
+            "recorder":0,
+            "nodepath":2,
+            "nodes":0,
+            "reccreator":5,
+            "reccreatorname":"大酒神",
+            "reccreated":"2017-06-07 14:37:55",
+            "recstatus":1,
+            "children":[
+
+            ]
+          },
+          {
+            "productsetid":"4fbdbcb0-4367-4774-96f1-fa120318e908",
+            "pproductsetid":"eef6f88c-bbee-4171-a3b5-7c4cbf4ce2b5",
+            "productsetname":"测试编码25",
+            "productsetcode":"222",
+            "recorder":0,
+            "nodepath":2,
+            "nodes":0,
+            "reccreator":5,
+            "reccreatorname":"大酒神",
+            "reccreated":"2017-06-07 14:38:25",
+            "recstatus":1,
+            "children":[
+
+            ]
+          }
+        ]
+      },
+      {
+        "productsetid":"523a3f6b-67e4-468f-a225-a213db151406",
+        "pproductsetid":"7f74192d-b937-403f-ac2a-8be34714278b",
+        "productsetname":"V64产品版",
+        "productsetcode":"aaaaaaabbde34",
+        "recorder":0,
+        "nodepath":1,
+        "nodes":0,
+        "reccreator":13,
+        "reccreatorname":"吴湛强",
+        "reccreated":"2017-07-31 09:30:21",
+        "recstatus":1,
+        "children":[
+
+        ]
+      },
+      {
+        "productsetid":"8c5c4229-c08d-4245-b6f9-9116b532a6b9",
+        "pproductsetid":"7f74192d-b937-403f-ac2a-8be34714278b",
+        "productsetname":"测试系列删除",
+        "productsetcode":"1",
+        "recorder":0,
+        "nodepath":1,
+        "nodes":3,
+        "reccreator":25,
+        "reccreatorname":"H测试1",
+        "reccreated":"2017-08-08 17:14:53",
+        "recstatus":1,
+        "children":[
+          {
+            "productsetid":"2e9081d0-55d3-4cd7-b8ac-056f9fa6a077",
+            "pproductsetid":"8c5c4229-c08d-4245-b6f9-9116b532a6b9",
+            "productsetname":"子系列删除",
+            "productsetcode":"12",
+            "recorder":0,
+            "nodepath":2,
+            "nodes":1,
+            "reccreator":25,
+            "reccreatorname":"H测试1",
+            "reccreated":"2017-08-08 17:15:06",
+            "recstatus":1,
+            "children":[
+
+            ]
+          }
+        ]
+      },
+      {
+        "productsetid":"7e947510-5e55-42d7-b177-74c26828377d",
+        "pproductsetid":"7f74192d-b937-403f-ac2a-8be34714278b",
+        "productsetname":"测试产品更新",
+        "productsetcode":"wodebiama",
+        "recorder":0,
+        "nodepath":1,
+        "nodes":0,
+        "reccreator":1,
+        "reccreatorname":"系统管理员",
+        "reccreated":"2017-08-18 14:46:46",
+        "recstatus":1,
+        "children":[
+
+        ]
+      },
+      {
+        "productsetid":"266fbb7b-2aec-44f4-b997-bce630de33e6",
+        "pproductsetid":"7f74192d-b937-403f-ac2a-8be34714278b",
+        "productsetname":"chj导入系列",
+        "productsetcode":"CHJ000",
+        "recorder":1,
+        "nodepath":1,
+        "nodes":0,
+        "reccreator":1,
+        "reccreatorname":"系统管理员",
+        "reccreated":"2017-08-21 10:04:05",
+        "recstatus":1,
+        "children":[
+
+        ]
+      }
+    ]
+  },
+  {
+    "productsetid":"9ff60bea-02c2-427d-a820-13d7eefc3304",
+    "pproductsetid":"7f74192d-b937-403f-ac2a-8be34714278b",
+    "productsetname":"玄武产品系列A",
+    "productsetcode":null,
+    "recorder":0,
+    "nodepath":1,
+    "nodes":4,
+    "reccreator":1,
+    "reccreatorname":"系统管理员",
+    "reccreated":"2017-04-11 15:29:40",
+    "recstatus":1,
+    "children":[
+      {
+        "productsetid":"bac2f310-16b6-4155-acd8-4dcedb0c2d76",
+        "pproductsetid":"9ff60bea-02c2-427d-a820-13d7eefc3304",
+        "productsetname":"sub",
+        "productsetcode":null,
+        "recorder":0,
+        "nodepath":2,
+        "nodes":0,
+        "reccreator":7,
+        "reccreatorname":"xch",
+        "reccreated":"2017-04-25 14:37:59",
+        "recstatus":1,
+        "children":[
+
+        ]
+      }
+    ]
+  },
+  {
+    "productsetid":"3112e835-3c96-4a8e-823a-3aadea65cd4b",
+    "pproductsetid":"7f74192d-b937-403f-ac2a-8be34714278b",
+    "productsetname":"即信产品系列b",
+    "productsetcode":"00000",
+    "recorder":0,
+    "nodepath":1,
+    "nodes":0,
+    "reccreator":1,
+    "reccreatorname":"系统管理员",
+    "reccreated":"2017-04-11 15:30:23",
+    "recstatus":1,
+    "children":[
+
+    ]
+  },
+  {
+    "productsetid":"bac2f310-16b6-4155-acd8-4dcedb0c2d76",
+    "pproductsetid":"9ff60bea-02c2-427d-a820-13d7eefc3304",
+    "productsetname":"sub",
+    "productsetcode":null,
+    "recorder":0,
+    "nodepath":2,
+    "nodes":0,
+    "reccreator":7,
+    "reccreatorname":"xch",
+    "reccreated":"2017-04-25 14:37:59",
+    "recstatus":1,
+    "children":[
+
+    ]
+  },
+  {
+    "productsetid":"f2075107-0b95-4710-b481-808802c790f8",
+    "pproductsetid":"7f74192d-b937-403f-ac2a-8be34714278b",
+    "productsetname":"chj系列",
+    "productsetcode":"S00001",
+    "recorder":0,
+    "nodepath":1,
+    "nodes":17,
+    "reccreator":1,
+    "reccreatorname":"系统管理员",
+    "reccreated":"2017-04-25 15:14:13",
+    "recstatus":1,
+    "children":[
+      {
+        "productsetid":"a1479333-7916-424e-8989-312f8df410ed",
+        "pproductsetid":"f2075107-0b95-4710-b481-808802c790f8",
+        "productsetname":"test02",
+        "productsetcode":"0002",
+        "recorder":0,
+        "nodepath":2,
+        "nodes":12,
+        "reccreator":14,
+        "reccreatorname":"wty商管",
+        "reccreated":"2017-05-08 15:51:04",
+        "recstatus":1,
+        "children":[
+          {
+            "productsetid":"ef515f1f-76af-447c-a15f-ac3d7000912f",
+            "pproductsetid":"a1479333-7916-424e-8989-312f8df410ed",
+            "productsetname":"test03",
+            "productsetcode":"S00003",
+            "recorder":0,
+            "nodepath":3,
+            "nodes":11,
+            "reccreator":14,
+            "reccreatorname":"wty商管",
+            "reccreated":"2017-05-08 15:51:04",
+            "recstatus":1,
+            "children":[
+              {
+                "productsetid":"3f2a61be-b4f6-402d-83c4-6a51de72802a",
+                "pproductsetid":"ef515f1f-76af-447c-a15f-ac3d7000912f",
+                "productsetname":"55551",
+                "productsetcode":"0004",
+                "recorder":0,
+                "nodepath":4,
+                "nodes":10,
+                "reccreator":14,
+                "reccreatorname":"wty商管",
+                "reccreated":"2017-05-08 15:51:04",
+                "recstatus":1,
+                "children":[
+                  {
+                    "productsetid":"c75394de-d150-4edb-8932-53f308f59fbc",
+                    "pproductsetid":"3f2a61be-b4f6-402d-83c4-6a51de72802a",
+                    "productsetname":"test05",
+                    "productsetcode":"S00005",
+                    "recorder":0,
+                    "nodepath":5,
+                    "nodes":9,
+                    "reccreator":14,
+                    "reccreatorname":"wty商管",
+                    "reccreated":"2017-05-08 15:51:04",
+                    "recstatus":1,
+                    "children":[
+                      {
+                        "productsetid":"5cf83457-2d7c-4dc7-9580-369ca7039253",
+                        "pproductsetid":"c75394de-d150-4edb-8932-53f308f59fbc",
+                        "productsetname":"test06",
+                        "productsetcode":"S00006",
+                        "recorder":0,
+                        "nodepath":6,
+                        "nodes":8,
+                        "reccreator":14,
+                        "reccreatorname":"wty商管",
+                        "reccreated":"2017-05-08 15:51:04",
+                        "recstatus":1,
+                        "children":[
+                          {
+                            "productsetid":"a21f25bc-5893-4daa-94f6-aac6da9cd2c3",
+                            "pproductsetid":"5cf83457-2d7c-4dc7-9580-369ca7039253",
+                            "productsetname":"test07",
+                            "productsetcode":"S00007",
+                            "recorder":0,
+                            "nodepath":7,
+                            "nodes":7,
+                            "reccreator":14,
+                            "reccreatorname":"wty商管",
+                            "reccreated":"2017-05-08 15:51:04",
+                            "recstatus":1,
+                            "children":[
+                              {
+                                "productsetid":"78d6cb16-6a97-4d16-810a-5e3d34f913d6",
+                                "pproductsetid":"a21f25bc-5893-4daa-94f6-aac6da9cd2c3",
+                                "productsetname":"test08",
+                                "productsetcode":"S00008",
+                                "recorder":0,
+                                "nodepath":8,
+                                "nodes":6,
+                                "reccreator":14,
+                                "reccreatorname":"wty商管",
+                                "reccreated":"2017-05-08 15:51:04",
+                                "recstatus":1,
+                                "children":[
+                                  {
+                                    "productsetid":"d1233a0d-7bf2-4311-9bd6-10c6d6b09475",
+                                    "pproductsetid":"78d6cb16-6a97-4d16-810a-5e3d34f913d6",
+                                    "productsetname":"test09",
+                                    "productsetcode":"S00009",
+                                    "recorder":0,
+                                    "nodepath":9,
+                                    "nodes":5,
+                                    "reccreator":14,
+                                    "reccreatorname":"wty商管",
+                                    "reccreated":"2017-05-08 15:51:04",
+                                    "recstatus":1,
+                                    "children":[
+                                      {
+                                        "productsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+                                        "pproductsetid":"d1233a0d-7bf2-4311-9bd6-10c6d6b09475",
+                                        "productsetname":"test10",
+                                        "productsetcode":"S00010",
+                                        "recorder":0,
+                                        "nodepath":10,
+                                        "nodes":4,
+                                        "reccreator":14,
+                                        "reccreatorname":"wty商管",
+                                        "reccreated":"2017-05-08 15:51:04",
+                                        "recstatus":1,
+                                        "children":[
+                                          {
+                                            "productsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+                                            "pproductsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+                                            "productsetname":"test11",
+                                            "productsetcode":"S00011",
+                                            "recorder":0,
+                                            "nodepath":11,
+                                            "nodes":3,
+                                            "reccreator":14,
+                                            "reccreatorname":"wty商管",
+                                            "reccreated":"2017-05-08 15:51:04",
+                                            "recstatus":1,
+                                            "children":[
+                                              {
+                                                "productsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+                                                "pproductsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+                                                "productsetname":"test12",
+                                                "productsetcode":"S00012",
+                                                "recorder":0,
+                                                "nodepath":12,
+                                                "nodes":2,
+                                                "reccreator":14,
+                                                "reccreatorname":"wty商管",
+                                                "reccreated":"2017-05-08 15:51:04",
+                                                "recstatus":1,
+                                                "children":[
+                                                  {
+                                                    "productsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                                                    "pproductsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+                                                    "productsetname":"test13",
+                                                    "productsetcode":"S00013",
+                                                    "recorder":0,
+                                                    "nodepath":13,
+                                                    "nodes":1,
+                                                    "reccreator":14,
+                                                    "reccreatorname":"wty商管",
+                                                    "reccreated":"2017-05-08 15:51:04",
+                                                    "recstatus":1,
+                                                    "children":[
+                                                      {
+                                                        "productsetid":"fcf747db-576d-45fd-9ace-f1c19f45a0b9",
+                                                        "pproductsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                                                        "productsetname":"test14",
+                                                        "productsetcode":"S00014",
+                                                        "recorder":0,
+                                                        "nodepath":14,
+                                                        "nodes":0,
+                                                        "reccreator":14,
+                                                        "reccreatorname":"wty商管",
+                                                        "reccreated":"2017-05-08 15:51:04",
+                                                        "recstatus":1,
+                                                        "children":[
+
+                                                        ]
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "productsetid":"2a762299-e455-4537-9c90-070c81f58a54",
+        "pproductsetid":"f2075107-0b95-4710-b481-808802c790f8",
+        "productsetname":"55551",
+        "productsetcode":"0001",
+        "recorder":0,
+        "nodepath":2,
+        "nodes":0,
+        "reccreator":1,
+        "reccreatorname":"系统管理员",
+        "reccreated":"2017-05-10 09:12:31",
+        "recstatus":1,
+        "children":[
+
+        ]
+      },
+      {
+        "productsetid":"620a733c-14fe-4a62-8aa2-f22f8b2b9a83",
+        "pproductsetid":"f2075107-0b95-4710-b481-808802c790f8",
+        "productsetname":"test322",
+        "productsetcode":"000021",
+        "recorder":0,
+        "nodepath":2,
+        "nodes":0,
+        "reccreator":1,
+        "reccreatorname":"系统管理员",
+        "reccreated":"2017-07-28 13:54:55",
+        "recstatus":1,
+        "children":[
+
+        ]
+      }
+    ]
+  },
+  {
+    "productsetid":"a1479333-7916-424e-8989-312f8df410ed",
+    "pproductsetid":"f2075107-0b95-4710-b481-808802c790f8",
+    "productsetname":"test02",
+    "productsetcode":"0002",
+    "recorder":0,
+    "nodepath":2,
+    "nodes":12,
+    "reccreator":14,
+    "reccreatorname":"wty商管",
+    "reccreated":"2017-05-08 15:51:04",
+    "recstatus":1,
+    "children":[
+      {
+        "productsetid":"ef515f1f-76af-447c-a15f-ac3d7000912f",
+        "pproductsetid":"a1479333-7916-424e-8989-312f8df410ed",
+        "productsetname":"test03",
+        "productsetcode":"S00003",
+        "recorder":0,
+        "nodepath":3,
+        "nodes":11,
+        "reccreator":14,
+        "reccreatorname":"wty商管",
+        "reccreated":"2017-05-08 15:51:04",
+        "recstatus":1,
+        "children":[
+          {
+            "productsetid":"3f2a61be-b4f6-402d-83c4-6a51de72802a",
+            "pproductsetid":"ef515f1f-76af-447c-a15f-ac3d7000912f",
+            "productsetname":"55551",
+            "productsetcode":"0004",
+            "recorder":0,
+            "nodepath":4,
+            "nodes":10,
+            "reccreator":14,
+            "reccreatorname":"wty商管",
+            "reccreated":"2017-05-08 15:51:04",
+            "recstatus":1,
+            "children":[
+              {
+                "productsetid":"c75394de-d150-4edb-8932-53f308f59fbc",
+                "pproductsetid":"3f2a61be-b4f6-402d-83c4-6a51de72802a",
+                "productsetname":"test05",
+                "productsetcode":"S00005",
+                "recorder":0,
+                "nodepath":5,
+                "nodes":9,
+                "reccreator":14,
+                "reccreatorname":"wty商管",
+                "reccreated":"2017-05-08 15:51:04",
+                "recstatus":1,
+                "children":[
+                  {
+                    "productsetid":"5cf83457-2d7c-4dc7-9580-369ca7039253",
+                    "pproductsetid":"c75394de-d150-4edb-8932-53f308f59fbc",
+                    "productsetname":"test06",
+                    "productsetcode":"S00006",
+                    "recorder":0,
+                    "nodepath":6,
+                    "nodes":8,
+                    "reccreator":14,
+                    "reccreatorname":"wty商管",
+                    "reccreated":"2017-05-08 15:51:04",
+                    "recstatus":1,
+                    "children":[
+                      {
+                        "productsetid":"a21f25bc-5893-4daa-94f6-aac6da9cd2c3",
+                        "pproductsetid":"5cf83457-2d7c-4dc7-9580-369ca7039253",
+                        "productsetname":"test07",
+                        "productsetcode":"S00007",
+                        "recorder":0,
+                        "nodepath":7,
+                        "nodes":7,
+                        "reccreator":14,
+                        "reccreatorname":"wty商管",
+                        "reccreated":"2017-05-08 15:51:04",
+                        "recstatus":1,
+                        "children":[
+                          {
+                            "productsetid":"78d6cb16-6a97-4d16-810a-5e3d34f913d6",
+                            "pproductsetid":"a21f25bc-5893-4daa-94f6-aac6da9cd2c3",
+                            "productsetname":"test08",
+                            "productsetcode":"S00008",
+                            "recorder":0,
+                            "nodepath":8,
+                            "nodes":6,
+                            "reccreator":14,
+                            "reccreatorname":"wty商管",
+                            "reccreated":"2017-05-08 15:51:04",
+                            "recstatus":1,
+                            "children":[
+                              {
+                                "productsetid":"d1233a0d-7bf2-4311-9bd6-10c6d6b09475",
+                                "pproductsetid":"78d6cb16-6a97-4d16-810a-5e3d34f913d6",
+                                "productsetname":"test09",
+                                "productsetcode":"S00009",
+                                "recorder":0,
+                                "nodepath":9,
+                                "nodes":5,
+                                "reccreator":14,
+                                "reccreatorname":"wty商管",
+                                "reccreated":"2017-05-08 15:51:04",
+                                "recstatus":1,
+                                "children":[
+                                  {
+                                    "productsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+                                    "pproductsetid":"d1233a0d-7bf2-4311-9bd6-10c6d6b09475",
+                                    "productsetname":"test10",
+                                    "productsetcode":"S00010",
+                                    "recorder":0,
+                                    "nodepath":10,
+                                    "nodes":4,
+                                    "reccreator":14,
+                                    "reccreatorname":"wty商管",
+                                    "reccreated":"2017-05-08 15:51:04",
+                                    "recstatus":1,
+                                    "children":[
+                                      {
+                                        "productsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+                                        "pproductsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+                                        "productsetname":"test11",
+                                        "productsetcode":"S00011",
+                                        "recorder":0,
+                                        "nodepath":11,
+                                        "nodes":3,
+                                        "reccreator":14,
+                                        "reccreatorname":"wty商管",
+                                        "reccreated":"2017-05-08 15:51:04",
+                                        "recstatus":1,
+                                        "children":[
+                                          {
+                                            "productsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+                                            "pproductsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+                                            "productsetname":"test12",
+                                            "productsetcode":"S00012",
+                                            "recorder":0,
+                                            "nodepath":12,
+                                            "nodes":2,
+                                            "reccreator":14,
+                                            "reccreatorname":"wty商管",
+                                            "reccreated":"2017-05-08 15:51:04",
+                                            "recstatus":1,
+                                            "children":[
+                                              {
+                                                "productsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                                                "pproductsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+                                                "productsetname":"test13",
+                                                "productsetcode":"S00013",
+                                                "recorder":0,
+                                                "nodepath":13,
+                                                "nodes":1,
+                                                "reccreator":14,
+                                                "reccreatorname":"wty商管",
+                                                "reccreated":"2017-05-08 15:51:04",
+                                                "recstatus":1,
+                                                "children":[
+                                                  {
+                                                    "productsetid":"fcf747db-576d-45fd-9ace-f1c19f45a0b9",
+                                                    "pproductsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                                                    "productsetname":"test14",
+                                                    "productsetcode":"S00014",
+                                                    "recorder":0,
+                                                    "nodepath":14,
+                                                    "nodes":0,
+                                                    "reccreator":14,
+                                                    "reccreatorname":"wty商管",
+                                                    "reccreated":"2017-05-08 15:51:04",
+                                                    "recstatus":1,
+                                                    "children":[
+
+                                                    ]
+                                                  }
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "productsetid":"ef515f1f-76af-447c-a15f-ac3d7000912f",
+    "pproductsetid":"a1479333-7916-424e-8989-312f8df410ed",
+    "productsetname":"test03",
+    "productsetcode":"S00003",
+    "recorder":0,
+    "nodepath":3,
+    "nodes":11,
+    "reccreator":14,
+    "reccreatorname":"wty商管",
+    "reccreated":"2017-05-08 15:51:04",
+    "recstatus":1,
+    "children":[
+      {
+        "productsetid":"3f2a61be-b4f6-402d-83c4-6a51de72802a",
+        "pproductsetid":"ef515f1f-76af-447c-a15f-ac3d7000912f",
+        "productsetname":"55551",
+        "productsetcode":"0004",
+        "recorder":0,
+        "nodepath":4,
+        "nodes":10,
+        "reccreator":14,
+        "reccreatorname":"wty商管",
+        "reccreated":"2017-05-08 15:51:04",
+        "recstatus":1,
+        "children":[
+          {
+            "productsetid":"c75394de-d150-4edb-8932-53f308f59fbc",
+            "pproductsetid":"3f2a61be-b4f6-402d-83c4-6a51de72802a",
+            "productsetname":"test05",
+            "productsetcode":"S00005",
+            "recorder":0,
+            "nodepath":5,
+            "nodes":9,
+            "reccreator":14,
+            "reccreatorname":"wty商管",
+            "reccreated":"2017-05-08 15:51:04",
+            "recstatus":1,
+            "children":[
+              {
+                "productsetid":"5cf83457-2d7c-4dc7-9580-369ca7039253",
+                "pproductsetid":"c75394de-d150-4edb-8932-53f308f59fbc",
+                "productsetname":"test06",
+                "productsetcode":"S00006",
+                "recorder":0,
+                "nodepath":6,
+                "nodes":8,
+                "reccreator":14,
+                "reccreatorname":"wty商管",
+                "reccreated":"2017-05-08 15:51:04",
+                "recstatus":1,
+                "children":[
+                  {
+                    "productsetid":"a21f25bc-5893-4daa-94f6-aac6da9cd2c3",
+                    "pproductsetid":"5cf83457-2d7c-4dc7-9580-369ca7039253",
+                    "productsetname":"test07",
+                    "productsetcode":"S00007",
+                    "recorder":0,
+                    "nodepath":7,
+                    "nodes":7,
+                    "reccreator":14,
+                    "reccreatorname":"wty商管",
+                    "reccreated":"2017-05-08 15:51:04",
+                    "recstatus":1,
+                    "children":[
+                      {
+                        "productsetid":"78d6cb16-6a97-4d16-810a-5e3d34f913d6",
+                        "pproductsetid":"a21f25bc-5893-4daa-94f6-aac6da9cd2c3",
+                        "productsetname":"test08",
+                        "productsetcode":"S00008",
+                        "recorder":0,
+                        "nodepath":8,
+                        "nodes":6,
+                        "reccreator":14,
+                        "reccreatorname":"wty商管",
+                        "reccreated":"2017-05-08 15:51:04",
+                        "recstatus":1,
+                        "children":[
+                          {
+                            "productsetid":"d1233a0d-7bf2-4311-9bd6-10c6d6b09475",
+                            "pproductsetid":"78d6cb16-6a97-4d16-810a-5e3d34f913d6",
+                            "productsetname":"test09",
+                            "productsetcode":"S00009",
+                            "recorder":0,
+                            "nodepath":9,
+                            "nodes":5,
+                            "reccreator":14,
+                            "reccreatorname":"wty商管",
+                            "reccreated":"2017-05-08 15:51:04",
+                            "recstatus":1,
+                            "children":[
+                              {
+                                "productsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+                                "pproductsetid":"d1233a0d-7bf2-4311-9bd6-10c6d6b09475",
+                                "productsetname":"test10",
+                                "productsetcode":"S00010",
+                                "recorder":0,
+                                "nodepath":10,
+                                "nodes":4,
+                                "reccreator":14,
+                                "reccreatorname":"wty商管",
+                                "reccreated":"2017-05-08 15:51:04",
+                                "recstatus":1,
+                                "children":[
+                                  {
+                                    "productsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+                                    "pproductsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+                                    "productsetname":"test11",
+                                    "productsetcode":"S00011",
+                                    "recorder":0,
+                                    "nodepath":11,
+                                    "nodes":3,
+                                    "reccreator":14,
+                                    "reccreatorname":"wty商管",
+                                    "reccreated":"2017-05-08 15:51:04",
+                                    "recstatus":1,
+                                    "children":[
+                                      {
+                                        "productsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+                                        "pproductsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+                                        "productsetname":"test12",
+                                        "productsetcode":"S00012",
+                                        "recorder":0,
+                                        "nodepath":12,
+                                        "nodes":2,
+                                        "reccreator":14,
+                                        "reccreatorname":"wty商管",
+                                        "reccreated":"2017-05-08 15:51:04",
+                                        "recstatus":1,
+                                        "children":[
+                                          {
+                                            "productsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                                            "pproductsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+                                            "productsetname":"test13",
+                                            "productsetcode":"S00013",
+                                            "recorder":0,
+                                            "nodepath":13,
+                                            "nodes":1,
+                                            "reccreator":14,
+                                            "reccreatorname":"wty商管",
+                                            "reccreated":"2017-05-08 15:51:04",
+                                            "recstatus":1,
+                                            "children":[
+                                              {
+                                                "productsetid":"fcf747db-576d-45fd-9ace-f1c19f45a0b9",
+                                                "pproductsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                                                "productsetname":"test14",
+                                                "productsetcode":"S00014",
+                                                "recorder":0,
+                                                "nodepath":14,
+                                                "nodes":0,
+                                                "reccreator":14,
+                                                "reccreatorname":"wty商管",
+                                                "reccreated":"2017-05-08 15:51:04",
+                                                "recstatus":1,
+                                                "children":[
+
+                                                ]
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "productsetid":"3f2a61be-b4f6-402d-83c4-6a51de72802a",
+    "pproductsetid":"ef515f1f-76af-447c-a15f-ac3d7000912f",
+    "productsetname":"55551",
+    "productsetcode":"0004",
+    "recorder":0,
+    "nodepath":4,
+    "nodes":10,
+    "reccreator":14,
+    "reccreatorname":"wty商管",
+    "reccreated":"2017-05-08 15:51:04",
+    "recstatus":1,
+    "children":[
+      {
+        "productsetid":"c75394de-d150-4edb-8932-53f308f59fbc",
+        "pproductsetid":"3f2a61be-b4f6-402d-83c4-6a51de72802a",
+        "productsetname":"test05",
+        "productsetcode":"S00005",
+        "recorder":0,
+        "nodepath":5,
+        "nodes":9,
+        "reccreator":14,
+        "reccreatorname":"wty商管",
+        "reccreated":"2017-05-08 15:51:04",
+        "recstatus":1,
+        "children":[
+          {
+            "productsetid":"5cf83457-2d7c-4dc7-9580-369ca7039253",
+            "pproductsetid":"c75394de-d150-4edb-8932-53f308f59fbc",
+            "productsetname":"test06",
+            "productsetcode":"S00006",
+            "recorder":0,
+            "nodepath":6,
+            "nodes":8,
+            "reccreator":14,
+            "reccreatorname":"wty商管",
+            "reccreated":"2017-05-08 15:51:04",
+            "recstatus":1,
+            "children":[
+              {
+                "productsetid":"a21f25bc-5893-4daa-94f6-aac6da9cd2c3",
+                "pproductsetid":"5cf83457-2d7c-4dc7-9580-369ca7039253",
+                "productsetname":"test07",
+                "productsetcode":"S00007",
+                "recorder":0,
+                "nodepath":7,
+                "nodes":7,
+                "reccreator":14,
+                "reccreatorname":"wty商管",
+                "reccreated":"2017-05-08 15:51:04",
+                "recstatus":1,
+                "children":[
+                  {
+                    "productsetid":"78d6cb16-6a97-4d16-810a-5e3d34f913d6",
+                    "pproductsetid":"a21f25bc-5893-4daa-94f6-aac6da9cd2c3",
+                    "productsetname":"test08",
+                    "productsetcode":"S00008",
+                    "recorder":0,
+                    "nodepath":8,
+                    "nodes":6,
+                    "reccreator":14,
+                    "reccreatorname":"wty商管",
+                    "reccreated":"2017-05-08 15:51:04",
+                    "recstatus":1,
+                    "children":[
+                      {
+                        "productsetid":"d1233a0d-7bf2-4311-9bd6-10c6d6b09475",
+                        "pproductsetid":"78d6cb16-6a97-4d16-810a-5e3d34f913d6",
+                        "productsetname":"test09",
+                        "productsetcode":"S00009",
+                        "recorder":0,
+                        "nodepath":9,
+                        "nodes":5,
+                        "reccreator":14,
+                        "reccreatorname":"wty商管",
+                        "reccreated":"2017-05-08 15:51:04",
+                        "recstatus":1,
+                        "children":[
+                          {
+                            "productsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+                            "pproductsetid":"d1233a0d-7bf2-4311-9bd6-10c6d6b09475",
+                            "productsetname":"test10",
+                            "productsetcode":"S00010",
+                            "recorder":0,
+                            "nodepath":10,
+                            "nodes":4,
+                            "reccreator":14,
+                            "reccreatorname":"wty商管",
+                            "reccreated":"2017-05-08 15:51:04",
+                            "recstatus":1,
+                            "children":[
+                              {
+                                "productsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+                                "pproductsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+                                "productsetname":"test11",
+                                "productsetcode":"S00011",
+                                "recorder":0,
+                                "nodepath":11,
+                                "nodes":3,
+                                "reccreator":14,
+                                "reccreatorname":"wty商管",
+                                "reccreated":"2017-05-08 15:51:04",
+                                "recstatus":1,
+                                "children":[
+                                  {
+                                    "productsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+                                    "pproductsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+                                    "productsetname":"test12",
+                                    "productsetcode":"S00012",
+                                    "recorder":0,
+                                    "nodepath":12,
+                                    "nodes":2,
+                                    "reccreator":14,
+                                    "reccreatorname":"wty商管",
+                                    "reccreated":"2017-05-08 15:51:04",
+                                    "recstatus":1,
+                                    "children":[
+                                      {
+                                        "productsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                                        "pproductsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+                                        "productsetname":"test13",
+                                        "productsetcode":"S00013",
+                                        "recorder":0,
+                                        "nodepath":13,
+                                        "nodes":1,
+                                        "reccreator":14,
+                                        "reccreatorname":"wty商管",
+                                        "reccreated":"2017-05-08 15:51:04",
+                                        "recstatus":1,
+                                        "children":[
+                                          {
+                                            "productsetid":"fcf747db-576d-45fd-9ace-f1c19f45a0b9",
+                                            "pproductsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                                            "productsetname":"test14",
+                                            "productsetcode":"S00014",
+                                            "recorder":0,
+                                            "nodepath":14,
+                                            "nodes":0,
+                                            "reccreator":14,
+                                            "reccreatorname":"wty商管",
+                                            "reccreated":"2017-05-08 15:51:04",
+                                            "recstatus":1,
+                                            "children":[
+
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "productsetid":"c75394de-d150-4edb-8932-53f308f59fbc",
+    "pproductsetid":"3f2a61be-b4f6-402d-83c4-6a51de72802a",
+    "productsetname":"test05",
+    "productsetcode":"S00005",
+    "recorder":0,
+    "nodepath":5,
+    "nodes":9,
+    "reccreator":14,
+    "reccreatorname":"wty商管",
+    "reccreated":"2017-05-08 15:51:04",
+    "recstatus":1,
+    "children":[
+      {
+        "productsetid":"5cf83457-2d7c-4dc7-9580-369ca7039253",
+        "pproductsetid":"c75394de-d150-4edb-8932-53f308f59fbc",
+        "productsetname":"test06",
+        "productsetcode":"S00006",
+        "recorder":0,
+        "nodepath":6,
+        "nodes":8,
+        "reccreator":14,
+        "reccreatorname":"wty商管",
+        "reccreated":"2017-05-08 15:51:04",
+        "recstatus":1,
+        "children":[
+          {
+            "productsetid":"a21f25bc-5893-4daa-94f6-aac6da9cd2c3",
+            "pproductsetid":"5cf83457-2d7c-4dc7-9580-369ca7039253",
+            "productsetname":"test07",
+            "productsetcode":"S00007",
+            "recorder":0,
+            "nodepath":7,
+            "nodes":7,
+            "reccreator":14,
+            "reccreatorname":"wty商管",
+            "reccreated":"2017-05-08 15:51:04",
+            "recstatus":1,
+            "children":[
+              {
+                "productsetid":"78d6cb16-6a97-4d16-810a-5e3d34f913d6",
+                "pproductsetid":"a21f25bc-5893-4daa-94f6-aac6da9cd2c3",
+                "productsetname":"test08",
+                "productsetcode":"S00008",
+                "recorder":0,
+                "nodepath":8,
+                "nodes":6,
+                "reccreator":14,
+                "reccreatorname":"wty商管",
+                "reccreated":"2017-05-08 15:51:04",
+                "recstatus":1,
+                "children":[
+                  {
+                    "productsetid":"d1233a0d-7bf2-4311-9bd6-10c6d6b09475",
+                    "pproductsetid":"78d6cb16-6a97-4d16-810a-5e3d34f913d6",
+                    "productsetname":"test09",
+                    "productsetcode":"S00009",
+                    "recorder":0,
+                    "nodepath":9,
+                    "nodes":5,
+                    "reccreator":14,
+                    "reccreatorname":"wty商管",
+                    "reccreated":"2017-05-08 15:51:04",
+                    "recstatus":1,
+                    "children":[
+                      {
+                        "productsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+                        "pproductsetid":"d1233a0d-7bf2-4311-9bd6-10c6d6b09475",
+                        "productsetname":"test10",
+                        "productsetcode":"S00010",
+                        "recorder":0,
+                        "nodepath":10,
+                        "nodes":4,
+                        "reccreator":14,
+                        "reccreatorname":"wty商管",
+                        "reccreated":"2017-05-08 15:51:04",
+                        "recstatus":1,
+                        "children":[
+                          {
+                            "productsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+                            "pproductsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+                            "productsetname":"test11",
+                            "productsetcode":"S00011",
+                            "recorder":0,
+                            "nodepath":11,
+                            "nodes":3,
+                            "reccreator":14,
+                            "reccreatorname":"wty商管",
+                            "reccreated":"2017-05-08 15:51:04",
+                            "recstatus":1,
+                            "children":[
+                              {
+                                "productsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+                                "pproductsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+                                "productsetname":"test12",
+                                "productsetcode":"S00012",
+                                "recorder":0,
+                                "nodepath":12,
+                                "nodes":2,
+                                "reccreator":14,
+                                "reccreatorname":"wty商管",
+                                "reccreated":"2017-05-08 15:51:04",
+                                "recstatus":1,
+                                "children":[
+                                  {
+                                    "productsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                                    "pproductsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+                                    "productsetname":"test13",
+                                    "productsetcode":"S00013",
+                                    "recorder":0,
+                                    "nodepath":13,
+                                    "nodes":1,
+                                    "reccreator":14,
+                                    "reccreatorname":"wty商管",
+                                    "reccreated":"2017-05-08 15:51:04",
+                                    "recstatus":1,
+                                    "children":[
+                                      {
+                                        "productsetid":"fcf747db-576d-45fd-9ace-f1c19f45a0b9",
+                                        "pproductsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                                        "productsetname":"test14",
+                                        "productsetcode":"S00014",
+                                        "recorder":0,
+                                        "nodepath":14,
+                                        "nodes":0,
+                                        "reccreator":14,
+                                        "reccreatorname":"wty商管",
+                                        "reccreated":"2017-05-08 15:51:04",
+                                        "recstatus":1,
+                                        "children":[
+
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "productsetid":"5cf83457-2d7c-4dc7-9580-369ca7039253",
+    "pproductsetid":"c75394de-d150-4edb-8932-53f308f59fbc",
+    "productsetname":"test06",
+    "productsetcode":"S00006",
+    "recorder":0,
+    "nodepath":6,
+    "nodes":8,
+    "reccreator":14,
+    "reccreatorname":"wty商管",
+    "reccreated":"2017-05-08 15:51:04",
+    "recstatus":1,
+    "children":[
+      {
+        "productsetid":"a21f25bc-5893-4daa-94f6-aac6da9cd2c3",
+        "pproductsetid":"5cf83457-2d7c-4dc7-9580-369ca7039253",
+        "productsetname":"test07",
+        "productsetcode":"S00007",
+        "recorder":0,
+        "nodepath":7,
+        "nodes":7,
+        "reccreator":14,
+        "reccreatorname":"wty商管",
+        "reccreated":"2017-05-08 15:51:04",
+        "recstatus":1,
+        "children":[
+          {
+            "productsetid":"78d6cb16-6a97-4d16-810a-5e3d34f913d6",
+            "pproductsetid":"a21f25bc-5893-4daa-94f6-aac6da9cd2c3",
+            "productsetname":"test08",
+            "productsetcode":"S00008",
+            "recorder":0,
+            "nodepath":8,
+            "nodes":6,
+            "reccreator":14,
+            "reccreatorname":"wty商管",
+            "reccreated":"2017-05-08 15:51:04",
+            "recstatus":1,
+            "children":[
+              {
+                "productsetid":"d1233a0d-7bf2-4311-9bd6-10c6d6b09475",
+                "pproductsetid":"78d6cb16-6a97-4d16-810a-5e3d34f913d6",
+                "productsetname":"test09",
+                "productsetcode":"S00009",
+                "recorder":0,
+                "nodepath":9,
+                "nodes":5,
+                "reccreator":14,
+                "reccreatorname":"wty商管",
+                "reccreated":"2017-05-08 15:51:04",
+                "recstatus":1,
+                "children":[
+                  {
+                    "productsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+                    "pproductsetid":"d1233a0d-7bf2-4311-9bd6-10c6d6b09475",
+                    "productsetname":"test10",
+                    "productsetcode":"S00010",
+                    "recorder":0,
+                    "nodepath":10,
+                    "nodes":4,
+                    "reccreator":14,
+                    "reccreatorname":"wty商管",
+                    "reccreated":"2017-05-08 15:51:04",
+                    "recstatus":1,
+                    "children":[
+                      {
+                        "productsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+                        "pproductsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+                        "productsetname":"test11",
+                        "productsetcode":"S00011",
+                        "recorder":0,
+                        "nodepath":11,
+                        "nodes":3,
+                        "reccreator":14,
+                        "reccreatorname":"wty商管",
+                        "reccreated":"2017-05-08 15:51:04",
+                        "recstatus":1,
+                        "children":[
+                          {
+                            "productsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+                            "pproductsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+                            "productsetname":"test12",
+                            "productsetcode":"S00012",
+                            "recorder":0,
+                            "nodepath":12,
+                            "nodes":2,
+                            "reccreator":14,
+                            "reccreatorname":"wty商管",
+                            "reccreated":"2017-05-08 15:51:04",
+                            "recstatus":1,
+                            "children":[
+                              {
+                                "productsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                                "pproductsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+                                "productsetname":"test13",
+                                "productsetcode":"S00013",
+                                "recorder":0,
+                                "nodepath":13,
+                                "nodes":1,
+                                "reccreator":14,
+                                "reccreatorname":"wty商管",
+                                "reccreated":"2017-05-08 15:51:04",
+                                "recstatus":1,
+                                "children":[
+                                  {
+                                    "productsetid":"fcf747db-576d-45fd-9ace-f1c19f45a0b9",
+                                    "pproductsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                                    "productsetname":"test14",
+                                    "productsetcode":"S00014",
+                                    "recorder":0,
+                                    "nodepath":14,
+                                    "nodes":0,
+                                    "reccreator":14,
+                                    "reccreatorname":"wty商管",
+                                    "reccreated":"2017-05-08 15:51:04",
+                                    "recstatus":1,
+                                    "children":[
+
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "productsetid":"a21f25bc-5893-4daa-94f6-aac6da9cd2c3",
+    "pproductsetid":"5cf83457-2d7c-4dc7-9580-369ca7039253",
+    "productsetname":"test07",
+    "productsetcode":"S00007",
+    "recorder":0,
+    "nodepath":7,
+    "nodes":7,
+    "reccreator":14,
+    "reccreatorname":"wty商管",
+    "reccreated":"2017-05-08 15:51:04",
+    "recstatus":1,
+    "children":[
+      {
+        "productsetid":"78d6cb16-6a97-4d16-810a-5e3d34f913d6",
+        "pproductsetid":"a21f25bc-5893-4daa-94f6-aac6da9cd2c3",
+        "productsetname":"test08",
+        "productsetcode":"S00008",
+        "recorder":0,
+        "nodepath":8,
+        "nodes":6,
+        "reccreator":14,
+        "reccreatorname":"wty商管",
+        "reccreated":"2017-05-08 15:51:04",
+        "recstatus":1,
+        "children":[
+          {
+            "productsetid":"d1233a0d-7bf2-4311-9bd6-10c6d6b09475",
+            "pproductsetid":"78d6cb16-6a97-4d16-810a-5e3d34f913d6",
+            "productsetname":"test09",
+            "productsetcode":"S00009",
+            "recorder":0,
+            "nodepath":9,
+            "nodes":5,
+            "reccreator":14,
+            "reccreatorname":"wty商管",
+            "reccreated":"2017-05-08 15:51:04",
+            "recstatus":1,
+            "children":[
+              {
+                "productsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+                "pproductsetid":"d1233a0d-7bf2-4311-9bd6-10c6d6b09475",
+                "productsetname":"test10",
+                "productsetcode":"S00010",
+                "recorder":0,
+                "nodepath":10,
+                "nodes":4,
+                "reccreator":14,
+                "reccreatorname":"wty商管",
+                "reccreated":"2017-05-08 15:51:04",
+                "recstatus":1,
+                "children":[
+                  {
+                    "productsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+                    "pproductsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+                    "productsetname":"test11",
+                    "productsetcode":"S00011",
+                    "recorder":0,
+                    "nodepath":11,
+                    "nodes":3,
+                    "reccreator":14,
+                    "reccreatorname":"wty商管",
+                    "reccreated":"2017-05-08 15:51:04",
+                    "recstatus":1,
+                    "children":[
+                      {
+                        "productsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+                        "pproductsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+                        "productsetname":"test12",
+                        "productsetcode":"S00012",
+                        "recorder":0,
+                        "nodepath":12,
+                        "nodes":2,
+                        "reccreator":14,
+                        "reccreatorname":"wty商管",
+                        "reccreated":"2017-05-08 15:51:04",
+                        "recstatus":1,
+                        "children":[
+                          {
+                            "productsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                            "pproductsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+                            "productsetname":"test13",
+                            "productsetcode":"S00013",
+                            "recorder":0,
+                            "nodepath":13,
+                            "nodes":1,
+                            "reccreator":14,
+                            "reccreatorname":"wty商管",
+                            "reccreated":"2017-05-08 15:51:04",
+                            "recstatus":1,
+                            "children":[
+                              {
+                                "productsetid":"fcf747db-576d-45fd-9ace-f1c19f45a0b9",
+                                "pproductsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                                "productsetname":"test14",
+                                "productsetcode":"S00014",
+                                "recorder":0,
+                                "nodepath":14,
+                                "nodes":0,
+                                "reccreator":14,
+                                "reccreatorname":"wty商管",
+                                "reccreated":"2017-05-08 15:51:04",
+                                "recstatus":1,
+                                "children":[
+
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "productsetid":"78d6cb16-6a97-4d16-810a-5e3d34f913d6",
+    "pproductsetid":"a21f25bc-5893-4daa-94f6-aac6da9cd2c3",
+    "productsetname":"test08",
+    "productsetcode":"S00008",
+    "recorder":0,
+    "nodepath":8,
+    "nodes":6,
+    "reccreator":14,
+    "reccreatorname":"wty商管",
+    "reccreated":"2017-05-08 15:51:04",
+    "recstatus":1,
+    "children":[
+      {
+        "productsetid":"d1233a0d-7bf2-4311-9bd6-10c6d6b09475",
+        "pproductsetid":"78d6cb16-6a97-4d16-810a-5e3d34f913d6",
+        "productsetname":"test09",
+        "productsetcode":"S00009",
+        "recorder":0,
+        "nodepath":9,
+        "nodes":5,
+        "reccreator":14,
+        "reccreatorname":"wty商管",
+        "reccreated":"2017-05-08 15:51:04",
+        "recstatus":1,
+        "children":[
+          {
+            "productsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+            "pproductsetid":"d1233a0d-7bf2-4311-9bd6-10c6d6b09475",
+            "productsetname":"test10",
+            "productsetcode":"S00010",
+            "recorder":0,
+            "nodepath":10,
+            "nodes":4,
+            "reccreator":14,
+            "reccreatorname":"wty商管",
+            "reccreated":"2017-05-08 15:51:04",
+            "recstatus":1,
+            "children":[
+              {
+                "productsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+                "pproductsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+                "productsetname":"test11",
+                "productsetcode":"S00011",
+                "recorder":0,
+                "nodepath":11,
+                "nodes":3,
+                "reccreator":14,
+                "reccreatorname":"wty商管",
+                "reccreated":"2017-05-08 15:51:04",
+                "recstatus":1,
+                "children":[
+                  {
+                    "productsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+                    "pproductsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+                    "productsetname":"test12",
+                    "productsetcode":"S00012",
+                    "recorder":0,
+                    "nodepath":12,
+                    "nodes":2,
+                    "reccreator":14,
+                    "reccreatorname":"wty商管",
+                    "reccreated":"2017-05-08 15:51:04",
+                    "recstatus":1,
+                    "children":[
+                      {
+                        "productsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                        "pproductsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+                        "productsetname":"test13",
+                        "productsetcode":"S00013",
+                        "recorder":0,
+                        "nodepath":13,
+                        "nodes":1,
+                        "reccreator":14,
+                        "reccreatorname":"wty商管",
+                        "reccreated":"2017-05-08 15:51:04",
+                        "recstatus":1,
+                        "children":[
+                          {
+                            "productsetid":"fcf747db-576d-45fd-9ace-f1c19f45a0b9",
+                            "pproductsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                            "productsetname":"test14",
+                            "productsetcode":"S00014",
+                            "recorder":0,
+                            "nodepath":14,
+                            "nodes":0,
+                            "reccreator":14,
+                            "reccreatorname":"wty商管",
+                            "reccreated":"2017-05-08 15:51:04",
+                            "recstatus":1,
+                            "children":[
+
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "productsetid":"d1233a0d-7bf2-4311-9bd6-10c6d6b09475",
+    "pproductsetid":"78d6cb16-6a97-4d16-810a-5e3d34f913d6",
+    "productsetname":"test09",
+    "productsetcode":"S00009",
+    "recorder":0,
+    "nodepath":9,
+    "nodes":5,
+    "reccreator":14,
+    "reccreatorname":"wty商管",
+    "reccreated":"2017-05-08 15:51:04",
+    "recstatus":1,
+    "children":[
+      {
+        "productsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+        "pproductsetid":"d1233a0d-7bf2-4311-9bd6-10c6d6b09475",
+        "productsetname":"test10",
+        "productsetcode":"S00010",
+        "recorder":0,
+        "nodepath":10,
+        "nodes":4,
+        "reccreator":14,
+        "reccreatorname":"wty商管",
+        "reccreated":"2017-05-08 15:51:04",
+        "recstatus":1,
+        "children":[
+          {
+            "productsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+            "pproductsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+            "productsetname":"test11",
+            "productsetcode":"S00011",
+            "recorder":0,
+            "nodepath":11,
+            "nodes":3,
+            "reccreator":14,
+            "reccreatorname":"wty商管",
+            "reccreated":"2017-05-08 15:51:04",
+            "recstatus":1,
+            "children":[
+              {
+                "productsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+                "pproductsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+                "productsetname":"test12",
+                "productsetcode":"S00012",
+                "recorder":0,
+                "nodepath":12,
+                "nodes":2,
+                "reccreator":14,
+                "reccreatorname":"wty商管",
+                "reccreated":"2017-05-08 15:51:04",
+                "recstatus":1,
+                "children":[
+                  {
+                    "productsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                    "pproductsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+                    "productsetname":"test13",
+                    "productsetcode":"S00013",
+                    "recorder":0,
+                    "nodepath":13,
+                    "nodes":1,
+                    "reccreator":14,
+                    "reccreatorname":"wty商管",
+                    "reccreated":"2017-05-08 15:51:04",
+                    "recstatus":1,
+                    "children":[
+                      {
+                        "productsetid":"fcf747db-576d-45fd-9ace-f1c19f45a0b9",
+                        "pproductsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                        "productsetname":"test14",
+                        "productsetcode":"S00014",
+                        "recorder":0,
+                        "nodepath":14,
+                        "nodes":0,
+                        "reccreator":14,
+                        "reccreatorname":"wty商管",
+                        "reccreated":"2017-05-08 15:51:04",
+                        "recstatus":1,
+                        "children":[
+
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "productsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+    "pproductsetid":"d1233a0d-7bf2-4311-9bd6-10c6d6b09475",
+    "productsetname":"test10",
+    "productsetcode":"S00010",
+    "recorder":0,
+    "nodepath":10,
+    "nodes":4,
+    "reccreator":14,
+    "reccreatorname":"wty商管",
+    "reccreated":"2017-05-08 15:51:04",
+    "recstatus":1,
+    "children":[
+      {
+        "productsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+        "pproductsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+        "productsetname":"test11",
+        "productsetcode":"S00011",
+        "recorder":0,
+        "nodepath":11,
+        "nodes":3,
+        "reccreator":14,
+        "reccreatorname":"wty商管",
+        "reccreated":"2017-05-08 15:51:04",
+        "recstatus":1,
+        "children":[
+          {
+            "productsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+            "pproductsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+            "productsetname":"test12",
+            "productsetcode":"S00012",
+            "recorder":0,
+            "nodepath":12,
+            "nodes":2,
+            "reccreator":14,
+            "reccreatorname":"wty商管",
+            "reccreated":"2017-05-08 15:51:04",
+            "recstatus":1,
+            "children":[
+              {
+                "productsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                "pproductsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+                "productsetname":"test13",
+                "productsetcode":"S00013",
+                "recorder":0,
+                "nodepath":13,
+                "nodes":1,
+                "reccreator":14,
+                "reccreatorname":"wty商管",
+                "reccreated":"2017-05-08 15:51:04",
+                "recstatus":1,
+                "children":[
+                  {
+                    "productsetid":"fcf747db-576d-45fd-9ace-f1c19f45a0b9",
+                    "pproductsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                    "productsetname":"test14",
+                    "productsetcode":"S00014",
+                    "recorder":0,
+                    "nodepath":14,
+                    "nodes":0,
+                    "reccreator":14,
+                    "reccreatorname":"wty商管",
+                    "reccreated":"2017-05-08 15:51:04",
+                    "recstatus":1,
+                    "children":[
+
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "productsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+    "pproductsetid":"b4e6a6d0-a79e-45f5-bf81-475f1e45ccf6",
+    "productsetname":"test11",
+    "productsetcode":"S00011",
+    "recorder":0,
+    "nodepath":11,
+    "nodes":3,
+    "reccreator":14,
+    "reccreatorname":"wty商管",
+    "reccreated":"2017-05-08 15:51:04",
+    "recstatus":1,
+    "children":[
+      {
+        "productsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+        "pproductsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+        "productsetname":"test12",
+        "productsetcode":"S00012",
+        "recorder":0,
+        "nodepath":12,
+        "nodes":2,
+        "reccreator":14,
+        "reccreatorname":"wty商管",
+        "reccreated":"2017-05-08 15:51:04",
+        "recstatus":1,
+        "children":[
+          {
+            "productsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+            "pproductsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+            "productsetname":"test13",
+            "productsetcode":"S00013",
+            "recorder":0,
+            "nodepath":13,
+            "nodes":1,
+            "reccreator":14,
+            "reccreatorname":"wty商管",
+            "reccreated":"2017-05-08 15:51:04",
+            "recstatus":1,
+            "children":[
+              {
+                "productsetid":"fcf747db-576d-45fd-9ace-f1c19f45a0b9",
+                "pproductsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+                "productsetname":"test14",
+                "productsetcode":"S00014",
+                "recorder":0,
+                "nodepath":14,
+                "nodes":0,
+                "reccreator":14,
+                "reccreatorname":"wty商管",
+                "reccreated":"2017-05-08 15:51:04",
+                "recstatus":1,
+                "children":[
+
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "productsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+    "pproductsetid":"378839ab-cb4e-453f-ac4f-c3aa04ccff61",
+    "productsetname":"test12",
+    "productsetcode":"S00012",
+    "recorder":0,
+    "nodepath":12,
+    "nodes":2,
+    "reccreator":14,
+    "reccreatorname":"wty商管",
+    "reccreated":"2017-05-08 15:51:04",
+    "recstatus":1,
+    "children":[
+      {
+        "productsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+        "pproductsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+        "productsetname":"test13",
+        "productsetcode":"S00013",
+        "recorder":0,
+        "nodepath":13,
+        "nodes":1,
+        "reccreator":14,
+        "reccreatorname":"wty商管",
+        "reccreated":"2017-05-08 15:51:04",
+        "recstatus":1,
+        "children":[
+          {
+            "productsetid":"fcf747db-576d-45fd-9ace-f1c19f45a0b9",
+            "pproductsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+            "productsetname":"test14",
+            "productsetcode":"S00014",
+            "recorder":0,
+            "nodepath":14,
+            "nodes":0,
+            "reccreator":14,
+            "reccreatorname":"wty商管",
+            "reccreated":"2017-05-08 15:51:04",
+            "recstatus":1,
+            "children":[
+
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "productsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+    "pproductsetid":"28ecf7f0-bf3f-48f9-b251-3eae184f1b2a",
+    "productsetname":"test13",
+    "productsetcode":"S00013",
+    "recorder":0,
+    "nodepath":13,
+    "nodes":1,
+    "reccreator":14,
+    "reccreatorname":"wty商管",
+    "reccreated":"2017-05-08 15:51:04",
+    "recstatus":1,
+    "children":[
+      {
+        "productsetid":"fcf747db-576d-45fd-9ace-f1c19f45a0b9",
+        "pproductsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+        "productsetname":"test14",
+        "productsetcode":"S00014",
+        "recorder":0,
+        "nodepath":14,
+        "nodes":0,
+        "reccreator":14,
+        "reccreatorname":"wty商管",
+        "reccreated":"2017-05-08 15:51:04",
+        "recstatus":1,
+        "children":[
+
+        ]
+      }
+    ]
+  },
+  {
+    "productsetid":"fcf747db-576d-45fd-9ace-f1c19f45a0b9",
+    "pproductsetid":"d5700df3-e526-4224-85d6-efa91f71c4a6",
+    "productsetname":"test14",
+    "productsetcode":"S00014",
+    "recorder":0,
+    "nodepath":14,
+    "nodes":0,
+    "reccreator":14,
+    "reccreatorname":"wty商管",
+    "reccreated":"2017-05-08 15:51:04",
+    "recstatus":1,
+    "children":[
+
+    ]
+  },
+  {
+    "productsetid":"2a762299-e455-4537-9c90-070c81f58a54",
+    "pproductsetid":"f2075107-0b95-4710-b481-808802c790f8",
+    "productsetname":"55551",
+    "productsetcode":"0001",
+    "recorder":0,
+    "nodepath":2,
+    "nodes":0,
+    "reccreator":1,
+    "reccreatorname":"系统管理员",
+    "reccreated":"2017-05-10 09:12:31",
+    "recstatus":1,
+    "children":[
+
+    ]
+  },
+  {
+    "productsetid":"488b77f0-f415-482f-9c50-533a5a053fb6",
+    "pproductsetid":"7f74192d-b937-403f-ac2a-8be34714278b",
+    "productsetname":"U客100系列产品",
+    "productsetcode":"no0719",
+    "recorder":0,
+    "nodepath":1,
+    "nodes":0,
+    "reccreator":25,
+    "reccreatorname":"H测试1",
+    "reccreated":"2017-05-16 16:53:39",
+    "recstatus":1,
+    "children":[
+
+    ]
+  },
+  {
+    "productsetid":"eef6f88c-bbee-4171-a3b5-7c4cbf4ce2b5",
+    "pproductsetid":"7f74192d-b937-403f-ac2a-8be34714278b",
+    "productsetname":"测试编码",
+    "productsetcode":"111122",
+    "recorder":0,
+    "nodepath":1,
+    "nodes":3,
+    "reccreator":5,
+    "reccreatorname":"大酒神",
+    "reccreated":"2017-06-07 13:46:20",
+    "recstatus":1,
+    "children":[
+      {
+        "productsetid":"348a5284-18d1-4e3c-a4b5-a3c961b4bef8",
+        "pproductsetid":"eef6f88c-bbee-4171-a3b5-7c4cbf4ce2b5",
+        "productsetname":"测试编码2",
+        "productsetcode":"22222",
+        "recorder":0,
+        "nodepath":2,
+        "nodes":0,
+        "reccreator":5,
+        "reccreatorname":"大酒神",
+        "reccreated":"2017-06-07 14:02:50",
+        "recstatus":1,
+        "children":[
+
+        ]
+      },
+      {
+        "productsetid":"9044b211-efac-4fad-af8d-8c72c12f79d2",
+        "pproductsetid":"eef6f88c-bbee-4171-a3b5-7c4cbf4ce2b5",
+        "productsetname":"测试编码333",
+        "productsetcode":"3334",
+        "recorder":0,
+        "nodepath":2,
+        "nodes":0,
+        "reccreator":5,
+        "reccreatorname":"大酒神",
+        "reccreated":"2017-06-07 14:37:55",
+        "recstatus":1,
+        "children":[
+
+        ]
+      },
+      {
+        "productsetid":"4fbdbcb0-4367-4774-96f1-fa120318e908",
+        "pproductsetid":"eef6f88c-bbee-4171-a3b5-7c4cbf4ce2b5",
+        "productsetname":"测试编码25",
+        "productsetcode":"222",
+        "recorder":0,
+        "nodepath":2,
+        "nodes":0,
+        "reccreator":5,
+        "reccreatorname":"大酒神",
+        "reccreated":"2017-06-07 14:38:25",
+        "recstatus":1,
+        "children":[
+
+        ]
+      }
+    ]
+  },
+  {
+    "productsetid":"348a5284-18d1-4e3c-a4b5-a3c961b4bef8",
+    "pproductsetid":"eef6f88c-bbee-4171-a3b5-7c4cbf4ce2b5",
+    "productsetname":"测试编码2",
+    "productsetcode":"22222",
+    "recorder":0,
+    "nodepath":2,
+    "nodes":0,
+    "reccreator":5,
+    "reccreatorname":"大酒神",
+    "reccreated":"2017-06-07 14:02:50",
+    "recstatus":1,
+    "children":[
+
+    ]
+  },
+  {
+    "productsetid":"9044b211-efac-4fad-af8d-8c72c12f79d2",
+    "pproductsetid":"eef6f88c-bbee-4171-a3b5-7c4cbf4ce2b5",
+    "productsetname":"测试编码333",
+    "productsetcode":"3334",
+    "recorder":0,
+    "nodepath":2,
+    "nodes":0,
+    "reccreator":5,
+    "reccreatorname":"大酒神",
+    "reccreated":"2017-06-07 14:37:55",
+    "recstatus":1,
+    "children":[
+
+    ]
+  },
+  {
+    "productsetid":"4fbdbcb0-4367-4774-96f1-fa120318e908",
+    "pproductsetid":"eef6f88c-bbee-4171-a3b5-7c4cbf4ce2b5",
+    "productsetname":"测试编码25",
+    "productsetcode":"222",
+    "recorder":0,
+    "nodepath":2,
+    "nodes":0,
+    "reccreator":5,
+    "reccreatorname":"大酒神",
+    "reccreated":"2017-06-07 14:38:25",
+    "recstatus":1,
+    "children":[
+
+    ]
+  },
+  {
+    "productsetid":"620a733c-14fe-4a62-8aa2-f22f8b2b9a83",
+    "pproductsetid":"f2075107-0b95-4710-b481-808802c790f8",
+    "productsetname":"test322",
+    "productsetcode":"000021",
+    "recorder":0,
+    "nodepath":2,
+    "nodes":0,
+    "reccreator":1,
+    "reccreatorname":"系统管理员",
+    "reccreated":"2017-07-28 13:54:55",
+    "recstatus":1,
+    "children":[
+
+    ]
+  },
+  {
+    "productsetid":"523a3f6b-67e4-468f-a225-a213db151406",
+    "pproductsetid":"7f74192d-b937-403f-ac2a-8be34714278b",
+    "productsetname":"V64产品版",
+    "productsetcode":"aaaaaaabbde34",
+    "recorder":0,
+    "nodepath":1,
+    "nodes":0,
+    "reccreator":13,
+    "reccreatorname":"吴湛强",
+    "reccreated":"2017-07-31 09:30:21",
+    "recstatus":1,
+    "children":[
+
+    ]
+  },
+  {
+    "productsetid":"12f17396-e473-45a1-8d99-a41c3ff83d41",
+    "pproductsetid":"0b843b78-9caf-4599-a89c-96f1e20a26ed",
+    "productsetname":"子项目",
+    "productsetcode":"1111",
+    "recorder":0,
+    "nodepath":2,
+    "nodes":0,
+    "reccreator":25,
+    "reccreatorname":"H测试1",
+    "reccreated":"2017-08-08 17:14:09",
+    "recstatus":1
+  },
+  {
+    "productsetid":"8c5c4229-c08d-4245-b6f9-9116b532a6b9",
+    "pproductsetid":"7f74192d-b937-403f-ac2a-8be34714278b",
+    "productsetname":"测试系列删除",
+    "productsetcode":"1",
+    "recorder":0,
+    "nodepath":1,
+    "nodes":3,
+    "reccreator":25,
+    "reccreatorname":"H测试1",
+    "reccreated":"2017-08-08 17:14:53",
+    "recstatus":1,
+    "children":[
+      {
+        "productsetid":"2e9081d0-55d3-4cd7-b8ac-056f9fa6a077",
+        "pproductsetid":"8c5c4229-c08d-4245-b6f9-9116b532a6b9",
+        "productsetname":"子系列删除",
+        "productsetcode":"12",
+        "recorder":0,
+        "nodepath":2,
+        "nodes":1,
+        "reccreator":25,
+        "reccreatorname":"H测试1",
+        "reccreated":"2017-08-08 17:15:06",
+        "recstatus":1,
+        "children":[
+
+        ]
+      }
+    ]
+  },
+  {
+    "productsetid":"2e9081d0-55d3-4cd7-b8ac-056f9fa6a077",
+    "pproductsetid":"8c5c4229-c08d-4245-b6f9-9116b532a6b9",
+    "productsetname":"子系列删除",
+    "productsetcode":"12",
+    "recorder":0,
+    "nodepath":2,
+    "nodes":1,
+    "reccreator":25,
+    "reccreatorname":"H测试1",
+    "reccreated":"2017-08-08 17:15:06",
+    "recstatus":1,
+    "children":[
+
+    ]
+  },
+  {
+    "productsetid":"7e947510-5e55-42d7-b177-74c26828377d",
+    "pproductsetid":"7f74192d-b937-403f-ac2a-8be34714278b",
+    "productsetname":"测试产品更新",
+    "productsetcode":"wodebiama",
+    "recorder":0,
+    "nodepath":1,
+    "nodes":0,
+    "reccreator":1,
+    "reccreatorname":"系统管理员",
+    "reccreated":"2017-08-18 14:46:46",
+    "recstatus":1,
+    "children":[
+
+    ]
+  },
+  {
+    "productsetid":"266fbb7b-2aec-44f4-b997-bce630de33e6",
+    "pproductsetid":"7f74192d-b937-403f-ac2a-8be34714278b",
+    "productsetname":"chj导入系列",
+    "productsetcode":"CHJ000",
+    "recorder":1,
+    "nodepath":1,
+    "nodes":0,
+    "reccreator":1,
+    "reccreatorname":"系统管理员",
+    "reccreated":"2017-08-21 10:04:05",
+    "recstatus":1,
+    "children":[
+
+    ]
+  }
+];
+class EntcommFunc extends React.Component {
+  static propTypes = {
+
+  };
+  static defaultProps = {
+
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
+  componentDidMount () {
+    if (this.treeRef) {
+      const MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+      if (MutationObserver) {
+        const observer = new MutationObserver((mutations) => {
+          console.log(mutations);
+        });
+        //主要监听节点插入和节点属性变化（不监听节点删除）
+        observer.observe(this.treeRef, { attributes: true, childList: true, subtree: true });
+      }
+    }
+  }
+
+  render() {
+    return (
+      <div className={Styles.Wrap}>
+        <div>
+          <Button size="default" onClick={this.props.add}>新增</Button>
+          <Button size="default" onClick={this.props.add}>编辑</Button>
+          <Button type="danger" size="default" onClick={this.props.add}>删除</Button>
+        </div>
+        <ul className={Styles.clearfix}>
+          <li ref={ref => this.treeRef = ref}>
+            <SeriesTree
+              data={data}
+              onChange={this.props.add}
+            />
+          </li>
+          <li>
+
+          </li>
+        </ul>
+      </div>
+    );
+  }
+}
+
+export default connect(
+  state => {
+    return {
+      ...state.entityFunc
+    };
+  },
+  dispatch => {
+    return {
+      selectSeries() {
+        dispatch({ type: 'entityFunc/showModals', payload: 'addSeries' });
+      },
+      add() {
+
+      },
+      del() {
+
+      }
+    };
+  }
+)(EntcommFunc);

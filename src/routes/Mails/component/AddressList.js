@@ -2,7 +2,7 @@
  * Created by 0291 on 2017/11/10.
  */
 import React, { Component } from 'react';
-import { Input, Tree, Collapse, Icon } from 'antd';
+import { Input, Tree, Collapse, Icon, message } from 'antd';
 const Panel = Collapse.Panel;
 const Search = Input.Search;
 const TreeNode = Tree.TreeNode;
@@ -11,6 +11,7 @@ import request from '../../../utils/request';
 import { queryInnerContact, queryDeptMailCatalog, queryMailCatalog } from '../../../services/mails';
 import { connect } from 'dva';
 import compare from '../lib/sortCompare';
+import _ from 'lodash';
 
 class AddressList extends Component {
   static propTypes = {
@@ -32,9 +33,13 @@ class AddressList extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      innerContact: nextProps.innerContact,
-      foldAddress: true
+      innerContact: nextProps.innerContact
     });
+    if (nextProps.showingPanel && nextProps.showingPanel !== this.props.showingPanel) {
+      this.setState({
+        foldAddress: true
+      });
+    }
   }
 
   componentDidMount() {
@@ -64,15 +69,15 @@ class AddressList extends Component {
   }
 
   renderTreeNodes(data) {
-    return data.map((item) => {
+    return data.map((item, index) => {
       if (item.children && item.children.length > 0) {
         return (
-          <TreeNode title={item.treename} key={item.treeid} dataRef={item} selectable={false}>
+          <TreeNode title={item.treename} key={JSON.stringify({ treeid: item.treeid, email: item.mail, name: item.treename })} dataRef={item} selectable={false}>
             {this.renderTreeNodes(item.children)}
           </TreeNode>
         );
       }
-      return <TreeNode title={item.treename} key={item.treeid} dataRef={item} isLeaf={item.nodetype === 1} selectable={item.nodetype === 1} />;
+      return <TreeNode title={item.treename} key={JSON.stringify({ treeid: item.treeid, email: item.mail, name: item.treename })} dataRef={item} isLeaf={item.nodetype === 1} selectable={item.nodetype === 1} />;
     });
   }
 
@@ -83,57 +88,64 @@ class AddressList extends Component {
       const oldData = editEmailFormData[this.props.focusTargetName] || [];
       const newEditEmailFormData = {
         ...editEmailFormData,
-        [this.props.focusTargetName]: [
+        [this.props.focusTargetName]: _.uniqBy([
           ...oldData,
           {
             name: item.name,
             email: item.emailaddress
           }
-        ]
+        ], 'email')
       };
 
       this.props.dispatch({ type: 'mails/putState', payload: { editEmailFormData: newEditEmailFormData } });
     }
   }
 
-  treeSelectHandler(selectKeys, { selected, selectedNodes, node, event }) {
-    const selectItem = this.state.innerContact && this.state.innerContact instanceof Array && this.state.innerContact.filter((item, index) => {
-      return item.treeid === (selectKeys && selectKeys instanceof Array && selectKeys.length > 0 && selectKeys[0]);
-    });
-
+  treeSelectHandler(selectKeys) {
     if (this.props.focusTargetName) {
       const editEmailFormData = this.props.editEmailFormData || {};
       const oldData = editEmailFormData[this.props.focusTargetName] || [];
-      const pushData = selectItem && selectItem instanceof Array && selectItem[0];
-
+      const pushData = selectKeys && selectKeys instanceof Array && selectKeys.length > 0 && JSON.parse(selectKeys[0]);
       if (pushData) {
         const newEditEmailFormData = {
           ...editEmailFormData,
-          [this.props.focusTargetName]: [
+          [this.props.focusTargetName]: _.uniqBy([
             ...oldData,
             {
-              name: pushData.treename,
-              email: pushData.mail
+              name: pushData.name,
+              email: pushData.email
             }
-          ]
+          ], 'email')
         };
 
-        let filterEditEmailFormData = {};
-        this.props.model && this.props.model instanceof Array && this.props.model.map((item) => { //筛选出当前表单显示的数据
-          filterEditEmailFormData[item.name] = newEditEmailFormData[item.name];
-        });
-
-        this.props.dispatch({ type: 'mails/putState', payload: { editEmailFormData: filterEditEmailFormData } });
+        this.props.dispatch({ type: 'mails/putState', payload: { editEmailFormData: newEditEmailFormData } });
       }
+    } else {
+      message.info('请先选择需要填充的焦点行');
     }
   }
 
   queryListData(value) {
-    request('/api/mail/getcontactbykeyword', {
-      method: 'post', body: JSON.stringify({ keyword: value, count: 50 })
-    }).then((result) => {
+    Promise.all([
+      request('/api/mail/getcontactbykeyword', {
+        method: 'post', body: JSON.stringify({ keyword: value, count: 50 })
+      }),
+      request('/api/mail/getinnerpersoncontact', {
+        method: 'post', body: JSON.stringify({ keyword: value, PageIndex: 1, pageSize: 50 })
+      })
+    ]).then((result) => {
+      const [customContact, innerContact] = result;
+      const innerContactData = innerContact.data.datalist.map((item) => {
+        return {
+          name: item.treename,
+          emailaddress: item.mail
+        };
+      });
       this.setState({
-        listData: result && result.data
+        listData: [
+          ...customContact.data,
+          ...innerContactData
+        ]
       });
     });
   }
