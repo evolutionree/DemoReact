@@ -5,10 +5,10 @@
     }
   }
 
-  .clearfix {
+  .functionSetWrap {
     zoom:1
   }
-  .clearfix:after{
+  .functionSetWrap:after{
     content:"";
     display:block;
     clear:both;
@@ -16,14 +16,20 @@
 }
 
 
-.Wrap > ul > li:first-of-type {
+.functionSetWrap > li:first-of-type {
   float: left;
+  width: 450px;
+  overflow: auto;
 }
 
-.Wrap > ul > li:last-of-type {
+.functionSetWrap > li:last-of-type {
   float: left;
   display: block;
-  width: 100%;
-  height: 100px;
-  background: red;
+  margin-right: 40px;
+}
+
+
+.Wrap .treeWrap > h2 {
+  height: 40px;
+  line-height: 40px;
 }

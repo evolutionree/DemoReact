@@ -966,7 +966,7 @@ export async function queryEntryPages(entityid) {
 export async function saveEntryPages(params) {
   return request('api/entitypro/saveentrypages', {
     method: 'POST',
-    body: JSON.stringify( params )
+    body: JSON.stringify(params)
   });
 }
 
@@ -992,3 +992,25 @@ export async function DJCloudCall(params) {
   });
 }
 
+/*
+  获取实体function列表
+  {
+ EntityId
+  }
+ */
+export async function functionlist(params) {
+  return request('api/EntityPro/functionlist', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}
+
+/*
+ 保存function列表
+ */
+export async function savefunctions(params) {
+  return request('api/EntityPro/savefunctions', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}

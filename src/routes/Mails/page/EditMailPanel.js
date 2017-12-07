@@ -654,6 +654,9 @@ class EditMailPanel extends Component {
   beforeUpload = (file) => {
     if (file.type === 'application/x-msdownload') {
       message.error('抱歉，暂时不支持此类型的附件上传');
+      this.setState({
+        fileUploadLimit: true
+      });
     }
     if (this.state.totalFileSize + file.size > 1024 * 1024 * 20) { //1024 * 1024 * 1024 * 1
       message.error('文件大小不可超过20M');
@@ -670,7 +673,7 @@ class EditMailPanel extends Component {
     console.log(event)
     console.log(this.state.totalFileSize)
     //debugger;
-    if (file.response && file.response.error_code === 0 && file.type !== 'application/x-msdownload' && !this.state.fileUploadLimit) {
+    if (file.response && file.response.error_code === 0 && !this.state.fileUploadLimit) {
       const fileId = file.response.data;
       // 上传成功，拿uuid
       this.setState({
