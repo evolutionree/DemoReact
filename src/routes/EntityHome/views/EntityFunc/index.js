@@ -70,7 +70,7 @@ class EntcommFunc extends React.Component {
         {
           funcid: '00000000-0000-0000-0000-000000000000',
           parentid: '11111111',
-          funcname: '根节点',
+          funcname: '功能设置',
           disabled: true
         }
       ];
