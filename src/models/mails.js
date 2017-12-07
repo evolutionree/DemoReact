@@ -449,7 +449,7 @@ export default {
       });
 
       // 标记已读
-      if (!mail.isread) {
+      if (mail.catalogtype !== 'dept' && !mail.isread) {
         try {
           yield call(markMails, { mailids: mail.mailid, mark: 3 });
           const { mailList } = yield select(state => state.mails);
