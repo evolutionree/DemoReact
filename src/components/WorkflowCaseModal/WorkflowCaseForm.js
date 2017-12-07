@@ -24,6 +24,7 @@ class WorkflowCaseForm extends Component {
 
   componentDidMount() {
     this.fetchAllUsers();
+    this.initFormData();
   }
 
   componentWillReceiveProps(nextProps) {
