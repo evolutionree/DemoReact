@@ -57,6 +57,10 @@ const CheckableMenu = ({ items, checkedKeys, onCheckedChange }) => {
   );
 };
 
+const MetaValue = ({ children }) => (
+  <span style={children ? {} : { color: '#999' }}>{children || '(空)'}</span>
+);
+
 class RelatedInfoPanel extends Component {
   static propTypes = {};
   static defaultProps = {};
@@ -290,9 +294,9 @@ class RelatedInfoPanel extends Component {
         {sender && sender.length > 0 && <div className={styles.infobox}>
           <div className={styles.infotitle}>发件人信息</div>
           <div className={styles.infometa}><Avatar.View value={sender[0].usericon} headShape={1} size={50} /></div>
-          <div className={styles.infometa}><span>姓名：</span><span>{sender[0].username}</span></div>
-          <div className={styles.infometa}><span>电话：</span><span>{sender[0].usertel}</span></div>
-          <div className={styles.infometa}><span>邮箱：</span><span>{sender[0].useremail}</span></div>
+          <div className={styles.infometa}><span>姓名：</span><MetaValue>{sender[0].username}</MetaValue></div>
+          <div className={styles.infometa}><span>电话：</span><MetaValue>{sender[0].usertel}</MetaValue></div>
+          <div className={styles.infometa}><span>邮箱：</span><MetaValue>{sender[0].useremail}</MetaValue></div>
         </div>}
         {custInfo && custInfo.length > 0 && <div className={styles.infobox}>
           <div className={styles.infotitle}>客户信息</div>
@@ -303,9 +307,11 @@ class RelatedInfoPanel extends Component {
         </div>}
         {contacts && contacts.length > 0 && <div className={styles.infobox}>
           <div className={styles.infotitle}>客户联系人信息</div>
-          <div className={styles.infometa}><span>姓名：</span><span>{contacts[0].recname}</span></div>
-          <div className={styles.infometa}><span>电话：</span><span>{contacts[0].phone}</span></div>
-          <div className={styles.infometa}><span>邮箱：</span><span>{contacts[0].email}</span></div>
+          {contacts.map(contact => <div key={contact.recname} style={{ marginBottom: '5px' }}>
+            <div className={styles.infometa}><span>姓名：</span><MetaValue>{contact.recname}</MetaValue></div>
+            <div className={styles.infometa}><span>电话：</span><MetaValue>{contact.mobilephone}</MetaValue></div>
+            <div className={styles.infometa}><span>邮箱：</span><MetaValue>{contact.email}</MetaValue></div>
+          </div>)}
         </div>}
       </div>
     );

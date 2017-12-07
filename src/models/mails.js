@@ -305,7 +305,10 @@ export default {
       catalogNode.catalogtype = catalogType;
       yield put({
         type: 'putState',
-        payload: { selectedCatalogNode: catalogNode }
+        payload: {
+          selectedCatalogNode: catalogNode,
+          mailPageIndex: 1
+        }
       });
       yield put({ type: 'queryMailList' });
     },

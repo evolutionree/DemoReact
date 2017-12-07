@@ -74,6 +74,10 @@ class MailContent extends Component {
     if (!data) return null;
     const { title, sender, receivers, ccers, bccers, receivedtime,
       senttime, attachinfo, summary, mailbody, attachcount, istag, catalogtype } = data;
+    let mailtime = receivedtime;
+    if (receivedtime === '0001-01-01 00:00:00' || !receivedtime) {
+      mailtime = senttime === '0001-01-01 00:00:00' ? '' : senttime;
+    }
     const strPersons = persons => {
       if (!persons) return null;
       return persons.map((item, index) => {
@@ -121,7 +125,7 @@ class MailContent extends Component {
           </p>}
           <p className={styles.meta}>
             <span>时&nbsp;&nbsp;&nbsp;&nbsp;间</span>
-            <span>{formatTime(receivedtime) || formatTime(senttime)}</span>
+            <span>{mailtime}</span>
           </p>
           <div className={styles.stuff}>
             {isPreview && (

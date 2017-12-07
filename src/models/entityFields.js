@@ -124,7 +124,8 @@ export default {
           return {
             entityId,
             fieldid: item.fieldid,
-            fieldname: item.fieldname
+            fieldname: item.fieldname,
+            relentityid: 'ac051b46-7a20-4848-9072-3b108f1de9b0' // 客户基础资料实体
           }
         })
 
