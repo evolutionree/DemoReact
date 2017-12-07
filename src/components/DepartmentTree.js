@@ -16,7 +16,8 @@ class DepartmentTree extends React.Component {
     onCheckChange: React.PropTypes.func,
     checkable: React.PropTypes.bool,
     checkStrictly: React.PropTypes.bool,
-    checkChildrenRecursively: React.PropTypes.bool
+    checkChildrenRecursively: React.PropTypes.bool,
+    uncheckChildrenRecursively: React.PropTypes.bool
   };
   static defaultProps = {
     departments: [],
@@ -25,7 +26,8 @@ class DepartmentTree extends React.Component {
     checkedKeys: [],
     checkable: false,
     checkStrictly: false,
-    checkChildrenRecursively: false
+    checkChildrenRecursively: false,
+    uncheckChildrenRecursively: false
   };
 
   getNodeById = id => {
@@ -56,24 +58,29 @@ class DepartmentTree extends React.Component {
   };
 
   handleCheck = (checkedKeys, event) => {
-    if (!this.props.checkChildrenRecursively) {
+    // if (!this.props.checkChildrenRecursively) {
+    //   const { checkedNodes, halfCheckedKeys } = event;
+    //   const values = checkedNodes.map(node => node.key);
+    //   const nodes = values.map(this.getNodeById);
+    //   this.props.onCheckChange(values, nodes, halfCheckedKeys);
+    //   return;
+    // }
+    const nowCheckedKeys = [...checkedKeys.checked];
+    const nowCheckedNodes = checkedKeys.checked.map(this.getNodeById);
+    const targetNode = this.getNodeById(event.node.props.eventKey);
+
+    if (targetNode && event.checked && this.props.checkChildrenRecursively) {
+      checkNodeRecursively(targetNode);
+      this.props.onCheckChange(nowCheckedKeys, nowCheckedNodes, []);
+    } else if (targetNode && !event.checked && this.props.uncheckChildrenRecursively) {
+      uncheckNodeRecursively(targetNode);
+      this.props.onCheckChange(nowCheckedKeys, nowCheckedNodes, []);
+    } else {
       const { checkedNodes, halfCheckedKeys } = event;
       const values = checkedNodes.map(node => node.key);
       const nodes = values.map(this.getNodeById);
       this.props.onCheckChange(values, nodes, halfCheckedKeys);
-      return;
     }
-
-
-    const nowCheckedKeys = [...checkedKeys.checked];
-    const nowCheckedNodes = checkedKeys.checked.map(this.getNodeById);
-    const targetKey = event.node.props.eventKey;
-    const targetNode = this.getNodeById(targetKey);
-
-    if (targetNode && event.checked) {
-      checkNodeRecursively(targetNode);
-    }
-    this.props.onCheckChange(nowCheckedKeys, nowCheckedNodes, []);
 
     function checkNodeRecursively(node) {
       if (node.children) {
@@ -83,6 +90,17 @@ class DepartmentTree extends React.Component {
             nowCheckedNodes.push(child);
           }
           checkNodeRecursively(child);
+        });
+      }
+    }
+    function uncheckNodeRecursively(node) {
+      if (node.children) {
+        node.children.forEach(child => {
+          if (_.includes(nowCheckedKeys, child.deptid)) {
+            _.remove(nowCheckedKeys, i => i === child.deptid);
+            _.remove(nowCheckedNodes, i => i.deptid === child.deptid);
+          }
+          uncheckNodeRecursively(child);
         });
       }
     }

@@ -43,9 +43,10 @@ class ActionButton extends Component {
   };
 
   onVisibleChange = visible => {
-    if (!visible) {
-      this.setState({ dropdownVisible: false });
-    }
+    // if (!visible) {
+    //   this.setState({ dropdownVisible: false });
+    // }
+    this.setState({ dropdownVisible: visible });
   };
 
   showDropdown = () => {
@@ -85,7 +86,7 @@ class ActionButton extends Component {
 
     return (
       <div style={wrapStyle}>
-        <Dropdown trigger={['click']} visible={this.state.dropdownVisible}
+        <Dropdown visible={this.state.dropdownVisible}
           onVisibleChange={this.onVisibleChange}
           overlay={overlay || (
             <Menu onClick={this.handleMenuClick}>

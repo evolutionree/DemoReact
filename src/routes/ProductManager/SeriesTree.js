@@ -50,14 +50,15 @@ class SeriesTree extends Component {
 
   renderTreeNodes(data) {
     return data.map(item => {
+      const title = item.recstatus === 0 ? ('(停用)' + item.productsetname) : item.productsetname;
       if (item.children && item.children.length) {
         return (
-          <TreeNode key={item.productsetid} title={item.productsetname}>
+          <TreeNode key={item.productsetid} title={title}>
             {this.renderTreeNodes(item.children)}
           </TreeNode>
         );
       } else {
-        return <TreeNode key={item.productsetid} title={item.productsetname} isLeaf />;
+        return <TreeNode key={item.productsetid} title={title} isLeaf />;
       }
     });
   }

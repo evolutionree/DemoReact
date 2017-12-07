@@ -416,15 +416,27 @@ export default {
       } = yield select(state => state.workflowDesign);
       const flowStep = _.find(flowSteps, ['id', stepId]);
       const allPathsFromThisFlowStep = flowPaths.filter(path => path.from === stepId);
-      if (allPathsFromThisFlowStep.some(path => path.to !== -1)) {
+      if (false && allPathsFromThisFlowStep.some(path => path.to !== -1)) {
         message.error('只能删除审批结束前一个节点');
       } else {
         const allPathsToThisFlowStep = flowPaths.filter(path => path.to === stepId);
-        allPathsToThisFlowStep.forEach(path => path.to = -1);
-        let newFlowPaths = flowPaths.filter(path => path.from !== stepId);
+        const thisNextSteps = getNextSteps(stepId, flowSteps, flowPaths);
+        const newToNextStepsPaths = _.flatten(allPathsToThisFlowStep.map(path => {
+          return thisNextSteps.map(step => ({
+            from: path.from,
+            to: step.id,
+            ruleid: null
+          }));
+        }));
+        let newFlowPaths = flowPaths.filter(path => path.from !== stepId && path.to !== stepId);
+        newFlowPaths = [...newFlowPaths, ...newToNextStepsPaths];
+        debugger;
         newFlowPaths = newFlowPaths.filter(path => {
-          return !(path.to === -1 && newFlowPaths.some(p => p.from === path.from && p.to !== -1));
+          return newToNextStepsPaths.every(step => {
+            return !(path.to === step.to && newFlowPaths.some(p => p.from === path.from && p.to !== step.to));
+          });
         }); // 删除短路节点
+        debugger;
         yield put({
           type: 'putState',
           payload: {
