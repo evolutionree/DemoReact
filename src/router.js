@@ -54,6 +54,8 @@ import AllDailyDetail from './routes/office/daily/AllDailyDetail';
 
 import Mails from './routes/Mails';
 
+import Test from './routes/Test/index';
+
 const appRoutes = [
   { path: 'home', comp: Home },
   { path: 'attendance', comp: AttendanceList, entid: '969d32b6-d81c-43a3-bc0d-124ffc26855c' },
@@ -100,6 +102,7 @@ const appRoutes = [
     ] },
   { path: 'alldaily/detail/:recid', comp: AllDailyDetail, model: require('./models/daily') },
   { path: 'mails', comp: Mails, model: require('./models/mails') },
+  { path: 'test', comp: Test, model: require('./models/test') },
   { path: '*', comp: NoFoundPage }
 ];
 

@@ -44,8 +44,10 @@ class SeriesTree extends Component {
 
   handleSelect = (selectedKeys, event) => {
     const { selectedNodes } = event;
-    const value = selectedNodes[0].key;
-    this.props.onChange(value, this.getNodeById(value));
+    if (selectedNodes && selectedNodes instanceof Array && selectedNodes.length > 0) {
+      const value = selectedNodes[0].key;
+      this.props.onChange(value, this.getNodeById(value));
+    }
   };
 
   renderTreeNodes(data) {
