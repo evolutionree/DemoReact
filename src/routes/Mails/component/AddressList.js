@@ -3,15 +3,14 @@
  */
 import React, { Component } from 'react';
 import { Input, Tree, Collapse, Icon, message } from 'antd';
-const Panel = Collapse.Panel;
-const Search = Input.Search;
-const TreeNode = Tree.TreeNode;
 import Styles from './AddressList.less';
 import request from '../../../utils/request';
-import { queryInnerContact, queryDeptMailCatalog, queryMailCatalog } from '../../../services/mails';
+import { queryInnerContact } from '../../../services/mails';
 import { connect } from 'dva';
 import compare from '../lib/sortCompare';
 import _ from 'lodash';
+const Panel = Collapse.Panel;
+const TreeNode = Tree.TreeNode;
 
 class AddressList extends Component {
   static propTypes = {
@@ -191,7 +190,10 @@ class AddressList extends Component {
                 {
                   this.state.listData && this.state.listData instanceof Array && this.state.listData.length > 0 ? this.state.listData.map((item, index) => {
                     return (
-                      <li key={index} onClick={this.selectContact.bind(this, item)}>{item.name ? item.name : item.emailaddress}</li>
+                      <li key={index} onClick={this.selectContact.bind(this, item)}>
+                        <div>{item.name ? item.name : item.emailaddress.substring(0, item.emailaddress.indexOf('@'))}</div>
+                        <div>{item.emailaddress}</div>
+                      </li>
                     );
                   }) : <li>没有符合条件的联系人</li>
                 }
@@ -205,7 +207,7 @@ class AddressList extends Component {
                         this.props.recentContact && this.props.recentContact instanceof Array && this.props.recentContact.map((item, index) => {
                           if (index === 9 && this.state.foldAddress) {
                             return (
-                              <li key={index} onClick={this.setFoldAddress.bind(this)} style={{ textAlign: 'center', fontWeight: 'bold' }}>点击显示更多...</li>
+                              <li key={index} onClick={this.setFoldAddress.bind(this)} className={Styles.showMore}>显示更多<span className={Styles.icon}></span></li>
                             );
                           } else if (index > 9 && this.state.foldAddress) {
                             return null;

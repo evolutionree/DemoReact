@@ -67,7 +67,8 @@ export default {
     modalPending: false,
     editEmailPageFormModel: null,
     editEmailPageBtn: null,
-    currentMailId: ''
+    currentMailId: '',
+    isSign: false
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -603,7 +604,8 @@ export default {
         modalMailsData: [],
         editEmailPageFormModel: null,
         editEmailPageBtn: null,
-        currentMailId: ''
+        currentMailId: '',
+        isSign: false
       };
     }
   }

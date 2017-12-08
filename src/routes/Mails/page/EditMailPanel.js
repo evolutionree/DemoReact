@@ -601,26 +601,31 @@ class EditMailPanel extends Component {
         }
       });
     } else {
-      validsendmaildata(submitData).then((result) => { //校验发送邮件白名单
-        const { data } = result;
-        if (data.flag === 0) {
-          confirm({
-            title: '确定继续发送吗?',
-            content: data.tipmsg,
-            okText: '确定',
-            okType: 'danger',
-            cancelText: '取消',
-            onOk: () => {
-              this.props.dispatch({ type: 'mails/sendemail', payload: submitData });
-            },
-            onCancel: () => {
+      try {
+        validsendmaildata(submitData).then((result) => { //校验发送邮件白名单
+          const { data } = result;
+          if (data.flag === 0) {
+            confirm({
+              title: '确定继续发送吗?',
+              content: data.tipmsg,
+              okText: '确定',
+              okType: 'danger',
+              cancelText: '取消',
+              onOk: () => {
+                this.props.dispatch({ type: 'mails/sendemail', payload: submitData });
+              },
+              onCancel: () => {
 
-            }
-          });
-        } else if(data.flag === 1) { //校验通过  邮件发送成功
-          this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: 'sendMailSuccess', editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null } });
-        }
-      })
+              }
+            });
+          } else if (data.flag === 1) { //校验通过  邮件发送成功
+            this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: 'sendMailSuccess', editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null } });
+          }
+        });
+      } catch (e) {
+        console.error(e);
+        message.error(e.message);
+      }
     }
 
     function getTransformAddress(data) {
@@ -708,6 +713,9 @@ class EditMailPanel extends Component {
     });
   }
 
+  changeSign(e) {
+    this.props.changeSign(e.target.checked);
+  }
 
   getUploadParams = (file) => {
     return {
@@ -795,7 +803,7 @@ class EditMailPanel extends Component {
                 }
               </Select>
               <span>
-                <Checkbox>带签名</Checkbox>
+                <Checkbox onChange={this.changeSign.bind(this)} checked={this.props.isSign}>带签名</Checkbox>
               </span>
             </div>
           </div>
@@ -814,6 +822,9 @@ export default connect(
   },
   dispatch => {
     return {
+      changeSign(checked) {
+        dispatch({ type: 'mails/putState', payload: { isSign: checked } });
+      },
       dispatch
     };
   }
