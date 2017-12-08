@@ -125,26 +125,12 @@ class AddressList extends Component {
   }
 
   queryListData(value) {
-    Promise.all([
-      request('/api/mail/getcontactbykeyword', {
-        method: 'post', body: JSON.stringify({ keyword: value, count: 50 })
-      }),
-      request('/api/mail/getinnerpersoncontact', {
-        method: 'post', body: JSON.stringify({ keyword: value, PageIndex: 1, pageSize: 50 })
-      })
-    ]).then((result) => {
-      const [customContact, innerContact] = result;
-      const innerContactData = innerContact.data.datalist.map((item) => {
-        return {
-          name: item.treename,
-          emailaddress: item.mail
-        };
-      });
+    request('/api/mail/getcontactbykeyword', {
+      method: 'post', body: JSON.stringify({ keyword: value, count: 50 })
+    }).then((result) => {
+      const { data } = result;
       this.setState({
-        listData: [
-          ...customContact.data,
-          ...innerContactData
-        ]
+        listData: data
       });
     });
   }

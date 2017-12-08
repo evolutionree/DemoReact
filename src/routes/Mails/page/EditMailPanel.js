@@ -108,6 +108,7 @@ class EditMailPanel extends Component {
       fileList: [],
       uploadingFiles: [],
       fileUploadLimit: false,
+      fileTypeUploadLimit: false,
       UMEditorContent: '',
       fromAddress: this.getDefaultFromAddress(this.props.mailBoxList),
       totalFileSize: 0,
@@ -660,7 +661,11 @@ class EditMailPanel extends Component {
     if (file.type === 'application/x-msdownload') {
       message.error('抱歉，暂时不支持此类型的附件上传');
       this.setState({
-        fileUploadLimit: true
+        fileTypeUploadLimit: true
+      });
+    } else {
+      this.setState({
+        fileTypeUploadLimit: false
       });
     }
     if (this.state.totalFileSize + file.size > 1024 * 1024 * 20) { //1024 * 1024 * 1024 * 1
@@ -668,17 +673,17 @@ class EditMailPanel extends Component {
       this.setState({
         fileUploadLimit: true
       });
+    } else {
+      this.setState({
+        fileUploadLimit: false
+      });
     }
     return true;
   };
 
   handleUploadChange = ({ file, fileList, event }) => {
-    console.log(file)
-    console.log(fileList)
-    console.log(event)
-    console.log(this.state.totalFileSize)
     //debugger;
-    if (file.response && file.response.error_code === 0 && !this.state.fileUploadLimit) {
+    if (file.response && file.response.error_code === 0 && !this.state.fileUploadLimit && !this.state.fileTypeUploadLimit) {
       const fileId = file.response.data;
       // 上传成功，拿uuid
       this.setState({
@@ -696,9 +701,9 @@ class EditMailPanel extends Component {
     } else if (file.status === "removed") { //移除附件
       this.setState({
         fileList: this.state.fileList.filter((item) => {
-          item.fieldid !== item.uid;
+          return item.fileid !== file.uid;
         })
-      })
+      });
     }
 
 
