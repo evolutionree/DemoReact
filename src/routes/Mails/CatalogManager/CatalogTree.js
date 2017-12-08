@@ -33,7 +33,7 @@ const Title = ({ text, type, unread, total }) => {
     <div>
       {!!icon && <ImgIcon name={icon} />}
       <span style={textStyl} title={text}>{text}</span>
-      {!!count && <span style={{ color: '#3398db' }}>({count})</span>}
+      {!!count && <span style={{ color: '#3398db', verticalAlign: 'middle', marginLeft: '4px' }}>({count})</span>}
     </div>
   );
 };
