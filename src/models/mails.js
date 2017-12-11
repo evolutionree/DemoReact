@@ -542,6 +542,9 @@ export default {
           newuserid: userId,
           recid: selectedCatalogNode.recid
         };
+        if (selectedCatalogNode.catalogtype === 'dept') {
+          params.ownUserId = selectedCatalogNode.userid;
+        }
         yield put({ type: 'modalPending', payload: true });
         yield call(transferMailCatalog, params);
         message.success('转移成功');
