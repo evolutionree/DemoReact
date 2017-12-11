@@ -589,7 +589,7 @@ export default {
           recid: selectedCatalogNode.recid
         };
         if (selectedCatalogNode.catalogtype === 'dept') {
-          params.ownUserId = selectedCatalogNode.userid;
+          params.ownUserId = selectedCatalogNode.viewuserid;
         }
         yield put({ type: 'modalPending', payload: true });
         yield call(transferMailCatalog, params);
