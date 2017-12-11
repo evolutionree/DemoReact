@@ -63,7 +63,7 @@ class CatalogManager extends Component {
     const isInboxCat = selected.ctype > 2000; // 收件箱子文件夹(包括下属)
     const transCatalog = () => {
       if (!isTempCat && hasSubCat) {
-        return message.error('只允许转移子目录');
+        return message.error('包含子文件夹，无法转移');
       }
       this.props.transferCatalog();
     };
