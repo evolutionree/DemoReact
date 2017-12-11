@@ -67,6 +67,18 @@ class AddressList extends Component {
     });
   }
 
+  getTitleHtml(item) {
+    if (item.nodetype === 1) {
+      return (
+        <ul style={{ padding: 0 }}>
+          <li style={{ padding: 0 }}>{item.treename}</li>
+          <li style={{ padding: 0 }}>{item.mail}</li>
+        </ul>
+      );
+    } else {
+      return item.treename;
+    }
+  }
   renderTreeNodes(data) {
     return data.map((item, index) => {
       if (item.children && item.children.length > 0) {
@@ -76,7 +88,9 @@ class AddressList extends Component {
           </TreeNode>
         );
       }
-      return <TreeNode title={item.treename} key={JSON.stringify({ treeid: item.treeid, email: item.mail, name: item.treename })} dataRef={item} isLeaf={item.nodetype === 1} selectable={item.nodetype === 1} />;
+      return <TreeNode title={this.getTitleHtml(item)}
+                       key={JSON.stringify({ treeid: item.treeid, email: item.mail, name: item.treename })}
+                       dataRef={item} isLeaf={item.nodetype === 1} selectable={item.nodetype === 1} />;
     });
   }
 
@@ -198,7 +212,12 @@ class AddressList extends Component {
                           } else if (index > 9 && this.state.foldAddress) {
                             return null;
                           } else {
-                            return <li key={index} onClick={this.selectContact.bind(this, item)}>{item.name ? item.name : item.emailaddress}</li>;
+                            return (
+                              <li key={index} onClick={this.selectContact.bind(this, item)}>
+                                <div>{item.name ? item.name : item.emailaddress.substring(0, item.emailaddress.indexOf('@'))}</div>
+                                <div>{item.emailaddress}</div>
+                              </li>
+                            );
                           }
                         })
                       }
@@ -208,7 +227,12 @@ class AddressList extends Component {
                     <ul className={Styles.recentContactsWrap}>
                       {
                         customerContact && customerContact instanceof Array && customerContact.map((item, index) => {
-                          return <li key={index} onClick={this.selectContact.bind(this, item)}>{item.customer ? item.customer : item.emailaddress}</li>;
+                          return (
+                            <li key={index} onClick={this.selectContact.bind(this, item)}>
+                              <div>{item.customer ? item.customer : item.emailaddress.substring(0, item.emailaddress.indexOf('@'))}</div>
+                              <div>{item.emailaddress}</div>
+                            </li>
+                          );
                         })
                       }
                     </ul>

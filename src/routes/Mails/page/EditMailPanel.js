@@ -83,6 +83,8 @@ const dynamicOperateBtn = [
   }
 ];
 
+const signHtml = '<br/><br/><br/><br/><br/><br/><h5 id="sign"></h5>';
+const signReg = /(<h5\sid="sign">)[\s\S]*?(<\/h5>)/;
 
 class EditMailPanel extends Component {
   static propTypes = {
@@ -112,7 +114,8 @@ class EditMailPanel extends Component {
       UMEditorContent: '',
       fromAddress: this.getDefaultFromAddress(this.props.mailBoxList),
       totalFileSize: 0,
-      height: document.body.clientHeight - 60 - 10
+      height: document.body.clientHeight - 60 - 10,
+      isSign: false
     };
   }
 
@@ -124,7 +127,15 @@ class EditMailPanel extends Component {
 
     if (nextProps.type && nextProps.type !== this.props.type) {
       this.queryMailDetail(nextProps.mailId, nextProps.mailBoxList, nextProps.type);
-    }
+      this.setState({
+        totalFileSize: 0,
+        isSign: false,
+        fileList: [],
+        uploadingFiles: false,
+        fileUploadLimit: false,
+        fileTypeUploadLimit: false
+      });
+    };
   }
 
   componentDidMount() {
@@ -180,7 +191,7 @@ class EditMailPanel extends Component {
         message.error(e);
       }
     } else {
-      this.umEditor.setContent(''); //写邮件  清空富文本内容
+      this.umEditor.setContent(''); //设置初始富文本内容
       this.setState({
         fileList: [],
         fromAddress: this.getDefaultFromAddress(mailBoxList)
@@ -199,7 +210,7 @@ class EditMailPanel extends Component {
     return returnData;
   }
 
-  getMail(maildetail, mailBoxList, type) { //原邮件的收件人 抄送人 密送人是否跟 mailBoxList 数据有匹配
+  getMail(maildetail, mailBoxList, type) { //原邮件的收件人 抄送人 密送人是否跟 mailBoxList 数据有匹配 (maildetail 不会返回密送人信息)
     let filterMailAddress = '';
     if (mailBoxList && mailBoxList instanceof Array) {
       for (let i = 0; i < mailBoxList.length; i++) {
@@ -234,17 +245,9 @@ class EditMailPanel extends Component {
         }
 
 
-        if (maildetail && maildetail.bccers && maildetail.bccers instanceof Array) {
-          let stop = false;
-          for (let j=0; j < maildetail.bccers.length; j++) {
-            if (mailBoxList[i].accountid === maildetail.bccers[j].address) {
-              filterMailAddress = maildetail.bccers[j].address;
-              stop = true;
-              break;
-            }
-          }
-          if (stop) {
-            break;
+        if (maildetail && maildetail.frommailaddress) {
+          if (mailBoxList[i].accountid === maildetail.frommailaddress) {
+            filterMailAddress = maildetail.frommailaddress;
           }
         }
       }
@@ -377,7 +380,7 @@ class EditMailPanel extends Component {
         this.props.dispatch({ type: 'mails/putState',
           payload: {
             editEmailFormData: {
-              [formDataField.ToAddress]: this.transformFornEndData(maildetail.sender),
+              [formDataField.ToAddress]: this.transformFornEndData([maildetail.sender]),
               [formDataField.subject]: 'Re：' + maildetail.title
             },
             editEmailPageBtn: null,
@@ -462,7 +465,7 @@ class EditMailPanel extends Component {
     let receivers = this.getTransformReceivers(mailDetailData.receivers);
     let ccers = this.getTransformReceivers(mailDetailData.ccers);
 
-    let initHtmlString = '<br/><br/><br/><br/><br/><br/>' +
+    let initHtmlString = '<br/><br/><br/>' +
       '<div style="background: #f2f2f2; padding: 10px">' +
       '<h4><span style="font-size:12px"></span></h4>' +
       '<h4><span style="font-size:12px"></span></h4>' +
@@ -497,7 +500,24 @@ class EditMailPanel extends Component {
   }
 
   closePanel() {
-    this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: '' } });
+    if (this.state.uploadingFiles.length > 0) {
+      confirm({
+        title: '还有附件未上传完成',
+        content: '您确定关闭？',
+        onOk: () => {
+          this.setState({
+            fileList: [],
+            uploadingFiles: []
+          })
+          this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: '' } });
+        },
+        onCancel() {
+
+        }
+      });
+    } else {
+      this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: '' } });
+    }
   }
 
   changeFormModal(type) {
@@ -602,31 +622,26 @@ class EditMailPanel extends Component {
         }
       });
     } else {
-      try {
-        validsendmaildata(submitData).then((result) => { //校验发送邮件白名单
-          const { data } = result;
-          if (data.flag === 0) {
-            confirm({
-              title: '确定继续发送吗?',
-              content: data.tipmsg,
-              okText: '确定',
-              okType: 'danger',
-              cancelText: '取消',
-              onOk: () => {
-                this.props.dispatch({ type: 'mails/sendemail', payload: submitData });
-              },
-              onCancel: () => {
+      validsendmaildata(submitData).then((result) => { //校验发送邮件白名单
+        const { data } = result;
+        if (data.flag === 0) {
+          confirm({
+            title: '确定继续发送吗?',
+            content: data.tipmsg,
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
+            onOk: () => {
+              this.props.dispatch({ type: 'mails/sendemail', payload: submitData });
+            },
+            onCancel: () => {
 
-              }
-            });
-          } else if (data.flag === 1) { //校验通过  邮件发送成功
-            this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: 'sendMailSuccess', editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null } });
-          }
-        });
-      } catch (e) {
-        console.error(e);
-        message.error(e.message);
-      }
+            }
+          });
+        } else if (data.flag === 1) { //校验通过  邮件发送成功
+          this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: 'sendMailSuccess', editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null } });
+        }
+      });
     }
 
     function getTransformAddress(data) {
@@ -713,13 +728,44 @@ class EditMailPanel extends Component {
 
 
   fromAddressSelectHandler(value) { //更新发送人
+    if (this.state.isSign) {
+      this.setSign(value);
+    }
     this.setState({
       fromAddress: value
     });
   }
 
   changeSign(e) {
-    this.props.changeSign(e.target.checked);
+    if (e.target.checked) {
+      this.setSign(this.state.fromAddress);
+    } else {
+      if (signReg.test(this.state.UMEditorContent)) {
+        this.umEditor.setContent(this.state.UMEditorContent.replace(signReg, '<span></span>')); //取消签名
+      }
+    }
+    this.setState({
+      isSign: e.target.checked
+    });
+  }
+
+  setSign(fromAddress) {
+    let signString = '';
+    const mailBoxList = this.props.mailBoxList;
+    if (mailBoxList && mailBoxList instanceof Array) {
+      for (let i = 0; i < mailBoxList.length; i++) {
+        if (fromAddress === mailBoxList[i].recid) {
+          signString = mailBoxList[i].signature;
+        }
+      }
+    }
+
+    signString = signString ? signString : '';
+    if (signReg.test(this.state.UMEditorContent)) {
+      this.umEditor.setContent(this.state.UMEditorContent.replace(signReg, '$1 ----------------<br />' + signString + ' $2')); //设置签名
+    } else {
+      this.umEditor.execCommand('inserthtml', '<br/><br/><br/><br/><h5 id="sign">----------------<br />' + signString + '</h5><br/>'); //设置初始富文本内容
+    }
   }
 
   getUploadParams = (file) => {
@@ -745,6 +791,7 @@ class EditMailPanel extends Component {
     const fileList = [...completedFileList, ...this.state.uploadingFiles];
     return fileList;
   };
+
 
   render() {
     const props = {
@@ -808,7 +855,7 @@ class EditMailPanel extends Component {
                 }
               </Select>
               <span>
-                <Checkbox onChange={this.changeSign.bind(this)} checked={this.props.isSign}>带签名</Checkbox>
+                <Checkbox onChange={this.changeSign.bind(this)} checked={this.state.isSign}>带签名</Checkbox>
               </span>
             </div>
           </div>
@@ -827,9 +874,6 @@ export default connect(
   },
   dispatch => {
     return {
-      changeSign(checked) {
-        dispatch({ type: 'mails/putState', payload: { isSign: checked } });
-      },
       dispatch
     };
   }
