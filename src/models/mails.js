@@ -302,7 +302,7 @@ export default {
             pageSize: mailPageSize,
             searchKey: mailSearchKey,
             catalog: selectedCatalogNode.recid,
-            fetchuserid: selectedCatalogNode.userid
+            fetchuserid: selectedCatalogNode.viewuserid
           };
           result = yield call(queryMailList, params);
         } else {
@@ -586,11 +586,12 @@ export default {
       try {
         const params = {
           newuserid: userId,
-          recid: selectedCatalogNode.recid
+          recid: selectedCatalogNode.recid,
+          ownUserId: selectedCatalogNode.viewuserid
         };
-        if (selectedCatalogNode.catalogtype === 'dept') {
-          params.ownUserId = selectedCatalogNode.viewuserid;
-        }
+        // if (selectedCatalogNode.catalogtype === 'dept') {
+        //   params.ownUserId = selectedCatalogNode.viewuserid;
+        // }
         yield put({ type: 'modalPending', payload: true });
         yield call(transferMailCatalog, params);
         message.success('转移成功');
