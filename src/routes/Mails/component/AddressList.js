@@ -169,6 +169,7 @@ class AddressList extends Component {
   render() {
     const { queryString } = this.state;
     const customerContact = this.props.customerContact && this.props.customerContact instanceof Array && this.props.customerContact.sort(compare);
+
     const suffix = queryString ? <Icon type="close-circle" onClick={this.emitEmptyQueryString.bind(this)} /> : null;
     return (
       <div className={Styles.addressListWrap}>
