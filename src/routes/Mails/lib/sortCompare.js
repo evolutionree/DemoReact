@@ -140,7 +140,6 @@ export default function compare(val1,val2) {
   // 依次比较字母的unicode码，相等时返回0，小于时返回-1，大于时返回1
   for(var i = 0; i < length; i++ ) {
     var differ = val1.charCodeAt(i) - val2.charCodeAt(i);
-    console.log(differ)
     if(differ == 0) {
       continue;
     }else {
@@ -153,4 +152,40 @@ export default function compare(val1,val2) {
   if(i == length) {
     return val1.length - val2.length;
   }
+}
+
+export function pySegSort(arr) {
+  var newArr = {};
+  arr.forEach(function(item) {
+    var initial = Pinyin.getFullChars(item.customer).charAt(0).toUpperCase();
+    if(initial>='A'&&initial<='Z'){
+      if (newArr[initial]){
+        newArr[initial].push(item);
+      } else {
+        newArr[initial] = [item];
+      }
+    }else{
+      if (newArr['extra']){
+        newArr['extra'].push(item);
+      } else {
+        newArr['extra'] = [item];
+      }
+    }
+  });
+
+  for (let key in newArr) {
+    newArr[key] = newArr[key].sort(compare)
+  }
+  return newArr;
+}
+
+
+function objKeySort(obj) {//排序的函数
+  var newkey = Object.keys(obj).sort();
+  //先用Object内置类的keys方法获取要排序对象的属性名，再利用Array原型上的sort方法对获取的属性名进行排序，newkey是一个数组
+  var newObj = {};//创建一个新的对象，用于存放排好序的键值对
+  for (var i = 0; i < newkey.length; i++) {//遍历newkey数组
+    newObj[newkey[i]] = obj[newkey[i]];//向新创建的对象中按照排好的顺序依次增加键值对
+  }
+  return newObj;//返回排好序的新对象
 }

@@ -7,7 +7,7 @@ import Styles from './AddressList.less';
 import request from '../../../utils/request';
 import { queryInnerContact } from '../../../services/mails';
 import { connect } from 'dva';
-import compare from '../lib/sortCompare';
+import compare, { pySegSort } from '../lib/sortCompare';
 import _ from 'lodash';
 const Panel = Collapse.Panel;
 const TreeNode = Tree.TreeNode;
@@ -169,6 +169,66 @@ class AddressList extends Component {
   render() {
     const { queryString } = this.state;
     const customerContact = this.props.customerContact && this.props.customerContact instanceof Array && this.props.customerContact.sort(compare);
+    console.log(this.props.customerContact);
+    const a = [
+      {
+        "recid":"bc2c1972-90e2-4478-b9d9-1c9b732d6b3a",
+        "emailaddress":"13123@qq.com",
+        "name":"pxfffffffff",
+        "customer":"123123123",
+        "icon":"00000000-0000-0000-0000-000000000000"
+      },
+      {
+        "recid":"0e9e68e1-7ace-42ac-b167-66c52a1a33b5",
+        "emailaddress":"d-higgins@mac.com",
+        "name":"Daniel Higgins Jr.",
+        "customer":"v测试时所所16",
+        "icon":"00000000-0000-0000-0000-000000000000"
+      },
+      {
+        "recid":"0e9e68e1-7ace-42ac-b167-66c52a1a33b5",
+        "emailaddress":"d-higgins@mac.com",
+        "name":"Daniel Higgins Jr.",
+        "customer":"测试时所所16",
+        "icon":"00000000-0000-0000-0000-000000000000"
+      },
+      {
+        "recid":"0e9e68e1-7ace-42ac-b167-66c52a1a33b5",
+        "emailaddress":"d-higgins@mac.com",
+        "name":"Daniel Higgins Jr.",
+        "customer":"af测试时所所16",
+        "icon":"00000000-0000-0000-0000-000000000000"
+      },
+      {
+        "recid":"0e9e68e1-7ace-42ac-b167-66c52a1a33b5",
+        "emailaddress":"d-higgins@mac.com",
+        "name":"Daniel Higgins Jr.",
+        "customer":"12测试时所所16",
+        "icon":"00000000-0000-0000-0000-000000000000"
+      },
+      {
+        "recid":"0e9e68e1-7ace-42ac-b167-66c52a1a33b5",
+        "emailaddress":"d-higgins@mac.com",
+        "name":"Daniel Higgins Jr.",
+        "customer":"测试时所所16",
+        "icon":"00000000-0000-0000-0000-000000000000"
+      },
+      {
+        "recid":"0e9e68e1-7ace-42ac-b167-66c52a1a33b5",
+        "emailaddress":"d-higgins@mac.com",
+        "name":"Daniel Higgins Jr.",
+        "customer":"我啊",
+        "icon":"00000000-0000-0000-0000-000000000000"
+      },
+      {
+        "recid":"edd12c34-8496-42d3-8f6c-2df3487f177a",
+        "emailaddress":"yjytest21@renqian.local",
+        "name":"沃尔哟",
+        "customer":"沃尔哟",
+        "icon":"00000000-0000-0000-0000-000000000000"
+      }
+    ];
+    console.log(JSON.stringify(pySegSort(a)))
 
     const suffix = queryString ? <Icon type="close-circle" onClick={this.emitEmptyQueryString.bind(this)} /> : null;
     return (
