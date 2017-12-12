@@ -54,7 +54,7 @@ import AllDailyDetail from './routes/office/daily/AllDailyDetail';
 
 import Mails from './routes/Mails';
 
-import Test from './routes/Test/index';
+import DbManager from './routes/DbManager/index';
 
 const appRoutes = [
   { path: 'home', comp: Home },
@@ -102,7 +102,7 @@ const appRoutes = [
     ] },
   { path: 'alldaily/detail/:recid', comp: AllDailyDetail, model: require('./models/daily') },
   { path: 'mails', comp: Mails, model: require('./models/mails') },
-  { path: 'test', comp: Test, model: require('./models/test') },
+  { path: 'dbmanager', comp: DbManager, model: require('./models/dbmanager') },
   { path: '*', comp: NoFoundPage }
 ];
 

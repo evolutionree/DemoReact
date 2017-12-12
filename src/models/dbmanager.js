@@ -2,10 +2,10 @@
  * Created by 0291 on 2017/12/7.
  */
 import { message } from 'antd';
-import { getSeries, getProducts } from '../services/products';
+import { listDirs, listObjects } from '../services/dbmanager';
 
 export default {
-  namespace: 'test',
+  namespace: 'dbmanager',
   state: {
     treeData: null,
     listData: [],
@@ -14,7 +14,7 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       return history.listen(location => {
-        if (location.pathname === '/test') {
+        if (location.pathname === '/dbmanager') {
           dispatch({ type: 'init' });
         } else {
           dispatch({ type: 'resetState' });
@@ -28,9 +28,7 @@ export default {
     },
     *queryTreeData(action, { select, put, call }) {
       try {
-        const result = yield call(getSeries, {
-          ProductsetId: '',
-          Direction: 'DOWNER'
+        const result = yield call(listDirs, {
         });
         const treeData = result.data;
         yield put({ type: 'putState', payload: { treeData } });
@@ -40,26 +38,18 @@ export default {
     },
     *queryListData({ payload: queries }, { select, put, call }) {
       try {
-        const result = yield call(getProducts, {
-          "productSeriesId":"09eba659-6d2c-4a97-9eb1-a2d8017ec5bd",
-          "recStatus":"0",
-          "pageIndex":"1",
-          "pageSize":10,
-          "searchKey":"",
-          "includeChild":true,
-          "recVersion":1
-        });
+        const result = yield call(listObjects, queries);
         const listData = result.data;
         yield put({ type: 'putState', payload: { listData } });
       } catch (e) {
         message.error(e.message || '获取数据失败');
       }
     },
-    *search({ payload: { key, value } }, { select, put, call }) {
-      let { queries } = yield select(state => state.test);
+    *search({ payload }, { select, put, call }) {
+      let { queries } = yield select(state => state.dbmanager);
       const newQueries = {
         ...queries,
-        [key]: value
+        ...payload
       };
       yield put({ type: 'putState', payload: { queries: newQueries } });
       yield put({ type: 'queryListData', payload: newQueries });
