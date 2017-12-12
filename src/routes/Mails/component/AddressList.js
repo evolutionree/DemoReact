@@ -7,7 +7,7 @@ import Styles from './AddressList.less';
 import request from '../../../utils/request';
 import { queryInnerContact } from '../../../services/mails';
 import { connect } from 'dva';
-import compare, { pySegSort } from '../lib/sortCompare';
+import groupSort from '../lib/groupSort';
 import _ from 'lodash';
 const Panel = Collapse.Panel;
 const TreeNode = Tree.TreeNode;
@@ -122,7 +122,7 @@ class AddressList extends Component {
       if (pushData) {
         const newEditEmailFormData = {
           ...editEmailFormData,
-          [this.props.focusTargetName]: _.uniqBy([
+          [this.props.focusTargetName]: _.uniqBy([ //去重
             ...oldData,
             {
               name: pushData.name,
@@ -166,69 +166,35 @@ class AddressList extends Component {
     });
   }
 
+  renderCustomListhHtml() {
+    let html = [];
+    const customerContact = this.props.customerContact && this.props.customerContact instanceof Array && groupSort(this.props.customerContact);
+    for (let key in customerContact) {
+      html.push(
+        <TreeNode title={key} key={key} selectable={false}>
+          {
+            customerContact[key].map((item, index) => {
+              return <TreeNode title={getTitle(item)} key={JSON.stringify({ treeid: item.recid, email: item.emailaddress, name: item.name })} />
+            })
+          }
+        </TreeNode>
+      )
+    };
+
+    function getTitle(item) {
+      return (
+        <ul className={Styles.customListUl}>
+          <li>{item.name}</li>
+          <li>{item.emailaddress}</li>
+        </ul>
+      )
+    }
+
+    return html;
+  }
+
   render() {
     const { queryString } = this.state;
-    const customerContact = this.props.customerContact && this.props.customerContact instanceof Array && this.props.customerContact.sort(compare);
-    console.log(this.props.customerContact);
-    const a = [
-      {
-        "recid":"bc2c1972-90e2-4478-b9d9-1c9b732d6b3a",
-        "emailaddress":"13123@qq.com",
-        "name":"pxfffffffff",
-        "customer":"123123123",
-        "icon":"00000000-0000-0000-0000-000000000000"
-      },
-      {
-        "recid":"0e9e68e1-7ace-42ac-b167-66c52a1a33b5",
-        "emailaddress":"d-higgins@mac.com",
-        "name":"Daniel Higgins Jr.",
-        "customer":"v测试时所所16",
-        "icon":"00000000-0000-0000-0000-000000000000"
-      },
-      {
-        "recid":"0e9e68e1-7ace-42ac-b167-66c52a1a33b5",
-        "emailaddress":"d-higgins@mac.com",
-        "name":"Daniel Higgins Jr.",
-        "customer":"测试时所所16",
-        "icon":"00000000-0000-0000-0000-000000000000"
-      },
-      {
-        "recid":"0e9e68e1-7ace-42ac-b167-66c52a1a33b5",
-        "emailaddress":"d-higgins@mac.com",
-        "name":"Daniel Higgins Jr.",
-        "customer":"af测试时所所16",
-        "icon":"00000000-0000-0000-0000-000000000000"
-      },
-      {
-        "recid":"0e9e68e1-7ace-42ac-b167-66c52a1a33b5",
-        "emailaddress":"d-higgins@mac.com",
-        "name":"Daniel Higgins Jr.",
-        "customer":"12测试时所所16",
-        "icon":"00000000-0000-0000-0000-000000000000"
-      },
-      {
-        "recid":"0e9e68e1-7ace-42ac-b167-66c52a1a33b5",
-        "emailaddress":"d-higgins@mac.com",
-        "name":"Daniel Higgins Jr.",
-        "customer":"测试时所所16",
-        "icon":"00000000-0000-0000-0000-000000000000"
-      },
-      {
-        "recid":"0e9e68e1-7ace-42ac-b167-66c52a1a33b5",
-        "emailaddress":"d-higgins@mac.com",
-        "name":"Daniel Higgins Jr.",
-        "customer":"我啊",
-        "icon":"00000000-0000-0000-0000-000000000000"
-      },
-      {
-        "recid":"edd12c34-8496-42d3-8f6c-2df3487f177a",
-        "emailaddress":"yjytest21@renqian.local",
-        "name":"沃尔哟",
-        "customer":"沃尔哟",
-        "icon":"00000000-0000-0000-0000-000000000000"
-      }
-    ];
-    console.log(JSON.stringify(pySegSort(a)))
 
     const suffix = queryString ? <Icon type="close-circle" onClick={this.emitEmptyQueryString.bind(this)} /> : null;
     return (
@@ -285,18 +251,13 @@ class AddressList extends Component {
                     </ul>
                   </Panel>
                   <Panel header="客户联系人" key="2">
-                    <ul className={Styles.recentContactsWrap}>
-                      {
-                        customerContact && customerContact instanceof Array && customerContact.map((item, index) => {
-                          return (
-                            <li key={index} onClick={this.selectContact.bind(this, item)}>
-                              <div>{item.customer ? item.customer : item.emailaddress.substring(0, item.emailaddress.indexOf('@'))}</div>
-                              <div>{item.emailaddress}</div>
-                            </li>
-                          );
-                        })
-                      }
-                    </ul>
+                    <div className={Styles.customList}>
+                      <Tree onSelect={this.treeSelectHandler.bind(this)}>
+                        {
+                          this.renderCustomListhHtml()
+                        }
+                      </Tree>
+                    </div>
                   </Panel>
                   <Panel header="企业内部联系人" key="3">
                     <Tree loadData={this.onLoadData} onSelect={this.treeSelectHandler.bind(this)}>

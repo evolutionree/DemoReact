@@ -113,7 +113,6 @@ class EditMailPanel extends Component {
       fileTypeUploadLimit: false,
       UMEditorContent: '',
       fromAddress: this.getDefaultFromAddress(this.props.mailBoxList),
-      totalFileSize: 0,
       height: document.body.clientHeight - 60 - 10,
       isSign: false
     };
@@ -128,7 +127,6 @@ class EditMailPanel extends Component {
     if (nextProps.type && nextProps.type !== this.props.type) {
       this.queryMailDetail(nextProps.mailId, nextProps.mailBoxList, nextProps.type);
       this.setState({
-        totalFileSize: 0,
         isSign: false,
         fileList: [],
         uploadingFiles: false,
@@ -176,7 +174,7 @@ class EditMailPanel extends Component {
                 return {
                   fileid: item.fileid,
                   filename: item.filename,
-                  size: 0
+                  size: item.filesize
                 };
               })
             });
@@ -673,6 +671,7 @@ class EditMailPanel extends Component {
   }
 
   beforeUpload = (file) => {
+    console.log(this.state.fileList)
     if (file.type === 'application/x-msdownload') {
       message.error('抱歉，暂时不支持此类型的附件上传');
       this.setState({
@@ -683,7 +682,7 @@ class EditMailPanel extends Component {
         fileTypeUploadLimit: false
       });
     }
-    if (this.state.totalFileSize + file.size > 1024 * 1024 * 20) { //1024 * 1024 * 1024 * 1
+    if (this.state.fileList.reduce((prev, cur) => cur.size + prev, 0) + file.size > 1024 * 1024 * 20) { //1024 * 1024 * 1024 * 1
       message.error('文件大小不可超过20M');
       this.setState({
         fileUploadLimit: true
@@ -710,8 +709,7 @@ class EditMailPanel extends Component {
             size: file.size
           }
         ],
-        uploadingFiles: [],
-        totalFileSize: fileList.reduce((prev, cur) => cur.size + prev, 0)
+        uploadingFiles: []
       });
     } else if (file.status === "removed") { //移除附件
       this.setState({

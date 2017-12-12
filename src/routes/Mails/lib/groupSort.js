@@ -1,4 +1,7 @@
 /**
+ * Created by 0291 on 2017/12/12.
+ */
+/**
  * Created by 0291 on 2017/11/20.
  * desc: 通讯录按中英文数字排序
  */
@@ -129,7 +132,7 @@ var Pinyin = (function (){
   return new Pinyin(arguments);
 })();
 
-export default function compare(val1,val2) {
+function compare(val1,val2) {
   // 转换为拼音
   val1 = Pinyin.getFullChars(val1.customer).toLowerCase();
   val2 = Pinyin.getFullChars(val2.customer).toLowerCase();
@@ -154,38 +157,19 @@ export default function compare(val1,val2) {
   }
 }
 
-export function pySegSort(arr) {
-  var newArr = {};
-  arr.forEach(function(item) {
-    var initial = Pinyin.getFullChars(item.customer).charAt(0).toUpperCase();
-    if(initial>='A'&&initial<='Z'){
-      if (newArr[initial]){
-        newArr[initial].push(item);
+
+export default function groupSort(arr) {
+  const sortArray = arr.sort(compare);
+  let newObject = {};
+  if (sortArray instanceof Array && sortArray.length > 0) {
+    newObject[sortArray[0].customer] = [];
+    for (let i = 0; i < sortArray.length; i++) {
+      if (newObject[sortArray[i].customer]){
+        newObject[sortArray[i].customer].push(sortArray[i]);
       } else {
-        newArr[initial] = [item];
+        newObject[sortArray[i].customer] = [sortArray[i]];
       }
-    }else{
-      if (newArr['extra']){
-        newArr['extra'].push(item);
-      } else {
-        newArr['extra'] = [item];
-      }
-    }
-  });
-
-  for (let key in newArr) {
-    newArr[key] = newArr[key].sort(compare)
+    };
   }
-  return newArr;
-}
-
-
-function objKeySort(obj) {//排序的函数
-  var newkey = Object.keys(obj).sort();
-  //先用Object内置类的keys方法获取要排序对象的属性名，再利用Array原型上的sort方法对获取的属性名进行排序，newkey是一个数组
-  var newObj = {};//创建一个新的对象，用于存放排好序的键值对
-  for (var i = 0; i < newkey.length; i++) {//遍历newkey数组
-    newObj[newkey[i]] = obj[newkey[i]];//向新创建的对象中按照排好的顺序依次增加键值对
-  }
-  return newObj;//返回排好序的新对象
+  return newObject;
 }

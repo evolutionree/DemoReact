@@ -130,3 +130,29 @@
     }
   }
 }
+
+
+.customList{
+  :global{
+    .ant-tree li ul{
+      padding: 0;
+      >li{
+
+      }
+    }
+  }
+  .customListUl{
+    padding: 0;
+    >li{
+      max-width: 160px;
+      color: #c3c0c0;
+      padding: 0;
+      white-space: nowrap;//不允许换行
+      overflow: hidden;//超出宽度不显示
+      text-overflow: ellipsis;//规定当文本溢出包含元素时显示省略号。
+    }
+    >li:first-of-type{
+      color:#333333;
+    }
+  }
+}
