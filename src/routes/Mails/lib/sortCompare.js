@@ -140,6 +140,7 @@ export default function compare(val1,val2) {
   // 依次比较字母的unicode码，相等时返回0，小于时返回-1，大于时返回1
   for(var i = 0; i < length; i++ ) {
     var differ = val1.charCodeAt(i) - val2.charCodeAt(i);
+    console.log(differ)
     if(differ == 0) {
       continue;
     }else {
