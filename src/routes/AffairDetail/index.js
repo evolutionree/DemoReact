@@ -82,6 +82,18 @@ class AffairDetail extends Component {
       message.error('请检查表单');
     }
   };
+  onSubmitPreAudit = () => {
+    // 0拒绝 1通过 2退回 3中止';
+    const op = this.props.selectedOperate;
+    if (op === undefined) {
+      return message.error('请选择操作');
+    }
+    if (this.validateColumnConfigForms()) {
+      this.props.submitPreAuditCase();
+    } else {
+      message.error('请检查表单');
+    }
+  };
   getCaseData = () => {
     const { columnConfigForms, columnConfigFormProtocols } = this.props;
     const formArray = _.map(columnConfigFormProtocols, (val, key) => ({ entityId: key, protocols: val }));
@@ -217,7 +229,7 @@ class AffairDetail extends Component {
                 {selectedNextNode && selectedNextNode.nodeinfo.flowtype === 0 && (
                   <Button onClick={this.props.closeFlow}>关闭流程</Button>
                 )}
-                <Button onClick={this.onSubmitAudit}>下一步</Button>
+                <Button onClick={this.onSubmitPreAudit}>下一步</Button>
               </div>
             </div>
           </div>
@@ -286,15 +298,16 @@ class AffairDetail extends Component {
             <Column title="意见" key="suggest" dataIndex="suggest" />
           </Table>
         </div>
-        {/*<WorkflowCaseModal*/}
-          {/*visible={/workflowCase/.test(showModals)}*/}
-          {/*caseId={caseId}*/}
-          {/*onCancel={onCaseModalCancel}*/}
-          {/*onDone={onCaseModalDone}*/}
-          {/*suggest={suggest}*/}
-          {/*choiceStatus={selectedOperate}*/}
-          {/*caseData={/workflowCase/.test(showModals) ? this.getCaseData() : {}}*/}
-        {/*/>*/}
+        <WorkflowCaseModal
+          visible={/workflowCase/.test(showModals)}
+          caseId={caseId}
+          suggest={suggest}
+          choiceStatus={selectedOperate}
+          nodeNum={flowDetail.nodenum}
+          caseData={/workflowCase/.test(showModals) ? this.getCaseData() : undefined}
+          onCancel={onCaseModalCancel}
+          onDone={onCaseModalDone}
+        />
       </Page>
     );
   }
@@ -329,6 +342,9 @@ export default connect(
       },
       submitAuditCase(data) {
         dispatch({ type: 'affairDetail/submitAuditCase', payload: data });
+      },
+      submitPreAuditCase() {
+        dispatch({ type: 'affairDetail/submitPreAuditCase' });
       },
       closeFlow() {
         dispatch({ type: 'affairDetail/closeFlow' });

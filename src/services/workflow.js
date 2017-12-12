@@ -266,6 +266,19 @@ export async function submitCaseItem(params) {
 }
 
 /**
+ * 预提交
+ * @param params
+ * @returns {Promise.<Object>}
+ */
+export async function submitPreCaseItem(params) {
+  return request('/api/workflow/submitpreaudit', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}
+
+
+/**
  * 获取审批详情
  * @param caseId
  * @returns {Promise.<Object>}

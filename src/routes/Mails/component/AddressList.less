@@ -35,14 +35,47 @@
 
 .recentContactsWrap{
   >li{
-    height: 26px;
-    line-height: 26px;
+    padding: 6px 10px;
+    border-bottom: 1px solid #efefef;
     font-size:14px;
     color:#333333;
     cursor: pointer;
-    padding: 0 10px;
     &:hover{
       background: #eff6f8;
+    }
+    >div{
+      white-space: nowrap;//不允许换行
+      overflow: hidden;//超出宽度不显示
+      text-overflow: ellipsis;//规定当文本溢出包含元素时显示省略号。
+    }
+    >div:last-of-type{
+      color: #c3c0c0;
+    }
+  }
+  >li:last-of-type{
+    border-bottom: none;
+  }
+  >li.showMore{
+    font-size:14px;
+    color:#3398db;
+    border-bottom: none;
+    &:hover{
+      background: transparent;
+    }
+    span.icon{
+      position: relative;
+    }
+    span.icon:after{
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 7px;
+      width: 0;
+      height: 0;
+      border-left: 4px solid transparent;
+      border-top: 4px solid #969696;
+      border-right: 4px solid transparent;
+      border-bottom: 4px solid transparent;
     }
   }
 }
@@ -78,14 +111,21 @@
   }
   >ul{
     >li {
-      height: 26px;
-      line-height: 26px;
+      padding: 6px 10px;
+      border-bottom: 1px solid #efefef;
       font-size:14px;
       color:#333333;
       cursor: pointer;
-      padding: 0 10px;
       &:hover{
         background: #eff6f8;
+      }
+      >div{
+        white-space: nowrap;//不允许换行
+        overflow: hidden;//超出宽度不显示
+        text-overflow: ellipsis;//规定当文本溢出包含元素时显示省略号。
+      }
+      >div:last-of-type{
+        color: #c3c0c0;
       }
     }
   }

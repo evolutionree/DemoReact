@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { routerRedux } from 'dva/router';
 import { getEntcommDetail, getGeneralProtocol, editEntcomm } from '../services/entcomm';
 import { queryFields } from '../services/entity';
-import { queryCaseItem, queryNextNodeData, queryCaseDetail, submitCaseItem } from '../services/workflow';
+import { queryCaseItem, queryNextNodeData, queryCaseDetail, submitCaseItem, submitPreCaseItem } from '../services/workflow';
 
 export default {
   namespace: 'affairDetail',
@@ -80,8 +80,9 @@ export default {
         }
       });
 
+      // 17/12/11 改为用预提交的方式，不获取nextdata了
       // 获取下一步节点
-      if (flowDetail.nodenum !== -1) {
+      if (flowDetail.nodenum !== -1 && false) {
         try {
           const { data: nextNodesData } = yield call(queryNextNodeData, caseId);
           yield put({
@@ -312,6 +313,57 @@ export default {
         return { data };
       }
     },
+    *submitPreAuditCase(action, { select, call, put }) {
+      const {
+        selectedOperate,
+        suggest,
+        caseId,
+        flowDetail,
+        columnConfigForms,
+        columnConfigFormProtocols
+      } = yield select(state => state.affairDetail);
+
+      if (selectedOperate === 1 || selectedOperate === 4) {
+        yield put({ type: 'showModals', payload: 'workflowCase' });
+      } else {
+        try {
+          const params = {
+            caseId,
+            nodenum: flowDetail.nodenum,
+            choicestatus: selectedOperate,
+            suggest,
+            casedata: getCaseData()
+          };
+          const { data, error_msg } = yield call(submitCaseItem, params);
+          message.success(error_msg || '提交成功');
+          // 提交完审批后，返回列表
+          const { navStack } = yield select(state => state.navHistory);
+          if (navStack.length >= 2) {
+            yield put(routerRedux.goBack());
+          } else {
+            yield put(routerRedux.push({
+              pathname: 'affair-list'
+            }));
+          }
+        } catch (e) {
+          message.error(e.message);
+        }
+      }
+
+      function getCaseData() {
+        const formArray = _.map(columnConfigFormProtocols, (val, key) => ({ entityId: key, protocols: val }));
+        const data = formArray.map(item => {
+          const { entityId } = item;
+          const submitFields = columnConfigFormProtocols[entityId].map(item => item.fieldname);
+          const fieldsValue = _.pick(columnConfigForms[entityId], submitFields);
+          return {
+            entityid: entityId,
+            fields: fieldsValue
+          };
+        });
+        return { data };
+      }
+    },
     *closeFlow(action, { select, put, call }) {
       try {
         const { caseId } = yield select(state => state.affairDetail);
@@ -335,6 +387,26 @@ export default {
         }
       } catch (e) {
         message.error(e.message || '提交失败');
+      }
+    },
+    *onCaseModalCancel(action, { select, call, put }) {
+      yield put({ type: 'showModals', payload: '' });
+      // const { caseId } = yield select(state => state.affairDetail);
+      // yield put({ type: 'init', payload: caseId });
+    },
+    *onCaseModalDone(action, { select, call, put }) {
+      message.success('提交成功');
+      yield put({ type: 'showModals', payload: '' });
+      const { caseId } = yield select(state => state.affairDetail);
+      // yield put({ type: 'init', payload: caseId });
+
+      const { navStack } = yield select(state => state.navHistory);
+      if (navStack.length >= 2) {
+        yield put(routerRedux.goBack());
+      } else {
+        yield put(routerRedux.push({
+          pathname: 'affair-list'
+        }));
       }
     }
   },
