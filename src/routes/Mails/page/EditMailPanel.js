@@ -114,7 +114,8 @@ class EditMailPanel extends Component {
       UMEditorContent: '',
       fromAddress: this.getDefaultFromAddress(this.props.mailBoxList),
       height: document.body.clientHeight - 60 - 10,
-      isSign: false
+      isSign: false,
+      sendLoading: false
     };
   }
 
@@ -131,9 +132,10 @@ class EditMailPanel extends Component {
         fileList: [],
         uploadingFiles: false,
         fileUploadLimit: false,
-        fileTypeUploadLimit: false
+        fileTypeUploadLimit: false,
+        sendLoading: false
       });
-    };
+    }
   }
 
   componentDidMount() {
@@ -620,6 +622,9 @@ class EditMailPanel extends Component {
         }
       });
     } else {
+      this.setState({
+        sendLoading: true
+      });
       validsendmaildata(submitData).then((result) => { //校验发送邮件白名单
         const { data } = result;
         if (data.flag === 0) {
@@ -630,14 +635,22 @@ class EditMailPanel extends Component {
             okType: 'danger',
             cancelText: '取消',
             onOk: () => {
+              this.setState({
+                sendLoading: false
+              });
               this.props.dispatch({ type: 'mails/sendemail', payload: submitData });
             },
             onCancel: () => {
-
+              this.setState({
+                sendLoading: false
+              });
             }
           });
         } else if (data.flag === 1) { //校验通过  邮件发送成功
           this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: 'sendMailSuccess', editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null } });
+          this.setState({
+            sendLoading: false
+          });
         }
       });
     }
@@ -821,7 +834,7 @@ class EditMailPanel extends Component {
         <div style={{ width: 'calc(100% - 220px)', float: 'left' }}>
           <div>
             <Toolbar style={{ paddingTop: '10px', paddingLeft: '10px' }}>
-              <Button onClick={this.sendMail.bind(this)}>发送</Button>
+              <Button onClick={this.sendMail.bind(this)} loading={this.state.sendLoading}>发送</Button>
               <Button className="grayBtn" onClick={this.closePanel.bind(this)}>取消</Button>
               {
                 this.state.dynamicOperateBtn && this.state.dynamicOperateBtn instanceof Array && this.state.dynamicOperateBtn.map((item, index) => {
