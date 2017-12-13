@@ -1,4 +1,5 @@
 import { message } from 'antd';
+import _ from 'lodash';
 import { routerRedux } from 'dva/router';
 import { getGeneralListProtocol, getListData, delEntcomm, transferEntcomm, getFunctionbutton, extraToolbarClickSendData, getEntcommDetail } from '../services/entcomm';
 import { queryMenus, queryEntityDetail, queryTypes, queryListFilter} from '../services/entity';
@@ -169,7 +170,11 @@ export default {
     *queryFuntionbutton__({ payload }, { select, call, put }) {
       const { entityId, currItems } = yield select(state => state.entcommList);
       try {
-        const { data: functionbutton } = yield call(getFunctionbutton, { entityid: entityId, RecIds: currItems.map((item) => item.recid) });
+        let { data: functionbutton } = yield call(getFunctionbutton, { entityid: entityId, RecIds: currItems.map((item) => item.recid) });
+        /*
+         DisplayPosition	按钮的显示位置（int数组）：web列表=0，web详情=1，手机列表=100，手机详情=101	array<number>	@mock=$order(0,1)
+         */
+        functionbutton = functionbutton.filter(item =>  _.indexOf(item.displayposition, 0) > -1);
         const extraButtonData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'ShowModals');
         const extraToolbarData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'CallService' || item.buttoncode === 'CallService_showModal');
         yield put({ type: 'putState', payload: { extraButtonData, extraToolbarData } });
