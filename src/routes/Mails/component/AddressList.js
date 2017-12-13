@@ -7,7 +7,7 @@ import Styles from './AddressList.less';
 import request from '../../../utils/request';
 import { queryInnerContact } from '../../../services/mails';
 import { connect } from 'dva';
-import compare from '../lib/sortCompare';
+import groupSort from '../lib/groupSort';
 import _ from 'lodash';
 const Panel = Collapse.Panel;
 const TreeNode = Tree.TreeNode;
@@ -122,7 +122,7 @@ class AddressList extends Component {
       if (pushData) {
         const newEditEmailFormData = {
           ...editEmailFormData,
-          [this.props.focusTargetName]: _.uniqBy([
+          [this.props.focusTargetName]: _.uniqBy([ //去重
             ...oldData,
             {
               name: pushData.name,
@@ -166,9 +166,35 @@ class AddressList extends Component {
     });
   }
 
+  renderCustomListhHtml() {
+    let html = [];
+    const customerContact = this.props.customerContact && this.props.customerContact instanceof Array && groupSort(this.props.customerContact);
+    for (let key in customerContact) {
+      html.push(
+        <TreeNode title={key} key={key} selectable={false}>
+          {
+            customerContact[key].map((item, index) => {
+              return <TreeNode title={getTitle(item)} key={JSON.stringify({ treeid: item.recid, email: item.emailaddress, name: item.name })} />
+            })
+          }
+        </TreeNode>
+      )
+    };
+
+    function getTitle(item) {
+      return (
+        <ul className={Styles.customListUl}>
+          <li>{item.name}</li>
+          <li>{item.emailaddress}</li>
+        </ul>
+      )
+    }
+
+    return html;
+  }
+
   render() {
     const { queryString } = this.state;
-    const customerContact = this.props.customerContact && this.props.customerContact instanceof Array && this.props.customerContact.sort(compare);
 
     const suffix = queryString ? <Icon type="close-circle" onClick={this.emitEmptyQueryString.bind(this)} /> : null;
     return (
@@ -225,18 +251,13 @@ class AddressList extends Component {
                     </ul>
                   </Panel>
                   <Panel header="客户联系人" key="2">
-                    <ul className={Styles.recentContactsWrap}>
-                      {
-                        customerContact && customerContact instanceof Array && customerContact.map((item, index) => {
-                          return (
-                            <li key={index} onClick={this.selectContact.bind(this, item)}>
-                              <div>{item.customer ? item.customer : item.emailaddress.substring(0, item.emailaddress.indexOf('@'))}</div>
-                              <div>{item.emailaddress}</div>
-                            </li>
-                          );
-                        })
-                      }
-                    </ul>
+                    <div className={Styles.customList}>
+                      <Tree onSelect={this.treeSelectHandler.bind(this)}>
+                        {
+                          this.renderCustomListhHtml()
+                        }
+                      </Tree>
+                    </div>
                   </Panel>
                   <Panel header="企业内部联系人" key="3">
                     <Tree loadData={this.onLoadData} onSelect={this.treeSelectHandler.bind(this)}>
