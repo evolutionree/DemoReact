@@ -2,7 +2,7 @@
  * Created by 0291 on 2017/12/13.
  */
 import React from 'react';
-import { Table, Select, Button, Form, Radio, Input, Checkbox } from 'antd';
+import { Table, Select, Button, Form, Radio, Input, Checkbox, message } from 'antd';
 import { connect } from 'dva';
 import Page from '../../components/Page';
 import Styles from './index.less';
@@ -47,7 +47,7 @@ class MailRecovery extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-
+      serchValue: null
     };
   }
 
@@ -59,15 +59,44 @@ class MailRecovery extends React.Component {
 
   }
 
-  fieldChangeHandler(formData) {
-    console.log(formData)
+  fieldChangeHandler(serchValue) {
+    if (serchValue.KeyWord && serchValue.KeyWord.length > 20) {
+      message.warning('关键字限制20个字符键入');
+      serchValue.KeyWord = serchValue.KeyWord.substring(0, 20);
+    }
+    this.setState({
+      serchValue: serchValue
+    })
+  }
+
+  serchList() {
+    this.searchRef.getWrappedInstance().validateFields((err, fieldsValue) => {
+      if (err) {
+        return;
+      }
+      console.log(fieldsValue)
+      this.props.dispatch({ type: 'mailrecovery/queryList', payload: fieldsValue });
+    });
+  }
+
+  recoveryMail() {
+
+  }
+
+  reset() {
+    this.searchRef.getWrappedInstance().resetFields();
   }
 
   render() {
     return (
       <Page title='邮件恢复'>
         <div>
-          <Search onChange={this.fieldChangeHandler.bind(this)}/>
+          <Search onChange={this.fieldChangeHandler.bind(this)} value={this.state.serchValue} ref={(ref) => {this.searchRef = ref }}/>
+          <div className={Styles.btnWrap}>
+            <Button type="primary" onClick={this.serchList.bind(this)}>搜索</Button>
+            <Button type="primary" onClick={this.recoveryMail.bind(this)}>恢复邮件</Button>
+            <Button type="primary" onClick={this.reset.bind(this)}>清空查询条件</Button>
+          </div>
         </div>
         <div>
           <Table dataSource={dataSource} columns={columns} />
@@ -81,7 +110,7 @@ export default connect(
   state => state.mailrecovery,
   dispatch => {
     return {
-
+      dispatch
     };
   }
 )(WrappedMailRecovery);

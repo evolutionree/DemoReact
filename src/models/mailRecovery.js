@@ -2,11 +2,12 @@
  * Created by 0291 on 2017/12/13.
  */
 import { message } from 'antd';
+import { getreconvertmaillst } from '../services/mailRecovery';
 
 export default {
   namespace: 'mailrecovery',
   state: {
-
+    mailAddressList: []
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -22,6 +23,18 @@ export default {
   effects: {
     *init(action, { put }) {
 
+    },
+    *queryList({ payload: params }, { select, call, put }) {
+      try {
+        const result = yield call(getreconvertmaillst, {
+          ...params,
+          pageindex: 1,
+          pagesize: 10
+        });
+
+      } catch (e) {
+        message.error(e.message || '获取邮件列表失败');
+      }
     }
   },
   reducers: {
@@ -30,7 +43,7 @@ export default {
     },
     resetState() {
       return {
-
+        mailAddressList: []
       };
     }
   }
