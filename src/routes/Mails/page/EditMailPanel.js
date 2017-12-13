@@ -651,6 +651,7 @@ class EditMailPanel extends Component {
           this.setState({
             sendLoading: false
           });
+          this.props.dispatch({ type: 'mails/reloadCatalogTree' });
         }
       });
     }
