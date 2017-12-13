@@ -25,7 +25,11 @@ export function autoSubmitCaseItem ({
     const { approvers, nodeinfo } = result.data;
     // 判断是否需要选人，不需要则提交审批
     if (nodeinfo.nodestate === 2 || nodeinfo.nodestate === -1) {
-      return submitCaseItem(params).then(result => {
+      const nextParams = {
+        ...params,
+        nodeid: nodeinfo.nodeid
+      };
+      return submitCaseItem(nextParams).then(result => {
         return result;
       }, error => {
         throw error;
@@ -62,7 +66,8 @@ class WorkflowCaseModal extends Component {
     super(props);
     this.state = {
       nodeData: null,
-      modalPending: false
+      modalPending: false,
+      modalVisible: false
     };
   }
 
@@ -80,11 +85,12 @@ class WorkflowCaseModal extends Component {
       autoSubmitCaseItem(params).then(result => {
         const { approvers, nodeinfo } = result;
         if (approvers) {
-          this.setState({ nodeData: { approvers, nodeinfo } });
+          this.setState({ nodeData: { approvers, nodeinfo }, modalVisible: true });
         } else {
           this.props.onDone();
         }
       }, err => {
+        this.props.onCancel();
         message.error(err.message);
       });
     } else if (isClosing) {
@@ -93,9 +99,12 @@ class WorkflowCaseModal extends Component {
   }
 
   resetState = () => {
-    this.form && this.form.resetFields();
     this.setState({
-      modalPending: false
+      nodeData: null,
+      modalPending: false,
+      modalVisible: false
+    }, () => {
+      this.form && typeof this.form.resetFields === 'function' && this.form.resetFields();
     });
   };
 
@@ -188,7 +197,7 @@ class WorkflowCaseModal extends Component {
     return (
       <Modal
         title={nodeinfo.nodename || '选择审批和抄送人'}
-        visible={this.props.visible}
+        visible={this.state.modalVisible}
         onCancel={this.props.onCancel}
         onOk={this.onOk}
         footer={footer}
