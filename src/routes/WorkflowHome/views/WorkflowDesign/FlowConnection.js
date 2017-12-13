@@ -11,7 +11,8 @@ class FlowConnection extends Component {
     jspInstance.connect({
       source: `${from}`,
       target: `${to}`,
-      anchor: ['Right', 'Left']
+      anchor: ['Right', 'Left'],
+      // detachable: false
     });
   }
   componentWillUnmount() {
