@@ -412,6 +412,14 @@ export default {
       }
     },
     *moveMails({ payload: { mails, catalogId } }, { select, call, put }) {
+      const { myCatalogDataAll } = yield select(state => state.mails);
+      let catObj = {};
+      treeForEach(myCatalogDataAll, node => {
+        if (node.recid === catalogId) catObj = node;
+      }, 'subcatalogs');
+      if (catObj.subcatalogs && catObj.subcatalogs.length) {
+        return message.error('只能移动到子文件夹');
+      }
       try {
         const params = {
           mailids: mails.map(item => item.mailid).join(','),

@@ -70,7 +70,7 @@ class CatalogManager extends Component {
     return (
       <div style={{ height: '100%', minWidth: '330px' }}>
         <div style={{ padding: '10px' }}>
-          <Button ghost onClick={this.props.addCatalog} disabled={!isMyCat || (!isPersonalCat && !isPersonalSubCat)}>新增</Button>
+          <Button ghost onClick={this.props.addCatalog} disabled={!isMyCat || !isPersonalCat}>新增</Button>
           <Button ghost onClick={this.props.editCatalog} disabled={!isMyCat || !isPersonalSubCat}>编辑</Button>
           <Button ghost onClick={transCatalog} disabled={!isPersonalSubCat && !isCustSubCat && !isTempCat}>转移</Button>
           <Button ghost onClick={this.props.delCatalog} disabled={!isMyCat || !isPersonalSubCat}>删除</Button>
