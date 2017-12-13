@@ -590,7 +590,27 @@ export default {
           flowPaths: [...flowPaths]
         }
       });
-    }
+    },
+    *userConnectNode({ payload: connInfo }, { select, put }) {
+      const { flowPaths } = yield select(state => state.workflowDesign);
+      const { source, target } = connInfo;
+      const getNodeId = elem => {
+        return elem.id.replace(/workflow-(.+)/, '$1');
+      };
+      const fromNodeId = getNodeId(source);
+      const endNodeId = getNodeId(target);
+      const newPath = {
+        from: fromNodeId,
+        to: endNodeId,
+        ruleid: null
+      };
+      yield put({
+        type: 'putState',
+        payload: {
+          flowPaths: [...flowPaths, newPath].map(markBranch)
+        }
+      });
+    },
   },
   reducers: {
     putState(state, { payload }) {
