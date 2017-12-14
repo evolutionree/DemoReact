@@ -256,17 +256,17 @@ export default {
     *dynamicModalSendData({ payload: submitData }, { select, call, put }) {
       const { dynamicModalData } = yield select(state => state.entcommList);
       const url = dynamicModalData.routepath;
-      const messageInfo = dynamicModalData && dynamicModalData.extradata && dynamicModalData.extradata.message;
+      const successMessageInfo = dynamicModalData && dynamicModalData.extradata && dynamicModalData.extradata.success_message;
       try {
         yield call(extraToolbarClickSendData, url, submitData);
         yield put({ type: 'showModals', payload: '' });
         yield put({ type: 'putState', payload: { dynamicModalData: {} } });
         yield put({ type: 'queryList' });
-        if (messageInfo) {
-          message.success(messageInfo);
+        if (successMessageInfo) {
+          message.success(successMessageInfo);
         }
       } catch (e) {
-        message.error(e.message || messageInfo);
+        message.error(e.message);
       }
     }
   },
