@@ -269,6 +269,12 @@ class AffairDetail extends Component {
           </div>
         </div>
 
+        {/*<div className={styles.section}>*/}
+          {/*<dive className={styles.sectitle}>*/}
+            {/*<span>抄送人</span>*/}
+          {/*</dive>*/}
+        {/*</div>*/}
+
         {!!relentityDetailProtocol.length && <div className={styles.section}>
           <div className={styles.sectitle}>
             <span>相关信息</span>
