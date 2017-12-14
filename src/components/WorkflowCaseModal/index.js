@@ -24,7 +24,7 @@ export function autoSubmitCaseItem ({
   return submitPreCaseItem(params).then(result => {
     const { approvers, nodeinfo } = result.data;
     // 判断是否需要选人，不需要则提交审批
-    if (nodeinfo.nodestate === 2 || nodeinfo.nodestate === -1) {
+    if (nodeinfo.nodestate === 2 || nodeinfo.nodestate === -1 || nodeinfo.nodestate === 1) {
       const nextParams = {
         ...params,
         nodeid: nodeinfo.nodeid
