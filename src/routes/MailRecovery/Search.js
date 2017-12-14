@@ -53,8 +53,11 @@ class Search extends React.Component {
           {...formItemLayout}
           label="用户"
         >
-          {getFieldDecorator('userid',{
-            initialValue: ''
+          {getFieldDecorator('userid', {
+            initialValue: '',
+            rules: [{
+              required: true, message: ' '
+            }]
           })(
             <SelectUser />
           )}
@@ -67,7 +70,7 @@ class Search extends React.Component {
             initialValue: ''
           })(
             <Select style={{ width: 200 }}>
-              <Option value="所有邮箱账号">所有邮箱账号</Option>
+              <Option value="">所有邮箱账号</Option>
               {
                 this.props.mailAddressList && this.props.mailAddressList instanceof Array && this.props.mailAddressList.map((item, index) => {
                   return <Option value={item} key={index}>{item}</Option>
@@ -81,7 +84,7 @@ class Search extends React.Component {
           label="类型"
         >
           {getFieldDecorator('Ctype', {
-            initialValue: ''
+            initialValue: 0
           })(
             <Select style={{ width: 200 }}>
               <Option value={0}>所有邮件</Option>
