@@ -4,6 +4,7 @@
 import React from 'react';
 import { Button, Select, Form, Radio, Input } from 'antd';
 import { connect } from 'dva';
+import _ from 'lodash';
 import SelectUser from './SelectUser';
 
 const FormItem = Form.Item;
@@ -12,12 +13,12 @@ const Option = Select.Option;
 const formItemLayout = {
   labelCol: {
     xs: { span: 3 },
-    sm: { span: 3 },
+    sm: { span: 3 }
   },
   wrapperCol: {
     xs: { span: 24 },
-    sm: { span: 16 },
-  },
+    sm: { span: 16 }
+  }
 };
 
 class Search extends React.Component {
@@ -41,7 +42,6 @@ class Search extends React.Component {
   componentWillReceiveProps(nextProps) {
 
   }
-
 
 
   render() {
@@ -119,7 +119,7 @@ class Search extends React.Component {
           )}
         </FormItem>
       </Form>
-    )
+    );
   }
 }
 const WrappedMailRecovery = Form.create({
