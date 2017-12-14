@@ -177,7 +177,7 @@ export default {
          DisplayPosition	按钮的显示位置（int数组）：web列表=0，web详情=1，手机列表=100，手机详情=101	array<number>	@mock=$order(0,1)
          */
 
-        functionbutton = functionbutton.filter(item =>  _.indexOf(item.displayposition, 0) > -1);
+        functionbutton = functionbutton.filter(item => _.indexOf(item.displayposition, 0) > -1);
 
         const extraButtonData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'ShowModals');
         const extraToolbarData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'CallService' || item.buttoncode === 'CallService_showModal');
@@ -243,13 +243,17 @@ export default {
     *dynamicModalSendData({ payload: submitData }, { select, call, put }) {
       const { dynamicModalData } = yield select(state => state.entcommApplication);
       const url = dynamicModalData.routepath;
+      const messageInfo = dynamicModalData && dynamicModalData.extradata && dynamicModalData.extradata.message;
       try {
         yield call(extraToolbarClickSendData, url, submitData);
         yield put({ type: 'showModals', payload: '' });
         yield put({ type: 'putState', payload: { dynamicModalData: {} } });
         yield put({ type: 'queryList' });
+        if (messageInfo) {
+          message.success(messageInfo);
+        }
       } catch (e) {
-        message.error(e.message);
+        message.error(e.message || messageInfo);
       }
     }
   },
