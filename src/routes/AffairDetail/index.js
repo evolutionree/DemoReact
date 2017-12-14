@@ -5,6 +5,7 @@ import { Radio, Input, Button, Icon, message, Checkbox, Table } from 'antd';
 import Page from '../../components/Page';
 import { DynamicFormEdit, DynamicFormAdd, DynamicFormView } from '../../components/DynamicForm';
 import WorkflowCaseModal from '../../components/WorkflowCaseModal';
+import ImgCardList from '../../components/ImgCardList';
 import WorkflowCaseForm from '../../components/WorkflowCaseModal/WorkflowCaseForm';
 import styles from './styles.less';
 
@@ -269,11 +270,14 @@ class AffairDetail extends Component {
           </div>
         </div>
 
-        {/*<div className={styles.section}>*/}
-          {/*<dive className={styles.sectitle}>*/}
-            {/*<span>抄送人</span>*/}
-          {/*</dive>*/}
-        {/*</div>*/}
+        {flowDetail && flowDetail.copyuser && flowDetail.copyuser.length > 0 && <div className={styles.section}>
+          <div className={styles.sectitle}>
+            <span>抄送人</span>
+          </div>
+          <div style={{ overflow: 'hidden' }}>
+            <ImgCardList.View dataSouce={flowDetail.copyuser} value={flowDetail.copyuser.map(i => i.userid).join(',')} />
+          </div>
+        </div>}
 
         {!!relentityDetailProtocol.length && <div className={styles.section}>
           <div className={styles.sectitle}>
