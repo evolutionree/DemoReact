@@ -22,22 +22,22 @@ const titleStyle = {
 const columns = [{
   title: '发件人',
   dataIndex: 'sender',
-  key: 'sender',
   render: (obj) => {
     return <span>{obj.displayname}</span>;
   }
 }, {
   title: '收件人',
   dataIndex: 'receivers',
-  key: 'receivers',
   render: (receiversArray) => {
     const receivers = receiversArray && receiversArray instanceof Array && receiversArray.map(item => item.displayname);
     return <span style={titleStyle} title={receivers.join(',')}>{receivers.join(',')}</span>;
   }
 }, {
   title: '主题',
-  dataIndex: 'title',
-  key: 'title'
+  dataIndex: 'title'
+}, {
+  title: '时间',
+  dataIndex: 'senttime'
 }];
 
 class MailRecovery extends React.Component {
