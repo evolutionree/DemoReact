@@ -71,7 +71,8 @@ export default {
     *saveobjectforbase({ payload: formValue }, { select, put, call }) {
       try {
         yield call(saveobjectforbase, formValue)
-        message.success('保持成功');
+        message.success('更新成功');
+        yield put({ type: 'showInfoModals', payload: '' });
         yield put({ type: 'queryListData' });
       } catch (e) {
         message.error(e.message || '获取数据失败');

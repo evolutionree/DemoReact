@@ -609,12 +609,14 @@ class EditMailPanel extends Component {
       }
     }
 
-    submitData.AttachmentFile = this.state.fileList.map((item) => {
+    submitData.AttachmentFile = this.state.fileList && this.state.fileList instanceof Array && this.state.fileList.map((item) => {
       return {
         fileid: item.fileid, //附件人
         filetype: 1 //新文件
       };
     }); //附件数据
+
+    submitData.AttachmentFile = submitData.AttachmentFile || [];
     submitData.bodycontent = this.state.UMEditorContent; //富文本框数据
 
     if (submitData.subject === 0 || !submitData.subject) {
@@ -633,6 +635,9 @@ class EditMailPanel extends Component {
         sendLoading: true
       });
       validsendmaildata(submitData).then((result) => { //校验发送邮件白名单
+        this.setState({
+          sendLoading: false
+        });
         const { data } = result;
         if (data.flag === 0) {
           confirm({
@@ -642,24 +647,21 @@ class EditMailPanel extends Component {
             okType: 'danger',
             cancelText: '取消',
             onOk: () => {
-              this.setState({
-                sendLoading: false
-              });
               this.props.dispatch({ type: 'mails/sendemail', payload: submitData });
             },
             onCancel: () => {
-              this.setState({
-                sendLoading: false
-              });
+
             }
           });
         } else if (data.flag === 1) { //校验通过  邮件发送成功
           this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: 'sendMailSuccess', editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null } });
-          this.setState({
-            sendLoading: false
-          });
           this.props.dispatch({ type: 'mails/reloadCatalogTree' });
         }
+      }).catch((reson) => {
+        message.error(reson.message);
+        this.setState({
+          sendLoading: false
+        });
       });
     }
 

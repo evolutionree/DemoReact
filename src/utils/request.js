@@ -8,6 +8,7 @@ function getAccessToken() {
 }
 
 function checkErrorCode(response) {
+  console.log(response)
   const errorCode = response.data.error_code;
   if (!errorCode) {
     return response;
