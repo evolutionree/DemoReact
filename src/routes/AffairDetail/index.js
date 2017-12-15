@@ -15,7 +15,8 @@ const operates = [
   { label: '同意', key: 'allow', id: 1 },
   { label: '拒绝', key: 'reject', id: 0 },
   { label: '退回', key: 'reback', id: 2 },
-  { label: '中止', key: 'terminate', id: 3 }
+  { label: '中止', key: 'terminate', id: 3 },
+  { label: '重新发起', key: 'launch', id: 4 }
 ];
 
 class AffairDetail extends Component {
@@ -186,7 +187,6 @@ class AffairDetail extends Component {
           <div>
             <div className={styles.operats}>
               <Radio.Group value={selectedOperate} onChange={e => putState({ selectedOperate: e.target.value })}>
-                {isFlowBack && <Radio value={4}>重新发起</Radio>}
                 {operates.map(op => (
                   !!flowOperates[op.key] && (
                     <Radio key={op.key} value={op.id} style={{ display: 'block' }}>{op.label}</Radio>
