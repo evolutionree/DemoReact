@@ -343,7 +343,8 @@ export default {
           data: rawNodeData.ruleconfig || {}
         },
         auditsucc: rawNodeData.auditsucc || 1,
-        stepFields: parseColumnConfig(rawNodeData.columnconfig)
+        stepFields: parseColumnConfig(rawNodeData.columnconfig),
+        nodeevent: rawNodeData.nodeevent || ''
       };
       yield put({
         type: 'putState',
@@ -516,7 +517,8 @@ export default {
         nodetype: editingFlowStepForm.nodeType,
         ruleconfig: editingFlowStepForm.stepUser.data,
         steptypeid: editingFlowStepForm.stepUser.type,
-        columnconfig: formatFieldsToColumnConfig(fields)
+        columnconfig: formatFieldsToColumnConfig(fields),
+        nodeevent: editingFlowStepForm.nodeevent
       };
       yield put({
         type: 'putState',
@@ -536,7 +538,7 @@ export default {
       try {
         const nodeIdCollect = {};
         const nodes = flowSteps.map(({ id, name, rawNode }) => {
-          const { nodetype, steptypeid, ruleconfig, columnconfig, auditnum, auditsucc } = rawNode;
+          const { nodetype, steptypeid, ruleconfig, columnconfig, auditnum, auditsucc, nodeevent } = rawNode;
           const newNodeId = nodeIdCollect[id] = uuid.v1();
           return {
             nodename: name,
@@ -546,7 +548,8 @@ export default {
             steptypeid,
             ruleconfig,
             columnconfig,
-            auditsucc
+            auditsucc,
+            nodeevent
           };
         });
         const lines = flowPaths.map(path => ({

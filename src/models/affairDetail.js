@@ -323,32 +323,32 @@ export default {
         columnConfigFormProtocols
       } = yield select(state => state.affairDetail);
 
-      if (selectedOperate === 1 || selectedOperate === 4) {
+      // if (selectedOperate === 1 || selectedOperate === 4) {
         yield put({ type: 'showModals', payload: 'workflowCase' });
-      } else {
-        try {
-          const params = {
-            caseId,
-            nodenum: flowDetail.nodenum,
-            choicestatus: selectedOperate,
-            suggest,
-            casedata: getCaseData()
-          };
-          const { data, error_msg } = yield call(submitCaseItem, params);
-          message.success(error_msg || '提交成功');
-          // 提交完审批后，返回列表
-          const { navStack } = yield select(state => state.navHistory);
-          if (navStack.length >= 2) {
-            yield put(routerRedux.goBack());
-          } else {
-            yield put(routerRedux.push({
-              pathname: 'affair-list'
-            }));
-          }
-        } catch (e) {
-          message.error(e.message);
-        }
-      }
+      // } else {
+      //   try {
+      //     const params = {
+      //       caseId,
+      //       nodenum: flowDetail.nodenum,
+      //       choicestatus: selectedOperate,
+      //       suggest,
+      //       casedata: getCaseData()
+      //     };
+      //     const { data, error_msg } = yield call(submitCaseItem, params);
+      //     message.success(error_msg || '提交成功');
+      //     // 提交完审批后，返回列表
+      //     const { navStack } = yield select(state => state.navHistory);
+      //     if (navStack.length >= 2) {
+      //       yield put(routerRedux.goBack());
+      //     } else {
+      //       yield put(routerRedux.push({
+      //         pathname: 'affair-list'
+      //       }));
+      //     }
+      //   } catch (e) {
+      //     message.error(e.message);
+      //   }
+      // }
 
       function getCaseData() {
         const formArray = _.map(columnConfigFormProtocols, (val, key) => ({ entityId: key, protocols: val }));

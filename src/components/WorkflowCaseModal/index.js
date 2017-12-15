@@ -78,7 +78,7 @@ class WorkflowCaseModal extends Component {
       const params = {
         caseid: nextProps.caseId,
         nodenum: nextProps.nodeNum || 0,
-        choicestatus: nextProps.choiceStatus || 4,
+        choicestatus: nextProps.choiceStatus,
         suggest: nextProps.suggest || '',
         casedata: nextProps.caseData
       };

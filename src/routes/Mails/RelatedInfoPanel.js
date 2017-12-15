@@ -297,10 +297,10 @@ class RelatedInfoPanel extends Component {
       <div>
         {sender && sender.length > 0 && <div className={styles.infobox}>
           <div className={styles.infotitle}>发件人信息</div>
-          <div className={styles.infometa}><Avatar.View value={sender[0].usericon} headShape={1} size={50} /></div>
-          <div className={styles.infometa}><span>姓名：</span><MetaValue>{sender[0].username}</MetaValue></div>
-          <div className={styles.infometa}><span>电话：</span><MetaValue>{sender[0].usertel}</MetaValue></div>
-          <div className={styles.infometa}><span>邮箱：</span><MetaValue>{sender[0].useremail}</MetaValue></div>
+          <div className={styles.infometa}><Avatar.View value={sender[0].headicon} headShape={1} size={50} /></div>
+          <div className={styles.infometa}><span>姓名：</span><MetaValue>{sender[0].recname}</MetaValue></div>
+          <div className={styles.infometa}><span>电话：</span><MetaValue>{sender[0].phone}</MetaValue></div>
+          <div className={styles.infometa}><span>邮箱：</span><MetaValue>{sender[0].email}</MetaValue></div>
         </div>}
         {custInfo && custInfo.length > 0 && <div className={styles.infobox}>
           <div className={styles.infotitle}>客户信息</div>

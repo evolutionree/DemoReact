@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import { queryDepartmentData } from '../services/structure';
-import { queryRegionData, queryDictionaries, queryProductTree } from '../services/basicdata';
+import { queryRegionData, queryDictionaries, queryProductTree, queryProductRaw } from '../services/basicdata';
 import { queryRoles } from '../services/role';
 
 const PENDING = -1;
@@ -112,6 +112,16 @@ export default {
         payload: {
           data,
           key: 'products'
+        }
+      });
+    },
+    *fetchProductsRaw(action, { call, put }) {
+      const { data } = yield call(queryProductRaw);
+      yield put({
+        type: 'receiveData',
+        payload: {
+          data,
+          key: 'productsRaw'
         }
       });
     }
