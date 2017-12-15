@@ -21,3 +21,10 @@ export async function listObjects(params) {
     body: JSON.stringify(params)
   });
 }
+
+export async function saveobjectforbase(params) {
+  return request('/api/dbmanage/saveobjectforbase', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}

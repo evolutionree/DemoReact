@@ -54,7 +54,7 @@ import AllDailyDetail from './routes/office/daily/AllDailyDetail';
 
 import Mails from './routes/Mails';
 
-import MailRecovery from './routes/MailRecovery'
+import MailRecovery from './routes/MailRecovery';
 
 import DbManager from './routes/DbManager/index';
 

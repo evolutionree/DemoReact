@@ -861,7 +861,7 @@ class EditMailPanel extends Component {
             <div ref='uploadList'>
               <Upload {...props}>
                 <div className={Styles.attachmentWrap}>
-                  <Icon type="link" /><span>添加附件</span><span>(20M)</span>
+                  <Icon type="link" /><span>添加附件</span>
                 </div>
               </Upload>
             </div>
