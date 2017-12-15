@@ -75,6 +75,23 @@ export async function queryProductTree() {
     return { data: retTree };
   });
 }
+/**
+ * 获取产品树（产品系列 + 产品）
+ * @returns {Promise.<Object>}
+ */
+export async function queryProductRaw() {
+  const params = [
+    { VersionType: 3, VersionKey: 'productsync', RecVersion: -1 },
+    { VersionType: 3, VersionKey: 'productserialsync', RecVersion: -1 }
+  ];
+  return request('/api/metaData/getincrementdata', {
+    method: 'post',
+    body: JSON.stringify(params)
+  }).then(result => {
+    const { data: { data: { productserialsync: productserial, productsync: product } } } = result;
+    return { data: { productserial, products: product } };
+  });
+}
 
 /**
  * 获取产品系列数据
