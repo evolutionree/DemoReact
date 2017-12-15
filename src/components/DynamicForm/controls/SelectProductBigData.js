@@ -18,7 +18,7 @@ class SelectProductBigData extends React.Component {
     placeholder: PropTypes.string
   };
   static defaultProps = {
-    productsRaw: { productserial: [], products: {} }
+    productsRaw: { productserial: [], products: [] }
   };
 
   constructor(props) {
