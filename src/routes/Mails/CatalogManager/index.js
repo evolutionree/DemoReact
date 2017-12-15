@@ -94,7 +94,7 @@ class CatalogManager extends Component {
           bordered={false}
           activeKey={openedCatalog}
           onChange={this.props.toggleOpenedCatalog}
-          style={{ height: 'calc(100% - 129px)' }}
+          style={{ height: 'calc(100% - 86px)' }}
         >
           <Collapse.Panel
             header={<div><ImgIcon name="user" /><span>{catTitle.my}</span></div>}
@@ -120,7 +120,7 @@ class CatalogManager extends Component {
               onSelect={(id, node) => this.props.selectCatalog(node, 'dept')}
             />
           </Collapse.Panel>
-          <Collapse.Panel
+          {false && <Collapse.Panel
             header={<div><ImgIcon name="structure" /><span>{catTitle.user}</span></div>}
             key="user"
             style={{ transition: 'all .2s', height: panelHeight('user') }}
@@ -137,7 +137,7 @@ class CatalogManager extends Component {
                 </li>
               ))}
             </ul>
-          </Collapse.Panel>
+          </Collapse.Panel>}
         </Collapse>
         <CatalogModal />
       </div>
