@@ -3,16 +3,12 @@
  */
 import React from 'react';
 import { connect } from 'dva';
-import { Select, Button, Table } from 'antd';
 import Page from '../../components/Page';
 import DbSystemPathTree from '../DbManager/DbSystemPathTree';
 import DBSQLObjectList from '../DbManager/DBSQLObjectList';
-import Toolbar from '../../components/Toolbar';
-import Search from '../../components/Search';
 import Styles from './styles.less';
-import DataGrid from './DataGrid';
 import SQLObjectFormModal from './SQLObjectFormModal';
-const Option = Select.Option;
+import JsModal from './JsModal';
 
 const contentStyle = {
   background: 'transparent',
@@ -26,7 +22,8 @@ function DbManager({
                 treeData,
                 changeTreeValue,
                      listData,
-                     fullpath
+                     queries,
+                     currItem
                          }) {
   return (
     <Page title="数据库初始脚本管理" contentStyle={contentStyle}>
@@ -35,16 +32,15 @@ function DbManager({
           <DbSystemPathTree
             data={treeData}
             onChange={changeTreeValue}
-            value={fullpath}
+            value={queries.fullpath}
           />
         </div>
         <div className={Styles.right}>
-          <div className={Styles.box}>
-            <DBSQLObjectList list={listData} />
-          </div>
+          <DBSQLObjectList list={listData} />
         </div>
       </div>
-      <SQLObjectFormModal />
+      <SQLObjectFormModal value={currItem} />
+      <JsModal />
     </Page>
   );
 }

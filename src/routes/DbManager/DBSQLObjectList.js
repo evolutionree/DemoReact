@@ -1,63 +1,69 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Select, Button, message, Modal, Breadcrumb } from 'antd';
-import DataGrid from './DataGrid';
+import { Select, Button, message, Modal, Breadcrumb, Menu, Dropdown, Icon, Table } from 'antd';
 import * as _ from 'lodash';
-import DynamicTable from '../../components/DynamicTable';
 import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import styles from './styles.less';
 
 const Option = Select.Option;
-const columns = [{
-  title: '对象名称',
-  dataIndex: 'objname',
-  key: 'objname'
-}, {
-  title: '参数',
-  dataIndex: 'procparam',
-  key: 'procparam'
-}, {
-  title: '显示名称',
-  dataIndex: 'name',
-  key: 'name'
-}, {
-  title: '对象类型',
-  dataIndex: 'objtype_name',
-  key: 'objtype_name'
-}, {
-  title: '需要初始化',
-  dataIndex: 'needinitsql_name',
-  key: 'needinitsql_name'
-}, {
-  title: '操作',
-  key: 'action'
-}];
 
 function DBSQLObjectList({
   queries,
-  total,
-  list, edit,
+  list,
+  edit,
   search,
-  currentUser,currItems,
-  selectItems
+  currentUser
 }) {
   function exportData() {
     window.open(`/api/excel/exportdata?TemplateType=0&FuncName=products_export&QueryParameters=${params}&UserId=${currentUser}`);
   }
+
+  function getColumns() {
+    return [{
+      title: '对象名称',
+      dataIndex: 'objname'
+    }, {
+      title: '参数',
+      dataIndex: 'procparam'
+    }, {
+      title: '显示名称',
+      dataIndex: 'name'
+    }, {
+      title: '对象类型',
+      dataIndex: 'objtype_name'
+    }, {
+      title: '需要初始化',
+      dataIndex: 'needinitsql_name'
+    }, {
+      title: '操作',
+      dataIndex: 'action',
+      width: 80,
+      render: (text, record, index) => {
+        return (
+          <div className={styles.actionWrap}>
+            <span style={{ marginRight: 4 }} onClick={edit.bind(this, 'editList', record)}>编辑</span>
+            <Dropdown overlay={
+              <Menu onClick={({ key }) => { edit(key, record) }}>
+                <Menu.Item key="editDataJs">
+                  <span>编辑初始化数据脚本</span>
+                </Menu.Item>
+                <Menu.Item key="viewStructureJs">
+                  <span>查看初始化结构脚本</span>
+                </Menu.Item>
+              </Menu>
+            } placement="bottomCenter">
+              <span><Icon type="down" /></span>
+            </Dropdown>
+          </div>
+        );
+      }
+    }];
+  }
   return (
     <div className={styles.rightContent}>
-      {/*<div className={styles.subtitle}>{currentFullPath && currentFullPath.productsetname}</div>*/}
-
-      <Toolbar
-        selectedCount={currItems.length}
-        actions={[
-          { label: '编辑', handler: edit, single: true },
-          { label: '编辑初始化结构脚本', handler: edit, single: true },
-          { label: '查看初始化数据脚本', handler: edit, single: true }
-        ]}
-      >
-        <Select value={queries.objecttype + ''} onChange={search.bind(null, 'objecttype')}>
+      <Toolbar>
+        <Select value={queries.objecttype + ''} onChange={search.bind(this, 'objecttype')}>
           <Option key="0">全部</Option>
           <Option key="1">表格</Option>
           <Option key="2">函数</Option>
@@ -74,18 +80,10 @@ function DBSQLObjectList({
         </Toolbar.Right>
       </Toolbar>
 
-      <DataGrid
-        columns={columns}
+      <Table
+        columns={getColumns()}
         dataSource={list}
-        slectRows={currItems}
-        selectRowHandler={selectItems}
-        pagination={{
-          total,
-          current: +queries.pageIndex,
-          pageSize: +queries.pageSize,
-          onChange: search.bind(null, 'pageIndex'),
-          onShowSizeChange: (page, size) => { search('pageSize', size); }
-        }}
+        rowKey="id"
       />
     </div>
   );
@@ -100,14 +98,12 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     search: (key, value) => {
-      dispatch({type: 'dbmanager/search', payload: {[key]: value}});
+      dispatch({ type: 'dbmanager/search', payload: { [key]: value } });
     },
-    edit: function() {
-      dispatch({ type: 'dbmanager/showInfoModals', payload: 'edit' } );
-    },
-    selectItems: (items) => {
-      dispatch({ type: 'dbmanager/putState', payload: { currItems: items } });
-    },
+    edit: function(type, currentItem) {
+      dispatch({ type: 'dbmanager/showInfoModals', payload: type });
+      dispatch({ type: 'dbmanager/putState', payload: { currItem: currentItem } });
+    }
   };
 }
 export default connect(

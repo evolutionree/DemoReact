@@ -2,17 +2,18 @@
  * Created by 0291 on 2017/12/7.
  */
 import { message } from 'antd';
-import { listDirs, listObjects } from '../services/dbmanager';
+import { listDirs, listObjects, saveobjectforbase } from '../services/dbmanager';
 
 export default {
   namespace: 'dbmanager',
   state: {
     treeData: null,
     listData: [],
-    queries: {},
+    queries: {
+      objecttype: 0
+    },
     showInfoModals: '',
-    currItems: []
-
+    currItem: {}
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -35,11 +36,21 @@ export default {
         });
         const treeData = result.data;
         yield put({ type: 'putState', payload: { treeData } });
+        if (treeData instanceof Array && treeData.length > 0) {
+          let { queries } = yield select(state => state.dbmanager);
+          const newQueries = {
+            ...queries,
+            fullpath: treeData[0].fullpath
+          };
+          yield put({ type: 'putState', payload: { queries: newQueries } });
+          yield put({ type: 'queryListData' });
+        }
       } catch (e) {
         message.error(e.message || '获取数据失败');
       }
     },
-    *queryListData({ payload: queries }, { select, put, call }) {
+    *queryListData(action, { select, put, call }) {
+      let { queries } = yield select(state => state.dbmanager);
       try {
         const result = yield call(listObjects, queries);
         const listData = result.data;
@@ -55,7 +66,16 @@ export default {
         ...payload
       };
       yield put({ type: 'putState', payload: { queries: newQueries } });
-      yield put({ type: 'queryListData', payload: newQueries });
+      yield put({ type: 'queryListData' });
+    },
+    *saveobjectforbase({ payload: formValue }, { select, put, call }) {
+      try {
+        yield call(saveobjectforbase, formValue)
+        message.success('保持成功');
+        yield put({ type: 'queryListData' });
+      } catch (e) {
+        message.error(e.message || '获取数据失败');
+      }
     }
   },
   reducers: {
@@ -76,9 +96,11 @@ export default {
       return {
         treeData: null,
         listData: [],
-        queries: {},
+        queries: {
+          objecttype: 0
+        },
         showInfoModals: '',
-        currItems: []
+        currItem: {}
       };
     }
   }

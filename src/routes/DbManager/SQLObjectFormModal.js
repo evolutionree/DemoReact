@@ -17,11 +17,6 @@ class SQLObjectFormModal extends Component {
 
   componentWillReceiveProps(nextProps) {
 
-    const record = nextProps.currItems[0];
-    const fieldsValue = _.pick(record, ['objtype', 'objname']);
-    this.props.form.setFieldsValue(fieldsValue);
-    console.error(record);
-    console.error(fieldsValue);
   }
 
   handleSubmit = () => {
@@ -29,10 +24,7 @@ class SQLObjectFormModal extends Component {
       if (err) {
         return message.error('请检查表单');
       }
-      const params = {
-
-      };
-      this.props.save(params);
+      this.props.save(values);
     });
   };
 
@@ -46,13 +38,12 @@ class SQLObjectFormModal extends Component {
         onOk={this.handleSubmit}
       >
         <Form>
+          {form.getFieldDecorator('id')(
+            <Input disabled type="hidden" />
+          )}
           <FormItem label="对象类型">
-            {form.getFieldDecorator('objtype', {
-              rules: [
-                { required: true}
-              ]
-            })(
-              <Radio.Group>
+            {form.getFieldDecorator('objtype')(
+              <Radio.Group disabled>
                 <Radio value={1}>表</Radio>
                 <Radio value={2}>函数</Radio>
                 <Radio value={3}>序列</Radio>
@@ -60,36 +51,32 @@ class SQLObjectFormModal extends Component {
             )}
           </FormItem>
           <FormItem label="对象名称">
-            {form.getFieldDecorator('objname', {
-              rules: [{ required: true, message: '对象名称' }]
-            })(
-              <Input type="text" placeholder="请输入对象名称" maxLength={200} />
+            {form.getFieldDecorator('objname')(
+              <Input disabled type="text" />
             )}
           </FormItem>
           <FormItem label="参数">
-            {form.getFieldDecorator('objname', {
-              rules: [{ required: true, message: '参数' }]
-            })(
-              <Input type="text" placeholder="请输入分组名称" maxLength={200}  />
+            {form.getFieldDecorator('procparam')(
+              <Input disabled type="text" />
             )}
           </FormItem>
           <FormItem label="分组">
             {form.getFieldDecorator('sqlpath', {
-              rules: [{ required: true, message: '分组' }]
+              rules: [{ required: true, message: ' ' }]
             })(
               <Input type="text" placeholder="请输入分组名称" maxLength={200} />
             )}
           </FormItem>
           <FormItem label="显示名称">
             {form.getFieldDecorator('name', {
-              rules: [{ required: true, message: '显示名称' }]
+              rules: [{ required: true, message: ' ' }]
             })(
-              <Input type="text" placeholder="请输入显示名称" maxLength={200}  />
+              <Input type="text" placeholder="请输入显示名称" maxLength={200} />
             )}
           </FormItem>
           <FormItem label="是否初始化">
-            {form.getFieldDecorator('isneedinit', {
-              rules: [{ required: true, message: '是否初始化' }]
+            {form.getFieldDecorator('needinitsql', {
+              initialValue: 0
             })(
               <Radio.Group>
                 <Radio value={1}>初始化</Radio>
@@ -97,7 +84,6 @@ class SQLObjectFormModal extends Component {
               </Radio.Group>
             )}
           </FormItem>
-
         </Form>
       </Modal>
     );
@@ -106,11 +92,10 @@ class SQLObjectFormModal extends Component {
 
 export default connect(
   state => {
-    const { showInfoModals, currItems } = state.dbmanager;
+    const { showInfoModals, currItem } = state.dbmanager;
     return {
-      visible: /edit/.test(showInfoModals),
-      isEdit: /edit/.test(showInfoModals),
-      currItems: currItems
+      visible: /editList/.test(showInfoModals),
+      currItem: currItem
     };
   },
   dispatch => {
@@ -119,8 +104,12 @@ export default connect(
         dispatch({ type: 'dbmanager/showInfoModals', payload: '' });
       },
       save(formData) {
-        dispatch({ type: 'dbmanager/save', payload: formData });
+        dispatch({ type: 'dbmanager/saveobjectforbase', payload: formData });
       }
     };
   }
-)(Form.create()(SQLObjectFormModal));
+)(Form.create({
+  mapPropsToFields({ value }) {
+    return _.mapValues(value, val => ({ value: val }));
+  }
+})(SQLObjectFormModal));
