@@ -11,7 +11,7 @@ import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import Styles from './styles.less';
 import DataGrid from './DataGrid';
-
+import SQLObjectFormModal from './SQLObjectFormModal';
 const Option = Select.Option;
 
 const contentStyle = {
@@ -44,6 +44,7 @@ function DbManager({
           </div>
         </div>
       </div>
+      <SQLObjectFormModal />
     </Page>
   );
 }

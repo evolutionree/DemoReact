@@ -11,30 +11,33 @@ import Search from "./Search";
 const FormItem = Form.Item;
 const Option = Select.Option;
 
-const dataSource = [{
-  key: '1',
-  name: '胡彦斌',
-  age: 32,
-  address: '西湖区湖底公园1号'
-}, {
-  key: '2',
-  name: '胡彦祖',
-  age: 42,
-  address: '西湖区湖底公园1号'
-}];
+const titleStyle = {
+  display: 'inline-block',
+  maxWidth: '600px',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap'
+};
 
 const columns = [{
-  title: '姓名',
-  dataIndex: 'name',
-  key: 'name',
+  title: '发件人',
+  dataIndex: 'sender',
+  render: (obj) => {
+    return <span>{obj.displayname}</span>;
+  }
 }, {
-  title: '年龄',
-  dataIndex: 'age',
-  key: 'age',
+  title: '收件人',
+  dataIndex: 'receivers',
+  render: (receiversArray) => {
+    const receivers = receiversArray && receiversArray instanceof Array && receiversArray.map(item => item.displayname);
+    return <span style={titleStyle} title={receivers.join(',')}>{receivers.join(',')}</span>;
+  }
 }, {
-  title: '住址',
-  dataIndex: 'address',
-  key: 'address',
+  title: '主题',
+  dataIndex: 'title'
+}, {
+  title: '时间',
+  dataIndex: 'senttime'
 }];
 
 class MailRecovery extends React.Component {
@@ -66,31 +69,50 @@ class MailRecovery extends React.Component {
     }
     this.setState({
       serchValue: serchValue
-    })
+    });
   }
 
   serchList() {
     this.searchRef.getWrappedInstance().validateFields((err, fieldsValue) => {
       if (err) {
+        message.warning('用户不能为空');
         return;
       }
-      console.log(fieldsValue)
-      this.props.dispatch({ type: 'mailrecovery/queryList', payload: fieldsValue });
+      this.props.dispatch({ type: 'mailrecovery/search', payload: fieldsValue });
     });
   }
 
   recoveryMail() {
-
+    this.props.dispatch({ type: 'mailrecovery/reconvermail' });
   }
 
   reset() {
     this.searchRef.getWrappedInstance().resetFields();
+    this.setState({
+      serchValue: null
+    });
+  }
+
+  selectRowHandler(keys, items) {
+    console.log(items)
+    this.props.dispatch({ type: 'mailrecovery/putState', payload: {
+      currItems: items
+    } });
+  }
+
+  pageIndexChange(page, pageSize) {
+    this.props.dispatch({ type: 'mailrecovery/changePageIndex', payload: page });
+  }
+
+  pageSizeChangeHandler(current, size) {
+    this.props.dispatch({ type: 'mailrecovery/changePageSize', payload: size });
   }
 
   render() {
+    const { currItems, total, pageSize, pageIndex, dataSource } = this.props;
     return (
-      <Page title='邮件恢复'>
-        <div>
+      <Page title='邮件恢复' contentStyle={{ padding: 0 }}>
+        <div className={Styles.formWrap}>
           <Search onChange={this.fieldChangeHandler.bind(this)} value={this.state.serchValue} ref={(ref) => {this.searchRef = ref }}/>
           <div className={Styles.btnWrap}>
             <Button type="primary" onClick={this.serchList.bind(this)}>搜索</Button>
@@ -98,11 +120,27 @@ class MailRecovery extends React.Component {
             <Button type="primary" onClick={this.reset.bind(this)}>清空查询条件</Button>
           </div>
         </div>
-        <div>
-          <Table dataSource={dataSource} columns={columns} />
+        <div className={Styles.gridWrap}>
+          <Table
+            scroll={{ x: '100%' }}
+            rowKey="mailid"
+            dataSource={dataSource}
+            rowSelection={{
+              selectedRowKeys: currItems.map(item => item.mailid),
+              onChange: this.selectRowHandler.bind(this)
+            }}
+            pagination={{
+              pageSize,
+              total: total,
+              current: pageIndex,
+              onChange: this.pageIndexChange.bind(this),
+              onShowSizeChange: this.pageSizeChangeHandler.bind(this)
+            }}
+            columns={columns}
+          />
         </div>
       </Page>
-    )
+    );
   }
 }
 const WrappedMailRecovery = Form.create()(MailRecovery);

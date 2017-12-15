@@ -37,9 +37,10 @@ const columns = [{
 function DBSQLObjectList({
   queries,
   total,
-  list,
+  list, edit,
   search,
-  currentUser
+  currentUser,currItems,
+  selectItems
 }) {
   function exportData() {
     window.open(`/api/excel/exportdata?TemplateType=0&FuncName=products_export&QueryParameters=${params}&UserId=${currentUser}`);
@@ -49,8 +50,11 @@ function DBSQLObjectList({
       {/*<div className={styles.subtitle}>{currentFullPath && currentFullPath.productsetname}</div>*/}
 
       <Toolbar
+        selectedCount={currItems.length}
         actions={[
-
+          { label: '编辑', handler: edit, single: true },
+          { label: '编辑初始化结构脚本', handler: edit, single: true },
+          { label: '查看初始化数据脚本', handler: edit, single: true }
         ]}
       >
         <Select value={queries.objecttype + ''} onChange={search.bind(null, 'objecttype')}>
@@ -73,6 +77,8 @@ function DBSQLObjectList({
       <DataGrid
         columns={columns}
         dataSource={list}
+        slectRows={currItems}
+        selectRowHandler={selectItems}
         pagination={{
           total,
           current: +queries.pageIndex,
@@ -94,8 +100,14 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     search: (key, value) => {
-      dispatch({ type: 'dbmanager/search', payload: { [key]: value } });
-    }
+      dispatch({type: 'dbmanager/search', payload: {[key]: value}});
+    },
+    edit: function() {
+      dispatch({ type: 'dbmanager/showInfoModals', payload: 'edit' } );
+    },
+    selectItems: (items) => {
+      dispatch({ type: 'dbmanager/putState', payload: { currItems: items } });
+    },
   };
 }
 export default connect(

@@ -13,3 +13,15 @@ export async function getreconvertmaillst(params) {
     body: JSON.stringify(params)
   });
 }
+
+/**
+ *恢复邮件
+ * MailIds
+ * @returns {Promise.<Object>}
+ */
+export async function reconvermail(params) {
+  return request('api/mail/reconvermail', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}

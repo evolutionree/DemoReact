@@ -3,6 +3,7 @@
  */
 import React, { PropTypes } from 'react';
 import { Icon, Input } from 'antd';
+import { connect } from 'dva';
 import UserSelectModal from './UserSelectModal';
 
 class UserSelect extends React.Component {
@@ -27,7 +28,7 @@ class UserSelect extends React.Component {
   showModal() {
     this.setState({
       modalVisible: true
-    })
+    });
   }
 
   hideModal() {
@@ -44,7 +45,12 @@ class UserSelect extends React.Component {
   }
 
   render() {
-   const text = this.props.value;
+    const userDataSourceData = this.props.userDataSourceData;
+   let text = '';
+   const filterArray =  userDataSourceData && userDataSourceData instanceof Array && userDataSourceData.filter(item => item.userid === this.props.value);
+   if (filterArray instanceof Array && filterArray.length === 1) {
+     text = filterArray[0].username;
+   }
    // <Icon type="close-circle" />
     return (
       <div>
@@ -63,4 +69,11 @@ class UserSelect extends React.Component {
   }
 }
 
-export default UserSelect;
+export default connect(
+  state => state.mailrecovery,
+  dispatch => {
+    return {
+
+    };
+  }
+)(UserSelect);
