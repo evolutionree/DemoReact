@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Form, Modal, Radio, InputNumber } from 'antd';
+import { Form, Modal, Radio, InputNumber, Input } from 'antd';
 import _ from 'lodash';
 import SelectFlowUser from './SelectFlowUser';
 import SelectFlowUserMultiple from './SelectFlowUserMultiple';
@@ -95,6 +95,11 @@ class FlowStepModal extends Component {
               rules: [{ validator: this.stepFieldsValidator }]
             })(
               <SelectStepFields entities={this.props.flowEntities} />
+            )}
+          </FormItem>
+          <FormItem label="NodeEvent">
+            {getFieldDecorator('nodeevent')(
+              <Input maxLength={200} placeholder="关联函数名" />
             )}
           </FormItem>
         </Form>}
