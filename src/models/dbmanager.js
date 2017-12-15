@@ -9,7 +9,10 @@ export default {
   state: {
     treeData: null,
     listData: [],
-    queries: {}
+    queries: {},
+    showInfoModals: '',
+    currItems: []
+
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -62,11 +65,20 @@ export default {
         ...payload
       };
     },
+    showInfoModals(state, { payload: showInfoModals }) {
+      return {
+        ...state,
+        showInfoModals,
+        modalPending: false
+      };
+    },
     resetState() {
       return {
         treeData: null,
         listData: [],
-        queries: {}
+        queries: {},
+        showInfoModals: '',
+        currItems: []
       };
     }
   }
