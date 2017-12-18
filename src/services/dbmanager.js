@@ -28,3 +28,21 @@ export async function saveobjectforbase(params) {
     body: JSON.stringify(params)
   });
 }
+
+/*
+ {"ObjId":"c2b59ead-6b63-4e76-a92f-82fc36b1f799","StructOrData":1}
+ 1=初始化结构，2=初始化数据
+ */
+export async function getobjectsql(params) {
+  return request('/api/dbmanage/getobjectsql', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+export async function saveobjectsql(params) {
+  return request('/api/dbmanage/saveobjectsql', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}

@@ -19,18 +19,18 @@ class JsModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      expandJS: this.props.expandJS
+      expandJS: this.props.JsData
     };
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      expandJS: nextProps.expandJS
+      expandJS: nextProps.JsData
     });
   }
 
   handleSubmit = () => {
-
+    this.props.save && this.props.save(this.state.expandJS);
   };
 
   onExpandJSChange = val => {
@@ -40,6 +40,11 @@ class JsModal extends Component {
   render() {
     const { showInfoModals, cancel } = this.props;
     const title = showInfoModals === 'editDataJs' ? '编辑初始化数据脚本' : '查看初始化结构脚本';
+    const props = {};
+    if (showInfoModals === 'viewStructureJs') {
+      props.footer = null;
+    }
+
     return (
       <Modal
         visible={/editDataJs/.test(showInfoModals) || /viewStructureJs/.test(showInfoModals)}
@@ -47,6 +52,7 @@ class JsModal extends Component {
         onCancel={cancel}
         onOk={this.handleSubmit}
         wrapClassName="code-editor-modal"
+        {...props}
       >
         <CodeEditor
           value={this.state.expandJS}
@@ -60,10 +66,11 @@ class JsModal extends Component {
 
 export default connect(
   state => {
-    const { showInfoModals, currItem } = state.dbmanager;
+    const { showInfoModals, currItem, JsData } = state.dbmanager;
     return {
       showInfoModals: showInfoModals,
-      currItem: currItem
+      currItem: currItem,
+      JsData
     };
   },
   dispatch => {
@@ -71,8 +78,8 @@ export default connect(
       cancel() {
         dispatch({ type: 'dbmanager/showInfoModals', payload: '' });
       },
-      save(formData) {
-
+      save(data) {
+        dispatch({ type: 'dbmanager/saveobjectsql', payload: data });
       }
     };
   }
