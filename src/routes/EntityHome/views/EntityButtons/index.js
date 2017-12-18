@@ -41,7 +41,8 @@ function EntityButtons({
   delButton,
   reorderButtons,
   formValue,
-  onEditingDataChange
+  onEditingDataChange,
+  devDel
 }) {
   function handleSortEnd({ oldIndex, newIndex }) {
     const newOrderButtons = arrayMove(buttons, oldIndex, newIndex);
@@ -96,6 +97,7 @@ function EntityButtons({
           </div>
         </Col>
       </Row>
+      <Button onClick={devDel} style={{ display: 'none' }}>开发删除数据</Button>
     </div>
   );
 }
@@ -123,6 +125,17 @@ export default connect(
             dispatch({ type: 'entityButtons/delButton', payload: id });
           }
         });
+      },
+      devDel() { //用户新增按钮时，字段extraData(json字符串) 经常填入的为非JSON格式，导致返回数据非JSON格式字符串，前端解析出错， 增加一个隐藏的按钮，便于前端删数据，让用户重新新增
+        const id = prompt('请输入按钮id', '');
+        if (id != null && id !== '') {
+          Modal.confirm({
+            title: '确定删除该按钮吗',
+            onOk() {
+              dispatch({ type: 'entityButtons/delButton', payload: id });
+            }
+          });
+        }
       },
       reorderButtons(newOrderButtons) {
         dispatch({ type: 'entityButtons/reorderButtons', payload: newOrderButtons });
