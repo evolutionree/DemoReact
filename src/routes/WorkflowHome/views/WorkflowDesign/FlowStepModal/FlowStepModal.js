@@ -50,15 +50,17 @@ class FlowStepModal extends Component {
     const { form } = this.props;
     const { getFieldDecorator, getFieldValue } = form;
     const nodeType = getFieldValue('nodeType');
+    const stepUser = form.getFieldValue('stepUser');
+    const steptypeid = stepUser && stepUser.type;
     return (
       <Modal
-        title="审批人设置"
+        title={steptypeid === -1 ? '节点设置' : '审批人设置'}
         visible={this.props.visible}
         onCancel={this.props.cancel}
         onOk={this.props.confirm}
         wrapClassName="ant-modal-custom-large"
       >
-        {this.props.visible && <Form>
+        {this.props.visible && steptypeid === 1 && <Form>
           <FormItem label="审批节点类型">
             {getFieldDecorator('nodeType', {
               rules: [{ required: true, message: '请选择审批节点类型' }]
@@ -98,7 +100,14 @@ class FlowStepModal extends Component {
             )}
           </FormItem>
           <FormItem label="NodeEvent">
-            {getFieldDecorator('nodeevent')(
+            {getFieldDecorator('funcname')(
+              <Input maxLength={200} placeholder="关联函数名" />
+            )}
+          </FormItem>
+        </Form>}
+        {this.props.visible && steptypeid === -1 && <Form>
+          <FormItem label="NodeEvent">
+            {getFieldDecorator('funcname')(
               <Input maxLength={200} placeholder="关联函数名" />
             )}
           </FormItem>

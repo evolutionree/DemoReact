@@ -335,7 +335,7 @@ export default {
       const { flowSteps } = yield select(state => state.workflowDesign);
       const flowStep = _.find(flowSteps, ['id', stepId]);
       const rawNodeData = flowStep.rawNode || {};
-      const editingFlowStepForm = {
+      let editingFlowStepForm = {
         stepId: flowStep.id,
         nodeType: rawNodeData.nodetype || 0,
         stepUser: {
@@ -344,7 +344,7 @@ export default {
         },
         auditsucc: rawNodeData.auditsucc || 1,
         stepFields: parseColumnConfig(rawNodeData.columnconfig),
-        nodeevent: rawNodeData.nodeevent || ''
+        funcname: rawNodeData.funcname || ''
       };
       yield put({
         type: 'putState',
@@ -467,59 +467,66 @@ export default {
        10	当前审批人所在团队的上级团队及角色(非下级)	0
        11	当前审批人所在团队的上级团队(非下级)	0
        */
-      if (editingFlowStepForm.nodeType === 1) {
-        const users = editingFlowStepForm.stepUser.data.username.split(',');
-        if (users.length < 2) {
-          message.error('请设置多名人员参与会审');
-          return;
-        }
-        const { auditsucc } = editingFlowStepForm;
-        if (!auditsucc) return message.error('请设置会审通过人数');
-        if (auditsucc > users.length) return message.error('会审通过人数不得超过总人数');
-      }
-      if (editingFlowStepForm.nodeType === 0) {
-        const data = editingFlowStepForm.stepUser.data;
-        const type = editingFlowStepForm.stepUser.type;
-        if (data) {
-          const { userid, roleid, deptid, fieldname } = data;
-          if ((type === 5 || type === 6) && !deptid) {
-            message.error('请选择团队');
-            return;
-          } else if ([4, 6, 9, 901, 902, 10, 101, 102].includes(type) && !roleid) {
-            message.error('请选择角色');
-            return;
-          } else if (type === 2 && !userid) {
-            message.error('请选择人员');
-            return;
-          } else if ([802, 112, 902, 102].includes(type) && !fieldname) {
-            message.error('请选择表单用户字段');
+      if (editingFlowStepForm.stepUser.steptypeid === -1) {
+        flowStep.rawNode = {
+          ...flowStep.rawNode,
+          funcname: editingFlowStepForm.funcname
+        };
+      } else {
+        if (editingFlowStepForm.nodeType === 1) {
+          const users = editingFlowStepForm.stepUser.data.username.split(',');
+          if (users.length < 2) {
+            message.error('请设置多名人员参与会审');
             return;
           }
+          const { auditsucc } = editingFlowStepForm;
+          if (!auditsucc) return message.error('请设置会审通过人数');
+          if (auditsucc > users.length) return message.error('会审通过人数不得超过总人数');
         }
-      }
-
-      const fields = editingFlowStepForm.stepFields;
-      const uniqCollect = {};
-      if (fields && fields.length) {
-        for (let i = 0; i < fields.length; i += 1) {
-          const item = fields[i];
-          if (!item.entityId) return message.error('请设置实体');
-          if (!item.fieldId) return message.error('请设置字段');
-          if (uniqCollect[item.entityId + item.fieldId]) return message.error('不可添加相同字段');
-          uniqCollect[item.entityId + item.fieldId] = 1;
+        if (editingFlowStepForm.nodeType === 0) {
+          const data = editingFlowStepForm.stepUser.data;
+          const type = editingFlowStepForm.stepUser.type;
+          if (data) {
+            const { userid, roleid, deptid, fieldname } = data;
+            if ((type === 5 || type === 6) && !deptid) {
+              message.error('请选择团队');
+              return;
+            } else if ([4, 6, 9, 901, 902, 10, 101, 102].includes(type) && !roleid) {
+              message.error('请选择角色');
+              return;
+            } else if (type === 2 && !userid) {
+              message.error('请选择人员');
+              return;
+            } else if ([802, 112, 902, 102].includes(type) && !fieldname) {
+              message.error('请选择表单用户字段');
+              return;
+            }
+          }
         }
-      }
 
-      flowStep.rawNode = {
-        ...flowStep.rawNode,
-        auditnum: editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.stepUser.data.userid.split(',').length,
-        auditsucc: editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.auditsucc,
-        nodetype: editingFlowStepForm.nodeType,
-        ruleconfig: editingFlowStepForm.stepUser.data,
-        steptypeid: editingFlowStepForm.stepUser.type,
-        columnconfig: formatFieldsToColumnConfig(fields),
-        nodeevent: editingFlowStepForm.nodeevent
-      };
+        const fields = editingFlowStepForm.stepFields;
+        const uniqCollect = {};
+        if (fields && fields.length) {
+          for (let i = 0; i < fields.length; i += 1) {
+            const item = fields[i];
+            if (!item.entityId) return message.error('请设置实体');
+            if (!item.fieldId) return message.error('请设置字段');
+            if (uniqCollect[item.entityId + item.fieldId]) return message.error('不可添加相同字段');
+            uniqCollect[item.entityId + item.fieldId] = 1;
+          }
+        }
+
+        flowStep.rawNode = {
+          ...flowStep.rawNode,
+          auditnum: editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.stepUser.data.userid.split(',').length,
+          auditsucc: editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.auditsucc,
+          nodetype: editingFlowStepForm.nodeType,
+          ruleconfig: editingFlowStepForm.stepUser.data,
+          steptypeid: editingFlowStepForm.stepUser.type,
+          columnconfig: formatFieldsToColumnConfig(fields),
+          funcname: editingFlowStepForm.funcname
+        };
+      }
       yield put({
         type: 'putState',
         payload: {
@@ -538,7 +545,7 @@ export default {
       try {
         const nodeIdCollect = {};
         const nodes = flowSteps.map(({ id, name, rawNode }) => {
-          const { nodetype, steptypeid, ruleconfig, columnconfig, auditnum, auditsucc, nodeevent } = rawNode;
+          const { nodetype, steptypeid, ruleconfig, columnconfig, auditnum, auditsucc, funcname } = rawNode;
           const newNodeId = nodeIdCollect[id] = uuid.v1();
           return {
             nodename: name,
@@ -549,7 +556,7 @@ export default {
             ruleconfig,
             columnconfig,
             auditsucc,
-            nodeevent
+            nodeevent: funcname
           };
         });
         const lines = flowPaths.map(path => ({

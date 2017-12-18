@@ -180,7 +180,16 @@ class FlowNode extends Component {
     }
 
     if (nodeData && nodeData.steptypeid === END_NODE) {
-      return <div className={styles.START}>{title}</div>;
+      const styl = {
+        width: '100px',
+        lineHeight: '32px'
+      };
+      return (
+        <div className={styles.START} style={styl}>
+          {title}
+          <Icon type="setting" onClick={this.props.openStepModal} style={{ marginLeft: '3px', cursor: 'pointer' }} />
+        </div>
+      );
     }
 
     if (nodeData && nodeData.steptypeid === START_NODE) {
