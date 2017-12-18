@@ -14,14 +14,16 @@ class UserSelectModal extends React.Component {
     limit: React.PropTypes.number,
     onOk: React.PropTypes.func,
     onCancel: React.PropTypes.func,
-    filterUsers: React.PropTypes.array
+    filterUsers: React.PropTypes.array,
+    isSearchLocal: React.PropTypes.bool
   };
   static defaultProps = {
     visible: false,
     selectedUsers: [],
     allUsers: [],
     limit: 1,
-    filterUsers: []
+    filterUsers: [],
+    isSearchLocal: false
   };
 
   constructor(props) {
@@ -75,15 +77,15 @@ class UserSelectModal extends React.Component {
 
   onSearch = (keyword) => {
     console.log(this.props.allUsers);
-    if (!this.props.allUsers || this.props.allUsers.length === 0) {
+    if (this.props.isSearchLocal) {
+      // 这里执行本地搜索
+      const retList = this.props.allUsers.filter(item => item.username.indexOf(keyword) >= 0);
+      this.setState({ searchName: keyword, userList: retList });
+    } else {
       this.setState({
         searchName: keyword,
         currentSelected: []
       }, this.fetchUserList);
-    } else {
-      // 这里执行本地搜索
-      let retList = this.props.allUsers.filter(item => item.username.indexOf(keyword) >= 0);
-      this.setState({ searchName: keyword, userList: retList });
     }
 
   };
@@ -128,7 +130,7 @@ class UserSelectModal extends React.Component {
   };
 
   render() {
-    const { visible, onCancel, limit, allUsers, filterUsers } = this.props;
+    const { visible, onCancel, limit, allUsers, filterUsers, isSearchLocal } = this.props;
     let { currentSelected, userList } = this.state;
     userList = userList.filter(u => {
       return filterUsers.indexOf(u.userid) === -1;
@@ -143,7 +145,7 @@ class UserSelectModal extends React.Component {
         wrapClassName={limit !== 1 ? 'ant-modal-custom-large' : ''}
       >
         <Toolbar>
-          <DepartmentSelect value={this.state.deptId} onChange={this.onDeptChange} width="200px" />
+          {!isSearchLocal && <DepartmentSelect value={this.state.deptId} onChange={this.onDeptChange} width="200px" />}
           <Search
             width="200px"
             value={this.state.searchName}

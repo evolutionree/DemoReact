@@ -11,10 +11,12 @@ class CaseUserSelect extends React.Component {
     onChange: PropTypes.func,
     users: PropTypes.array,
     limit: PropTypes.number,
-    disabled: PropTypes.bool
+    disabled: PropTypes.bool,
+    isFreeFlow: PropTypes.bool
   };
   static defaultProps = {
-    disabled: false
+    disabled: false,
+    isFreeFlow: true
   };
 
   constructor(props) {
@@ -93,6 +95,7 @@ class CaseUserSelect extends React.Component {
           limit={limit}
           onOk={this.handleOk}
           onCancel={this.hideModal}
+          isSearchLocal={!this.props.isFreeFlow}
         />
       </div>
     );
