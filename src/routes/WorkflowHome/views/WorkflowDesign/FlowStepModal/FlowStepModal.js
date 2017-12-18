@@ -60,7 +60,7 @@ class FlowStepModal extends Component {
         onOk={this.props.confirm}
         wrapClassName="ant-modal-custom-large"
       >
-        {this.props.visible && steptypeid === 1 && <Form>
+        {this.props.visible && steptypeid !== -1 && <Form>
           <FormItem label="审批节点类型">
             {getFieldDecorator('nodeType', {
               rules: [{ required: true, message: '请选择审批节点类型' }]
