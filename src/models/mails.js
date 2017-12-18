@@ -351,6 +351,9 @@ export default {
         }
       });
       yield put({ type: 'queryMailList' });
+      if (catalogType === 'my') {
+        yield put({ type: 'updateMyCatalogData' });
+      }
     },
     *saveCatalog({ payload: data }, { call, put }) {
       const isEdit = !!data.recid;
