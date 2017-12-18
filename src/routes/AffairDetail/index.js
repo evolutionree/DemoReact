@@ -16,7 +16,7 @@ const operates = [
   { label: '拒绝', key: 'reject', id: 0 },
   { label: '退回', key: 'reback', id: 2 },
   { label: '中止', key: 'terminate', id: 3 },
-  { label: '重新发起', key: 'launch', id: 4 }
+  { label: '重新发起', key: 'lunch', id: 4 }
 ];
 
 class AffairDetail extends Component {
