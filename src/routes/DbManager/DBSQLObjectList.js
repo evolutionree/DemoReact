@@ -103,6 +103,9 @@ function mapDispatchToProps(dispatch) {
     edit: function(type, currentItem) {
       dispatch({ type: 'dbmanager/showInfoModals', payload: type });
       dispatch({ type: 'dbmanager/putState', payload: { currItem: currentItem } });
+      if (type === 'editDataJs' || type === 'viewStructureJs') {
+        dispatch({ type: 'dbmanager/getobjectsql', payload: { type, currItem: currentItem } });
+      }
     }
   };
 }

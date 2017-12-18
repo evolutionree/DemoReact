@@ -2,7 +2,7 @@
  * Created by 0291 on 2017/12/7.
  */
 import { message } from 'antd';
-import { listDirs, listObjects, saveobjectforbase } from '../services/dbmanager';
+import { listDirs, listObjects, saveobjectforbase, getobjectsql, saveobjectsql } from '../services/dbmanager';
 
 export default {
   namespace: 'dbmanager',
@@ -13,7 +13,8 @@ export default {
       objecttype: 0
     },
     showInfoModals: '',
-    currItem: {}
+    currItem: {},
+    JsData: ''
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -77,6 +78,27 @@ export default {
       } catch (e) {
         message.error(e.message || '获取数据失败');
       }
+    },
+    *getobjectsql({ payload: { type, currItem } }, { select, put, call }) {
+      const params = { ObjId: currItem.id, StructOrData: type === 'editDataJs' ? 2 : 1 };
+      try {
+        const { data } = yield call(getobjectsql, params);
+        yield put({ type: 'putState', payload: { JsData: data } });
+      } catch (e) {
+        message.error(e.message || '获取数据失败');
+      }
+    },
+    *saveobjectsql({ payload: data }, { select, put, call }) {
+      let { currItem } = yield select(state => state.dbmanager);
+      const params = { ObjId: currItem.id, StructOrData: 2, SqlText: data };
+      try {
+        yield call(saveobjectsql, params);
+        yield put({ type: 'showInfoModals', payload: '' });
+        yield put({ type: 'queryListData' });
+        message.success('更新成功');
+      } catch (e) {
+        message.error(e.message || '获取数据失败');
+      }
     }
   },
   reducers: {
@@ -101,7 +123,8 @@ export default {
           objecttype: 0
         },
         showInfoModals: '',
-        currItem: {}
+        currItem: {},
+        JsData: ''
       };
     }
   }
