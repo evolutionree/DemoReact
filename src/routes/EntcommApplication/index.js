@@ -49,7 +49,7 @@ function EntcommList({
   function openAdd() {
     dispatch({
       type: 'entcommApplication/showModals',
-      payload: 'recordAdd'
+      payload: 'add'
     });
   }
   function extraToolbarClickHandler(item) {

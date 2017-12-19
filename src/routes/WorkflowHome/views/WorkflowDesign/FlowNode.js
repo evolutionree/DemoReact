@@ -9,7 +9,7 @@ const END_NODE = -1;
 
 class FlowNode extends Component {
   static propTypes = {
-    id: PropTypes.number,
+    id: PropTypes.string,
     title: PropTypes.node,
     nodeData: PropTypes.object,
     changeStepName: PropTypes.func,
@@ -124,7 +124,7 @@ class FlowNode extends Component {
       return <div style={{ border: '1px dashed red' }}>点击这里配置审批人</div>;
     }
     const { steptypeid, ruleconfig, nodetype } = nodeData;
-    let { username, rolename, deptname } = ruleconfig;
+    let { username, rolename, deptname, fieldlabel } = ruleconfig;
     if (nodetype === 1) { // 会审
       return (
         <div>
@@ -136,9 +136,17 @@ class FlowNode extends Component {
     if (steptypeid === 1) return <div>让用户自己选择审批人</div>;
     if (steptypeid === 7) return <div>流程发起人</div>;
     if (steptypeid === 8 || steptypeid === 9) {
-      deptname = '当前审批人所在团队';
-    } else if (steptypeid === 10 || steptypeid === 11) {
-      deptname = '当前审批人所在团队的上级团队';
+      deptname = '上一步骤处理人所在团队';
+    } else if (steptypeid === 11 || steptypeid === 10) {
+      deptname = '上一步骤处理人所在团队的上级团队';
+    } else if (steptypeid === 801 || steptypeid === 901) {
+      deptname = '流程发起人所在团队';
+    } else if (steptypeid === 111 || steptypeid === 101) {
+      deptname = '流程发起人所在团队的上级团队';
+    } else if (steptypeid === 802 || steptypeid === 902) {
+      deptname = `表单中用户(${fieldlabel || '--'})所在团队`;
+    } else if (steptypeid === 112 || steptypeid === 102) {
+      deptname = `表单中用户(${fieldlabel || '--'})所在团队的上级团队`;
     }
     return (
       <div>
@@ -158,14 +166,33 @@ class FlowNode extends Component {
     );
   };
 
-  render() {
-    const { id, title } = this.props;
+  renderHelperNode = () => {
+    return (
+      <div style={{ width: '30px', height: '30px', background: '#333' }}>&nbsp;</div>
+    );
+  };
 
-    if (id === END_NODE) {
-      return <div className={styles.START}>{title}</div>;
+  render() {
+    const { id, title, nodeData } = this.props;
+
+    if (/__helper/.test(id)) {
+      return this.renderHelperNode();
     }
 
-    if (id === START_NODE) {
+    if (nodeData && nodeData.steptypeid === END_NODE) {
+      const styl = {
+        width: '100px',
+        lineHeight: '32px'
+      };
+      return (
+        <div className={styles.START} style={styl}>
+          {title}
+          <Icon type="setting" onClick={this.props.openStepModal} style={{ marginLeft: '3px', cursor: 'pointer' }} />
+        </div>
+      );
+    }
+
+    if (nodeData && nodeData.steptypeid === START_NODE) {
       return (
         <div className={styles.REVIEW}>
           {this.renderStartNodeTitle()}

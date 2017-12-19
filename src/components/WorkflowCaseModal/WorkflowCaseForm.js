@@ -24,6 +24,7 @@ class WorkflowCaseForm extends Component {
 
   componentDidMount() {
     this.fetchAllUsers();
+    this.initFormData();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -76,7 +77,8 @@ class WorkflowCaseForm extends Component {
   render() {
     const { form, caseNodes, selectedNode } = this.props;
     const { nodeinfo, approvers } = selectedNode || {};
-    const isFreeFlow = nodeinfo && nodeinfo.flowtype === 0; // 自由流程
+    const isFreeFlow = !!(nodeinfo && nodeinfo.flowtype === 0); // 自由流程
+    const isFreeUser = isFreeFlow || (nodeinfo && nodeinfo.steptypeid === 1); // 自由选审批人
     return (
       <div>
         {caseNodes.length > 1 && (
@@ -93,6 +95,7 @@ class WorkflowCaseForm extends Component {
               rules: [{ validator: this.checkHandleUser }, { required: true }]
             })(
               <CaseUserSelect
+                isFreeUser={isFreeUser}
                 users={isFreeFlow ? this.state.allUsers : approvers}
                 disabled={nodeinfo.nodetype === 1}
                 filterUsers={form.getFieldValue('copyuser')}
@@ -105,6 +108,7 @@ class WorkflowCaseForm extends Component {
               initialValue: []
             })(
               <CaseUserSelect
+                isFreeUser
                 users={this.state.allUsers}
                 filterUsers={form.getFieldValue('handleuser')}
                 limit={0}

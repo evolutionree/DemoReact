@@ -50,7 +50,7 @@ function EntcommList({
   function openAdd() {
     dispatch({
       type: 'entcommList/showModals',
-      payload: 'recordAdd'
+      payload: 'add'
     });
   }
 
@@ -179,7 +179,7 @@ function EntcommList({
         {shouldShowExport() && <Button onClick={exportData}>导出</Button>}
         {
           extraButtonData && extraButtonData instanceof Array && extraButtonData.map((item, index) => {
-            return <Button onClick={extraButtonClickHandler} key={index}>{item.title}</Button>;
+            return <Button onClick={extraButtonClickHandler.bind(this, item)} key={index}>{item.title}</Button>;
           })
         }
         <Toolbar.Right>

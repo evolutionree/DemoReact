@@ -7,6 +7,7 @@ class FlowNodeContainer extends Component {
     id: PropTypes.string.isRequired,
     x: PropTypes.number,
     y: PropTypes.number,
+    className: PropTypes.string,
     children: PropTypes.node
   };
   componentDidMount() {
@@ -17,7 +18,7 @@ class FlowNodeContainer extends Component {
     return (
       <div
         id={id}
-        className={styles.flownode}
+        className={styles.flownode + ' ' + this.props.className}
         style={{ left: x + 'px', top: y + 'px' }}
       >
         {children}

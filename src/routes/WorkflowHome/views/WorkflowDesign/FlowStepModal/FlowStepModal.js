@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Form, Modal, Radio, InputNumber } from 'antd';
+import { Form, Modal, Radio, InputNumber, Input } from 'antd';
 import _ from 'lodash';
 import SelectFlowUser from './SelectFlowUser';
 import SelectFlowUserMultiple from './SelectFlowUserMultiple';
@@ -10,7 +10,7 @@ class SelectFlowUserAll extends Component {
   render() {
     const { nodeType, value, onChange } = this.props;
     return nodeType === 0 ? (
-      <SelectFlowUser value={value} onChange={onChange} />
+      <SelectFlowUser value={value} onChange={onChange} entities={this.props.entities} />
     ) : (
       <SelectFlowUserMultiple value={value} onChange={onChange} />
     );
@@ -50,15 +50,17 @@ class FlowStepModal extends Component {
     const { form } = this.props;
     const { getFieldDecorator, getFieldValue } = form;
     const nodeType = getFieldValue('nodeType');
+    const stepUser = form.getFieldValue('stepUser');
+    const steptypeid = stepUser && stepUser.type;
     return (
       <Modal
-        title="审批人设置"
+        title={steptypeid === -1 ? '节点设置' : '审批人设置'}
         visible={this.props.visible}
         onCancel={this.props.cancel}
         onOk={this.props.confirm}
         wrapClassName="ant-modal-custom-large"
       >
-        {this.props.visible && <Form>
+        {this.props.visible && steptypeid !== -1 && <Form>
           <FormItem label="审批节点类型">
             {getFieldDecorator('nodeType', {
               rules: [{ required: true, message: '请选择审批节点类型' }]
@@ -73,7 +75,7 @@ class FlowStepModal extends Component {
             {getFieldDecorator('stepUser', {
               rules: [{ required: true, message: '请设置审批人' }]
             })(
-              <SelectFlowUserAll nodeType={nodeType} />
+              <SelectFlowUserAll nodeType={nodeType} entities={this.props.flowEntities} />
             )}
           </FormItem>
           {nodeType === 1 && <FormItem label="设置会审通过人数">
@@ -95,6 +97,18 @@ class FlowStepModal extends Component {
               rules: [{ validator: this.stepFieldsValidator }]
             })(
               <SelectStepFields entities={this.props.flowEntities} />
+            )}
+          </FormItem>
+          <FormItem label="NodeEvent">
+            {getFieldDecorator('funcname')(
+              <Input maxLength={200} placeholder="关联函数名" />
+            )}
+          </FormItem>
+        </Form>}
+        {this.props.visible && steptypeid === -1 && <Form>
+          <FormItem label="NodeEvent">
+            {getFieldDecorator('funcname')(
+              <Input maxLength={200} placeholder="关联函数名" />
             )}
           </FormItem>
         </Form>}

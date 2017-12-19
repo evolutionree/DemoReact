@@ -18,14 +18,16 @@ class UserSelectModal extends React.Component {
     onCancel: React.PropTypes.func,
     multiple: React.PropTypes.bool,
     title: React.PropTypes.string,
-    modalPending: React.PropTypes.bool
+    modalPending: React.PropTypes.bool,
+    isRequiredSelect: React.PropTypes.bool //必须选择用户
   };
   static defaultProps = {
     visible: false,
     selectedUsers: [],
     multiple: true,
     title: '选择人员',
-    modalPending: false
+    modalPending: false,
+    isRequiredSelect: false
   };
 
   constructor(props) {
@@ -91,9 +93,9 @@ class UserSelectModal extends React.Component {
   };
 
   handleOk = () => {
-    // if (!this.state.currentSelected.length) {
-    //   return message.error('请选择人员');
-    // }
+    if (this.props.isRequiredSelect && !this.state.currentSelected.length) {
+      return message.error('请选择人员');
+    }
     this.props.onOk(this.state.currentSelected);
   };
 
@@ -104,7 +106,7 @@ class UserSelectModal extends React.Component {
   onSearch = (keyword) => {
     this.setState({
       searchName: keyword,
-      // currentSelected: []
+      //currentSelected: []
     }, this.fetchUserList);
   };
 

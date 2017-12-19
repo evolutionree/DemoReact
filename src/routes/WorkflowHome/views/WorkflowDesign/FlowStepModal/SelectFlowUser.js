@@ -1,7 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { Radio, Select } from 'antd';
 import classnames from 'classnames';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { queryRoles } from '../../../../../services/role';
 import SelectNumber from '../../../../../components/SelectNumber';
 import SelectUser from '../../../../../components/DynamicForm/controls/SelectUser';
@@ -13,11 +13,10 @@ const Option = Select.Option;
 const SelectRole = ({ value, value_name, onChange, isReadOnly, allRoles }) => {
   let val = value ? value.split(',') : [];
   function onSelectChange(arrVal) {
-    debugger;
     onChange(arrVal.join(','));
   }
   return (
-    <div className={styles.selectrole} style={{ width: '240px' }} title={value_name}>
+    <div className={styles.selectrole} style={{ width: '260px' }} title={value_name}>
       <div className={classnames([styles.selectrolename, {
         [styles.empty]: !value, [styles.disabled]: isReadOnly === 1
       }])}>{value_name || '请选择角色'}</div>
@@ -33,8 +32,32 @@ const SelectRole = ({ value, value_name, onChange, isReadOnly, allRoles }) => {
         ))}
       </Select>
     </div>
-  )
+  );
 };
+
+const SelectField = ({ value, onChange, disabled, fields }) => {
+  function onSelectChange(fieldname) {
+    if (!fieldname) {
+      return onChange();
+    }
+    const fieldlabel = _.find(fields, ['fieldname', fieldname]).displayname;
+    onChange(fieldname, fieldlabel);
+  }
+  return (
+    <Select
+      value={value}
+      onChange={onSelectChange}
+      disabled={disabled}
+      placeholder="请选择表单用户字段"
+      style={{ width: '260px' }}
+    >
+      {fields.map(item => (
+        <Option key={item.fieldname}>{item.displayname}</Option>
+      ))}
+    </Select>
+  );
+};
+
 /**
  * 1	让用户自己选择审批人	0
   2	指定审批人	0
@@ -52,6 +75,7 @@ const SelectRole = ({ value, value_name, onChange, isReadOnly, allRoles }) => {
  */
 class SelectFlowUser extends Component {
   static propTypes = {
+    entities: PropTypes.array,
     value: PropTypes.shape({
       type: PropTypes.number.isRequired,
       data: PropTypes.object
@@ -106,13 +130,18 @@ class SelectFlowUser extends Component {
 
   render() {
     const { type, data } = this.props.value;
-    console.log(data);
     const radioStyle = {
-      display: 'block'
+      display: 'block',
+      marginRight: '700px'
     };
+    let userFields = [];
+    const { entities } = this.props;
+    if (entities && entities[0]) {
+      userFields = entities[0].fields.filter(field => [25, 1002, 1003, 1006].indexOf(field.controltype) !== -1);
+    }
     return (
-      <div>
-        <Radio.Group onChange={this.onRadioChange}>
+      <div className={styles.selectFlowUser}>
+        <Radio.Group onChange={this.onRadioChange} style={{ width: '100%' }}>
           <Radio style={radioStyle} checked={_.includes([1], type)} value={[1]}>让用户自己选择审批人</Radio>
           <Radio style={radioStyle} checked={_.includes([2], type)} value={[2]}>
             指定审批人
@@ -127,6 +156,7 @@ class SelectFlowUser extends Component {
             }}
             isReadOnly={type === 2 ? 0 : 1}
             multiple={1}
+            style={{ width: '260px' }}
           />
           <Radio style={radioStyle} checked={_.includes([4], type)} value={[4]}>
             指定审批人的角色
@@ -149,60 +179,78 @@ class SelectFlowUser extends Component {
             isReadOnly={type === 4 ? 0 : 1}
             allRoles={this.state.allRoles}
           />
-          {/* 5	指定审批人所在团队(特定)
-              8	当前审批人所在团队(非下级)
-              11	当前审批人所在团队的上级团队(非下级)	 */}
-          <Radio style={radioStyle} checked={_.includes([5, 8, 11], type)} value={[5, 8, 11]}>
+          {/*5 指定审批人所在团队(特定)*/}
+          {/*8 当前审批人所在团队(非下级)*/}
+          {/*11 当前审批人所在团队的上级团队(非下级)	*/}
+          <Radio style={radioStyle} checked={_.includes([5, 8, 801, 802, 11, 111, 112], type)} value={[5, 8, 801, 802, 11, 111, 112]}>
             指定审批人所在团队
           </Radio>
           <SelectNumber
-            value={_.includes([5, 8, 11], type) ? type : 5}
+            value={_.includes([5, 8, 801, 802, 11, 111, 112], type) ? type : 5}
             onChange={this.onTypeChange}
-            disabled={!_.includes([5, 8, 11], type)}
-            style={{ width: '240px' }}
+            disabled={!_.includes([5, 8, 801, 802, 11, 111, 112], type)}
+            style={{ width: '260px' }}
           >
-            <Option key="5">指定审批人所在团队(特定)</Option>
-            <Option key="8">当前审批人所在团队(非下级)</Option>
-            <Option key="11">当前审批人所在团队的上级团队(非下级)</Option>
+            <Option key="5">特定团队</Option>
+            <Option key="8">上一步骤处理人所在团队</Option>
+            <Option key="11">上一步骤处理人所在团队的上级团队</Option>
+            <Option key="801">流程发起人所在团队</Option>
+            <Option key="111">流程发起人所在团队的上级团队</Option>
+            <Option key="802">表单中用户所在团队</Option>
+            <Option key="112">表单中用户所在团队的上级团队</Option>
           </SelectNumber>
-          <DepartmentSelect
+          {type === 5 && <DepartmentSelect
             multiple
             value={type === 5 ? (data.deptid ? data.deptid.split(',') : []) : []}
             onChange={(values, labels) => {
               this.onDataChange({ deptid: values.join(','), deptname: labels.join(',') });
             }}
             disabled={type !== 5}
-            width="300px"
-          />
+            width="260px"
+          />}
+          {(type === 802 || type === 112) && <SelectField
+            value={(type === 802 || type === 112) ? data.fieldname : ''}
+            onChange={(fieldname, fieldlabel) => this.onDataChange({ fieldname, fieldlabel })}
+            fields={userFields}
+          />}
           {/* 6	指定审批人所在团队及角色(特定)
               9	当前审批人所在团队及角色(非下级)
               10	当前审批人所在团队的上级团队及角色(非下级)	 */}
-          <Radio style={radioStyle} checked={_.includes([6, 9, 10], type)} value={[6, 9, 10]}>
+          <Radio style={radioStyle} checked={_.includes([6, 9, 901, 902, 10, 101, 102], type)} value={[6, 9, 901, 902, 10, 101, 102]}>
             指定审批人所在团队及角色
           </Radio>
           <SelectNumber
-            value={_.includes([6, 9, 10], type) ? type : 6}
+            value={_.includes([6, 9, 901, 902, 10, 101, 102], type) ? type : 6}
             onChange={this.onTypeChange}
-            disabled={!_.includes([6, 9, 10], type)}
-            style={{ width: '240px' }}
+            disabled={!_.includes([6, 9, 901, 902, 10, 101, 102], type)}
+            style={{ width: '260px' }}
           >
-            <Option key="6">指定审批人所在团队(特定)</Option>
-            <Option key="9">当前审批人所在团队(非下级)</Option>
-            <Option key="10">当前审批人所在团队的上级团队(非下级)</Option>
+            <Option key="6">特定团队</Option>
+            <Option key="9">上一步骤处理人所在团队</Option>
+            <Option key="10">上一步骤处理人所在团队的上级团队</Option>
+            <Option key="901">流程发起人所在团队</Option>
+            <Option key="101">流程发起人所在团队的上级团队</Option>
+            <Option key="902">表单中用户所在团队</Option>
+            <Option key="102">表单中用户所在团队的上级团队</Option>
           </SelectNumber>
-          <DepartmentSelect
+          {type === 6 && <DepartmentSelect
             multiple
             value={type === 6 ? (data.deptid ? data.deptid.split(',') : []) : []}
             onChange={(values, labels) => {
               this.onDataChange({ deptid: values.join(','), deptname: labels.join(',') });
             }}
             disabled={type !== 6}
-            width="300px"
-          />
+            width="260px"
+          />}
+          {(type === 902 || type === 102) && <SelectField
+            value={(type === 902 || type === 102) ? data.fieldname : ''}
+            onChange={(fieldname, fieldlabel) => this.onDataChange({ fieldname, fieldlabel })}
+            fields={userFields}
+          />}
           <SelectRole
             placeholder="请选择角色"
-            value={_.includes([6, 9, 10], type) ? data.roleid : ''}
-            value_name={_.includes([6, 9, 10], type) ? data.rolename : ''}
+            value={_.includes([6, 9, 901, 902, 10, 101, 102], type) ? data.roleid : ''}
+            value_name={_.includes([6, 9, 901, 902, 10, 101, 102], type) ? data.rolename : ''}
             onChange={(values) => {
               if (values) {
                 const labels = values.split(',').map(id => _.find(this.state.allRoles, ['id', id]).name);
@@ -214,7 +262,7 @@ class SelectFlowUser extends Component {
                 this.onDataChange({ roleid: '', rolename: '' });
               }
             }}
-            isReadOnly={_.includes([6, 9, 10], type) ? 0 : 1}
+            isReadOnly={_.includes([6, 9, 901, 902, 10, 101, 102], type) ? 0 : 1}
             allRoles={this.state.allRoles}
           />
           <Radio style={radioStyle} checked={_.includes([7], type)} value={[7]}>流程发起人</Radio>

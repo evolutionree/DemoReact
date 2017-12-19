@@ -25,6 +25,18 @@ export async function queryFlowJSON(flowid) {
 }
 
 /**
+ * 获取流程图json数据
+ * @param flowid
+ * @returns {Promise.<Object>}
+ */
+export async function queryFlowJSONv2(flowid) {
+  return request('/api/workflow/getnodelinesinfo', {
+    method: 'POST',
+    body: JSON.stringify({ flowid })
+  });
+}
+
+/**
  * 获取流程分支条件
  * @param ruleid
  * @returns {Promise.<Object>}
@@ -59,7 +71,7 @@ export async function queryBranchRule(ruleid) {
  * @returns {Promise.<Object>}
  */
 export async function saveFlowJSON(params) {
-  return request('/api/workflow/nodelinesconfig', {
+  return request('/api/workflow/savenodesconfig', {
     method: 'POST',
     body: JSON.stringify(params)
   });
@@ -137,7 +149,7 @@ export async function unDeleteWorkFlow(params){
  * @returns {Promise.<Object>}
  */
 export async function queryNextNodeData(caseId) {
-  return request('/api/workflow/nextnodedata', {
+  return request('/api/workflow/getnextnode', {
     method: 'POST',
     body: JSON.stringify({ caseId })
   });
@@ -228,6 +240,53 @@ export async function auditCaseItem(params) {
   return request('/api/workflow/auditcaseitem', {
     method: 'POST',
     body: JSON.stringify(params)
+  });
+}
+
+/**
+ * 选人之后，提交审批意见和审批人数据等(新接口)
+ * @param params
+ * {
+    "CaseId": "46b47980-0d47-4b1f-8ee3-22e947cb2b36",
+    "NodeId": "xxx-xxx",
+    "NodeNum":9, // nodenum,handleuser都为-1 表示自由流程关闭
+    "ChoiceStatus": 1, // 审批操作类型， 0拒绝 1通过 2退回 3中止 4编辑发起
+    "Suggest": "xxx",
+    "HandleUser":"1",
+    "CopyUser": "1",
+    "CaseData": {} // 流程数据，字典对象
+  }
+ * @returns {Promise.<Object>}
+ */
+export async function submitCaseItem(params) {
+  return request('/api/workflow/submitaudit', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
+ * 预提交
+ * @param params
+ * @returns {Promise.<Object>}
+ */
+export async function submitPreCaseItem(params) {
+  return request('/api/workflow/submitpreaudit', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}
+
+
+/**
+ * 获取审批详情
+ * @param caseId
+ * @returns {Promise.<Object>}
+ */
+export async function queryCaseDetail(caseId) {
+  return request('/api/workflow/casedetail', {
+    method: 'POST',
+    body: JSON.stringify({ caseId })
   });
 }
 

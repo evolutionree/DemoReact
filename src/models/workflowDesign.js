@@ -1,6 +1,7 @@
 import { message } from 'antd';
-import _ from 'lodash';
-import { queryFlowJSON, saveFlowJSON } from '../services/workflow';
+import * as _ from 'lodash';
+import uuid from 'uuid';
+import { queryFlowJSONv2, saveFlowJSON } from '../services/workflow';
 import { queryFields } from '../services/entity';
 
 // 654209d5-3506-48eb-b5d2-0e0ea2ba7c84
@@ -8,7 +9,7 @@ import { queryFields } from '../services/entity';
 /**
  * 格式化服务端数据，并为节点初始化坐标
  * @param data { lines, nodes }
- * @returns {{flowNodes: Array, flowLines: Array}}
+ * @returns {{flowSteps: Array, flowPaths: Array, flowStepsByIdCollection: Object}}
  */
 function parseFlowJSON(data) {
   if (!data.nodes || !data.nodes.length) {
@@ -16,12 +17,13 @@ function parseFlowJSON(data) {
   }
 
   const nodesByIdCollection = data.nodes.reduce((collect, curr) => {
-    return { ...collect, [curr.nodenum]: curr };
+    return { ...collect, [curr.nodeid]: curr };
   }, {});
   const nodesByPositionCollection = {};
 
   // 用 position 标记层级
-  nodesByIdCollection[0].position = 0;
+  const startNode = _.find(data.nodes, node => node.steptypeid === 0);
+  startNode.position = 0;
   let restLines = data.lines;
   while (restLines.length) {
     restLines = loopRestLines(restLines);
@@ -78,7 +80,7 @@ function parseFlowJSON(data) {
   function loopRestLines(lines) {
     const nextRest = [...lines];
     lines.forEach((line, index) => {
-      const { fromnode: fromId, endnode: endId } = line;
+      const { fromnodeid: fromId, tonodeid: endId } = line;
       const fromNode = nodesByIdCollection[fromId];
       const endNode = nodesByIdCollection[endId];
       if (fromNode.position === undefined) return;
@@ -91,15 +93,15 @@ function parseFlowJSON(data) {
   }
 
   const flowSteps = data.nodes.map(item => ({
-    id: item.nodenum,
+    id: item.nodeid,
     name: item.nodename,
     x: item.x,
     y: item.y,
     rawNode: item
   }));
   const flowPaths = data.lines.map(item => ({
-    from: item.fromnode,
-    to: item.endnode,
+    from: item.fromnodeid,
+    to: item.tonodeid,
     ruleid: item.ruleid
   })).map(markBranch);
   const flowStepsByIdCollection = flowSteps.reduce((collect, curr) => {
@@ -108,11 +110,14 @@ function parseFlowJSON(data) {
   return { flowSteps, flowPaths, flowStepsByIdCollection };
 }
 function getInitialFlowJSON() {
+  const startNodeId = uuid.v1();
+  const endNodeId = uuid.v1();
+  const nextNodeId = uuid.v1();
   return {
     nodes: [
       {
         nodename: '发起审批',
-        nodenum: 0,
+        nodeid: startNodeId,
         auditnum: 0,
         nodetype: 0,
         steptypeid: 0,
@@ -122,7 +127,7 @@ function getInitialFlowJSON() {
       },
       {
         nodename: '结束审批',
-        nodenum: -1,
+        nodeid: endNodeId,
         auditnum: 0,
         nodetype: 0,
         steptypeid: -1,
@@ -132,7 +137,7 @@ function getInitialFlowJSON() {
       },
       {
         nodename: '审批节点',
-        nodenum: 1,
+        nodeid: nextNodeId,
         // auditnum: 1,
         // nodetype: 0,
         // steptypeid: 9,
@@ -142,13 +147,13 @@ function getInitialFlowJSON() {
     ],
     lines: [
       {
-        fromnode: 0,
-        endnode: 1,
+        fromnodeid: startNodeId,
+        tonodeid: nextNodeId,
         ruleid: null
       },
       {
-        fromnode: 1,
-        endnode: -1,
+        fromnodeid: nextNodeId,
+        tonodeid: endNodeId,
         ruleid: null
       }
     ]
@@ -196,6 +201,59 @@ function markBranch(path, index, allPaths) {
   };
 }
 
+// 针对 { node1, node2 ... } => { node3, node4 ... } 添加分支辅助节点
+function addBranchHelpers({ flowSteps, flowPaths }) {
+  let retFlowSteps = [...flowSteps];
+  let retFlowPaths = [...flowPaths];
+  const nextSteps = {};
+  flowSteps.forEach(step => nextSteps[step.id] = getNextSteps(step.id, flowSteps, flowPaths));
+  const groupBySameNextSteps = _.groupBy(flowSteps, step => {
+    return nextSteps[step.id].map(item => item.id).join(',');
+  });
+  Object.keys(groupBySameNextSteps).forEach(key => {
+    const grouped = groupBySameNextSteps[key];
+    if (grouped.length <= 1) return;
+    const nexts = nextSteps[grouped[0].id];
+    if (nexts.length <= 1) return;
+
+    const helperStepId = '__helper_' + uuid.v4();
+    const helperStep = {
+      id: helperStepId,
+      name: '__helper',
+      x: grouped[0].x + 100,
+      y: grouped[0].y,
+      rawNode: null
+    };
+    const helperPaths = grouped.map(step => ({ from: step.id, to: helperStepId, ruleid: null }));
+    const helperPaths2 = nexts.map(step => ({ from: helperStepId, to: step.id, ruleid: _.find(flowPaths, ['to', step.id]).ruleid }));
+    retFlowPaths = retFlowPaths.filter(path => !_.includes(grouped.map(i => i.id), path.from));
+    retFlowPaths = [...retFlowPaths, ...helperPaths, ...helperPaths2];
+    retFlowSteps = [...retFlowSteps, helperStep];
+
+    const afterSteps = getAfterSteps(helperStepId, retFlowSteps, retFlowPaths);
+    afterSteps.forEach(step => {
+      // step.x += 50;
+      // step.y += 50;
+    });
+  });
+  return { flowSteps: retFlowSteps, flowPaths: retFlowPaths };
+}
+function getNextSteps(stepId, flowSteps, flowPaths) {
+  const paths = flowPaths.filter(item => item.from === stepId);
+  const nextStepsId = paths.map(item => item.to);
+  return nextStepsId.map(id => _.find(flowSteps, ['id', id])).filter(item => !!item);
+}
+function getAfterSteps(stepId, flowSteps, flowPaths) {
+  let allNexts = [];
+  let nextSteps = getNextSteps(stepId, flowSteps, flowPaths);
+  while (nextSteps.length) {
+    allNexts = [...allNexts, ...nextSteps];
+    nextSteps = nextSteps.map(step => getNextSteps(step.id, flowSteps, flowPaths));
+    nextSteps = _.flatten(nextSteps);
+  }
+  return _.uniqBy(allNexts, 'id');
+}
+
 export default {
   namespace: 'workflowDesign',
   state: {
@@ -228,7 +286,7 @@ export default {
     *queryFlowJSON(action, { select, put, call }) {
       const { flowId } = yield select(state => state.workflowHome);
       try {
-        const { data } = yield call(queryFlowJSON, flowId);
+        const { data } = yield call(queryFlowJSONv2, flowId);
         const { flowSteps, flowPaths } = parseFlowJSON(data);
         yield put({ type: 'putState', payload: { flowSteps, flowPaths } });
 
@@ -277,7 +335,7 @@ export default {
       const { flowSteps } = yield select(state => state.workflowDesign);
       const flowStep = _.find(flowSteps, ['id', stepId]);
       const rawNodeData = flowStep.rawNode || {};
-      const editingFlowStepForm = {
+      let editingFlowStepForm = {
         stepId: flowStep.id,
         nodeType: rawNodeData.nodetype || 0,
         stepUser: {
@@ -285,7 +343,8 @@ export default {
           data: rawNodeData.ruleconfig || {}
         },
         auditsucc: rawNodeData.auditsucc || 1,
-        stepFields: parseColumnConfig(rawNodeData.columnconfig)
+        stepFields: parseColumnConfig(rawNodeData.columnconfig),
+        funcname: rawNodeData.funcname || ''
       };
       yield put({
         type: 'putState',
@@ -303,7 +362,7 @@ export default {
       const flowStep = _.find(flowSteps, ['id', stepId]);
       // const allPathsToThisFlowStep = flowPaths.filter(path => path.to === stepId);
       const allPathsFromThisFlowStep = flowPaths.filter(path => path.from === stepId);
-      const newStepId = getMaxStepId(flowSteps) + 1;
+      const newStepId = uuid.v1();
       const newFlowStep = {
         id: newStepId,
         name: '新的审批节点',
@@ -324,14 +383,6 @@ export default {
           flowPaths: [...flowPaths, newPath].map(markBranch)
         }
       });
-
-      function getMaxStepId(steps) {
-        let max = 0;
-        steps.forEach(step => {
-          max = Math.max(max, step.id);
-        });
-        return max;
-      }
     },
     *addBranchStep({ payload: stepId }, { select, put }) {
       const {
@@ -341,7 +392,7 @@ export default {
       const flowStep = _.find(flowSteps, ['id', stepId]);
       const allPathsToThisFlowStep = flowPaths.filter(path => path.to === stepId);
       const allPathsFromThisFlowStep = flowPaths.filter(path => path.from === stepId);
-      const newStepId = getMaxStepId(flowSteps) + 1;
+      const newStepId = uuid.v1();
       const newFlowStep = {
         id: newStepId,
         name: '新的审批节点',
@@ -358,14 +409,6 @@ export default {
           flowPaths: [...flowPaths, ...newPathsToNewFlowStep, ...newPathsFromNewFlowStep].map(markBranch)
         }
       });
-
-      function getMaxStepId(steps) {
-        let max = 0;
-        steps.forEach(step => {
-          max = Math.max(max, step.id);
-        });
-        return max;
-      }
     },
     *delStep({ payload: stepId }, { select, put }) {
       const {
@@ -374,15 +417,27 @@ export default {
       } = yield select(state => state.workflowDesign);
       const flowStep = _.find(flowSteps, ['id', stepId]);
       const allPathsFromThisFlowStep = flowPaths.filter(path => path.from === stepId);
-      if (allPathsFromThisFlowStep.some(path => path.to !== -1)) {
+      if (false && allPathsFromThisFlowStep.some(path => path.to !== -1)) {
         message.error('只能删除审批结束前一个节点');
       } else {
         const allPathsToThisFlowStep = flowPaths.filter(path => path.to === stepId);
-        allPathsToThisFlowStep.forEach(path => path.to = -1);
-        let newFlowPaths = flowPaths.filter(path => path.from !== stepId);
+        const thisNextSteps = getNextSteps(stepId, flowSteps, flowPaths);
+        const newToNextStepsPaths = _.flatten(allPathsToThisFlowStep.map(path => {
+          return thisNextSteps.map(step => ({
+            from: path.from,
+            to: step.id,
+            ruleid: null
+          }));
+        }));
+        let newFlowPaths = flowPaths.filter(path => path.from !== stepId && path.to !== stepId);
+        newFlowPaths = [...newFlowPaths, ...newToNextStepsPaths];
+        debugger;
         newFlowPaths = newFlowPaths.filter(path => {
-          return !(path.to === -1 && newFlowPaths.some(p => p.from === path.from && p.to !== -1));
+          return newToNextStepsPaths.every(step => {
+            return !(path.to === step.to && newFlowPaths.some(p => p.from === path.from && p.to !== step.to));
+          });
         }); // 删除短路节点
+        debugger;
         yield put({
           type: 'putState',
           payload: {
@@ -412,55 +467,66 @@ export default {
        10	当前审批人所在团队的上级团队及角色(非下级)	0
        11	当前审批人所在团队的上级团队(非下级)	0
        */
-      if (editingFlowStepForm.nodeType === 1) {
-        const users = editingFlowStepForm.stepUser.data.username.split(',');
-        if (users.length < 2) {
-          message.error('请设置多名人员参与会审');
-          return;
-        }
-        const { auditsucc } = editingFlowStepForm;
-        if (!auditsucc) return message.error('请设置会审通过人数');
-        if (auditsucc > users.length) return message.error('会审通过人数不得超过总人数');
-      }
-      if (editingFlowStepForm.nodeType === 0) {
-        const data = editingFlowStepForm.stepUser.data;
-        const type = editingFlowStepForm.stepUser.type;
-        if (data) {
-          const { userid, roleid, deptid } = data;
-          if ((type === 5 || type === 6) && !deptid) {
-            message.error('请选择团队');
-            return;
-          } else if ((type === 4 || type === 6) && !roleid) {
-            message.error('请选择角色');
-            return;
-          } else if (type === 2 && !userid) {
-            message.error('请选择人员');
+      if (editingFlowStepForm.stepUser.steptypeid === -1) {
+        flowStep.rawNode = {
+          ...flowStep.rawNode,
+          funcname: editingFlowStepForm.funcname
+        };
+      } else {
+        if (editingFlowStepForm.nodeType === 1) {
+          const users = editingFlowStepForm.stepUser.data.username.split(',');
+          if (users.length < 2) {
+            message.error('请设置多名人员参与会审');
             return;
           }
+          const { auditsucc } = editingFlowStepForm;
+          if (!auditsucc) return message.error('请设置会审通过人数');
+          if (auditsucc > users.length) return message.error('会审通过人数不得超过总人数');
         }
-      }
-
-      const fields = editingFlowStepForm.stepFields;
-      const uniqCollect = {};
-      if (fields && fields.length) {
-        for (let i = 0; i < fields.length; i += 1) {
-          const item = fields[i];
-          if (!item.entityId) return message.error('请设置实体');
-          if (!item.fieldId) return message.error('请设置字段');
-          if (uniqCollect[item.entityId + item.fieldId]) return message.error('不可添加相同字段');
-          uniqCollect[item.entityId + item.fieldId] = 1;
+        if (editingFlowStepForm.nodeType === 0) {
+          const data = editingFlowStepForm.stepUser.data;
+          const type = editingFlowStepForm.stepUser.type;
+          if (data) {
+            const { userid, roleid, deptid, fieldname } = data;
+            if ((type === 5 || type === 6) && !deptid) {
+              message.error('请选择团队');
+              return;
+            } else if ([4, 6, 9, 901, 902, 10, 101, 102].includes(type) && !roleid) {
+              message.error('请选择角色');
+              return;
+            } else if (type === 2 && !userid) {
+              message.error('请选择人员');
+              return;
+            } else if ([802, 112, 902, 102].includes(type) && !fieldname) {
+              message.error('请选择表单用户字段');
+              return;
+            }
+          }
         }
-      }
 
-      flowStep.rawNode = {
-        ...flowStep.rawNode,
-        auditnum: editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.stepUser.data.userid.split(',').length,
-        auditsucc: editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.auditsucc,
-        nodetype: editingFlowStepForm.nodeType,
-        ruleconfig: editingFlowStepForm.stepUser.data,
-        steptypeid: editingFlowStepForm.stepUser.type,
-        columnconfig: formatFieldsToColumnConfig(fields)
-      };
+        const fields = editingFlowStepForm.stepFields;
+        const uniqCollect = {};
+        if (fields && fields.length) {
+          for (let i = 0; i < fields.length; i += 1) {
+            const item = fields[i];
+            if (!item.entityId) return message.error('请设置实体');
+            if (!item.fieldId) return message.error('请设置字段');
+            if (uniqCollect[item.entityId + item.fieldId]) return message.error('不可添加相同字段');
+            uniqCollect[item.entityId + item.fieldId] = 1;
+          }
+        }
+
+        flowStep.rawNode = {
+          ...flowStep.rawNode,
+          auditnum: editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.stepUser.data.userid.split(',').length,
+          auditsucc: editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.auditsucc,
+          nodetype: editingFlowStepForm.nodeType,
+          ruleconfig: editingFlowStepForm.stepUser.data,
+          steptypeid: editingFlowStepForm.stepUser.type,
+          columnconfig: formatFieldsToColumnConfig(fields),
+          funcname: editingFlowStepForm.funcname
+        };
+      }
       yield put({
         type: 'putState',
         payload: {
@@ -477,33 +543,26 @@ export default {
         return;
       }
       try {
-        // {
-        //   "nodename": "结束审批",
-        //   "nodenum": -1,
-        //   "auditnum": 0,
-        //   "nodetype": 0,
-        //   "steptypeid": -1,
-        //   "ruleconfig": {},
-        //   "columnconfig": {},
-        //   "auditsucc": 1
-        // }
+        const nodeIdCollect = {};
         const nodes = flowSteps.map(({ id, name, rawNode }) => {
-          const { nodetype, steptypeid, ruleconfig, columnconfig, auditnum, auditsucc } = rawNode;
+          const { nodetype, steptypeid, ruleconfig, columnconfig, auditnum, auditsucc, funcname } = rawNode;
+          const newNodeId = nodeIdCollect[id] = uuid.v1();
           return {
             nodename: name,
-            nodenum: id,
+            nodeid: newNodeId,
             auditnum,
             nodetype,
             steptypeid,
             ruleconfig,
             columnconfig,
-            auditsucc
+            auditsucc,
+            nodeevent: funcname
           };
         });
         const lines = flowPaths.map(path => ({
-          fromnode: path.from,
-          endnode: path.to,
-          ruleid: null
+          fromnodeid: nodeIdCollect[path.from] || '',
+          tonodeid: nodeIdCollect[path.to] || '',
+          ruleid: path.isBranch ? path.ruleid : null
         }));
         const params = { flowId, nodes, lines };
         yield call(saveFlowJSON, params);
@@ -541,7 +600,27 @@ export default {
           flowPaths: [...flowPaths]
         }
       });
-    }
+    },
+    *userConnectNode({ payload: connInfo }, { select, put }) {
+      const { flowPaths } = yield select(state => state.workflowDesign);
+      const { source, target } = connInfo;
+      const getNodeId = elem => {
+        return elem.id.replace(/workflow-(.+)/, '$1');
+      };
+      const fromNodeId = getNodeId(source);
+      const endNodeId = getNodeId(target);
+      const newPath = {
+        from: fromNodeId,
+        to: endNodeId,
+        ruleid: null
+      };
+      yield put({
+        type: 'putState',
+        payload: {
+          flowPaths: [...flowPaths, newPath].map(markBranch)
+        }
+      });
+    },
   },
   reducers: {
     putState(state, { payload }) {

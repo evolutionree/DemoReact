@@ -54,6 +54,10 @@ import AllDailyDetail from './routes/office/daily/AllDailyDetail';
 
 import Mails from './routes/Mails';
 
+import MailRecovery from './routes/MailRecovery';
+
+import DbManager from './routes/DbManager/index';
+
 const appRoutes = [
   { path: 'home', comp: Home },
   { path: 'attendance', comp: AttendanceList, entid: '969d32b6-d81c-43a3-bc0d-124ffc26855c' },
@@ -100,6 +104,8 @@ const appRoutes = [
     ] },
   { path: 'alldaily/detail/:recid', comp: AllDailyDetail, model: require('./models/daily') },
   { path: 'mails', comp: Mails, model: require('./models/mails') },
+  { path: 'mailrecovery', comp: MailRecovery, model: require('./models/mailRecovery') },
+  { path: 'dbmanager', comp: DbManager, model: require('./models/dbmanager') },
   { path: '*', comp: NoFoundPage }
 ];
 

@@ -31,19 +31,23 @@ const CheckableMenu = ({ items, checkedKeys, onCheckedChange }) => {
     group.push(item);
   });
   function onClick({ key }) {
-    const newCheckedKeys = checkedKeys.filter(
-      k => !itemGroups.some(g => g.some(i => i.key === key) && g.some(i => i.key === k))
-    );
-    newCheckedKeys.push(key);
+    const [group, k] = key.split('-');
+    const newCheckedKeys = [...checkedKeys];
+    newCheckedKeys[group] = k;
     onCheckedChange(newCheckedKeys);
+    // const newCheckedKeys = checkedKeys.filter(
+    //   k => !itemGroups.some(g => g.some(i => i.key === key) && g.some(i => i.key === k))
+    // );
+    // newCheckedKeys.push(key);
+    // onCheckedChange(newCheckedKeys);
   }
   return (
     <Menu selectable={false} onClick={onClick} className={styles.checkableMenu}>
       {itemGroups.map((itemGroup, index) => (
         <Menu.ItemGroup key={index}>
           {itemGroup.map(item => (
-            <Menu.Item key={item.key} className={styles.checkableItem}>
-              {checkedKeys.indexOf(item.key) !== -1
+            <Menu.Item key={item.group + '-' + item.key} className={styles.checkableItem}>
+              {checkedKeys[index] === item.key
                 ? <ImgIcon name="check" />
                 : (
                   <div style={{ display: 'inline-block', width: '24px' }}>&nbsp;</div>
@@ -56,6 +60,10 @@ const CheckableMenu = ({ items, checkedKeys, onCheckedChange }) => {
     </Menu>
   );
 };
+
+const MetaValue = ({ children }) => (
+  <span style={children ? {} : { color: '#999' }}>{children || '(空)'}</span>
+);
 
 class RelatedInfoPanel extends Component {
   static propTypes = {};
@@ -70,13 +78,13 @@ class RelatedInfoPanel extends Component {
       sender: null,
       custInfo: null,
       contacts: null,
-      mailTypes: mailTypes || ['1', '2'],
+      mailTypes: mailTypes || ['1', '0'],
       mailList: null,
       mailTotal: 0,
       mailPageIndex: 1,
       mailPageSize: 10,
       // mailLoading: false,
-      attachTypes: attachTypes || ['1', '2'],
+      attachTypes: attachTypes || ['1', '0'],
       attachList: null,
       attachTotal: 0,
       attachPageIndex: 1,
@@ -197,8 +205,8 @@ class RelatedInfoPanel extends Component {
 
   fetchMailList = () => {
     const { mailTypes, mailPageIndex, mailPageSize } = this.state;
-    const relatedMySelf = _.includes(mailTypes, '0') ? 0 : 1;
-    const relatedSendOrReceive = _.includes(mailTypes, '2') ? 0 : _.includes(mailTypes, '3') ? 1 : 2;
+    const relatedMySelf = mailTypes[0];
+    const relatedSendOrReceive = mailTypes[1];
     const params = {
       pageIndex: mailPageIndex,
       pageSize: mailPageSize,
@@ -221,8 +229,8 @@ class RelatedInfoPanel extends Component {
 
   fetchAttachList = () => {
     const { attachTypes, attachPageIndex, attachPageSize } = this.state;
-    const relatedMySelf = _.includes(attachTypes, '0') ? 0 : 1;
-    const relatedSendOrReceive = _.includes(attachTypes, '2') ? 0 : _.includes(attachTypes, '3') ? 1 : 2;
+    const relatedMySelf = attachTypes[0];
+    const relatedSendOrReceive = attachTypes[1];
     const params = {
       pageIndex: attachPageIndex,
       pageSize: attachPageSize,
@@ -289,10 +297,10 @@ class RelatedInfoPanel extends Component {
       <div>
         {sender && sender.length > 0 && <div className={styles.infobox}>
           <div className={styles.infotitle}>发件人信息</div>
-          <div className={styles.infometa}><Avatar.View value={sender[0].usericon} headShape={1} size={50} /></div>
-          <div className={styles.infometa}><span>姓名：</span><span>{sender[0].username}</span></div>
-          <div className={styles.infometa}><span>电话：</span><span>{sender[0].usertel}</span></div>
-          <div className={styles.infometa}><span>邮箱：</span><span>{sender[0].useremail}</span></div>
+          <div className={styles.infometa}><Avatar.View value={sender[0].headicon} headShape={1} size={50} /></div>
+          <div className={styles.infometa}><span>姓名：</span><MetaValue>{sender[0].recname}</MetaValue></div>
+          <div className={styles.infometa}><span>电话：</span><MetaValue>{sender[0].phone}</MetaValue></div>
+          <div className={styles.infometa}><span>邮箱：</span><MetaValue>{sender[0].email}</MetaValue></div>
         </div>}
         {custInfo && custInfo.length > 0 && <div className={styles.infobox}>
           <div className={styles.infotitle}>客户信息</div>
@@ -303,9 +311,11 @@ class RelatedInfoPanel extends Component {
         </div>}
         {contacts && contacts.length > 0 && <div className={styles.infobox}>
           <div className={styles.infotitle}>客户联系人信息</div>
-          <div className={styles.infometa}><span>姓名：</span><span>{contacts[0].recname}</span></div>
-          <div className={styles.infometa}><span>电话：</span><span>{contacts[0].phone}</span></div>
-          <div className={styles.infometa}><span>邮箱：</span><span>{contacts[0].email}</span></div>
+          {contacts.map(contact => <div key={contact.recname} style={{ marginBottom: '5px' }}>
+            <div className={styles.infometa}><span>姓名：</span><MetaValue>{contact.recname}</MetaValue></div>
+            <div className={styles.infometa}><span>电话：</span><MetaValue>{contact.mobilephone}</MetaValue></div>
+            <div className={styles.infometa}><span>邮箱：</span><MetaValue>{contact.email}</MetaValue></div>
+          </div>)}
         </div>}
       </div>
     );
@@ -342,11 +352,11 @@ class RelatedInfoPanel extends Component {
                     overlay={(
                       <CheckableMenu
                         items={[
-                          { key: '0', group: 1, label: '仅查看与自己的往来邮件' },
-                          { key: '1', group: 1, label: '查看与所有用户的往来邮件' },
-                          { key: '2', group: 2, label: '查看所有收到与发出的邮件' },
-                          { key: '3', group: 2, label: '查看收到的邮件' },
-                          { key: '4', group: 2, label: '查看发出的邮件' }
+                          { key: '1', group: 0, label: '仅查看与自己的往来邮件' },
+                          { key: '2', group: 0, label: '查看与所有用户的往来邮件' },
+                          { key: '0', group: 1, label: '查看所有收到与发出的邮件' },
+                          { key: '1', group: 1, label: '查看收到的邮件' },
+                          { key: '2', group: 1, label: '查看发出的邮件' }
                         ]}
                         checkedKeys={this.state.mailTypes}
                         onCheckedChange={this.onMailTypesChange}
@@ -401,11 +411,12 @@ class RelatedInfoPanel extends Component {
                     overlay={(
                       <CheckableMenu
                         items={[
-                          { key: '0', group: 1, label: '仅查看与自己的往来附件' },
-                          { key: '1', group: 1, label: '查看与所有用户的往来附件' },
-                          { key: '2', group: 2, label: '查看所有收到与发出的附件' },
-                          { key: '3', group: 2, label: '查看收到的附件' },
-                          { key: '4', group: 2, label: '查看发出的附件' }
+                          { key: '0', group: 0, label: '当前邮件的附件' },
+                          { key: '1', group: 0, label: '仅查看与自己的往来附件' },
+                          { key: '2', group: 0, label: '查看与所有用户的往来附件' },
+                          { key: '0', group: 1, label: '查看所有收到与发出的附件' },
+                          { key: '1', group: 1, label: '查看收到的附件' },
+                          { key: '2', group: 1, label: '查看发出的附件' }
                         ]}
                         checkedKeys={this.state.attachTypes}
                         onCheckedChange={this.onAttachTypesChange}
