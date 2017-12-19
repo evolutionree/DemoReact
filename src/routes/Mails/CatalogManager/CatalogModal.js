@@ -34,6 +34,14 @@ class CatalogModal extends Component {
     }
   }
 
+  validateParentCat = (rule, value, callback) => {
+    // const { currentCatalog, isEdit } = this.props;
+    // if (isEdit && currentCatalog.recid === value) {
+    //   callback('不能')
+    // }
+    callback();
+  };
+
   submitForm = () => {
     this.props.form.validateFields((err, values) => {
       if (err) return message.error('请检查表单');
@@ -46,7 +54,7 @@ class CatalogModal extends Component {
   };
 
   render() {
-    const { isEdit, form, visible, cancel, modalPending, myCatalogData } = this.props;
+    const { isEdit, form, visible, cancel, modalPending, myCatalogDataAll } = this.props;
     const { getFieldDecorator } = form;
     return (
       <Modal
@@ -65,14 +73,17 @@ class CatalogModal extends Component {
               <Input placeholder="请输入文件夹名称" maxLength="50" />
             )}
           </FormItem>
-          {!isEdit && <FormItem label="上级文件夹">
+          <FormItem label="上级文件夹" style={{ display: 'none' }}>
             {getFieldDecorator('pid', {
               initialValue: '',
-              rules: [{ required: true, message: '请选择上级文件夹' }]
+              rules: [
+                { required: true, message: '请选择上级文件夹' },
+                { validator: this.validateParentCat }
+              ]
             })(
-              <MailCatalogSelect catalogData={myCatalogData} />
+              <MailCatalogSelect catalogData={myCatalogDataAll} />
             )}
-          </FormItem>}
+          </FormItem>
         </Form>
       </Modal>
     );
@@ -81,13 +92,13 @@ class CatalogModal extends Component {
 
 export default connect(
   state => {
-    const { showingModals, selectedCatalogNode, myCatalogData, modalPending } = state.mails;
+    const { showingModals, selectedCatalogNode, myCatalogDataAll, modalPending } = state.mails;
     return {
       visible: /addCatalog|editCatalog/.test(showingModals),
       isEdit: /editCatalog/.test(showingModals),
       currentCatalog: selectedCatalogNode,
       modalPending,
-      myCatalogData
+      myCatalogDataAll
     };
   },
   dispatch => {

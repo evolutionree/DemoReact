@@ -65,11 +65,11 @@ export async function saveMailCatalog(params) {
 /**
  * 编辑目录文件夹
  * @param params
- * { recid, recname }
+ * { recid, recname, newpid }
  * @returns {Promise.<Object>}
  */
 export async function updateMailCatalog(params) {
-  return request('api/mailset/updatepersonalcatalog', {
+  return request('api/mailset/movecatalog', {
     method: 'post',
     body: JSON.stringify(params)
   });
@@ -167,7 +167,7 @@ export async function markMails(params) {
   } else if (mark === 2 || mark === 3) {
     return request('api/mail/readmail', {
       method: 'post',
-      body: JSON.stringify({ mailids, recstatus: mark === 2 ? 0 : 1 })
+      body: JSON.stringify({ mailids, isread: mark === 2 ? 0 : 1 })
     });
   }
   return Promise.reject('参数错误');
@@ -264,6 +264,19 @@ export async function querySignature() {
   return request('api/mailset/getsignature', {
     method: 'post',
     body: JSON.stringify({})
+  });
+}
+
+/**
+ * 校验发送邮件白名单
+ * @param params
+ * {  }
+ * @returns {Promise.<Object>}
+ */
+export async function validsendmaildata(params) {
+  return request('api/mail/validsendmaildata', {
+    method: 'post',
+    body: JSON.stringify(params)
   });
 }
 

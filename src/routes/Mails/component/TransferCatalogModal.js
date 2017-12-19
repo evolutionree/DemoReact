@@ -5,12 +5,13 @@ import UserSelectModal from '../../../components/DynamicForm/controls/UserSelect
 
 const TransferCatalogModal = connect(
   state => {
-    const { showingModals } = state.mails;
+    const { showingModals, modalPending } = state.mails;
     return {
       visible: /transferCatalog/.test(showingModals),
       selectedUsers: [],
       multiple: false,
-      title: '选择文件夹的接收人'
+      title: '选择文件夹的接收人',
+      modalPending
     };
   },
   dispatch => {

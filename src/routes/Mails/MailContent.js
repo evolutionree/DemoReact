@@ -1,6 +1,9 @@
 import React, { PropTypes, Component } from 'react';
-import { Icon } from 'antd';
+import { Icon, message } from 'antd';
+import { connect } from 'dva';
 import ImgIcon from '../../components/ImgIcon';
+import { formatTime } from '../../utils';
+import { markMails } from '../../services/mails';
 import styles from './MailContent.less';
 
 class MailContent extends Component {
@@ -23,7 +26,8 @@ class MailContent extends Component {
     super(props);
     this.state = {
       attachmentsVisible: false,
-      headerVisible: true
+      headerVisible: true,
+      iframeHeight: 100
     };
   }
 
@@ -41,17 +45,52 @@ class MailContent extends Component {
     this.setState({ headerVisible: !this.state.headerVisible });
   };
 
+  toggleTag = () => {
+    const tag = this.props.data.istag ? 0 : 1;
+    this.props.tagMailsInDetail(tag);
+  };
+
   showMailDetail = () => {
     this.props.onShowDetail(this.props.data);
+  };
+
+  onIframeLoad = (event) => {
+    const iframe = event.target;
+    const idoc = (iframe.contentWindow || iframe.contentDocument.parentWindow).document;
+    let height = 300;
+    // if (idoc.body) {
+    //   height = Math.max(idoc.body.scrollHeight, idoc.body.offsetHeight);
+    // } else if (idoc.documentElement) {
+    //   height = Math.max(idoc.documentElement.scrollHeight, idoc.documentElement.offsetHeight);
+    // }
+    if (idoc.documentElement) {
+      height = idoc.documentElement.offsetHeight;
+    }
+    this.setState({ iframeHeight: height });
   };
 
   render() {
     const { isPreview, data } = this.props;
     if (!data) return null;
-    const isLoading = data.status === 'loading';
-    const detailData = isLoading ? data.mailInfo : data.maildetail;
-    const { title, receivers, ccers, receivetime, attachinfo, summary, mailbody, attachcount } = detailData;
-    const strPersons = persons => persons && persons.map(item => item.displayname).join(', ');
+    const { title, sender, receivers, ccers, bccers, receivedtime,
+      senttime, attachinfo, summary, mailbody, attachcount, istag, catalogtype } = data;
+    let mailtime = receivedtime;
+    if (receivedtime === '0001-01-01 00:00:00' || !receivedtime) {
+      mailtime = senttime === '0001-01-01 00:00:00' ? '' : senttime;
+    }
+    const strPersons = persons => {
+      if (!persons) return null;
+      const str = persons.map((item, index) => {
+        const name = item.displayname || item.nickname || item.address;
+        // const address = item.address ? <span style={{ color: '#7f7f7f', paddingLeft: '3px' }}>&lt;{item.address}&gt;</span> : null;
+        const address = item.address ? `<${item.address}>` : null;
+        return `${name} ${address}`;
+        // return (
+        //   <span key={index} style={{ marginLeft: '3px' }}>{name}{address};</span>
+        // );
+      }).join('; ');
+      return <span>{str}</span>;
+    };
     return (
       <div className={styles.wrap}>
         <ImgIcon
@@ -60,19 +99,35 @@ class MailContent extends Component {
           style={{ position: 'absolute', top: '10px', right: '10px' }}
           onClick={this.toggleHeader}
         />
-        <div className={styles.title}>{title}</div>
+        <div className={styles.title} title={title}>
+          {catalogtype !== 'dept' &&
+            <Icon
+              type={istag ? 'star' : 'star-o'}
+              style={{ color: '#ff9a2e', marginRight: '5px', cursor: 'pointer' }}
+              onClick={this.toggleTag}
+            />}
+          {title}
+        </div>
         {this.state.headerVisible && <div className={styles.header}>
           <p className={styles.meta}>
-            <span>收件人</span>
-            <span>{strPersons(receivers)}</span>
+            <span>发件人</span>
+            {strPersons(sender && (Array.isArray(sender) ? sender : [sender]))}
           </p>
           <p className={styles.meta}>
-            <span>抄送人</span>
-            <span>{strPersons(ccers)}</span>
+            <span>收件人</span>
+            {strPersons(receivers)}
           </p>
+          {!!(ccers && ccers.length) && <p className={styles.meta}>
+            <span>抄送人</span>
+            {strPersons(ccers)}
+          </p>}
+          {bccers && <p className={styles.meta}>
+            <span>密送人</span>
+            {strPersons(bccers)}
+          </p>}
           <p className={styles.meta}>
             <span>时&nbsp;&nbsp;&nbsp;&nbsp;间</span>
-            <span>{receivetime}</span>
+            <span>{mailtime}</span>
           </p>
           <div className={styles.stuff}>
             {isPreview && (
@@ -89,7 +144,7 @@ class MailContent extends Component {
                    onClick={isPreview ? this.showMailDetail : this.toggleAttachments}>查看附件</a>
               </p>
             )}
-            {this.state.attachmentsVisible && data.status === 'loaded' && (
+            {this.state.attachmentsVisible && (
               <ul className={styles.attachlist} style={{ paddingLeft: isPreview ? '170px' : '70px' }}>
                 {(attachinfo || []).map(item => (
                   <li key={item.fileid}>
@@ -103,11 +158,31 @@ class MailContent extends Component {
             )}
           </div>
         </div>}
-        <div className={styles.body} dangerouslySetInnerHTML={{ __html: mailbody || summary }} />
+        {/*<div className={styles.body} dangerouslySetInnerHTML={{ __html: mailbody || summary }} />*/}
+        <div className={styles.iframewrap}>
+          <iframe
+            className={styles.iframe}
+            frameBorder={0}
+            scrolling="no"
+            height={this.state.iframeHeight}
+            width="100%"
+            srcDoc={mailbody || summary}
+            onLoad={this.onIframeLoad}
+          />
+        </div>
       </div>
     );
   }
 }
 
-export default MailContent;
+export default connect(
+  state => ({}),
+  dispatch => {
+    return {
+      tagMailsInDetail(tag) {
+        dispatch({ type: 'mails/tagMailsInDetail__', payload: tag });
+      }
+    };
+  }
+)(MailContent);
 

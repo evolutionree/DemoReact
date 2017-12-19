@@ -24,12 +24,16 @@ class MailCatalogSelect extends Component {
 
   getTreeData = catalogData => {
     const treeData = _.cloneDeep(catalogData);
+    let retTreeData;
     treeForEach(treeData, item => {
       item.value = item.recid;
       item.label = item.recname;
       item.children = item.subcatalogs;
+      if (item.ctype === 2002) {
+        retTreeData = item;
+      }
     }, 'subcatalogs');
-    return treeData;
+    return [retTreeData];
   };
 
   render() {

@@ -39,10 +39,11 @@ class InputSearch extends Component {
 
   queryListData(value) {
     request('/api/mail/getcontactbykeyword', {
-      method: 'post', body: JSON.stringify({ keyword: value })
+      method: 'post', body: JSON.stringify({ keyword: value, count: 10 })
     }).then((result) => {
+      const { data } = result;
       this.setState({
-        listData: result && result.data
+        listData: data
       });
     });
   }
@@ -66,7 +67,6 @@ class InputSearch extends Component {
   }
 
   completeInput(type) {
-    console.log('inse:blur')
     this.props.completeInput && this.props.completeInput(this.getMatchAllContacts(this.state.value), type);
     this.setState({
       value: ''

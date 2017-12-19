@@ -49,7 +49,8 @@ export async function delSeries(ProductsetId) {
  * @param params
  * {
     "ProductsetId":"",
-    "Direction":"DOWNER"
+    "Direction":"DOWNER",
+    "IsGetDisable": 1
   }
  * @returns {Promise.<Object>}
  */
@@ -104,6 +105,30 @@ export async function delProduct(productid) {
   return request('/api/products/deleteproduct', {
     method: 'post',
     body: JSON.stringify({ productid })
+  });
+}
+
+/**
+ * 启用停用产品
+ * @param productid
+ * @returns {Promise.<Object>}
+ */
+export async function enableProduct(productid) {
+  return request('/api/products/toenableproduct', {
+    method: 'post',
+    body: JSON.stringify({ productid })
+  });
+}
+
+/**
+ * 启用停用产品系列
+ * @param serialid
+ * @returns {Promise.<Object>}
+ */
+export async function enableProductSerial(serialid) {
+  return request('/api/products/toenableseries', {
+    method: 'post',
+    body: JSON.stringify({ ProductsetId: serialid })
   });
 }
 

@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { Button, Form, Input, Radio, Select, message } from 'antd';
 import SelectAppIcon from '../../../../components/SelectAppIcon';
+import PowerTextArea from '../../../../components/PowerTextArea';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -84,7 +85,7 @@ class EntityButtonForm extends Component {
           {form.getFieldDecorator('extradata', {
             // rules: [{ required: true, message: '请设置按钮关联的url服务' }]
           })(
-            <Input.TextArea />
+            <PowerTextArea />
           )}
         </FormItem>
         <FormItem {...itemLayout} label="图标">

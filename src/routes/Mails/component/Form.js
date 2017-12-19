@@ -37,7 +37,9 @@ class Form extends Component {
   componentDidMount() {
     if (this.state.model && this.state.model instanceof Array && this.state.model.length > 0) {
       setTimeout(() => {
-        this.refs[this.state.model[0].name].refs.wrappedInstance.inputFocus();
+        try {
+          this.refs[this.state.model[0].name].refs.wrappedInstance.inputFocus();
+        } catch(e) {}
       }, 3000);
     }
   }

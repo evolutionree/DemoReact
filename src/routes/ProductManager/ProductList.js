@@ -30,7 +30,7 @@ function ProductList({
   search,
   add,
   edit,
-  del,
+  enable,
   selectItems,
   importData,
   checkFunc,
@@ -52,6 +52,7 @@ function ProductList({
   }
   const currentSeries = _.find(series, ['productsetid', queries.productSeriesId]);
   const seriesPath = getSeriesPath(currentSeries, series);
+  const isDisabledSeries = currentSeries && currentSeries.recstatus === 0;
   return (
     <div className={styles.rightContent}>
       {/*<div className={styles.subtitle}>{currentSeries && currentSeries.productsetname}</div>*/}
@@ -69,17 +70,18 @@ function ProductList({
         </Breadcrumb>
       </div>
       <Toolbar
-        selectedCount={currentItems.length}
+        selectedCount={isDisabledSeries ? 0 : currentItems.length}
         actions={[
           { label: '编辑', handler: edit, single: true, show: checkFunc('ProductEdit') },
-          { label: '删除', handler: del, show: checkFunc('ProductDelete') }
+          { label: '启用', handler: () => enable(1), show: checkFunc('ProductDelete') && currentItems.some(i => !i.recstatus) },
+          { label: '停用', handler: () => enable(0), show: checkFunc('ProductDelete') && currentItems.some(i => !!i.recstatus) }
         ]}
       >
         <Select value={queries.recStatus + ''} onChange={search.bind(null, 'recStatus')}>
           <Option key="1">启用</Option>
           <Option key="0">停用</Option>
         </Select>
-        {checkFunc('ProductAdd') && <Button onClick={add}>新增</Button>}
+        {!isDisabledSeries && checkFunc('ProductAdd') && <Button onClick={add}>新增</Button>}
         {checkFunc('ProductImport') && <Button onClick={importData}>导入</Button>}
         <Button onClick={exportData}>导出</Button>
         <Toolbar.Right>
@@ -130,13 +132,17 @@ function mapDispatchToProps(dispatch) {
     edit: () => {
       dispatch({ type: 'productManager/showModals', payload: 'editProduct' });
     },
-    del: () => {
-      Modal.confirm({
-        title: '确定删除选中的产品吗？',
-        onOk() {
-          dispatch({ type: 'productManager/delProducts' });
-        }
-      });
+    enable: flag => {
+      if (!flag) {
+        Modal.confirm({
+          title: '确定停用选中的产品吗？',
+          onOk() {
+            dispatch({ type: 'productManager/enableProducts', payload: flag });
+          }
+        });
+      } else {
+        dispatch({ type: 'productManager/enableProducts', payload: flag });
+      }
     },
     selectItems: (items) => {
       dispatch({ type: 'productManager/putState', payload: { currentItems: items } });

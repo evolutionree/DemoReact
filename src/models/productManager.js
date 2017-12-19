@@ -1,7 +1,7 @@
 import { routerRedux } from 'dva/router';
 import { message } from 'antd';
 import _ from 'lodash';
-import { getSeries, getProducts, delSeries, addSeries, updateSeries, delProduct, addProduct, updateProduct } from '../services/products';
+import { getSeries, getProducts, enableProductSerial, delSeries, delProduct, addSeries, updateSeries, enableProduct, addProduct, updateProduct } from '../services/products';
 import { getGeneralProtocol, addEntcomm, editEntcomm } from '../services/entcomm';
 
 const ProductEntityId = '59cf141c-4d74-44da-bca8-3ccf8582a1f2';
@@ -21,7 +21,8 @@ export default {
     total: null,
     currentItems: [],
     showModals: '',
-    modalPending: false
+    modalPending: false,
+    showDisabledSeries: false
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -92,11 +93,13 @@ export default {
         message.error(e.message || '获取产品列表失败');
       }
     },
-    *querySeries(action, { put, call }) {
+    *querySeries(action, { select, put, call }) {
+      const { showDisabledSeries } = yield select(state => state.productManager);
       try {
         const { data } = yield call(getSeries, {
           ProductsetId: '',
-          Direction: 'DOWNER'
+          Direction: 'DOWNER',
+          IsGetDisable: showDisabledSeries ? 1 : 0
         });
         yield put({ type: 'putState', payload: { series: data } });
       } catch (e) {
@@ -172,28 +175,51 @@ export default {
         message.error(e.message || '保存失败');
       }
     },
-    *delProducts(action, { select, put, call }) {
+    *enableProducts({ payload: flag }, { select, put, call }) {
       try {
         const { currentItems } = yield select(state => state.productManager);
-        yield call(delProduct, currentItems.map(item => item.recid).join(','));
-        message.success('删除成功');
+        const ids = currentItems.filter(item => !item.recstatus !== !flag).map(item => item.recid).join(',');
+        yield call(flag ? enableProduct : delProduct, ids);
+        message.success(flag ? '启用成功' : '停用成功');
         yield put({ type: 'queryList' });
       } catch (e) {
-        message.error(e.message || '删除失败');
+        message.error(e.message || (flag ? '启用失败' : '停用失败'));
       }
     },
-    *delSeries(action, { select, put, call }) {
+    *enableSeries({ payload: flag }, { select, put, call }) {
+      const {
+        queries: { productSeriesId },
+        series,
+        showDisabledSeries
+      } = yield select(state => state.productManager);
+      const recstatus = _.find(series, ['productsetid', productSeriesId]).recstatus;
       try {
-        const {
-          queries: { productSeriesId },
-          series
-        } = yield select(state => state.productManager);
-        yield call(delSeries, productSeriesId);
-        message.success('删除成功');
+        yield call(flag ? enableProductSerial : delSeries, productSeriesId);
+        message.success(recstatus ? '停用成功' : '启用成功');
         yield put({ type: 'querySeries' });
-        yield put({ type: 'search', payload: { productSeriesId: getRootSeriesId(series) } });
+        if (!flag && !showDisabledSeries) {
+          yield put({ type: 'search', payload: { productSeriesId: getRootSeriesId(series) } });
+        }
       } catch (e) {
-        message.error(e.message || '删除失败');
+        message.error(e.message || (recstatus ? '停用失败' : '启用失败'));
+      }
+    },
+    *toggleShowDisabledSeries(action, { select, put, call }) {
+      const {
+        queries: { productSeriesId },
+        series,
+        showDisabledSeries
+      } = yield select(state => state.productManager);
+      const recstatus = _.find(series, ['productsetid', productSeriesId]).recstatus;
+      yield put({
+        type: 'putState',
+        payload: {
+          showDisabledSeries: !showDisabledSeries
+        }
+      });
+      yield put({ type: 'querySeries' });
+      if (showDisabledSeries && recstatus === 0) {
+        yield put({ type: 'search', payload: { productSeriesId: getRootSeriesId(series) } });
       }
     }
   },
@@ -226,7 +252,8 @@ export default {
         total: null,
         currentItems: [],
         showModals: '',
-        modalPending: false
+        modalPending: false,
+        showDisabledSeries: false
       };
     }
   }

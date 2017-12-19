@@ -9,9 +9,13 @@ class UploadButton extends React.Component {
   };
   static defaultProps = {};
 
+  hideMsgCallback = null;
+
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      uploading: false
+    };
   }
 
   getUploadParams = (file) => {
@@ -21,27 +25,40 @@ class UploadButton extends React.Component {
   };
 
   handleUploadChange = ({ file }) => {
-    if (file.response && file.response.error_code === 0) {
-      // 上传成功，拿uuid
-      const fileId = file.response.data;
-      this.props.onUpload({
-        fileId,
-        fileName: file.name,
-        fileSize: file.size
-      });
+    if (file.response) {
+      if (this.hideMsgCallback) {
+        this.hideMsgCallback();
+      }
+      this.setState({ uploading: false });
+
+      if (file.response.error_code === 0) {
+        // 上传成功，拿uuid
+        const fileId = file.response.data;
+        this.props.onUpload({
+          fileId,
+          fileName: file.name,
+          fileSize: file.size
+        });
+      } else {
+        message.error(file.response.error_msg || '上传失败');
+      }
     }
   };
 
   beforeUpload = file => {
-    // const isJPG = file.type === 'image/jpeg';
-    // if (!isJPG) {
-    //   message.error('You can only upload JPG file!');
-    // }
-    const isLt100M = file.size / 1024 / 1024 < 100;
-    if (!isLt100M) {
-      message.error('文件大小不可超过100M!');
+    if (this.state.uploading) {
+      message.error('其他文件正在上传中..');
+      return false;
     }
-    return isLt100M;
+    if (file.size / 1024 / 1024 > 100) {
+      message.error('文件大小不可超过100M!');
+      return false;
+    }
+    if (file.size / 1024 / 1024 > 30) {
+      this.hideMsgCallback = message.loading('上传文件较大，请耐心等候', 0);
+    }
+    this.setState({ uploading: true });
+    return true;
   };
 
   render() {

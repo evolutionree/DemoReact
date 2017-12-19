@@ -44,20 +44,23 @@ class SeriesTree extends Component {
 
   handleSelect = (selectedKeys, event) => {
     const { selectedNodes } = event;
-    const value = selectedNodes[0].key;
-    this.props.onChange(value, this.getNodeById(value));
+    if (selectedNodes && selectedNodes instanceof Array && selectedNodes.length > 0) {
+      const value = selectedNodes[0].key;
+      this.props.onChange(value, this.getNodeById(value));
+    }
   };
 
   renderTreeNodes(data) {
     return data.map(item => {
+      const title = item.recstatus === 0 ? ('(停用)' + item.productsetname) : item.productsetname;
       if (item.children && item.children.length) {
         return (
-          <TreeNode key={item.productsetid} title={item.productsetname}>
+          <TreeNode key={item.productsetid} title={title}>
             {this.renderTreeNodes(item.children)}
           </TreeNode>
         );
       } else {
-        return <TreeNode key={item.productsetid} title={item.productsetname} isLeaf />;
+        return <TreeNode key={item.productsetid} title={title} isLeaf />;
       }
     });
   }

@@ -14,14 +14,14 @@ import ImageGallery from '../components/ImageGallery';
 import MapModal from '../components/MapModal';
 import JsonEditModal from '../components/JsonEditModal';
 
-const App = ({ children, location, siderFold, loading, dispatch, user }) => {
-  const cls = classnames({ [styles.app]: true, [styles.fold]: siderFold });
+const App = ({ children, location, siderFold, loading, dispatch, user, noMinWidth }) => {
+  const cls = classnames({ [styles.app]: true, [styles.fold]: siderFold, [styles.noMinWidth]: noMinWidth });
   return (
     <div className={cls}>
       <AppHeader />
       <AppMenu location={location} />
       <Spin spinning={loading}>
-        <div className={styles.main}>
+        <div className={styles.main} style={{ minHeight: '200px' }}>
           {user.userid !== undefined && children}
         </div>
       </Spin>

@@ -105,7 +105,7 @@ function DSourceList(props) {
               : <span>{text}</span>;
           }}
         />
-        <Column key="entityname" dataIndex="entityname" title="类型" />
+        <Column key="entityname" dataIndex="entityname" title="关联实体" />
         <Column key="recstatus" dataIndex="recstatus" title="状态" render={v => ['停用', '启用'][v]} />
         <Column key="srcmark" dataIndex="srcmark" title="描述" />
       </Table>

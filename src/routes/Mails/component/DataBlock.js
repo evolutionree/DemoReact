@@ -9,7 +9,7 @@ import InputSearch from './InputSearch';
 
 class DataBlock extends Component {
   static propTypes = {
-    value: React.PropTypes.string
+    value: React.PropTypes.any
   };
   static defaultProps = {
     value: ''

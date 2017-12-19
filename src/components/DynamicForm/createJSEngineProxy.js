@@ -225,7 +225,8 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     setValueByName = (fieldName, value) => {
       setTimeout(() => {
         try {
-          this.getFieldComponentInstance(fieldName).setValueByName(value);
+          const inst = this.getFieldComponentInstance(fieldName);
+          inst.setValueByName(value);
         } catch (e) {
           console.error(e);
         }

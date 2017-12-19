@@ -31,6 +31,7 @@ function EntityConfig({
     <LinkTab.Group>
       {tabVisibleMap[entityType].map(tabIndex => tabs[tabIndex])}
       {checkIsDev() && <LinkTab to={`/entity-config/${entityId}/${entityType}/buttons`}>按钮设置</LinkTab>}
+      {(entityType == 0 || entityType == 2) && checkIsDev() && <LinkTab to={`/entity-config/${entityId}/${entityType}/func`}>功能设置</LinkTab>}
       {checkIsDev() && <LinkTab to={`/entity-config/${entityId}/${entityType}/pages`}>特别页面</LinkTab>}
       {checkIsDev() && <LinkTab to={`/entity-config/${entityId}/${entityType}/scripts`}>全局JS</LinkTab>}
     </LinkTab.Group>

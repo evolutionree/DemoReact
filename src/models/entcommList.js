@@ -1,6 +1,7 @@
 import { message } from 'antd';
+import _ from 'lodash';
 import { routerRedux } from 'dva/router';
-import { getGeneralListProtocol, getListData, delEntcomm, transferEntcomm,getEntcommDetail } from '../services/entcomm';
+import { getGeneralListProtocol, getListData, delEntcomm, transferEntcomm, getFunctionbutton, extraToolbarClickSendData, getEntcommDetail } from '../services/entcomm';
 import { queryMenus, queryEntityDetail, queryTypes, queryListFilter} from '../services/entity';
 
 export default {
@@ -20,7 +21,10 @@ export default {
     showModals: '',
     modalPending: false,
     simpleSearchKey: 'recname',
-    copyData: {}
+    copyData: {},
+    extraButtonData: [], //页面动态 按钮数据源
+    extraToolbarData: [], //页面toolbar 动态按钮数据源
+    dynamicModalData: {}
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -57,6 +61,9 @@ export default {
         // 获取协议
         const { data: protocol } = yield call(getGeneralListProtocol, { typeId: entityId });
         yield put({ type: 'protocol', payload: protocol });
+
+        // 获取页面操作按钮
+        yield put({ type: 'queryFuntionbutton__', payload: {} });
 
         // 获取下拉菜单
         const { data: { rulemenu } } = yield call(queryMenus, entityId);
@@ -160,6 +167,21 @@ export default {
         message.error(e.message || '获取列表数据失败');
       }
     },
+    *queryFuntionbutton__({ payload }, { select, call, put }) {
+      const { entityId, currItems } = yield select(state => state.entcommList);
+      try {
+        let { data: functionbutton } = yield call(getFunctionbutton, { entityid: entityId, RecIds: currItems.map((item) => item.recid) });
+        /*
+         DisplayPosition	按钮的显示位置（int数组）：web列表=0，web详情=1，手机列表=100，手机详情=101	array<number>	@mock=$order(0,1)
+         */
+        functionbutton = functionbutton.filter(item => _.indexOf(item.displayposition, 0) > -1);
+        const extraButtonData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'ShowModals');
+        const extraToolbarData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'CallService' || item.buttoncode === 'CallService_showModal');
+        yield put({ type: 'putState', payload: { extraButtonData, extraToolbarData } });
+      } catch (e) {
+        message.error(e.message);
+      }
+    },
     *addDone(action, { select, put }) {
       yield put({ type: 'showModals', payload: '' });
       const { pageIndex } = yield select(state => state.entcommList.queries);
@@ -214,6 +236,37 @@ export default {
       } catch (e) {
         yield put({ type: 'modalPending', payload: false });
         message.error(e.message || '转移失败');
+      }
+    },
+    *extraToolbarClick({ payload: item }, { select, call, put }) {
+      const { currItems } = yield select(state => state.entcommList);
+      let params = {};
+      params = {
+        Recids: currItems.map(item => item.recid),
+        ...item.extradata
+      };
+      try {
+        yield call(extraToolbarClickSendData, item.routepath, params);
+        yield put({ type: 'queryList' });
+        message.success('更新成功');
+      } catch (e) {
+        message.error(e.message);
+      }
+    },
+    *dynamicModalSendData({ payload: submitData }, { select, call, put }) {
+      const { dynamicModalData } = yield select(state => state.entcommList);
+      const url = dynamicModalData.routepath;
+      const successMessageInfo = dynamicModalData && dynamicModalData.extradata && dynamicModalData.extradata.success_message;
+      try {
+        yield call(extraToolbarClickSendData, url, submitData);
+        yield put({ type: 'showModals', payload: '' });
+        yield put({ type: 'putState', payload: { dynamicModalData: {} } });
+        yield put({ type: 'queryList' });
+        if (successMessageInfo) {
+          message.success(successMessageInfo);
+        }
+      } catch (e) {
+        message.error(e.message);
       }
     }
   },
@@ -304,7 +357,10 @@ export default {
         showModals: '',
         modalPending: false,
         simpleSearchKey: 'recname',
-        copyData: {}
+        copyData: {},
+        extraButtonData: [], //页面动态 按钮数据源
+        extraToolbarData: [], //页面toolbar 动态按钮数据源
+        dynamicModalData: {}
       };
     }
   }
