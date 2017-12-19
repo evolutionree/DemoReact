@@ -70,7 +70,7 @@ class Page extends Component {
   };
 
   render() {
-    const { layout, title, children, fixedTop, showGoBack, contentStyle, contentStyleFree } = this.props;
+    const { layout, title, children, fixedTop, showGoBack, contentStyle, contentWrapStyle, contentStyleFree } = this.props;
 
     return (
       <div className={classnames([styles.page, styles[layout]])}>
@@ -79,7 +79,7 @@ class Page extends Component {
           <span className={styles.title}>{title}</span>
         </div>
         {fixedTop || ''}
-        <div className={styles.content}>
+        <div className={styles.content} style={contentWrapStyle}>
           <div className={contentStyleFree ? '' : styles.contentInner} style={contentStyle}>
             {children}
           </div>

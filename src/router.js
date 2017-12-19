@@ -58,6 +58,8 @@ import MailRecovery from './routes/MailRecovery';
 
 import DbManager from './routes/DbManager/index';
 
+import Schedule from './routes/Schedule/index';
+
 const appRoutes = [
   { path: 'home', comp: Home },
   { path: 'attendance', comp: AttendanceList, entid: '969d32b6-d81c-43a3-bc0d-124ffc26855c' },
@@ -106,7 +108,7 @@ const appRoutes = [
   { path: 'mails', comp: Mails, model: require('./models/mails') },
   { path: 'mailrecovery', comp: MailRecovery, model: require('./models/mailRecovery') },
   { path: 'dbmanager', comp: DbManager, model: require('./models/dbmanager') },
-  { path: 'test', comp: DbManager, model: require('./models/dbmanager') },
+  { path: 'schedule', comp: Schedule },
   { path: '*', comp: NoFoundPage }
 ];
 
