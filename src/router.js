@@ -106,7 +106,6 @@ const appRoutes = [
   { path: 'mails', comp: Mails, model: require('./models/mails') },
   { path: 'mailrecovery', comp: MailRecovery, model: require('./models/mailRecovery') },
   { path: 'dbmanager', comp: DbManager, model: require('./models/dbmanager') },
-  { path: 'test', comp: DbManager, model: require('./models/dbmanager') },
   { path: '*', comp: NoFoundPage }
 ];
 
