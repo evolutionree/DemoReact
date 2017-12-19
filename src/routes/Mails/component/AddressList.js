@@ -2,15 +2,15 @@
  * Created by 0291 on 2017/11/10.
  */
 import React, { Component } from 'react';
-import { Input, Tree, Collapse, Icon, message } from 'antd';
+import { Input, Tree, Collapse, Icon } from 'antd';
+const Panel = Collapse.Panel;
+const Search = Input.Search;
+const TreeNode = Tree.TreeNode;
 import Styles from './AddressList.less';
 import request from '../../../utils/request';
-import { queryInnerContact } from '../../../services/mails';
+import { queryInnerContact, queryDeptMailCatalog, queryMailCatalog } from '../../../services/mails';
 import { connect } from 'dva';
-import groupSort from '../lib/groupSort';
-import _ from 'lodash';
-const Panel = Collapse.Panel;
-const TreeNode = Tree.TreeNode;
+import compare from '../lib/sortCompare';
 
 class AddressList extends Component {
   static propTypes = {
@@ -32,13 +32,9 @@ class AddressList extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      innerContact: nextProps.innerContact
+      innerContact: nextProps.innerContact,
+      foldAddress: true
     });
-    if (nextProps.showingPanel && nextProps.showingPanel !== this.props.showingPanel) {
-      this.setState({
-        foldAddress: true
-      });
-    }
   }
 
   componentDidMount() {
@@ -67,30 +63,16 @@ class AddressList extends Component {
     });
   }
 
-  getTitleHtml(item) {
-    if (item.nodetype === 1) {
-      return (
-        <ul style={{ padding: 0 }}>
-          <li style={{ padding: 0 }}>{item.treename}</li>
-          <li style={{ padding: 0 }}>{item.mail}</li>
-        </ul>
-      );
-    } else {
-      return item.treename;
-    }
-  }
   renderTreeNodes(data) {
-    return data.map((item, index) => {
+    return data.map((item) => {
       if (item.children && item.children.length > 0) {
         return (
-          <TreeNode title={item.treename} key={JSON.stringify({ treeid: item.treeid, email: item.mail, name: item.treename })} dataRef={item} selectable={false}>
+          <TreeNode title={item.treename} key={item.treeid} dataRef={item} selectable={false}>
             {this.renderTreeNodes(item.children)}
           </TreeNode>
         );
       }
-      return <TreeNode title={this.getTitleHtml(item)}
-                       key={JSON.stringify({ treeid: item.treeid, email: item.mail, name: item.treename })}
-                       dataRef={item} isLeaf={item.nodetype === 1} selectable={item.nodetype === 1} />;
+      return <TreeNode title={item.treename} key={item.treeid} dataRef={item} isLeaf={item.nodetype === 1} selectable={item.nodetype === 1} />;
     });
   }
 
@@ -101,40 +83,48 @@ class AddressList extends Component {
       const oldData = editEmailFormData[this.props.focusTargetName] || [];
       const newEditEmailFormData = {
         ...editEmailFormData,
-        [this.props.focusTargetName]: _.uniqBy([
+        [this.props.focusTargetName]: [
           ...oldData,
           {
             name: item.name,
             email: item.emailaddress
           }
-        ], 'email')
+        ]
       };
 
       this.props.dispatch({ type: 'mails/putState', payload: { editEmailFormData: newEditEmailFormData } });
     }
   }
 
-  treeSelectHandler(selectKeys) {
+  treeSelectHandler(selectKeys, { selected, selectedNodes, node, event }) {
+    const selectItem = this.state.innerContact && this.state.innerContact instanceof Array && this.state.innerContact.filter((item, index) => {
+      return item.treeid === (selectKeys && selectKeys instanceof Array && selectKeys.length > 0 && selectKeys[0]);
+    });
+
     if (this.props.focusTargetName) {
       const editEmailFormData = this.props.editEmailFormData || {};
       const oldData = editEmailFormData[this.props.focusTargetName] || [];
-      const pushData = selectKeys && selectKeys instanceof Array && selectKeys.length > 0 && JSON.parse(selectKeys[0]);
+      const pushData = selectItem && selectItem instanceof Array && selectItem[0];
+
       if (pushData) {
         const newEditEmailFormData = {
           ...editEmailFormData,
-          [this.props.focusTargetName]: _.uniqBy([ //去重
+          [this.props.focusTargetName]: [
             ...oldData,
             {
-              name: pushData.name,
-              email: pushData.email
+              name: pushData.treename,
+              email: pushData.mail
             }
-          ], 'email')
+          ]
         };
 
-        this.props.dispatch({ type: 'mails/putState', payload: { editEmailFormData: newEditEmailFormData } });
+        let filterEditEmailFormData = {};
+        this.props.model && this.props.model instanceof Array && this.props.model.map((item) => { //筛选出当前表单显示的数据
+          filterEditEmailFormData[item.name] = newEditEmailFormData[item.name];
+        });
+
+        this.props.dispatch({ type: 'mails/putState', payload: { editEmailFormData: filterEditEmailFormData } });
       }
-    } else {
-      message.info('请先选择需要填充的焦点行');
     }
   }
 
@@ -142,9 +132,8 @@ class AddressList extends Component {
     request('/api/mail/getcontactbykeyword', {
       method: 'post', body: JSON.stringify({ keyword: value, count: 50 })
     }).then((result) => {
-      const { data } = result;
       this.setState({
-        listData: data
+        listData: result && result.data
       });
     });
   }
@@ -166,36 +155,9 @@ class AddressList extends Component {
     });
   }
 
-  renderCustomListhHtml() {
-    let html = [];
-    const customerContact = this.props.customerContact && this.props.customerContact instanceof Array && groupSort(this.props.customerContact);
-    for (let key in customerContact) {
-      html.push(
-        <TreeNode title={key} key={key} selectable={false}>
-          {
-            customerContact[key].map((item, index) => {
-              return <TreeNode title={getTitle(item)} key={JSON.stringify({ treeid: item.recid, email: item.emailaddress, name: item.name })} />
-            })
-          }
-        </TreeNode>
-      )
-    };
-
-    function getTitle(item) {
-      return (
-        <ul className={Styles.customListUl}>
-          <li>{item.name}</li>
-          <li>{item.emailaddress}</li>
-        </ul>
-      )
-    }
-
-    return html;
-  }
-
   render() {
     const { queryString } = this.state;
-
+    const customerContact = this.props.customerContact && this.props.customerContact instanceof Array && this.props.customerContact.sort(compare);
     const suffix = queryString ? <Icon type="close-circle" onClick={this.emitEmptyQueryString.bind(this)} /> : null;
     return (
       <div className={Styles.addressListWrap}>
@@ -217,10 +179,7 @@ class AddressList extends Component {
                 {
                   this.state.listData && this.state.listData instanceof Array && this.state.listData.length > 0 ? this.state.listData.map((item, index) => {
                     return (
-                      <li key={index} onClick={this.selectContact.bind(this, item)}>
-                        <div>{item.name ? item.name : item.emailaddress.substring(0, item.emailaddress.indexOf('@'))}</div>
-                        <div>{item.emailaddress}</div>
-                      </li>
+                      <li key={index} onClick={this.selectContact.bind(this, item)}>{item.name ? item.name : item.emailaddress}</li>
                     );
                   }) : <li>没有符合条件的联系人</li>
                 }
@@ -234,30 +193,25 @@ class AddressList extends Component {
                         this.props.recentContact && this.props.recentContact instanceof Array && this.props.recentContact.map((item, index) => {
                           if (index === 9 && this.state.foldAddress) {
                             return (
-                              <li key={index} onClick={this.setFoldAddress.bind(this)} className={Styles.showMore}>显示更多<span className={Styles.icon}></span></li>
+                              <li key={index} onClick={this.setFoldAddress.bind(this)} style={{ textAlign: 'center', fontWeight: 'bold' }}>点击显示更多...</li>
                             );
                           } else if (index > 9 && this.state.foldAddress) {
                             return null;
                           } else {
-                            return (
-                              <li key={index} onClick={this.selectContact.bind(this, item)}>
-                                <div>{item.name ? item.name : item.emailaddress.substring(0, item.emailaddress.indexOf('@'))}</div>
-                                <div>{item.emailaddress}</div>
-                              </li>
-                            );
+                            return <li key={index} onClick={this.selectContact.bind(this, item)}>{item.name ? item.name : item.emailaddress}</li>;
                           }
                         })
                       }
                     </ul>
                   </Panel>
                   <Panel header="客户联系人" key="2">
-                    <div className={Styles.customList}>
-                      <Tree onSelect={this.treeSelectHandler.bind(this)}>
-                        {
-                          this.renderCustomListhHtml()
-                        }
-                      </Tree>
-                    </div>
+                    <ul className={Styles.recentContactsWrap}>
+                      {
+                        customerContact && customerContact instanceof Array && customerContact.map((item, index) => {
+                          return <li key={index} onClick={this.selectContact.bind(this, item)}>{item.customer ? item.customer : item.emailaddress}</li>;
+                        })
+                      }
+                    </ul>
                   </Panel>
                   <Panel header="企业内部联系人" key="3">
                     <Tree loadData={this.onLoadData} onSelect={this.treeSelectHandler.bind(this)}>

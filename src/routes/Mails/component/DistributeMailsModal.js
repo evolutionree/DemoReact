@@ -18,17 +18,12 @@ class DistributeMailsModal extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const isOpening = !this.props.visible && nextProps.visible;
-    const isClosing = this.props.visible && !nextProps.visible;
-    if (isOpening) {
 
-    } else if (isClosing) {
-      this.ComplexFormRef.resetFields();
-    }
   }
 
   onFormModalCancel = () => {
     this.props.cancel && this.props.cancel();
+    this.ComplexFormRef.resetFields();
   };
 
   onFormModalConfirm = () => {

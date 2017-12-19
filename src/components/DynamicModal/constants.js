@@ -16,8 +16,7 @@ function presetProps(props, WrappedComponent) {
 }
 
 const UserSingleSelectModal = presetProps({
-  multiple: false,
-  isRequiredSelect: true
+  multiple: false
 }, UserSelectModal);
 
 export const controlMap = {

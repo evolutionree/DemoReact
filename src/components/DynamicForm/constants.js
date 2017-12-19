@@ -25,7 +25,6 @@ import Attachment from './controls/Attachment';
 import RelTable from './controls/RelTable';
 import SelectUser from './controls/SelectUser';
 import SelectProduct from './controls/SelectProduct';
-import SelectProductBigData from './controls/SelectProductBigData';
 import SelectEntityType from './controls/SelectEntityType';
 import SelectProductSerial from './controls/SelectProductSerial';
 import RelObject from './controls/RelObject';
@@ -86,7 +85,6 @@ export const controlMap = {
   26: null,
   27: null,
   28: SelectProduct,
-  // 28: SelectProductBigData,
   29: SelectProductSerial,
   30: null,
   31: RelObject,

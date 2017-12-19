@@ -52,7 +52,6 @@ function ProductList({
   }
   const currentSeries = _.find(series, ['productsetid', queries.productSeriesId]);
   const seriesPath = getSeriesPath(currentSeries, series);
-  const isDisabledSeries = currentSeries && currentSeries.recstatus === 0;
   return (
     <div className={styles.rightContent}>
       {/*<div className={styles.subtitle}>{currentSeries && currentSeries.productsetname}</div>*/}
@@ -70,7 +69,7 @@ function ProductList({
         </Breadcrumb>
       </div>
       <Toolbar
-        selectedCount={isDisabledSeries ? 0 : currentItems.length}
+        selectedCount={currentItems.length}
         actions={[
           { label: '编辑', handler: edit, single: true, show: checkFunc('ProductEdit') },
           { label: '启用', handler: () => enable(1), show: checkFunc('ProductDelete') && currentItems.some(i => !i.recstatus) },
@@ -81,7 +80,7 @@ function ProductList({
           <Option key="1">启用</Option>
           <Option key="0">停用</Option>
         </Select>
-        {!isDisabledSeries && checkFunc('ProductAdd') && <Button onClick={add}>新增</Button>}
+        {checkFunc('ProductAdd') && <Button onClick={add}>新增</Button>}
         {checkFunc('ProductImport') && <Button onClick={importData}>导入</Button>}
         <Button onClick={exportData}>导出</Button>
         <Toolbar.Right>

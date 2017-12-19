@@ -735,40 +735,6 @@ export async function saveCustomBasicConfig(params) {
 }
 
 /**
- * 查询邮件客户信息字段（通用）
- * @param params
- * { entityid, commentityid }
- * @returns {Promise.<Object>}
- */
-export async function queryCommonRelField(params) {
-  return request('api/entitypro/querybasefield', {
-    method: 'post',
-    body: JSON.stringify(params)
-  });
-}
-/**
- * 保存邮件客户信息字段（通用）
- * @param params
- * [
- {
-     "EntityId": "e0771780-9883-456a-98b9-372d9888e0ac",
-     "fieldid": "fc978c06-1dd8-42a0-80a3-28ffdf6dc11c"
- },
- {
-     "EntityId": "e0771780-9883-456a-98b9-372d9888e0ac",
-     "fieldid": "de5ba784-c6f9-4af8-b7b4-fe7a02d69a44"
- }
- ]
- * @returns {Promise.<Object>}
- */
-export async function saveCommonRelField(params) {
-  return request('/api/entitypro/saveentitybasedata', {
-    method: 'post',
-    body: JSON.stringify(params)
-  });
-}
-
-/**
  * 获取页签设置列表数据
  *
  */
@@ -966,7 +932,7 @@ export async function queryEntryPages(entityid) {
 export async function saveEntryPages(params) {
   return request('api/entitypro/saveentrypages', {
     method: 'POST',
-    body: JSON.stringify(params)
+    body: JSON.stringify( params )
   });
 }
 
@@ -992,25 +958,3 @@ export async function DJCloudCall(params) {
   });
 }
 
-/*
-  获取实体function列表
-  {
- EntityId
-  }
- */
-export async function functionlist(params) {
-  return request('api/EntityPro/functionlist', {
-    method: 'POST',
-    body: JSON.stringify(params)
-  });
-}
-
-/*
- 保存function列表
- */
-export async function savefunctions(params) {
-  return request('api/EntityPro/savefunctions', {
-    method: 'POST',
-    body: JSON.stringify(params)
-  });
-}

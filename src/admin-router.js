@@ -16,10 +16,9 @@ import EntityFields from './routes/EntityHome/views/EntityFields';
 import EntityRules from './routes/EntityHome/views/EntityRules';
 import EntityMenus from './routes/EntityHome/views/EntityMenus';
 import EntityTabs from './routes/EntityHome/views/EntityTabs';
-import EntityFunc from './routes/EntityHome/views/EntityFunc';
 import EntityDynamicVisible from './routes/EntityHome/views/EntityDynamicVisible';
 import EntityButtons from './routes/EntityHome/views/EntityButtons';
-import EntityPages from './routes/EntityHome/views/EntityPages';
+import EntityPages from './routes/EntityHome/views/EntityPages'
 import EntityScripts from './routes/EntityHome/views/EntityScripts';
 
 import RoleGroups from './routes/RoleGroupList';
@@ -87,7 +86,6 @@ const appRoutes = [
       { path: 'rules', comp: EntityRules, model: require('./models/entityRules') },
       { path: 'menus', comp: EntityMenus, model: require('./models/entityMenus') },
       { path: 'tabs', comp: EntityTabs, model: require('./models/entityTabs') },
-      { path: 'func', comp: EntityFunc, model: require('./models/entityFunc') },
       { path: 'dynamic-visible', comp: EntityDynamicVisible, model: require('./models/entityDynamicVisible') },
       { path: 'buttons', comp: EntityButtons, model: require('./models/entityButtons') },
       { path: 'pages', comp: EntityPages, model: require('./models/entityPages') },

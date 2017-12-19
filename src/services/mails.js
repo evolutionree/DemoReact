@@ -268,19 +268,6 @@ export async function querySignature() {
 }
 
 /**
- * 校验发送邮件白名单
- * @param params
- * {  }
- * @returns {Promise.<Object>}
- */
-export async function validsendmaildata(params) {
-  return request('api/mail/validsendmaildata', {
-    method: 'post',
-    body: JSON.stringify(params)
-  });
-}
-
-/**
  * 发送邮箱
  * @param params
  * {  }

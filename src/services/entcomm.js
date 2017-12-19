@@ -296,11 +296,7 @@ export async function queryPlugins({ entityid, recid }) {
       body: JSON.stringify({ entityid, RecIds:[recid] })
     };
     return request('/api/dynamicentity/functionbutton', params)
-      .then(result => {
-        return result.data.filter(item => {
-          return item.displayposition.indexOf(1) !== -1;
-        });
-      });
+      .then(result => result.data);
   };
 
   return Promise.all([

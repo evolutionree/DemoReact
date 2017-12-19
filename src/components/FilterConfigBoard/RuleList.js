@@ -32,8 +32,7 @@ class RuleList extends Component {
       entityId,
       fieldId,
       operator,
-      ruleData,
-      ruleType
+      ruleData
     } = rule;
     if (changeKey === 'entityId') {
       entityId = changeValue;
@@ -41,7 +40,6 @@ class RuleList extends Component {
       fieldId = matchField.fieldId;
       operator = getDefaultOperator(matchField.controlType);
       ruleData = getDefaultRuleData(matchField.controlType, operator);
-      ruleType = this.props.flowEnities[0].entityId ? ruleTypes.关联实体字段 : ruleTypes.关联独立实体字段;
     }
     if (changeKey === 'fieldId') {
       fieldId = changeValue;
@@ -61,8 +59,7 @@ class RuleList extends Component {
       entityId,
       fieldId,
       operator,
-      ruleData,
-      ruleType
+      ruleData
     });
   };
 
@@ -81,7 +78,7 @@ class RuleList extends Component {
   };
 
   onAddWorkflow = event => {
-    const isWorkflowField = event.key === '20';
+    const isWorkflowField = event.key === '11';
     const field = _.find(this.props.allFields, item => {
       if (isWorkflowField) {
         return !!item.isWorkflow && item.recStatus === 1;
@@ -99,13 +96,13 @@ class RuleList extends Component {
       entityId: isWorkflowField ? undefined : field.entityId,
       fieldId,
       operator,
-      ruleType: isWorkflowField ? ruleTypes.流程字段 : ruleTypes.关联实体字段,
+      ruleType: isWorkflowField ? ruleTypes.流程字段 : ruleTypes.全部实体字段,
       ruleData: getDefaultRuleData(controlType, operator)
     });
   };
 
   onAdd = (event) => {
-    if (event.key === '10' || event.key === '20') {
+    if (event.key === '10' || event.key === '11') {
       this.onAddWorkflow(event);
       return;
     }
@@ -157,7 +154,7 @@ class RuleList extends Component {
       menus = (
         <Menu onClick={this.onAdd.bind(this)}>
           <Menu.Item key="10">实体变量</Menu.Item>
-          <Menu.Item key="20">流程变量</Menu.Item>
+          <Menu.Item key="11">流程变量</Menu.Item>
         </Menu>
       );
     }

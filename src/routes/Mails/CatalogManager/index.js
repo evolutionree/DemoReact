@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import { Button, Collapse, Modal, Input, message } from 'antd';
+import { Button, Collapse, Modal, Input } from 'antd';
 import { connect } from 'dva';
 import classnames from 'classnames';
 import CatalogTree from './CatalogTree';
@@ -54,29 +54,21 @@ class CatalogManager extends Component {
     const { openedCatalog, myCatalogData, deptCatalogData, userCatalogData, selectedCatalogNode, catSearchKey, putState } = this.props;
     const panelHeight = key => (openedCatalog === key ? 'calc(100% - 38px)' : '38px');
     const selected = selectedCatalogNode || {};
-    const hasSubCat = selected.subcatalogs && selected.subcatalogs.length;
     const isMyCat = openedCatalog === 'my';
-    const isPersonalCat = selected.ctype === 2002;
-    const isPersonalSubCat = selected.ctype === 3002;
-    const isCustSubCat = selected.ctype === 4001;
-    const isTempCat = selected.ctype === 2003; // 未归类文件夹
-    const isInboxCat = selected.ctype > 2000; // 收件箱子文件夹(包括下属)
-    const transCatalog = () => {
-      if (!isTempCat && hasSubCat) {
-        return message.error('包含子文件夹，无法转移');
-      }
-      this.props.transferCatalog();
-    };
+    const isPersonalCat = isMyCat && selected.ctype === 2002;
+    const isPersonalSubCat = isMyCat && selected.ctype === 3002;
+    const isCustCat = isMyCat && selected.ctype === 4001;
+    const isInboxCat = isMyCat && selected.ctype > 2000; // 收件箱子文件夹
     return (
       <div style={{ height: '100%', minWidth: '330px' }}>
         <div style={{ padding: '10px' }}>
-          <Button ghost onClick={this.props.addCatalog} disabled={!isMyCat || !isPersonalCat}>新增</Button>
-          <Button ghost onClick={this.props.editCatalog} disabled={!isMyCat || !isPersonalSubCat}>编辑</Button>
-          <Button ghost onClick={transCatalog} disabled={!isPersonalSubCat && !isCustSubCat && !isTempCat}>转移</Button>
-          <Button ghost onClick={this.props.delCatalog} disabled={!isMyCat || !isPersonalSubCat}>删除</Button>
+          <Button ghost onClick={this.props.addCatalog} disabled={!isPersonalCat && !isPersonalSubCat}>新增</Button>
+          <Button ghost onClick={this.props.editCatalog} disabled={!isPersonalSubCat}>编辑</Button>
+          <Button ghost onClick={this.props.transferCatalog} disabled={!isInboxCat}>转移</Button>
+          <Button ghost onClick={this.props.delCatalog} disabled={!isPersonalSubCat}>删除</Button>
           <ImgIcon name="refresh" onClick={this.props.refreshCatalog} />
-          {isMyCat && (isPersonalSubCat || isCustSubCat) && <ImgIcon name="arrow-down-bordered" onClick={this.onOrderDown} />}
-          {isMyCat && (isPersonalSubCat || isCustSubCat) && <ImgIcon name="arrow-up-bordered" onClick={this.onOrderUp} />}
+          {(isPersonalSubCat || isCustCat) && <ImgIcon name="arrow-down-bordered" onClick={this.onOrderDown} />}
+          {(isPersonalSubCat || isCustCat) && <ImgIcon name="arrow-up-bordered" onClick={this.onOrderUp} />}
         </div>
         <div style={{ position: 'relative', background: '#f7f7f7', height: '44px', paddingLeft: '10px' }}>
           <span style={{ lineHeight: '44px' }}>{catTitle[openedCatalog] || '邮箱'}</span>
@@ -94,7 +86,7 @@ class CatalogManager extends Component {
           bordered={false}
           activeKey={openedCatalog}
           onChange={this.props.toggleOpenedCatalog}
-          style={{ height: 'calc(100% - 86px)' }}
+          style={{ height: 'calc(100% - 129px)' }}
         >
           <Collapse.Panel
             header={<div><ImgIcon name="user" /><span>{catTitle.my}</span></div>}
@@ -120,7 +112,7 @@ class CatalogManager extends Component {
               onSelect={(id, node) => this.props.selectCatalog(node, 'dept')}
             />
           </Collapse.Panel>
-          {false && <Collapse.Panel
+          <Collapse.Panel
             header={<div><ImgIcon name="structure" /><span>{catTitle.user}</span></div>}
             key="user"
             style={{ transition: 'all .2s', height: panelHeight('user') }}
@@ -137,7 +129,7 @@ class CatalogManager extends Component {
                 </li>
               ))}
             </ul>
-          </Collapse.Panel>}
+          </Collapse.Panel>
         </Collapse>
         <CatalogModal />
       </div>

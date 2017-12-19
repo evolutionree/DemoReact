@@ -48,7 +48,6 @@ class RelTable extends Component {
   parseValue = () => {
     let { value } = this.props;
     if (!value) return [];
-    if (!Array.isArray(value)) return [];
     return value;
   };
 

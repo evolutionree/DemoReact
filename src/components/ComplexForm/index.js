@@ -23,8 +23,8 @@ class ComplexForm extends React.Component {
 
   renderComponent(componentType) {
     const placeholder = {
-      UserSelect: '请选择接收人员',
-      DeptSelect: '请选择接收团队'
+      UserSelect: '请选择接收团队',
+      DeptSelect: '请选择接收人员'
     };
 
     if (componentType === 'UserSelect' || componentType === 'DeptSelect') {

@@ -40,7 +40,7 @@ class RuleItem extends Component {
       fields = allFields.filter(field => field.controlType > 1000);
     } else if (ruleType === ruleTypes.其他字段) {
       fields = allFields.filter(field => field.controlType < 1000);
-    } else if (ruleType === ruleTypes.关联实体字段) {
+    } else if (ruleType === ruleTypes.全部实体字段) {
       fields = allFields.filter(field => !field.isWorkflow);
       entities = this.props.entities;
     } else if (ruleType === ruleTypes.流程字段) {

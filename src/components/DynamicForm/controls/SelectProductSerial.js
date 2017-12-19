@@ -20,7 +20,6 @@ const TreeNode = TreeSelect.TreeNode;
 
 class SelectProductSerial extends React.Component {
   static propTypes = {
-    wrapStyle: PropTypes.object,
     products: PropTypes.array,
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     value_name: PropTypes.string,
@@ -31,7 +30,6 @@ class SelectProductSerial extends React.Component {
     placeholder: PropTypes.string
   };
   static defaultProps = {
-    wrapStyle: {},
     products: []
   };
 
@@ -202,7 +200,7 @@ class SelectProductSerial extends React.Component {
   }
 
   render() {
-    const { multiple, placeholder, isReadOnly, onFocus, wrapStyle } = this.props;
+    const { multiple, placeholder, isReadOnly, onFocus } = this.props;
 
     const treeData = this.getTreeData();
     // const treeDefaultExpandedKeys = treeData.map(item => item.productsetid).filter(item => !!item);
@@ -210,7 +208,6 @@ class SelectProductSerial extends React.Component {
     return (
       <TreeSelect
         allowClear
-        style={wrapStyle}
         dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
         value={this.parseValue()}
         onChange={this.handleChange}

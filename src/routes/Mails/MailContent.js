@@ -74,22 +74,16 @@ class MailContent extends Component {
     if (!data) return null;
     const { title, sender, receivers, ccers, bccers, receivedtime,
       senttime, attachinfo, summary, mailbody, attachcount, istag, catalogtype } = data;
-    let mailtime = receivedtime;
-    if (receivedtime === '0001-01-01 00:00:00' || !receivedtime) {
-      mailtime = senttime === '0001-01-01 00:00:00' ? '' : senttime;
-    }
     const strPersons = persons => {
       if (!persons) return null;
-      const str = persons.map((item, index) => {
+      return persons.map((item, index) => {
         const name = item.displayname || item.nickname || item.address;
         // const address = item.address ? <span style={{ color: '#7f7f7f', paddingLeft: '3px' }}>&lt;{item.address}&gt;</span> : null;
-        const address = item.address ? `<${item.address}>` : null;
-        return `${name} ${address}`;
-        // return (
-        //   <span key={index} style={{ marginLeft: '3px' }}>{name}{address};</span>
-        // );
-      }).join('; ');
-      return <span>{str}</span>;
+        const address = null;
+        return (
+          <span key={index} style={{ marginLeft: '3px' }}>{name}{address};</span>
+        );
+      });
     };
     return (
       <div className={styles.wrap}>
@@ -111,23 +105,23 @@ class MailContent extends Component {
         {this.state.headerVisible && <div className={styles.header}>
           <p className={styles.meta}>
             <span>发件人</span>
-            {strPersons(sender && (Array.isArray(sender) ? sender : [sender]))}
+            <span>{strPersons(sender && (Array.isArray(sender) ? sender : [sender]))}</span>
           </p>
           <p className={styles.meta}>
             <span>收件人</span>
-            {strPersons(receivers)}
+            <span>{strPersons(receivers)}</span>
           </p>
           {!!(ccers && ccers.length) && <p className={styles.meta}>
             <span>抄送人</span>
-            {strPersons(ccers)}
+            <span>{strPersons(ccers)}</span>
           </p>}
           {bccers && <p className={styles.meta}>
             <span>密送人</span>
-            {strPersons(bccers)}
+            <span>{strPersons(bccers)}</span>
           </p>}
           <p className={styles.meta}>
             <span>时&nbsp;&nbsp;&nbsp;&nbsp;间</span>
-            <span>{mailtime}</span>
+            <span>{formatTime(receivedtime) || formatTime(senttime)}</span>
           </p>
           <div className={styles.stuff}>
             {isPreview && (

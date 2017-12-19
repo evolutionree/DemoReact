@@ -12,7 +12,6 @@ import SetMainFieldModal from './SetMainFieldModal';
 import SelListFilterModal from './SetListFilterModal';
 import SetDynamicFieldsModal from './SetDynamicFieldsModal';
 import SetCustomBasicConfigModal from './SetCustomBasicConfigModal';
-import SetCustomMailConfigModal from './SetCustomMailConfigModal';
 import ExpandJSModal from './ExpandJSModal';
 
 import styles from './EntityFields.less';
@@ -119,9 +118,6 @@ function EntityFields({
   function setCustomBasicConfig() {
     dispatch({ type: 'entityFields/showModals', payload: 'customBasicConfig' });
   }
-  function setCustomMailConfig() {
-    dispatch({ type: 'entityFields/showModals', payload: 'customMailConfig' });
-  }
   const columns = [
     { title: '序号',
       dataIndex: 'row_number',
@@ -181,7 +177,6 @@ function EntityFields({
         {btns.setfilter && <Button onClick={setListFilter}>设置筛选条件</Button>}
         {btns.dynamic && <Button onClick={setDynamicFields}>动态摘要配置</Button>}
         {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={setCustomBasicConfig}>设置客户基础资料字段</Button> : null}
-        {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={setCustomMailConfig}>设置邮件客户信息字段</Button> : null}
       </Toolbar>
       <Table
         columns={columns}
@@ -213,7 +208,6 @@ function EntityFields({
       <SelListFilterModal />
       <SetDynamicFieldsModal />
       <SetCustomBasicConfigModal />
-      <SetCustomMailConfigModal />
       <ExpandJSModal />
     </div>
   );

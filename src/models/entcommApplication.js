@@ -1,5 +1,4 @@
 import { message } from 'antd';
-import _ from 'lodash';
 import { routerRedux } from 'dva/router';
 import { getGeneralListProtocol, getListData, delEntcomm, transferEntcomm, getFunctionbutton, extraToolbarClickSendData, savemailowner } from '../services/entcomm';
 import { queryMenus, queryEntityDetail, queryTypes, queryListFilter } from '../services/entity';
@@ -172,13 +171,7 @@ export default {
     *queryFuntionbutton__({ payload }, { select, call, put }) {
       const { entityId, currItems } = yield select(state => state.entcommApplication);
       try {
-        let { data: functionbutton } = yield call(getFunctionbutton, { entityid: entityId, RecIds: currItems.map((item) => item.recid) });
-        /*
-         DisplayPosition	按钮的显示位置（int数组）：web列表=0，web详情=1，手机列表=100，手机详情=101	array<number>	@mock=$order(0,1)
-         */
-
-        functionbutton = functionbutton.filter(item => _.indexOf(item.displayposition, 0) > -1);
-
+        const { data: functionbutton } = yield call(getFunctionbutton, { entityid: entityId, RecIds: currItems.map((item) => item.recid) });
         const extraButtonData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'ShowModals');
         const extraToolbarData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'CallService' || item.buttoncode === 'CallService_showModal');
         yield put({ type: 'functionbutton', payload: { extraButtonData, extraToolbarData } });
@@ -243,15 +236,11 @@ export default {
     *dynamicModalSendData({ payload: submitData }, { select, call, put }) {
       const { dynamicModalData } = yield select(state => state.entcommApplication);
       const url = dynamicModalData.routepath;
-      const successMessageInfo = dynamicModalData && dynamicModalData.extradata && dynamicModalData.extradata.success_message;
       try {
         yield call(extraToolbarClickSendData, url, submitData);
         yield put({ type: 'showModals', payload: '' });
         yield put({ type: 'putState', payload: { dynamicModalData: {} } });
         yield put({ type: 'queryList' });
-        if (successMessageInfo) {
-          message.success(successMessageInfo);
-        }
       } catch (e) {
         message.error(e.message);
       }

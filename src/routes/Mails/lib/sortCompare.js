@@ -1,7 +1,4 @@
 /**
- * Created by 0291 on 2017/12/12.
- */
-/**
  * Created by 0291 on 2017/11/20.
  * desc: 通讯录按中英文数字排序
  */
@@ -132,7 +129,7 @@ var Pinyin = (function (){
   return new Pinyin(arguments);
 })();
 
-function compare(val1,val2) {
+export default function compare(val1,val2) {
   // 转换为拼音
   val1 = Pinyin.getFullChars(val1.customer).toLowerCase();
   val2 = Pinyin.getFullChars(val2.customer).toLowerCase();
@@ -155,21 +152,4 @@ function compare(val1,val2) {
   if(i == length) {
     return val1.length - val2.length;
   }
-}
-
-
-export default function groupSort(arr) {
-  const sortArray = arr.sort(compare);
-  let newObject = {};
-  if (sortArray instanceof Array && sortArray.length > 0) {
-    newObject[sortArray[0].customer] = [];
-    for (let i = 0; i < sortArray.length; i++) {
-      if (newObject[sortArray[i].customer]){
-        newObject[sortArray[i].customer].push(sortArray[i]);
-      } else {
-        newObject[sortArray[i].customer] = [sortArray[i]];
-      }
-    };
-  }
-  return newObject;
 }

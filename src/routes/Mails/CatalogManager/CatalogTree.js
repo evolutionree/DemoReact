@@ -8,7 +8,7 @@ import styles from '../styles.less';
 
 const TreeNode = Tree.TreeNode;
 
-const Title = ({ text, type, unread, total }) => {
+const Title = ({ text, type, count }) => {
   const iconMap = {
     0: 'folder',
     1001: 'box',
@@ -25,15 +25,11 @@ const Title = ({ text, type, unread, total }) => {
     whiteSpace: 'nowrap',
     verticalAlign: 'middle'
   };
-  let count = unread;
-  if (type > 1001 && type < 2000) {
-    count = total;
-  }
   return (
     <div>
       {!!icon && <ImgIcon name={icon} />}
       <span style={textStyl} title={text}>{text}</span>
-      {!!count && <span style={{ color: '#3398db', verticalAlign: 'middle', marginLeft: '4px' }}>({count})</span>}
+      {!!count && <span style={{ color: '#3398db' }}>({count})</span>}
     </div>
   );
 };
@@ -118,18 +114,18 @@ class CatalogTree extends Component {
 
       if (item.subcatalogs && item.subcatalogs.length) {
         return (
-          <TreeNode key={item.recid} title={<Title type={item.ctype} text={item.recname} unread={item.unreadcount} total={item.mailcount} />}>
+          <TreeNode key={item.recid} title={<Title type={item.ctype} text={item.recname} count={item.unreadcount} />}>
             {this.renderTreeNodes(item.subcatalogs)}
           </TreeNode>
         );
       } else {
-        return <TreeNode key={item.recid} title={<Title type={item.ctype} text={item.recname} unread={item.unreadcount} total={item.mailcount} />} isLeaf />;
+        return <TreeNode key={item.recid} title={<Title type={item.ctype} text={item.recname} count={item.unreadcount} />} isLeaf />;
       }
     });
   };
 
   renderDeptTreeNode = item => {
-    const label = <Title type={item.nodetype} text={item.treename} unread={item.unreadcount} total={item.mailcount} />;
+    const label = <Title type={item.nodetype} text={item.treename} count={item.unreadcount} />;
     if (item.subcatalogs && item.subcatalogs.length) {
       return (
         <TreeNode key={item.treeid} title={label} dataRef={item}>

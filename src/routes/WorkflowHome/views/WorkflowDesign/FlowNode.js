@@ -158,30 +158,11 @@ class FlowNode extends Component {
     );
   };
 
-  renderHelperNode = () => {
-    return (
-      <div style={{ width: '30px', height: '30px', background: '#333' }}>&nbsp;</div>
-    );
-  };
-
   render() {
     const { id, title } = this.props;
 
-    if (/__helper/.test(id)) {
-      return this.renderHelperNode();
-    }
-
-    if (nodeData && nodeData.steptypeid === END_NODE) {
-      const styl = {
-        width: '100px',
-        lineHeight: '32px'
-      };
-      return (
-        <div className={styles.START} style={styl}>
-          {title}
-          <Icon type="setting" onClick={this.props.openStepModal} style={{ marginLeft: '3px', cursor: 'pointer' }} />
-        </div>
-      );
+    if (id === END_NODE) {
+      return <div className={styles.START}>{title}</div>;
     }
 
     if (id === START_NODE) {

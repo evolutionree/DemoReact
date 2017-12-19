@@ -205,12 +205,7 @@ export default {
       }
     },
     *toggleShowDisabledSeries(action, { select, put, call }) {
-      const {
-        queries: { productSeriesId },
-        series,
-        showDisabledSeries
-      } = yield select(state => state.productManager);
-      const recstatus = _.find(series, ['productsetid', productSeriesId]).recstatus;
+      const { showDisabledSeries } = yield select(state => state.productManager);
       yield put({
         type: 'putState',
         payload: {
@@ -218,9 +213,6 @@ export default {
         }
       });
       yield put({ type: 'querySeries' });
-      if (showDisabledSeries && recstatus === 0) {
-        yield put({ type: 'search', payload: { productSeriesId: getRootSeriesId(series) } });
-      }
     }
   },
   reducers: {

@@ -151,7 +151,7 @@ class DataGrid extends  React.Component {
   render() {
     const key = this.props.rowKey ? this.props.rowKey : rowKey;
     const rowSelection = this.props.rowSelection ? {
-      selectedRowKeys: this.state.slectRows.map(item => item[key]),
+      selectedRowKeys: this.state.slectRows.map(item => item[rowKey]),
       onChange: this.rowSelectHandler.bind(this)
     } : null;
 

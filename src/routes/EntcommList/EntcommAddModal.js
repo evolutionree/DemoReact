@@ -221,7 +221,7 @@ export default connect(
   state => {
     const { showModals, entityTypes, entityName } = state.entcommList;
     return {
-      visible: /add/.test(showModals),
+      visible: /recordAdd/.test(showModals),
       entityTypes,
       entityName,
       currentUser: state.app.user

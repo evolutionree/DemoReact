@@ -66,7 +66,6 @@ class DeptSelectModal extends React.Component {
               checkable
               checkStrictly
               checkChildrenRecursively
-              uncheckChildrenRecursively
               checkedKeys={{ checked: this.state.currentSelected && this.state.currentSelected instanceof Array && this.state.currentSelected.map(item => item.id), halfChecked: [] }}
               onCheckChange={this.onChange}
             />

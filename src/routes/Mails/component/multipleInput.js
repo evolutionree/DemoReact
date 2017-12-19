@@ -65,10 +65,10 @@ class MultipleInput extends Component {
 
   completeInput(value, type) {
     if (value && value.email) {
-      this.props.changeData && this.props.changeData(_.uniqBy([
+      this.props.changeData && this.props.changeData([
         ...this.state.data,
         value
-      ], 'email'));
+      ]);
     }
 
     if (type === 'blur') {
@@ -124,6 +124,7 @@ class MultipleInput extends Component {
 
   render() {
     let listData = this.state.data;
+    listData = listData && listData instanceof Array && _.uniqBy(listData, 'email');
     return (
       <div className={Styles.inputWrap} onClick={this.inputFocus.bind(this)}>
         <span>{this.props.label}</span>

@@ -223,7 +223,7 @@ class DetailModal extends Component {
         <Spin spinning={this.state.loading}>
           {this.state.isEdit ? (
             <DynamicFormEdit
-              entityTypeId={(this.props.detailData && this.props.detailData.rectype) || this.props.entityId}
+              entityTypeId={this.state.editData && this.state.editData.rectype}
               fields={this.state.editProtocol}
               value={this.state.editData}
               onChange={this.onEditDataChange}
@@ -231,7 +231,7 @@ class DetailModal extends Component {
             />
           ) : (
             <DynamicFormView
-              entityTypeId={(this.props.detailData && this.props.detailData.rectype) || this.props.entityId}
+              entityTypeId={this.props.detailData && this.props.detailData.rectype}
               fields={this.state.protocol}
               value={this.state.detailData || {}}
             />

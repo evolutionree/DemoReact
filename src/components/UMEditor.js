@@ -55,16 +55,6 @@ class RichEditorInForm extends React.Component {
     }
   };
 
-  execCommand = (type, content) => {
-    if (this.editor) {
-      this.editor.execCommand(type, content);
-    } else {
-      this.onEditorReady = () => {
-        this.editor.execCommand(type, content);
-      };
-    }
-  };
-
   onContainerDomReady = (container) => {
     const editor = this.editor = UM.getEditor(this.state.id, { x_img_base64: this.props.useImageBase64 });
     this.onEditorReady && this.onEditorReady();
