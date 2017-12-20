@@ -3,9 +3,10 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
+import { routerRedux } from 'dva/router';
 import { Spin, message, Select } from 'antd';
 import Page from '../../../components/Page';
-import { hashHistory } from 'react-router';
+// import { hashHistory } from 'react-router';
 import styles from '../../../components/ParamsBoard/styles.less';
 import Toolbar from '../../../components/Toolbar';
 import ParamsList from '../../../components/ParamsBoard/ParamsList';
@@ -53,7 +54,12 @@ export default connect(
   dispatch => {
     return {
       fieldClickHandler(item) {
-        hashHistory.push('/targetsetting/' + item.normtypeid + '?normtypename=' + item.normtypename);
+        dispatch(routerRedux.push({
+          pathname: '/targetsetting/' + item.normtypeid,
+          query: {
+            normtypename: item.normtypename
+          }
+        }));
       },
       onCreate(value) {
         dispatch({ type: 'targetSetting/addTarget', payload: value });
