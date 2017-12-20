@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import request from '../utils/request';
+import { encryptPassword } from '../services/authentication';
 
 /**
  * 查询用户列表
@@ -41,9 +42,11 @@ export async function revertPassword(userid) {
   });
 }
 export async function batchhRevertPassword(userids, newpassword) {
-  return request('/api/account/reconvertpwd', {
-    method: 'post',
-    body: JSON.stringify({ userid: userids, pwd: newpassword })
+  return encryptPassword(newpassword).then(result => {
+    return request('/api/account/reconvertpwd', {
+      method: 'post',
+      body: JSON.stringify({ userid: userids, pwd: result })
+    });
   });
 }
 
@@ -75,12 +78,12 @@ export async function setLeader(params) {
   }
  * @returns {Promise.<Object>}
  */
-export async function registerUser(params) {
-  return request('/api/account/regist', {
-    method: 'post',
-    body: JSON.stringify(params)
-  });
-}
+// export async function registerUser(params) {
+//   return request('/api/account/regist', {
+//     method: 'post',
+//     body: JSON.stringify(params)
+//   });
+// }
 
 /**
  * 编辑用户信息

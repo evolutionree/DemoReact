@@ -2,7 +2,6 @@ import { routerRedux } from 'dva/router';
 import { message, Modal } from 'antd';
 import {
   queryUsers,
-  registerUser,
   updateUser,
   createDepartment,
   updateDepartment,
@@ -15,7 +14,7 @@ import {
   setLeader,
   updateDeptStatus
 } from '../services/structure';
-// import { getCorrectPager } from '../utils/common';
+import { registerUser } from '../services/authentication';
 
 
 function getRootId(tree) {

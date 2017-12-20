@@ -47,7 +47,7 @@ export default function request(url, options) {
     'Content-Type': 'application/json',
     ...getDeviceHeaders()
   };
-  if (!/login/.test(url)) {
+  if (!/login/.test(url) && !/account\/getpublickey/.test(url)) {
     defaultHeaders.Authorization = `Bearer ${getAccessToken()}`;
   }
 
