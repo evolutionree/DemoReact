@@ -6,11 +6,13 @@ import { Tabs } from 'antd';
 import Page from '../../components/Page';
 import ScheduleTab from './ScheduleTab';
 import TaskTab from './TaskTab';
+import ScheduleModal from './Modal/ScheduleModal';
+import ScheduleCalendarTable from './componnet/ScheduleCalendarTable/index';
 import Styles from './index.less';
 
 const TabPane = Tabs.TabPane;
 
-const otherHeight = 60 + 48 + 10;
+const otherHeight = 60 + 48 + 10; //60：系统logo栏  48：页标栏  10： padding
 
 class Schedule extends Component {
   static propTypes = {
@@ -58,6 +60,7 @@ class Schedule extends Component {
       boxShadow: 'none',
       padding: 0
     };
+
     return (
       <Page title="工作台" contentStyle={contentStyle} contentWrapStyle={{ paddingBottom: 0, overflow: 'auto' }}>
         <div className={Styles.ScheduleWrap} style={{ height: this.state.height }}>
@@ -80,7 +83,7 @@ class Schedule extends Component {
           <div className={Styles.Right}>
             <Tabs defaultActiveKey="1">
               <TabPane tab="日程" key="1">
-                <ScheduleTab />
+                <ScheduleTab height={this.state.height - 50} />
               </TabPane>
               <TabPane tab="任务" key="2">
                 <TaskTab />
@@ -88,6 +91,11 @@ class Schedule extends Component {
             </Tabs>
           </div>
         </div>
+        <ScheduleModal>
+          <div style={{ padding: '0 30px' }}>
+            <ScheduleCalendarTable />
+          </div>
+        </ScheduleModal>
       </Page>
     );
   }

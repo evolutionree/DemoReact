@@ -99,17 +99,6 @@ class CalendarBody extends React.Component {
     year < 1900 || year > 9999 ? alert('不是有效年份') : this.changeYearHandler(event.target.value);
   }
 
-  test() {
-    let dates = [];
-    let datestr;
-    let myDate = new Date('2017-12-01');
-    for (let i = 0; i < 5; i++) {
-      datestr = myDate.getDate();
-      dates.push(datestr);
-      myDate.setTime(myDate.getTime() + 1000 * 60 * 60 * 24);
-    }
-    console.log(dates);
-  }
 
   render () {
     //TODO 以下代码有待优化
@@ -190,18 +179,18 @@ class CalendarBody extends React.Component {
         </div>
         <div className="dayul" style={{ display: (!this.state.changeMonth && !this.state.changeYear) ? 'block' : 'none' }}>{node1} {node2}{node3}</div>
         <div className="wasabi-datetime-month" style={{ display: this.state.changeMonth ? 'block' : 'none' }}>
-          <div className={"datespan "+((this.state.month==1) ? "chosed" : "")} onClick={this.changeMonthHandler.bind(this, 1)}>一月</div>
-          <div className={"datespan "+((this.state.month==2) ? "chosed" : "")} onClick={this.changeMonthHandler.bind(this, 2)}>二月</div>
-          <div className={"datespan "+((this.state.month==3) ? "chosed" : "")} onClick={this.changeMonthHandler.bind(this, 3)}>三月</div>
-          <div className={"datespan "+((this.state.month==4) ? "chosed" : "")} onClick={this.changeMonthHandler.bind(this, 4)}>四月</div>
-          <div className={"datespan "+((this.state.month==5) ? "chosed" : "")} onClick={this.changeMonthHandler.bind(this, 5)}>五月</div>
-          <div className={"datespan "+((this.state.month==6) ? "chosed" : "")} onClick={this.changeMonthHandler.bind(this, 6)}>六月</div>
-          <div className={"datespan "+((this.state.month==7) ? "chosed" : "")} onClick={this.changeMonthHandler.bind(this, 7)}>七月</div>
-          <div className={"datespan "+((this.state.month==8) ? "chosed" : "")} onClick={this.changeMonthHandler.bind(this, 8)}>八月</div>
-          <div className={"datespan "+((this.state.month==9) ? "chosed" : "")} onClick={this.changeMonthHandler.bind(this, 9)}>九月</div>
-          <div className={"datespan "+((this.state.month==10) ? "chosed" : "")} onClick={this.changeMonthHandler.bind(this, 10)}>十月</div>
-          <div className={"datespan "+((this.state.month==11) ? "chosed" : "")} onClick={this.changeMonthHandler.bind(this, 11)}>十一月</div>
-          <div className={"datespan "+((this.state.month==12) ? "chosed" : "")} onClick={this.changeMonthHandler.bind(this, 12)}>十二月</div>
+          <div className={"datespan " + ((this.state.month === 1) ? 'chosed' : '')} onClick={this.changeMonthHandler.bind(this, 1)}>一月</div>
+          <div className={"datespan " + ((this.state.month === 2) ? 'chosed' : '')} onClick={this.changeMonthHandler.bind(this, 2)}>二月</div>
+          <div className={"datespan " + ((this.state.month === 3) ? 'chosed' : '')} onClick={this.changeMonthHandler.bind(this, 3)}>三月</div>
+          <div className={"datespan " + ((this.state.month === 4) ? 'chosed' : '')} onClick={this.changeMonthHandler.bind(this, 4)}>四月</div>
+          <div className={"datespan " + ((this.state.month === 5) ? 'chosed' : '')} onClick={this.changeMonthHandler.bind(this, 5)}>五月</div>
+          <div className={"datespan " + ((this.state.month === 6) ? 'chosed' : '')} onClick={this.changeMonthHandler.bind(this, 6)}>六月</div>
+          <div className={"datespan " + ((this.state.month === 7) ? 'chosed' : '')} onClick={this.changeMonthHandler.bind(this, 7)}>七月</div>
+          <div className={"datespan " + ((this.state.month === 8) ? 'chosed' : '')} onClick={this.changeMonthHandler.bind(this, 8)}>八月</div>
+          <div className={"datespan " + ((this.state.month === 9) ? 'chosed' : '')} onClick={this.changeMonthHandler.bind(this, 9)}>九月</div>
+          <div className={"datespan " + ((this.state.month === 10) ? 'chosed' : '')} onClick={this.changeMonthHandler.bind(this, 10)}>十月</div>
+          <div className={"datespan " + ((this.state.month === 11) ? 'chosed' : '')} onClick={this.changeMonthHandler.bind(this, 11)}>十一月</div>
+          <div className={"datespan " + ((this.state.month === 12) ? 'chosed' : '')} onClick={this.changeMonthHandler.bind(this, 12)}>十二月</div>
         </div>
         <div className="wasabi-datetime-year" style={{ display: this.state.changeYear ? 'block' : 'none' }}>
           <div style={{ display: 'block', textAlign: 'center', marginBottom: 10 }}>
