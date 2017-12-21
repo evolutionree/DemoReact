@@ -314,7 +314,11 @@ export default {
           };
           result = yield call(queryHistoryUserMails, params);
         }
-        const mailList = result.data.datalist.map(item => ({ ...item, catalogtype: selectedCatalogNode.catalogtype }));
+        const mailList = result.data.datalist.map(item => ({
+          ...item,
+          catalogtype: selectedCatalogNode.catalogtype,
+          ctype: selectedCatalogNode.ctype
+        }));
         yield put({
           type: 'putState',
           payload: {
@@ -527,6 +531,7 @@ export default {
         const { mailDetailData: { mailId } } = yield select(state => state.mails);
         if (mailId !== mail.mailid) return;
         data.maildetail.catalogtype = mail.catalogtype;
+        data.maildetail.ctype = mail.ctype;
         yield put({
           type: 'putState',
           payload: {
@@ -611,6 +616,20 @@ export default {
         message.error(e.message || '转移失败');
         yield put({ type: 'modalPending', payload: false });
       }
+    },
+    *recoverMails({ payload: mails }, { select, call, put }) {
+      // try {
+      //   const params = {
+      //     IsTruncate: completely || false,
+      //     mailids: mails.map(item => item.mailid).join(','),
+      //     recstatus: 0
+      //   };
+      //   yield call(delMails, params);
+      //   message.success('删除成功');
+      //   yield put({ type: 'queryMailList' });
+      // } catch (e) {
+      //   message.error(e.message || '删除失败');
+      // }
     }
   },
   reducers: {
