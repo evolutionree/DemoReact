@@ -286,7 +286,7 @@ function filterTreeByPathSearch(treeData, pathSearches) {
         if (!showChildren) {
           node.children = [];
         } else if (childrenConPaths.length) {
-          node.children = loopNodes(node.children, childrenConPaths, true, forceShowChildren);
+          node.children = loopNodes(node.children || [], childrenConPaths, true, forceShowChildren);
         }
         node.selectable = selectable;
       }
