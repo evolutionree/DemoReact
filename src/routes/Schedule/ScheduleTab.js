@@ -2,10 +2,12 @@
  * Created by 0291 on 2017/12/19.
  */
 import React, { Component } from 'react';
+import { Icon } from 'antd';
 import Calendar from './componnet/Calendar/index';
 import List from './componnet/List/index';
 import WeekList from './componnet/WeekList/index';
 import MonthList from './componnet/MonthList/index';
+import SelectUser from '../../components/DynamicForm/controls/SelectUser';
 import classnames from 'classnames';
 import Styles from './ScheduleTab.less';
 
@@ -22,7 +24,8 @@ class ScheduleTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      scheduleWaysActive: ScheduleWays[0]
+      scheduleWaysActive: ScheduleWays[0],
+      searchPanelShow: false
     };
   }
 
@@ -32,7 +35,9 @@ class ScheduleTab extends Component {
 
 
   componentWillReceiveProps(nextProps) {
-
+    this.setState({
+      searchPanelShow: false
+    });
   }
 
   componentWillMount() {
@@ -45,12 +50,24 @@ class ScheduleTab extends Component {
     });
   }
 
+  toggleSearchPanel() {
+    this.setState({
+      searchPanelShow: !this.state.searchPanelShow
+    });
+  }
+
   render() {
     return (
       <div className={Styles.ScheduleTab} style={{ height: this.props.height }}>
         <div style={{ padding: '20px' }}>
           <div className={Styles.Header}>
-            <div className={Styles.Title}>我的日程</div>
+            <div className={Styles.Title}><Icon type="schedule" /><span>我的日程</span><Icon type="down" onClick={this.toggleSearchPanel.bind(this)} /><Icon type="plus" /></div>
+            <div className={Styles.SearchWrap} style={{ display: this.state.searchPanelShow ? 'block' : 'none' }}>
+              <div>我的日程</div>
+              <div>
+                <SelectUser />
+              </div>
+            </div>
             <ul>
               {
                 ScheduleWays.map((item, index) => {

@@ -71,7 +71,7 @@ class CalendarBody extends Component {
     }
 
     let node1 = arry1.map(function(item, i) {
-      return <li key={'li1' + i} className={Styles.otherMonthDay}>{item}</li>;
+      return <li key={'li1' + i} className={Styles.otherMonthDay}><div>{item}</div></li>;
     })
 
     let node2 = arry2.map((item, i) => {
@@ -84,15 +84,11 @@ class CalendarBody extends Component {
         [Styles.today]: item === today_day && parseInt(this.state.year) === today_year && parseInt(this.state.month) === today_month,
         [Styles.hasScheduleOrTask]: item === 11
       }]);
-      return <li key={'li1' + i} className={liClassName}>
-        {
-          this.props.render ? this.props.render(item) : <div>{item}</div>
-        }
-      </li>;
+      return <li key={'li1' + i} className={liClassName}><div>{item}</div></li>;
     })
 
     let node3 = arry3.map(function(item, i) {
-      return <li key={'li3' + i} className={Styles.otherMonthDay}>{item}</li>;
+      return <li key={'li3' + i} className={Styles.otherMonthDay}><div>{item}</div></li>;
     })
 
     return (

@@ -25,7 +25,7 @@ class TableBody extends Component {
   }
 
   componentDidMount() {
-    document.addEventListener('mousedown', this.onDocumentMouseDown.bind(this));
+    this.refs.dayUl.addEventListener('mousedown', this.onDocumentMouseDown.bind(this));
   }
 
 
@@ -34,10 +34,16 @@ class TableBody extends Component {
       year: nextProps.year,
       month: nextProps.month
     });
+    let selList = this.refs.dayUl.children;
+    for (let i = 0; i < selList.length; i++) {
+      if (selList[i].className.indexOf('seled') !== -1) {
+        selList[i].className = '';
+      }
+    }
   }
 
   componentWillMount() {
-    document.removeEventListener('mousedown', this.onDocumentMouseDown.bind(this));
+    //document.removeEventListener('mousedown', this.onDocumentMouseDown.bind(this));
   }
 
   onDocumentMouseDown(e) {
@@ -54,9 +60,10 @@ class TableBody extends Component {
       let clientRight = selList[i].getBoundingClientRect().right;
       let clientTop = selList[i].getBoundingClientRect().top;
       let clientBottom = selList[i].getBoundingClientRect().bottom;
-
+      selList[i].className = '';
       if (startX > clientLeft && startX < clientRight && startY > clientTop && startY < clientBottom) {
         firstSelectDivIndex = i;
+        selList[i].className = selList[i].className + ' seled';
       }
 
       // if (Math.max(_x, startX) > clientLeft && Math.max(_y, startY) > clientTop && dl > (Math.max(_x, startX) - _w) && dt > (Math.max(_y, startY) - _h)) {
@@ -110,7 +117,8 @@ class TableBody extends Component {
       _this.clearEventBubble(evt);
     }
 
-    document.onmouseup = () => {
+    this.refs.dayUl.onmouseup = () => {
+      document.onmousemove = null;
       isSelect = false;
       this.showSelDiv(selList);
       selList = null, _x = null, _y = null, startX = null, startY = null, evt = null;

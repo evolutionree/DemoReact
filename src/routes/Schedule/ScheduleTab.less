@@ -3,6 +3,7 @@
   .Header{
     width: 100%;
     height: 136px;
+    position: relative;
 
     .Title{
       background:#3398db;
@@ -13,6 +14,47 @@
       margin-bottom: 20px;
       font-size: 18px;
       color: #ffffff;
+      position: relative;
+
+      >i:first-of-type {
+        font-size: 22px;
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        margin-top: -11px;
+      }
+
+      >i:nth-of-type(2) {
+        padding-left: 10px;
+        cursor: pointer;
+      }
+
+      >i:last-of-type {
+        font-size: 24px;
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        margin-top: -12px;
+        cursor: pointer;
+      }
+    }
+
+    .SearchWrap {
+      position: absolute;
+      top: 50px;
+      left: 0px;
+      width: 100%;
+      height: 124px;
+      background: #ffffff;
+      box-shadow:0 2px 7px 0 rgba(34,57,73,0.25);
+      >div{
+        height: 44px;
+        line-height: 44px;
+        font-size:14px;
+        color:#333333;
+        padding-left: 20px;
+        border-bottom: 1px solid #f0f0f0;
+      }
     }
 
     >ul{
