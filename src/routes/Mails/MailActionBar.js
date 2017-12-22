@@ -22,8 +22,10 @@ class MailActionBar extends Component {
   onAction = type => {
     const mailSelected = this.props.mails;
     const hasDeptCatalogMail = mailSelected.some(item => item.catalogtype === 'dept');
+    const isDistributedMail = mailSelected.some(item => item.ctype === 1009);
     if (type === 'editMail') return this.props.openEditMail(type, mailSelected, '');
     if (!mailSelected.length) return message.error('请选择邮件');
+    if (isDistributedMail) return message.error('内部分发的邮件只允许查看');
     if (type === 'replay' || type === 'replay-attach' || type === 'reply-all' || type === 'replay-all-attach' || type === 'send' || type === 'send-attach') {
       if (hasDeptCatalogMail) return message.error('只能对属于自己的邮件执行此项操作');
       if (mailSelected.length === 1) return this.props.openEditMail(type, mailSelected, mailSelected[0].mailid);
@@ -59,6 +61,12 @@ class MailActionBar extends Component {
         break;
       case 'mark-unstared':
         this.props.markMails(mailSelected, 0);
+        break;
+      case 'recover':
+        if (mailSelected.some(item => item.ctype !== 1006)) {
+          return message.error('只能恢复已删除的邮件');
+        }
+        this.props.recoverMails(mailSelected);
         break;
       default:
         console.error('Matching error');
@@ -142,6 +150,7 @@ class MailActionBar extends Component {
           标记为
         </ActionButton>
         <ActionButton icon="folder-move" actions={[]} onAction={this.onAction} renderOverlay={renderOverlay}>移动到</ActionButton>
+        <ActionButton icon="recover" actions="recover" onAction={this.onAction}>恢复</ActionButton>
       </Toolbar>
     );
   }
@@ -167,6 +176,9 @@ export default connect(
       },
       markMails(mails, mark) {
         dispatch({ type: 'mails/markMails', payload: { mails, mark } });
+      },
+      recoverMails(mails) {
+        dispatch({ type: 'mails/recoverMails', payload: mails });
       },
       showModals(modalName, mails) {
         dispatch({ type: 'mails/putState', payload: { modalMailsData: mails } });

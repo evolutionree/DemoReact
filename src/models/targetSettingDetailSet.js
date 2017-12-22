@@ -33,7 +33,7 @@ export default {
         const match = location.pathname.match(pathReg);
         if (match) {
           const normtypeid = match[1];
-          dispatch({ type: 'putState', payload: { normid: normtypeid, normtypename: GetArgsFromHref('normtypename') } });
+          dispatch({ type: 'putState', payload: { normid: normtypeid, normtypename: decodeURIComponent(GetArgsFromHref('normtypename')) } });
           dispatch({
             type: 'init',
             payload: { }

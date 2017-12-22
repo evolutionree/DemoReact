@@ -12,9 +12,13 @@ const Title = ({ text, type, unread, total }) => {
   const iconMap = {
     0: 'folder',
     1001: 'box',
+    1002: 'unread-box',
     1003: 'box-send',
     1004: 'box-sended',
-    1006: 'trash'
+    1005: 'draft',
+    1006: 'trash',
+    1008: 'stared-box',
+    1009: 'share-g'
   };
   const icon = iconMap[type];
   const textStyl = {
@@ -26,7 +30,7 @@ const Title = ({ text, type, unread, total }) => {
     verticalAlign: 'middle'
   };
   let count = unread;
-  if (type > 1001 && type < 2000) {
+  if (type > 1002 && type < 2000) {
     count = total;
   }
   return (

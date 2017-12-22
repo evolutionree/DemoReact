@@ -1,5 +1,6 @@
 import Cookie from 'js-cookie';
 import { Base64 } from 'js-base64';
+import { JSEncrypt } from 'jsencrypt';
 import request from '../utils/request';
 import storage from '../utils/storage';
 
@@ -26,15 +27,47 @@ export function onTokenChange(callback) {
 }
 
 /**
+ * 注册用户
+ * @param params
+ * {
+    "AccountName":"10888008001",
+    "AccountPwd":"999999",
+    "UserName":"系统管理员",
+    "AccessType":"00",
+    "UserIcon":"ICON",
+    "UserPhone":"10000000000",
+    "UserJob":"最高级管理员",
+    "DeptId":"7f74192d-b937-403f-ac2a-8be34714278b"
+  }
+ * @returns {Promise.<Object>}
+ */
+export async function registerUser(params) {
+  return encryptPassword(params.accountpwd).then(result => {
+    return request('/api/account/regist', {
+      method: 'post',
+      body: JSON.stringify({
+        ...params,
+        accountpwd: result,
+        encrypttype: 1
+      })
+    });
+  });
+}
+
+/**
  * 登录
- * @param params { username, password }
+ * @param params
+ *  { accountname, accountpwd, rememberpwd }
  * @returns {Promise.<Object>}
  */
 export async function login(params) {
   const { accountname, accountpwd, rememberpwd } = params;
-  return request('/api/account/login', {
-    method: 'post',
-    body: JSON.stringify({ accountname, accountpwd })
+  return encryptPassword(accountpwd, true).then(encryptedPwd => {
+    return _login({
+      accountname,
+      accountpwd: encryptedPwd,
+      encrypttype: 1
+    });
   }).then(result => {
     const loginInfo = {
       user: {
@@ -46,6 +79,23 @@ export async function login(params) {
     rememberpwd ? setRememberedPwd({ account: accountname, pwd: accountpwd }) : setRememberedPwd(null);
     setLogin(loginInfo);
     return { loginInfo };
+  });
+}
+/**
+ * 登录
+ * @param params
+ *  {
+      "AccountName":"302",
+      "AccountPwd":密码文本，若不加密则为明文，若加密，则使用“时间戳_密码”的格式,登录时的时间戳值为getpublickey接口返回的timestamp（1分钟内有效）
+      "EncryptType":加密方式，0=不加密，1=RSA方式加密
+    }
+ * @returns {Promise.<Object>}
+ * @private
+ */
+function _login(params) {
+  return request('/api/account/login', {
+    method: 'post',
+    body: JSON.stringify(params)
   });
 }
 
@@ -127,9 +177,18 @@ export function logout() {
  * @returns {Promise.<Object>}
  */
 export async function modifyPassword(params) {
-  return request('/api/account/pwd', {
-    method: 'post',
-    body: JSON.stringify(params)
+  const { accountpwd, orginpwd } = params;
+  return encryptPassword([accountpwd, orginpwd]).then(result => {
+    const _params = {
+      ...params,
+      accountpwd: result[0],
+      orginpwd: result[1],
+      encrypttype: 1
+    };
+    return request('/api/account/pwd', {
+      method: 'post',
+      body: JSON.stringify(_params)
+    });
   });
 }
 
@@ -165,5 +224,27 @@ export function setRememberedPwd(rememberedPwd) {
 export function getAppDownloadUrl() {
   return request('/api/account/downloadapp', {
     method: 'get'
+  });
+}
+
+/**
+ * 加密密码
+ * @param password 待加密的密码(可传数组)
+ */
+export async function encryptPassword(password) {
+  return getRsaPublicKey().then(result => {
+    const { rsapublickey, timestamp } = result.data;
+    const encrypt = new JSEncrypt();
+    encrypt.setPublicKey(rsapublickey);
+    if (typeof password === 'string') {
+      return encrypt.encrypt(timestamp + '_' + password);
+    } else if (Array.isArray(password)) {
+      return password.map(item => encrypt.encrypt(timestamp + '_' + item));
+    }
+  });
+}
+function getRsaPublicKey() {
+  return request('/api/account/getpublickey', {
+    method: 'post'
   });
 }
