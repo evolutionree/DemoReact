@@ -884,4 +884,36 @@ export default class FormItemFactory {
       </FormItem>
     );
   }
+
+  createEncrypted() {
+    return (
+      <FormItem label="是否加密" key="encrypted">
+        {this.getFieldDecorator('encrypted', {
+          initialValue: 0,
+          rules: [{ required: true, message: '请选择是否加密' }]
+        })(
+          <RadioGroup>
+            <Radio value={0}>普通文本</Radio>
+            <Radio value={1}>加密文本</Radio>
+          </RadioGroup>
+        )}
+      </FormItem>
+    );
+  }
+
+  createTextType() {
+    return (
+      <FormItem label="文本类型" key="textType">
+        {this.getFieldDecorator('textType', {
+          initialValue: 0,
+          rules: [{ required: true, message: '请选择文本类型' }]
+        })(
+          <RadioGroup>
+            <Radio value={0}>普通文本</Radio>
+            <Radio value={1}>富文本</Radio>
+          </RadioGroup>
+        )}
+      </FormItem>
+    );
+  }
 }

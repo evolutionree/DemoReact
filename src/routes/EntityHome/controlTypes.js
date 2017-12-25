@@ -12,11 +12,11 @@
 // 1012 实体名称
 
 export const fieldModels = [
-  { name: '文本', value: 1, requires: ['maxLength'] }, // TODO 加defaultValue
+  { name: '文本', value: 1, requires: ['maxLength', 'encrypted'] }, // TODO 加defaultValue
   { name: '提示文本', value: 2, requires: ['tipContent', 'tipColor'] },
   { name: '单选', value: 3, requires: ['dataSource', 'defaultValue'] },
   { name: '多选', value: 4, requires: ['dataSource'] },
-  { name: '大文本', value: 5, requires: ['defaultValue'] },
+  { name: '大文本', value: 5, requires: ['defaultValue', 'textType'] },
   { name: '整数文本', value: 6, requires: ['maxLength', 'defaultValue'] },
   { name: '小数文本', value: 7, requires: ['maxLength', 'decimalsLength', 'defaultValue'] },
   { name: '日期', value: 8, requires: ['format', 'defaultValue'] },

@@ -7,6 +7,7 @@ import storage from '../utils/storage';
 const TOKEN_KEY = 'auth_access_token';
 const USER_KEY = 'auth_user';
 const PERMISSION_KEY = 'auth_permission_level';  // 0无登录权限 1仅web 1仅管理后台 3都有权限
+let rsa_public = ''; // RSA加密公钥
 
 // 串号问题
 let lastToken = '';
@@ -246,5 +247,27 @@ export async function encryptPassword(password) {
 function getRsaPublicKey() {
   return request('/api/account/getpublickey', {
     method: 'post'
+  });
+}
+export function encryptPasswordSync(password) {
+  const rsapublickey = getRsaPublicKeySync();
+  const encrypt = new JSEncrypt();
+  encrypt.setPublicKey(rsapublickey);
+  let result = password;
+  if (typeof password === 'string') {
+    result = rsapublickey ? encrypt.encrypt(password) : password;
+  } else if (Array.isArray(password)) {
+    result = password.map(item => rsapublickey ? encrypt.encrypt(item) : item);
+  }
+  return result;
+}
+function getRsaPublicKeySync() {
+  return rsa_public;
+}
+export function initRsaPublicKey() {
+  request('/api/account/getpublickey', {
+    method: 'post'
+  }).then(result => {
+    rsa_public = result.data.rsapublickey;
   });
 }
