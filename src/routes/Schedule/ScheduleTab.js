@@ -2,7 +2,7 @@
  * Created by 0291 on 2017/12/19.
  */
 import React, { Component } from 'react';
-import { Icon } from 'antd';
+import { Icon, Button } from 'antd';
 import Calendar from './componnet/Calendar/index';
 import List from './componnet/List/index';
 import WeekList from './componnet/WeekList/index';
@@ -25,7 +25,8 @@ class ScheduleTab extends Component {
     super(props);
     this.state = {
       scheduleWaysActive: ScheduleWays[0],
-      searchPanelShow: false
+      searchPanelShow: false,
+      userIds: ''
     };
   }
 
@@ -65,7 +66,12 @@ class ScheduleTab extends Component {
             <div className={Styles.SearchWrap} style={{ display: this.state.searchPanelShow ? 'block' : 'none' }}>
               <div>我的日程</div>
               <div>
-                <SelectUser />
+                <SelectUser style={{ height: '38px', width: '240px' }}
+                            placeholder="请输入并选择"
+                            multiple={1}
+                            value={this.state.userIds}
+                            onChange={(userIds) => { this.setState({ userIds }) }} />
+                <Button type="primary">确定</Button>
               </div>
             </div>
             <ul>

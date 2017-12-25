@@ -8,7 +8,8 @@ import ScheduleTab from './ScheduleTab';
 import TaskTab from './TaskTab';
 import ScheduleModal from './Modal/ScheduleModal';
 import ScheduleCalendarTable from './componnet/ScheduleCalendarTable/index';
-import DragSelectList from './componnet/DragSelectList';
+import ScheduleDayTable from './componnet/ScheduleDayTable';
+
 import Styles from './index.less';
 
 const TabPane = Tabs.TabPane;
@@ -94,7 +95,7 @@ class Schedule extends Component {
         </div>
         <ScheduleModal>
           <div style={{ padding: '0 30px' }}>
-            <ScheduleCalendarTable />
+            <ScheduleDayTable />
           </div>
         </ScheduleModal>
       </Page>
