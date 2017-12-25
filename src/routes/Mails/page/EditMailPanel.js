@@ -501,7 +501,7 @@ class EditMailPanel extends Component {
       });
       return this.transformFornEndData(returnData);
     } else if (type === 'getCcers') {
-      const returnData = maildetail && maildetail instanceof Array && maildetail.ccers.filter((item) => {
+      const returnData = maildetail && maildetail.ccers && maildetail.ccers instanceof Array && maildetail.ccers.filter((item) => {
         return item.address !== filterMailAddress;
       });
       return this.transformFornEndData(returnData);
