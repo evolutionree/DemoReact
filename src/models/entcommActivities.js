@@ -165,6 +165,7 @@ export default {
             );
             if (!confirmed) return;
             try {
+              const { entityId, recordId } = yield select(state => state.entcommActivities);
               if(plugins[pluginIndex].entity&&plugins[pluginIndex].entity.extradata){
                 const { routepath } = plugins[pluginIndex].entity;
                 yield call(dynamicRequest,'/'+routepath, {
