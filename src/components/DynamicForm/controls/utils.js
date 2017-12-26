@@ -72,7 +72,7 @@ export function createNormalInput(type, options) {
             onBlur={this.onInputBlur}
             disabled={isReadOnly === 1}
             maxLength={maxLength}
-            autocomplete="off"
+            autoComplete="off"
             {...optProps}
             onFocus={this.onInputFocus}
           />
