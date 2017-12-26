@@ -2,7 +2,7 @@
  * Created by 0291 on 2017/12/21.
  */
 import React, { Component } from 'react';
-import CalendarHeader from '../Calendar/CalendarHeader';
+import CalendarHeader from '../componnet/Calendar/CalendarHeader';
 import TableBody from './TableBody';
 import Styles from './index.less';
 

@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { Icon } from 'antd';
-import Styles from './ScheduleModal.less';
+import Styles from './index.less';
 
 const otherHeight = 60 + 48 + 10; //60：系统logo栏  48：页标栏  10： padding
 

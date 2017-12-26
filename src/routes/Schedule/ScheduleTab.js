@@ -8,10 +8,10 @@ import List from './componnet/List/index';
 import WeekList from './componnet/WeekList/index';
 import MonthList from './componnet/MonthList/index';
 import SelectUser from '../../components/DynamicForm/controls/SelectUser';
+import Radio from './componnet/Radio/index';
+import { connect } from 'dva';
 import classnames from 'classnames';
 import Styles from './ScheduleTab.less';
-
-const ScheduleWays = ['日', '周', '月']
 
 class ScheduleTab extends Component {
   static propTypes = {
@@ -24,7 +24,7 @@ class ScheduleTab extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      scheduleWaysActive: ScheduleWays[0],
+      scheduleWays: this.props.scheduleWays,
       searchPanelShow: false,
       userIds: ''
     };
@@ -37,7 +37,9 @@ class ScheduleTab extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      searchPanelShow: false
+      scheduleWays: nextProps.scheduleWays,
+      searchPanelShow: false,
+      userIds: ''
     });
   }
 
@@ -46,9 +48,7 @@ class ScheduleTab extends Component {
   }
 
   scheduleWayChangeHandler(way) {
-    this.setState({
-      scheduleWaysActive: way
-    });
+    this.props.scheduleWayChange && this.props.scheduleWayChange(way);
   }
 
   toggleSearchPanel() {
@@ -58,6 +58,7 @@ class ScheduleTab extends Component {
   }
 
   render() {
+    const ScheduleWays = this.props.scheduleWays;
     return (
       <div className={Styles.ScheduleTab} style={{ height: this.props.height }}>
         <div style={{ padding: '20px' }}>
@@ -74,29 +75,20 @@ class ScheduleTab extends Component {
                 <Button type="primary">确定</Button>
               </div>
             </div>
-            <ul>
-              {
-                ScheduleWays.map((item, index) => {
-                  const cls = classnames([{
-                    [Styles.active]: item === this.state.scheduleWaysActive
-                  }]);
-                  return <li className={cls} key={index} onClick={this.scheduleWayChangeHandler.bind(this, item)}>{item}</li>;
-                })
-              }
-            </ul>
+            <Radio data={ScheduleWays} onChange={this.scheduleWayChangeHandler.bind(this)} />
           </div>
           {
-            this.state.scheduleWaysActive === ScheduleWays[0] ? <div style={{ padding: '0 17px' }}><Calendar /></div> : null
+            this.state.scheduleWaysActive === ScheduleWays[0].name ? <div style={{ padding: '0 17px' }}><Calendar /></div> : null
           }
           {
-            this.state.scheduleWaysActive === ScheduleWays[1] ? <WeekList /> : null
+            this.state.scheduleWaysActive === ScheduleWays[1].name ? <WeekList /> : null
           }
           {
-            this.state.scheduleWaysActive === ScheduleWays[2] ? <MonthList /> : null
+            this.state.scheduleWaysActive === ScheduleWays[2].name ? <MonthList /> : null
           }
         </div>
         {
-          this.state.scheduleWaysActive === ScheduleWays[0] ? <List data={[
+          this.state.scheduleWaysActive === ScheduleWays[0].name ? <List data={[
             { type: 'schedule', time: '10:30-11:30', title: '拜访客户' },
             { type: 'schedule', time: '14:30-15:30', title: '需求会议' },
             { type: 'schedule', time: '18:00', title: '工作汇报' }
@@ -108,4 +100,13 @@ class ScheduleTab extends Component {
 }
 
 
-export default ScheduleTab;
+export default connect(
+  state => state.schedule,
+  dispatch => {
+    return {
+      scheduleWayChange(way) {
+        dispatch({ type: 'schedule/putState', payload: { scheduleWays: way } });
+      }
+    };
+  }
+)(ScheduleTab);

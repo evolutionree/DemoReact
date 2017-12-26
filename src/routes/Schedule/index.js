@@ -3,12 +3,13 @@
  */
 import React, { Component } from 'react';
 import { Tabs } from 'antd';
+import { connect } from 'dva';
 import Page from '../../components/Page';
 import ScheduleTab from './ScheduleTab';
 import TaskTab from './TaskTab';
-import ScheduleModal from './Modal/ScheduleModal';
-import ScheduleCalendarTable from './componnet/ScheduleCalendarTable/index';
-import ScheduleDayTable from './componnet/ScheduleDayTable';
+import ScheduleModal from './componnet/ScheduleModal/index';
+import ScheduleCalendarTable from './ScheduleCalendarTable';
+import ScheduleDayTable from './ScheduleDayTable';
 
 import Styles from './index.less';
 
@@ -94,9 +95,9 @@ class Schedule extends Component {
           </div>
         </div>
         <ScheduleModal>
-          <div style={{ padding: '0 30px' }}>
-            <ScheduleDayTable />
-          </div>
+          {
+            this.props.scheduleWaysActive === this.props.scheduleWays[0].name ? <div style={{ padding: '0 30px' }}><ScheduleDayTable /></div> : null
+          }
         </ScheduleModal>
       </Page>
     );
@@ -104,4 +105,11 @@ class Schedule extends Component {
 }
 
 
-export default Schedule;
+export default connect(
+  state => state.schedule,
+  dispatch => {
+    return {
+
+    };
+  }
+)(Schedule);
