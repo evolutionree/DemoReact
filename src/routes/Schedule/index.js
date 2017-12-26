@@ -8,8 +8,11 @@ import Page from '../../components/Page';
 import ScheduleTab from './ScheduleTab';
 import TaskTab from './TaskTab';
 import ScheduleModal from './componnet/ScheduleModal/index';
-import ScheduleCalendarTable from './ScheduleCalendarTable';
 import ScheduleDayTable from './ScheduleDayTable';
+import ScheduleWeekTable from './ScheduleWeekTable';
+import ScheduleCalendarTable from './ScheduleCalendarTable';
+import EmptyShow from './componnet/EmptyShow';
+
 
 import Styles from './index.less';
 
@@ -70,16 +73,16 @@ class Schedule extends Component {
           <div className={Styles.Left} style={{ width: 'calc(100% - 420px)' }}>
             <Tabs defaultActiveKey="2">
               <TabPane tab="待跟进的客户" key="1">
-                待跟进的客户
+                <EmptyShow />
               </TabPane>
               <TabPane tab="销售记录" key="2">
-                销售记录
+                <EmptyShow />
               </TabPane>
               <TabPane tab="公告通知" key="3">
-                公告通知
+                <EmptyShow />
               </TabPane>
               <TabPane tab="审批通知" key="4">
-                审批通知
+                <EmptyShow />
               </TabPane>
             </Tabs>
           </div>
@@ -89,14 +92,20 @@ class Schedule extends Component {
                 <ScheduleTab height={this.state.height - 50} />
               </TabPane>
               <TabPane tab="任务" key="2">
-                <TaskTab />
+                <TaskTab height={this.state.height - 50} />
               </TabPane>
             </Tabs>
           </div>
         </div>
-        <ScheduleModal>
+        <ScheduleModal visible={this.props.scheduleModalVisible} onClose={this.props.closeScheduleModal} >
           {
-            this.props.scheduleWaysActive === this.props.scheduleWays[0].name ? <div style={{ padding: '0 30px' }}><ScheduleDayTable /></div> : null
+            this.props.scheduleWays[0].active ? <div style={{ padding: '0 30px' }}><ScheduleDayTable /></div> : null
+          }
+          {
+            this.props.scheduleWays[1].active ? <div style={{ padding: '0 30px' }}><ScheduleWeekTable /></div> : null
+          }
+          {
+            this.props.scheduleWays[2].active ? <div style={{ padding: '0 30px' }}><ScheduleCalendarTable /></div> : null
           }
         </ScheduleModal>
       </Page>
@@ -109,7 +118,9 @@ export default connect(
   state => state.schedule,
   dispatch => {
     return {
-
+      closeScheduleModal() {
+        dispatch({ type: 'schedule/putState', payload: { scheduleModalVisible: false } });
+      }
     };
   }
 )(Schedule);

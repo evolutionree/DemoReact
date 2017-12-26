@@ -6,30 +6,43 @@ import classnames from 'classnames';
 import Styles from './index.less';
 
 function List({
-                data
+                data,
+                className,
+                firstKey,
+                secondKey
               }) {
 
   if (!data) {
     return null;
   }
 
+  const wrapClassName = classnames(Styles.List, className);
+
   return (
-    <ul className={Styles.List}>
+    <ul className={wrapClassName}>
       {
         data && data instanceof Array && data.map((item, index) => {
-          const typeClassName = classnames([{
-            [Styles.info]: index === 0,
-            [Styles.warning]: index === 1,
-            [Styles.task]: index === 2
-          }]);
+          // item  { type: 'default or info or waring or task', time: '', title: '' }
+          const typeClassName = classnames(Styles[item.type]);
 
-          return (
-            <li key={index}>
-              <span className={typeClassName}></span>
-              <span>{item.time}</span>
-              <span title={item.title}>{item.title}</span>
-            </li>
-          );
+          if (firstKey && secondKey) {
+            return (
+              <li key={index}>
+                <span className={typeClassName}></span>
+                <span style={{ width: '75px', marginRight: '20px' }}>{item[firstKey]}</span>
+                <span title={item.title} style={{ width: 'calc(100% - 95px)' }}>{item[secondKey]}</span>
+              </li>
+            );
+          } else if (firstKey) {
+            return (
+              <li key={index}>
+                <span className={typeClassName}></span>
+                <span style={{ width: '100%' }}>{item[firstKey]}</span>
+              </li>
+            );
+          } else {
+            console.log('组件List需传入属性[firstKey]');
+          }
         })
       }
     </ul>

@@ -9,7 +9,7 @@ class CalendarBody extends Component {
   static propTypes = {
     year: React.PropTypes.number, //年
     month: React.PropTypes.number, //月
-    day: React.PropTypes.number, //日
+    day: React.PropTypes.number //日
   };
   static defaultProps = {
     year: new window.Date().getFullYear(),
@@ -20,7 +20,8 @@ class CalendarBody extends Component {
     super(props);
     this.state = {
       year: this.props.year,
-      month: this.props.month
+      month: this.props.month,
+      activeDay: -1
     };
   }
 
@@ -54,6 +55,13 @@ class CalendarBody extends Component {
     return new window.Date(this.state.year, this.state.month - 1, 1).getDay();
   }
 
+  dayHandler(day) {
+    this.setState({
+      activeDay: day
+    })
+    this.props.dayHandler && this.props.dayHandler(day); // 执行父组件回调函数，改变父组件状态值
+  }
+
   render() {
     let arry1 = []; let arry2 = []; let arry3 = [];
     let getDays = this.getMonthDays();
@@ -70,8 +78,8 @@ class CalendarBody extends Component {
       arry3[i] = (i + 1);
     }
 
-    let node1 = arry1.map(function(item, i) {
-      return <li key={'li1' + i} className={Styles.otherMonthDay}><div>{item}</div></li>;
+    let node1 = arry1.map((item, i) => {
+      return <li key={'li1' + i} className={Styles.otherMonthDay} onClick={this.dayHandler.bind(this, item)}><div>{item}</div></li>;
     })
 
     let node2 = arry2.map((item, i) => {
@@ -80,15 +88,15 @@ class CalendarBody extends Component {
       const today_day = new window.Date().getDate();
 
       const liClassName = classnames([{
-        [Styles.active]: item === 13,
+        [Styles.active]: item === parseInt(this.state.activeDay),
         [Styles.today]: item === today_day && parseInt(this.state.year) === today_year && parseInt(this.state.month) === today_month,
         [Styles.hasScheduleOrTask]: item === 11
       }]);
-      return <li key={'li1' + i} className={liClassName}><div>{item}</div></li>;
+      return <li key={'li1' + i} className={liClassName} onClick={this.dayHandler.bind(this, item)}><div>{item}</div></li>;
     })
 
-    let node3 = arry3.map(function(item, i) {
-      return <li key={'li3' + i} className={Styles.otherMonthDay}><div>{item}</div></li>;
+    let node3 = arry3.map((item, i) => {
+      return <li key={'li3' + i} className={Styles.otherMonthDay} onClick={this.dayHandler.bind(this, item)}><div>{item}</div></li>;
     })
 
     return (

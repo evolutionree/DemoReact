@@ -48,13 +48,25 @@ class ScheduleTab extends Component {
   }
 
   scheduleWayChangeHandler(way) {
-    this.props.scheduleWayChange && this.props.scheduleWayChange(way);
+    const newScheduleWays = this.props.scheduleWays.map((item) => {
+      if (item.name === way) {
+        item.active = true;
+      } else {
+        item.active = false;
+      }
+      return item;
+    })
+    this.props.scheduleWayChange && this.props.scheduleWayChange(newScheduleWays);
   }
 
   toggleSearchPanel() {
     this.setState({
       searchPanelShow: !this.state.searchPanelShow
     });
+  }
+
+  calendarSelectHandler(date) {
+    this.props.openScheduleModal && this.props.openScheduleModal();
   }
 
   render() {
@@ -78,21 +90,21 @@ class ScheduleTab extends Component {
             <Radio data={ScheduleWays} onChange={this.scheduleWayChangeHandler.bind(this)} />
           </div>
           {
-            this.state.scheduleWaysActive === ScheduleWays[0].name ? <div style={{ padding: '0 17px' }}><Calendar /></div> : null
+            ScheduleWays[0].active ? <div style={{ padding: '0 17px' }}><Calendar onSelect={this.calendarSelectHandler.bind(this)} /></div> : null
           }
           {
-            this.state.scheduleWaysActive === ScheduleWays[1].name ? <WeekList /> : null
+            ScheduleWays[1].active ? <WeekList /> : null
           }
           {
-            this.state.scheduleWaysActive === ScheduleWays[2].name ? <MonthList /> : null
+            ScheduleWays[2].active ? <MonthList /> : null
           }
         </div>
         {
-          this.state.scheduleWaysActive === ScheduleWays[0].name ? <List data={[
-            { type: 'schedule', time: '10:30-11:30', title: '拜访客户' },
-            { type: 'schedule', time: '14:30-15:30', title: '需求会议' },
-            { type: 'schedule', time: '18:00', title: '工作汇报' }
-          ]} /> : null
+          ScheduleWays[0].active ? <List data={[
+            { type: 'info', time: '10:30-11:30', title: '拜访客户' },
+            { type: 'warning', time: '14:30-15:30', title: '需求会议' },
+            { type: 'task', time: '18:00', title: '工作汇报' }
+          ]} firstKey="time" secondKey="title" /> : null
         }
       </div>
     );
@@ -104,8 +116,11 @@ export default connect(
   state => state.schedule,
   dispatch => {
     return {
-      scheduleWayChange(way) {
-        dispatch({ type: 'schedule/putState', payload: { scheduleWays: way } });
+      scheduleWayChange(newScheduleWays) {
+        dispatch({ type: 'schedule/putState', payload: { scheduleWays: newScheduleWays } });
+      },
+      openScheduleModal() {
+        dispatch({ type: 'schedule/putState', payload: { scheduleModalVisible: true } });
       }
     };
   }

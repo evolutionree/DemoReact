@@ -12,14 +12,13 @@ class ScheduleModal extends Component {
 
   };
   static defaultProps = {
-    visible: true
+    visible: false
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      height: document.body.clientHeight - otherHeight,
-      visible: this.props.visible
+      height: document.body.clientHeight - otherHeight
     };
   }
 
@@ -35,7 +34,7 @@ class ScheduleModal extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      visible: nextProps.visible
+
     });
   }
 
@@ -44,15 +43,13 @@ class ScheduleModal extends Component {
   }
 
   closeModal() {
-    this.setState({
-      visible: false
-    });
+    this.props.onClose && this.props.onClose();
   }
 
 
   render() {
     return (
-      <div className={Styles.ScheduleModal} style={{ height: this.state.height, width: 'calc(100% - 420px)', display: this.state.visible ? 'block' : 'none' }}>
+      <div className={Styles.ScheduleModal} style={{ height: this.state.height, width: 'calc(100% - 420px)', display: this.props.visible ? 'block' : 'none' }}>
         <div className={Styles.Wrap}>
           <div className={Styles.header}>
             {

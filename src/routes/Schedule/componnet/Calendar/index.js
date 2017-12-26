@@ -127,6 +127,16 @@ class Date extends Component {
     }
   }
 
+  dayHandler(day) {
+    if (this.props.onSelect !== null) {
+      let value = this.state.year + '-' + (this.state.month.toString().length === 1 ? '0' + this.state.month.toString() : this.state.month) + '-' + (day < 10 ? '0' + day.toString() : day);
+      if (this.props.attachTime) { //如果需要附加时间
+        value = value + ' 00:00:00';
+      }
+      this.props.onSelect(value);
+    }
+  }
+
   render() {
     return (
       <div className={Styles.Calendar}>
@@ -139,6 +149,7 @@ class Date extends Component {
           render={this.props.renderBody}
           year={this.state.year}
           month={this.state.month}
+          dayHandler={this.dayHandler.bind(this)}
         />
       </div>
     );

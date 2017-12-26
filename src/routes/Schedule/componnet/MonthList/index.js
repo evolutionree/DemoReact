@@ -3,9 +3,8 @@
  */
 import React, { Component } from 'react';
 import { Icon } from 'antd';
-import CalendarHeader from '../Calendar/CalendarHeader';
+import List from '../List';
 import Styles from './index.less';
-import classnames from 'classnames';
 
 const month = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月']
 class MonthList extends Component {
@@ -54,6 +53,9 @@ class MonthList extends Component {
 
 
   render() {
+    const listData = month.map((item) => {
+      return { type: 'default', title: item };
+    })
     return (
       <div className={Styles.MonthList}>
         <div className={Styles.CalendarHeader}>
@@ -63,21 +65,7 @@ class MonthList extends Component {
             <Icon type="right" className={Styles.Icon} onClick={this.nextYearChangeHandler.bind(this)} />
           </div>
         </div>
-        <ul>
-          {
-            month.map((item, index) => {
-              const typeClassName = classnames([Styles.info, {
-                [Styles.active]: false
-              }]);
-              return (
-                <li key={index}>
-                  <span className={typeClassName}></span>
-                  <span>{item}</span>
-                </li>
-              );
-            })
-          }
-        </ul>
+        <List data={listData} className="taskList" firstKey="title" />
       </div>
     );
   }
