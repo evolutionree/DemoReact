@@ -196,7 +196,7 @@ class AffairDetail extends Component {
             </div>
 
             {/*columnconfig 审批可改字段*/}
-            <div style={{ width: '600px' }}>
+            {this.props.selectedOperate === 1 && <div style={{ width: '600px' }}>
               {columnConfigFormsArray.map(item => (
                 <DynamicFormAdd
                   horizontal
@@ -208,7 +208,7 @@ class AffairDetail extends Component {
                   ref={inst => this.columnConfigFormInstance[item.entityId] = inst}
                 />
               ))}
-            </div>
+            </div>}
 
             {this.shouldShowUserForm() && (
               <WorkflowCaseForm
