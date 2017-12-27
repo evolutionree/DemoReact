@@ -305,7 +305,19 @@ class AffairDetail extends Component {
             <Column title="节点名称" key="nodename" dataIndex="nodename" />
             <Column title="处理状态" key="casestatus" dataIndex="casestatus" />
             <Column title="处理时间" key="recupdated" dataIndex="recupdated" />
-            <Column title="意见" key="suggest" dataIndex="suggest" />
+            <Column title="意见" key="suggest" dataIndex="suggest" render={text => {
+              if (!text) return '';
+              text += '';
+              text = text.split('\n').reduce((result, line) => {
+                return [
+                  ...result,
+                  line,
+                  <br />
+                ];
+              }, []);
+              text.pop();
+              return <div>{text}</div>;
+            }} />
           </Table>
         </div>
         <WorkflowCaseModal
