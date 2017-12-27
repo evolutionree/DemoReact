@@ -89,7 +89,7 @@ class MailContent extends Component {
         //   <span key={index} style={{ marginLeft: '3px' }}>{name}{address};</span>
         // );
       }).join('; ');
-      return <span>{str}</span>;
+      return <span>{str}&nbsp;</span>;
     };
     return (
       <div className={styles.wrap}>
