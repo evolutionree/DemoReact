@@ -116,7 +116,8 @@ class UserSelectModal extends React.Component {
         return this.filterOption(opt.userid);
       }).map(user => ({
         name: user.username,
-        id: user.userid
+        id: user.userid,
+        deptname: user.deptname || ''
       }))
     });
   };
