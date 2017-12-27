@@ -7,11 +7,12 @@ import { connect } from 'dva';
 import Page from '../../components/Page';
 import ScheduleTab from './ScheduleTab';
 import TaskTab from './TaskTab';
-import ScheduleModal from './componnet/ScheduleModal/index';
+import SchedulePanel from './componnet/SchedulePanel/index';
 import ScheduleDayTable from './ScheduleDayTable';
 import ScheduleWeekTable from './ScheduleWeekTable';
 import ScheduleCalendarTable from './ScheduleCalendarTable';
 import EmptyShow from './componnet/EmptyShow';
+import FormModal from './FormModal';
 
 
 import Styles from './index.less';
@@ -97,7 +98,7 @@ class Schedule extends Component {
             </Tabs>
           </div>
         </div>
-        <ScheduleModal visible={this.props.scheduleModalVisible} onClose={this.props.closeScheduleModal} >
+        <SchedulePanel visible={this.props.schedulePanelVisible} onClose={this.props.closeSchedulePanel} >
           {
             this.props.scheduleWays[0].active ? <div style={{ padding: '0 30px' }}><ScheduleDayTable /></div> : null
           }
@@ -107,7 +108,8 @@ class Schedule extends Component {
           {
             this.props.scheduleWays[2].active ? <div style={{ padding: '0 30px' }}><ScheduleCalendarTable /></div> : null
           }
-        </ScheduleModal>
+        </SchedulePanel>
+        <FormModal />
       </Page>
     );
   }
@@ -118,8 +120,8 @@ export default connect(
   state => state.schedule,
   dispatch => {
     return {
-      closeScheduleModal() {
-        dispatch({ type: 'schedule/putState', payload: { scheduleModalVisible: false } });
+      closeSchedulePanel() {
+        dispatch({ type: 'schedule/putState', payload: { schedulePanelVisible: false } });
       }
     };
   }

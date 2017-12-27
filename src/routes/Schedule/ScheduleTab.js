@@ -66,7 +66,7 @@ class ScheduleTab extends Component {
   }
 
   calendarSelectHandler(date) {
-    this.props.openScheduleModal && this.props.openScheduleModal();
+    this.props.openSchedulePanel && this.props.openSchedulePanel();
   }
 
   render() {
@@ -119,8 +119,8 @@ export default connect(
       scheduleWayChange(newScheduleWays) {
         dispatch({ type: 'schedule/putState', payload: { scheduleWays: newScheduleWays } });
       },
-      openScheduleModal() {
-        dispatch({ type: 'schedule/putState', payload: { scheduleModalVisible: true } });
+      openSchedulePanel() {
+        dispatch({ type: 'schedule/putState', payload: { schedulePanelVisible: true } });
       }
     };
   }
