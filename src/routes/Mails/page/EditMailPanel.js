@@ -21,7 +21,8 @@ import AddressList from '../component/AddressList'; //通讯录
 import _ from 'lodash';
 import Styles from './EditMailPanel.less';
 import {
-  validsendmaildata
+  validsendmaildata,
+  savedraft
 } from '../../../services/mails';
 
 const confirm = Modal.confirm;
@@ -106,7 +107,7 @@ class EditMailPanel extends Component {
       fromAddress: this.getDefaultFromAddress(this.props.mailBoxList), //发件邮箱 发新邮件默认取列表第一个  回复、转发取收到邮件的邮箱
       height: document.body.clientHeight - 60 - 10,
       isSign: false, //是否 设置签名
-      sendLoading: false //发邮件状态  防止邮件发送重复提交
+      sendLoading: false, //发邮件状态  防止邮件发送重复提交
     };
   }
 
@@ -525,7 +526,25 @@ class EditMailPanel extends Component {
         }
       });
     } else {
-      this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: '' } });
+      const submitData = this.getSubmitData();
+      if (submitData[formDataField.ToAddress].length !== 0 ||
+        submitData[formDataField.CCAddress].length !== 0 ||
+        submitData[formDataField.BCCAddress].length !== 0 ||
+        submitData[formDataField.subject] || submitData.AttachmentFile.length !== 0 || submitData.bodycontent) {
+        confirm({
+          title: '离开提示',
+          content: '内容已被修改，是否要将此邮件存为草稿？',
+          onOk: () => {
+            this.saveDraft();
+            this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: '' } });
+          },
+          onCancel: () => {
+            this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: '' } });
+          }
+        });
+      } else {
+        this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: '' } });
+      }
     }
   }
 
@@ -619,50 +638,19 @@ class EditMailPanel extends Component {
     submitData.AttachmentFile = submitData.AttachmentFile || [];
     submitData.bodycontent = this.state.UMEditorContent; //富文本框数据
 
-    if (submitData.subject === 0 || !submitData.subject) {
+    if (!submitData.subject && submitData.subject !== 0) {
       confirm({
         title: '您的邮件没有填写主题',
         content: '您确定继续发送？',
         onOk: () => {
-          this.props.dispatch({ type: 'mails/sendemail', payload: submitData });
+          this.okSend(submitData);
         },
         onCancel() {
 
         }
       });
     } else {
-      this.setState({
-        sendLoading: true
-      });
-      validsendmaildata(submitData).then((result) => { //校验发送邮件白名单
-        this.setState({
-          sendLoading: false
-        });
-        const { data } = result;
-        if (data.flag === 0) {
-          confirm({
-            title: '确定继续发送吗?',
-            content: data.tipmsg,
-            okText: '确定',
-            okType: 'danger',
-            cancelText: '取消',
-            onOk: () => {
-              this.props.dispatch({ type: 'mails/sendemail', payload: submitData });
-            },
-            onCancel: () => {
-
-            }
-          });
-        } else if (data.flag === 1) { //校验通过  邮件发送成功
-          this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: 'sendMailSuccess', editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null } });
-          this.props.dispatch({ type: 'mails/reloadCatalogTree' });
-        }
-      }).catch((reson) => {
-        message.error(reson.message);
-        this.setState({
-          sendLoading: false
-        });
-      });
+      this.okSend(submitData);
     }
 
     function getTransformAddress(data) {
@@ -670,7 +658,7 @@ class EditMailPanel extends Component {
       if (data && data instanceof Array) {
         for (let i = 0; i < data.length; i++) {
           if (!regTest(data[i].email)) {
-           return false;
+            return false;
           }
           returnData.push({
             address: data[i].email,
@@ -685,6 +673,109 @@ class EditMailPanel extends Component {
       const reg = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
       return reg.test(value);
     }
+  }
+
+  okSend(submitData) {
+    this.setState({
+      sendLoading: true
+    });
+    validsendmaildata(submitData).then((result) => { //校验发送邮件白名单
+      this.setState({
+        sendLoading: false
+      });
+      const { data } = result;
+      if (data.flag === 0) {
+        confirm({
+          title: '确定继续发送吗?',
+          content: data.tipmsg,
+          okText: '确定',
+          okType: 'danger',
+          cancelText: '取消',
+          onOk: () => {
+            this.props.dispatch({ type: 'mails/sendemail', payload: submitData });
+          },
+          onCancel: () => {
+
+          }
+        });
+      } else if (data.flag === 1) { //校验通过  邮件发送成功
+        this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: 'sendMailSuccess', editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null } });
+        this.props.dispatch({ type: 'mails/reloadCatalogTree' });
+      }
+    }).catch((reson) => {
+      message.error(reson.message);
+      this.setState({
+        sendLoading: false
+      });
+    });
+  }
+
+  saveDraft() {
+    const submitData = this.getSubmitData();
+    savedraft(submitData).then((result) => { //保存草稿箱
+      const { data } = result;
+    }).catch((reson) => {
+      message.error(reson.message);
+    });
+  }
+
+  getSubmitData() { //发送邮件不用此函数（有很多验证逻辑）
+    const mailBoxList = this.props.mailBoxList; //发件人列表数据
+    const formData = this.props.editEmailFormData;
+    let formModel = this.state.formModel && this.state.formModel instanceof Array && this.state.formModel.filter((item) => item.show);
+
+    let submitData = {};
+    formModel && formModel instanceof Array && formModel.map((item) => { //筛选出当前表单显示的数据
+      submitData[item.name] = formData && formData[item.name];
+    });
+
+    for (let key in formDataField) { //抄送 密送没值得时候 传[]
+      if (key !== formDataField.subject) {
+        submitData[key] = submitData[key] ? submitData[key] : [];
+      }
+    }
+
+
+    for (let key in submitData) {
+      if (key !== formDataField.subject) { //跟发送邮件不同  不用验证邮箱格式
+        submitData[key] = getTransformAddress(submitData[key]);  //转换成后端要求的格式
+      }
+    }
+
+    if (mailBoxList && mailBoxList instanceof Array) {
+      for (let i = 0; i < mailBoxList.length; i++) {
+        if (mailBoxList[i].recid === this.state.fromAddress) {
+          submitData.fromaddress = mailBoxList[i].accountid;
+          submitData.fromname = mailBoxList[i].recname;
+          break;
+        }
+      }
+    }
+
+    submitData.AttachmentFile = this.state.fileList && this.state.fileList instanceof Array && this.state.fileList.map((item) => {
+        return {
+          fileid: item.fileid, //附件人
+          filetype: 1 //新文件
+        };
+      }); //附件数据
+
+    submitData.AttachmentFile = submitData.AttachmentFile || [];
+    submitData.bodycontent = this.state.UMEditorContent; //富文本框数据
+
+    function getTransformAddress(data) {
+      let returnData = [];
+      if (data && data instanceof Array) {
+        for (let i = 0; i < data.length; i++) {
+          returnData.push({
+            address: data[i].email,
+            displayname: data[i].name
+          });
+        }
+      }
+      return returnData;
+    }
+
+    return submitData;
   }
 
   UMEditorContentChangeHandler(content) {
@@ -848,6 +939,7 @@ class EditMailPanel extends Component {
           <div>
             <Toolbar style={{ paddingTop: '10px', paddingLeft: '10px' }}>
               <Button onClick={this.sendMail.bind(this)} loading={this.state.sendLoading}>发送</Button>
+              <Button onClick={this.saveDraft.bind(this)}>存草稿</Button>
               <Button className="grayBtn" onClick={this.closePanel.bind(this)}>取消</Button>
               {
                 this.state.dynamicOperateBtn && this.state.dynamicOperateBtn instanceof Array && this.state.dynamicOperateBtn.map((item, index) => {
