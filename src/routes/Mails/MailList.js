@@ -18,6 +18,14 @@ class MailList extends Component {
     this.state = {};
   }
 
+  onDoubleClickRow = (mail) => {
+    if (mail.ctype === 1005) {
+      this.props.openEditMail('draft', [mail], mail.mailid);
+      return;
+    }
+    this.props.showMailDetail(mail);
+  };
+
   render() {
     const { mailList, mailTotal, mailSelected, mailPageIndex, mailPageSize, mailDetailData } = this.props;
     return (
@@ -37,7 +45,7 @@ class MailList extends Component {
             onChange: (keys, items) => this.props.selectMails(items)
           }}
           onRowClick={this.props.toggleMailCurrent}
-          onRowDoubleClick={this.props.showMailDetail}
+          onRowDoubleClick={this.onDoubleClickRow}
         >
           <Column
             title={<ImgIcon marginLess name="mail" />}
@@ -132,6 +140,10 @@ export default connect(
       },
       showMailDetail(mail) {
         dispatch({ type: 'mails/showMailDetail', payload: mail });
+      },
+      openEditMail(showModalsName, mails, currentMailId) {
+        dispatch({ type: 'mails/putState',
+          payload: { showingPanel: showModalsName, currentMailId: currentMailId, modalMailsData: mails, editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null } });
       }
     };
   }
