@@ -294,6 +294,20 @@ export async function sendemail(params) {
 }
 
 /**
+ * 保存草稿箱
+ * @param params
+ * {  }
+ * @returns {Promise.<Object>}
+ */
+export async function savedraft(params) {
+  return request('api/mail/savedraft', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+
+/**
  * 获取往来邮件
  * @param params
  * { mailid, pageindex, pagesize, relatedMySelf, relatedSendOrReceive }
