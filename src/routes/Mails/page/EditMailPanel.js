@@ -221,7 +221,7 @@ class EditMailPanel extends Component {
     let sender = mailDetailData.sender;
     let senttime = mailDetailData.senttime;
     let title = mailDetailData.title;
-    let mailbody = mailDetailData.mailbody.replace(/body{/, '.edui-body-container{'); // 解决 富文本里的样式 覆盖全局样式
+    let mailbody = mailDetailData.mailbody && typeof mailDetailData.mailbody === 'string' && mailDetailData.mailbody.replace(/body{/, '.edui-body-container{'); // 解决 富文本里的样式 覆盖全局样式
     let receivers = this.getTransformReceivers(mailDetailData.receivers);
     let ccers = this.getTransformReceivers(mailDetailData.ccers);
 
