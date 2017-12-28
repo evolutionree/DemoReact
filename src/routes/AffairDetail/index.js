@@ -196,7 +196,7 @@ class AffairDetail extends Component {
             </div>
 
             {/*columnconfig 审批可改字段*/}
-            <div style={{ width: '600px' }}>
+            {this.props.selectedOperate === 1 && <div style={{ width: '600px' }}>
               {columnConfigFormsArray.map(item => (
                 <DynamicFormAdd
                   horizontal
@@ -208,7 +208,7 @@ class AffairDetail extends Component {
                   ref={inst => this.columnConfigFormInstance[item.entityId] = inst}
                 />
               ))}
-            </div>
+            </div>}
 
             {this.shouldShowUserForm() && (
               <WorkflowCaseForm
@@ -305,7 +305,19 @@ class AffairDetail extends Component {
             <Column title="节点名称" key="nodename" dataIndex="nodename" />
             <Column title="处理状态" key="casestatus" dataIndex="casestatus" />
             <Column title="处理时间" key="recupdated" dataIndex="recupdated" />
-            <Column title="意见" key="suggest" dataIndex="suggest" />
+            <Column title="意见" key="suggest" dataIndex="suggest" render={text => {
+              if (!text) return '';
+              text += '';
+              text = text.split('\n').reduce((result, line) => {
+                return [
+                  ...result,
+                  line,
+                  <br />
+                ];
+              }, []);
+              text.pop();
+              return <div>{text}</div>;
+            }} />
           </Table>
         </div>
         <WorkflowCaseModal

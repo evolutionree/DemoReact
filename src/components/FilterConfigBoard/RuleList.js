@@ -41,7 +41,7 @@ class RuleList extends Component {
       fieldId = matchField.fieldId;
       operator = getDefaultOperator(matchField.controlType);
       ruleData = getDefaultRuleData(matchField.controlType, operator);
-      ruleType = this.props.flowEnities[0].entityId ? ruleTypes.关联实体字段 : ruleTypes.关联独立实体字段;
+      ruleType = this.props.flowEnities[0].entityId === changeValue ? ruleTypes.关联实体字段 : ruleTypes.关联独立实体字段;
     }
     if (changeKey === 'fieldId') {
       fieldId = changeValue;

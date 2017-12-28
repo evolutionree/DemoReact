@@ -4,6 +4,8 @@ import classnames from 'classnames';
 
 export function createNormalInput(type, options) {
   return class InputComponent extends Component {
+    inputRef = null;
+    hasFocused = false;
     constructor(props) {
       super(props);
       this.state = {
@@ -37,8 +39,15 @@ export function createNormalInput(type, options) {
       this.props.onChange(val);
     };
 
+    onInputFocus = event => {
+      if (this.props.mode === 'EDIT' && !this.hasFocused && event.target.value) {
+        this.hasFocused = true;
+        this.props.onChange('');
+      }
+    };
+
     render() {
-      const { value, isReadOnly, maxLength, isTable } = this.props;
+      const { value, isReadOnly, maxLength, isTable, encrypted } = this.props;
 
       let optProps = {};
       if (options && options.props) {
@@ -47,16 +56,25 @@ export function createNormalInput(type, options) {
           optProps.autosize = { minRows: 2, maxRows: 5 };
         }
       }
+
+      let inputType = type;
+      if (this.state.innerVal && encrypted) {
+        inputType = 'password';
+      }
+
       return (
         <div className={classnames({ 'input-table-view': isTable })}>
           <Input
-            type={type}
+            ref={ref => this.inputRef = ref}
+            type={inputType}
             value={this.state.innerVal}
             onChange={this.onInputChange}
             onBlur={this.onInputBlur}
             disabled={isReadOnly === 1}
             maxLength={maxLength}
+            autoComplete="off"
             {...optProps}
+            onFocus={this.onInputFocus}
           />
         </div>
       );

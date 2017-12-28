@@ -140,6 +140,7 @@ class StageFlowModal extends Component {
           caseId={caseId}
           onCancel={cancel}
           onDone={this.props.done}
+          caseData={{ salesstageids: this.props.salesstageids }}
         />
       </div>
     );

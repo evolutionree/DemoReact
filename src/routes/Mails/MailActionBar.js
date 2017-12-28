@@ -81,6 +81,10 @@ class MailActionBar extends Component {
     if (mails.some(item => item.catalogtype === 'dept')) {
       return message.error('只能对属于自己的邮件执行此项操作');
     }
+    if (mails.some(item =>item.ctype === 1003)) return message.error('不能移动此文件夹的邮件');
+    if (mails.some(item =>item.ctype === 1008)) return message.error('不能移动此文件夹的邮件');
+    if (mails.some(item =>item.ctype === 1009)) return message.error('不能移动此文件夹的邮件');
+    if (mails.some(item =>item.ctype === 1005)) return message.error('不能移动此文件夹的邮件');
     this.props.moveMails(mails, catalogId);
   };
 

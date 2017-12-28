@@ -8,7 +8,8 @@ import {
   modifyAvatar,
   getLocalAuthentication,
   logout,
-  onTokenChange
+  onTokenChange,
+  initRsaPublicKey
 } from '../services/authentication';
 import { getGlobalMenus } from '../services/webmenus';
 import { clearServerCache, queryYearWeekData } from '../services/basicdata';
@@ -41,6 +42,7 @@ export default {
         dispatch({ type: 'fetchGlobalMenus' });
         dispatch({ type: 'fetchUserInfo' });
         dispatch({ type: 'fetchYearWeekData' });
+        dispatch({ type: 'initRsaPublicKey' });
       }
     },
     // session过期，退出登录
@@ -129,6 +131,9 @@ export default {
         type: 'putState',
         payload: { yearWeekData }
       });
+    },
+    *initRsaPublicKey(action, { call, put }) {
+      yield call(initRsaPublicKey);
     }
   },
   reducers: {

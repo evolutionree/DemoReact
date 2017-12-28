@@ -324,7 +324,7 @@ class RelatedInfoPanel extends Component {
   render() {
     const { mailDetailData } = this.props;
     return (
-      <div className={styles.wrap} style={{ minWidth: '300px' }}>
+      <div className={styles.wrap} style={{ minWidth: '400px' }}>
         <Spin spinning={this.state.loading}>
           <Tabs
             animated={false}
@@ -352,8 +352,8 @@ class RelatedInfoPanel extends Component {
                     overlay={(
                       <CheckableMenu
                         items={[
-                          { key: '1', group: 0, label: '仅查看与自己的往来邮件' },
-                          { key: '2', group: 0, label: '查看与所有用户的往来邮件' },
+                          { key: '0', group: 0, label: '仅查看与自己的往来邮件' },
+                          { key: '1', group: 0, label: '查看与所有用户的往来邮件' },
                           { key: '0', group: 1, label: '查看所有收到与发出的邮件' },
                           { key: '1', group: 1, label: '查看收到的邮件' },
                           { key: '2', group: 1, label: '查看发出的邮件' }
@@ -436,12 +436,18 @@ class RelatedInfoPanel extends Component {
                   pagination={false}
                 >
                   <Column title="附件名" dataIndex="filename" render={val => (
-                    <span title={val} style={{ display: 'block', maxWidth: '270px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{val}</span>
+                    <span title={val} style={{ display: 'block', maxWidth: '108px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{val}</span>
                   )} />
-                  <Column title="大小" dataIndex="filesize" render={formatFileSize} />
-                  <Column title="日期" dataIndex="receivedtime" render={(val, record) => formatTime(record.receivedtime) || formatTime(record.senttime)} />
-                  <Column title="操作" dataIndex="mongoid" render={mongoid => (
-                    <a href={`/api/fileservice/download?fileid=${mongoid}`} download>下载</a>
+                  <Column width={95} title="大小" dataIndex="filesize" render={val => {
+                    const style = { width: '75', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
+                    return <div style={style}>{formatFileSize(val)}</div>;
+                  }} />
+                  <Column width={100} title="日期" dataIndex="receivedtime" render={(val, record) => {
+                    const style = { width: '80', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
+                    return <div style={style}>{formatTime(record.receivedtime) || formatTime(record.senttime)}</div>;
+                  }} />
+                  <Column width={76} title="操作" dataIndex="mongoid" render={mongoid => (
+                    <a style={{ width: '50', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} href={`/api/fileservice/download?fileid=${mongoid}`} download>下载</a>
                   )} />
                 </Table>
                 <TinyPager

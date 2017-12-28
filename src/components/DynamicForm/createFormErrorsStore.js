@@ -1,5 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import * as _ from 'lodash';
+import { encryptPasswordSync } from '../../services/authentication';
 
 function equalUndefined(object, other) {
   const removeUndeinfedProp = obj => _.pickBy(obj, item => item !== undefined);
@@ -33,6 +34,19 @@ export default function createFormErrorsStore(WrappedFormComponent) {
       });
       return innerFormValue;
     };
+    processRetValues = values => {
+      const result = _.cloneDeep(values);
+      const { fields } = this.props;
+      debugger;
+      fields.forEach(field => {
+        const { controltype, fieldconfig, fieldname } = field;
+        if (!result[fieldname]) return;
+        if (controltype === 1 && fieldconfig && fieldconfig.encrypted) {
+          result[fieldname] = encryptPasswordSync(result[fieldname]);
+        }
+      });
+      return result;
+    };
     validateFields = (...args) => {
       let opts = {};
       let callback;
@@ -48,7 +62,7 @@ export default function createFormErrorsStore(WrappedFormComponent) {
           if (val === undefined || val === null) return '';
           return val;
         });
-        callback(err, retValues);
+        callback(err, this.processRetValues(retValues));
       });
     };
     handleFormValueChange = formValue => {
