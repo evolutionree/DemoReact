@@ -7,9 +7,18 @@ import classnames from 'classnames';
 
 class CalendarBody extends Component {
   static propTypes = {
-    year: React.PropTypes.number, //年
-    month: React.PropTypes.number, //月
-    day: React.PropTypes.number //日
+    year: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.number
+    ]), //年
+    month: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.number
+    ]), //月
+    day: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.number
+    ]) //日
   };
   static defaultProps = {
     year: new window.Date().getFullYear(),

@@ -75,7 +75,10 @@ class ScheduleTab extends Component {
       <div className={Styles.ScheduleTab} style={{ height: this.props.height }}>
         <div style={{ padding: '20px' }}>
           <div className={Styles.Header}>
-            <div className={Styles.Title}><Icon type="schedule" /><span>我的日程</span><Icon type="down" onClick={this.toggleSearchPanel.bind(this)} /><Icon type="plus" /></div>
+            <div className={Styles.Title}>
+              <Icon type="schedule" /><span>我的日程</span><Icon type="down" onClick={this.toggleSearchPanel.bind(this)} />
+              <Icon type="plus" onClick={this.props.openFormModal} />
+            </div>
             <div className={Styles.SearchWrap} style={{ display: this.state.searchPanelShow ? 'block' : 'none' }}>
               <div>我的日程</div>
               <div>
@@ -121,6 +124,9 @@ export default connect(
       },
       openSchedulePanel() {
         dispatch({ type: 'schedule/putState', payload: { schedulePanelVisible: true } });
+      },
+      openFormModal() {
+        dispatch({ type: 'schedule/putState', payload: { showModals: 'formModal' } });
       }
     };
   }

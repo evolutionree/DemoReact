@@ -9,7 +9,8 @@ export default {
   state: {
     scheduleWays: [{ name: 'day', title: '日', active: true }, { name: 'week', title: '周', active: false }, { name: 'month', title: '月', active: false }],
     taskWays: [{ name: 'myTask', title: '我的任务', active: true }, { name: 'myAssignment', title: '我分配的任务', active: false }],
-    schedulePanelVisible: false
+    schedulePanelVisible: false,
+    showModals: ''
   },
   subscriptions: {
     setup({ dispatch, history }) {

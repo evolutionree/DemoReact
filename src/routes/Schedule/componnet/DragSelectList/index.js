@@ -488,7 +488,7 @@ class DragSelectList extends Component {
     };
   }
 
-  componentDidMount() {
+  componentDidUpdate() {
     console.log(this.listRef.offsetWidth)
     this.listRef.addEventListener('mousedown', this.onDocumentMouseDown.bind(this));
     const totalHeight = 22 * 48;

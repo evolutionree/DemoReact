@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import ReactDom from 'react-dom';
-import { Select } from 'antd';
+import { Select, Tooltip, Icon } from 'antd';
 import _ from 'lodash';
 import connectBasicData from '../../../models/connectBasicData';
 import { queryYearWeekData } from '../../../services/basicdata';
@@ -183,19 +183,26 @@ class SelectSingle extends Component {
     const { value, isReadOnly, onFocus } = this.props;
     const options = this.getOptions();
     return (
-      <Select
-        value={value === null || value === undefined ? '' : (value + '')}
-        disabled={isReadOnly === 1}
-        onChange={this.onChange}
-        onFocus={onFocus}
-        style={{ width: '100%' }}
-        ref={ref => this.innerRef = ref}
-      >
-        <Option value="">- 请选择 -</Option>
-        {options.map(opt => (
-          <Option key={opt.value + ''} disabled={opt.disabled}>{opt.label}</Option>
-        ))}
-      </Select>
+      <div>
+        <Select
+          value={value === null || value === undefined ? '' : (value + '')}
+          disabled={isReadOnly === 1}
+          onChange={this.onChange}
+          onFocus={onFocus}
+          style={{ width: this.props.toolTip ? 'calc(100% - 22px)' : '100%' }}
+          ref={ref => this.innerRef = ref}
+        >
+          <Option value="">- 请选择 -</Option>
+          {options.map(opt => (
+            <Option key={opt.value + ''} disabled={opt.disabled}>{opt.label}</Option>
+          ))}
+        </Select>
+        {
+          this.props.toolTip ? <Tooltip placement="bottom" title={this.props.toolTip}>
+            <Icon type="info-circle" style={{ color: '#b8c7ce', fontSize: '18px', marginLeft: '4px' }} />
+          </Tooltip> : null
+        }
+      </div>
     );
   }
 }

@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import { Modal } from 'antd';
+import { connect } from 'dva';
 import ScheduleForm from './ScheduleForm';
 import TaskForm from './TaskForm';
 import classnames from 'classnames';
@@ -19,7 +20,8 @@ class FormModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      titleNodeData: [{ name: '日程', active: true }, { name: '任务', active: false }]
+      titleNodeData: [{ name: '日程', active: true }, { name: '任务', active: false }],
+      FormValue: {}
     };
   }
 
@@ -50,6 +52,19 @@ class FormModal extends Component {
     });
   }
 
+  submit() {
+    const titleNodeData = this.state.titleNodeData;
+    if (titleNodeData[0].active) {
+      this.ScheduleFormRef.getWrappedInstance().validateFields((err, fieldsValue) => {
+        console.log(fieldsValue)
+      });
+    } else {
+      this.TaskFormRef.getWrappedInstance().validateFields((err, fieldsValue) => {
+        console.log(fieldsValue)
+      });
+    }
+  }
+
   render() {
     const titleNodeData = this.state.titleNodeData;
     const titleNode = titleNodeData.map((item, index) => {
@@ -57,12 +72,20 @@ class FormModal extends Component {
       return <span key={index} onClick={this.changeTitleNodeActive.bind(this, item.name)} className={cls}>{item.name}</span>;
     })
     return (
-      <Modal visible={true} title={<div className={Styles.header}>{titleNode}</div>} wrapClassName="formModalWrap">
+      <Modal title={<div className={Styles.formModalHeader}>{titleNode}</div>}
+             wrapClassName="formModalWrap"
+             visible={this.props.showModals === 'formModal'}
+             onOk={this.submit.bind(this)}
+             onCancel={this.props.closeFormModal}
+             >
         {
-          titleNodeData[0].active ? <ScheduleForm /> : null
+          titleNodeData[0].active ? <ScheduleForm ref={(ref) => { this.ScheduleFormRef = ref }}
+                                                  value={this.state.FormValue} onChange={(formValue) => { this.setState({ FormValue: formValue }) }} /> : null
         }
         {
-          titleNodeData[1].active ? <TaskForm /> : null
+          titleNodeData[1].active ? <TaskForm ref={(ref) => { this.TaskFormRef = ref }}
+                                              value={this.state.FormValue}
+                                              onChange={(formValue) => { this.setState({ FormValue: formValue }) }} /> : null
         }
       </Modal>
     );
@@ -70,4 +93,13 @@ class FormModal extends Component {
 }
 
 
-export default FormModal;
+export default connect(
+  state => state.schedule,
+  dispatch => {
+    return {
+      closeFormModal() {
+        dispatch({ type: 'schedule/putState', payload: { showModals: '' } });
+      }
+    };
+  }
+)(FormModal);;

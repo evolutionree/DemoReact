@@ -7,8 +7,14 @@ import Styles from './index.less';
 
 class CalendarHeader extends Component {
   static propTypes = {
-    year: React.PropTypes.number, //年
-    month: React.PropTypes.number //月
+    year:React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.number
+    ]), //年
+    month: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.number
+    ]) //月
   };
   static defaultProps = {
     year: new window.Date().getFullYear(),
