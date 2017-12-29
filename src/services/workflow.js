@@ -210,6 +210,23 @@ export async function addCase(params) {
 /**
  * 将实体记录接入流程
  * @param params
+ *  {
+ *    CaseModel // DataType=1时，必填，原addcase接口的参数对象
+ *    DataType // 数据类型：0=实体数据（原add接口），1=流程数据（原addcase接口）
+ *    EntityModel // DataType=0时，必填，原add接口的参数对象
+ *  }
+ * @returns {Promise.<Object>}
+ */
+export async function preAddCase(params) {
+  return request('/api/workflow/preaddcase', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
+ * 将实体记录接入流程
+ * @param params
  *  public Guid FlowId { get; set; }
     public Guid EntityId { get; set; }
     public Guid RecId { get; set; } 数组
