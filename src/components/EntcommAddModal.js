@@ -3,7 +3,6 @@ import { Modal, Select, message, Radio } from 'antd';
 import * as _ from 'lodash';
 import { DynamicFormAdd, generateDefaultFormData } from './DynamicForm';
 import { getGeneralProtocol, addEntcomm } from '../services/entcomm';
-import { addCase, preAddCase } from '../services/workflow';
 import { WorkflowCaseForAddModal } from "./WorkflowCaseModal";
 
 const Option = Select.Option;
@@ -168,11 +167,11 @@ class EntcommAddModal extends Component {
           extradata: this.props.extraData
         };
       }
-      this.setState({ dataModel, showWorkflowCaseModal: true });
+      this.setState({ dataModel, showWorkflowCaseModal: true, showFormModal: false });
     });
   };
   onWorkflowCaseCancel = () => {
-    this.setState({ showWorkflowCaseModal: false });
+    this.setState({ showWorkflowCaseModal: false, showFormModal: true });
   };
   onWorkflowCaseDone = (result) => {
     this.props.done(result);
