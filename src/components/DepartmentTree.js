@@ -67,14 +67,16 @@ class DepartmentTree extends React.Component {
     // }
 
     const targetNode = this.getNodeById(event.node.props.eventKey);
+    let nowCheckedKeys = [];
+    let nowCheckedNodes = [];
     if (targetNode && event.checked && this.props.checkChildrenRecursively) {
-      const nowCheckedKeys = [...checkedKeys.checked || []];
-      const nowCheckedNodes = checkedKeys.checked.map(this.getNodeById);
+      nowCheckedKeys = [...checkedKeys.checked || []];
+      nowCheckedNodes = checkedKeys.checked.map(this.getNodeById);
       checkNodeRecursively(targetNode);
       this.props.onCheckChange(nowCheckedKeys, nowCheckedNodes, []);
     } else if (targetNode && !event.checked && this.props.uncheckChildrenRecursively) {
-      const nowCheckedKeys = [...checkedKeys.checked || []];
-      const nowCheckedNodes = checkedKeys.checked.map(this.getNodeById);
+      nowCheckedKeys = [...checkedKeys.checked || []];
+      nowCheckedNodes = checkedKeys.checked.map(this.getNodeById);
       checkNodeRecursively(targetNode);
       this.props.onCheckChange(nowCheckedKeys, nowCheckedNodes, []);
       uncheckNodeRecursively(targetNode);
