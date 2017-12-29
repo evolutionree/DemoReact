@@ -77,8 +77,12 @@ class WorkflowDesign extends Component {
   getJspConfig = () => {
     return {
       PaintStyle: {
-        strokeWidth: 2,
+        strokeWidth: 3,
         stroke: '#b5b5b5'
+      },
+      HoverPaintStyle: {
+        strokeWidth: 3,
+        stroke: '#3398db'
       },
       Connector: ['Flowchart', {
         stub: [10, 60],
@@ -87,8 +91,47 @@ class WorkflowDesign extends Component {
         cornerRadius: 3,
         alwaysRespectStubs: true
       }],
-      Endpoint: ['Dot', { radius: 5 }],
-      EndpointStyle: { fill: 'transparent' },
+      Endpoint: ['Dot', {
+        radius: 5,
+        connectorStyle: {
+          strokeWidth: 2,
+          stroke: "#61B7CF",
+          joinstyle: "round",
+          outlineStroke: "white",
+          outlineWidth: 2
+        },
+        hoverPaintStyle: {
+          fill: "#216477",
+          stroke: "#216477"
+        },
+        connectorHoverStyle: {
+          strokeWidth: 3,
+          stroke: "#216477",
+          outlineWidth: 5,
+          outlineStroke: "white"
+        }
+      }],
+      EndpointStyle: {
+        fill: 'transparent',
+        connectorStyle: {
+          strokeWidth: 2,
+          stroke: "#61B7CF",
+          joinstyle: "round",
+          outlineStroke: "white",
+          outlineWidth: 2
+        },
+        hoverPaintStyle: {
+          fill: "#216477",
+          stroke: "#216477"
+        },
+        connectorHoverStyle: {
+          strokeWidth: 3,
+          stroke: "#216477",
+          outlineWidth: 5,
+          outlineStroke: "white"
+        }
+      },
+      ConnectionsDetachable: false,
       ConnectionOverlays: [
         ['Arrow', {
           location: 1,
@@ -98,7 +141,7 @@ class WorkflowDesign extends Component {
           id: 'ARROW',
           events: {
             click: () => {
-              alert('you clicked on the arrow overlay');
+              // alert('you clicked on the arrow overlay');
             }
           }
         }],
@@ -149,109 +192,33 @@ class WorkflowDesign extends Component {
 
   onContainerReady = (elemContainer) => {
     const jspInstance = jsPlumb.getInstance({ ...this.getJspConfig(), Container: elemContainer });
-    // connection事件触发，创建“分支条件”按钮
+    jspInstance.bind('dblclick', (connInfo, originalEvent) => {
+      this.props.userDisConnectNode(connInfo);
+      // debugger
+    });
     jspInstance.bind('connection', (connInfo, originalEvent) => {
       const { connection, source, target } = connInfo;
       // 用户拖拉
       if (originalEvent) {
-        this.props.userConnectNode(connInfo);
+        jspInstance.detach(connInfo);
         setTimeout(() => {
-          // jspInstance.detach({
-          //   source,
-          //   target,
-          //   anchor: ['BottomCenter', 'TopCenter']
-          // });
-          jspInstance.detach(connInfo);
-        })
-        return;
+          this.props.userConnectNode(connInfo);
+        }, 5);
+        // return;
       }
-      this.addExtraEndPoints([source, target]);
+      // this.addExtraEndPoints([source, target]);
       // try {
       //   connection.getOverlay('label').setLabel(connection.sourceId.slice(-1) + '-' + connection.targetId.slice(-1));
       // } catch (e) {
       //   console.error(e);
       // }
     });
-    this.setState({ jspInstance });
-  };
-
-  addExtraEndPoints = elems => {
-    const connectorPaintStyle = {
-      strokeWidth: 2,
-      stroke: "#61B7CF",
-      joinstyle: "round",
-      outlineStroke: "white",
-      outlineWidth: 2
-    };
-    const connectorHoverStyle = {
-      strokeWidth: 3,
-      stroke: "#216477",
-      outlineWidth: 5,
-      outlineStroke: "white"
-    };
-    const endpointHoverStyle = {
-      fill: "#216477",
-      stroke: "#216477"
-    };
-    const sourceEndpoint = {
-      endpoint: "Dot",
-      paintStyle: {
-        // stroke: "#7AB02C",
-        stroke: "transparent",
-        fill: "transparent",
-        radius: 7,
-        strokeWidth: 1
-      },
-      isSource: true,
-      connector: ["Flowchart", { stub: [40, 60], gap: 10, cornerRadius: 5, alwaysRespectStubs: true }],
-      connectorStyle: connectorPaintStyle,
-      hoverPaintStyle: endpointHoverStyle,
-      connectorHoverStyle: connectorHoverStyle,
-      dragOptions: {},
-      overlays: [
-        ["Label", {
-          location: [0.5, 1.5],
-          label: "Drag",
-          cssClass: "endpointSourceLabel",
-          visible: false
-        }]
-      ]
-    };
-    const targetEndpoint = {
-      endpoint: "Dot",
-      paintStyle: { fill: "transparent", radius: 7 },
-      hoverPaintStyle: endpointHoverStyle,
-      maxConnections: -1,
-      dropOptions: { hoverClass: "hover", activeClass: "active" },
-      isTarget: true,
-      overlays: [
-        ["Label", { location: [0.5, -0.5], label: "Drop", cssClass: "endpointTargetLabel", visible: false }]
-      ]
-    };
-    const jsp = this.state.jspInstance;
-    const _addEndPoint = (el, isTarget) => {
-      const options = {
-        anchor: 'TopCenter',
-        uuid: el.id + '-TopCenter'
-      };
-      const options2 = {
-        anchor: 'BottomCenter',
-        uuid: el.id + '-BottomCenter'
-      };
-      jsp.addEndpoint(el.id, isTarget ? targetEndpoint : sourceEndpoint, options);
-      jsp.addEndpoint(el.id, isTarget ? targetEndpoint : sourceEndpoint, options2);
-    };
-    elems.forEach(el => {
-      const cls = el.classList;
-      if (cls.contains('flow-node-start')) return;
-      if (cls.contains('flow-node-has-extra-endpoint')) return;
-      cls.add('flow-node-has-extra-endpoint');
-      if (cls.contains('flow-node-end')) {
-        _addEndPoint(el, true);
-      } else if (cls.contains('flow-node-mid')) {
-        _addEndPoint(el);
+    jspInstance.bind('connectionDetached', (connInfo, originalEvent) => {
+      if (originalEvent) {
+        this.props.userDisConnectNode(connInfo);
       }
     });
+    this.setState({ jspInstance });
   };
 
   addFlowNode = () => {
@@ -294,6 +261,7 @@ class WorkflowDesign extends Component {
                     id={getNodeElemId(id)}
                     x={x}
                     y={y}
+                    steptypeid={rawNode.steptypeid}
                   >
                     <FlowNode id={id} title={name} nodeData={rawNode} />
                   </FlowNodeContainer>
@@ -316,6 +284,10 @@ class WorkflowDesign extends Component {
         <Button onClick={this.props.newFlow} style={{ position: 'absolute', right: '130px', top: '30px' }}>
           生成
         </Button>}
+        {!!flowSteps.length &&
+        <Button onClick={this.props.createNode} style={{ position: 'absolute', right: '130px', top: '30px' }}>
+          添加节点
+        </Button>}
         <Button onClick={this.props.save} style={{ position: 'absolute', right: '50px', top: '30px' }}>保存</Button>
       </div>
     );
@@ -332,11 +304,17 @@ export default connect(
       newFlow() {
         dispatch({ type: 'workflowDesign/generateFlowJSON' });
       },
+      createNode() {
+        dispatch({ type: 'workflowDesign/createNode' });
+      },
       editBranchRule(flowPath) {
         dispatch({ type: 'workflowDesign/editBranchRule', payload: flowPath });
       },
       userConnectNode(connInfo) {
         dispatch({ type: 'workflowDesign/userConnectNode', payload: connInfo });
+      },
+      userDisConnectNode(connInfo) {
+        dispatch({ type: 'workflowDesign/userDisConnectNode', payload: connInfo });
       }
     };
   }
