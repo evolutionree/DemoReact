@@ -295,7 +295,7 @@ export default {
     },
     *queryMailList(action, { select, call, put }) {
       try {
-        const { mailPageIndex, mailPageSize, mailSearchKey, selectedCatalogNode } = yield select(state => state.mails);
+        const { mailPageIndex, mailPageSize, mailSearchKey, mailDetailData, selectedCatalogNode } = yield select(state => state.mails);
         let result;
         if (selectedCatalogNode.recid) {
           // 收件箱邮件
@@ -330,6 +330,16 @@ export default {
             mailSelected: []
           }
         });
+        if (mailList.every(item => (mailDetailData && mailDetailData.mailId) !== item.mailid)) {
+          yield put({
+            type: 'putState',
+            payload: {
+              mailDetailData: null,
+              mailCurrent: null,
+              showingPanel: ''
+            }
+          });
+        }
       } catch (e) {
         message.error(e.message || '获取邮件列表失败');
       }
