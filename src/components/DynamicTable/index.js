@@ -121,9 +121,10 @@ class DynamicTable extends Component {
       // 表格
       case 24:
         return this.renderTable(cellText, field, record);
+      case 1:
+        return this.renderInputText(cellText, field, record);
       // 普通文本，日期
       case 1012:
-      case 1:
       case 2:
       case 3:
       case 4:
@@ -215,6 +216,13 @@ class DynamicTable extends Component {
   renderTable = (cellText, field, record) => {
     if (!cellText) return null;
     return <a onClick={() => this.showInnerTable(record, field)}>{field.displayname}</a>;
+  };
+  renderInputText = (cellText, field, record) => {
+    const { fieldconfig } = field;
+    if (fieldconfig && fieldconfig.encrypted) {
+      return cellText ? '********' : '';
+    }
+    return this.renderText(cellText);
   };
   renderAttachment = (filesJSON) => {
     let files = [];
