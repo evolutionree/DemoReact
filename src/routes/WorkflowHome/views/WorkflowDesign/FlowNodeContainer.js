@@ -19,6 +19,7 @@ const endpointHoverStyle = {
   stroke: "#216477"
 };
 const sourceEndpoint = {
+  // cssClass: 'asdf',
   endpoint: "Dot",
   paintStyle: {
     stroke: "#7AB02C",
@@ -44,6 +45,7 @@ const sourceEndpoint = {
 };
 const targetEndpoint = {
   endpoint: "Dot",
+  // cssClass: 'asdf',
   paintStyle: {
     // fill: "transparent",
     fill: "#436d34",
@@ -95,6 +97,7 @@ class FlowNodeContainer extends Component {
       uuid: id + '-LeftMiddle'
     };
     const options4 = {
+      cssClass: 'jtk-endpoint--source',
       anchor: 'RightMiddle',
       uuid: id + '-RightMiddle'
     };
