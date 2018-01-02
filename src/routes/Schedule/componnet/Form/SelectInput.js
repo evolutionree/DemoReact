@@ -33,21 +33,34 @@ class SelectInput extends Component {
     });
   }
 
-  handleChange() {
+  selectValueChange(value) {
+    this.props.onChange && this.props.onChange({
+      ...this.props.value,
+      select: value
+    });
+  }
 
+  inputValueChange(e) {
+    this.props.onChange && this.props.onChange({
+      ...this.props.value,
+      input: e.target.value
+    });
   }
 
   render() {
+    const value = this.props.value;
     return (
       <div className={Styles.SelectInputWrap}>
-        <Select defaultValue={this.props.options && this.props.options[0].value} style={{ width: 120, marginRight: '4px' }} onChange={this.handleChange.bind(this)}>
+        <Select defaultValue={this.props.options && this.props.options[0].value} value={value && value.select} style={{ width: 120, marginRight: '4px' }}
+                onChange={this.selectValueChange.bind(this)}>
           {
             this.props.options && this.props.options instanceof Array && this.props.options.map((item, index) => {
               return <Option value={item.value} key={index}>{item.label}</Option>;
             })
           }
         </Select>
-        <Input placeholder={this.props.placeholder} style={{ width: this.props.toolTip ? 'calc(100% - 146px)' : 'calc(100% - 124px)' }} />
+        <Input placeholder={this.props.placeholder} value={value && value.input} style={{ width: this.props.toolTip ? 'calc(100% - 146px)' : 'calc(100% - 124px)' }}
+               onChange={this.inputValueChange.bind(this)} />
         {
           this.props.toolTip ? <Tooltip placement="bottom" title={this.props.toolTip}>
             <Icon type="info-circle" style={{ color: '#b8c7ce', fontSize: '18px', marginLeft: '4px' }} />
