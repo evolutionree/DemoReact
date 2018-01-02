@@ -400,3 +400,16 @@ export async function queryHistoryUserMails(params) {
     body: JSON.stringify(params)
   });
 }
+
+/**
+ * 恢复邮件
+ * @param params
+ * { mailids }
+ * @returns {Promise.<Object>}
+ */
+export async function recoverMails(params) {
+  return request('api/mail/reconvermail', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
