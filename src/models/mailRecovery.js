@@ -20,7 +20,7 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       return history.listen(location => {
-        if (location.pathname === '/mailRecovery') {
+        if (location.pathname === '/mailrecovery') {
           dispatch({ type: 'init' });
         } else {
           dispatch({ type: 'resetState' });

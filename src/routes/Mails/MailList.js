@@ -74,7 +74,7 @@ class MailList extends Component {
               return (
                 <div style={style} title={val}>
                   {!!record.istag && <Icon type="star" style={{ color: '#ff9a2e', marginRight: '5px' }} />}
-                  <span>{val}</span>
+                  <span>{val ? val : '(没有主题)'}</span>
                 </div>
               );
             }}
@@ -93,7 +93,7 @@ class MailList extends Component {
             dataIndex="receivers"
             width={145}
             render={val => {
-              if (!(val && val.length)) return '';
+              if (!(val && val.length)) return '(没有收件人)';
               const title = val.map(item => item.displayname || item.address).join(', ');
               const ect = val.length > 1 ? `等${val.length}个人` : '';
               const style = { width: '145px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
