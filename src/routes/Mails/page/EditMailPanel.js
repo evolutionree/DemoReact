@@ -593,31 +593,15 @@ class EditMailPanel extends Component {
             uploadingFiles: []
           })
           this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: '' } });
+          this.props.dispatch({ type: 'mails/reloadCatalogTree' });
         },
         onCancel() {
 
         }
       });
     } else {
-      const submitData = this.getSubmitData();
-      if (submitData[formDataField.ToAddress].length !== 0 ||
-        submitData[formDataField.CCAddress].length !== 0 ||
-        submitData[formDataField.BCCAddress].length !== 0 ||
-        submitData[formDataField.subject] || submitData.AttachmentFile.length !== 0 || submitData.bodycontent) {
-        confirm({
-          title: '离开提示',
-          content: '内容已被修改，是否要将此邮件存为草稿？',
-          onOk: () => {
-            this.saveDraft();
-            this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: '' } });
-          },
-          onCancel: () => {
-            this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: '' } });
-          }
-        });
-      } else {
-        this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: '' } });
-      }
+      this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: '' } });
+      this.props.dispatch({ type: 'mails/reloadCatalogTree' });
     }
   }
 
@@ -788,8 +772,8 @@ class EditMailPanel extends Component {
     if (this.props.currentMailId) {
       submitData.mailId = this.props.currentMailId;
     }
-    alert(this.props.currentMailId)
     savedraft(submitData).then((result) => { //保存草稿箱
+      message.success('草稿保存成功');
       const { data } = result;
       if (!this.props.currentMailId) { //新增页面 保存草稿箱后要更新当前邮件Id  下次保存草稿就是更新数据
         this.props.dispatch({ type: 'mails/putState', payload: { currentMailId: data } });
@@ -1020,7 +1004,7 @@ class EditMailPanel extends Component {
             <Toolbar style={{ paddingTop: '10px', paddingLeft: '10px' }}>
               <Button onClick={this.sendMail.bind(this)} loading={this.state.sendLoading}>发送</Button>
               <Button onClick={this.saveDraft.bind(this)}>存草稿</Button>
-              <Button className="grayBtn" onClick={this.closePanel.bind(this)}>取消</Button>
+              <Button className="grayBtn" onClick={this.closePanel.bind(this)}>关闭</Button>
               {
                 this.state.dynamicOperateBtn && this.state.dynamicOperateBtn instanceof Array && this.state.dynamicOperateBtn.map((item, index) => {
                   if (item.show) {
