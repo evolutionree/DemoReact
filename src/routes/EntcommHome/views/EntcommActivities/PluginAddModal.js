@@ -5,8 +5,7 @@ import EntcommAddModal from '../../../../components/EntcommAddModal';
 import EntcommDetailModal from '../../../../components/EntcommDetailModal';
 import EntcommCopyModal from '../../../../components/EntcommCopyModal';
 import EntcommTransferModal from '../../../../components/EntcommTransferModal';
-import WorkflowCaseModal from '../../../../components/WorkflowCaseModal';
-import { addCase } from '../../../../services/workflow';
+import { WorkflowCaseForAddModal } from '../../../../components/WorkflowCaseModal';
 import { getEntcommDetail } from '../../../../services/entcomm';
 
 class PluginAddModal extends Component {
@@ -42,7 +41,8 @@ class PluginAddModal extends Component {
       showDetailModal: false,
       showTransferModal: false,
       showFlowCaseModal: false,
-      copyData:null
+      copyData:null,
+      dataModel: undefined
     };
   }
 
@@ -102,7 +102,8 @@ class PluginAddModal extends Component {
         showDetailModal: false,
         showTransferModal: false,
         showFlowCaseModal: false,
-        copyData:null
+        copyData:null,
+        dataModel: undefined
       });
     }
   }
@@ -128,34 +129,45 @@ class PluginAddModal extends Component {
     if (this.props.currPlugin.type === 'normal') {
       this.props.done();
     } else if (this.props.currPlugin.type === 'flow') {
-      const caseId = result.data;
-      this.setState({
-        caseId,
-        showAddModal: false,
-        showFlowCaseModal: true
-      });
-     this.props.auditDone(entityId,recordId);
+      // const caseId = result.data;
+      // this.setState({
+      //   caseId,
+      //   showAddModal: false,
+      //   showFlowCaseModal: true
+      // });
+      this.props.auditDone(entityId, recordId);
+      this.props.done();
     }
   };
 
   onDetailConfirm = () => {
-    const params = {
-      flowId: this.props.currPlugin.flowid,
-      entityId: this.props.entityId,
-      recId: this.props.recordId
-    };
-    addCase(params).then(result => {
-      const caseId = result.data;
-      this.setState({
-        caseId,
-        showDetailModal: false,
-        showFlowCaseModal: true
-      });
-      const { entityId,recordId } = this.props;
-      this.props.auditDone(entityId,recordId);
-    }, err => {
-      message.error(err.message || '提交审批失败');
-    });
+    // const params = {
+    //   flowId: this.props.currPlugin.flowid,
+    //   entityId: this.props.entityId,
+    //   recId: this.props.recordId
+    // };
+    // addCase(params).then(result => {
+    //   const caseId = result.data;
+    //   this.setState({
+    //     caseId,
+    //     showDetailModal: false,
+    //     showFlowCaseModal: true
+    //   });
+    //   const { entityId,recordId } = this.props;
+    //   this.props.auditDone(entityId,recordId);
+    // }, err => {
+    //   message.error(err.message || '提交审批失败');
+    // });
+
+    this.setState({
+      dataModel: {
+        flowId: this.props.currPlugin.flowid,
+        entityId: this.props.entityId,
+        recId: this.props.recordId
+      },
+      showDetailModal: false,
+      showFlowCaseModal: true
+    })
   };
 
   onCancel = () => {
@@ -225,11 +237,18 @@ class PluginAddModal extends Component {
           onCancel={this.props.cancel}
           onDone={this.props.done}
         />
-        <WorkflowCaseModal
+        {/*<WorkflowCaseModal*/}
+          {/*visible={showFlowCaseModal}*/}
+          {/*caseId={caseId}*/}
+          {/*onCancel={cancel}*/}
+          {/*onDone={this.props.done}*/}
+        {/*/>*/}
+        <WorkflowCaseForAddModal
           visible={showFlowCaseModal}
-          caseId={caseId}
+          isAddCase
+          dataModel={this.state.dataModel}
           onCancel={cancel}
-          onDone={this.props.done}
+          onDone={this.onAddDone}
         />
       </div>
     );

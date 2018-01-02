@@ -5,6 +5,22 @@
   height: 600px;
   //margin-top: 50px;
   margin: -15px;
+  user-select: none;
+
+  :global {
+    .jtk-connector {
+      z-index: 100;
+    }
+    .jtk-endpoint {
+      z-index: 110;
+    }
+    .jtk-endpoint--source {
+      z-index: 111;
+    }
+    .jtk-overlay {
+      z-index: 120;
+    }
+  }
 }
 .flownode {
   position: absolute;

@@ -91,9 +91,10 @@ class FlowNode extends Component {
           <div className={styles.content} title={this.props.title}>{this.props.title}</div>
           <div className={styles.controls}>
             <Icon type="edit" onClick={this.onEditOpen} />
-            <Dropdown overlay={dropdownMenu}>
+            <Icon type="delete" onClick={this.props.delStep} />
+            {false && <Dropdown overlay={dropdownMenu}>
               <Icon type="plus" />
-            </Dropdown>
+            </Dropdown>}
           </div>
         </div>
       );
@@ -110,9 +111,10 @@ class FlowNode extends Component {
       <div className={styles.title}>
         <div className={styles.content} title={this.props.title}>{this.props.title}</div>
         <div className={styles.controls}>
-          <Dropdown overlay={dropdownMenu}>
+          <Icon type="setting" onClick={this.props.openStepModal} style={{ marginLeft: '3px', cursor: 'pointer' }} />
+          {false && <Dropdown overlay={dropdownMenu}>
             <Icon type="plus" />
-          </Dropdown>
+          </Dropdown>}
         </div>
       </div>
     );

@@ -3,7 +3,7 @@ import { Modal, Select, message, Radio } from 'antd';
 import * as _ from 'lodash';
 import { DynamicFormAdd, generateDefaultFormData } from './DynamicForm';
 import { getGeneralProtocol, addEntcomm } from '../services/entcomm';
-import { addCase } from '../services/workflow';
+import { WorkflowCaseForAddModal } from "./WorkflowCaseModal";
 
 const Option = Select.Option;
 
@@ -22,7 +22,8 @@ class EntcommAddModal extends Component {
     footer: PropTypes.arrayOf(PropTypes.node),
     extraData: PropTypes.object, // 提交表单的额外参数
     initFormData: PropTypes.object,
-    processProtocol: PropTypes.func
+    processProtocol: PropTypes.func,
+    isAddCase: PropTypes.bool
   };
   static defaultProps = {
   };
@@ -32,10 +33,12 @@ class EntcommAddModal extends Component {
     this.state = {
       showTypeModal: false,
       showFormModal: false,
+      showWorkflowCaseModal: false,
       selectedEntityType: '',
       protocolFields: [], // 协议字段
       formData: props.initFormData || {}, // 表单数据
       confirmLoading: false,
+      dataModel: undefined,
       key: new Date().getTime() // 每次打开弹窗时，都重新渲染
     };
   }
@@ -69,6 +72,20 @@ class EntcommAddModal extends Component {
     }
   }
 
+  resetState = () => {
+    this.setState({
+      showTypeModal: false,
+      showFormModal: false,
+      showWorkflowCaseModal: false,
+      selectedEntityType: '',
+      protocolFields: [], // 协议字段
+      formData: {}, // 表单数据
+      confirmLoading: false,
+      dataModel: undefined,
+      key: new Date().getTime()
+    });
+  };
+
   onTypeModalCancel = () => {
     this.props.cancel();
   };
@@ -94,7 +111,7 @@ class EntcommAddModal extends Component {
   };
 
   onFormModalConfirm = () => {
-    if (this.props.isAddCase) {
+    if (this.props.flow && this.props.flow.flowid) {
       this.onFormModalConfirmAddCase();
       return;
     }
@@ -105,7 +122,7 @@ class EntcommAddModal extends Component {
 
       const params = {
         typeid: this.state.selectedEntityType,
-        flowid: this.props.flow ? this.props.flow.flowid : undefined,
+        // flowid: this.props.flow ? this.props.flow.flowid : undefined,
         relentityid: this.props.refEntity,
         relrecid: this.props.refRecord,
         fielddata: values,
@@ -130,38 +147,62 @@ class EntcommAddModal extends Component {
         return message.error('请检查表单');
       }
 
-      const params = {
-        entityid: this.state.selectedEntityType,
-        flowid: this.props.flow ? this.props.flow.flowid : undefined,
-        recid: this.props.recId,
-        relentityid: this.props.refEntity,
-        relrecid: this.props.refRecord,
-        casedata: values
-      };
-      this.setState({ confirmLoading: true });
-      addCase(params).then(result => {
-        this.setState({ confirmLoading: false });
-        message.success('新增成功');
-        this.props.done(result);
-      }).catch(e => {
-        this.setState({ confirmLoading: false });
-        console.error(e);
-        message.error(e.message || '新增失败');
-      });
+      let dataModel;
+      if (this.props.isAddCase) {
+        dataModel = {
+          entityid: this.state.selectedEntityType,
+          flowid: this.props.flow.flowid,
+          recid: this.props.recId,
+          relentityid: this.props.refEntity,
+          relrecid: this.props.refRecord,
+          casedata: values
+        };
+      } else {
+        dataModel = {
+          typeid: this.state.selectedEntityType,
+          flowid: this.props.flow.flowid,
+          relentityid: this.props.refEntity,
+          relrecid: this.props.refRecord,
+          fielddata: values,
+          extradata: this.props.extraData
+        };
+      }
+      this.setState({ dataModel, showWorkflowCaseModal: true, showFormModal: false });
     });
+  };
+  onWorkflowCaseCancel = () => {
+    this.setState({ showWorkflowCaseModal: false, showFormModal: true });
+  };
+  onWorkflowCaseDone = (result) => {
+    this.props.done(result);
   };
 
-  resetState = () => {
-    this.setState({
-      showTypeModal: false,
-      showFormModal: false,
-      selectedEntityType: '',
-      protocolFields: [], // 协议字段
-      formData: {}, // 表单数据
-      confirmLoading: false,
-      key: new Date().getTime()
-    });
-  };
+  // onFormModalConfirmAddCase = () => {
+  //   this.form.validateFields((err, values) => {
+  //     if (err) {
+  //       return message.error('请检查表单');
+  //     }
+  //
+  //     const params = {
+  //       entityid: this.state.selectedEntityType,
+  //       flowid: this.props.flow ? this.props.flow.flowid : undefined,
+  //       recid: this.props.recId,
+  //       relentityid: this.props.refEntity,
+  //       relrecid: this.props.refRecord,
+  //       casedata: values
+  //     };
+  //     this.setState({ confirmLoading: true });
+  //     addCase(params).then(result => {
+  //       this.setState({ confirmLoading: false });
+  //       message.success('新增成功');
+  //       this.props.done(result);
+  //     }).catch(e => {
+  //       this.setState({ confirmLoading: false });
+  //       console.error(e);
+  //       message.error(e.message || '新增失败');
+  //     });
+  //   });
+  // };
 
   fetchProtocol = (typeId) => {
     const params = {
@@ -236,6 +277,13 @@ class EntcommAddModal extends Component {
           />
           {/*{JSON.stringify(this.state.formData)}*/}
         </Modal>
+        <WorkflowCaseForAddModal
+          visible={this.state.showWorkflowCaseModal}
+          isAddCase={this.props.isAddCase}
+          dataModel={this.state.dataModel}
+          onCancel={this.onWorkflowCaseCancel}
+          onDone={this.onWorkflowCaseDone}
+        />
       </div>
     );
   }

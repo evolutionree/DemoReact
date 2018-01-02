@@ -110,9 +110,9 @@ function parseFlowJSON(data) {
   return { flowSteps, flowPaths, flowStepsByIdCollection };
 }
 function getInitialFlowJSON() {
-  const startNodeId = uuid.v1();
-  const endNodeId = uuid.v1();
-  const nextNodeId = uuid.v1();
+  const startNodeId = uuid.v4();
+  const endNodeId = uuid.v4();
+  const nextNodeId = uuid.v4();
   return {
     nodes: [
       {
@@ -254,6 +254,28 @@ function getAfterSteps(stepId, flowSteps, flowPaths) {
   return _.uniqBy(allNexts, 'id');
 }
 
+function validateFlowSteps(flowSteps, flowPaths) {
+  let valid = true;
+  flowSteps.forEach(step => {
+    const { id, rawNode } = step;
+    if (!rawNode) {
+      valid = false;
+      return;
+    }
+    const { steptypeid } = rawNode;
+    const hasPathToThis = flowPaths.some(path => path.to === id);
+    const hasPathFromThis = flowPaths.some(path => path.from === id);
+    if (steptypeid === 0 && !hasPathFromThis) {
+      valid = false;
+    } else if (steptypeid === -1 && !hasPathToThis) {
+      valid = false;
+    } else if ((steptypeid !== 0 && steptypeid !== -1) && (!hasPathFromThis || !hasPathToThis)) {
+      valid = false;
+    }
+  });
+  return valid;
+}
+
 export default {
   namespace: 'workflowDesign',
   state: {
@@ -339,7 +361,7 @@ export default {
         stepId: flowStep.id,
         nodeType: rawNodeData.nodetype || 0,
         stepUser: {
-          type: rawNodeData.steptypeid || 1,
+          type: rawNodeData.steptypeid !== undefined ? rawNodeData.steptypeid : 1,
           data: rawNodeData.ruleconfig || {}
         },
         auditsucc: rawNodeData.auditsucc || 1,
@@ -362,7 +384,7 @@ export default {
       const flowStep = _.find(flowSteps, ['id', stepId]);
       // const allPathsToThisFlowStep = flowPaths.filter(path => path.to === stepId);
       const allPathsFromThisFlowStep = flowPaths.filter(path => path.from === stepId);
-      const newStepId = uuid.v1();
+      const newStepId = uuid.v4();
       const newFlowStep = {
         id: newStepId,
         name: '新的审批节点',
@@ -392,7 +414,7 @@ export default {
       const flowStep = _.find(flowSteps, ['id', stepId]);
       const allPathsToThisFlowStep = flowPaths.filter(path => path.to === stepId);
       const allPathsFromThisFlowStep = flowPaths.filter(path => path.from === stepId);
-      const newStepId = uuid.v1();
+      const newStepId = uuid.v4();
       const newFlowStep = {
         id: newStepId,
         name: '新的审批节点',
@@ -430,14 +452,12 @@ export default {
           }));
         }));
         let newFlowPaths = flowPaths.filter(path => path.from !== stepId && path.to !== stepId);
-        newFlowPaths = [...newFlowPaths, ...newToNextStepsPaths];
-        debugger;
-        newFlowPaths = newFlowPaths.filter(path => {
-          return newToNextStepsPaths.every(step => {
-            return !(path.to === step.to && newFlowPaths.some(p => p.from === path.from && p.to !== step.to));
-          });
-        }); // 删除短路节点
-        debugger;
+        // newFlowPaths = [...newFlowPaths, ...newToNextStepsPaths];
+        // newFlowPaths = newFlowPaths.filter(path => {
+        //   return newToNextStepsPaths.every(step => {
+        //     return !(path.to === step.to && newFlowPaths.some(p => p.from === path.from && p.to !== step.to));
+        //   });
+        // }); // 删除短路节点
         yield put({
           type: 'putState',
           payload: {
@@ -542,11 +562,15 @@ export default {
         message.error('请配置节点审批人');
         return;
       }
+      if (!validateFlowSteps(flowSteps, flowPaths)) {
+        message.error('请检查流程节点是否完整');
+        return;
+      }
       try {
         const nodeIdCollect = {};
         const nodes = flowSteps.map(({ id, name, rawNode }) => {
           const { nodetype, steptypeid, ruleconfig, columnconfig, auditnum, auditsucc, funcname } = rawNode;
-          const newNodeId = nodeIdCollect[id] = uuid.v1();
+          const newNodeId = nodeIdCollect[id] = uuid.v4();
           return {
             nodename: name,
             nodeid: newNodeId,
@@ -609,6 +633,7 @@ export default {
       };
       const fromNodeId = getNodeId(source);
       const endNodeId = getNodeId(target);
+      if (flowPaths.some(path => path.from === fromNodeId && path.to === endNodeId)) return;
       const newPath = {
         from: fromNodeId,
         to: endNodeId,
@@ -621,6 +646,36 @@ export default {
         }
       });
     },
+    *userDisConnectNode({ payload: connInfo }, { select, put }) {
+      const { flowPaths } = yield select(state => state.workflowDesign);
+      const { source, target } = connInfo;
+      const getNodeId = elem => {
+        return elem.id.replace(/workflow-(.+)/, '$1');
+      };
+      const fromNodeId = getNodeId(source);
+      const endNodeId = getNodeId(target);
+      yield put({
+        type: 'putState',
+        payload: {
+          flowPaths: flowPaths.filter(path => path.from !== fromNodeId || path.to !== endNodeId).map(markBranch)
+        }
+      });
+    },
+    *createNode(action, { select, put }) {
+      const { flowSteps } = yield select(state => state.workflowDesign);
+      const newFlowStep = {
+        id: uuid.v4(),
+        name: '新的审批节点',
+        x: 30,
+        y: 30
+      };
+      yield put({
+        type: 'putState',
+        payload: {
+          flowSteps: [...flowSteps, newFlowStep]
+        }
+      });
+    }
   },
   reducers: {
     putState(state, { payload }) {

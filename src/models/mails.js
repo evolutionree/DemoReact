@@ -23,7 +23,8 @@ import {
   queryHistoryUserMails,
   sendemail,
   distributeMails,
-  transferMailCatalog
+  transferMailCatalog,
+  recoverMails
 } from '../services/mails';
 import { treeForEach } from '../utils';
 
@@ -173,7 +174,9 @@ export default {
           params.catalogtype = 1001;
         }
         const { data } = yield call(queryMailCatalog, params);
+        debugger;
         yield put({ type: 'putState', payload: { myCatalogData: data } });
+        debugger;
         if (!catSearchKey.my) {
           yield put({ type: 'putState', payload: { myCatalogDataAll: data } });
         }
@@ -356,7 +359,8 @@ export default {
       });
       yield put({ type: 'queryMailList' });
       if (catalogType === 'my') {
-        yield put({ type: 'updateMyCatalogData' });
+        // yield put({ type: 'updateMyCatalogData' });
+        yield put({ type: 'reloadCatalogTree' });
       }
     },
     *saveCatalog({ payload: data }, { call, put }) {
@@ -618,18 +622,17 @@ export default {
       }
     },
     *recoverMails({ payload: mails }, { select, call, put }) {
-      // try {
-      //   const params = {
-      //     IsTruncate: completely || false,
-      //     mailids: mails.map(item => item.mailid).join(','),
-      //     recstatus: 0
-      //   };
-      //   yield call(delMails, params);
-      //   message.success('删除成功');
-      //   yield put({ type: 'queryMailList' });
-      // } catch (e) {
-      //   message.error(e.message || '删除失败');
-      // }
+      try {
+        const params = {
+          mailids: mails.map(item => item.mailid).join(',')
+        };
+        yield call(recoverMails, params);
+        message.success('恢复成功');
+        yield put({ type: 'queryMailList' });
+        yield put({ type: 'reloadCatalogTree' });
+      } catch (e) {
+        message.error(e.message || '恢复失败');
+      }
     }
   },
   reducers: {

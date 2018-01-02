@@ -2,8 +2,7 @@ import React, { PropTypes, Component } from 'react';
 import { Button, message } from 'antd';
 import EntcommAddModal from '../../components/EntcommAddModal';
 import EntcommDetailModal from '../../components/EntcommDetailModal';
-import WorkflowCaseModal from '../../components/WorkflowCaseModal';
-import { addCase } from '../../services/workflow';
+import { WorkflowCaseForAddModal } from '../../components/WorkflowCaseModal';
 
 class StageFlowModal extends Component {
   static propTypes = {
@@ -66,37 +65,53 @@ class StageFlowModal extends Component {
     if (this.props.currPlugin.type === 'normal') {
       this.props.done();
     } else if (this.props.currPlugin.type === 'flow') {
-      const caseId = result.data;
-      this.setState({
-        caseId,
-        showAddModal: false,
-        showFlowCaseModal: true
-      });
+      // const caseId = result.data;
+      // this.setState({
+      //   caseId,
+      //   showAddModal: false,
+      //   showFlowCaseModal: true
+      // });
+      this.props.done();
     }
   };
 
   onDetailConfirm = () => {
-    console.log(this.props);
-    const params = {
-      casedata: { salesstageids: this.props.salesstageids },
-      flowId: this.props.currPlugin.flowid,
-      entityId: this.props.entityId,
-      // entityId: this.props.entityType,
-      recId: this.props.recordId,
-      relentityid: this.props.relentityid,
-      relrecid: this.props.relrecid,
-      typeid: this.props.typeId
-    };
-    addCase(params).then(result => {
-      const caseId = result.data;
-      this.setState({
-        caseId,
-        showDetailModal: false,
-        showFlowCaseModal: true
-      });
-    }, err => {
-      message.error(err.message || '提交审批失败');
-    });
+    // console.log(this.props);
+    // const params = {
+    //   casedata: { salesstageids: this.props.salesstageids },
+    //   flowId: this.props.currPlugin.flowid,
+    //   entityId: this.props.entityId,
+    //   // entityId: this.props.entityType,
+    //   recId: this.props.recordId,
+    //   relentityid: this.props.relentityid,
+    //   relrecid: this.props.relrecid,
+    //   typeid: this.props.typeId
+    // };
+    // addCase(params).then(result => {
+    //   const caseId = result.data;
+    //   this.setState({
+    //     caseId,
+    //     showDetailModal: false,
+    //     showFlowCaseModal: true
+    //   });
+    // }, err => {
+    //   message.error(err.message || '提交审批失败');
+    // });
+
+    this.setState({
+      dataModel: {
+        casedata: { salesstageids: this.props.salesstageids },
+        flowId: this.props.currPlugin.flowid,
+        entityId: this.props.entityId,
+        // entityId: this.props.entityType,
+        recId: this.props.recordId,
+        relentityid: this.props.relentityid,
+        relrecid: this.props.relrecid,
+        typeid: this.props.typeId
+      },
+      showDetailModal: false,
+      showFlowCaseModal: true
+    })
   };
 
   onCancel = () => {
@@ -135,12 +150,19 @@ class StageFlowModal extends Component {
           ]}
           title="提交审批"
         />
-        <WorkflowCaseModal
+        {/*<WorkflowCaseModal*/}
+          {/*visible={showFlowCaseModal}*/}
+          {/*caseId={caseId}*/}
+          {/*onCancel={cancel}*/}
+          {/*onDone={this.props.done}*/}
+          {/*caseData={{ salesstageids: this.props.salesstageids }}*/}
+        {/*/>*/}
+        <WorkflowCaseForAddModal
           visible={showFlowCaseModal}
-          caseId={caseId}
+          isAddCase
+          dataModel={this.state.dataModel}
           onCancel={cancel}
           onDone={this.props.done}
-          caseData={{ salesstageids: this.props.salesstageids }}
         />
       </div>
     );

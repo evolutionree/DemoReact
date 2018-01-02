@@ -97,11 +97,12 @@ class NewAffairModal extends Component {
   };
 
   onStep2Done = (result) => {
-    const caseId = result.data;
-    this.setState({
-      caseId,
-      currModals: 'step3'
-    });
+    this.props.done();
+    // const caseId = result.data;
+    // this.setState({
+    //   caseId,
+    //   currModals: 'step3'
+    // });
   };
 
   onStep3Cancel = () => {
@@ -149,12 +150,12 @@ class NewAffairModal extends Component {
           cancel={this.onStep2Cancel}
           done={this.onStep2Done}
         />
-        <WorkflowCaseModal
-          visible={/step3/.test(currModals)}
-          caseId={caseId}
-          onCancel={this.onStep3Cancel}
-          onDone={this.onStep3Done}
-        />
+        {/*<WorkflowCaseModal*/}
+          {/*visible={/step3/.test(currModals)}*/}
+          {/*caseId={caseId}*/}
+          {/*onCancel={this.onStep3Cancel}*/}
+          {/*onDone={this.onStep3Done}*/}
+        {/*/>*/}
       </div>
     );
   }
