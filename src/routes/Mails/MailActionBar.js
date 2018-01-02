@@ -23,9 +23,22 @@ class MailActionBar extends Component {
     const mailSelected = this.props.mails;
     const hasDeptCatalogMail = mailSelected.some(item => item.catalogtype === 'dept');
     const isDistributedMail = mailSelected.some(item => item.ctype === 1009);
+    const isDraftMail = mailSelected.some(item => item.ctype === 1005);
+    const isDeletedMail = mailSelected.some(item => item.ctype === 1006);
     if (type === 'editMail') return this.props.openEditMail(type, mailSelected, '');
     if (!mailSelected.length) return message.error('请选择邮件');
     if (isDistributedMail) return message.error('内部分发的邮件只允许查看');
+    // 草稿箱只允许删除
+    if (isDraftMail && type !== 'delete' && type !== 'delete-completely') {
+      return message.error('无法对草稿箱的邮件执行此项操作');
+    }
+    // 已删除的邮件只能移动、恢复、彻底删除
+    if (isDeletedMail && type === 'delete') {
+      return message.error('邮件已删除');
+    }
+    if (isDeletedMail && type !== 'recover' && type !== 'delete-completely') {
+      return message.error('无法对已删除的邮件执行此项操作');
+    }
     if (type === 'replay' || type === 'replay-attach' || type === 'reply-all' || type === 'replay-all-attach' || type === 'send' || type === 'send-attach') {
       if (hasDeptCatalogMail) return message.error('只能对属于自己的邮件执行此项操作');
       if (mailSelected.length === 1) return this.props.openEditMail(type, mailSelected, mailSelected[0].mailid);
