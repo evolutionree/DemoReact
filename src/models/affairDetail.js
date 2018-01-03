@@ -395,7 +395,7 @@ export default {
       // yield put({ type: 'init', payload: caseId });
     },
     *onCaseModalDone(action, { select, call, put }) {
-      message.success('提交成功');
+      // message.success('提交成功');
       yield put({ type: 'showModals', payload: '' });
       const { caseId } = yield select(state => state.affairDetail);
       // yield put({ type: 'init', payload: caseId });

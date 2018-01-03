@@ -93,6 +93,7 @@ class WorkflowCaseModal extends Component {
         if (approvers) {
           this.setState({ nodeData: { approvers, nodeinfo }, modalVisible: true });
         } else {
+          message.success('提交成功');
           this.props.onDone();
         }
       }, err => {
