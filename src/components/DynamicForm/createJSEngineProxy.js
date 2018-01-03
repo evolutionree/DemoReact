@@ -348,6 +348,8 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
 
     clearFilter = fieldName => {
       this.setFieldConfig(fieldName, {
+        designateDataSource: '',
+        designateDataSourceByName: '',
         designateFilterDataSource: '',
         designateFilterDataSourceByName: '',
         designateNodes: '',
