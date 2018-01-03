@@ -122,7 +122,7 @@ class ScheduleForm extends React.Component {
           {getFieldDecorator('user', {
             initialValue: ''
           })(
-            <SelectUser />
+            <SelectUser multiple={1} />
           )}
         </FormItem>
         <FormItem

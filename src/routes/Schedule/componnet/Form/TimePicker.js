@@ -72,7 +72,7 @@ class TimePicker extends Component {
         <RangePicker
           showTime={allDayChecked ? false : { format: 'HH:mm' }}
           format={allDayChecked ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm'}
-          placeholder={['Start Time', 'End Time']}
+          placeholder={['开始时间', '结束时间']}
           style={{ marginBottom: '4px', width: '100%' }}
           onChange={this.onChange.bind(this)}
           onOk={this.onOk.bind(this)}
