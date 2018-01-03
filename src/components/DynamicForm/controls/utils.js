@@ -40,7 +40,7 @@ export function createNormalInput(type, options) {
     };
 
     onInputFocus = event => {
-      if (this.props.mode === 'EDIT' && !this.hasFocused && event.target.value) {
+      if (this.props.mode === 'EDIT' && !this.hasFocused && this.props.encrypted && event.target.value) {
         this.hasFocused = true;
         this.props.onChange('');
       }

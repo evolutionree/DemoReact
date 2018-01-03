@@ -473,13 +473,33 @@ export default {
         message.success(`${actionName}成功`);
         yield put({ type: 'queryMailList' });
         yield put({ type: 'reloadCatalogTree' });
+
+        const { mailDetailData } = yield select(state => state.mails);
+        if ((mark === 0 || mark === 1) && mails.some(item => (mailDetailData && mailDetailData.mailId) === item.mailid)) {
+          yield put({
+            type: 'putState',
+            payload: {
+              mailDetailData: {
+                ...mailDetailData,
+                mailInfo: {
+                  ...mailDetailData.mailInfo,
+                  istag: mark
+                },
+                maildetail: mailDetailData.maildetail ? {
+                  ...mailDetailData.maildetail,
+                  istag: mark
+                } : undefined
+              }
+            }
+          });
+        }
       } catch (e) {
         message.error(e.message || `${actionName}失败`);
       }
     },
     *tagMailsInDetail__({ payload: tag }, { select, call, put }) {
       try {
-        const { mailDetailData, openedCatalog } = yield select(state => state.mails);
+        const { mailDetailData, openedCatalog, mailList } = yield select(state => state.mails);
         const params = {
           mailids: mailDetailData.mailId,
           mark: tag
@@ -497,7 +517,8 @@ export default {
         yield put({
           type: 'putState',
           payload: {
-            mailDetailData: newMailDetailData
+            mailDetailData: newMailDetailData,
+            mailList: mailList.map(mail => mail.mailid === mailDetailData.mailId ? { ...mail, istag: tag } : mail)
           }
         });
 

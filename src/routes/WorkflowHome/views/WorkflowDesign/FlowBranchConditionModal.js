@@ -117,6 +117,7 @@ class FlowBranchConditionModal extends Component {
     const params = {
       typeid: 3,
       entityid: flowEntities[0].entityid,
+      relentityid: flowEntities[1] && flowEntities[1].entityid,
       rulename: '',
       // ruleitems: ruleList.map(ruleToItem),
       ruleitems: ruleListToItems(ruleList, allFields, flowEntities[0].entityid),
