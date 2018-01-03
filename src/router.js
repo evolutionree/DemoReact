@@ -57,6 +57,7 @@ import Mails from './routes/Mails';
 import MailRecovery from './routes/MailRecovery';
 
 import DbManager from './routes/DbManager/index';
+import UkqrtzManager from './routes/UkqrtzManager/index';
 
 const appRoutes = [
   { path: 'home', comp: Home },
@@ -106,6 +107,7 @@ const appRoutes = [
   { path: 'mails', comp: Mails, model: require('./models/mails') },
   { path: 'mailrecovery', comp: MailRecovery, model: require('./models/mailRecovery') },
   { path: 'dbmanager', comp: DbManager, model: require('./models/dbmanager') },
+  { path: 'ukqrtzmanager', comp: UkqrtzManager, model: require('./models/ukqrtzmanager') },
   { path: '*', comp: NoFoundPage }
 ];
 
