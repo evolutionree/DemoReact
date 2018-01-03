@@ -44,8 +44,8 @@ class MailActionBar extends Component {
       if (mailSelected.length === 1) return this.props.openEditMail(type, mailSelected, mailSelected[0].mailid);
       return message.warning('请选择一封邮件进行操作');
     }
-    if (type === 'distribute') return this.props.showModals('distributeMails', mailSelected);
     if (hasDeptCatalogMail) return message.error('只能对属于自己的邮件执行此项操作');
+    if (type === 'distribute') return this.props.showModals('distributeMails', mailSelected);
     switch (type) {
       case 'delete':
         Modal.confirm({
