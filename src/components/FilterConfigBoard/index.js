@@ -40,6 +40,7 @@ export const ruleListToItems = (ruleList, fields, entityId) => {
     return {
       itemname: `规则${index + 1}`,
       entityid: entityId,
+      relentityid: ruletype === 11 ? rule.entityId : undefined,
       controltype,
       fieldid: rule.fieldId || defaultUUID,
       operate: rule.operator || '',
