@@ -746,6 +746,7 @@ class StageBar extends Component {
               ref={form => this.entityForm = form}
               fields={entityFields}
               value={entityFieldsData}
+              refEntityData={this.props.recordDetail}
               onChange={val => this.setState({
                 showingStageDetail: { ...this.state.showingStageDetail, entityFieldsData: val }
               })}
@@ -760,6 +761,7 @@ class StageBar extends Component {
               ref={form => this.customForm = form}
               fields={customFields}
               value={customFieldsData}
+              refEntityData={this.props.recordDetail}
               onChange={val => this.setState({
                 showingStageDetail: { ...this.state.showingStageDetail, customFieldsData: val }
               })}
