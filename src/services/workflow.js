@@ -144,6 +144,38 @@ export async function unDeleteWorkFlow(params){
 }
 
 /**
+ * 保存自由流程函数
+ * @param params
+ * {
+    "FlowId":"dsfdf",
+    "BeginNodeFunc":"",
+    "EndNodeFunc":""
+    }
+ * @returns {Promise.<Object>}
+ */
+export async function saveFreeFlowEvent(params){
+  return request('/api/workflow/savefreeflowevent', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
+ * 查询自由流程函数
+ * @param params
+ * {
+    "FlowId":"dsfdf"
+    }
+ * @returns {Promise.<Object>}
+ */
+export async function queryFreeFlowEvent(params){
+  return request('/api/workflow/getfreeflowevent', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
  * 获取下一节点信息（审批人等）
  * @param caseId
  * @returns {Promise.<Object>}
