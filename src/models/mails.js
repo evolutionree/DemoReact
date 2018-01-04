@@ -660,8 +660,8 @@ export default {
         const params = {
           mailids: mails.map(item => item.mailid).join(',')
         };
-        yield call(recoverMails, params);
-        message.success('恢复成功');
+        const { data } = yield call(recoverMails, params);
+        message.success(data.tipmsg || '恢复成功');
         yield put({ type: 'queryMailList' });
         yield put({ type: 'reloadCatalogTree' });
       } catch (e) {
