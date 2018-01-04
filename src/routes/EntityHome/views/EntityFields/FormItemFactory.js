@@ -916,4 +916,20 @@ export default class FormItemFactory {
       </FormItem>
     );
   }
+
+  createSeparator() {
+    return (
+      <FormItem label="使用千分位" key="separator">
+        {this.getFieldDecorator('separator', {
+          initialValue: 0,
+          rules: [{ required: true, message: '请选择是否使用千分位' }]
+        })(
+          <RadioGroup>
+            <Radio value={0}>否</Radio>
+            <Radio value={1}>是</Radio>
+          </RadioGroup>
+        )}
+      </FormItem>
+    );
+  }
 }
