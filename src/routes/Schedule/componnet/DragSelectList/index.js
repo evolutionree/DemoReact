@@ -501,7 +501,7 @@ class DragSelectList extends Component {
 
     for (let i = 0; i < dataSort.length; i++) {
       let selDiv = document.createElement('div');
-      selDiv.style.cssText = 'position:absolute;margin:0px;padding:0px;border:1px dashed #0099FF;background-color:red;z-index:1000;filter:alpha(opacity:60);opacity:0.6;display:block;';
+      selDiv.style.cssText = 'position:absolute;margin:0px;padding:0px;border:1px dashed #0099FF;background-color:red;z-index:10;filter:alpha(opacity:60);opacity:0.6;display:block;';
       const top = ((dataSort[i].startDate / 1000 - getTimeStamp('2017-12-4 00:00:00')) / dayTimeStamp) * totalHeight;
       selDiv.style.top = top + 'px';
       const height = ((dataSort[i].endDate / 1000 - dataSort[i].startDate / 1000) / dayTimeStamp) * totalHeight;
