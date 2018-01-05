@@ -16,14 +16,15 @@ class Date extends Component {
   };
 
   onDateChange = (date, dateString) => {
-    this.props.onChange(dateString);
+    // this.props.onChange(dateString);
+    this.props.onChange(date.format('YYYY-MM-DD'));
   };
 
   render() {
     const { value, isReadOnly, format } = this.props;
 
     const mFormat = toMomentFormat(format);
-    const date = value ? moment(value, mFormat) : undefined;
+    const date = value ? moment(moment(value, 'YYYY-MM-DD').format(mFormat), mFormat) : undefined;
 
     return (
       <DatePicker

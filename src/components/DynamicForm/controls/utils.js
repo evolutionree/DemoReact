@@ -2,6 +2,28 @@ import React, { Component, PropTypes } from 'react';
 import { Input, message } from 'antd';
 import classnames from 'classnames';
 
+function addSeparator(val) {
+  if (!val) return val;
+
+  let arr = (val + '').split('.');
+  let intStr = arr[0].replace(/^0+/g, '');
+  intStr = intStr || '0';
+  let intArr = intStr.split('').reverse();
+  let intFormatted = '';
+  intArr.forEach(function(n, index) {
+      if (index % 3 === 0 && index !== 0) {
+          intFormatted = ',' + intFormatted;
+      }
+      intFormatted = n + intFormatted;
+  });
+
+  if (arr[1]) {
+      return intFormatted + '.' + arr[1];
+  } else {
+      return intFormatted;
+  }
+}
+
 export function createNormalInput(type, options) {
   return class InputComponent extends Component {
     inputRef = null;
@@ -9,7 +31,8 @@ export function createNormalInput(type, options) {
     constructor(props) {
       super(props);
       this.state = {
-        innerVal: props.value
+        innerVal: props.value,
+        isFocused: false
       };
     }
 
@@ -37,9 +60,11 @@ export function createNormalInput(type, options) {
         val = options.filterOnBlur(val, this.props);
       }
       this.props.onChange(val);
+      this.setState({ isFocused: false });
     };
 
     onInputFocus = event => {
+      this.setState({ isFocused: true });
       if (this.props.mode === 'EDIT' && !this.hasFocused && this.props.encrypted && event.target.value) {
         this.hasFocused = true;
         this.props.onChange('');
@@ -62,12 +87,20 @@ export function createNormalInput(type, options) {
         inputType = 'password';
       }
 
+      let val = this.state.innerVal;
+      if (this.props.separator) {
+        const isFocused = this.inputRef && (this.inputRef.refs.input === document.activeElement);
+        if (!this.state.isFocused) {
+          val = addSeparator(val);
+        }
+      }
+
       return (
         <div className={classnames({ 'input-table-view': isTable })}>
           <Input
             ref={ref => this.inputRef = ref}
             type={inputType}
-            value={this.state.innerVal}
+            value={val}
             onChange={this.onInputChange}
             onBlur={this.onInputBlur}
             disabled={isReadOnly === 1}

@@ -594,6 +594,7 @@ class EditMailPanel extends Component {
           })
           this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: '' } });
           this.props.dispatch({ type: 'mails/reloadCatalogTree' });
+          this.props.dispatch({ type: 'mails/queryMailList' });
         },
         onCancel() {
 
@@ -602,6 +603,7 @@ class EditMailPanel extends Component {
     } else {
       this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: '' } });
       this.props.dispatch({ type: 'mails/reloadCatalogTree' });
+      this.props.dispatch({ type: 'mails/queryMailList' });
     }
   }
 
