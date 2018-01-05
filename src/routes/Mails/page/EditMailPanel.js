@@ -777,9 +777,7 @@ class EditMailPanel extends Component {
     savedraft(submitData).then((result) => { //保存草稿箱
       message.success('草稿保存成功');
       const { data } = result;
-      if (!this.props.currentMailId) { //新增页面 保存草稿箱后要更新当前邮件Id  下次保存草稿就是更新数据
-        this.props.dispatch({ type: 'mails/putState', payload: { currentMailId: data } });
-      }
+      this.props.dispatch({ type: 'mails/putState', payload: { currentMailId: data } }); //保存草稿箱后要更新当前邮件Id  下次保存草稿就是更新数据
     }).catch((reson) => {
       message.error(reson.message);
     });
