@@ -237,7 +237,7 @@ class EditMailPanel extends Component {
           [formDataField.ToAddress]: this.transformFornEndData(maildetail.receivers),
           [formDataField.CCAddress]: this.transformFornEndData(maildetail.ccers),
           [formDataField.BCCAddress]: this.transformFornEndData(maildetail.bccers),
-          [formDataField.subject]: maildetail.title
+          [formDataField.subject]: maildetail.title ? maildetail.title : ''
         },
         editEmailPageBtn: [
           {
@@ -293,7 +293,7 @@ class EditMailPanel extends Component {
   getInitMailContent(mailDetailData) {
     let sender = mailDetailData.sender;
     let senttime = mailDetailData.senttime;
-    let title = mailDetailData.title;
+    let title = mailDetailData.title ? mailDetailData.title : '';
     let mailbody = mailDetailData.mailbody && typeof mailDetailData.mailbody === 'string' && mailDetailData.mailbody.replace(/body{/, '.edui-body-container{'); // 解决 富文本里的样式 覆盖全局样式
     let receivers = this.getTransformReceivers(mailDetailData.receivers);
     let ccers = this.getTransformReceivers(mailDetailData.ccers);
@@ -314,7 +314,7 @@ class EditMailPanel extends Component {
 
     initHtmlString += '<span style="font-size:12px"><strong>主题:</strong> ' + title + '</span><br/></h4></div>';
 
-    initHtmlString += mailbody;
+    initHtmlString += (mailbody ? mailbody : '');
     return initHtmlString;
   }
 
@@ -337,7 +337,7 @@ class EditMailPanel extends Component {
         this.props.dispatch({ type: 'mails/putState',
           payload: {
             editEmailFormData: { //发件人 抄送人 密送人 主题 form的数据
-              [formDataField.subject]: 'Re：' + maildetail.title
+              [formDataField.subject]: 'Re：' + (maildetail.title ? maildetail.title : '')
             },
             editEmailPageBtn: null,
             editEmailPageFormModel: null
@@ -348,7 +348,7 @@ class EditMailPanel extends Component {
             editEmailFormData: {
               [formDataField.ToAddress]: this.transformFornEndData(maildetail.receivers),
               [formDataField.CCAddress]: this.transformFornEndData(maildetail.ccers),
-              [formDataField.subject]: 'Re：' + maildetail.title
+              [formDataField.subject]: 'Re：' + (maildetail.title ? maildetail.title : '')
             },
             editEmailPageBtn: [
               {
@@ -403,7 +403,7 @@ class EditMailPanel extends Component {
         this.props.dispatch({ type: 'mails/putState',
           payload: {
             editEmailFormData: {
-              [formDataField.subject]: 'Fw：' + maildetail.title
+              [formDataField.subject]: 'Fw：' + (maildetail.title ? maildetail.title : '')
             },
             editEmailPageBtn: null,
             editEmailPageFormModel: null
@@ -416,7 +416,7 @@ class EditMailPanel extends Component {
           payload: {
             editEmailFormData: {
               [formDataField.ToAddress]: this.transformFornEndData([maildetail.sender]),
-              [formDataField.subject]: 'Re：' + maildetail.title
+              [formDataField.subject]: 'Re：' + (maildetail.title ? maildetail.title : '')
             },
             editEmailPageBtn: null,
             editEmailPageFormModel: null
@@ -427,7 +427,7 @@ class EditMailPanel extends Component {
             editEmailFormData: {
               [formDataField.ToAddress]: this.getMail(maildetail, mailBoxList, 'getReceivers'),
               [formDataField.CCAddress]: this.getMail(maildetail, mailBoxList, 'getCcers'),
-              [formDataField.subject]: 'Re：' + maildetail.title
+              [formDataField.subject]: 'Re：' + (maildetail.title ? maildetail.title : '')
             },
             editEmailPageBtn: [
               {
@@ -482,7 +482,7 @@ class EditMailPanel extends Component {
         this.props.dispatch({ type: 'mails/putState',
           payload: {
             editEmailFormData: {
-              [formDataField.subject]: 'Fw：' + maildetail.title
+              [formDataField.subject]: 'Fw：' + (maildetail.title ? maildetail.title : '')
             },
             editEmailPageBtn: null,
             editEmailPageFormModel: null

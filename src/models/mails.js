@@ -174,9 +174,7 @@ export default {
           params.catalogtype = 1001;
         }
         const { data } = yield call(queryMailCatalog, params);
-        debugger;
         yield put({ type: 'putState', payload: { myCatalogData: data } });
-        debugger;
         if (!catSearchKey.my) {
           yield put({ type: 'putState', payload: { myCatalogDataAll: data } });
         }
