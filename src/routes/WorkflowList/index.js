@@ -6,6 +6,7 @@ import Page from '../../components/Page';
 import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import WorkflowFormModal from './WorkflowFormModal';
+import WorkflowEventModal from "./WorkflowEventModal";
 
 const Option = Select.Option;
 const Column = Table.Column;
@@ -20,7 +21,8 @@ function WorkflowList({
     edit,
     toggleStatus,
     unDeleteWorkFlow,
-    selectItems
+    selectItems,
+    openFlowEvent
   }) {
   const { flowStatus, pageIndex, pageSize, searchName } = queries;
   return (
@@ -34,7 +36,9 @@ function WorkflowList({
           { label: '停用', handler: toggleStatus, single: true,
             show: () => currentItems[0].recstatus === 1 },
           { label: '启用', handler: unDeleteWorkFlow, single: true,
-            show: () => currentItems[0].recstatus === 0 }
+            show: () => currentItems[0].recstatus === 0 },
+          { label: '设置流程函数', handler: openFlowEvent, single: true,
+            show: () => currentItems[0].flowtype === 0 }
         ]}
       >
         <Select value={flowStatus + ''} onChange={val => search({ flowStatus: val })}>
@@ -84,6 +88,7 @@ function WorkflowList({
         <Column title="流程说明" key="remark" dataIndex="remark" />
       </Table>
       <WorkflowFormModal />
+      <WorkflowEventModal />
     </Page>
   );
 }
@@ -106,6 +111,9 @@ export default connect(
       },
       unDeleteWorkFlow() {
         dispatch({ type: 'workflowList/unDeleteWorkFlow' });
+      },
+      openFlowEvent() {
+        dispatch({ type: 'workflowList/showModals', payload: 'flowEvent' });
       },
       selectItems(items) {
         dispatch({ type: 'workflowList/putState', payload: { currentItems: items } })

@@ -74,7 +74,7 @@ class CatalogTree extends Component {
       });
     } else {
       return queryMailCatalog({ searchuserid: +dataRef.treeid }).then(result => {
-        dataRef.subcatalogs = result.data.filter(i => i.ctype === 1001);
+        dataRef.subcatalogs = result.data.filter(i => i.ctype === 1001 || i.ctype === 1004);
         this.props.onDataChange(this.props.data);
       });
     }

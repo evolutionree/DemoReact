@@ -348,6 +348,8 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
 
     clearFilter = fieldName => {
       this.setFieldConfig(fieldName, {
+        designateDataSource: '',
+        designateDataSourceByName: '',
         designateFilterDataSource: '',
         designateFilterDataSourceByName: '',
         designateNodes: '',
@@ -429,7 +431,8 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     getMainFormID = () => {
       return {
         entityid: this.props.refEntity,
-        recid: this.props.refRecord
+        recid: this.props.refRecord,
+        entitydetail: this.props.refEntityData
       };
     };
 

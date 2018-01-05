@@ -84,7 +84,7 @@ class UserSelectModal extends React.Component {
     } else {
       this.setState({
         searchName: keyword,
-        currentSelected: []
+        // currentSelected: []
       }, this.fetchUserList);
     }
 

@@ -18,9 +18,7 @@ export function autoAddCaseItem (isAddCase, dataModel) {
   return preAddCase(params).then(result => {
     const { approvers, nodeinfo } = result.data;
     // 判断是否需要选人，不需要则提交审批
-    if (nodeinfo.nodestate === -1) {
-      return {};
-    } else if (nodeinfo.nodestate !== 0) {
+    if (nodeinfo.nodestate !== 0) {
       const nextParams = {
         ...params,
         nodeid: nodeinfo.nodeid
@@ -66,6 +64,7 @@ class WorkflowCaseForAddModal extends Component {
         if (approvers) {
           this.setState({ nodeData: { approvers, nodeinfo }, modalVisible: true });
         } else {
+          message.success('提交成功');
           this.props.onDone();
         }
       }, err => {

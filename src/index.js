@@ -1,3 +1,4 @@
+import './utils/check-browser';
 import dva from 'dva';
 import { routerRedux } from 'dva/router';
 import { message, Table, Pagination, Button, Select, TreeSelect, DatePicker, Modal, Input } from 'antd';

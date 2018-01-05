@@ -104,7 +104,9 @@ class RelatedInfoPanel extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.mailCurrent !== nextProps.mailCurrent) {
+    if (!nextProps.mailCurrent) {
+      this.resetData();
+    } else if (this.props.mailCurrent !== nextProps.mailCurrent) {
       this.resetData(this.fetchRelInfo);
     }
     // if (nextProps.mailId !== this.props.mailId) {

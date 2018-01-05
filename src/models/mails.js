@@ -295,7 +295,7 @@ export default {
     },
     *queryMailList(action, { select, call, put }) {
       try {
-        const { mailPageIndex, mailPageSize, mailSearchKey, selectedCatalogNode } = yield select(state => state.mails);
+        const { mailPageIndex, mailPageSize, mailSearchKey, mailDetailData, selectedCatalogNode } = yield select(state => state.mails);
         let result;
         if (selectedCatalogNode.recid) {
           // 收件箱邮件
@@ -330,6 +330,16 @@ export default {
             mailSelected: []
           }
         });
+        if (mailList.every(item => (mailDetailData && mailDetailData.mailId) !== item.mailid)) {
+          yield put({
+            type: 'putState',
+            payload: {
+              mailDetailData: null,
+              mailCurrent: null,
+              showingPanel: ''
+            }
+          });
+        }
       } catch (e) {
         message.error(e.message || '获取邮件列表失败');
       }
@@ -418,6 +428,7 @@ export default {
         yield call(delMails, params);
         message.success('删除成功');
         yield put({ type: 'queryMailList' });
+        yield put({ type: 'reloadCatalogTree' });
       } catch (e) {
         message.error(e.message || '删除失败');
       }
@@ -461,8 +472,26 @@ export default {
         yield call(markMails, params);
         message.success(`${actionName}成功`);
         yield put({ type: 'queryMailList' });
-        if (mark === 2 || mark === 3) {
-          yield put({ type: 'reloadCatalogTree' });
+        yield put({ type: 'reloadCatalogTree' });
+
+        const { mailDetailData } = yield select(state => state.mails);
+        if ((mark === 0 || mark === 1) && mails.some(item => (mailDetailData && mailDetailData.mailId) === item.mailid)) {
+          yield put({
+            type: 'putState',
+            payload: {
+              mailDetailData: {
+                ...mailDetailData,
+                mailInfo: {
+                  ...mailDetailData.mailInfo,
+                  istag: mark
+                },
+                maildetail: mailDetailData.maildetail ? {
+                  ...mailDetailData.maildetail,
+                  istag: mark
+                } : undefined
+              }
+            }
+          });
         }
       } catch (e) {
         message.error(e.message || `${actionName}失败`);
@@ -470,7 +499,7 @@ export default {
     },
     *tagMailsInDetail__({ payload: tag }, { select, call, put }) {
       try {
-        const { mailDetailData } = yield select(state => state.mails);
+        const { mailDetailData, openedCatalog, mailList } = yield select(state => state.mails);
         const params = {
           mailids: mailDetailData.mailId,
           mark: tag
@@ -488,9 +517,14 @@ export default {
         yield put({
           type: 'putState',
           payload: {
-            mailDetailData: newMailDetailData
+            mailDetailData: newMailDetailData,
+            mailList: mailList.map(mail => mail.mailid === mailDetailData.mailId ? { ...mail, istag: tag } : mail)
           }
         });
+
+        if (openedCatalog === 'my') {
+          yield put({ type: 'reloadCatalogTree' });
+        }
       } catch (e) {
         message.error(e.message || '标记失败');
       }
@@ -626,8 +660,8 @@ export default {
         const params = {
           mailids: mails.map(item => item.mailid).join(',')
         };
-        yield call(recoverMails, params);
-        message.success('恢复成功');
+        const { data } = yield call(recoverMails, params);
+        message.success(data.tipmsg || '恢复成功');
         yield put({ type: 'queryMailList' });
         yield put({ type: 'reloadCatalogTree' });
       } catch (e) {
