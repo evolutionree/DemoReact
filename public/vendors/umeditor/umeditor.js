@@ -6499,7 +6499,8 @@ UM.plugins['undo'] = function () {
 
         var me = this;
         var keyCode = evt.keyCode || evt.which;
-        if (!keys[keyCode] && !evt.ctrlKey && !evt.metaKey && !evt.shiftKey && !evt.altKey) {
+        //remove !evt.shiftKey  2017-01-05 modify by zhirongyuan   resolve: An event of contentChange cannot be triggered when the shift key is pressed
+        if (!keys[keyCode] && !evt.ctrlKey && !evt.metaKey && !evt.altKey) {
             if (inputType)
                 return;
 
