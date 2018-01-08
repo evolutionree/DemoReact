@@ -433,7 +433,7 @@ class RelatedInfoPanel extends Component {
                 <Table
                   size="middle"
                   bordered={false}
-                  rowKey="mailid"
+                  rowKey="mongoid"
                   dataSource={this.state.attachList || []}
                   pagination={false}
                 >
