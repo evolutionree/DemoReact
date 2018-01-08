@@ -1,5 +1,8 @@
+import React from 'react';
 import { createNormalInput } from './utils';
 import InputNumberRange from './InputNumberRange';
+import { addSeparator } from '../../../utils';
+import { DefaultTextView } from '../DynamicFieldView';
 
 const InputInteger = createNormalInput('text', {
   filter: inputValue => {
@@ -12,6 +15,16 @@ const InputInteger = createNormalInput('text', {
     return parseInt(inputValue, 10);
   }
 });
+
+InputInteger.View = (props) => {
+  const { value, separator } = props;
+  if (value && separator) {
+    const text = addSeparator(value);
+    return <div style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}>{text}</div>;
+  } else {
+    return <DefaultTextView {...props} />;
+  }
+};
 
 InputInteger.AdvanceSearch = InputNumberRange;
 
