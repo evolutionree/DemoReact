@@ -6,6 +6,7 @@ import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import styles from './Structure.less';
 import ChangeDeptModal from './ChangeDeptModal';
+import SelectRole from "../../components/SelectRole";
 
 const Option = Select.Option;
 const Column = Table.Column;
@@ -55,6 +56,7 @@ function UserList({
             show: () => checkFunc('SetLeader') && !currentItems[0].isleader }
         ]}
       >
+        {/*<SelectRole value={queries.roleId} onChange={search.bind(null, 'roleId')} style={{ width: '160px' }} />*/}
         <Select value={queries.recStatus} onChange={search.bind(null, 'recStatus')}>
           <Option value="1">启用</Option>
           <Option value="0">停用</Option>
