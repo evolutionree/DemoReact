@@ -764,6 +764,7 @@ class EditMailPanel extends Component {
       } else if (data.flag === 1) { //校验通过  邮件发送成功
         this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: 'sendMailSuccess', editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null } });
         this.props.dispatch({ type: 'mails/reloadCatalogTree' });
+        this.props.dispatch({ type: 'mails/queryMailList' });
       }
     }).catch((reson) => {
       message.error(reson.message);
