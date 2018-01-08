@@ -91,8 +91,8 @@ export default {
       if (currItems && currItems instanceof Array && currItems.length > 0) {
         const MailIds = currItems.map(item => item.mailid);
         try {
-          yield call(reconvermail, { MailIds: MailIds.join(',') });
-          message.success('邮件已经恢复到未归类文件夹文件夹中');
+          const { data } = yield call(reconvermail, { MailIds: MailIds.join(',') });
+          message.success(data.tipmsg);
           yield put({ type: 'queryList' });
         } catch (e) {
           message.error(e.message || '恢复邮件失败');
