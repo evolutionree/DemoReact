@@ -697,6 +697,10 @@ class EditMailPanel extends Component {
     submitData.AttachmentFile = submitData.AttachmentFile || [];
     submitData.bodycontent = this.state.UMEditorContent; //富文本框数据
 
+    if (this.props.type === 'draft' && this.props.currentMailId) { //发送的是草稿箱中的邮件,发送成功后，后端需要删除草稿箱中的邮件
+      submitData.mailId = this.props.currentMailId;
+    }
+
     if (!submitData.subject && submitData.subject !== 0) {
       confirm({
         title: '您的邮件没有填写主题',
@@ -777,7 +781,7 @@ class EditMailPanel extends Component {
     savedraft(submitData).then((result) => { //保存草稿箱
       message.success('草稿保存成功');
       const { data } = result;
-      this.props.dispatch({ type: 'mails/putState', payload: { currentMailId: data } }); //保存草稿箱后要更新当前邮件Id  下次保存草稿就是更新数据
+      this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: 'draft', currentMailId: data } }); //保存草稿箱后要更新当前邮件Id  下次保存草稿就是更新数据
     }).catch((reson) => {
       message.error(reson.message);
     });
