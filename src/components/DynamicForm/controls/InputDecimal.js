@@ -1,5 +1,8 @@
+import React from 'react';
 import { createNormalInput } from './utils';
 import InputNumberRange from './InputNumberRange';
+import { addSeparator } from '../../../utils';
+import { DefaultTextView } from '../DynamicFieldView';
 
 const InputDecimal = createNormalInput('text', {
   filter: (inputValue, props) => {
@@ -30,6 +33,16 @@ const InputDecimal = createNormalInput('text', {
     }
   }
 });
+
+InputDecimal.View = (props) => {
+  const { value, separator } = props;
+  if (value && separator) {
+    const text = addSeparator(value);
+    return <div style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}>{text}</div>;
+  } else {
+    return <DefaultTextView {...props} />;
+  }
+};
 
 InputDecimal.AdvanceSearch = InputNumberRange;
 
