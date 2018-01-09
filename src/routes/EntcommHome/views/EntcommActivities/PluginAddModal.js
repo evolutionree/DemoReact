@@ -137,6 +137,9 @@ class PluginAddModal extends Component {
       // });
       this.props.auditDone(entityId, recordId);
       this.props.done();
+    } else {
+      this.props.auditDone(entityId, recordId);
+      this.props.done();
     }
   };
 
