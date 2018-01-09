@@ -38,6 +38,7 @@ class DynamicTable extends Component {
         key: field.fieldname,
         dataIndex: field.fieldname,
         title: field.displayname,
+        sorter: this.props.sorter,
         render: (text, record) => {
           const isLinkField = field === linkField;
           return this.renderCell(text, field, record, isLinkField);

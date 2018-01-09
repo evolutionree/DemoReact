@@ -131,6 +131,14 @@ function EntcommList({
   function shouldShowExport() {
     return checkFunc('EntityDataExport');
   }
+  function handleTableChange(pagination, filters, sorter) {
+    const searchOrder = sorter.field ? (sorter.field + (sorter.order === 'ascend' ? ' asc' : ' desc')) : ''
+    search({
+      pageIndex: pagination.current,
+      pageSize: pagination.pageSize,
+      searchOrder: searchOrder
+    });
+  }
 
   const { menuId, searchData, pageIndex, pageSize } = queries;
   const keyword = (searchData && searchData[simpleSearchKey]) || '';
@@ -200,6 +208,7 @@ function EntcommList({
         </Toolbar.Right>
       </Toolbar>
       <DynamicTable
+        sorter={true}
         protocol={protocol}
         rowKey="recid"
         entityId={entityId}
@@ -208,10 +217,11 @@ function EntcommList({
         pagination={{
           total,
           pageSize,
-          current: pageIndex,
-          onChange: val => search({ pageIndex: val }),
-          onShowSizeChange: (curr, size) => search({ pageSize: size })
+          current: pageIndex
+          // onChange: val => search({ pageIndex: val }),
+          // onShowSizeChange: (curr, size) => search({ pageSize: size })
         }}
+        onChange={handleTableChange}
         rowSelection={{
           selectedRowKeys: currItems.map(item => item.recid),
           onChange: (keys, items) => selectItems(items)

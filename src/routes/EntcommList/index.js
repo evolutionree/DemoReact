@@ -132,6 +132,14 @@ function EntcommList({
     const canAllocate = currItems.every(item => item.allocated === 1 || item.allocated === 4); // 分配状态为 新建/退回
     return isXiansuoEntity && canAllocate && checkFunc('BatchClueAllocate');
   }
+  function handleTableChange(pagination, filters, sorter) {
+    const searchOrder = sorter.field ? (sorter.field + (sorter.order === 'ascend' ? ' asc' : ' desc')) : ''
+    search({
+      pageIndex: pagination.current,
+      pageSize: pagination.pageSize,
+      searchOrder: searchOrder
+    });
+  }
 
   const { menuId, searchData, pageIndex, pageSize, isAdvanceQuery } = queries;
   const keyword = (!isAdvanceQuery && searchData && searchData[simpleSearchKey]) || '';
@@ -194,6 +202,7 @@ function EntcommList({
         </Toolbar.Right>
       </Toolbar>
       <DynamicTable
+        sorter={true}
         entityId={entityId}
         protocol={protocol}
         rowKey="recid"
@@ -202,10 +211,11 @@ function EntcommList({
         pagination={{
           total,
           pageSize,
-          current: pageIndex,
-          onChange: val => search({ pageIndex: val }),
-          onShowSizeChange: (curr, size) => search({ pageSize: size })
+          current: pageIndex
+          // onChange: val => search({ pageIndex: val }),  改用table提供的onChange事件
+          // onShowSizeChange: (curr, size) => search({ pageSize: size })
         }}
+        onChange={handleTableChange}
         rowSelection={{
           selectedRowKeys: currItems.map(item => item.recid),
           onChange: (keys, items) => selectItems(items)
