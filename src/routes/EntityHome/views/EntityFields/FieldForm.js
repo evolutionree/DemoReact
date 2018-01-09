@@ -39,7 +39,7 @@ function FieldForm({ form, isEdit, entityFields, entityId }) {
   const dynamicFormItems = getDynamicFormItems(controlType, form, entityFields, entityId, isEdit);
   const isSystemControl = controlType >= 1000;
   return (
-    <Form horizontal>
+    <Form layout="horizontal">
       <FormItem label="选择字段格式" style={isSystemControl ? { display: 'none' } : {}}>
         {getFieldDecorator('controlType', {
           initialValue: '1',
