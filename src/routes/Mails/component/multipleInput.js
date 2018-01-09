@@ -41,7 +41,7 @@ class MultipleInput extends Component {
   docKeyDownHandler(e) {
     if (e.keyCode === 8) { //删除最后一条数据
       if (document.activeElement.tagName && document.activeElement.tagName.toUpperCase() === 'BODY') {
-        const newData = this.state.data.filter((item, index) => {
+        const newData = this.state.data && this.state.data instanceof Array && this.state.data.filter((item, index) => {
           return index !== this.state.dataBlockSelectIndex;
         });
 

@@ -38,6 +38,9 @@ const columns = [{
 }, {
   title: '时间',
   dataIndex: 'senttime'
+}, {
+  title: '源文件夹',
+  dataIndex: 'catalogname'
 }];
 
 class MailRecovery extends React.Component {
