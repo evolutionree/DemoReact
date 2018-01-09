@@ -1020,7 +1020,7 @@ class EditMailPanel extends Component {
             </Toolbar>
           </div>
           <div ref='domListenRef'>
-            <Form model={formModel} ref={ref => this.FormRef = ref} />
+            <Form model={formModel} ref={ref => this.FormRef = ref} isOpenPage={visible} />
             <div ref='uploadList'>
               <Upload {...props}>
                 <div className={Styles.attachmentWrap}>
