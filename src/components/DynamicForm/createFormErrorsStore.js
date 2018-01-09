@@ -42,7 +42,7 @@ export default function createFormErrorsStore(WrappedFormComponent) {
         const { controltype, fieldconfig, fieldname } = field;
         if (!result[fieldname]) return;
         if (controltype === 1 && fieldconfig && fieldconfig.encrypted) {
-          result[fieldname] = encryptPasswordSync(result[fieldname]);
+          result[fieldname] = encryptPasswordSync(result[fieldname]) || result[fieldname];
         }
       });
       return result;
