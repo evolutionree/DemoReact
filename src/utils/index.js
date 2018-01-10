@@ -415,7 +415,7 @@ export function addSeparator(val) {
   let intFormatted = '';
   intArr.forEach(function(n, index) {
       if (index % 3 === 0 && index !== 0) {
-          intFormatted = ',' + intFormatted;
+          intFormatted = ', ' + intFormatted;
       }
       intFormatted = n + intFormatted;
   });
