@@ -94,11 +94,17 @@ class DeptSelectModal extends React.Component {
   };
 
   selectAll = () => {
+    const newSelected = this.state.userList.filter(user => {
+      return !this.state.currentSelected.some(item => item.id === user.userid);
+    }).map(user => ({
+      name: user.username,
+      id: user.userid
+    }));
     this.setState({
-      currentSelected: this.state.userList.map(user => ({
-        name: user.username,
-        id: user.userid
-      }))
+      currentSelected: [
+        ...this.state.currentSelected,
+        ...newSelected
+      ]
     });
   };
 
