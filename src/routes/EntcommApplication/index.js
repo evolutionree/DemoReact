@@ -214,6 +214,7 @@ function EntcommList({
         entityId={entityId}
         dataSource={list}
         total={total}
+        fixedHeader={true}
         pagination={{
           total,
           pageSize,

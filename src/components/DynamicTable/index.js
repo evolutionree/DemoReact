@@ -14,15 +14,35 @@ function formatDate(text, fmt) {
 }
 
 class DynamicTable extends Component {
+  static propTypes = {
+    fixedHeader: false //是否固定表头
+  }
+
   constructor(props) {
     super(props);
     this.state = {
       innerTableVisible: false,
       innerTableTitle: '查看明细',
       innerTableProtocol: [],
-      innerTableRecords: []
+      innerTableRecords: [],
+      height: document.body.clientHeight
     };
   }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.onWindowResize.bind(this));
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onWindowResize);
+  }
+
+  onWindowResize(e) {
+    this.setState({
+      height: document.body.clientHeight
+    });
+  }
+
   getColumns = () => {
     const { protocol, ignoreRecName } = this.props;
     // 把第一列作为跳转详情列
@@ -31,21 +51,54 @@ class DynamicTable extends Component {
     })[0];
 
     // 过滤掉分组
-    return protocol.filter(field => {
+    const filterField = protocol.filter(field => {
       return field.controltype !== 20;
-    }).map((field, index) => {
+    })
+    return filterField.map((field, index) => {
+      /*
+        Ant Table: 实现表格表头固定的话，需给每列设置固定宽度（表头可换行），单元格超出给定宽则做超出显示处理，ScrollX 需大于等于表格总宽度
+       */
+      const setWidth = this.props.fixedHeader ? (field.defaultwidth > 0 ? field.defaultwidth : 150) : 0;  //后端会给定列宽，没给则默认设置为150
+      const normalStyle = {
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        display: 'inline-block'
+      };
+      const style = this.props.fixedHeader ? {
+        ...normalStyle,
+        width: setWidth
+      } : {
+        ...normalStyle,
+        maxWidth: '340px'
+      };
       return {
         key: field.fieldname,
         dataIndex: field.fieldname,
         title: field.displayname,
         sorter: this.props.sorter,
+        width: this.props.fixedHeader ? setWidth + 21 : 0, //21：padding + border
+        fixed: this.props.fixedHeader ? (index === 0 ? 'left' : false) : false,
         render: (text, record) => {
           const isLinkField = field === linkField;
-          return this.renderCell(text, field, record, isLinkField);
+          return (
+            <span style={style}>
+              {
+                this.renderCell(text, field, record, isLinkField)
+              }
+            </span>
+          );
         }
       };
     });
   };
+  getColumnsTotalWidth(columns) { //获取列表的总宽度
+    let columnsTotalWidth = 0;
+    columns.map((item) => {
+      columnsTotalWidth += item.width;
+    });
+    return columnsTotalWidth;
+  }
   showInnerTable = (record, field) => {
     this.setState({
       innerTableVisible: true,
@@ -152,33 +205,19 @@ class DynamicTable extends Component {
   };
   renderDetailLink = (text, field, record) => {
     let textView = text;
-    const titleStyle = {
-      display: 'inline-block',
-      maxWidth: '340px',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap'
-    };
     let linkUrl = `/entcomm/${field.typeid}/${record.recid}`;
     if (this.props.linkUrl) {
       linkUrl = this.props.linkUrl(textView, field, record);
     }
 
-    return <Link to={linkUrl} style={titleStyle} title={textView}>{textView || '(查看详情)'}</Link>;
+    return <Link to={linkUrl} title={textView}>{textView || '(查看详情)'}</Link>;
   };
   renderText = (text) => {
-    const titleStyle = {
-      display: 'inline-block',
-      maxWidth: '340px',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap'
-    };
     let text_ = text;
     if (typeof text_ === 'object' && text_ !== null) {
       text_ = JSON.stringify(text_);
     }
-    return <span style={titleStyle} title={text_}>{text_}</span>;
+    return <span title={text_}>{text_}</span>;
   };
   renderAvatar = (fileId, field) => {
     const { headShape } = field.fieldconfig || {};
@@ -234,14 +273,16 @@ class DynamicTable extends Component {
     return this.renderText(text);
   };
   render() {
-    const { protocol, ignoreRecName, ...restProps } = this.props;
+    const { protocol, ignoreRecName, fixedHeader, ...restProps } = this.props;
+    const columns = this.getColumns();
+    const scrollX = this.props.rowSelection ? parseInt(this.getColumnsTotalWidth(columns)) + 63 : parseInt(this.getColumnsTotalWidth(columns)); //63 表格如果支持选择，则加上选择列的宽度
     return (
       <div>
         <Table
-          scroll={{ x: '100%' }}
+          scroll={fixedHeader ? { x: scrollX, y: this.state.height - 316 } : { x: '100%' }}
           className={styles.dynamictable}
           {...restProps}
-          columns={this.getColumns()}
+          columns={columns}
         />
         <Modal
           width={860}

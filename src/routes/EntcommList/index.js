@@ -166,7 +166,6 @@ function EntcommList({
       return { label: item.title, handler: extraToolbarClickHandler.bind(this, item), single: single, multiple: multiple, show: true };
   });
   ajaxToolbarActions = ajaxToolbarActions || [];
-
   return (
     <Page title={entityName}>
       <Toolbar
@@ -208,6 +207,7 @@ function EntcommList({
         rowKey="recid"
         dataSource={list}
         total={total}
+        fixedHeader={true}
         pagination={{
           total,
           pageSize,
