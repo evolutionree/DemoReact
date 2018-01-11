@@ -610,8 +610,6 @@ export default {
           type: 'putState',
           payload: { showingPanel: 'sendMailSuccess', editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null }
         });
-        yield put({ type: 'reloadCatalogTree' });
-        yield put({ type: 'queryMailList' });
       } catch (e) {
         message.error(e.message || '发送邮件失败');
       }
