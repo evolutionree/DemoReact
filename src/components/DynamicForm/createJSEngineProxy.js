@@ -170,11 +170,17 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       if (!value) {
         switch (controlType) {
           case 1:
+          case 4: // 多选
+          case 5:
           case 8:
           case 9:
           case 10:
           case 11:
           case 12:
+          case 17:
+          case 22:
+          case 28:
+          case 29:
             return '';
           case 6:
           case 7:

@@ -126,7 +126,8 @@ class EntcommEditModal extends Component {
     const { typeId, protocol, formData, confirmLoading } = this.state;
 
     const hasTable = protocol.some(field => {
-      return field.controltype === 24 && (field.fieldconfig.isVisible === 1);
+      return (field.controltype === 24 && field.fieldconfig.isVisible === 1)
+        || (field.controltype === 5 && field.fieldconfig.textType === 1 && field.fieldconfig.isVisible === 1);
     });
 
     return (

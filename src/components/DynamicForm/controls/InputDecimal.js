@@ -6,10 +6,10 @@ import { DefaultTextView } from '../DynamicFieldView';
 
 const InputDecimal = createNormalInput('text', {
   filter: (inputValue, props) => {
-    let val = inputValue.replace(/[^\d.]/g, '');
+    let val = inputValue.replace(/[^\d.。]/g, '');
     if (/^0+$/.test(val)) return '0';
-    val = val.replace(/^\./, '0.')
-      .replace(/^0+\./, '0.')
+    val = val.replace(/^\./, '0.').replace(/^。/, '0.')
+      .replace(/^0+\./, '0.').replace(/^0+。/, '0.')
       .replace(/^0+(\d)/, '$1');
     return val;
   },

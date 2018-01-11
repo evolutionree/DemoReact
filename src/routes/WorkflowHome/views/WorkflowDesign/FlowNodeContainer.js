@@ -31,8 +31,8 @@ const sourceEndpoint = {
   isSource: true,
   connector: ["Flowchart", { stub: [40, 60], gap: 10, cornerRadius: 5, alwaysRespectStubs: true }],
   connectorStyle: connectorPaintStyle,
-  hoverPaintStyle: endpointHoverStyle,
-  connectorHoverStyle: connectorHoverStyle,
+  // hoverPaintStyle: endpointHoverStyle,
+  // connectorHoverStyle: connectorHoverStyle,
   dragOptions: {},
   overlays: [
     ["Label", {
@@ -51,7 +51,7 @@ const targetEndpoint = {
     fill: "#436d34",
     radius: 7
   },
-  hoverPaintStyle: endpointHoverStyle,
+  // hoverPaintStyle: endpointHoverStyle,
   maxConnections: -1,
   dropOptions: { hoverClass: "hover", activeClass: "active" },
   isTarget: true,

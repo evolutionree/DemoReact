@@ -45,7 +45,7 @@ export async function batchhRevertPassword(userids, newpassword) {
   return encryptPassword(newpassword).then(result => {
     return request('/api/account/reconvertpwd', {
       method: 'post',
-      body: JSON.stringify({ userid: userids, pwd: result })
+      body: JSON.stringify({ userid: userids, pwd: result, encrypttype: 1 })
     });
   });
 }

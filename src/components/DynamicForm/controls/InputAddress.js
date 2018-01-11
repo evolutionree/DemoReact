@@ -55,16 +55,24 @@ class InputAddress extends Component {
     //   lat: obj.lat,
     //   lon: obj.lng
     // });
-    this.setState({ inputValue: event.target.value });
+    this.setState({
+      inputValue: event.target.value,
+      currentPoint: {
+        lat: null,
+        lng: null,
+        address: event.target.value
+      }
+    });
   };
 
   onInputBlur = event => {
-    const obj = this.parseValue(this.props.value);
-    this.props.onChange({
-      address: event.target.value,
-      lat: obj.lat,
-      lon: obj.lng
-    });
+    // const obj = this.parseValue(this.props.value);
+    // this.props.onChange({
+    //   address: event.target.value,
+    //   lat: obj.lat,
+    //   lon: obj.lng
+    // });
+    this.props.onChange(this.state.currentPoint);
   };
 
   showAddressModal = () => {

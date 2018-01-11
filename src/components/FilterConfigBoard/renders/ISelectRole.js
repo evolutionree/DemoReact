@@ -24,7 +24,7 @@ class ISelectRole extends Component {
     const { dataVal, dataVal_name } = this.props.value;
     const selectVal = dataVal && dataVal.split(',');
     return (
-      <Select mode="multiple" value={selectVal} onChange={this.handleChange}>
+      <Select mode="multiple" value={selectVal || []} onChange={this.handleChange}>
         {this.props.roles.map(role => (
           <Select.Option key={role.roleid}>{role.rolename}</Select.Option>
         ))}

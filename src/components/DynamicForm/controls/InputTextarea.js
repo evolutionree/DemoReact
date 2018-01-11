@@ -3,6 +3,7 @@ import { Input } from 'antd';
 import classnames from 'classnames';
 import PowerTextArea from '../../PowerTextArea';
 import { checkIsDev } from '../../../utils';
+import InputRichText from './InputRichText';
 
 const TextAreaComponent = checkIsDev() ? PowerTextArea : Input.TextArea;
 
@@ -37,7 +38,12 @@ class InputTextarea extends Component {
   };
 
   render() {
-    const { value, isReadOnly, maxLength, isTable } = this.props;
+    const { value, isReadOnly, maxLength, isTable, textType } = this.props;
+    if (!isTable && textType === 1) { // 富文本
+      return (
+        <InputRichText {...this.props} />
+      );
+    }
     return (
       <div className={classnames({ 'input-table-view': isTable })}>
         <TextAreaComponent
@@ -53,7 +59,11 @@ class InputTextarea extends Component {
   }
 }
 
-InputTextarea.View = ({ value, value_name }) => {
+InputTextarea.View = ({ value, value_name, textType }) => {
+  if (textType === 1) {
+    return <InputRichText.View value={value} />;
+  }
+
   const emptyText = <span style={{ color: '#999999' }}>(空)</span>;
   let text = value_name !== undefined ? value_name : value;
   if (text === null || text === undefined) {
