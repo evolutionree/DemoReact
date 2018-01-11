@@ -59,6 +59,11 @@ export default {
             type: 'selectButton',
             payload: newSelected
           });
+        } else {
+          yield put({
+            type: 'putState',
+            payload: { selectedButton: '' }
+          });
         }
       } catch (e) {
         console.error(e)
@@ -119,7 +124,7 @@ export default {
     },
     *saveButton({ payload: formData }, { select, put, call }) {
       const { entityId, selectedButton: id } = yield select(state => state.entityButtons);
-      const isAdd = /^__/.test(id);
+      const isAdd = /^__/.test(id) || !id;
       const params = {
         ...formData,
         displayposition: formData.displayposition && formData.displayposition.map(item => +item),
@@ -142,6 +147,7 @@ export default {
       const { entityId, buttons } = yield select(state => state.entityButtons);
       if (/^__/.test(id)) {
         yield put({ type: 'queryButtons' });
+        return false;
       }
       const params = { id, entityId };
       try {
