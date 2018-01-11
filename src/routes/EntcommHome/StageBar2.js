@@ -541,7 +541,7 @@ class StageBar extends Component {
   };
 
   onFlowDone = () => {
-    this.setState({ flowEntity: null });
+    this.setState({ flowEntity: null }, this.props.refreshRecordDetail);
   };
 
   onFileUpload = (eventsetid, { fileId, fileName, fileSize }) => {

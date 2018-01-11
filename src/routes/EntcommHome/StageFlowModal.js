@@ -72,6 +72,8 @@ class StageFlowModal extends Component {
       //   showFlowCaseModal: true
       // });
       this.props.done();
+    } else {
+      this.props.done();
     }
   };
 
