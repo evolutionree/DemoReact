@@ -16,7 +16,7 @@ export const fieldModels = [
   { name: '提示文本', value: 2, requires: ['tipContent', 'tipColor'] },
   { name: '单选', value: 3, requires: ['dataSource', 'defaultValue'] },
   { name: '多选', value: 4, requires: ['dataSource'] },
-  { name: '大文本', value: 5, requires: ['defaultValue', 'textType'] },
+  { name: '大文本', value: 5, requires: ['defaultValue']},
   { name: '整数文本', value: 6, requires: ['maxLength', 'defaultValue', 'separator'] },
   { name: '小数文本', value: 7, requires: ['maxLength', 'decimalsLength', 'defaultValue', 'separator'] },
   { name: '日期', value: 8, requires: ['format', 'defaultValue'] },

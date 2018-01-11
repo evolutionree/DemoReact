@@ -57,7 +57,17 @@ export default {
       try {
         const isEdit = !!data.fieldId;
         const { entityId } = yield select(({ entityFields }) => entityFields);
-        yield call(isEdit ? updateField : saveField, { ...data, entityId });
+        const params = { ...data, entityId };
+        if (params.fieldId === 'a85009a1-781f-4b99-bbfe-2620eab1742a') { // 邮箱 签名字段特殊处理
+          let { fieldConfig } = params;
+          if (fieldConfig) {
+            params.fieldConfig = JSON.stringify({
+              ...JSON.parse(fieldConfig),
+              textType: 1 // 富文本
+            });
+          }
+        }
+        yield call(isEdit ? updateField : saveField, params);
         message.success('保存成功');
         callback(null);
         yield put({ type: 'modalPending', payload: false });
