@@ -102,7 +102,7 @@ class DynamicFormBase extends Component {
     if (maxLength) {
       rules.push({
         validator(rule, value, callback) {
-          if (value && value.length > maxLength) {
+          if (value && (value + '').length > maxLength) {
             return callback('最大长度为' + maxLength);
           }
           callback();
