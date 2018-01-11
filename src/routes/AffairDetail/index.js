@@ -39,7 +39,8 @@ class AffairDetail extends Component {
       });
     };
 
-    const { columnConfigFormProtocols } = this.props;
+    const { columnConfigFormProtocols, selectedOperate } = this.props;
+    if (selectedOperate !== 1) return true;
     const formArray = _.map(columnConfigFormProtocols, (val, key) => ({ entityId: key, protocols: val }));
     let result = true;
     validateNext();
@@ -69,7 +70,7 @@ class AffairDetail extends Component {
     if (this.props.selectedOperate === undefined) {
       return message.error('请选择操作');
     }
-    if (!this.validateColumnConfigForms()) return message.error('请检查表单');
+    if (this.props.selectedOperate === 1 && !this.validateColumnConfigForms()) return message.error('请检查表单');
     this.props.submitAuditCase();
   };
   onSubmitAudit = () => {
