@@ -21,6 +21,7 @@ import Knowledge from './routes/Knowledge';
 
 import EntcommList from './routes/EntcommList';
 import EntcommApplication from './routes/EntcommApplication';
+import EntcommDynamic from './routes/EntcommDynamic';
 import EntcommHome from './routes/EntcommHome';
 import EntcommActivities from './routes/EntcommHome/views/EntcommActivities';
 import EntcommInfo from './routes/EntcommHome/views/EntcommInfo';
@@ -73,6 +74,7 @@ const appRoutes = [
   { path: 'knowledge', comp: Knowledge, entid: 'a3500e78-fe1c-11e6-aee4-005056ae7f49', model: require('./models/knowledge') },
   { path: 'entcomm-list/:id', comp: EntcommList, model: require('./models/entcommList') },
   { path: 'entcomm-application/:id', comp: EntcommApplication, model: require('./models/entcommApplication') },
+  { path: 'entcomm-dynamic/:id', comp: EntcommDynamic, model: require('./models/entcommDynamic') },
   { path: 'entcomm/:entityId/:recordId',
     comp: EntcommHome,
     model: require('./models/entcommHome'),

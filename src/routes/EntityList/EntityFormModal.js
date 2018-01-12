@@ -106,6 +106,7 @@ class EntityFormModal extends Component {
     } = this.props;
 
     const typeid = getFieldValue('typeid');
+    const relentityid = getFieldValue('relentityid');
     const isEdit = /edit/.test(showModals);
 
     return (
@@ -152,6 +153,15 @@ class EntityFormModal extends Component {
               rules: [{ required: typeid === '1' || typeid === '3', message: '请选择关联实体' }]
             })(
               <RelateEntitySelect disabled={isEdit} showSimpleEntity={typeid === '1' || typeid === '2'} />
+            )}
+          </FormItem> : ''}
+          {/* 动态实体必填 */}
+          {(typeid === '3' && relentityid) ? <FormItem label="关联对象显示字段">
+            {getFieldDecorator('relentityfield', {
+              initialValue: '',
+              rules: [{ required: (typeid === '3' && relentityid), message: '前输入关联对象显示字段' }]
+            })(
+              <Input placeholder="关联对象显示字段" maxLength={50} />
             )}
           </FormItem> : ''}
           {/* 关联审批只有实体类型为“简单实体”或动态实体时才能设置 */}
