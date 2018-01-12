@@ -27,10 +27,24 @@
 
     .jtk-endpoint {
       z-index: 120;
+      border: 1px solid transparent;
+      display: none;
     }
     .jtk-endpoint--source {
       z-index: 121;
+      display: block;
     }
+    .jtk-endpoint.active {
+      //border: 1px dotted green;
+      display: block;
+    }
+    .jtk-endpoint.hover {
+      border: 1px dotted red;
+    }
+    .jtk-endpoint.hover circle {
+      fill: #2d7514;
+    }
+
     .jtk-overlay {
       z-index: 100;
     }

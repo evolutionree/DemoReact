@@ -25,7 +25,7 @@ const sourceEndpoint = {
     stroke: "#7AB02C",
     // stroke: "transparent",
     fill: "transparent",
-    radius: 7,
+    radius: 6,
     strokeWidth: 1
   },
   isSource: true,
@@ -48,8 +48,8 @@ const targetEndpoint = {
   // cssClass: 'asdf',
   paintStyle: {
     // fill: "transparent",
-    fill: "#436d34",
-    radius: 7
+    fill: "#639f4a",
+    radius: 6
   },
   // hoverPaintStyle: endpointHoverStyle,
   maxConnections: -1,
