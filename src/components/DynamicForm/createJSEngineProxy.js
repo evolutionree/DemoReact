@@ -371,6 +371,10 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       }
     };
 
+    setRequired = (fieldName, isRequired) => {
+      this.setFieldConfig(fieldName, { isRequiredJS: isRequired ? 1 : 0 });
+    };
+
     setReadOnly = (fieldName, isReadOnly) => {
       this.setFieldConfig(fieldName, { isReadOnlyJS: isReadOnly ? 1 : 0 });
     };
@@ -398,6 +402,14 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       const instance = this.getFieldComponentInstance(tableFieldName);
       if (instance && instance.setRowFieldVisible) {
         return instance.setRowFieldVisible(columnFieldName, isVisible);
+      }
+    };
+
+    setRowFieldRequired = (tableFieldName, rowIndex, columnFieldName, isRequired) => {
+      if (this.getFieldControlType(tableFieldName) !== 24) return [];
+      const instance = this.getFieldComponentInstance(tableFieldName);
+      if (instance && instance.setRowFieldRequired) {
+        return instance.setRowFieldRequired(columnFieldName, isRequired);
       }
     };
 
