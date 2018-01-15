@@ -37,7 +37,7 @@ function FieldForm({ form, isEdit, entityFields, entityId }) {
   const { getFieldDecorator, getFieldsValue, resetFields, setFieldsValue } = form;
   const { controlType = '1' } = getFieldsValue(['controlType']);
   const dynamicFormItems = getDynamicFormItems(controlType, form, entityFields, entityId, isEdit);
-  const isSystemControl = controlType >= 1000;
+  const isSystemControl = (controlType * 1 >= 1000 || controlType * 1 === 30);
   return (
     <Form horizontal>
       <FormItem label="选择字段格式" style={isSystemControl ? { display: 'none' } : {}}>
@@ -59,6 +59,16 @@ function FieldForm({ form, isEdit, entityFields, entityId }) {
         {getFieldDecorator('displayName', {
         })(<Input placeholder="显示名称" maxLength={20} />)}
       </FormItem>
+      {
+        controlType * 1 === 30 ? <FormItem label="关联对象显示字段" key="relObj">
+          {getFieldDecorator('relObj', {
+            initialValue: '',
+            rules: [{ required: true, message: '关联对象显示字段' }]
+          })(
+            <Input placeholder="关联对象显示字段" maxLength={20} />
+          )}
+        </FormItem> : null
+      }
       <FormItem label="状态" key="recStatus">
         {getFieldDecorator('recStatus', {
           initialValue: '1',

@@ -16,8 +16,8 @@ function isSupportSearch({ controltype }) {
 }
 
 function isSupportLikeSearch({ controltype }) {
-  // 【日期、日期时间、整数、小数】控件，不支持模糊搜索
-  return [1004, 1005, 6, 7, 8, 9].indexOf(controltype) === -1;
+  // 【日期、日期时间、整数、小数】控件，不支持模糊搜索   动态实体【关联对象】字段 默认支持模糊搜索，且不允许改动
+  return [1004, 1005, 6, 7, 8, 9, 30].indexOf(controltype) === -1;
 
   // // 2017/08/16 目前服务端只支持文本类的模糊搜索
   // return [1, 5, 10, 11, 12].indexOf(controltype) !== -1;
@@ -71,7 +71,7 @@ class SetListFilterModal extends Component {
     if (pickedFields.indexOf(currField) !== -1) return;
     const newField = {
       ...currField,
-      islike: 0
+      islike: currField.controltype === 30 ? 1 : 0 // 动态实体【关联对象】字段 默认支持模糊搜索
     };
     this.setState({
       pickedFields: [...pickedFields, newField],

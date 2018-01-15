@@ -44,7 +44,7 @@ function showBtns(entityType) {
     0: ['add', 'order', 'webvis', 'mobvis', 'topfield', 'setfilter'],
     1: ['add', 'order', 'dynamic'],
     2: ['add', 'order', 'webvis', 'mobvis', 'setfilter', 'dynamic'],
-    3: ['add', 'order', 'webvis', 'dynamic']
+    3: ['add', 'order', 'webvis', 'setfilter', 'dynamic']
   };
   const allBtns = ['add', 'order', 'webvis', 'mobvis', 'topfield', 'setfilter', 'dynamic'];
   const showButtons = btnVisibleMap[entityType];
