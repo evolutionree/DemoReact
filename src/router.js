@@ -3,6 +3,7 @@ import React from 'react';
 import { Router, Route, IndexRoute, Redirect, IndexRedirect } from 'dva/router';
 
 import connectPermission from './models/connectPermission';
+import routerGuard from './router-guard';
 
 import App from './routes/App';
 import NoFoundPage from './routes/NoFoundPage';
@@ -133,7 +134,8 @@ function renderRoutes(routes, app) {
           registerModel(app, model);
         }
         cb(null, component);
-      }
+      },
+      onEnter: routerGuard
     };
     if (children && children.length) {
       props.children = renderRoutes(children, app);
