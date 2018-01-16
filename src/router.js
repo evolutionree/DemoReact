@@ -6,6 +6,7 @@ import connectPermission from './models/connectPermission';
 
 import App from './routes/App';
 import NoFoundPage from './routes/NoFoundPage';
+import NoPermission from './routes/NoPermission';
 
 import Home from './routes/Home/index';
 
@@ -108,6 +109,7 @@ const appRoutes = [
   { path: 'mailrecovery', comp: MailRecovery, model: require('./models/mailRecovery') },
   { path: 'dbmanager', comp: DbManager, model: require('./models/dbmanager') },
   { path: 'ukqrtzmanager', comp: UkqrtzManager, model: require('./models/ukqrtzmanager') },
+  { path: 'nopermission', comp: NoPermission },
   { path: '*', comp: NoFoundPage }
 ];
 
