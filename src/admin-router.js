@@ -184,8 +184,9 @@ function renderRoutes(routes, app) {
     }
     return React.createElement(Route, props);
   });
-  const indexRedirect = <IndexRedirect to={routes[0].path} key={'redirect-' + routes[0].path} />;
-  return [indexRedirect, ...resultRoutes];
+  // const indexRedirect = <IndexRedirect to={routes[0].path} key={'redirect-' + routes[0].path} />;
+  // return [indexRedirect, ...resultRoutes];
+  return resultRoutes;
 }
 
 export default function RouterConfig({ history, app }) {
