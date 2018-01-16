@@ -271,3 +271,16 @@ export function initRsaPublicKey() {
     rsa_public = result.data.rsapublickey;
   });
 }
+
+/**
+ * 检查页面权限
+ * @param params
+ * { pageid: "xxx", extradata: {} }
+ * @returns {Promise.<Object>}
+ */
+export async function checkPagePermission(params) {
+  return request('/api/pagepermission', {
+    method: 'post',
+    body: JSON.stringify(params)
+  })
+}
