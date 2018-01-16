@@ -2,31 +2,23 @@
  * Created by 0291 on 2018/1/12.
  */
 import { message } from 'antd';
-import _ from 'lodash';
 import { routerRedux } from 'dva/router';
-import { getGeneralListProtocol, getListData, delEntcomm, transferEntcomm, getFunctionbutton, extraToolbarClickSendData, savemailowner } from '../services/entcomm';
-import { queryMenus, queryEntityDetail, queryTypes, queryListFilter } from '../services/entity';
+import { getGeneralListProtocol, getListData } from '../services/entcomm';
+import { queryEntityDetail, queryTypes, queryListFilter } from '../services/entity';
 
 export default {
   namespace: 'entcommDynamic',
   state: {
     entityId: '',
     entityName: '',
-    importUrl:'',
-    importTemplate:'',
     entityTypes: [],
-    menus: [],
     protocol: [],
     queries: {},
     list: [],
     total: 0,
-    currItems: [],
     showModals: '',
     modalPending: false,
-    simpleSearchKey: 'recname',
-    extraButtonData: [], //页面动态 按钮数据源
-    extraToolbarData: [], //页面toolbar 动态按钮数据源
-    dynamicModalData: {}
+    simpleSearchKey: 'recname'
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -101,7 +93,7 @@ export default {
     *queryList(action, { select, call, put }) {
       const location = yield select(({ routing }) => routing.locationBeforeTransitions);
       const { query } = location;
-      const { menus, entityId } = yield select(({ entcommDynamic }) => entcommDynamic);
+      const { entityId } = yield select(({ entcommDynamic }) => entcommDynamic);
       const queries = {
         entityId,
         pageIndex: 1,
@@ -154,9 +146,6 @@ export default {
     protocol(state, { payload: protocol }) {
       return { ...state, protocol };
     },
-    functionbutton(state, { payload: { extraButtonData, extraToolbarData } }) {
-      return { ...state, extraButtonData, extraToolbarData };
-    },
     queries(state, { payload: queries }) {
       return { ...state, queries };
     },
@@ -164,8 +153,7 @@ export default {
       return {
         ...state,
         list,
-        total,
-        currItems: []
+        total
       };
     },
     showModals(state, { payload: showModals }) {
@@ -175,25 +163,10 @@ export default {
         modalPending: false
       };
     },
-    impModals(state, { payload: { importUrl,importTemplate} }) {
-      return {
-        ...state,
-        importUrl,
-        importTemplate,
-        showModals:'import',
-        modalPending: false
-      };
-    },
     modalPending(state, { payload: modalPending }) {
       return {
         ...state,
         modalPending
-      };
-    },
-    currItems(state, { payload: currItems }) {
-      return {
-        ...state,
-        currItems
       };
     },
     putState(state, { payload: stateAssignment }) {
@@ -205,22 +178,15 @@ export default {
     resetState() {
       return {
         entityId: '',
-        importUrl:'',
-        importTemplate:'',
         entityName: '',
         entityTypes: [],
-        menus: [],
         protocol: [],
         queries: {},
         list: [],
         total: 0,
-        currItems: [],
         showModals: '',
         modalPending: false,
-        simpleSearchKey: 'recname',
-        extraButtonData: [], //页面动态 按钮数据源
-        extraToolbarData: [], //页面toolbar 动态按钮数据源
-        dynamicModalData: {}
+        simpleSearchKey: 'recname'
       };
     }
   }

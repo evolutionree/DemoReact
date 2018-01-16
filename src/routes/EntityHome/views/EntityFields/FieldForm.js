@@ -2,6 +2,7 @@ import React from 'react';
 import { Form, Checkbox, Select, Input } from 'antd';
 import _ from 'lodash';
 import FormItemFactory from './FormItemFactory';
+import AjaxSelect from '../../../EntityList/AjaxRelObjSelect';
 import { fieldModels } from '../../controlTypes';
 import { getRandomLetters } from '../../../../utils';
 
@@ -60,12 +61,12 @@ function FieldForm({ form, isEdit, entityFields, entityId }) {
         })(<Input placeholder="显示名称" maxLength={20} />)}
       </FormItem>
       {
-        controlType * 1 === 30 ? <FormItem label="关联对象显示字段" key="relObj">
-          {getFieldDecorator('relObj', {
+        controlType * 1 === 30 ? <FormItem label="关联对象显示字段" key="relfieldid">
+          {getFieldDecorator('relfieldid', {
             initialValue: '',
             rules: [{ required: true, message: '关联对象显示字段' }]
           })(
-            <Input placeholder="关联对象显示字段" maxLength={20} />
+            <AjaxSelect entityId={''} />
           )}
         </FormItem> : null
       }

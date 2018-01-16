@@ -2,9 +2,8 @@
  * Created by 0291 on 2018/1/12.
  */
 import React from 'react';
-import { Select, Button, Modal } from 'antd';
+import { Button } from 'antd';
 import { connect } from 'dva';
-import _ from 'lodash';
 import Page from '../../components/Page';
 import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
@@ -13,24 +12,18 @@ import RecordDetailModal from './RecordDetailModal';
 import connectPermission from '../../models/connectPermission';
 import AdvanceSearchModal from './AdvanceSearchModal';
 
-const Option = Select.Option;
 
 function EntcommList({
                        checkFunc,
                        dispatch,
                        entityName,
-                       menus,
                        protocol,
                        queries,
                        list,
                        total,
-                       currItems,
                        entityId,
                        currentUser,
-                       simpleSearchKey,
-                       extraButtonData,
-                       extraToolbarData,
-                       showModals
+                       simpleSearchKey
                      }) {
   function search(payload) {
     dispatch({ type: 'entcommDynamic/search', payload });
@@ -42,10 +35,6 @@ function EntcommList({
   function exportData() {
     const params = JSON.stringify({ ...queries, pageIndex: 1, pageSize: 65535 });
     window.open(`/api/excel/exportdata?TemplateType=1&DynamicQuery=${params}&UserId=${currentUser}`);
-    // dispatch({
-    //   type: 'entcommList/exportData',
-    //   payload: 'import'
-    // });
   }
   function advanceSearch() {
     dispatch({ type: 'entcommDynamic/showModals', payload: 'advanceSearch' });
@@ -107,8 +96,6 @@ function EntcommList({
           total,
           pageSize,
           current: pageIndex
-          // onChange: val => search({ pageIndex: val }),
-          // onShowSizeChange: (curr, size) => search({ pageSize: size })
         }}
         onChange={handleTableChange}
         renderLinkField={(text, field, record, props) => (

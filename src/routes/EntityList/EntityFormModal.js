@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { Modal, Form, Input, Select, Radio } from 'antd';
 import connectBizParam from '../../components/connectBizParam';
 import SelectAppIcon from '../../components/SelectAppIcon';
+import AjaxSelect from './AjaxRelObjSelect';
 
 const Option = Select.Option;
 const FormItem = Form.Item;
@@ -157,11 +158,11 @@ class EntityFormModal extends Component {
           </FormItem> : ''}
           {/* 动态实体必填 */}
           {(typeid === '3' && relentityid) ? <FormItem label="关联对象显示字段">
-            {getFieldDecorator('relentityfield', {
+            {getFieldDecorator('relfieldid', {
               initialValue: '',
               rules: [{ required: (typeid === '3' && relentityid), message: '前输入关联对象显示字段' }]
             })(
-              <Input placeholder="关联对象显示字段" maxLength={50} />
+              <AjaxSelect entityId={relentityid} />
             )}
           </FormItem> : ''}
           {/* 关联审批只有实体类型为“简单实体”或动态实体时才能设置 */}
