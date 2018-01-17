@@ -218,7 +218,7 @@ class SelectProduct extends React.Component {
       <TreeSelect
         allowClear
         style={{ width: '100%' }}
-        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+        dropdownStyle={{ maxHeight: 250, overflow: 'auto' }}
         value={this.parseValue()}
         onChange={this.handleChange}
         onClick={onFocus}

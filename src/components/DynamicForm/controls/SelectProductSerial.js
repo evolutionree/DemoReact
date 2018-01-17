@@ -211,7 +211,7 @@ class SelectProductSerial extends React.Component {
       <TreeSelect
         allowClear
         style={wrapStyle}
-        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+        dropdownStyle={{ maxHeight: 250, overflow: 'auto' }}
         value={this.parseValue()}
         onChange={this.handleChange}
         onClick={onFocus}

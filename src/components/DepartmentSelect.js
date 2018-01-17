@@ -158,7 +158,7 @@ class DepartmentSelect extends React.Component {
         searchPlaceholder="输入团队名称搜索"
         treeNodeFilterProp="title"
         style={width ? { width } : {}}
-        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+        dropdownStyle={{ maxHeight: 250, overflow: 'auto' }}
         value={value}
         onChange={this.handleChange}
         onClick={onFocus}
