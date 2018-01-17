@@ -117,7 +117,7 @@ class EntcommCopyModal extends Component {
         return retData;
       }
 
-      
+
       const formData = genEditData(this.props.copyData, protocolFields)
       //基础的数据重新获取
 /*      const baseFormData = generateDefaultFormData(protocolFields);
@@ -131,7 +131,7 @@ class EntcommCopyModal extends Component {
         formData.recmanager = currentUser && currentUser.userid;
         formData.recmanager_name = currentUser && currentUser.username;
       }
-        
+
       this.setState({
         protocolFields,
         formData: formData,
@@ -209,7 +209,7 @@ class EntcommCopyModal extends Component {
   }
 
   render() {
-    const { entityTypes } = this.props;
+    const { entityTypes, entityId } = this.props;
     const {
       showTypeModal,
       showFormModal,
@@ -234,6 +234,7 @@ class EntcommCopyModal extends Component {
           width={hasTable ? 900 : 550}
         >
           {this.state.fetchDataSucced && <DynamicFormAdd
+            entityId={entityId}
             entityTypeId={selectedEntityType}
             fields={protocolFields}
             value={formData}
@@ -251,9 +252,10 @@ class EntcommCopyModal extends Component {
 
 export default connect(
   state => {
-    const { showModals, entityTypes, copyData } = state.entcommList;
+    const { showModals, entityTypes, copyData, entityId } = state.entcommList;
     return {
       visible: /copy/.test(showModals),
+      entityId,
       entityTypes,
       copyData,
       currentUser: state.app.user

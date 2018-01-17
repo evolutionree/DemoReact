@@ -122,7 +122,7 @@ class EntcommEditModal extends Component {
   };
 
   render() {
-    const { visible, footer } = this.props;
+    const { visible, footer, entityId } = this.props;
     const { typeId, protocol, formData, confirmLoading } = this.state;
 
     const hasTable = protocol.some(field => {
@@ -141,6 +141,7 @@ class EntcommEditModal extends Component {
         key={this.state.key}
       >
         <DynamicFormEdit
+          entityId={entityId}
           entityTypeId={typeId}
           fields={protocol}
           value={formData}

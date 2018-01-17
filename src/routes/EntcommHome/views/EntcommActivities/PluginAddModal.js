@@ -234,6 +234,7 @@ class PluginAddModal extends Component {
         />
         <EntcommCopyModal
           visible={showCopyModal}
+          entityId={this.props.entityId}
           entityTypes={entityTypes}
           copyData={copyData}
           currentUser={this.props.currentUser}

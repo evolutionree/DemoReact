@@ -154,7 +154,7 @@ class EntcommAddModal extends Component {
   }
 
   render() {
-    const { entityTypes } = this.props;
+    const { entityTypes, entityId } = this.props;
     const {
       showTypeModal,
       showFormModal,
@@ -202,7 +202,8 @@ class EntcommAddModal extends Component {
           confirmLoading={confirmLoading}
           width={hasTable ? 900 : 550}
         >
-          <DynamicFormAdd
+          {showFormModal && <DynamicFormAdd
+            entityId={entityId}
             entityTypeId={selectedEntityType}
             fields={protocolFields}
             value={formData}
@@ -210,7 +211,7 @@ class EntcommAddModal extends Component {
             ref={form => { this.form = form; }}
             setExtraData={this.setExtraData}
             setFieldsConfig={this.setFieldsConfig}
-          />
+          />}
           {/*{JSON.stringify(this.state.formData)}*/}
         </Modal>
       </div>
@@ -220,10 +221,11 @@ class EntcommAddModal extends Component {
 
 export default connect(
   state => {
-    const { showModals, entityTypes, entityName } = state.entcommList;
+    const { showModals, entityTypes, entityName, entityId } = state.entcommList;
     return {
       visible: /add/.test(showModals),
       entityTypes,
+      entityId,
       entityName,
       currentUser: state.app.user
     };
