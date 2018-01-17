@@ -11,7 +11,8 @@ const Option = Select.Option;
 function DepartmentFormModal({
   form: {
     getFieldDecorator,
-    validateFields
+    validateFields,
+    getFieldValue
   },
   showModals,
   currentDept,
@@ -54,7 +55,16 @@ function DepartmentFormModal({
       </FormItem>
       <FormItem label="上级部门">
         {getFieldDecorator('pdeptid', {
-          rules: [{ required: true, message: '请选择上级部门' }]
+          rules: [
+            { required: true, message: '请选择上级部门' },
+            { validator: (rule, val, callback) => {
+              if (isEdit && val === currentDept.deptid) {
+                callback('不能选择当前部门');
+              } else {
+                callback();
+              }
+            } }
+          ]
         })(
           <DepartmentSelect placeholder="上级部门" width="100%" />
         )}

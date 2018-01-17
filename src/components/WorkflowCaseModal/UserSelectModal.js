@@ -68,7 +68,11 @@ class UserSelectModal extends React.Component {
     // if (!this.state.currentSelected.length) {
     //   return message.error('请选择人员');
     // }
-    this.props.onOk(this.state.currentSelected);
+    this.props.onOk(
+      this.state.currentSelected.filter(u => {
+        return this.props.filterUsers.indexOf(u) === -1;
+      })
+    );
   };
 
   onDeptChange = (value) => {
@@ -92,7 +96,9 @@ class UserSelectModal extends React.Component {
 
   selectAll = () => {
     this.setState({
-      currentSelected: mergeIds(this.state.currentSelected, this.state.userList.map(u => u.userid))
+      currentSelected: mergeIds(this.state.currentSelected, this.state.userList.map(u => u.userid)).filter(u => {
+        return this.props.filterUsers.indexOf(u) === -1;
+      })
     });
     function mergeIds(targetIds, sourceIds) {
       const newIds = sourceIds.filter(id => targetIds.every(tid => tid !== id));

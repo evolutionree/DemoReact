@@ -3,7 +3,7 @@ import React from 'react';
 import { Router, Route, IndexRoute, Redirect, IndexRedirect } from 'dva/router';
 
 import connectPermission from './models/connectPermission';
-import routerGuard from './router-guard';
+import createRouterGuard from './router-guard';
 
 import App from './routes/App';
 import NoFoundPage from './routes/NoFoundPage';
@@ -67,7 +67,7 @@ const appRoutes = [
   { path: 'notice-list', comp: NoticeList, entid: '00000000-0000-0000-0000-000000000002' },
   { path: 'notice/:id/:title',
     comp: NoticeHome,
-    children: [
+    routes: [
       { path: 'detail', comp: NoticeDetail },
       { path: 'records', comp: NoticeRecords }
     ] },
@@ -78,7 +78,7 @@ const appRoutes = [
   { path: 'entcomm/:entityId/:recordId',
     comp: EntcommHome,
     model: require('./models/entcommHome'),
-    children: [
+    routes: [
       { path: 'activities', comp: EntcommActivities, model: require('./models/entcommActivities') },
       { path: 'info', comp: EntcommInfo, model: require('./models/entcommInfo') },
       { path: 'docs', comp: EntcommDocs, model: require('./models/entcommDocs') },
@@ -91,7 +91,7 @@ const appRoutes = [
   { path: 'affair/:id', comp: AffairDetail, model: require('./models/affairDetail') },
   { path: 'reportform/:id', comp: ReportForm, model: require('./models/reportForm') },
   { path: 'weekly', comp: Weekly, entid: '0b81d536-3817-4cbc-b882-bc3e935db845', model: require('./models/weekly'),
-    children: [
+    routes: [
       { path: 'myweekly', comp: MyWeekly, model: require('./models/weekly') },
       { path: 'receiveweekly', comp: ReceiveWeekly, model: require('./models/weekly') },
       { path: 'allweekly', comp: AllWeekly, entid: '0b81d536-3817-4cbc-b882-bc3e935db845', model: require('./models/weekly') },
@@ -99,7 +99,7 @@ const appRoutes = [
     ] },
   { path: 'allweekly/detail/:recid', comp: AllWeeklyDetail, model: require('./models/weekly') },
   { path: 'daily', comp: Daily, entid: '601cb738-a829-4a7b-a3d9-f8914a5d90f2', model: require('./models/daily'),
-    children: [
+    routes: [
       { path: 'mydaily', comp: myDaily, model: require('./models/daily') },
       { path: 'receivedaily', comp: ReceiveDaily, model: require('./models/daily') },
       { path: 'alldaily', comp: AllDaily, entid: '601cb738-a829-4a7b-a3d9-f8914a5d90f2', model: require('./models/daily') },
@@ -122,10 +122,10 @@ function registerModel(app, model) {
   }
 }
 
-function renderRoutes(routes, app) {
+function renderRoutes(routes, app, routerGuard) {
   if (!routes.length) return null;
   const resultRoutes = routes.map(route => {
-    const { path, comp, children, entid, model } = route;
+    const { path, comp, routes: childRoutes, entid, model } = route;
 
     const component = entid ? connectPermission(entid, comp) : comp;
     const props = {
@@ -139,8 +139,8 @@ function renderRoutes(routes, app) {
       },
       onEnter: routerGuard
     };
-    if (children && children.length) {
-      props.children = renderRoutes(children, app);
+    if (childRoutes && childRoutes.length) {
+      props.children = renderRoutes(childRoutes, app, routerGuard);
     }
     return React.createElement(Route, props);
   });
@@ -149,10 +149,11 @@ function renderRoutes(routes, app) {
 }
 
 export default function RouterConfig({ history, app }) {
+  const routerGuard = createRouterGuard(appRoutes);
   return (
     <Router history={history}>
       <Route path="/" component={App}>
-        {renderRoutes(appRoutes, app)}
+        {renderRoutes(appRoutes, app, routerGuard)}
         <Route path="*" component={NoFoundPage} />
       </Route>
     </Router>

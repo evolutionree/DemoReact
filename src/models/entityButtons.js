@@ -80,7 +80,10 @@ export default {
         }
         if (key === 'extradata') {
           try {
-            return JSON.stringify(val);
+            if ((typeof val).toLocaleLowerCase() === 'object') {
+              return JSON.stringify(val);
+            }
+            return val;
           } catch (e) {
             return '';
           }
