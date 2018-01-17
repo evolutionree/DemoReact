@@ -101,37 +101,41 @@ export default {
       yield call(logout);
       // yield put(routerRedux.push({ pathname: '/login' }));
       location.href = '/login.html';
+      storage.removeLocalItem('defaultPath');
     },
     *fetchGlobalMenus(action, { call, put }) {
       try {
         const type = /admin/.test(location.pathname) ? 1 : 0;
         const result = yield call(getGlobalMenus, type);
 
-        let defaultPath = '';
-        let findFirstPath = true;
-        function getDefaultPath(menus) {
-          for (let i = 0; i < menus.length; i++) {
-            if (menus[i].children && menus[i].children.length > 0) {
-              getDefaultPath(menus[i].children);
-            } else {
-              if (menus[i].isDefaultPage * 1 === 1) {
-                defaultPath = menus[i].path;
-                break;
-              }
-              if (findFirstPath && menus[i].path) {
-                defaultPath = menus[i].path;
-                findFirstPath = false;
+        if (!storage.getLocalItem('defaultPath')) {
+          let defaultPath = '';
+          let findFirstPath = true;
+          function getDefaultPath(menus) {
+            for (let i = 0; i < menus.length; i++) {
+              if (menus[i].children && menus[i].children.length > 0) {
+                getDefaultPath(menus[i].children);
+              } else {
+                if (menus[i].isDefaultPage * 1 === 1) {
+                  defaultPath = menus[i].path;
+                  break;
+                }
+                if (findFirstPath && menus[i].path) {
+                  defaultPath = menus[i].path;
+                  findFirstPath = false;
+                }
               }
             }
+            return defaultPath;
           }
-          return defaultPath;
-        }
 
-        const firstPagePath = getDefaultPath(result.data);
-        if (firstPagePath) {
-          hashHistory.push(firstPagePath);
-        } else {
-          hashHistory.push('/nopermission');
+          const firstPagePath = getDefaultPath(result.data);
+          if (firstPagePath) {
+            hashHistory.push(firstPagePath);
+            storage.setLocalItem('defaultPath', true);
+          } else {
+            hashHistory.push('/nopermission');
+          }
         }
         yield put({ type: 'putState', payload: { menus: result.data } });
       } catch (e) {
