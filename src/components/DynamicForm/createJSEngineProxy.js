@@ -54,6 +54,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     globalJSLoading = false;
     globalJSExecuted = false;
     excuteId = 0;
+    isExcutingJS = false;
 
     constructor(props) {
       super(props);
@@ -102,6 +103,10 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       //   }
       // });
     }
+
+    validateFields = (opts, callback) => {
+
+    };
 
     setJS = props => {
       const fieldExpandJS = {};
@@ -501,12 +506,15 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       if (!js) return;
       try {
         this.excuteId += 1;
+        this.isExcutingJS = true;
         console.info(
           `[${logTitle}]excuteJS: ${js && js.replace('/n', '').slice(1, 40)}...`
         );
         // eval(this.getDefCode() + filterJS);
         eval('var app = this;' + js);
+        this.isExcutingJS = false;
       } catch (e) {
+        this.isExcutingJS = false;
         console.error(e);
       }
     };

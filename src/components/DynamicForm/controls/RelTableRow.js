@@ -87,5 +87,6 @@ const withForm = Form.create({
 export default createFormErrorsStore(
   withForm(
     createJSEngineProxy(RelTableRow)
-  )
+  ),
+  true
 );
