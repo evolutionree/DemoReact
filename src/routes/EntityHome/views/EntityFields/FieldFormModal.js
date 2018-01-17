@@ -73,7 +73,6 @@ function FieldFormModal({ form, showModals, editingRecord, onOk, onCancel, modal
 
   const isEdit = /edit/.test(showModals);
   const title = isEdit ? '编辑字段' : '新增字段';
-
   return (
     <Modal title={title}
            visible={/edit|add/.test(showModals)}
@@ -109,9 +108,11 @@ export default Form.create({
       ret[key] = { value: record[key] };
     });
     // 将fieldConfig的属性挂到fields下，避免嵌套
-    Object.keys(fieldConfig).forEach(key => {
-      ret[key] = { value: fieldConfig[key] };
-    });
+    if (fieldConfig) {
+      Object.keys(fieldConfig).forEach(key => {
+        ret[key] = { value: fieldConfig[key] };
+      });
+    }
     delete ret.fieldConfig;
     return ret;
   }
