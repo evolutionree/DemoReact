@@ -84,6 +84,7 @@ class FieldFormModal extends Component {
     if (isOpening) {
       const { form, showModals, editingRecord } = nextProps;
       if (/edit/.test(showModals)) {
+        form.resetFields();
         form.setFields(_.mapValues({
           ...editingRecord,
           ...editingRecord.fieldConfig,
