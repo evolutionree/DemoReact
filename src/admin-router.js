@@ -6,6 +6,7 @@ import connectPermission from './models/connectPermission';
 
 import App from './routes/App';
 import NoFoundPage from './routes/NoFoundPage';
+import NoPermission from './routes/NoPermission';
 
 import Structure from './routes/Structure';
 
@@ -150,6 +151,7 @@ const appRoutes = [
     ] },
   { path: 'dbmanager', comp: DbManager, model: require('./models/dbmanager') },
   { path: 'ukqrtzmanager', comp: UkqrtzManager, model: require('./models/ukqrtzmanager') },
+  { path: 'nopermission', comp: NoPermission },
   { path: '*', comp: NoFoundPage }
 ];
 
