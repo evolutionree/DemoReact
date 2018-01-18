@@ -285,7 +285,7 @@ class ReportForm extends React.Component {
               if (component.ctrltype === 1) {
                 if (component.commonextinfo.charttype === 3) { //仪表盘
                   changeParams[paramsObj.parametername] = (paramsObj.parametervalue.indexOf('#') > -1) ? this.getParamsValue(paramsObj.parametervalue, componentIndex, params.dataIndex, chartIndex) : paramsObj.parametervalue;
-                } else if (component.commonextinfo.series.length > 0) {  //柱状图 折线图
+                } else if (component.commonextinfo.series.length > 0) {  //柱状图 折线图 饼图
                   changeParams[paramsObj.parametername] = (paramsObj.parametervalue.indexOf('#') > -1) ? this.getParamsValue(paramsObj.parametervalue, componentIndex, params.dataIndex, chartIndex) : paramsObj.parametervalue;
                 } else { //散点图
                   changeParams[paramsObj.parametername] = (paramsObj.parametervalue.indexOf('#') > -1) ? params.data[3][paramsObj.parametervalue.split('#')[1].split('#')[0]] : paramsObj.parametervalue;
@@ -310,7 +310,9 @@ class ReportForm extends React.Component {
             cloneDatasources.map((item) => {
               for (let key in changeParams) {
                 if (item.parameArray.indexOf(key) > -1) { //事件发生后 查询参数发生改变  判断数据源中是否存在该请求参数
-                  this.reloadReportData({ ...this.state.serchValue, ...changeParams });
+                  this.setState({
+                    serchValue: { ...this.state.serchValue, ...changeParams }
+                  }, this.reloadReportData({ ...this.state.serchValue, ...changeParams }));
                   break;
                 }
               }
@@ -426,7 +428,9 @@ class ReportForm extends React.Component {
     // }
     // storage.setLocalItem('reportLocalParams', JSON.stringify(reportLocalParams));
     //storage.removeLocalItem('reportLocalParams');
-    this.reloadReportData(serchValue);
+    this.setState({
+      serchValue: serchValue
+    }, this.reloadReportData(serchValue));
   }
 
   reloadReportData(paramsChange, serchValue = this.state.serchValue) {
@@ -610,17 +614,22 @@ class ReportForm extends React.Component {
         );
       //表格
       case 2:
-        let props = (width - 72) > this.getColumnsTotalWidth(item.tableextinfo, item.datasourcename) ? {} : {
-          scroll: { x: this.getColumnsTotalWidth(item.tableextinfo, item.datasourcename), y: height }
-        }
+        // let props = (width - 72) > this.getColumnsTotalWidth(item.tableextinfo, item.datasourcename) ? {} : {
+        //   scroll: { x: this.getColumnsTotalWidth(item.tableextinfo, item.datasourcename), y: height }
+        // }
         return (
           <div className={styles.reportDataGridWrap}>
             <DataGrid loading={this.state[item.datasourcename + 'loading']}
-                      columns={this.getColumns(item.tableextinfo, item.datasourcename)}
+                      columns={item.tableextinfo}
                       pagination={true}
                       rowSelection={false}
-                      {...props}
-                      dataSource={this.state[item.datasourcename] ? this.state[item.datasourcename] : []} />
+                      params={this.state.serchValue}
+                      url="/api/ReportEngine/queryData"
+                      tableDefined={item}
+                      width={width}
+                      height={height}
+                      datasources={_.find(this.state.datasources, ['instid', item.datasourcename])}
+                      />
           </div>
         );
       //查询组件
