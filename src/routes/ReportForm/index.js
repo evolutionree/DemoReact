@@ -161,106 +161,6 @@ class ReportForm extends React.Component {
     });
   }
 
-  formatDate(text, fmt) {
-    if (!text) return text;
-    if (!fmt) return text;
-    return moment(text, 'YYYY-MM-DD HH:mm:ss').format(fmt.replace(/y/g, 'Y').replace(/d/g, 'D'));
-  }
-
-  getColumns(tableextinfo, datasourcename) { //DataGrid 列获取
-    let columns = tableextinfo.columns;
-    if (this.state[datasourcename + 'columns']) {
-      columns = this.state[datasourcename + 'columns'];
-    }
-
-    const returnColumns = columns.map((item, index) => {
-      const setWidth = item.width > 0 ? item.width : 150;  //后端会给定列宽，没给则默认设置为150
-      const style = {
-        width: setWidth,
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        display: 'inline-block'
-      };
-
-
-      if (item.linkscheme) { //有链接
-        return new HeaderModel(item.title, item.fieldname, (text, record, rowIndex) => {
-          const targetType = ['', '_self', '_blank'];
-
-          let cellText = text instanceof Object ? text.name : text;
-          // 格式化日期
-          if ((item.controltype === 8 || item.controltype === 9) && item.formatstr) {
-            cellText = this.formatDate(text, item.formatstr);
-          }
-
-          function getScheme(index=0) {
-            let scheme = item.linkscheme;
-            const keys = scheme && scheme.match(/#.*?#/g, '');
-            if (keys && keys instanceof Array) {
-              for (let i = 0; i < keys.length; i++) {
-                const dataSourceKey = record[keys[i].replace(/#/g, '')];
-                scheme = scheme.replace(keys[i], dataSourceKey instanceof Object ? getValue(dataSourceKey.id, index) : getValue(dataSourceKey, index));
-              }
-            }
-
-            return scheme;
-          }
-
-          function getValue(value, index) {
-            if (value && value.toString().indexOf(',') > -1) {
-              return value.split(',')[index];
-            } else {
-              return value;
-            }
-          }
-
-          if (cellText && cellText.toString().indexOf(',') > -1) { //多数据源
-            return (
-              <span style={style}>
-                {
-                  cellText.split(',').map((item, index) => {
-                    return <Link key={index} style={{ marginRight: '10px' }} title={item} target={targetType[item.targettype]} to={getScheme(index)}>{item}</Link>;
-                  })
-                }
-              </span>
-            );
-          } else {
-            return <Link style={style} title={cellText} target={targetType[item.targettype]} to={getScheme()}>{cellText}</Link>;
-          }
-        }, setWidth);
-      } else {
-        return new HeaderModel(item.title, item.fieldname, (text, record, rowIndex) => {
-          let cellText = text instanceof Object ? text.name : text;
-          // 格式化日期
-          if ((item.controltype === 8 || item.controltype === 9) && item.formatstr) {
-            cellText = this.formatDate(text, item.formatstr);
-          }
-          return (
-            <span style={style} title={cellText} className={styles.datagridTdWrap}>
-              <DynamicFieldView value={cellText} value_name={cellText} controlType={item.controltype} />
-            </span>
-          );
-        }, setWidth);
-      }
-    });
-
-    return returnColumns;
-  }
-
-  getColumnsTotalWidth(tableextinfo, datasourcename) { //获取列表的总宽度
-    let columns = tableextinfo.columns;
-    if (this.state[datasourcename + 'columns']) {
-      columns = this.state[datasourcename + 'columns'];
-    }
-    let columnsTotalWidth = 0;
-    columns.map((item) => {
-      columnsTotalWidth += (item.width > 0 ? item.width + 20 + 2 : 150 + 20 + 2); //scroll.x 需要大于 表格每列的总宽度，否则 表头与内容行对不齐 20:td-padding 2: td-border
-    });
-    return columnsTotalWidth;
-  }
-
-
   getParamsValue(field, componentIndex, dataIndex, chartIndex) { //获取当前点击的节点对应的数据（作为新的参数）
     const currentComponentData = this.state[this.state.components[componentIndex].datasourcename];
     const paramsName = field.split('#')[1].split('#')[0];
@@ -285,7 +185,7 @@ class ReportForm extends React.Component {
               if (component.ctrltype === 1) {
                 if (component.commonextinfo.charttype === 3) { //仪表盘
                   changeParams[paramsObj.parametername] = (paramsObj.parametervalue.indexOf('#') > -1) ? this.getParamsValue(paramsObj.parametervalue, componentIndex, params.dataIndex, chartIndex) : paramsObj.parametervalue;
-                } else if (component.commonextinfo.series.length > 0) {  //柱状图 折线图
+                } else if (component.commonextinfo.series.length > 0) {  //柱状图 折线图 饼图
                   changeParams[paramsObj.parametername] = (paramsObj.parametervalue.indexOf('#') > -1) ? this.getParamsValue(paramsObj.parametervalue, componentIndex, params.dataIndex, chartIndex) : paramsObj.parametervalue;
                 } else { //散点图
                   changeParams[paramsObj.parametername] = (paramsObj.parametervalue.indexOf('#') > -1) ? params.data[3][paramsObj.parametervalue.split('#')[1].split('#')[0]] : paramsObj.parametervalue;
@@ -310,7 +210,9 @@ class ReportForm extends React.Component {
             cloneDatasources.map((item) => {
               for (let key in changeParams) {
                 if (item.parameArray.indexOf(key) > -1) { //事件发生后 查询参数发生改变  判断数据源中是否存在该请求参数
-                  this.reloadReportData({ ...this.state.serchValue, ...changeParams });
+                  this.setState({
+                    serchValue: { ...this.state.serchValue, ...changeParams }
+                  }, this.reloadReportData({ ...this.state.serchValue, ...changeParams }));
                   break;
                 }
               }
@@ -426,7 +328,9 @@ class ReportForm extends React.Component {
     // }
     // storage.setLocalItem('reportLocalParams', JSON.stringify(reportLocalParams));
     //storage.removeLocalItem('reportLocalParams');
-    this.reloadReportData(serchValue);
+    this.setState({
+      serchValue: serchValue
+    }, this.reloadReportData(serchValue));
   }
 
   reloadReportData(paramsChange, serchValue = this.state.serchValue) {
@@ -610,17 +514,21 @@ class ReportForm extends React.Component {
         );
       //表格
       case 2:
-        let props = (width - 72) > this.getColumnsTotalWidth(item.tableextinfo, item.datasourcename) ? {} : {
-          scroll: { x: this.getColumnsTotalWidth(item.tableextinfo, item.datasourcename), y: height }
-        }
+        // let props = (width - 72) > this.getColumnsTotalWidth(item.tableextinfo, item.datasourcename) ? {} : {
+        //   scroll: { x: this.getColumnsTotalWidth(item.tableextinfo, item.datasourcename), y: height }
+        // }
         return (
           <div className={styles.reportDataGridWrap}>
-            <DataGrid loading={this.state[item.datasourcename + 'loading']}
-                      columns={this.getColumns(item.tableextinfo, item.datasourcename)}
+            <DataGrid columns={item.tableextinfo.columns}
                       pagination={true}
                       rowSelection={false}
-                      {...props}
-                      dataSource={this.state[item.datasourcename] ? this.state[item.datasourcename] : []} />
+                      params={this.state.serchValue}
+                      url="/api/ReportEngine/queryData"
+                      tableDefined={item}
+                      width={width}
+                      height={height}
+                      datasources={_.find(this.state.datasources, ['instid', item.datasourcename])}
+                      />
           </div>
         );
       //查询组件
