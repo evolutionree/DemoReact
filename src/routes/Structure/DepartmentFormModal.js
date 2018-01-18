@@ -38,6 +38,7 @@ function DepartmentFormModal({
     });
   }
   const isEdit = /editDept/.test(showModals);
+  const designateFilterNodes = (isEdit && currentDept) ? [currentDept.deptname] : [];
   return (
     <Modal
       title={isEdit ? '编辑部门' : '新增部门'}
@@ -66,7 +67,7 @@ function DepartmentFormModal({
             } }
           ]
         })(
-          <DepartmentSelect placeholder="上级部门" width="100%" />
+          <DepartmentSelect disabled={(isEdit && currentDept) ? currentDept.nodepath === 0 : false} designateFilterNodes={designateFilterNodes} placeholder="上级部门" width="100%" />
         )}
       </FormItem>
       {/*<FormItem label="团队级别">*/}
