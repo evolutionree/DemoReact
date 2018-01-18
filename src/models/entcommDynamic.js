@@ -53,7 +53,7 @@ export default {
         yield put({ type: 'entityTypes', payload: entityTypes });
 
         // 获取协议
-        const { data: protocol } = yield call(getGeneralListProtocol, { typeId: entityId });
+        const { data: protocol } = yield call(getDynamicListProtocol, { typeId: entityId });
         yield put({ type: 'protocol', payload: protocol });
 
         // 获取简单搜索

@@ -78,6 +78,25 @@ export async function getGeneralListProtocol(params) {
 }
 
 /**
+ * 获取动态列表协议
+ * @param params
+ * {
+    //"entityid":"",
+    "typeid":""
+    }
+ * @returns {Promise.<Object>}
+ */
+export async function getDynamicListProtocol(params) {
+  return request('/api/dynamicentity/generaldynwebprotocol', {
+    method: 'post',
+    body: JSON.stringify({
+      operatetype: 2,
+      ...params
+    })
+  });
+}
+
+/**
  * 获取高级搜索协议
  * @param entityid
  * @returns {Promise.<Object>}
