@@ -77,6 +77,8 @@ import CustomerRelationTree from './routes/CustomerHome/RelationTree';
 
 import DbManager from './routes/DbManager/index';
 import UkqrtzManager from './routes/UkqrtzManager/index';
+import MailRecovery from './routes/MailRecovery';
+
 const appRoutes = [
   { path: 'structure', comp: Structure, entid: '3d77dfd2-60bb-4552-bb69-1c3e73cf4095', model: require('./models/structure') },
   { path: 'entity', comp: EntityList, entid: '00000000-0000-0000-0000-000000000010', model: require('./models/entityList') },
@@ -150,6 +152,7 @@ const appRoutes = [
       { path: 'rel/:relId/:relEntityId', comp: EntcommRel, model: require('./models/entcommRel') }
     ] },
   { path: 'dbmanager', comp: DbManager, model: require('./models/dbmanager') },
+  { path: 'mailrecovery', comp: MailRecovery, model: require('./models/mailRecovery') },
   { path: 'ukqrtzmanager', comp: UkqrtzManager, model: require('./models/ukqrtzmanager') },
   { path: 'nopermission', comp: NoPermission },
   { path: '*', comp: NoFoundPage }

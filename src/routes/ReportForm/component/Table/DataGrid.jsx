@@ -22,24 +22,23 @@ class DataGrid extends  React.Component {
       total: this.props.total,
       current: this.props.current,
       dataSource: this.props.dataSource,
-      dataSourceField: this.props.dataSourceField,
       params: this.props.params,
       slectRows: this.props.slectRows,
-      columns:this.props.columns,//表頭
+      columns: this.props.columns, //表頭
       loading: this.props.loading,
       url: this.props.url
-    }
+    };
   }
+
   componentWillReceiveProps(nextProps) {
    if (nextProps.url) { //  区分开 父组件传url则表示数据源通过url获取，否则通过更新父组件传过来的dataSource更新
      this.setState({
        params: nextProps.params,
        url: nextProps.url,
-       reload: nextProps.reload,
        slectRows: nextProps.slectRows
      });
-     if (this.state.url !== nextProps.url || this.props.datasources !== nextProps.datasources || JSON.stringify(nextProps.params) !== JSON.stringify(this.state.params)) {
-       this.reloadReportData(this.state.current, this.state.pageSize, nextProps.url, nextProps.params);
+     if (this.state.url !== nextProps.url || JSON.stringify(nextProps.params) !== JSON.stringify(this.state.params)) {
+       this.reloadReportData(nextProps.url, nextProps.params, 1, 10);
      }
    } else {
      this.setState({
@@ -63,14 +62,14 @@ class DataGrid extends  React.Component {
   }
 
   componentDidMount() {
-    this.reloadReportData(this.state.current, this.state.pageSize, this.state.url, this.state.params);
+    this.reloadReportData(this.state.url, this.state.params, 1, 10);
   }
 
   reload() {
-    this.queryListData(this.state.current, this.state.pageSize, this.state.url, this.state.params);
+    this.reloadReportData(this.state.url, this.state.params, 1, 10);
   }
 
-  reloadReportData(current, pageSize, url, paramsChange) {
+  reloadReportData(url, paramsChange, current, pageSize) {
     let params = {};
     for (let key in paramsChange) { //可能参数里包含多个子参数  需拆分
       if (key.indexOf(',') > -1) {
@@ -82,10 +81,9 @@ class DataGrid extends  React.Component {
       }
     }
 
-
     let datasources = this.props.datasources;
     let parameArray = [];
-    datasources && datasources.parameters.map((item1) => {
+    datasources && datasources.parameters instanceof Array && datasources.parameters.map((item1) => {
       _.forIn(item1, function(value, key) {
         parameArray.push(value);  //value：前端查詢字段 key ：請求Url的參數名
       });
@@ -93,13 +91,13 @@ class DataGrid extends  React.Component {
 
     for (let key in params) {
       if (parameArray.indexOf(key) > -1) {
-        this.queryListData(current, pageSize, url, {
+        this.queryListData(url, {
           DataSourceId: datasources.datasourcedefineid,
           InstId: datasources.instid,
           Parameters: {
             ...getParameters(),
             ['@pageindex']: current,
-            ['@pagesize']: 2
+            ['@pagesize']: pageSize
           }
         });
         break;
@@ -118,32 +116,8 @@ class DataGrid extends  React.Component {
     }
   }
 
-  //获取真正的数据源
-  getSource(data, source) {
-    let sourceArr = new Array();
-    let returnData = data;
 
-    if (source.indexOf(".") > -1) {
-      sourceArr = source.split(".");
-    } else {
-      sourceArr.push(source);
-    }
-    let i = 0;
-    try {
-      while (i < sourceArr.length) {
-        returnData = returnData[sourceArr[i]];
-        if (returnData == null) {
-          return  null;//直接返回
-        }
-        i++;
-      }
-    } catch(e) {
-      return null;
-    }
-    return  returnData;
-  }
-
-  queryListData(current, pageSize, url, params) {
+  queryListData(url, params) {
     if (url == null) {
       return false;
     }
@@ -182,7 +156,8 @@ class DataGrid extends  React.Component {
     return moment(text, 'YYYY-MM-DD HH:mm:ss').format(fmt.replace(/y/g, 'Y').replace(/d/g, 'D'));
   }
 
-  getColumns(tableextinfo, datasourcename) { //DataGrid 列获取
+  getColumns(tableextinfo, datasourcename) {
+    //DataGrid 列获取
     // let columns = tableextinfo.columns;
     // if (this.state[datasourcename + 'columns']) {
     //   columns = this.state[datasourcename + 'columns'];
@@ -276,29 +251,13 @@ class DataGrid extends  React.Component {
     return columnsTotalWidth;
   }
 
-  pageChangeHandler(current, pageSize) {
-    this.setState({
-      current: current,
-      pageSize: pageSize
-    });
-    this.queryListData(current, pageSize, this.state.url, this.state.params);
-  }
-
-  showSizeChangeHandler(current, size) {
-    this.setState({
-      pageSize: size,
-      current: current
-    });
-    this.queryListData(current, size, this.state.url, this.state.params);
-  }
-
   tableChange(pagination, filters, sorter) {
     const { current, pageSize } = pagination;
     this.setState({
       pageSize: pageSize,
       current: current
     });
-    this.queryListData(current, pageSize, this.state.url, this.state.params);
+    this.reloadReportData(this.state.url, this.state.params, current, pageSize);
   }
 
   rowSelectHandler(selectedRowKeys, selectedRows) {
@@ -309,7 +268,6 @@ class DataGrid extends  React.Component {
   }
 
   render() {
-    console.log(this.state.columns)
     const key = this.props.rowKey ? this.props.rowKey : rowKey;
     const rowSelection = this.props.rowSelection ? {
       selectedRowKeys: this.state.slectRows.map(item => item[key]),
@@ -319,9 +277,7 @@ class DataGrid extends  React.Component {
     const pagination = this.props.pagination ? {
       pageSize: this.state.pageSize,
       total: this.state.total,
-      current: this.state.current,
-      onChange: this.pageChangeHandler.bind(this),
-      onShowSizeChange: this.showSizeChangeHandler.bind(this)
+      current: this.state.current
     } : false;
 
     let props = (this.props.width - 72) > this.getColumnsTotalWidth() ? {} : {
