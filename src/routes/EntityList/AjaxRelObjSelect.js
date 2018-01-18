@@ -48,10 +48,13 @@ class SelectComponent extends Component {
   }
 
   render() {
+    const filterDataSource = this.state.dataSource instanceof Array && this.state.dataSource.filter((item) => {
+      return item.controltype !== 15 && item.controltype !== 22 && item.controltype !== 24 && item.controltype !== 6 && item.controltype !== 7 && item.controltype !== 8 && item.controltype !== 9;
+    });
     return (
       <Select value={this.props.value} style={{ width: 506 }} onChange={this.selectHandler.bind(this)}>
         {
-          this.state.dataSource instanceof Array && this.state.dataSource.map((item) => {
+          filterDataSource instanceof Array && filterDataSource.map((item) => {
             return <Option key={item.fieldid}>{item.displayname}</Option>;
           })
         }
