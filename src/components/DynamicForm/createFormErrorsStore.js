@@ -7,9 +7,10 @@ function equalUndefined(object, other) {
   return _.isEqual(removeUndeinfedProp(object), removeUndeinfedProp(other));
 }
 
-export default function createFormErrorsStore(WrappedFormComponent) {
+export default function createFormErrorsStore(WrappedFormComponent, isTable) {
   return class WithFieldsErrorStore extends Component {
     formInst = null;
+    formRef = null;
     constructor(props) {
       super(props);
       this.state = {
@@ -37,7 +38,6 @@ export default function createFormErrorsStore(WrappedFormComponent) {
     processRetValues = values => {
       const result = _.cloneDeep(values);
       const { fields } = this.props;
-      debugger;
       fields.forEach(field => {
         const { controltype, fieldconfig, fieldname } = field;
         if (!result[fieldname]) return;
@@ -56,14 +56,46 @@ export default function createFormErrorsStore(WrappedFormComponent) {
       } else if (args.length === 1) {
         callback = args[0];
       }
-      this.formInst.validateFieldsAndScroll(opts, (err, values) => {
-        // console.log('createFormErrorsStore validate callbacked err: ', err);
-        const retValues = _.mapValues(values, val => {
-          if (val === undefined || val === null) return '';
-          return val;
+      const formRef = this.formRef;
+      // if (isTable) {
+      //   this.formInst.validateFieldsAndScroll(opts, (err, values) => {
+      //     // console.log('createFormErrorsStore validate callbacked err: ', err);
+      //     const retValues = _.mapValues(values, val => {
+      //       if (val === undefined || val === null) return '';
+      //       return val;
+      //     });
+      //     callback(err, this.processRetValues(retValues));
+      //   });
+      // } else {
+        setTimeout(() => {
+          this.formInst.validateFieldsAndScroll(opts, (err, values) => {
+            // console.log('createFormErrorsStore validate callbacked err: ', err);
+            const retValues = _.mapValues(values, val => {
+              if (val === undefined || val === null) return '';
+              return val;
+            });
+            if (err) {
+              let flag = true;
+              Object.keys(err).forEach(k => {
+                const fieldErr = err[k];
+                if (fieldErr.errors && fieldErr.errors.some(item => !/need\sto\srevalidate/.test(item.message))) {
+                  flag = false;
+                }
+              });
+              if (flag) {
+                callback(null, this.processRetValues(retValues));
+              } else {
+                callback(err, this.processRetValues(retValues));
+              }
+            } else {
+              callback(err, this.processRetValues(retValues));
+            }
+            // if (!isTable) {
+            //   debugger;
+            // }
+          });
         });
-        callback(err, this.processRetValues(retValues));
-      });
+      // }
     };
     handleFormValueChange = formValue => {
       this.setState({
@@ -81,6 +113,7 @@ export default function createFormErrorsStore(WrappedFormComponent) {
         <WrappedFormComponent
           {...restProps}
           ref={formInst => this.formInst = formInst}
+          wrappedComponentRef={(inst) => this.formRef = inst}
           value={this.state.innerFormValue}
           onChange={this.handleFormValueChange}
         />

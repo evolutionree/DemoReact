@@ -202,6 +202,7 @@ class AffairDetail extends Component {
                 <DynamicFormAdd
                   horizontal
                   key={item.entityId}
+                  entityId={item.entityId}
                   entityTypeId={item.entityId}
                   fields={item.protocols}
                   value={columnConfigForms[item.entityId] || {}}
@@ -254,6 +255,7 @@ class AffairDetail extends Component {
             <div>
               {editing ? (
                 <DynamicFormEdit
+                  entityId={flowDetail.entityid}
                   entityTypeId={entityDetail.rectype || flowDetail.entityid}
                   fields={entityEditProtocol}
                   value={editData}
@@ -262,6 +264,7 @@ class AffairDetail extends Component {
                 />
               ) : (
                 <DynamicFormView
+                  entityId={flowDetail.entityid}
                   entityTypeId={entityDetail.rectype || flowDetail.entityid}
                   fields={entityDetailProtocol}
                   value={entityDetail}
@@ -286,6 +289,7 @@ class AffairDetail extends Component {
           </div>
           <div className={styles.auditform}>
             <DynamicFormView
+              entityId={relentityDetail && relentityDetail.rectype}
               entityTypeId={relentityDetail && relentityDetail.rectype}
               fields={relentityDetailProtocol}
               value={relentityDetail}

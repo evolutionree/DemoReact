@@ -38,6 +38,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
   const formType = options.type;
   return class WithJSEngineProxy extends Component {
     static propTypes = {
+      entityId: PropTypes.string, // 若有entityId，则调接口查看是否有初始化js脚本
       entityTypeId: PropTypes.string, // 若有entityTypeId，则调接口查看是否有初始化js脚本
       form: PropTypes.any,
       fields: PropTypes.array,
@@ -53,6 +54,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     globalJSLoading = false;
     globalJSExecuted = false;
     excuteId = 0;
+    isExcutingJS = false;
 
     constructor(props) {
       super(props);
@@ -63,8 +65,8 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     }
 
     componentDidMount() {
-      if (this.props.entityTypeId) {
-        this.fetchGlobalJS(this.props.entityTypeId);
+      if (this.props.entityId) {
+        this.fetchGlobalJS(this.props.entityId);
       }
     }
 
@@ -82,8 +84,8 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
         }
       });
 
-      if (nextProps.entityTypeId !== this.props.entityTypeId) {
-        this.fetchGlobalJS(nextProps.entityTypeId);
+      if (nextProps.entityId !== this.props.entityId) {
+        this.fetchGlobalJS(nextProps.entityId);
       }
 
       this.setJS(nextProps);
@@ -101,6 +103,10 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       //   }
       // });
     }
+
+    validateFields = (opts, callback) => {
+
+    };
 
     setJS = props => {
       const fieldExpandJS = {};
@@ -500,12 +506,15 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       if (!js) return;
       try {
         this.excuteId += 1;
+        this.isExcutingJS = true;
         console.info(
           `[${logTitle}]excuteJS: ${js && js.replace('/n', '').slice(1, 40)}...`
         );
         // eval(this.getDefCode() + filterJS);
         eval('var app = this;' + js);
+        this.isExcutingJS = false;
       } catch (e) {
+        this.isExcutingJS = false;
         console.error(e);
       }
     };

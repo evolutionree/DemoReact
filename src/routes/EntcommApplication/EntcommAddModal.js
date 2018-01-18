@@ -132,7 +132,7 @@ class EntcommAddModal extends Component {
   };
 
   render() {
-    const { entityTypes } = this.props;
+    const { entityTypes, entityId } = this.props;
     const {
       showTypeModal,
       showFormModal,
@@ -181,6 +181,7 @@ class EntcommAddModal extends Component {
           width={hasTable ? 900 : 550}
         >
           <DynamicFormAdd
+            entityId={entityId}
             entityTypeId={selectedEntityType}
             fields={protocolFields}
             value={formData}

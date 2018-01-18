@@ -1,7 +1,12 @@
 import dva from 'dva';
 import { routerRedux } from 'dva/router';
-import { message, Table, Pagination, Button, Select, TreeSelect, DatePicker, Modal } from 'antd';
+import { message, Table, Pagination, Button, Select, TreeSelect, DatePicker, Modal, Input, Cascader} from 'antd';
 
+function getPopupContainer(elem) {
+  if (!elem) return document.body;
+  const parentModal = $(elem).parents('.ant-modal')[0];
+  return parentModal || document.body;
+}
 function setDefaultProps(Component, defaultProps) {
     Component.defaultProps = {
         ...Component.defaultProps,
@@ -9,7 +14,8 @@ function setDefaultProps(Component, defaultProps) {
     };
 }
 setDefaultProps(Select, {
-    size: 'default'
+    size: 'default',
+    getPopupContainer: getPopupContainer
 });
 setDefaultProps(Button, {
     size: 'default',
@@ -25,14 +31,19 @@ setDefaultProps(Pagination, {
     showTotal: val => `共${val}条记录`
 });
 setDefaultProps(TreeSelect, {
-    size: 'default'
+    size: 'default',
+    getPopupContainer: getPopupContainer
 });
 setDefaultProps(DatePicker, {
-    size: 'default'
+    size: 'default',
+    getCalendarContainer: getPopupContainer
 });
 setDefaultProps(Modal, {
     maskClosable: false,
     width: 550
+});
+setDefaultProps(Cascader, {
+    getPopupContainer: getPopupContainer
 });
 
 // import './index.css';

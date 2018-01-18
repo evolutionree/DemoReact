@@ -744,6 +744,7 @@ class StageBar extends Component {
             <DynamicFormEdit
               horizontal
               ref={form => this.entityForm = form}
+              entityId={this.props.entityId}
               fields={entityFields}
               value={entityFieldsData}
               refEntityData={this.props.recordDetail}
@@ -759,6 +760,7 @@ class StageBar extends Component {
             <DynamicFormEdit
               horizontal
               ref={form => this.customForm = form}
+              entityId={this.props.entityId}
               fields={customFields}
               value={customFieldsData}
               refEntityData={this.props.recordDetail}

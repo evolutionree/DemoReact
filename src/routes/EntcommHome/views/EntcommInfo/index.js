@@ -16,7 +16,8 @@ function EntcommInfo({
     saveEdit,
     onEditDataChange,
     editFormRef,
-    permission
+    permission,
+    entityId
   }) {
   if (!permission) {
     return (
@@ -46,6 +47,7 @@ function EntcommInfo({
           <Button type="default" onClick={cancelEdit}>取消</Button>
         </div>
         <DynamicFormEdit
+          entityId={entityId}
           entityTypeId={editData && editData.rectype}
           fields={editProtocol}
           value={editData}
@@ -61,6 +63,7 @@ function EntcommInfo({
           {checkFunc('EntityDataEdit') && <Button onClick={startEdit}>编辑</Button>}
         </div>
         <DynamicFormView
+          entityId={entityId}
           entityTypeId={detailData && detailData.rectype}
           fields={detailProtocol}
           value={detailData}
@@ -74,7 +77,8 @@ export default connect(
   state => {
     return {
       ...state.entcommInfo,
-      detailData: state.entcommHome.recordDetail
+      detailData: state.entcommHome.recordDetail,
+      entityId: state.entcommHome.entityId
     };
   },
   dispatch => {

@@ -40,7 +40,7 @@ class MailCatalogSelect extends Component {
     return (
       <TreeSelect
         allowClear
-        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+        dropdownStyle={{ maxHeight: 250, overflow: 'auto' }}
         treeData={this.state.treeData}
         value={this.props.value}
         onChange={this.props.onChange}
