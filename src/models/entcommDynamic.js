@@ -3,7 +3,7 @@
  */
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
-import { getGeneralListProtocol, getListData } from '../services/entcomm';
+import { getDynamicListProtocol, getListData } from '../services/entcomm';
 import { queryEntityDetail, queryTypes, queryListFilter } from '../services/entity';
 
 export default {
