@@ -44,6 +44,7 @@ class ReportForm extends React.Component {
       components: [],
       datasources: [],
       serchValue: {},
+      reload: true, //serchValue 改变时 是否让DataGrid组件重新请求数据（如果用户在点击搜索按钮之前只是修改查询参数，不请求）
       width: document.body.clientWidth - 200, //系统左侧 200px显示菜单
       mapType: 'china',
       mapSeriesType: 'map',
@@ -63,21 +64,32 @@ class ReportForm extends React.Component {
     request('/api/ReportEngine/queryReportDefine', {
       method: 'post', body: JSON.stringify({ 'id': reportId })
     }).then((result) => {
+      const components = result.data.components;
+      let dataGridDatasouces = [];
+      components && components instanceof Array && components.map((item) => {
+        if (item.ctrltype === 2) {
+          dataGridDatasouces.push(item.datasourcename);
+        }
+      });
       this.setState({
-        components: result.data.components,
+        components: components,
         datasources: result.data.datasources,
-        pageName: result.data.name
+        pageName: result.data.name,
+        dataGridDatasouces: dataGridDatasouces
       });
 
       result.data.datasources.map((item, index) => {
-        this.setState({
-          [item.instid + 'loading']: true
-        });
-        this.queryData(item, {
-          DataSourceId: item.datasourcedefineid,
-          InstId: item.instid,
-          Parameters: this.getDefaultParameters(item, result.data.components)
-        });
+        const defaultParams = this.getDefaultParameters(item, result.data.components)
+        if (_.indexOf(dataGridDatasouces, item.instid) === -1) { //不请求 表格对应的数据源 交给组件DataGrid去处理
+          this.setState({
+            [item.instid + 'loading']: true
+          });
+          this.queryData(item, {
+            DataSourceId: item.datasourcedefineid,
+            InstId: item.instid,
+            Parameters: defaultParams
+          });
+        }
       });
     });
   }
@@ -128,7 +140,8 @@ class ReportForm extends React.Component {
     }
 
     this.setState({
-      serchValue: defaultSerchValue
+      serchValue: defaultSerchValue,
+      reload: true
     });
     return getParameters(datasource, params);
   }
@@ -138,6 +151,7 @@ class ReportForm extends React.Component {
       components: [],
       datasources: [],
       serchValue: {},
+      reload: true,
       width: document.body.clientWidth - 200,
       mapType: 'china',
       mapSeriesType: 'map',
@@ -211,7 +225,8 @@ class ReportForm extends React.Component {
               for (let key in changeParams) {
                 if (item.parameArray.indexOf(key) > -1) { //事件发生后 查询参数发生改变  判断数据源中是否存在该请求参数
                   this.setState({
-                    serchValue: { ...this.state.serchValue, ...changeParams }
+                    serchValue: { ...this.state.serchValue, ...changeParams },
+                    reload: true
                   }, this.reloadReportData({ ...this.state.serchValue, ...changeParams }));
                   break;
                 }
@@ -247,7 +262,8 @@ class ReportForm extends React.Component {
       serchValue: {
         ...this.state.serchValue,
         '@regions': newBreadcrumbData.join()
-      }
+      },
+      reload: true
     }, this.reloadReportData({ ...this.state.serchValue, '@regions': newBreadcrumbData.join() }, { ...this.state.serchValue, '@regions': newBreadcrumbData.join() }));  //查询最新数据
 
     if (chinaMap[mapName]) {  //全国  省市区
@@ -329,8 +345,15 @@ class ReportForm extends React.Component {
     // storage.setLocalItem('reportLocalParams', JSON.stringify(reportLocalParams));
     //storage.removeLocalItem('reportLocalParams');
     this.setState({
-      serchValue: serchValue
+      serchValue: serchValue,
+      reload: false
     }, this.reloadReportData(serchValue));
+
+    for (let key in this) { //表格交给表格组件 处理
+      if (key.indexOf('dataGridRef') > -1) {
+        this[key] && this[key].reload && this[key].reload(serchValue);
+      }
+    }
   }
 
   reloadReportData(paramsChange, serchValue = this.state.serchValue) {
@@ -358,7 +381,7 @@ class ReportForm extends React.Component {
 
     cloneDatasources.map((item, index) => {
       for (let key in params) {
-       if (item.parameArray.indexOf(key) > -1) {
+       if (item.parameArray.indexOf(key) > -1 && _.indexOf(this.state.dataGridDatasouces, item.instid) === -1) { //不请求 表格对应的数据源 交给组件DataGrid去处理
          this.setState({
            [item.instid + 'loading']: true
          });
@@ -407,7 +430,8 @@ class ReportForm extends React.Component {
         newSerchValue[mapFilterItems[i].paramname] = currentParamsValue(mapFilterItems[i].data).join();
       }
       this.setState({
-        serchValue: newSerchValue
+        serchValue: newSerchValue,
+        reload: true
       });
     }
 
@@ -448,7 +472,8 @@ class ReportForm extends React.Component {
     const breadcrumbData = this.state.breadcrumbData;
     serchValue['@regions'] = breadcrumbData.join();
     this.setState({
-      serchValue: serchValue
+      serchValue: serchValue,
+      reload: true
     }, this.reloadReportData(serchValue, serchValue));
   }
   getForSummaryValue(keys, title, data) {
@@ -514,19 +539,19 @@ class ReportForm extends React.Component {
         );
       //表格
       case 2:
-        // let props = (width - 72) > this.getColumnsTotalWidth(item.tableextinfo, item.datasourcename) ? {} : {
-        //   scroll: { x: this.getColumnsTotalWidth(item.tableextinfo, item.datasourcename), y: height }
-        // }
+        //为分解业务逻辑，表格的数据源 交给DataGrid组件自己去处理，自主处理分页、分页大小，后续可处理排序等等
         return (
           <div className={styles.reportDataGridWrap}>
             <DataGrid columns={item.tableextinfo.columns}
                       pagination={true}
                       rowSelection={false}
                       params={this.state.serchValue}
+                      reload={this.state.reload}
                       url="/api/ReportEngine/queryData"
                       tableDefined={item}
                       width={width}
                       height={height}
+                      ref={(ref) => { this[item.datasourcename + 'dataGridRef'] = ref }}
                       datasources={_.find(this.state.datasources, ['instid', item.datasourcename])}
                       />
           </div>
@@ -535,7 +560,7 @@ class ReportForm extends React.Component {
       case 3:
         return <SearchBar model={item.filterextinfo.ctrls}
                           onSearch={this.reportSearch.bind(this)}
-                          onChange={(serchValue) => { this.setState({ serchValue: serchValue }); }}
+                          onChange={(serchValue) => { this.setState({ serchValue: serchValue, reload: false }); }}
                           value={this.state.serchValue} />;
       //漏斗图
       case 4:

@@ -37,7 +37,7 @@ class DataGrid extends  React.Component {
        url: nextProps.url,
        slectRows: nextProps.slectRows
      });
-     if (this.state.url !== nextProps.url || JSON.stringify(nextProps.params) !== JSON.stringify(this.state.params)) {
+     if (this.state.url !== nextProps.url || (JSON.stringify(nextProps.params) !== JSON.stringify(this.state.params) && nextProps.reload)) {
        this.reloadReportData(nextProps.url, nextProps.params, 1, 10);
      }
    } else {
@@ -65,8 +65,11 @@ class DataGrid extends  React.Component {
     this.reloadReportData(this.state.url, this.state.params, 1, 10);
   }
 
-  reload() {
-    this.reloadReportData(this.state.url, this.state.params, 1, 10);
+  reload(params) {
+    this.setState({
+      params: params
+    })
+    this.reloadReportData(this.state.url, params, 1, 10);
   }
 
   reloadReportData(url, paramsChange, current, pageSize) {
@@ -99,7 +102,7 @@ class DataGrid extends  React.Component {
             ['@pageindex']: current,
             ['@pagesize']: pageSize
           }
-        });
+        }, current, pageSize);
         break;
       }
     }
@@ -108,7 +111,7 @@ class DataGrid extends  React.Component {
       let returnParams = {};
       datasources.parameters.map((item) => {
         _.forIn(item, function(value, key) {
-          returnParams[key] = params[value];
+          returnParams[key] = params[value] ? params[value] : '';
         });
       })
 
@@ -117,7 +120,7 @@ class DataGrid extends  React.Component {
   }
 
 
-  queryListData(url, params) {
+  queryListData(url, params, current, pageSize) {
     if (url == null) {
       return false;
     }
@@ -139,7 +142,9 @@ class DataGrid extends  React.Component {
         dataSource: dataSource,
         columns: result.data.columns ? result.data.columns : this.state.columns,
         total: result.data.page[0].total,
-        loading: false
+        loading: false,
+        current,
+        pageSize
       });
     }).catch((e) => {
       console.error(e);
@@ -253,10 +258,6 @@ class DataGrid extends  React.Component {
 
   tableChange(pagination, filters, sorter) {
     const { current, pageSize } = pagination;
-    this.setState({
-      pageSize: pageSize,
-      current: current
-    });
     this.reloadReportData(this.state.url, this.state.params, current, pageSize);
   }
 
@@ -280,9 +281,13 @@ class DataGrid extends  React.Component {
       current: this.state.current
     } : false;
 
-    let props = (this.props.width - 72) > this.getColumnsTotalWidth() ? {} : {
-      scroll: { x: this.getColumnsTotalWidth(), y: this.props.height }
+    let props = {};
+    if (this.props.width && this.props.height) {
+      props = (this.props.width - 72) > this.getColumnsTotalWidth() ? {} : {
+        scroll: { x: this.getColumnsTotalWidth(), y: this.props.height }
+      };
     }
+
     return (
       <Table
         loading={this.state.loading}

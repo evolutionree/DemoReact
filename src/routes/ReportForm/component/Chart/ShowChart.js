@@ -19,7 +19,7 @@ function ShowChart({
   if (!dataSource) {
     return null;
   }
-  const colors = ['#3398db', '#7ed321', '#675bba'];
+  const colors = ['#3398db', '#7ed321', '#675bba', '#61aced', '#ba6f0b', '#77ba07'];
   function transformData(item) {
     const seriesData = item.data;
     let newSeresData = [];
@@ -351,9 +351,9 @@ function ShowChart({
         textStyle: {
           color: '#9b9b9b'
         },
-        type: 'scroll',
-        orient: 'vertical',
-        left: 'left',
+        top: 20,
+        formatter: '{name} : ',
+        align: 'right',
         data: dataSource && dataSource instanceof Array && dataSource.map((dataItem) => {
           return { name: dataItem[component.commonextinfo.xfieldname], icon: 'roundRect' };
         })
