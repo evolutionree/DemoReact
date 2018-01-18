@@ -163,7 +163,7 @@ class DataGrid extends  React.Component {
       }
       this.setState({
         dataSource: dataSource,
-        columns: result.data.columns,
+        columns: result.data.columns ? result.data.columns : this.state.columns,
         total: result.data.page[0].total,
         loading: false
       });
@@ -309,6 +309,7 @@ class DataGrid extends  React.Component {
   }
 
   render() {
+    console.log(this.state.columns)
     const key = this.props.rowKey ? this.props.rowKey : rowKey;
     const rowSelection = this.props.rowSelection ? {
       selectedRowKeys: this.state.slectRows.map(item => item[key]),
