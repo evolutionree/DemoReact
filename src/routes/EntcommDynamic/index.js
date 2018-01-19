@@ -72,7 +72,7 @@ function EntcommList({
   return (
     <Page title={entityName}>
       <Toolbar>
-        {shouldShowExport() && <Button onClick={exportData}>导出</Button>}
+        <Button onClick={exportData}>导出</Button>
         <Toolbar.Right>
           <Search
             placeholder="请输入关键字"

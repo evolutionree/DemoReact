@@ -81,7 +81,7 @@ class DynamicTable extends Component {
         title: field.displayname,
         sorter: this.props.sorter,
         width: this.props.fixedHeader ? setWidth + 21 : 0, //21：padding + border
-        fixed: this.props.fixedHeader ? (index === 0 ? 'left' : false) : false,
+        fixed: this.props.fixedHeader ? (index === 0 ? 'left' : false) : false, //具体固定哪栏的逻辑 待后期确定，暂时固定第一栏
         render: (text, record) => {
           const isLinkField = field === linkField;
           return (
@@ -277,13 +277,17 @@ class DynamicTable extends Component {
   };
   render() {
     const { protocol, ignoreRecName, fixedHeader, ...restProps } = this.props;
-    const columns = this.getColumns();
+    let columns = this.getColumns();
     const scrollX = this.props.rowSelection ? parseInt(this.getColumnsTotalWidth(columns)) + 63 : parseInt(this.getColumnsTotalWidth(columns)); //63 表格如果支持选择，则加上选择列的宽度
-    console.log('width:' + this.state.width);
-    const width = (this.state.width - 200) < 1080 ? 1080 : this.state.width; // 系统设置了最小宽度
-    if (width > parseInt(this.getColumnsTotalWidth(columns))) {
 
+    const width = (this.state.width - 200) < 1080 ? 1080 : this.state.width; // 系统设置了最小宽度
+    if (width > parseInt(this.getColumnsTotalWidth(columns))) { //如果表格没有横向滚动条，则不需要固定第一栏
+      columns = columns.map((item) => {
+        item.fixed = false;
+        return item;
+      });
     }
+
     return (
       <div>
         <Table
