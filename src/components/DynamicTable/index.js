@@ -74,7 +74,7 @@ class DynamicTable extends Component {
         ...normalStyle,
         maxWidth: '340px'
       };
-      console.log('width:' + this.state.width)
+
       return {
         key: field.fieldname,
         dataIndex: field.fieldname,
@@ -279,6 +279,11 @@ class DynamicTable extends Component {
     const { protocol, ignoreRecName, fixedHeader, ...restProps } = this.props;
     const columns = this.getColumns();
     const scrollX = this.props.rowSelection ? parseInt(this.getColumnsTotalWidth(columns)) + 63 : parseInt(this.getColumnsTotalWidth(columns)); //63 表格如果支持选择，则加上选择列的宽度
+    console.log('width:' + this.state.width);
+    const width = (this.state.width - 200) < 1080 ? 1080 : this.state.width; // 系统设置了最小宽度
+    if (width > parseInt(this.getColumnsTotalWidth(columns))) {
+
+    }
     return (
       <div>
         <Table
