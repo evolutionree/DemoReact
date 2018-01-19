@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { Modal, Form, Input, Select, Radio } from 'antd';
+import * as _ from 'lodash';
 import connectBizParam from '../../components/connectBizParam';
 import SelectAppIcon from '../../components/SelectAppIcon';
 import AjaxSelect from './AjaxRelObjSelect';
@@ -55,11 +56,11 @@ class EntityFormModal extends Component {
       if (!/edit/.test(showModals)) {
         form.resetFields();
       } else {
-        form.setFieldsValue({
+        form.setFields(_.mapValues({
           icons: '',
           ...editingRecord,
           typeid: editingRecord.modeltype + ''
-        });
+        }, val => ({ value: val })));
       }
     }
   }
