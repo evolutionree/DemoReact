@@ -350,3 +350,27 @@ export async function queryCaseItem(caseId) {
     body: JSON.stringify({ caseId })
   });
 }
+
+/**
+ * 查询可见规则
+ * @param flowId
+ * @returns {Promise.<Object>}
+ */
+export async function queryWorkflowVisibleRule(flowId) {
+  return request('/api/rule/queryflowruleinfo', {
+    method: 'POST',
+    body: JSON.stringify({ flowId })
+  });
+}
+
+/**
+ * 保存可见规则
+ * @param params
+ * @returns {Promise.<Object>}
+ */
+export async function saveWorkflowVisibleRule(params) {
+  return request('/api/rule/saverule', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}
