@@ -18,6 +18,22 @@ export async function getGeneralProtocol(params) {
   });
 }
 
+/**
+ * 获取动态协议
+ * @param params
+ * * {
+     TypeId: 'xxx', // entityid
+     operatetype: 0 // 0新增 1编辑 2查看
+  }
+ * @returns {Promise.<Object>}
+ */
+export async function getGenralDynawebProtocol(params) {
+  return request('/api/dynamicentity/generaldynwebprotocol', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
 
 /**
  * 获取页面操作按钮

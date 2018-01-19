@@ -25,7 +25,8 @@ class DynamicTable extends Component {
       innerTableTitle: '查看明细',
       innerTableProtocol: [],
       innerTableRecords: [],
-      height: document.body.clientHeight
+      height: document.body.clientHeight,
+      width: document.body.clientWidth
     };
   }
 
@@ -39,7 +40,8 @@ class DynamicTable extends Component {
 
   onWindowResize(e) {
     this.setState({
-      height: document.body.clientHeight
+      height: document.body.clientHeight,
+      width: document.body.clientWidth
     });
   }
 
@@ -72,6 +74,7 @@ class DynamicTable extends Component {
         ...normalStyle,
         maxWidth: '340px'
       };
+      console.log('width:' + this.state.width)
       return {
         key: field.fieldname,
         dataIndex: field.fieldname,
