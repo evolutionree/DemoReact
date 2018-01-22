@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { PropTypes, Component } from 'react';
 import { Modal, Form } from 'antd';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import FieldForm from './FieldForm';
 import { getRandomLetters } from '../../../../utils';
 
@@ -58,62 +58,78 @@ function processFormValues(values, editingRecord) {
   return retValues;
 }
 
-function FieldFormModal({ form, showModals, editingRecord, onOk, onCancel, modalPending, entityFields, entityId }) {
-  function handleOk() {
+class FieldFormModal extends Component {
+  static propTypes = {
+    form: PropTypes.object,
+    showModals: PropTypes.string,
+    editingRecord: PropTypes.object,
+    onOk: PropTypes.func,
+    onCancel: PropTypes.func,
+    modalPending: PropTypes.bool,
+    entityFields: PropTypes.array,
+    entityId: PropTypes.string
+  };
+  static defaultProps = {};
+
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const thisVisible = /edit|add/.test(this.props.showModals);
+    const nextVisible = /edit|add/.test(nextProps.showModals);
+    const isOpening = !thisVisible && nextVisible;
+    const isClosing = thisVisible && !nextVisible;
+    if (isOpening) {
+      const { form, showModals, editingRecord } = nextProps;
+      if (/edit/.test(showModals)) {
+        form.resetFields();
+        form.setFields(_.mapValues({
+          ...editingRecord,
+          ...editingRecord.fieldConfig,
+          fieldConfig: undefined
+        }, val => ({ value: val })), 1000);
+      } else {
+        form.resetFields();
+        form.setFields({
+          fieldName: { value: getRandomLetters(6) }
+        });
+      }
+    }
+  }
+
+  handleOk = () => {
+    const { form, editingRecord, showModals } = this.props;
+    const isEdit = /edit/.test(showModals);
     form.validateFields((err, values) => {
       if (err) return;
       const newVal = processFormValues(values, editingRecord, isEdit);
-      onOk(newVal, form.resetFields.bind(form));
+      this.props.onOk(newVal, () => {});
     });
-  }
-  function handleCancel() {
-    form.resetFields();
-    onCancel();
-  }
+  };
 
-  const isEdit = /edit/.test(showModals);
-  const title = isEdit ? '编辑字段' : '新增字段';
-  return (
-    <Modal title={title}
-           visible={/edit|add/.test(showModals)}
-           onOk={handleOk}
-           confirmLoading={modalPending}
-           onCancel={handleCancel}>
-      <FieldForm form={form} isEdit={isEdit} entityFields={entityFields} entityId={entityId} />
-    </Modal>
-  );
+  handleCancel = () => {
+    this.props.onCancel();
+  };
+
+  render() {
+    const { form, showModals, modalPending, entityFields, entityId } = this.props;
+    const isEdit = /edit/.test(showModals);
+    const title = isEdit ? '编辑字段' : '新增字段';
+
+    return (
+      <Modal
+        title={title}
+        visible={/edit|add/.test(showModals)}
+        onOk={this.handleOk}
+        confirmLoading={modalPending}
+        onCancel={this.handleCancel}
+      >
+        <FieldForm form={form} isEdit={isEdit} entityFields={entityFields} entityId={entityId} />
+      </Modal>
+    );
+  }
 }
-FieldFormModal.propTypes = {
-  showModals: React.PropTypes.string,
-  editingRecord: React.PropTypes.object,
-  onOk: React.PropTypes.func.isRequired,
-  onCancel: React.PropTypes.func.isRequired,
-  modalPending: React.PropTypes.bool,
-  entityFields: React.PropTypes.array.isRequired
-};
 
-export default Form.create({
-  // 没做双向绑定，改变表单值将不会触发此函数，
-  // 只做初始化用，return的值会更新到form对象下
-  mapPropsToFields: ({ showModals, editingRecord: record }) => {
-    if (!/edit/.test(showModals)) {
-      return {
-        fieldName: { value: getRandomLetters(6) }
-      };
-    }
-
-    const ret = {};
-    const fieldConfig = record.fieldConfig;
-    Object.keys(record).forEach(key => {
-      ret[key] = { value: record[key] };
-    });
-    // 将fieldConfig的属性挂到fields下，避免嵌套
-    if (fieldConfig) {
-      Object.keys(fieldConfig).forEach(key => {
-        ret[key] = { value: fieldConfig[key] };
-      });
-    }
-    delete ret.fieldConfig;
-    return ret;
-  }
-})(FieldFormModal);
+export default Form.create()(FieldFormModal);

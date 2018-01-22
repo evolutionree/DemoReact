@@ -18,40 +18,26 @@ class Form extends Component {
     super(props);
     this.state = {
       model: this.props.model,
-      updateFocus: false
+      focusForm: this.props.isOpenPage
     };
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      model: nextProps.model
+      model: nextProps.model,
+      focusForm: this.props.isOpenPage !== nextProps.isOpenPage
     });
-
-    if (JSON.stringify(this.state.model) !== JSON.stringify(nextProps.model)) {
-      this.setState({
-        updateFocus: true
-      });
-    }
   }
 
   componentDidMount() {
-    if (this.state.model && this.state.model instanceof Array && this.state.model.length > 0) {
-      setTimeout(() => {
-        try {
-          this.refs[this.state.model[0].name].refs.wrappedInstance.inputFocus();
-        } catch(e) {}
-      }, 3000);
-    }
+
   }
 
   componentDidUpdate() {
-    if (this.state.updateFocus) {
+    if (this.state.focusForm) {
       if (this.state.model && this.state.model instanceof Array && this.state.model.length > 0) {
         this.refs[this.state.model[0].name].refs.wrappedInstance.inputFocus();
       }
-      this.setState({
-        updateFocus: false
-      });
     }
   }
 

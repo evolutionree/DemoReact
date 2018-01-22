@@ -327,7 +327,7 @@ export default {
           entityname,
           fields: data.entityfieldpros
         }];
-        if (relentityid) {
+        if (relentityid && relentityname) {
           const { data: data2 } = yield call(queryFields, relentityid);
           flowEntities.push({
             entityid: relentityid,

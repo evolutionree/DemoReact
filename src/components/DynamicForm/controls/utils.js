@@ -1,28 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Input, message } from 'antd';
 import classnames from 'classnames';
-
-function addSeparator(val) {
-  if (!val) return val;
-
-  let arr = (val + '').split('.');
-  let intStr = arr[0].replace(/^0+/g, '');
-  intStr = intStr || '0';
-  let intArr = intStr.split('').reverse();
-  let intFormatted = '';
-  intArr.forEach(function(n, index) {
-      if (index % 3 === 0 && index !== 0) {
-          intFormatted = ',' + intFormatted;
-      }
-      intFormatted = n + intFormatted;
-  });
-
-  if (arr[1]) {
-      return intFormatted + '.' + arr[1];
-  } else {
-      return intFormatted;
-  }
-}
+import { addSeparator } from '../../../utils';
 
 export function createNormalInput(type, options) {
   return class InputComponent extends Component {

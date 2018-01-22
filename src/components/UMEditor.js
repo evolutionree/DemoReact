@@ -9,13 +9,17 @@ class RichEditorInForm extends React.Component {
   static propTypes = {
     initialValue: React.PropTypes.string,
     onChange: React.PropTypes.func,
+    onBlur: React.PropTypes.func,
     useImageBase64: React.PropTypes.bool,
     loading: React.PropTypes.bool,
-    token: React.PropTypes.string
+    token: React.PropTypes.string,
+    mode: React.PropTypes.oneOf(['normal', 'simple'])
   };
   static defaultProps = {
+    mode: 'normal',
     useImageBase64: false,
-    style: { width: '100%', height: '500px' }
+    style: { width: '100%', height: '500px' },
+    loading: false
   };
 
   editor = null;
@@ -28,7 +32,30 @@ class RichEditorInForm extends React.Component {
   }
 
   componentDidMount() {
-
+    let conf = {
+      x_img_base64: this.props.useImageBase64
+    };
+    if (this.props.mode === 'simple') {
+      conf = {
+        ...conf,
+        toolbars: [
+          [
+            'bold', 'italic', 'underline', '|',
+            'fontfamily', 'fontsize', 'forecolor', 'backcolor', '|',
+            'justifyleft', 'justifycenter', 'justifyright', '|',
+            'insertorderedlist', 'insertunorderedlist'
+          ]
+        ]
+      }
+    }
+    const editor = this.editor = UM.getEditor(this.state.id, conf);
+    this.onEditorReady && this.onEditorReady();
+    editor.addListener('contentChange', () => {
+      this.props.onChange && this.props.onChange(editor.getContent());
+    });
+    editor.addListener('blur', () => {
+      this.props.onBlur && this.props.onBlur();
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -65,19 +92,19 @@ class RichEditorInForm extends React.Component {
     }
   };
 
-  onContainerDomReady = (container) => {
-    const editor = this.editor = UM.getEditor(this.state.id, { x_img_base64: this.props.useImageBase64 });
-    this.onEditorReady && this.onEditorReady();
-    editor.addListener('contentChange', () => {
-      this.props.onChange && this.props.onChange(editor.getContent());
-    });
-  };
+  // onContainerDomReady = (container) => {
+  //   const editor = this.editor = UM.getEditor(this.state.id, { x_img_base64: this.props.useImageBase64 });
+  //   this.onEditorReady && this.onEditorReady();
+  //   editor.addListener('contentChange', () => {
+  //     this.props.onChange && this.props.onChange(editor.getContent());
+  //   });
+  // };
 
   render() {
     return (
       <Spin spinning={this.props.loading}>
         <div style={{ lineHeight: 'initial' }}>
-          <script id={this.state.id} name="content" type="text/plain" style={{ ...this.props.style }} ref={this.onContainerDomReady}></script>
+          <script id={this.state.id} name="content" type="text/plain" style={{ ...this.props.style }}> </script>
         </div>
       </Spin>
     );

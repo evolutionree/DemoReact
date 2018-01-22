@@ -39,6 +39,12 @@ class VocationRule extends Component {
     this.setState({
       selectedFuncs: values
     });
+    this.props.dispatch({
+      type: 'vocationRule/putState',
+      payload: {
+        selectedFuncs: values
+      }
+    });
   };
   // getAllHidenFunctions = () => {
   //   const thisAllFuncs = this.state.allFunctions;
@@ -95,8 +101,8 @@ class VocationRule extends Component {
   //   return hiddenFuncs;
   // };
   getAllHidenFunctions = () => {
-    return this.state.allFunctions
-      .filter(item => !_.includes(this.state.selectedFuncs.checked, item.funcid));
+    return this.props.allFunctions
+      .filter(item => !_.includes(this.props.selectedFuncs.checked, item.funcid));
   };
   handleSubmit = () => {
     const hiddenFuncs = this.getAllHidenFunctions();
@@ -108,7 +114,7 @@ class VocationRule extends Component {
       };
     }
       );
-    const { vocationId } = this.state;
+    const { vocationId } = this.props;
     const params = {
       vocationid: vocationId,
       functionjson

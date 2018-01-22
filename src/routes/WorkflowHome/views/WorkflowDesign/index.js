@@ -80,10 +80,10 @@ class WorkflowDesign extends Component {
         strokeWidth: 3,
         stroke: '#b5b5b5'
       },
-      HoverPaintStyle: {
-        strokeWidth: 3,
-        stroke: '#3398db'
-      },
+      // HoverPaintStyle: {
+      //   strokeWidth: 3,
+      //   stroke: '#3398db'
+      // },
       Connector: ['Flowchart', {
         stub: [10, 60],
         midpoint: 0.1,
@@ -100,16 +100,16 @@ class WorkflowDesign extends Component {
           outlineStroke: "white",
           outlineWidth: 2
         },
-        hoverPaintStyle: {
-          fill: "#216477",
-          stroke: "#216477"
-        },
-        connectorHoverStyle: {
-          strokeWidth: 3,
-          stroke: "#216477",
-          outlineWidth: 5,
-          outlineStroke: "white"
-        }
+        // hoverPaintStyle: {
+        //   fill: "#216477",
+        //   stroke: "#216477"
+        // },
+        // connectorHoverStyle: {
+        //   strokeWidth: 3,
+        //   stroke: "#216477",
+        //   outlineWidth: 5,
+        //   outlineStroke: "white"
+        // }
       }],
       EndpointStyle: {
         fill: 'transparent',
@@ -120,16 +120,16 @@ class WorkflowDesign extends Component {
           outlineStroke: "white",
           outlineWidth: 2
         },
-        hoverPaintStyle: {
-          fill: "#216477",
-          stroke: "#216477"
-        },
-        connectorHoverStyle: {
-          strokeWidth: 3,
-          stroke: "#216477",
-          outlineWidth: 5,
-          outlineStroke: "white"
-        }
+        // hoverPaintStyle: {
+        //   fill: "#216477",
+        //   stroke: "#216477"
+        // },
+        // connectorHoverStyle: {
+        //   strokeWidth: 3,
+        //   stroke: "#216477",
+        //   outlineWidth: 5,
+        //   outlineStroke: "white"
+        // }
       },
       ConnectionsDetachable: false,
       ConnectionOverlays: [
@@ -150,7 +150,12 @@ class WorkflowDesign extends Component {
             return this.createPathLabel(component);
           },
           location: -50,
-          id: 'branchCustomLabel'
+          id: 'branchCustomLabel',
+          events: {
+            click: () => {
+              // debugger;
+            }
+          }
         }]
       ]
     };
@@ -164,17 +169,17 @@ class WorkflowDesign extends Component {
     const isBranch = flowPaths.some(path => path.from === fromNodeId && path.to !== toNodeId);
 
     const customElem = document.createElement('div');
+    customElem.className = 'branch-label';
 
     if (isBranch) {
       // TODO 开启分支条件配置
       const styl = {
-        display: 'inline-block',
         paddingBottom: '20px',
         fontSize: '12px',
         cursor: 'pointer'
       };
       ReactDom.render(
-        <span style={styl} onClick={this.editBranchRule.bind(this, fromNodeId, toNodeId)}>
+        <span style={styl} className="branch-label-span" onClick={this.editBranchRule.bind(this, fromNodeId, toNodeId)}>
           <Icon type="edit" />
           <span>分支条件</span>
         </span>,
@@ -192,6 +197,9 @@ class WorkflowDesign extends Component {
 
   onContainerReady = (elemContainer) => {
     const jspInstance = jsPlumb.getInstance({ ...this.getJspConfig(), Container: elemContainer });
+    jspInstance.bind('click', (connInfo, originalEvent) => {
+      // debugger
+    });
     jspInstance.bind('dblclick', (connInfo, originalEvent) => {
       this.props.userDisConnectNode(connInfo);
       // debugger
@@ -239,11 +247,28 @@ class WorkflowDesign extends Component {
     });
   };
 
+  onClickContainer = (event) => {
+    if (event.target.className === styles.flowcontainer) {
+      const jsp = this.state.jspInstance;
+      jsp.select().each(conn => {
+        const connector = conn.getConnector();
+        connector.canvas.classList.remove('connector-active');
+
+        const overlays = conn.getOverlays();
+        const branchLabel = overlays.branchCustomLabel;
+        if (branchLabel) {
+          branchLabel.canvas.classList.remove('branch-label-active');
+        }
+      });
+    }
+    // debugger;
+  };
+
   render() {
     const { flowSteps, flowPaths } = this.props;
     const { jspInstance } = this.state;
     return (
-      <div style={{ position: 'relative' }}>
+      <div style={{ position: 'relative' }} onClick={this.onClickContainer}>
         <FlowContainer onDomReady={this.onContainerReady}>
           {jspInstance ? (
             <div>

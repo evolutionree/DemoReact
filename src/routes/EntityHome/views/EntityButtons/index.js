@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Row, Col, Icon, Button, Menu, Modal } from 'antd';
+import { Row, Col, Icon, Button, Menu, Modal, message } from 'antd';
 import { SortableContainer, SortableElement, SortableHandle, arrayMove } from 'react-sortable-hoc';
 import classnames from 'classnames';
 // import Page from '../../../../components/Page';
@@ -49,11 +49,22 @@ function EntityButtons({
     reorderButtons(newOrderButtons);
   }
   function handleSelect(event) {
+    window.formRef.resetFields();
     selectButton(event.key);
   }
   function handleDel(id, event) {
     event.stopPropagation();
     delButton(id);
+  }
+  const addBtn = () => {
+    for (let i = 0; i < buttons.length; i++) {
+      if (/^__/.test(buttons[i].id)) {
+        message.error('请先保存新增的按钮');
+        return false;
+      }
+    }
+    window.formRef.resetFields();
+    createButton();
   }
 
   return (
@@ -61,7 +72,7 @@ function EntityButtons({
       <Row gutter={10}>
         <Col span={6}>
           <div>
-            <Button onClick={createButton} style={{ marginBottom: '10px' }}>添加按钮</Button>
+            <Button onClick={addBtn} style={{ marginBottom: '10px' }}>添加按钮</Button>
             <SortableMenu
               className={styles.btnlist}
               onSortEnd={handleSortEnd}
@@ -90,6 +101,7 @@ function EntityButtons({
         <Col span={18}>
           <div style={{ maxWidth: '580px' }}>
             <EntityButtonForm
+              ref={(ref) => { window.formRef = ref }}
               value={formValue}
               onChange={onEditingDataChange}
               onSubmit={saveButton}
@@ -122,11 +134,12 @@ export default connect(
         Modal.confirm({
           title: '确定删除该按钮吗',
           onOk() {
+            window.formRef.resetFields();
             dispatch({ type: 'entityButtons/delButton', payload: id });
           }
         });
       },
-      devDel() { //用户新增按钮时，字段extraData(json字符串) 经常填入的为非JSON格式，导致返回数据非JSON格式字符串，前端解析出错， 增加一个隐藏的按钮，便于前端删数据，让用户重新新增
+      devDel() { //用户新增按钮时，字段extraData(json字符串) 经常填入的为非JSON格式，导致返回数据非JSON格式字符串，前端解析出错， 增加一个隐藏的按钮，便于前端删数据(隐藏功能，不对用户开放)，让用户重新新增
         const id = prompt('请输入按钮id', '');
         if (id != null && id !== '') {
           Modal.confirm({

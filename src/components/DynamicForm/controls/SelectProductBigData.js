@@ -8,7 +8,6 @@ import connectBasicData from "../../../models/connectBasicData";
 
 class SelectProductBigData extends React.Component {
   static propTypes = {
-    productsRaw: PropTypes.shape({ productserial: PropTypes.array, products: PropTypes.array }),
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     value_name: PropTypes.string,
     onChange: PropTypes.func.isRequired,
@@ -18,28 +17,26 @@ class SelectProductBigData extends React.Component {
     placeholder: PropTypes.string
   };
   static defaultProps = {
-    productsRaw: { productserial: [], products: [] }
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      modalVisible: false
+      modalVisible: false,
+      valMap: {}
     };
-    this.setValue = this.ensureDataReady(this.setValue);
-    this.setValueByName = this.ensureDataReady(this.setValueByName);
-    if (props.productsRaw.products.length) {
-      this.setDataReady();
-    }
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!this.props.productsRaw.products.length && nextProps.productsRaw.products.length) {
-      setTimeout(this.setDataReady, 0);
+    if (this.props.value_name !== nextProps.value_name) {
+      const arrVal = nextProps.value.split(',');
+      const arrName = nextProps.value_name;
+      let valMap = { ...this.state.valMap };
+      arrVal.forEach((val, index) => {
+        valMap[val] = arrName[index];
+      });
+      this.setState({ valMap });
     }
-    // if (nextProps.value !== this.props.value) {
-    //   setTimeout(blurByHelper, 10);
-    // }
   }
 
   setValue = val => {
@@ -73,30 +70,21 @@ class SelectProductBigData extends React.Component {
     this.props.onChange(validVals);
   };
 
-  setDataReady = () => {
-    this._dataReady = true;
-    if (this._onDataReady) {
-      this._onDataReady.forEach(fn => fn());
-      this._onDataReady = [];
-    }
-  };
-  ensureDataReady = callback => {
-    return (...args) => {
-      if (this._dataReady) return callback(...args);
-      if (!this._onDataReady) this._onDataReady = [];
-      this._onDataReady.push(callback.bind(this, ...args));
-    };
-  };
-
   parseValue = () => {
-    const { multiple, value, value_name, productsRaw } = this.props;
-    let text = value;
-    let array = value ? value.split(',') : [];
-    const allProductData = this.props.productsRaw.products;
-    text = array.map(id => _.find(allProductData, ['productid', id]))
-      .filter(i => !!i)
-      .map(obj => obj.productname)
-      .join(',');
+    // const { multiple, value, value_name, productsRaw } = this.props;
+    // let text = value;
+    // let array = value ? value.split(',') : [];
+    // const allProductData = this.props.productsRaw.products;
+    // text = array.map(id => _.find(allProductData, ['productid', id]))
+    //   .filter(i => !!i)
+    //   .map(obj => obj.productname)
+    //   .join(',');
+    // return { text, array };
+    const { value } = this.props;
+    const { valMap } = this.state;
+    let arrVal = value ? value.split(',') : [];
+    let array = arrVal.map(val => ({ productid: val, productname: valMap[val] }));
+    let text = array.map(item =>item.productname).join(',');
     return { text, array };
   };
 
@@ -114,7 +102,13 @@ class SelectProductBigData extends React.Component {
 
   handleOk = array => {
     this.hideModal();
-    this.props.onChange(array.join(','));
+    let valMap = { ...this.state.valMap };
+    array.forEach(item => {
+      valMap[item.productid] = item.productname;
+    });
+    this.setState({ valMap }, () => {
+      this.props.onChange(array.map(item => item.productid).join(','));
+    });
   };
 
   iconClearHandler = (e) => {
@@ -156,4 +150,5 @@ class SelectProductBigData extends React.Component {
   }
 }
 
-export default connectBasicData('productsRaw', SelectProductBigData);
+// export default connectBasicData('productsRaw', SelectProductBigData);
+export default SelectProductBigData;

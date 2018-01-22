@@ -122,11 +122,12 @@ class EntcommEditModal extends Component {
   };
 
   render() {
-    const { visible, footer } = this.props;
+    const { visible, footer, entityId } = this.props;
     const { typeId, protocol, formData, confirmLoading } = this.state;
 
     const hasTable = protocol.some(field => {
-      return field.controltype === 24 && (field.fieldconfig.isVisible === 1);
+      return (field.controltype === 24 && field.fieldconfig.isVisible === 1)
+        || (field.controltype === 5 && field.fieldconfig.textType === 1 && field.fieldconfig.isVisible === 1);
     });
 
     return (
@@ -140,6 +141,7 @@ class EntcommEditModal extends Component {
         key={this.state.key}
       >
         <DynamicFormEdit
+          entityId={entityId}
           entityTypeId={typeId}
           fields={protocol}
           value={formData}

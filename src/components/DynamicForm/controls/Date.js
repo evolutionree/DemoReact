@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { DatePicker } from 'antd';
 import moment from 'moment';
 import DateTimeRange from "./DateTimeRange";
+import { DefaultTextView } from '../DynamicFieldView';
 
 function toMomentFormat(format) {
   const defaultFormat = 'YYYY-MM-DD';
@@ -37,6 +38,17 @@ class Date extends Component {
     );
   }
 }
+
+Date.View = (props) => {
+  const { value, format } = props;
+  if (value) {
+    const mFormat = toMomentFormat(format);
+    const text = moment(value, 'YYYY-MM-DD').format(mFormat);
+    return <div style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}>{text}</div>;
+  } else {
+    return <DefaultTextView {...props} />;
+  }
+};
 
 Date.AdvanceSearch = DateTimeRange;
 

@@ -1,8 +1,10 @@
 import { message } from 'antd';
-import { routerRedux } from 'dva/router';
+import { routerRedux, hashHistory } from 'dva/router';
 import storage from '../utils/storage';
 import { subscribe as subscribeRequest } from '../utils/request';
 import { queryUserInfo } from '../services/structure';
+
+
 import {
   modifyPassword,
   modifyAvatar,
@@ -99,11 +101,42 @@ export default {
       yield call(logout);
       // yield put(routerRedux.push({ pathname: '/login' }));
       location.href = '/login.html';
+      storage.removeLocalItem('defaultPath');
     },
     *fetchGlobalMenus(action, { call, put }) {
       try {
         const type = /admin/.test(location.pathname) ? 1 : 0;
         const result = yield call(getGlobalMenus, type);
+
+        if (!storage.getLocalItem('defaultPath')) {
+          let defaultPath = '';
+          let findFirstPath = true;
+          function getDefaultPath(menus) {
+            for (let i = 0; i < menus.length; i++) {
+              if (menus[i].children && menus[i].children.length > 0) {
+                getDefaultPath(menus[i].children);
+              } else {
+                if (menus[i].isDefaultPage * 1 === 1) {
+                  defaultPath = menus[i].path;
+                  break;
+                }
+                if (findFirstPath && menus[i].path) {
+                  defaultPath = menus[i].path;
+                  findFirstPath = false;
+                }
+              }
+            }
+            return defaultPath;
+          }
+
+          const firstPagePath = getDefaultPath(result.data);
+          if (firstPagePath) {
+            hashHistory.push(firstPagePath);
+            storage.setLocalItem('defaultPath', true);
+          } else {
+            hashHistory.push('/nopermission');
+          }
+        }
         yield put({ type: 'putState', payload: { menus: result.data } });
       } catch (e) {
         console.error(e);
@@ -114,7 +147,6 @@ export default {
       const result = yield call(queryUserInfo);
       const { user, role } = result.data;
       user[0].role = role;
-      console.log('fetchUserInfo', user);
       yield put({ type: 'putState', payload: { user: user[0] } });
     },
     *clearServerCache(action, { call }) {

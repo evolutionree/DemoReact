@@ -51,6 +51,10 @@ class MailContent extends Component {
   };
 
   showMailDetail = () => {
+    if (this.props.data.ctype === 1005) {
+      this.props.openEditMail('draft', [this.props.data], this.props.data.mailid);
+      return;
+    }
     this.props.onShowDetail(this.props.data);
   };
 
@@ -72,7 +76,7 @@ class MailContent extends Component {
   render() {
     const { isPreview, data } = this.props;
     if (!data) return null;
-    const { title, sender, receivers, ccers, bccers, receivedtime,
+    const { title, sender, receivers, ccers, bccers, receivedtime, ctype,
       senttime, attachinfo, summary, mailbody, attachcount, istag, catalogtype } = data;
     let mailtime = receivedtime;
     if (receivedtime === '0001-01-01 00:00:00' || !receivedtime) {
@@ -133,7 +137,7 @@ class MailContent extends Component {
             {isPreview && (
               <p style={{ display: 'inline-block', marginRight: '20px' }}>
                 <ImgIcon name="mail-read" />
-                <a href="javascript:;" onClick={this.showMailDetail}>邮件正文</a>
+                <a href="javascript:;" onClick={this.showMailDetail}>{ctype === 1005 ? '编辑邮件' : '邮件正文'}</a>
               </p>
             )}
             {attachcount > 0 && (
@@ -181,6 +185,10 @@ export default connect(
     return {
       tagMailsInDetail(tag) {
         dispatch({ type: 'mails/tagMailsInDetail__', payload: tag });
+      },
+      openEditMail(showModalsName, mails, currentMailId) {
+        dispatch({ type: 'mails/putState',
+          payload: { showingPanel: showModalsName, currentMailId: currentMailId, modalMailsData: mails, editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null } });
       }
     };
   }

@@ -137,6 +137,9 @@ class PluginAddModal extends Component {
       // });
       this.props.auditDone(entityId, recordId);
       this.props.done();
+    } else {
+      this.props.auditDone(entityId, recordId);
+      this.props.done();
     }
   };
 
@@ -231,6 +234,7 @@ class PluginAddModal extends Component {
         />
         <EntcommCopyModal
           visible={showCopyModal}
+          entityId={this.props.entityId}
           entityTypes={entityTypes}
           copyData={copyData}
           currentUser={this.props.currentUser}

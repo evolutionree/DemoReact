@@ -41,8 +41,8 @@ class WorkflowEventModal extends Component {
       const beginnode = _.find(funcs, ['steptype', 0]) || {};
       const endnode = _.find(funcs, ['steptype', 1]) || {};
       this.props.form.setFieldsValue({
-        beginnodefunc: beginnode.funcname,
-        endnodefunc: endnode.funcname
+        beginnodefunc: beginnode.funcname || '',
+        endnodefunc: endnode.funcname || ''
       });
     })
   };
