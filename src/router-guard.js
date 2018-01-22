@@ -86,16 +86,22 @@ const matchRoutes = (routes, pathname, /*not public API*/ branch = []) => {
 };
 
 export default (routes) => (nextState, replace, next) => {
-  const { pathname } = nextState.location;
-  const result = matchRoutes(routes, pathname.replace(/^\//, ''));
-  if (result.length) {
-    const { match, route } = result[result.length - 1];
-    const { params, path, url } = match;
-    console.log(
-      `检查页面${pathname}权限, path: ${path}, url: ${url}, params: ${JSON.stringify(params)}`
-    );
+  // const { pathname } = nextState.location;
+  // const result = matchRoutes(routes, pathname.replace(/^\//, ''));
+  // if (result.length) {
+  //   const { match, route } = result[result.length - 1];
+  //   const { params, path, url } = match;
+  //   console.log(
+  //     `检查页面${pathname}权限, path: ${path}, url: ${url}, params: ${JSON.stringify(params)}`
+  //   );
+  //   checkPagePermission({ pageid: path, extradata: { params } }).then(res => {
+  //     if (res) {
+  //       next();
+  //     } else {
+  //       alert('没有权限进入该页面');
+  //     }
+  //   });
+  // } else {
     next();
-  } else {
-    next();
-  }
+  // }
 }
