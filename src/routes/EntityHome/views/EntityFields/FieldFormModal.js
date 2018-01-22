@@ -87,7 +87,7 @@ class FieldFormModal extends Component {
         form.resetFields();
         form.setFields(_.mapValues({
           ...editingRecord,
-          ...editingRecord.fieldConfig,
+          ...(editingRecord.fieldConfig || {}),
           fieldConfig: undefined
         }, val => ({ value: val })), 1000);
       } else {
