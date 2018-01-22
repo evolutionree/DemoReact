@@ -460,6 +460,14 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       };
     };
 
+    getCurrentFormID = () => {
+      return {
+        currentEntityId: this.props.entityId,
+        currentRecId: this.props.value && this.props.value.recid,
+        currentTypeId: this.props.entityTypeId
+      };
+    };
+
     getDefCode = () => {
       // const appDef = 'var app = {};';
       // const appPropsDef = [
