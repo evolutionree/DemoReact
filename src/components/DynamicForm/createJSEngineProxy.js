@@ -38,6 +38,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
   const formType = options.type;
   return class WithJSEngineProxy extends Component {
     static propTypes = {
+      entityId: PropTypes.string, // 若有entityId，则调接口查看是否有初始化js脚本
       entityTypeId: PropTypes.string, // 若有entityTypeId，则调接口查看是否有初始化js脚本
       form: PropTypes.any,
       fields: PropTypes.array,
@@ -53,6 +54,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     globalJSLoading = false;
     globalJSExecuted = false;
     excuteId = 0;
+    isExcutingJS = false;
 
     constructor(props) {
       super(props);
@@ -63,8 +65,8 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     }
 
     componentDidMount() {
-      if (this.props.entityTypeId) {
-        this.fetchGlobalJS(this.props.entityTypeId);
+      if (this.props.entityId) {
+        this.fetchGlobalJS(this.props.entityId);
       }
     }
 
@@ -82,8 +84,8 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
         }
       });
 
-      if (nextProps.entityTypeId !== this.props.entityTypeId) {
-        this.fetchGlobalJS(nextProps.entityTypeId);
+      if (nextProps.entityId !== this.props.entityId) {
+        this.fetchGlobalJS(nextProps.entityId);
       }
 
       this.setJS(nextProps);
@@ -101,6 +103,10 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       //   }
       // });
     }
+
+    validateFields = (opts, callback) => {
+
+    };
 
     setJS = props => {
       const fieldExpandJS = {};
@@ -170,11 +176,17 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       if (!value) {
         switch (controlType) {
           case 1:
+          case 4: // 多选
+          case 5:
           case 8:
           case 9:
           case 10:
           case 11:
           case 12:
+          case 17:
+          case 22:
+          case 28:
+          case 29:
             return '';
           case 6:
           case 7:
@@ -365,6 +377,10 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       }
     };
 
+    setRequired = (fieldName, isRequired) => {
+      this.setFieldConfig(fieldName, { isRequiredJS: isRequired ? 1 : 0 });
+    };
+
     setReadOnly = (fieldName, isReadOnly) => {
       this.setFieldConfig(fieldName, { isReadOnlyJS: isReadOnly ? 1 : 0 });
     };
@@ -392,6 +408,14 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       const instance = this.getFieldComponentInstance(tableFieldName);
       if (instance && instance.setRowFieldVisible) {
         return instance.setRowFieldVisible(columnFieldName, isVisible);
+      }
+    };
+
+    setRowFieldRequired = (tableFieldName, rowIndex, columnFieldName, isRequired) => {
+      if (this.getFieldControlType(tableFieldName) !== 24) return [];
+      const instance = this.getFieldComponentInstance(tableFieldName);
+      if (instance && instance.setRowFieldRequired) {
+        return instance.setRowFieldRequired(columnFieldName, isRequired);
       }
     };
 
@@ -433,6 +457,14 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
         entityid: this.props.refEntity,
         recid: this.props.refRecord,
         entitydetail: this.props.refEntityData
+      };
+    };
+
+    getCurrentFormID = () => {
+      return {
+        currentEntityId: this.props.entityId,
+        currentRecId: this.props.value && this.props.value.recid,
+        currentTypeId: this.props.entityTypeId
       };
     };
 
@@ -482,12 +514,15 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       if (!js) return;
       try {
         this.excuteId += 1;
+        this.isExcutingJS = true;
         console.info(
           `[${logTitle}]excuteJS: ${js && js.replace('/n', '').slice(1, 40)}...`
         );
         // eval(this.getDefCode() + filterJS);
         eval('var app = this;' + js);
+        this.isExcutingJS = false;
       } catch (e) {
+        this.isExcutingJS = false;
         console.error(e);
       }
     };

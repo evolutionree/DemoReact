@@ -16,7 +16,10 @@ function ShowChart({
                      axisDataSource,
                      xseries
                    }) {
-  const colors = ['#3398db', '#7ed321', '#675bba'];
+  if (!dataSource) {
+    return null;
+  }
+  const colors = ['#3398db', '#7ed321', '#675bba', '#61aced', '#ba6f0b', '#77ba07'];
   function transformData(item) {
     const seriesData = item.data;
     let newSeresData = [];
@@ -37,7 +40,7 @@ function ShowChart({
 
   function getScatterXAxisData() {
     let xAsix = [];
-    dataSource && dataSource.map((item) => {
+    dataSource && dataSource instanceof Array && dataSource.map((item) => {
       item.data.map((item2) => {
         xAsix.push(item2[item.xfieldname]);
       });
@@ -123,7 +126,7 @@ function ShowChart({
         if (dataSource && dataSource instanceof Array && dataSource.length > 0) {
           if (keys && keys instanceof Array) {
             for (let i = 0; i < keys.length; i++) {
-              formatstr = formatstr.replace(keys[i], dataSource[obj[0].dataIndex][keys[i].replace(/#/g, '')]);
+              formatstr = formatstr.replace(keys[i], dataSource[obj instanceof Array ? obj[0].dataIndex : obj.dataIndex][keys[i].replace(/#/g, '')]);
             }
           }
         }
@@ -322,6 +325,58 @@ function ShowChart({
           }
         ]
       };
+  }
+  else if (component.commonextinfo.charttype === 4) { //饼图
+    option = {
+      backgroundColor: '#3a3c4f',
+      color: colors,
+      title: {
+        text: component.titleinfo.title,
+        textStyle: {
+          color: '#9b9b9b'
+        }
+      },
+      grid: optionSet.grid,
+      //提示框组件
+      tooltip: {
+        ...optionSet.tooltip,
+        trigger: 'item'
+      },
+      //原生图形元素组件
+      graphic: optionSet.graphic,
+      //工具栏
+      toolbox: optionSet.toolbox,
+      //图例组件
+      legend: {
+        textStyle: {
+          color: '#9b9b9b'
+        },
+        top: 20,
+        formatter: '{name} : ',
+        align: 'right',
+        data: dataSource && dataSource instanceof Array && dataSource.map((dataItem) => {
+          return { name: dataItem[component.commonextinfo.xfieldname], icon: 'roundRect' };
+        })
+      },
+      //系列列表。每个系列通过 type 决定自己的图表类型
+      series: component.commonextinfo.series.map((item, index) => {
+        return {
+          name: item.seriesname,
+          type: item.chartype,
+          radius: '70%',
+          center: ['50%', '55%'],
+          //图形上的文本标签，可用于说明图形的一些数据信息
+          label: {
+            normal: {
+              show: true
+            }
+          },
+          data: dataSource && dataSource instanceof Array && dataSource.map((dataItem) => {
+            return { value: dataItem[item.fieldname], name: dataItem[component.commonextinfo.xfieldname] };
+          })
+        };
+      })
+    };
   } else if (component.commonextinfo.series.length > 0) { //柱状图 折线图
     option = {
       backgroundColor: '#3a3c4f',
@@ -357,7 +412,7 @@ function ShowChart({
           lineStyle: optionSet.axisLineLineStyle
         },
         ...optionSet.asisLineAndasisLabel,
-        data: dataSource && dataSource.map((item) => {
+        data: dataSource && dataSource instanceof Array && dataSource.map((item) => {
           return item[component.commonextinfo.xfieldname];
         })
       },
@@ -443,7 +498,7 @@ function ShowChart({
               }
             }
           },
-          data: dataSource && dataSource.map((dataItem) => {
+          data: dataSource && dataSource instanceof Array && dataSource.map((dataItem) => {
             return dataItem[item.fieldname];
           })
         };
@@ -571,7 +626,7 @@ function ShowChart({
           }
         }
       },
-      series: dataSource ? dataSource.map((item, index) => {
+      series: dataSource ? dataSource instanceof Array && dataSource.map((item, index) => {
         return {
           name: item.seriename,
           data: transformData(item),
@@ -598,8 +653,6 @@ function ShowChart({
       }) : []
     };
   }
-
-
   return (
     <EchartsReact
       echarts={echarts}

@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { queryDepartmentData } from '../services/structure';
 import { queryRegionData, queryDictionaries, queryProductTree, queryProductRaw } from '../services/basicdata';
 import { queryRoles } from '../services/role';
+import { getSeries } from "../services/products";
 
 const PENDING = -1;
 const EXPIRED_DURING = 3000; // 数据过期时间
@@ -20,6 +21,7 @@ export default {
     regionData: [],
     dictionaryData: {},
     products: [],
+    productSerial: [],
     dataTimestamp: {}
   },
   subscriptions: {
@@ -122,6 +124,20 @@ export default {
         payload: {
           data,
           key: 'productsRaw'
+        }
+      });
+    },
+    *fetchProductSerial(action, { call, put }) {
+      const { data } = yield call(getSeries, {
+        ProductsetId: '',
+        Direction: 'DOWNER',
+        IsGetDisable: 0
+      });
+      yield put({
+        type: 'receiveData',
+        payload: {
+          data,
+          key: 'productSerial'
         }
       });
     }

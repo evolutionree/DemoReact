@@ -41,7 +41,7 @@ function FieldForm({ form, isEdit, entityFields, entityId }) {
   const isSystemControl = (controlType * 1 >= 1000 || controlType * 1 === 30);
   const { relentityid } = getFieldsValue(['relentityid']);
   return (
-    <Form horizontal>
+    <Form layout="horizontal">
       <FormItem label="选择字段格式" style={isSystemControl ? { display: 'none' } : {}}>
         {getFieldDecorator('controlType', {
           initialValue: '1',

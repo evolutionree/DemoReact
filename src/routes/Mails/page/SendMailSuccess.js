@@ -32,6 +32,8 @@ class SendMailSuccess extends Component {
 
   closePage() {
     this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: '' } });
+    this.props.dispatch({ type: 'mails/reloadCatalogTree' });
+    this.props.dispatch({ type: 'mails/queryMailList' });
   }
 
   openEditEmailPanel() {

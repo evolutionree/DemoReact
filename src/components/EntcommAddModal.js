@@ -219,7 +219,7 @@ class EntcommAddModal extends Component {
   };
 
   render() {
-    const { entityTypes, footer, refRecord } = this.props;
+    const { entityTypes, footer, refRecord, entityId } = this.props;
     const {
       showTypeModal,
       showFormModal,
@@ -230,7 +230,8 @@ class EntcommAddModal extends Component {
     } = this.state;
 
     const hasTable = protocolFields.some(field => {
-      return field.controltype === 24 && (field.fieldconfig.isVisible === 1);
+      return (field.controltype === 24 && field.fieldconfig.isVisible === 1)
+        || (field.controltype === 5 && field.fieldconfig.textType === 1 && field.fieldconfig.isVisible === 1);
     });
 
     return (
@@ -267,6 +268,7 @@ class EntcommAddModal extends Component {
           width={hasTable ? 900 : 550}
         >
           <DynamicFormAdd
+            entityId={entityId}
             entityTypeId={selectedEntityType}
             fields={protocolFields}
             value={formData}

@@ -140,6 +140,12 @@ class FlowBranchConditionModal extends Component {
 
   render() {
     const flowEnities = this.props.flowEntities.map(item => ({ entityId: item.entityid, entityName: item.entityname }));
+    let entityId;
+    if (flowEnities.length === 1) {
+      entityId = flowEnities[0].entityId;
+    } else if (flowEnities.length > 1) {
+      entityId = flowEnities[1].entityId;
+    }
     return (
       <Modal
         title="设置分支条件"
@@ -152,6 +158,7 @@ class FlowBranchConditionModal extends Component {
         {!this.state.loading && this.state.allFields.length !== 0 && (
           <FilterConfigBoard
             isWorkflow
+            entityId={entityId}
             flowEnities={flowEnities}
             ref={inst => { this.filterConfigBoard = inst; }}
             allFields={this.state.allFields}

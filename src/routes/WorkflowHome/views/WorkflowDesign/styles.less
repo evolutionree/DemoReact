@@ -9,16 +9,58 @@
 
   :global {
     .jtk-connector {
-      z-index: 100;
-    }
-    .jtk-endpoint {
       z-index: 110;
     }
-    .jtk-endpoint--source {
-      z-index: 111;
+    .jtk-connector.connector-active path {
+      stroke: #3398db;
     }
-    .jtk-overlay {
+    .jtk-connector.connector-active {
+      z-index: 210;
+    }
+    .jtk-connector:hover path {
+      stroke: #3398db;
+      cursor: pointer;
+    }
+    .jtk-connector:hover {
+      z-index: 210;
+    }
+
+    .jtk-endpoint {
       z-index: 120;
+      border: 1px solid transparent;
+      display: none;
+    }
+    .jtk-endpoint--source {
+      z-index: 121;
+      display: block;
+    }
+    .jtk-endpoint.active {
+      //border: 1px dotted green;
+      display: block;
+    }
+    .jtk-endpoint.hover {
+      border: 1px dotted red;
+    }
+    .jtk-endpoint.hover circle {
+      fill: #2d7514;
+    }
+
+    .jtk-overlay {
+      z-index: 100;
+    }
+    .jtk-overlay .branch-label-span {
+      display: block;
+    }
+    .jtk-overlay.jtk-hover .branch-label-span {
+      display: block;
+      color: #3398db;
+    }
+    .jtk-overlay.branch-label-active .branch-label-span {
+      display: block;
+      color: #3398db;
+    }
+    .jtk-overlay.branch-label-active {
+      z-index: 200;
     }
   }
 }

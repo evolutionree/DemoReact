@@ -185,6 +185,7 @@ class WorkflowCaseModal extends Component {
     };
     submitCaseItem(params).then(result => {
       this.setState({ modalPending: false });
+      message.success('提交成功');
       this.props.onDone(result);
     }, err => {
       message.error(err.message || '关闭流程失败');

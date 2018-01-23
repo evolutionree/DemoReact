@@ -82,6 +82,7 @@ class EntcommDetailModal extends Component {
         key={this.state.key}
       >
         <DynamicFormView
+          entityId={entityId}
           entityTypeId={data.rectype || entityId}
           fields={protocol}
           value={data}

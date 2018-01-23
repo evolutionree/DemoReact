@@ -39,7 +39,8 @@ class AffairDetail extends Component {
       });
     };
 
-    const { columnConfigFormProtocols } = this.props;
+    const { columnConfigFormProtocols, selectedOperate } = this.props;
+    if (selectedOperate !== 1) return true;
     const formArray = _.map(columnConfigFormProtocols, (val, key) => ({ entityId: key, protocols: val }));
     let result = true;
     validateNext();
@@ -69,7 +70,7 @@ class AffairDetail extends Component {
     if (this.props.selectedOperate === undefined) {
       return message.error('请选择操作');
     }
-    if (!this.validateColumnConfigForms()) return message.error('请检查表单');
+    if (this.props.selectedOperate === 1 && !this.validateColumnConfigForms()) return message.error('请检查表单');
     this.props.submitAuditCase();
   };
   onSubmitAudit = () => {
@@ -201,6 +202,7 @@ class AffairDetail extends Component {
                 <DynamicFormAdd
                   horizontal
                   key={item.entityId}
+                  entityId={item.entityId}
                   entityTypeId={item.entityId}
                   fields={item.protocols}
                   value={columnConfigForms[item.entityId] || {}}
@@ -253,6 +255,7 @@ class AffairDetail extends Component {
             <div>
               {editing ? (
                 <DynamicFormEdit
+                  entityId={flowDetail.entityid}
                   entityTypeId={entityDetail.rectype || flowDetail.entityid}
                   fields={entityEditProtocol}
                   value={editData}
@@ -261,6 +264,7 @@ class AffairDetail extends Component {
                 />
               ) : (
                 <DynamicFormView
+                  entityId={flowDetail.entityid}
                   entityTypeId={entityDetail.rectype || flowDetail.entityid}
                   fields={entityDetailProtocol}
                   value={entityDetail}
@@ -285,6 +289,7 @@ class AffairDetail extends Component {
           </div>
           <div className={styles.auditform}>
             <DynamicFormView
+              entityId={relentityDetail && relentityDetail.rectype}
               entityTypeId={relentityDetail && relentityDetail.rectype}
               fields={relentityDetailProtocol}
               value={relentityDetail}

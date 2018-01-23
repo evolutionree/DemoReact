@@ -232,6 +232,19 @@ class RelTable extends Component {
     }
   };
 
+  setRowFieldRequired = (fieldName, isRequired) => {
+    const newFields = [...this.state.fields];
+    const fieldIndex = _.findIndex(newFields, ['fieldname', fieldName]);
+    if (fieldIndex !== -1) {
+      const field = this.state.fields[fieldIndex];
+      field.fieldconfig = {
+        ...field.fieldconfig,
+        isRequiredJS: isRequired ? 1 : 0
+      };
+      this.setState({ fields: newFields });
+    }
+  };
+
 
   // 渲染表格列头
   renderTableHeader = () => {

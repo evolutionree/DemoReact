@@ -108,6 +108,7 @@ class EditMailPanel extends Component {
       height: document.body.clientHeight - 60 - 10,
       isSign: false, //是否 设置签名
       sendLoading: false, //发邮件状态  防止邮件发送重复提交
+      saveDraftLoading: false //保存草稿的按钮状态  防止重复提交
     };
   }
 
@@ -161,7 +162,8 @@ class EditMailPanel extends Component {
         fileUploadLimit: false,
         fileTypeUploadLimit: false,
         isSign: false,
-        sendLoading: false
+        sendLoading: false,
+        saveDraftLoading: false
       });
     }
   }
@@ -763,8 +765,6 @@ class EditMailPanel extends Component {
         });
       } else if (data.flag === 1) { //校验通过  邮件发送成功
         this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: 'sendMailSuccess', editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null } });
-        this.props.dispatch({ type: 'mails/reloadCatalogTree' });
-        this.props.dispatch({ type: 'mails/queryMailList' });
       }
     }).catch((reson) => {
       message.error(reson.message);
@@ -779,12 +779,21 @@ class EditMailPanel extends Component {
     if (this.props.currentMailId) {
       submitData.mailId = this.props.currentMailId;
     }
+    this.setState({
+      saveDraftLoading: true
+    });
     savedraft(submitData).then((result) => { //保存草稿箱
       message.success('草稿保存成功');
       const { data } = result;
       this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: 'draft', currentMailId: data } }); //保存草稿箱后要更新当前邮件Id  下次保存草稿就是更新数据
+      this.setState({
+        saveDraftLoading: false
+      });
     }).catch((reson) => {
       message.error(reson.message);
+      this.setState({
+        saveDraftLoading: false
+      });
     });
   }
 
@@ -1008,7 +1017,7 @@ class EditMailPanel extends Component {
           <div>
             <Toolbar style={{ paddingTop: '10px', paddingLeft: '10px' }}>
               <Button onClick={this.sendMail.bind(this)} loading={this.state.sendLoading}>发送</Button>
-              <Button onClick={this.saveDraft.bind(this)}>存草稿</Button>
+              <Button onClick={this.saveDraft.bind(this)} loading={this.state.saveDraftLoading}>存草稿</Button>
               <Button className="grayBtn" onClick={this.closePanel.bind(this)}>关闭</Button>
               {
                 this.state.dynamicOperateBtn && this.state.dynamicOperateBtn instanceof Array && this.state.dynamicOperateBtn.map((item, index) => {
@@ -1020,7 +1029,7 @@ class EditMailPanel extends Component {
             </Toolbar>
           </div>
           <div ref='domListenRef'>
-            <Form model={formModel} ref={ref => this.FormRef = ref} />
+            <Form model={formModel} ref={ref => this.FormRef = ref} isOpenPage={visible} />
             <div ref='uploadList'>
               <Upload {...props}>
                 <div className={Styles.attachmentWrap}>

@@ -92,7 +92,7 @@ class DynamicFormBase extends Component {
   generateValidateRules = (field) => {
     const rules = [];
     const fieldConfig = field.fieldconfig;
-    const { maxLength, regExp } = fieldConfig;
+    const { maxLength, regExp, isRequiredJS } = fieldConfig;
     if (regExp) {
       rules.push({
         pattern: new RegExp(regExp),
@@ -102,14 +102,14 @@ class DynamicFormBase extends Component {
     if (maxLength) {
       rules.push({
         validator(rule, value, callback) {
-          if (value && value.length > maxLength) {
+          if (value && (value + '').length > maxLength) {
             return callback('最大长度为' + maxLength);
           }
           callback();
         }
       });
     }
-    if (field.isrequire) {
+    if (field.isrequire || isRequiredJS) {
       rules.push({
         validator(rule, value, callback) {
           const isEmptyArray = Array.isArray(value) && !value.length;
@@ -254,6 +254,7 @@ class DynamicFormBase extends Component {
 
   renderFieldControlWrapper = field => {
     const WrapFormItem = field.controltype === 24 ? CustomFormItem : FormItem; // 表格控件特殊处理
+    const fieldConfig = field.fieldconfig || {};
     const cls = classnames([
       'dynamic-form-field',
       'dynamic-form-field-' + field.controltype
@@ -263,7 +264,7 @@ class DynamicFormBase extends Component {
         key={field.fieldname}
         label={field.displayname}
         colon={false}
-        required={field.isrequire}
+        required={field.isrequire || fieldConfig.isRequiredJS}
         className={cls}
         {...this.getFormItemLayout(field.fieldname)}
       >

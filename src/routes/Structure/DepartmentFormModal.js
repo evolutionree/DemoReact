@@ -11,7 +11,8 @@ const Option = Select.Option;
 function DepartmentFormModal({
   form: {
     getFieldDecorator,
-    validateFields
+    validateFields,
+    getFieldValue
   },
   showModals,
   currentDept,
@@ -37,6 +38,7 @@ function DepartmentFormModal({
     });
   }
   const isEdit = /editDept/.test(showModals);
+  const designateFilterNodes = (isEdit && currentDept) ? [currentDept.deptname] : [];
   return (
     <Modal
       title={isEdit ? '编辑部门' : '新增部门'}
@@ -54,9 +56,18 @@ function DepartmentFormModal({
       </FormItem>
       <FormItem label="上级部门">
         {getFieldDecorator('pdeptid', {
-          rules: [{ required: true, message: '请选择上级部门' }]
+          rules: [
+            { required: true, message: '请选择上级部门' },
+            { validator: (rule, val, callback) => {
+              if (isEdit && val === currentDept.deptid) {
+                callback('不能选择当前部门');
+              } else {
+                callback();
+              }
+            } }
+          ]
         })(
-          <DepartmentSelect placeholder="上级部门" width="100%" />
+          <DepartmentSelect disabled={(isEdit && currentDept) ? currentDept.nodepath === 0 : false} designateFilterNodes={designateFilterNodes} placeholder="上级部门" width="100%" />
         )}
       </FormItem>
       {/*<FormItem label="团队级别">*/}
