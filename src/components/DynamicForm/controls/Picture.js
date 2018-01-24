@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import classnames from 'classnames';
 import styles from './Picture.less';
 import { getDeviceHeaders } from '../../../utils/request';
+import { uploadImg } from '../../../utils/index';
 
 class Picture extends Component {
   static propTypes = {
@@ -103,14 +104,19 @@ class Picture extends Component {
           {showAdd && <Upload
             className={styles.upload}
             name="data"
-            data={this.getUploadParams}
+            // data={this.getUploadParams}
             showUploadList={false}
             action="/api/fileservice/upload"
             beforeUpload={this.beforeUpload}
-            onChange={this.handleUploadChange}
+            // onChange={this.handleUploadChange}
             headers={{
               ...getDeviceHeaders(),
               Authorization: 'Bearer ' + this.props.token
+            }}
+            customRequest={(e) => {
+              uploadImg(e, (fileId) => {
+                this.onPictureAdd(fileId);
+              });
             }}
           >
             <span className={styles.holder} style={{ cursor: 'pointer' }}>

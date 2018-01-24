@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import defaultAvatar from '../../../assets/img_default_avatar.png';
 import styles from './Avatar.less';
 import { getDeviceHeaders } from '../../../utils/request';
+import { uploadImg } from '../../../utils/index';
 
 class Avatar extends Component {
   static propTypes = {
@@ -19,19 +20,19 @@ class Avatar extends Component {
     this.state = {};
   }
 
-  getUploadParams = (file) => {
-    return {
-      filename: file.name
-    };
-  };
+  // getUploadParams = (file) => {  //图片做压缩处理  不再传data  交给自定义Ajax append处理
+  //   return {
+  //     filename: file.name
+  //   };
+  // };
 
-  handleUploadChange = ({ file }) => {
-    if (file.response && file.response.error_code === 0) {
-      // 上传成功，拿uuid
-      const fileId = file.response.data;
-      this.props.onChange(fileId);
-    }
-  };
+  // handleUploadChange = ({ file }) => {
+  //   if (file.response && file.response.error_code === 0) {
+  //     // 上传成功，拿uuid
+  //     const fileId = file.response.data;
+  //     this.props.onChange(fileId);
+  //   }
+  // };
 
   beforeUpload = file => {
     // const isLt2M = file.size / 1024 / 1024 < 2;
@@ -61,14 +62,19 @@ class Avatar extends Component {
           <Upload
             className={styles.upload}
             name="data"
-            data={this.getUploadParams}
+            // data={this.getUploadParams}
             showUploadList={false}
             action="/api/fileservice/upload"
             beforeUpload={this.beforeUpload}
-            onChange={this.handleUploadChange}
+            // onChange={this.handleUploadChange}
             headers={{
               ...getDeviceHeaders(),
               Authorization: 'Bearer ' + this.props.token
+            }}
+            customRequest={(e) => {
+              uploadImg(e, (fileId) => {
+                this.props.onChange(fileId);
+              }, false);
             }}
           >
             <Button className={styles.btn} disabled={this.props.isReadOnly === 1}>上传头像</Button>
