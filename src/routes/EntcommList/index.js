@@ -144,7 +144,7 @@ function EntcommList({
   let dynamicTableRef;
   function openSetHeader() {
     console.log(dynamicTableRef);
-    dynamicTableRef.getWrappedInstance().openSetHeaders();
+    dynamicTableRef.getWrappedInstance().openSetCustomHeaders();
   }
 
   const { menuId, searchData, pageIndex, pageSize, isAdvanceQuery } = queries;
