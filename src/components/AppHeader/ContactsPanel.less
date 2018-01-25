@@ -1,0 +1,49 @@
+.panelWrap {
+  position: fixed;
+  top: 60px;
+  right: 0;
+  bottom: 0;
+  width: 410px;
+  background-color: #fff;
+}
+.panelHeader {
+  color: #3398db;
+  padding: 0 22px;
+  line-height: 50px;
+  height: 50px;
+
+  i {
+    font-size: 20px;
+    vertical-align: middle;
+  }
+
+  span {
+    font-size: 18px;
+    vertical-align: middle;
+  }
+}
+.panelTabs {
+  :global {
+    .ant-tabs-bar {
+      background-color: #3398db;
+      color: #fff;
+      padding: 10px 23px;
+    }
+    .ant-tabs-nav {
+      display: flex;
+    }
+    .ant-tabs-tab {
+      flex: 1;
+      font-size: 14px;
+      padding: 8px 0;
+      text-align: center;
+    }
+    .ant-tabs-tab-active {
+      color: #fff;
+    }
+    .ant-tabs-ink-bar {
+      background-color: #fff;
+      height: 1px;
+    }
+  }
+}
