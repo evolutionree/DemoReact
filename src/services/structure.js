@@ -298,3 +298,22 @@ export async function updateUserDept(params) {
     body: JSON.stringify(params)
   });
 }
+
+/**
+ * 通讯录
+ * @param params
+ * @returns {Promise}
+ */
+export async function queryContacts(params) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve([
+        { id: 1, contactname: '林可', deptname: '超厉害的部门', mobile: '13888888888', phone: '', isstared: 1 },
+        { id: 12, contactname: '林可', deptname: '超厉害的部门', mobile: '13888888888', phone: '', isstared: 1 },
+        { id: 31, contactname: '林可', deptname: '超厉害的部门', mobile: '13888888888', phone: '', isstared: 0 },
+        { id: 41, contactname: '林可', deptname: '超厉害的部门', mobile: '13888888888', phone: '', isstared: 0 },
+        { id: 51, contactname: '林可', deptname: '超厉害的部门', mobile: '13888888888', phone: '', isstared: 0 }
+      ]);
+    }, 500);
+  })
+}

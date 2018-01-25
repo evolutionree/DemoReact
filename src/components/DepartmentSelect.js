@@ -16,11 +16,13 @@ class DepartmentSelect extends React.Component {
     ]),
     onChange: React.PropTypes.func,
     width: React.PropTypes.string,
-    multiple: React.PropTypes.bool
+    multiple: React.PropTypes.bool,
+    showSearch: React.PropTypes.bool
   };
   static defaultProps = {
     departments: [],
-    placeholder: '请选择部门'
+    placeholder: '请选择部门',
+    showSearch: false
   };
 
   constructor(props) {
@@ -146,7 +148,7 @@ class DepartmentSelect extends React.Component {
   };
 
   render() {
-    const { width, value, onChange, onFocus, ...rest } = this.props;
+    const { width, value, onChange, onFocus, showSearch, ...rest } = this.props;
 
     const treeNodes = this.getTreeData();
     const treeDefaultExpandedKeys = treeNodes.map(item => item.deptid).filter(item => !!item);
@@ -154,7 +156,7 @@ class DepartmentSelect extends React.Component {
     return treeNodes ? (
       <TreeSelect
         allowClear
-        showSearch={false}
+        showSearch={showSearch}
         searchPlaceholder="输入团队名称搜索"
         treeNodeFilterProp="title"
         style={width ? { width } : {}}
