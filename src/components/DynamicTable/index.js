@@ -3,7 +3,7 @@ import { Table, Modal, Button } from 'antd';
 import { Link } from 'dva/router';
 import { connect } from 'dva';
 import moment from 'moment';
-import { getGeneralProtocol, getEntcommDetail } from '../../services/entcomm';
+import { getGeneralProtocol, getEntcommDetail, getCustomHeaders, saveCustomHeaders } from '../../services/entcomm';
 import Avatar from '../../components/Avatar';
 import styles from './styles.less';
 
@@ -26,7 +26,8 @@ class DynamicTable extends Component {
       innerTableProtocol: [],
       innerTableRecords: [],
       height: document.body.clientHeight,
-      width: document.body.clientWidth
+      width: document.body.clientWidth,
+      setHeadersVisible: false //是否显示 设置表头 Modal
     };
   }
 
@@ -116,6 +117,48 @@ class DynamicTable extends Component {
       innerTableRecords: []
     });
   };
+
+  openSetHeaders = () => {
+    this.fetchSetHeaderData();
+    this.setState({
+      setHeadersVisible: true
+    });
+  };
+
+  hideSetHeaders = () => {
+    this.setState({
+      setHeadersVisible: false
+    });
+  };
+
+  saveCustomHeaders = () => {
+    saveCustomHeaders({
+      EntityId: this.props.entityId,
+      viewconfig: {
+        Columns: [
+          {
+            fieldid: '046ed3f6-8c81-41ab-baff-339c339eddf5',
+            IsDisplay: 1,
+            Seq: 0,
+            Width: 200
+          }
+        ],
+        FixedColumnCount: 1
+      }
+    }).then((result) => {
+      console.log(result);
+    });
+  }
+
+  fetchSetHeaderData = () => {
+    getCustomHeaders({
+      EntityId: this.props.entityId
+    }).then((result) => {
+      console.log(result);
+    });
+  };
+
+
   fetchInnerTableData = (record, field) => {
     const entityId = field.fieldconfig && field.fieldconfig.entityId;
     Promise.all([
@@ -316,11 +359,25 @@ class DynamicTable extends Component {
             />
           ) : 'loading..'}
         </Modal>
+        <Modal
+          wrapClassName="setHeaderModal"
+          width={860}
+          title="设置显示字段"
+          visible={this.state.setHeadersVisible}
+          onCancel={this.hideSetHeaders}
+          footer={[
+            <Button key="close" type="default" onClick={this.saveCustomHeaders}>保存</Button>
+          ]}>
+          设置表头
+        </Modal>
       </div>
     );
   }
 }
 
 export default connect(
-  state => state.app
+  state => state.app,
+  null,
+  undefined,
+  { withRef: true }
 )(DynamicTable);
