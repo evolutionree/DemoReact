@@ -1,0 +1,98 @@
+:global{
+  .setHeaderModal{
+    .ant-modal-close-x {
+      color: #ffffff;
+    }
+    .ant-modal-header{
+      background: #3398db;
+      .ant-modal-title {
+        color: #ffffff;
+      }
+    }
+    .ant-modal-body {
+      padding: 0px;
+    }
+
+    .ant-modal-footer{
+      padding: 14px 20px;
+      .ant-btn{
+        margin: 4px;
+        padding: 0 14px;
+     }
+    }
+  }
+}
+
+
+.customTableHeader{
+  position: fixed;
+  z-index: 2;
+  background: #ffffff;
+
+  height: 44px;
+  line-height: 44px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.customTableBody{
+  padding-top: 44px;
+  height: 460px;
+  overflow: auto;
+}
+
+.customTableRow{
+  height: 44px;
+  line-height: 44px;
+  border-bottom: 1px solid #f0f0f0;
+  z-index: 99999;
+  background: #ffffff;
+  cursor: move;
+}
+.customTableColumn{
+  text-align: center;
+  height: 44px;
+  position: relative;
+  >div{
+    white-space: nowrap;//不允许换行
+    overflow: hidden;//超出宽度不显示
+    text-overflow: ellipsis;//规定当文本溢出包含元素时显示省略号。
+  }
+}
+
+.rowStart{
+  position: relative;
+}
+.rowStart>i{
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  margin-top: -7px;
+}
+
+
+.setHeaderModalFooter{
+  zoom:1
+}
+.setHeaderModalFooter:after{
+  content:"";
+  display:block;
+  clear:both;
+}
+.setHeaderModalFooter>div:first-of-type{
+  float: left;
+  >button{
+    border: none;
+    outline: none;
+    background:#dff2ff;
+    border-radius:3px;
+    width:112px;
+    height:33px;
+    margin-left: 18px;
+    color: #3398db;
+    cursor: pointer;
+  }
+}
+
+.setHeaderModalFooter>div:last-of-type{
+  float: right;
+}
