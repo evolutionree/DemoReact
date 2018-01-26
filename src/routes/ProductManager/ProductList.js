@@ -88,7 +88,8 @@ function ProductList({
           <Search
             value={queries.searchKey}
             onSearch={search.bind(null, 'searchKey')}
-            placeholder="请输入产品名称"
+            width="260px"
+            placeholder="请输入产品名称或产品编码"
           />
         </Toolbar.Right>
       </Toolbar>
