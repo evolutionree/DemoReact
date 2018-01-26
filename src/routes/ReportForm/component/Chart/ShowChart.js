@@ -343,7 +343,23 @@ function ShowChart({
         trigger: 'item'
       },
       //原生图形元素组件
-      graphic: optionSet.graphic,
+      graphic: [
+        {
+          type: 'image',
+          id: 'logo',
+          right: 'center',
+          top: 'center',
+          z: -10,
+          bounding: 'raw',
+          origin: [75, 75],
+          style: {
+            image: '/img_site_logo.png',
+            width: 160,
+            height: 50,
+            opacity: 0.5
+          }
+        }
+      ],
       //工具栏
       toolbox: optionSet.toolbox,
       //图例组件
@@ -373,7 +389,7 @@ function ShowChart({
           },
           data: dataSource && dataSource instanceof Array && dataSource.map((dataItem) => {
             return { value: dataItem[item.fieldname], name: dataItem[component.commonextinfo.xfieldname] };
-          })
+          }).filter(item => item.value !== 0)
         };
       })
     };
