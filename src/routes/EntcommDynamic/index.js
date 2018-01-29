@@ -2,7 +2,7 @@
  * Created by 0291 on 2018/1/12.
  */
 import React from 'react';
-import { Button } from 'antd';
+import { Button, Icon } from 'antd';
 import { connect } from 'dva';
 import Page from '../../components/Page';
 import Toolbar from '../../components/Toolbar';
@@ -51,6 +51,11 @@ function EntcommList({
     });
   }
 
+  let dynamicTableRef;
+  function openSetHeader() {
+    dynamicTableRef.getWrappedInstance().openSetCustomHeaders();
+  }
+
   const { menuId, searchData, pageIndex, pageSize } = queries;
   const keyword = (searchData && searchData[simpleSearchKey]) || '';
 
@@ -82,9 +87,11 @@ function EntcommList({
             搜索
           </Search>
           <Button onClick={advanceSearch} style={{ marginLeft: '10px', height: '31px' }}>高级搜索</Button>
+          <Icon type="setting" onClick={openSetHeader} style={{ fontSize: '20px', marginLeft: '10px', cursor: 'pointer', color: '#9ba1ad', position: 'relative', top: '2px' }} />
         </Toolbar.Right>
       </Toolbar>
       <DynamicTable
+        ref={(ref) => dynamicTableRef = ref }
         sorter={true}
         protocol={protocol}
         rowKey="recid"

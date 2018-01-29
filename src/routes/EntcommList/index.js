@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select, Button, Modal } from 'antd';
+import { Select, Button, Modal, Icon } from 'antd';
 import { connect } from 'dva';
 import _ from 'lodash';
 import Page from '../../components/Page';
@@ -143,7 +143,6 @@ function EntcommList({
 
   let dynamicTableRef;
   function openSetHeader() {
-    console.log(dynamicTableRef);
     dynamicTableRef.getWrappedInstance().openSetCustomHeaders();
   }
 
@@ -204,7 +203,7 @@ function EntcommList({
             搜索
           </Search>
           <Button onClick={advanceSearch} style={{ marginLeft: '10px', height: '31px' }}>高级搜索</Button>
-          <Button onClick={openSetHeader} style={{ marginLeft: '10px', height: '31px' }}>设置</Button>
+          <Icon type="setting" onClick={openSetHeader} style={{ fontSize: '20px', marginLeft: '10px', cursor: 'pointer', color: '#9ba1ad', position: 'relative', top: '2px' }} />
         </Toolbar.Right>
       </Toolbar>
       <DynamicTable

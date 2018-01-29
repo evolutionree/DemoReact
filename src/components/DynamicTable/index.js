@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { Table, Modal, Button } from 'antd';
+import { Table, Modal, Button, message } from 'antd';
 import { Link } from 'dva/router';
 import { connect } from 'dva';
 import _ from 'lodash';
@@ -30,8 +30,13 @@ class DynamicTable extends Component {
       height: document.body.clientHeight,
       width: document.body.clientWidth,
       setCustomHeadersVisible: false, //是否显示 设置表头 Modal
-      customProtocol: [] //自定义表列数据
+      customProtocol: [], //自定义表列数据
+      fixedColumnCount: 0
     };
+  }
+
+  componentWillMount() {
+    this.fetchCustomHeaderData();
   }
 
   componentDidMount() {
@@ -40,6 +45,10 @@ class DynamicTable extends Component {
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.onWindowResize);
+  }
+
+  componentWillReceiveProps() {
+
   }
 
   onWindowResize(e) {
@@ -58,14 +67,14 @@ class DynamicTable extends Component {
     let customProtocol = this.state.customProtocol;
 
     for (let i = 0; i < filterField.length; i++) {
-      filterField[i].columnConfig = {
+      filterField[i].columnConfig = { //整合成 设置表头Modal需要的UI数据
         fieldid: filterField[i].fieldid,
         isdisplay: 1,
         width: filterField[i].defaultwidth < 100 ? 100 : filterField[i].defaultwidth //后端会给定默认列宽，没给则默认设置为100
       };
     }
 
-    //个人定义的列表数据 可能和 web列表定义的数据 不一致（web列表定义的字段可以在配置做修改）
+    //个人定义的列表数据 可能和 web列表定义的数据 不一致（web列表定义的字段可以在配置做修改） 先优先处理个人定义的数据（在web列表定义中存在）,再添加在个人定义不存在但在web定义存在的数据
     let newProtocol = [];
     for (let i = 0; i < customProtocol.length; i++) {
       const findFilterFieldIndex = _.findIndex(filterField, item => item.fieldid === customProtocol[i].fieldid);
@@ -91,14 +100,19 @@ class DynamicTable extends Component {
 
   getColumns = () => {
     const { protocol, ignoreRecName } = this.props;
+
+    const combineCustomProtocol = this.getcombineCustomProtocol();
+    let filterField = combineCustomProtocol;
+    if (_.findIndex(combineCustomProtocol, item => item.columnConfig.isdisplay === 1) > -1) { //如果所有列都设置了不显示 则表格显示所有列
+      filterField = combineCustomProtocol.filter((item) => {
+        return item.columnConfig.isdisplay === 1;
+      });
+    }
+
     // 把第一列作为跳转详情列
-    const linkField = ignoreRecName ? undefined : protocol.filter(field => {
+    const linkField = ignoreRecName ? undefined : filterField.filter(field => {
       return [13, 14, 15, 20, 22, 23, 24].indexOf(field.controltype) === -1;
     })[0];
-
-    const filterField = this.getcombineCustomProtocol().filter((item) => {
-      return item.columnConfig.isdisplay === 1;
-    })
 
     return filterField instanceof Array && filterField.map((field, index) => {
       /*
@@ -125,7 +139,7 @@ class DynamicTable extends Component {
         title: field.displayname,
         sorter: this.props.sorter,
         width: this.props.fixedHeader ? setWidth + 21 : 0, //21：padding + border
-        fixed: this.props.fixedHeader ? (index === 0 ? 'left' : false) : false, //具体固定哪栏的逻辑 待后期确定，暂时固定第一栏
+        fixed: this.props.fixedHeader ? (index < this.state.fixedColumnCount ? 'left' : false) : false,
         render: (text, record) => {
           const isLinkField = field === linkField;
           return (
@@ -174,22 +188,17 @@ class DynamicTable extends Component {
     });
   };
 
-  saveCustomHeaders = () => {
+  saveCustomHeaders = (columnsConfig, FixedColumnCount) => {
     saveCustomHeaders({
       EntityId: this.props.entityId,
       viewconfig: {
-        Columns: [
-          {
-            fieldid: '046ed3f6-8c81-41ab-baff-339c339eddf5',
-            IsDisplay: 0,
-            Seq: 0,
-            Width: 200
-          }
-        ],
-        FixedColumnCount: 1
+        Columns: columnsConfig,
+        FixedColumnCount: FixedColumnCount
       }
-    }).then((result) => {
-      console.log(result);
+    }).then(() => {
+      message.success('保存成功');
+      this.hideSetCustomHeaders();
+      this.fetchCustomHeaderData();
     });
   }
 
@@ -198,7 +207,8 @@ class DynamicTable extends Component {
       EntityId: this.props.entityId
     }).then((result) => {
       this.setState({
-        customProtocol: result.data.columns
+        customProtocol: result.data.columns,
+        fixedColumnCount: result.data.fixedcolumncount
       });
     });
   };
@@ -369,7 +379,7 @@ class DynamicTable extends Component {
     const scrollX = this.props.rowSelection ? parseInt(this.getColumnsTotalWidth(columns)) + 63 : parseInt(this.getColumnsTotalWidth(columns)); //63 表格如果支持选择，则加上选择列的宽度
 
     const width = (this.state.width - 200) < 1080 ? 1080 : this.state.width; // 系统设置了最小宽度
-    if (width > parseInt(this.getColumnsTotalWidth(columns))) { //如果表格没有横向滚动条，则不需要固定第一栏
+    if (width > parseInt(this.getColumnsTotalWidth(columns))) { //如果表格没有横向滚动条，则不需要对列固定
       columns = columns.map((item) => {
         item.fixed = false;
         return item;
@@ -404,7 +414,11 @@ class DynamicTable extends Component {
             />
           ) : 'loading..'}
         </Modal>
-        <CustomHeaderModal visible={this.state.setCustomHeadersVisible} dataSource={this.getcombineCustomProtocol()} onCancel={this.hideSetCustomHeaders} />
+        <CustomHeaderModal visible={this.state.setCustomHeadersVisible}
+                           dataSource={this.getcombineCustomProtocol()}
+                           fixedColumnCount={this.state.fixedColumnCount}
+                           onCancel={this.hideSetCustomHeaders}
+                           saveCustomHeaders={this.saveCustomHeaders} />
       </div>
     );
   }
