@@ -2,9 +2,11 @@ import React, { Component, PropTypes } from 'react';
 import { Table, Modal, Button } from 'antd';
 import { Link } from 'dva/router';
 import { connect } from 'dva';
+import _ from 'lodash';
 import moment from 'moment';
-import { getGeneralProtocol, getEntcommDetail } from '../../services/entcomm';
+import { getGeneralProtocol, getEntcommDetail, getCustomHeaders, saveCustomHeaders } from '../../services/entcomm';
 import Avatar from '../../components/Avatar';
+import CustomHeaderModal from '../../components/CustomHeaderModal';
 import styles from './styles.less';
 
 function formatDate(text, fmt) {
@@ -26,7 +28,9 @@ class DynamicTable extends Component {
       innerTableProtocol: [],
       innerTableRecords: [],
       height: document.body.clientHeight,
-      width: document.body.clientWidth
+      width: document.body.clientWidth,
+      setCustomHeadersVisible: false, //是否显示 设置表头 Modal
+      customProtocol: [] //自定义表列数据
     };
   }
 
@@ -45,6 +49,46 @@ class DynamicTable extends Component {
     });
   }
 
+  getcombineCustomProtocol() { //web列表返回的字段协议 与 个人列定义的协议 做交集处理
+    const { protocol } = this.props;
+    // 过滤掉分组
+    let filterField = protocol.filter(field => {
+      return field.controltype !== 20;
+    });
+    let customProtocol = this.state.customProtocol;
+
+    for (let i = 0; i < filterField.length; i++) {
+      filterField[i].columnConfig = {
+        fieldid: filterField[i].fieldid,
+        isdisplay: 1,
+        width: filterField[i].defaultwidth < 100 ? 100 : filterField[i].defaultwidth //后端会给定默认列宽，没给则默认设置为100
+      };
+    }
+
+    //个人定义的列表数据 可能和 web列表定义的数据 不一致（web列表定义的字段可以在配置做修改）
+    let newProtocol = [];
+    for (let i = 0; i < customProtocol.length; i++) {
+      const findFilterFieldIndex = _.findIndex(filterField, item => item.fieldid === customProtocol[i].fieldid);
+      if (findFilterFieldIndex > -1) {
+        let column = filterField[findFilterFieldIndex];
+        column.columnConfig = {
+          fieldid: customProtocol[i].fieldid,
+          isdisplay: customProtocol[i].isdisplay,
+          width: customProtocol[i].width
+        }
+        newProtocol.push(column);
+      }
+    }
+
+
+    for (let i = 0; i < filterField.length; i++) {
+      if (_.findIndex(newProtocol, item => item.fieldid === filterField[i].fieldid) === -1) {
+        newProtocol.push(filterField[i]);
+      }
+    }
+    return newProtocol;
+  }
+
   getColumns = () => {
     const { protocol, ignoreRecName } = this.props;
     // 把第一列作为跳转详情列
@@ -52,15 +96,15 @@ class DynamicTable extends Component {
       return [13, 14, 15, 20, 22, 23, 24].indexOf(field.controltype) === -1;
     })[0];
 
-    // 过滤掉分组
-    const filterField = protocol.filter(field => {
-      return field.controltype !== 20;
+    const filterField = this.getcombineCustomProtocol().filter((item) => {
+      return item.columnConfig.isdisplay === 1;
     })
-    return filterField.map((field, index) => {
+
+    return filterField instanceof Array && filterField.map((field, index) => {
       /*
         Ant Table: 实现表格表头固定的话，需给每列设置固定宽度（表头可换行），单元格超出给定宽则做超出显示处理，ScrollX 需大于等于表格总宽度
        */
-      const setWidth = this.props.fixedHeader ? (field.defaultwidth > 0 ? field.defaultwidth : 150) : 0;  //后端会给定列宽，没给则默认设置为150
+      const setWidth = field.columnConfig.width;
       const normalStyle = {
         whiteSpace: 'nowrap',
         overflow: 'hidden',
@@ -116,6 +160,50 @@ class DynamicTable extends Component {
       innerTableRecords: []
     });
   };
+
+  openSetCustomHeaders = () => {
+    this.fetchCustomHeaderData();
+    this.setState({
+      setCustomHeadersVisible: true
+    });
+  };
+
+  hideSetCustomHeaders = () => {
+    this.setState({
+      setCustomHeadersVisible: false
+    });
+  };
+
+  saveCustomHeaders = () => {
+    saveCustomHeaders({
+      EntityId: this.props.entityId,
+      viewconfig: {
+        Columns: [
+          {
+            fieldid: '046ed3f6-8c81-41ab-baff-339c339eddf5',
+            IsDisplay: 0,
+            Seq: 0,
+            Width: 200
+          }
+        ],
+        FixedColumnCount: 1
+      }
+    }).then((result) => {
+      console.log(result);
+    });
+  }
+
+  fetchCustomHeaderData = () => {
+    getCustomHeaders({
+      EntityId: this.props.entityId
+    }).then((result) => {
+      this.setState({
+        customProtocol: result.data.columns
+      });
+    });
+  };
+
+
   fetchInnerTableData = (record, field) => {
     const entityId = field.fieldconfig && field.fieldconfig.entityId;
     Promise.all([
@@ -316,11 +404,15 @@ class DynamicTable extends Component {
             />
           ) : 'loading..'}
         </Modal>
+        <CustomHeaderModal visible={this.state.setCustomHeadersVisible} dataSource={this.getcombineCustomProtocol()} onCancel={this.hideSetCustomHeaders} />
       </div>
     );
   }
 }
 
 export default connect(
-  state => state.app
+  state => state.app,
+  null,
+  undefined,
+  { withRef: true }
 )(DynamicTable);

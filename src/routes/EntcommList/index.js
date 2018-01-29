@@ -141,6 +141,12 @@ function EntcommList({
     });
   }
 
+  let dynamicTableRef;
+  function openSetHeader() {
+    console.log(dynamicTableRef);
+    dynamicTableRef.getWrappedInstance().openSetCustomHeaders();
+  }
+
   const { menuId, searchData, pageIndex, pageSize, isAdvanceQuery } = queries;
   const keyword = (!isAdvanceQuery && searchData && searchData[simpleSearchKey]) || '';
 
@@ -198,9 +204,11 @@ function EntcommList({
             搜索
           </Search>
           <Button onClick={advanceSearch} style={{ marginLeft: '10px', height: '31px' }}>高级搜索</Button>
+          <Button onClick={openSetHeader} style={{ marginLeft: '10px', height: '31px' }}>设置</Button>
         </Toolbar.Right>
       </Toolbar>
       <DynamicTable
+        ref={(ref) => dynamicTableRef = ref }
         sorter={true}
         entityId={entityId}
         protocol={protocol}

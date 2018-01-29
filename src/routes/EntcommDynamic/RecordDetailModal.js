@@ -1,7 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Button } from 'antd';
-import DetailModal from './DetailModal';
+import EntcommDetailModal from '../../components/EntcommDetailModal';
 
 const RecordDetailModal = connect(
   state => {
@@ -32,6 +32,6 @@ const RecordDetailModal = connect(
       }
     };
   }
-)(DetailModal);
+)(EntcommDetailModal);
 
 export default RecordDetailModal;

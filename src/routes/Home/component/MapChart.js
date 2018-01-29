@@ -143,7 +143,7 @@ class MapChart extends React.Component {
       <div className={Styles.mapWrap}>
         <div className={Styles.titleInfo}>
           <div>业务发展参数</div>
-          <div>与其他区域数框对比</div>
+          <div>与其他区域数据对比</div>
         </div>
         <div className={Styles.MapInfo} style={{ height: 'calc(100% - 180px)' }}>
           {

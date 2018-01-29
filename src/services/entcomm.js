@@ -751,3 +751,46 @@ export async function savemailowner(params) {
     body: JSON.stringify(params)
   });
 }
+
+
+/**
+ * 获取获取个人列定义协议
+ * @param params
+ * {
+     EntityId: 'xxx', // 实体的id
+  }
+ * @returns {Promise.<Object>}
+ */
+export async function getCustomHeaders(params) {
+  return request('/api/DynamicEntity/getweblistcolumnsforpersonal', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+
+/**
+ * 保存个人列定义接口
+ * @param params
+ * {
+     EntityId: 'xxx', // 实体的id
+     viewconfig: {
+      Columns: [
+        {
+        FieldId:
+        IsDisplay:
+        Seq:
+        width:
+        }
+      ]
+     },
+     FixedColumnCount:
+  }
+ * @returns {Promise.<Object>}
+ */
+export async function saveCustomHeaders(params) {
+  return request('/api/DynamicEntity/saveweblistcolumnsforpersonal', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}

@@ -2,8 +2,10 @@ import draftToHtml from 'draftjs-to-html';
 import moment from 'moment';
 import htmlToDraft from 'html-to-draftjs';
 import { convertToRaw, EditorState, ContentState } from 'draft-js';
+import { photoCompress } from './photoCompress';
 import * as _ from 'lodash';
-
+import { Modal } from 'antd';
+const confirm = Modal.confirm;
 export function checkIsDev() {
   let uke_dev = window.uke_dev;
   let uke_dev_local = localStorage.getItem('uke_dev');
@@ -426,3 +428,56 @@ export function addSeparator(val) {
       return intFormatted;
   }
 }
+
+export function uploadImg(uploadObj, onSuccess, isProvideCompress = true) { //isProvideCompress ture:让用户选择上传原图/上传压缩图  false: 直接上传压缩图
+  if (isProvideCompress) {
+    confirm({
+      title: '是否上传压缩图？',
+      okText: '  是  ',
+      cancelText: '上传原图',
+      onOk() {
+        photoCompressAjax(); //压缩上传
+      },
+      onCancel() {
+        AjaxFileData(uploadObj.file); //不压缩直接上传
+      }
+    });
+  } else {
+    photoCompressAjax();
+  }
+
+  function photoCompressAjax() {
+    if (uploadObj.file.size / 1024 > 600) { //大于600/1024 M，进行压缩上传
+      photoCompress(uploadObj.file, function(imgBlob) {
+        AjaxFileData(imgBlob);
+      });
+    } else {
+      AjaxFileData(uploadObj.file);
+    }
+  }
+
+  function AjaxFileData(imgData) {
+    let form = new FormData(); // FormData 对象
+    form.append('data', imgData); // 文件对象
+    form.append('filename', uploadObj.file.name); // 文件对象
+    let xhr = new XMLHttpRequest();  // XMLHttpRequest 对象
+    xhr.open('post', uploadObj.action, true); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
+    xhr.onload = ({ currentTarget }) => {
+      const response = JSON.parse(currentTarget.response);
+      if (response && response.error_code === 0) {
+        // 上传成功，拿uuid
+        const fileId = response.data;
+        onSuccess && onSuccess(fileId);
+      } else {
+        console.error(response.error_msg);
+      }
+    }; //请求完成
+    xhr.onerror = uploadObj.onError; //请求失败
+    const headers = uploadObj.headers;
+    for (let item in headers) {
+      xhr.setRequestHeader(item, headers[item]);
+    }
+    xhr.send(form); //开始上传，发送form数据
+  }
+}
+
