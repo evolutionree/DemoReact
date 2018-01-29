@@ -45,7 +45,7 @@ function UserDropdown({ isLogin, user, dispatch }) {
   let userName = '未登录';
 
   if (user && user.username) {
-    image = `/api/fileservice/read?fileid=${user.usericon}`;
+    image = `/api/fileservice/read?fileid=${user.usericon}&filetype=3`;
     userName = user.username;
   }
 

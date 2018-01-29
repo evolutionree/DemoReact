@@ -162,7 +162,7 @@ class NoticeList extends React.Component {
     return (
       <img
         style={{ width: 30, height: 30 }}
-        src={`/api/fileservice/read?fileid=${fileId}&thumbmodel=0&imagewidth=30&imageheight=30`}
+        src={`/api/fileservice/read?fileid=${fileId}&filetype=1&thumbmodel=0&imagewidth=30&imageheight=30`}
         alt=""
         onClick={() => {
           this.props.dispatch({ type: 'app/viewImages', payload: [{ src: imageUrl }] });

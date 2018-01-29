@@ -38,7 +38,7 @@ function List({
                   <li key={index}>
                     <Avatar
                       style={{ width: '36px', height: '36px', position: 'absolute', left: '10px', top: '50%', marginTop: '-18px' }}
-                      image={`/api/fileservice/read?fileid=${getValue(component.item1valuescheme, item)}`}
+                      image={`/api/fileservice/read?fileid=${getValue(component.item1valuescheme, item)}&filetype=3`}
                     />
                     <span title={getValue(component.item2valuescheme, item)}>{getValue(component.item2valuescheme, item)}</span>
                   </li>

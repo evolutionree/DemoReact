@@ -322,7 +322,7 @@ class DynamicTable extends Component {
   };
   renderAvatar = (fileId, field) => {
     const { headShape } = field.fieldconfig || {};
-    const url = `/api/fileservice/read?fileid=${fileId}`;
+    const url = `/api/fileservice/read?fileid=${fileId}&filetype=3`;
     return (
       <Avatar
         image={url}
@@ -336,14 +336,15 @@ class DynamicTable extends Component {
   };
   renderPictures = (strFileIds, field) => {
     if (!strFileIds) return '';
-    const urls = strFileIds.split(',').map(id => `/api/fileservice/read?fileid=${id}`);
+    const urls = strFileIds.split(',').map(id => `/api/fileservice/read?fileid=${id}&filetype=1`);
+    const originUrls = strFileIds.split(',').map(id => `/api/fileservice/read?fileid=${id}`);
     return urls.map((url, index) => (
       <img
         key={index}
         src={url}
         alt=""
         onClick={() => {
-          this.props.dispatch({ type: 'app/viewImages', payload: urls.map(src => ({ src, active: src === url })) });
+          this.props.dispatch({ type: 'app/viewImages', payload: originUrls.map(src => ({ src, active: src === url })) });
         }}
         style={{
           width: '32px',

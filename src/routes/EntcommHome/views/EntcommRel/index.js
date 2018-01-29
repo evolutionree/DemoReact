@@ -40,7 +40,7 @@ function EntcommRel({
                 <Avatar
                   className={styles.listIcon}
                   style={{ width: '50px', height: '50px' }}
-                  image={`/api/fileservice/read?fileid=${item[iconField.fieldName]}`}
+                  image={`/api/fileservice/read?fileid=${item[iconField.fieldName]}&filetype=3`}
                 />
               )}
               {listFields.map(({ fieldName, color, font }) => {

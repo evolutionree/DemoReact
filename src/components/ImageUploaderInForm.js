@@ -55,7 +55,7 @@ class ImageUploaderInForm extends React.Component {
   render() {
     let imgUrl = '';
     if (this.props.value) {
-      imgUrl = `/api/fileservice/read?fileid=${this.props.value}`;
+      imgUrl = `/api/fileservice/read?fileid=${this.props.value}&filetype=1`;
     }
 
     return (

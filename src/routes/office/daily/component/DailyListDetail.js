@@ -89,7 +89,7 @@ class DailyListDetail extends Component {
           <div className={Styles.userbar}>
             <Avatar
               style={{ width: '42px', height: '42px' }}
-              image={`/api/fileservice/read?fileid=${data.usericon}`}
+              image={`/api/fileservice/read?fileid=${data.usericon}&filetype=3`}
             />
             <span className={Styles.username}>{data.reccreator_name}</span>
             {

@@ -27,7 +27,7 @@ function ReceiveDaily({ receiveDailylistData, queryReceiveDailyDetail, receiveDa
                 <div className={class_name} onClick={queryReceiveDailyDetail.bind(this, item.recid)}>
                   <div className={Styles.left}>
                     <img
-                      src={'/api/fileservice/read?fileid=' + item.usericon}
+                      src={'/api/fileservice/read?fileid=' + item.usericon + '&filetype=3'}
                       onError={(e) => { e.target.src = defaultAvatar; }} //eslint-disable-line
                      />
                     <div className={Styles.receiveWeeklyUserInfoWrap}>

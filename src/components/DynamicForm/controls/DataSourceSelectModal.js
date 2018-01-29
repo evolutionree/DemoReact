@@ -147,7 +147,7 @@ class DataSourceSelectModal extends Component {
           <Avatar
             className={styles.listIcon}
             style={{ width: '28px', height: '28px' }}
-            image={`/api/fileservice/read?fileid=${item[iconField.fieldName]}`}
+            image={`/api/fileservice/read?fileid=${item[iconField.fieldName]}&filetype=3`}
           />
         )}
         <Row gutter={10}>

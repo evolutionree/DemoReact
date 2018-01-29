@@ -42,7 +42,7 @@ class CommentItem extends Component {
       <div style={{ marginBottom: '10px' }}>
         <Avatar
           style={{ width: '42px', height: '42px', float: 'left', margin: '0 10px 0 0' }}
-          image={`/api/fileservice/read?fileid=${item.usericon}`}
+          image={`/api/fileservice/read?fileid=${item.usericon}&filetype=3`}
         />
         <div className={Styles.commentWrap}>{this.props.title}:<span style={{ paddingLeft: '10px' }}>{item.comments}</span></div>
         <div style={{ paddingLeft: '52px' }}>{moment(item.reccreated).format('YYYY年MM月DD HH:MM:SS')}<a style={{ paddingLeft: '10px' }} onClick={this.commentParent.bind(this, item.reccreator_name)}>评论</a></div>
