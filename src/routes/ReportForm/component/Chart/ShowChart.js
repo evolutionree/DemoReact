@@ -19,7 +19,7 @@ function ShowChart({
   if (!dataSource) {
     return null;
   }
-  const colors = ['#3398db', '#7ed321', '#675bba', '#61aced', '#ba6f0b', '#77ba07'];
+  const colors = ['#3398db', '#7ed321', '#A5CE3A', '#22B14A', '#FBD50B', '#FFB516', '#F46F21', '#A3228E', '#665ABB'];
   function transformData(item) {
     const seriesData = item.data;
     let newSeresData = [];
