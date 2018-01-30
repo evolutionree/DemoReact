@@ -74,6 +74,7 @@ class DepartmentSelect extends React.Component {
             className={item.recstatus === 0 ? styles.hiddenNode : ''}
             value={item.deptid}
             key={item.deptid}
+            name={item.deptname}
             title={<span title={item.deptname} style={titleStyle}>{item.deptname}</span>}
           >
             {this.renderTreeNodes(item.children)}
@@ -85,6 +86,7 @@ class DepartmentSelect extends React.Component {
             className={item.recstatus === 0 ? styles.hiddenNode : ''}
             value={item.deptid}
             key={item.deptid}
+            name={item.deptname}
             title={<span title={item.deptname} style={titleStyle}>{item.deptname}</span>}
             isLeaf
           />
@@ -158,7 +160,7 @@ class DepartmentSelect extends React.Component {
         allowClear
         showSearch={showSearch}
         searchPlaceholder="输入团队名称搜索"
-        treeNodeFilterProp="title"
+        treeNodeFilterProp="name"
         style={width ? { width } : {}}
         dropdownStyle={{ maxHeight: 250, overflow: 'auto' }}
         value={value}
