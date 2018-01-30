@@ -1,31 +1,36 @@
 import React, { PropTypes, Component } from 'react';
+import { connect } from 'dva';
 import { Badge, Icon, Tabs, message, Spin } from "antd";
 import classnames from 'classnames';
 import styles from './ContactsPanel.less';
 import Avatar from "../Avatar";
 import Search from "../Search";
 import DepartmentSelect from "../DepartmentSelect";
-import { queryContacts } from '../../services/structure';
+import { queryContacts, queryUsers, flagContact } from '../../services/structure';
 
 const TabPane = Tabs.TabPane;
 
-const ContactItem = ({ data, onStar, onClick }) => {
+const ContactItem = ({ data, onStar, onClick, showStar = false }) => {
+  const onClickStar = (e) => {
+    e.stopPropagation();
+    onStar();
+  };
   return (
     <li className={styles.contactItem} onClick={onClick}>
       <div className={styles.contactAvatar}>
-        <Avatar image={data.headicon} width={30} />
+        <Avatar image={`/api/fileservice/read?fileid=${data.usericon}`} width={30} />
       </div>
-      <p>{data.contactname}</p>
+      <p>{data.username}</p>
       <p>{data.deptname}</p>
       <p>
-        <Icon type="mobile" />
-        <span style={{ marginRight: '12px' }}>{data.mobile}</span>
-        <Icon type="phone" />
-        <span>{data.phone}</span>
+        <Icon type="mobile" style={{ marginRight: '5px' }} />
+        <MetaValue>{data.userphone}</MetaValue>
+        <Icon type="phone" style={{ marginLeft: '12px', marginRight: '5px' }} />
+        <MetaValue>{data.usertel}</MetaValue>
       </p>
-      <div className={classnames(styles.contactStar, { [styles.isStared]: data.isstared })}>
-        <Icon type="star" onClick={(e) => { e.stopPropagation(); onStar(); }} />
-      </div>
+      {showStar && <div className={classnames(styles.contactStar, { [styles.isStared]: data.flag })}>
+        <Icon type="star" onClick={onClickStar} />
+      </div>}
     </li>
   );
 };
@@ -38,8 +43,17 @@ const ContactList = ({ children }) => {
   );
 };
 
+const MetaValue = ({ children }) => {
+  if (!children) {
+    return <span style={{ color: '#999' }}>未填写</span>
+  }
+  return <span>{children}</span>;
+};
+
 class ContactsPanel extends Component {
-  static propTypes = {};
+  static propTypes = {
+    userInfo: PropTypes.object
+  };
   static defaultProps = {};
 
   constructor(props) {
@@ -47,12 +61,15 @@ class ContactsPanel extends Component {
     this.state = {
       panelVisible: false,
       searchKey: '',
-      searchDept: '',
+      searchDept: '7f74192d-b937-403f-ac2a-8be34714278b',
       currentTab: '1',
+      pageIndex: 1,
+      pageSize: 20,
       list: [],
       detailVisible: false,
       detailData: {},
-      loading: false
+      loading: false,
+      hasMore: true
     };
   }
 
@@ -73,36 +90,76 @@ class ContactsPanel extends Component {
     this.setState({ panelVisible }, () => {
       if (panelVisible) {
         this.setState({
+          panelVisible: true,
           searchKey: '',
-          searchDept: '',
+          searchDept: '7f74192d-b937-403f-ac2a-8be34714278b',
           currentTab: '1',
+          pageIndex: 1,
+          pageSize: 20,
           list: [],
           detailVisible: false,
           detailData: {},
+          loading: false,
+          hasMore: true
         }, this.fetchList);
       } else {
         this.setState({
           detailVisible: false
-        })
+        });
       }
     });
   };
 
-  fetchList = () => {
-    this.setState({ loading: true });
-    queryContacts({}).then(result => {
-      this.setState({ list: result, loading: false });
-    }, err => {
-      message.error(err.message || '获取通讯录列表失败');
-    });
+  fetchList = (pageIndex = 1) => {
+    const { currentTab, searchKey, searchDept } = this.state;
+    if (currentTab === '1' || currentTab === '2') {
+      this.setState({ loading: true });
+      const params = {
+        type: currentTab === '1' ? 0 : 1,
+        userid: this.props.userInfo.userid,
+        searchkey: searchKey,
+        pageIndex: pageIndex,
+        pageSize: -1
+      };
+      queryContacts(params).then(result => {
+        this.setState({
+          list: pageIndex === 1 ? result.data.datalist : this.state.list.concat(result.data.datalist),
+          loading: false,
+          pageIndex: pageIndex
+        });
+      }, err => {
+        this.setState({ loading: false });
+        message.error(err.message || '获取通讯录列表失败');
+      });
+    } else {
+      const params = {
+        deptId: currentTab === '3' ? this.props.userInfo.deptid : searchDept,
+        pageIndex: pageIndex,
+        pageSize: -1,
+        recStatus: 1,
+        userName: currentTab === '3' ? (searchKey || '') : '',
+        userPhone: ''
+      };
+      this.setState({ loading: true });
+      queryUsers(params).then(result => {
+        this.setState({ list: result.data.pagedata, loading: false });
+      }, err => {
+        this.setState({ loading: false });
+        message.error(err.message || '获取通讯录列表失败');
+      });
+    }
   };
 
   onTabChange = (tabKey) => {
     this.setState({
       searchKey: '',
-      searchDept: '',
+      searchDept: '7f74192d-b937-403f-ac2a-8be34714278b',
       currentTab: tabKey,
-      list: []
+      pageIndex: 1,
+      pageSize: 20,
+      list: [],
+      loading: false,
+      hasMore: true
     }, this.fetchList);
   };
 
@@ -121,7 +178,20 @@ class ContactsPanel extends Component {
   };
 
   handleStar = (item) => {
+    const params = {
+      userid: item.userid,
+      flag: !item.flag
+    };
+    flagContact(params).then(result => {
+      item.flag = !item.flag;
+      this.setState({ list: [...this.state.list] });
+    }, err => {
+      message.error(err.message || '操作失败');
+    });
+  };
 
+  loadMore = () => {
+    this.fetchList(this.state.pageIndex + 1);
   };
 
   onDepartmentChange = (deptid) => {
@@ -144,6 +214,11 @@ class ContactsPanel extends Component {
   };
 
   render() {
+    const { detailData, currentTab, hasMore } = this.state;
+    const formatDate = val => {
+      if (!val) return '';
+      return val.slice(0, 10);
+    };
     return (
       <div>
         <Badge>
@@ -167,6 +242,7 @@ class ContactsPanel extends Component {
               <div className={styles.panelSearch}>
                 {this.state.currentTab === '4' ? (
                   <DepartmentSelect
+                    showSearch
                     value={this.state.searchDept}
                     onChange={this.onDepartmentChange}
                     style={{ width: '100%' }}
@@ -184,40 +260,67 @@ class ContactsPanel extends Component {
               <ContactList>
                 {this.state.list.map(item => (
                   <ContactItem
-                    key={item.id}
+                    key={item.userid}
                     data={item}
                     onClick={this.showContactDetail.bind(this, item)}
                     onStar={this.handleStar.bind(this, item)}
+                    showStar={currentTab !== '2'}
                   />
                 ))}
               </ContactList>
+              {/*{hasMore ? <div className={styles.loadMore} onClick={this.loadMore}>加载更多</div> : <div>亲,没有更多数据加载了哦</div>}*/}
             </div>
           </Spin>
           <div className={styles.detailPanel} style={{ display: this.state.detailVisible ? 'block' : 'none' }}>
             <div className={styles.detailHeader}>
-              <span style={{ fontSize: '18px', marginRight: '12px' }}>林克</span>
-              <span style={{ fontSize: '14px', color: '#999' }}>超厉害的部门</span>
+              <span style={{ fontSize: '18px', marginRight: '12px' }}>{detailData.username}</span>
+              <span style={{ fontSize: '14px', color: '#999' }}>{detailData.deptname}</span>
               <Icon type="close" onClick={this.closeDetail} />
             </div>
             <div className={styles.detailContent}>
               <div className={styles.detailAvatar}>
-                <Avatar image="123" width={120} />
+                <Avatar image={`/api/fileservice/read?fileid=${detailData.usericon}`} width={120} />
               </div>
               <p className={styles.detailMeta}>
                 <span>姓名：</span>
-                <span>林克</span>
+                <MetaValue>{detailData.username}</MetaValue>
               </p>
               <p className={styles.detailMeta}>
                 <span>部门：</span>
-                <span>超厉害的部门</span>
+                <MetaValue>{detailData.deptname}</MetaValue>
               </p>
               <p className={styles.detailMeta}>
                 <span>入职日期：</span>
-                <span>2017.09.09</span>
+                <MetaValue>{formatDate(detailData.joineddate)}</MetaValue>
               </p>
               <p className={styles.detailMeta}>
                 <span>性别：</span>
-                <span>男</span>
+                <MetaValue>{['男', '女'][detailData.usersex]}</MetaValue>
+              </p>
+              <p className={styles.detailMeta}>
+                <span>职位：</span>
+                <MetaValue>{detailData.userjob}</MetaValue>
+              </p>
+              <p className={styles.detailMeta}>
+                <span>出生日期：</span>
+                <MetaValue>{formatDate(detailData.birthday)}</MetaValue>
+              </p>
+              <p className={styles.detailMeta}>
+                <span>备注：</span>
+                <MetaValue>{detailData.remark}</MetaValue>
+              </p>
+              <div style={{ height: '1px', background: '#f0f0f0', marginBottom: '15px' }} />
+              <p className={styles.detailMeta}>
+                <span>办公电话：</span>
+                <MetaValue>{detailData.usertel}</MetaValue>
+              </p>
+              <p className={styles.detailMeta}>
+                <span>手机号码：</span>
+                <MetaValue>{detailData.userphone}</MetaValue>
+              </p>
+              <p className={styles.detailMeta}>
+                <span>邮箱：</span>
+                <MetaValue>{detailData.useremail}</MetaValue>
               </p>
             </div>
           </div>
@@ -227,4 +330,10 @@ class ContactsPanel extends Component {
   }
 }
 
-export default ContactsPanel;
+export default connect(
+  state => {
+    return {
+      userInfo: state.app.user
+    };
+  }
+)(ContactsPanel);
