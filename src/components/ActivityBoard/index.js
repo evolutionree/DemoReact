@@ -94,7 +94,7 @@ class ActivityBoard extends Component {
           <div className={styles.userbar}>
             <Avatar
               style={{ width: '42px', height: '42px' }}
-              image={`/api/fileservice/read?fileid=${user.icon}`}
+              image={`/api/fileservice/read?fileid=${user.icon}&filetype=3`}
             />
             <span className={styles.username}>{user.name}</span>
           </div>
@@ -122,7 +122,7 @@ class ActivityBoard extends Component {
                 <Avatar
                   className={styles.commenticon}
                   style={{ width: '34px', height: '34px' }}
-                  image={`/api/fileservice/read?fileid=${comment.user.icon}`}
+                  image={`/api/fileservice/read?fileid=${comment.user.icon}&filetype=3`}
                 />
                 <p className={styles.commenttitle}>
                   <span className={styles.commentuser}>{comment.user.name}</span>

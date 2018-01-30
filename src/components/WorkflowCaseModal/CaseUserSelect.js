@@ -65,7 +65,7 @@ class CaseUserSelect extends React.Component {
           {selectedUsers.map(user => (
             <li key={user.userid}>
               <Avatar
-                image={`/api/fileservice/read?fileid=${user.usericon}`}
+                image={`/api/fileservice/read?fileid=${user.usericon}&filetype=3`}
                 style={{ width: '40px', height: '40px' }}
               />
               <span title={user.username}>{user.username}</span>

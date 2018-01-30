@@ -91,7 +91,7 @@ class Picture extends Component {
         <div className={classnames({ [styles.wrap]: true, [styles.isTable]: isTable })}>
           {fileIds.map(fileId => (
             <span className={styles.holder} key={fileId}>
-              <img src={`/api/fileservice/read?fileid=${fileId}`} alt="" />
+              <img src={`/api/fileservice/read?fileid=${fileId}&filetype=1`} alt="" />
               {showRemove && (
                 <Icon
                   type="close-circle"
@@ -137,7 +137,8 @@ class Picture extends Component {
 
 Picture.View = ({ value, dispatch }) => {
   const fileIds = value ? value.split(',') : [];
-  const urls = fileIds.map(id => `/api/fileservice/read?fileid=${id}`);
+  const urls = fileIds.map(id => `/api/fileservice/read?fileid=${id}&filetype=1`);
+  const originUrls = fileIds.map(id => `/api/fileservice/read?fileid=${id}`);
   return (
     <div>
       {urls.map(url => (
@@ -146,7 +147,7 @@ Picture.View = ({ value, dispatch }) => {
             src={url}
             alt=""
             onClick={() => {
-              dispatch({ type: 'app/viewImages', payload: urls.map(src => ({ src, active: src === url })) });
+              dispatch({ type: 'app/viewImages', payload: originUrls.map(src => ({ src, active: src === url })) });
             }}
           />
         </span>

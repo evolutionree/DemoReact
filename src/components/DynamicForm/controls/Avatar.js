@@ -45,7 +45,7 @@ class Avatar extends Component {
 
   render() {
     const { value, headShape } = this.props;
-    const imgSrc = value ? `/api/fileservice/read?fileid=${value}` : defaultAvatar
+    const imgSrc = value ? `/api/fileservice/read?fileid=${value}&filetype=3` : defaultAvatar
     return (
       <div className={styles.wrap}>
         <div className={styles.uploadrow}>
@@ -99,7 +99,7 @@ Avatar.View = ({ value, headShape, size = 80 }) => (
       height: size + 'px',
       borderRadius: headShape === 1 ? '100%' : '0'
     }}
-    src={`/api/fileservice/read?fileid=${value}`}
+    src={`/api/fileservice/read?fileid=${value}&filetype=3`}
     onError={(e) => { e.target.src = defaultAvatar; }} //eslint-disable-line
     alt=""
   />

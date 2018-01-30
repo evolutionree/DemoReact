@@ -33,7 +33,7 @@ function ReceiveWeekly({ receiveWeeklistData, queryReceiveWeeklyDetail, receiveW
                 <div key={key + '-' + index} className={class_name} onClick={queryReceiveWeeklyDetail.bind(_this, item.recid, value[0].weekLabel)}>
                   <div className={Styles.left}>
                     <img
-                      src={'/api/fileservice/read?fileid=' + item.usericon}
+                      src={'/api/fileservice/read?fileid=' + item.usericon + '&filetype=3'}
                       onError={(e) => { e.target.src = defaultAvatar; }} //eslint-disable-line
                        />
                     <div className={Styles.receiveWeeklyUserInfoWrap}>

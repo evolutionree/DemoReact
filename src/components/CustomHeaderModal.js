@@ -2,13 +2,10 @@
  * Created by 0291 on 2018/1/25.
  * desc: 设置自定义表头 Table
  */
-import React, { Component, PropTypes } from 'react';
-import { Modal, Table, Button, Icon, Row, Col, InputNumber, Switch } from 'antd';
-import { connect } from 'dva';
+import React, { Component } from 'react';
+import { Modal, Button, Row, Col, InputNumber, Switch, Checkbox } from 'antd';
 import _ from 'lodash';
-import classnames from 'classnames';
 import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-hoc';
-import { saveCustomHeaders } from '../services/entcomm';
 import Styles from './CustomHeaderModal.less';
 
 let customTableBodyRef;
@@ -37,7 +34,7 @@ const SortableItem = SortableElement(({ item, isDisplayChange, widthChange }) =>
         </Col>
         <Col span={6}>
           <div className={Styles.customTableColumn}>
-            <Switch defaultChecked={item.columnConfig.isdisplay === 1 ? true : false} onChange={() => {console.log(111); isDisplayChange()}} />
+            <Checkbox onChange={isDisplayChange} checked={item.columnConfig.isdisplay === 1 ? true : false} />
           </div>
         </Col>
       </Row>
@@ -65,13 +62,13 @@ class CustomHeaderModal extends Component {
     super(props);
     this.state = {
       dataSource: this.setSeqNum(this.props.dataSource),
-      innerWidth: 800,
-      FixedColumnCount: 0 //开发测试
+      FixedColumnCount: this.props.fixedColumnCount
     };
   }
 
   setSeqNum(data) {
-    return data instanceof Array && data.map((item, index) => {
+    const cloneData = _.cloneDeep(data);
+    return cloneData instanceof Array && cloneData.map((item, index) => {
       item.columnConfig.seq = index + 1;
       return item;
     });
@@ -83,12 +80,17 @@ class CustomHeaderModal extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      dataSource: this.setSeqNum(nextProps.dataSource)
+      dataSource: this.setSeqNum(nextProps.dataSource),
+      FixedColumnCount: nextProps.fixedColumnCount
     });
   }
 
   saveCustomHeaders() {
+    const columnsConfig = this.state.dataSource.map((item) => {
+      return item.columnConfig;
+    });
 
+    this.props.saveCustomHeaders && this.props.saveCustomHeaders(columnsConfig, this.state.FixedColumnCount);
   }
 
   onSortEnd = ({ oldIndex, newIndex }) => {
@@ -124,10 +126,8 @@ class CustomHeaderModal extends Component {
     if (this.hasScrolled(customTableBodyRef)) { //存在滚动条
       innerWidth = 800 - this.getScrollWidth();
     }
-    if (innerWidth !== this.state.innerWidth) {
-      this.setState({
-        innerWidth: innerWidth
-      });
+    if (this.customTableHeaderRef) {
+      this.customTableHeaderRef.style.width = innerWidth + 'px';
     }
   }
 
@@ -139,18 +139,28 @@ class CustomHeaderModal extends Component {
     });
   }
 
-  isDisplayChange(a, b) {
-    console.log(a);
-    console.log(b)
+  isDisplayChange(rowIndex, e) {
+    let newDataSource = this.state.dataSource;
+    newDataSource[rowIndex].columnConfig.isdisplay = e.target.checked ? 1 : 0;
+    this.setState({
+      dataSource: newDataSource
+    });
   }
 
   FixedColumnCountChange(value) {
-    const reg = /^[1-9]+\d*$/;
+    const reg = /^[0-9]+\d*$/;
     if ((!isNaN(value) && reg.test(value))) {
       this.setState({
         FixedColumnCount: value
       });
     }
+  }
+
+  reset() {
+    this.setState({
+      dataSource: this.setSeqNum(this.props.dataSource),
+      FixedColumnCount: this.props.fixedColumnCount
+    });
   }
 
   render() {
@@ -165,17 +175,17 @@ class CustomHeaderModal extends Component {
         footer={
           <div className={Styles.setHeaderModalFooter}>
             <div>
-              固定列数：<InputNumber min={0} step={1} value={this.state.FixedColumnCount} onChange={this.FixedColumnCountChange.bind(this)} />
-              <button>还原默认设置</button>
+              固定列数：<InputNumber min={0} max={Math.min(5, dataSource.length)} step={1} value={this.state.FixedColumnCount} onChange={this.FixedColumnCountChange.bind(this)} />
+              <button onClick={this.reset.bind(this)}>还原默认设置</button>
             </div>
             <div>
               <Button key="back" type="default" onClick={this.props.onCancel}>取消</Button>,
-              <Button key="submit" type="primary" loading={false} onClick={this.saveCustomHeaders}>确定</Button>
+              <Button key="submit" type="primary" loading={false} onClick={this.saveCustomHeaders.bind(this)}>确定</Button>
             </div>
           </div>
         }>
         <div>
-          <div className={Styles.customTableHeader} style={{ width: this.state.innerWidth }}>
+          <div className={Styles.customTableHeader} ref={ref => this.customTableHeaderRef = ref}>
             <Row>
               <Col span={4}><div className={Styles.customTableColumn}>序号</div></Col>
               <Col span={8}><div className={Styles.customTableColumn}>列名</div></Col>
@@ -190,9 +200,4 @@ class CustomHeaderModal extends Component {
   }
 }
 
-export default connect(
-  state => state.app,
-  null,
-  undefined,
-  { withRef: true }
-)(CustomHeaderModal);
+export default CustomHeaderModal;

@@ -71,7 +71,7 @@ class ModifyAvatarModal extends React.Component {
     const fileId = this.state.fileId;
     let imageUrl = '';
     if (fileId) {
-      imageUrl = `/api/fileservice/read?fileid=${fileId}`;
+      imageUrl = `/api/fileservice/read?fileid=${fileId}&filetype=3`;
     }
     return (
       <Modal
