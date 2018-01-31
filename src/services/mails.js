@@ -413,3 +413,14 @@ export async function recoverMails(params) {
     body: JSON.stringify(params)
   });
 }
+
+/**
+ * 恢复邮件
+ * @returns {Promise.<Object>}
+ */
+export async function validMailPwd() {
+  return request('api/mail/validpwd', {
+    method: 'post',
+    body: JSON.stringify({})
+  });
+}
