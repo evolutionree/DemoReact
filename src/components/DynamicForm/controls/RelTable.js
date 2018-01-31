@@ -17,11 +17,13 @@ class RelTable extends Component {
       FieldData: PropTypes.object
     })),
     entityId: PropTypes.string,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+    onFocus: PropTypes.func
   };
   static defaultProps = {
     mode: 'ADD',
-    value: []
+    value: [],
+    onFocus: () => {}
   };
 
   arrFormInstance = [];
@@ -245,6 +247,29 @@ class RelTable extends Component {
     }
   };
 
+  getFieldConfig = fieldName => {
+    const field = this.getFieldByName(fieldName);
+    return field && field.fieldconfig;
+  };
+
+  setFieldConfig = (fieldName, config) => {
+    const field = this.getFieldByName(fieldName);
+    if (field) {
+      field.fieldconfig = {
+        ...field.fieldconfig,
+        ...config
+      };
+    }
+    this.setState({ fields: [...this.state.fields] });
+  };
+
+  getFieldByName = (fieldName) => {
+    return _.find(this.state.fields, ['fieldname', fieldName]);
+  };
+
+  onRowFieldFocus = fieldName => {
+    this.props.onFocus();
+  };
 
   // 渲染表格列头
   renderTableHeader = () => {
@@ -282,6 +307,7 @@ class RelTable extends Component {
           onChange={this.onRowValueChange.bind(this, index)}
           onSelect={this.onRowSelect.bind(this, index)}
           ref={formInst => this.arrFormInstance[index] = formInst}
+          onFieldControlFocus={this.onRowFieldFocus}
         />
       );
     });

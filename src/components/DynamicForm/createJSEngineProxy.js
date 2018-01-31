@@ -427,6 +427,66 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       }
     };
 
+    designateRowFieldDataSource = (tableFieldName, columnFieldName, type, values) => {
+      if (this.getFieldControlType(tableFieldName) !== 24) return [];
+      const instance = this.getFieldComponentInstance(tableFieldName);
+      if (!instance) return;
+      if (type === 1) {
+        let ids = values;
+        if (ids === undefined || ids === null) return;
+        instance.setFieldConfig(columnFieldName, {
+          designateDataSource: typeof ids === 'object' ? ids : (ids + ''),
+          designateDataSourceByName: ''
+        });
+      } else if (type === 0) {
+        let names = values;
+        instance.setFieldConfig(columnFieldName, {
+          designateDataSource: '',
+          designateDataSourceByName: names
+        });
+      }
+    };
+
+    designateRowFieldNode = (tableFieldName, columnFieldName, nodePath, includeSubNode = false) => {
+      if (this.getFieldControlType(tableFieldName) !== 24) return [];
+      const instance = this.getFieldComponentInstance(tableFieldName);
+      if (!instance) return;
+      instance.setFieldConfig(columnFieldName, {
+        designateNodes: [{ path: nodePath, includeSubNode }]
+      });
+    };
+
+    designateRowFieldFilterDataSource = (tableFieldName, columnFieldName, type, values) => {
+      if (this.getFieldControlType(tableFieldName) !== 24) return [];
+      const instance = this.getFieldComponentInstance(tableFieldName);
+      if (!instance) return;
+      if (type === 1) {
+        let ids = values;
+        if (ids === undefined) return;
+        const conf = instance.getFieldConfig(columnFieldName);
+        if (!conf) return;
+        const { designateFilterDataSource: oldVal, excuteId } = conf;
+        const newVal = (oldVal && excuteId === this.excuteId) ? (oldVal + ',' + ids) : ids;
+        instance.setFieldConfig(columnFieldName, {
+          designateFilterDataSource: newVal + '',
+          designateFilterDataSourceByName: '',
+          excuteId: this.excuteId
+        });
+      } else if (type === 0) {
+        let names = values;
+        if (!names) return;
+        const conf = instance.getFieldConfig(columnFieldName);
+        if (!conf) return;
+        const { designateFilterDataSourceByName: oldVal, excuteId } = conf;
+        const newVal = (oldVal && excuteId === this.excuteId) ? (oldVal + ',' + names) : names;
+        instance.setFieldConfig(columnFieldName, {
+          designateFilterDataSource: '',
+          designateFilterDataSourceByName: newVal,
+          excuteId: this.excuteId
+        });
+      }
+    };
+
     getFieldConfig = fieldName => {
       const field = this.getFieldByName(fieldName);
       return field && field.fieldconfig;
