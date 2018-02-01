@@ -284,7 +284,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     designateDataSource = (fieldName, ids) => {
-      if (ids === undefined || ids === null) return;
+      if (ids === undefined || ids === null) ids = '';
       this.setFieldConfig(fieldName, {
         designateDataSource: typeof ids === 'object' ? ids : (ids + ''),
         designateDataSourceByName: ''
@@ -294,12 +294,12 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     designateDataSourceByName = (fieldName, names) => {
       this.setFieldConfig(fieldName, {
         designateDataSource: '',
-        designateDataSourceByName: names
+        designateDataSourceByName: names || ''
       });
     };
 
     designateFilterDataSource = (fieldName, ids) => {
-      if (ids === undefined) return;
+      if (ids === undefined || ids === null) ids = '';
       const conf = this.getFieldConfig(fieldName);
       if (!conf) return;
       const { designateFilterDataSource: oldVal, excuteId } = conf;
@@ -312,7 +312,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     designateFilterDataSourceByName = (fieldName, names) => {
-      if (!names) return;
+      if (!names) names = '';
       const conf = this.getFieldConfig(fieldName);
       if (!conf) return;
       const { designateFilterDataSourceByName: oldVal, excuteId } = conf;
@@ -433,13 +433,13 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       if (!instance) return;
       if (type === 1) {
         let ids = values;
-        if (ids === undefined || ids === null) return;
+        if (ids === undefined || ids === null) ids = '';
         instance.setFieldConfig(columnFieldName, {
           designateDataSource: typeof ids === 'object' ? ids : (ids + ''),
           designateDataSourceByName: ''
         });
       } else if (type === 0) {
-        let names = values;
+        let names = values || '';
         instance.setFieldConfig(columnFieldName, {
           designateDataSource: '',
           designateDataSourceByName: names
@@ -452,7 +452,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       const instance = this.getFieldComponentInstance(tableFieldName);
       if (!instance) return;
       instance.setFieldConfig(columnFieldName, {
-        designateNodes: [{ path: nodePath, includeSubNode }]
+        designateNodes: [{ path: nodePath || '', includeSubNode }]
       });
     };
 
@@ -462,7 +462,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       if (!instance) return;
       if (type === 1) {
         let ids = values;
-        if (ids === undefined) return;
+        if (ids === undefined || ids === null) ids = '';
         const conf = instance.getFieldConfig(columnFieldName);
         if (!conf) return;
         const { designateFilterDataSource: oldVal, excuteId } = conf;
@@ -473,8 +473,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
           excuteId: this.excuteId
         });
       } else if (type === 0) {
-        let names = values;
-        if (!names) return;
+        let names = values || '';
         const conf = instance.getFieldConfig(columnFieldName);
         if (!conf) return;
         const { designateFilterDataSourceByName: oldVal, excuteId } = conf;
