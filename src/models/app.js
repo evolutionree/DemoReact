@@ -108,7 +108,7 @@ export default {
         const type = /admin/.test(location.pathname) ? 1 : 0;
         const result = yield call(getGlobalMenus, type);
 
-        if (storage.getLocalItem('defaultPathType') !== type) {
+        if (storage.getLocalItem('defaultPathType') != type) {
           let defaultPath = '';
           let findFirstPath = true;
           function getDefaultPath(menus) {
