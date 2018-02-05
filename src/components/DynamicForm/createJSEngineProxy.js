@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { Modal } from 'antd';
 import { getAuthedHeaders } from '../../utils/request';
 import { queryEntityDetail } from '../../services/entity';
@@ -260,10 +260,10 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       if (this.getFieldControlType(fieldName) !== 24) return [];
       const value = this.getValue(fieldName);
       if (value && value[rowIndex]) {
-        return [value[rowIndex].FieldData || value[rowIndex]];
+        return [_.cloneDeep([rowIndex].FieldData || value[rowIndex])];
       }
       if (value && rowIndex === -1) {
-        return value.map(rowVal => rowVal.FieldData || rowVal);
+        return value.map(rowVal => _.cloneDeep(rowVal.FieldData || rowVal));
       }
       return [];
     };
@@ -325,8 +325,11 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     designateNode = (fieldName, nodePath, includeSubNode = false) => {
+      const designateNodes = (nodePath || '').split(',').map(nodePathItem => {
+        return { path: nodePathItem, includeSubNode };
+      });
       this.setFieldConfig(fieldName, {
-        designateNodes: [{ path: nodePath, includeSubNode }]
+        designateNodes: designateNodes
       });
     };
 
@@ -451,8 +454,11 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       if (this.getFieldControlType(tableFieldName) !== 24) return [];
       const instance = this.getFieldComponentInstance(tableFieldName);
       if (!instance) return;
+      const designateNodes = (nodePath || '').split(',').map(nodePathItem => {
+        return { path: nodePathItem, includeSubNode };
+      });
       instance.setFieldConfig(columnFieldName, {
-        designateNodes: [{ path: nodePath, includeSubNode }]
+        designateNodes: designateNodes
       });
     };
 
