@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Button, Checkbox } from 'antd';
 import classnames from 'classnames';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { getGeneralProtocolForGrid } from '../../../services/entcomm';
 import RelTableRow from './RelTableRow';
 import styles from './RelTable.less';
