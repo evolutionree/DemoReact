@@ -79,10 +79,12 @@ class CustomHeaderModal extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      dataSource: this.setSeqNum(nextProps.dataSource),
-      FixedColumnCount: nextProps.fixedColumnCount
-    });
+    if (nextProps.visible) {
+      this.setState({
+        dataSource: this.setSeqNum(nextProps.dataSource),
+        FixedColumnCount: nextProps.fixedColumnCount
+      });
+    }
   }
 
   saveCustomHeaders() {
