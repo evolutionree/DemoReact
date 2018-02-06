@@ -79,10 +79,12 @@ class CustomHeaderModal extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      dataSource: this.setSeqNum(nextProps.dataSource),
-      FixedColumnCount: nextProps.fixedColumnCount
-    });
+    if (nextProps.visible) {
+      this.setState({
+        dataSource: this.setSeqNum(nextProps.dataSource),
+        FixedColumnCount: nextProps.fixedColumnCount
+      });
+    }
   }
 
   saveCustomHeaders() {
@@ -184,7 +186,7 @@ class CustomHeaderModal extends Component {
             </div>
           </div>
         }>
-        <div>
+        <div className={Styles.bodyWrap}>
           <div className={Styles.customTableHeader} ref={ref => this.customTableHeaderRef = ref}>
             <Row>
               <Col span={4}><div className={Styles.customTableColumn}>序号</div></Col>
