@@ -45,7 +45,7 @@ class ReportForm extends React.Component {
       datasources: [],
       serchValue: {},
       reload: true, //serchValue 改变时 是否让DataGrid组件重新请求数据（如果用户在点击搜索按钮之前只是修改查询参数，不请求）
-      width: document.body.clientWidth - 200, //系统左侧 200px显示菜单
+      width: document.body.clientWidth,
       mapType: 'china',
       mapSeriesType: 'map',
       bmapCenter: [],
@@ -152,7 +152,7 @@ class ReportForm extends React.Component {
       datasources: [],
       serchValue: {},
       reload: true,
-      width: document.body.clientWidth - 200,
+      width: document.body.clientWidth,
       mapType: 'china',
       mapSeriesType: 'map',
       bmapCenter: [],
@@ -171,7 +171,7 @@ class ReportForm extends React.Component {
 
   onWindowResize(e) {
     this.setState({
-      width: document.body.clientWidth - 200
+      width: document.body.clientWidth
     });
   }
 
@@ -617,7 +617,7 @@ class ReportForm extends React.Component {
   }
 
   render() {
-    let width = this.state.width;
+    let width = this.state.width - (this.props.siderFold ? 61 : 200); //系统左侧 200px显示菜单(未折叠  折叠61)
     width = width < 1080 ? 1080 : width; // 系统设置了最小宽度
     return (
       <Page contentStyle={{ background: '#ffffff' }} title={this.state.pageName || ''}>
@@ -628,11 +628,11 @@ class ReportForm extends React.Component {
               let height = (item.height > 0 ? item.height : widthActually * Math.abs(item.height));
               let style;
               if (item.ctrltype === 2) {
-                style = { padding: '10px' } //表格不给固定高  通过scroll.y去设置
+                style = { padding: '10px 0px' } //表格不给固定高  通过scroll.y去设置
               } else if (item.ctrltype === 3) {
                 style = {};
               } else {
-                style = { height: height, padding: '10px' };
+                style = { height: height, padding: '10px 0px' };
               }
               item.ctrltype === 4 ? style.overflowX = 'auto' : style;
               return (
@@ -651,5 +651,5 @@ class ReportForm extends React.Component {
 }
 
 export default connect(state => {
-  return state.reportForm;
+  return { ...state.reportForm, siderFold: state.app.siderFold };
 })(ReportForm);

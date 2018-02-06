@@ -163,15 +163,27 @@ class DataGrid extends  React.Component {
 
   getColumns(tableextinfo, datasourcename) {
     //DataGrid 列获取
-    // let columns = tableextinfo.columns;
-    // if (this.state[datasourcename + 'columns']) {
-    //   columns = this.state[datasourcename + 'columns'];
-    // }
     let columns = this.state.columns || [];
+
+    let columnsTotalWidth = 0;
+    columns instanceof Array && columns.map((item) => {
+      columnsTotalWidth += (item.width > 0 ? item.width + 20 + 2 : 150 + 20 + 2); //scroll.x 需要大于 表格每列的总宽度，否则 表头与内容行对不齐 20:td-padding 2: td-border
+    });
+    window.tableHasScrollX = true;
+    if ((this.props.width - 52) > columnsTotalWidth) { //不会出现横向滚动条 让表格适配整个页面
+      window.tableHasScrollX = false;
+    }
+
     const returnColumns = columns instanceof Array && columns.map((item, index) => {
-      const setWidth = item.width > 0 ? item.width : 150;  //后端会给定列宽，没给则默认设置为150
-      const style = {
+      const setWidth = window.tableHasScrollX ? (item.width > 0 ? item.width : 150) : 0;  //后端会给定列宽，没给则默认设置为150
+      const style = window.tableHasScrollX ? {
         width: setWidth,
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        display: 'inline-block'
+      } : {
+        maxWidth: '340px',
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
@@ -283,8 +295,10 @@ class DataGrid extends  React.Component {
 
     let props = {};
     if (this.props.width && this.props.height) {
-      props = (this.props.width - 72) > this.getColumnsTotalWidth() ? {} : {
+      props = window.tableHasScrollX ? {
         scroll: { x: this.getColumnsTotalWidth(), y: this.props.height }
+      } : {
+        scroll: { x: '100%' }
       };
     }
 

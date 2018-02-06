@@ -47,8 +47,14 @@ class DynamicTable extends Component {
     window.removeEventListener('resize', this.onWindowResize);
   }
 
-  componentWillReceiveProps() {
-
+  componentWillReceiveProps(nextProps) {
+    if(this.props.entityId !== nextProps.entityId) { //不同的实体之间切换页面了  需再次请求最新的表头自定义设置数据
+      this.fetchCustomHeaderData(nextProps.entityId);
+    }
+    this.setState({
+      height: document.body.clientHeight,
+      width: document.body.clientWidth
+    });
   }
 
   onWindowResize(e) {
@@ -202,9 +208,9 @@ class DynamicTable extends Component {
     });
   }
 
-  fetchCustomHeaderData = () => {
+  fetchCustomHeaderData = (entityId = this.props.entityId) => { //放在这个组件里去请求数据 主要是考虑 一次代码多次复用 不然交给上一层组件去请求，那么独立实体 简单实体 动态实体列表都得写一遍
     getCustomHeaders({
-      EntityId: this.props.entityId
+      EntityId: entityId
     }).then((result) => {
       this.setState({
         customProtocol: result.data.columns,
@@ -379,8 +385,9 @@ class DynamicTable extends Component {
     let columns = this.getColumns();
     const scrollX = this.props.rowSelection ? parseInt(this.getColumnsTotalWidth(columns)) + 63 : parseInt(this.getColumnsTotalWidth(columns)); //63 表格如果支持选择，则加上选择列的宽度
 
-    const width = (this.state.width - 200) < 1080 ? 1080 : this.state.width; // 系统设置了最小宽度
-    if (width > parseInt(this.getColumnsTotalWidth(columns))) { //如果表格没有横向滚动条，则不需要对列固定
+    let width = this.state.width - (this.props.siderFold ? 61 : 200); //系统左侧 200px显示菜单(未折叠  折叠61)
+    width = width < 1080 ? 1080 : width; // 系统设置了最小宽度
+    if ((width - 52) > (parseInt(this.getColumnsTotalWidth(columns)) + 63)) { //如果表格没有横向滚动条，则不需要对列固定  -52:计算出表格真实占用的宽度 +63 表格各列宽+ 列头的checkBox宽
       columns = columns.map((item) => {
         item.fixed = false;
         return item;
