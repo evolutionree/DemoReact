@@ -41,7 +41,8 @@ function WorkflowList({
             show: () => currentItems[0].recstatus === 0 },
           { label: '设置流程函数', handler: openFlowEvent, single: true,
             show: () => currentItems[0].flowtype === 0 },
-          { label: '设置可见规则', handler: openFlowVisibleRule, single: true }
+          { label: '设置可见规则', handler: openFlowVisibleRule, single: true,
+            show: () => currentItems[0].entitymodeltype === 0 }
         ]}
       >
         <Select value={flowStatus + ''} onChange={val => search({ flowStatus: val })}>

@@ -298,3 +298,38 @@ export async function updateUserDept(params) {
     body: JSON.stringify(params)
   });
 }
+
+/**
+ * 通讯录
+ * @param params
+ * { type: 0|1, userid: xx, pagesize, pageindex, searchkey } // 0最近联系人 1星标联系人
+ * @returns {Promise}
+ */
+export async function queryContacts(params) {
+  const type = params.type;
+  delete params.type;
+  if (type === 0) {
+    return request('/api/contact/getrecentcall', {
+      method: 'POST',
+      body: JSON.stringify(params)
+    });
+  } else {
+    return request('/api/contact/getflaglinkman', {
+      method: 'POST',
+      body: JSON.stringify(params)
+    });
+  }
+}
+
+/**
+ * 标记星标联系人
+ * @param params
+ * { flag, userid }
+ * @returns {Promise.<Object>}
+ */
+export async function flagContact(params) {
+  return request('/api/contact/flaglinkman', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}

@@ -113,7 +113,7 @@ class WorkflowRuleModal extends Component {
       rulename: '',
       flowid: this.props.currentItem.flowid,
       ruleid: rawRuleData ? rawRuleData.ruleid : undefined,
-      id: rawRuleData ? rawRuleData.id : undefined,
+      id: rawRuleData ? rawRuleData.ruleid : undefined,
       entityid: entityid,
       ruleset: {
         ruleset: ruleSet,

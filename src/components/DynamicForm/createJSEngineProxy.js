@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import _ from 'lodash';
+import * as _ from 'lodash';
 import { Modal } from 'antd';
 import { getAuthedHeaders } from '../../utils/request';
 import { queryEntityDetail } from '../../services/entity';
@@ -260,10 +260,10 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       if (this.getFieldControlType(fieldName) !== 24) return [];
       const value = this.getValue(fieldName);
       if (value && value[rowIndex]) {
-        return [value[rowIndex].FieldData || value[rowIndex]];
+        return [_.cloneDeep([rowIndex].FieldData || value[rowIndex])];
       }
       if (value && rowIndex === -1) {
-        return value.map(rowVal => rowVal.FieldData || rowVal);
+        return value.map(rowVal => _.cloneDeep(rowVal.FieldData || rowVal));
       }
       return [];
     };
@@ -325,8 +325,11 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     designateNode = (fieldName, nodePath, includeSubNode = false) => {
+      const designateNodes = (nodePath || '').split(',').map(nodePathItem => {
+        return { path: nodePathItem, includeSubNode };
+      });
       this.setFieldConfig(fieldName, {
-        designateNodes: [{ path: nodePath, includeSubNode }]
+        designateNodes: designateNodes
       });
     };
 
@@ -424,6 +427,69 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       const instance = this.getFieldComponentInstance(tableFieldName);
       if (instance && instance.setRowFieldReadOnly) {
         return instance.setRowFieldReadOnly(columnFieldName, isReadonly);
+      }
+    };
+
+    designateRowFieldDataSource = (tableFieldName, columnFieldName, type, values) => {
+      if (this.getFieldControlType(tableFieldName) !== 24) return [];
+      const instance = this.getFieldComponentInstance(tableFieldName);
+      if (!instance) return;
+      if (type === 1) {
+        let ids = values;
+        if (ids === undefined || ids === null) return;
+        instance.setFieldConfig(columnFieldName, {
+          designateDataSource: typeof ids === 'object' ? ids : (ids + ''),
+          designateDataSourceByName: ''
+        });
+      } else if (type === 0) {
+        let names = values;
+        instance.setFieldConfig(columnFieldName, {
+          designateDataSource: '',
+          designateDataSourceByName: names
+        });
+      }
+    };
+
+    designateRowFieldNode = (tableFieldName, columnFieldName, nodePath, includeSubNode = false) => {
+      if (this.getFieldControlType(tableFieldName) !== 24) return [];
+      const instance = this.getFieldComponentInstance(tableFieldName);
+      if (!instance) return;
+      const designateNodes = (nodePath || '').split(',').map(nodePathItem => {
+        return { path: nodePathItem, includeSubNode };
+      });
+      instance.setFieldConfig(columnFieldName, {
+        designateNodes: designateNodes
+      });
+    };
+
+    designateRowFieldFilterDataSource = (tableFieldName, columnFieldName, type, values) => {
+      if (this.getFieldControlType(tableFieldName) !== 24) return [];
+      const instance = this.getFieldComponentInstance(tableFieldName);
+      if (!instance) return;
+      if (type === 1) {
+        let ids = values;
+        if (ids === undefined) return;
+        const conf = instance.getFieldConfig(columnFieldName);
+        if (!conf) return;
+        const { designateFilterDataSource: oldVal, excuteId } = conf;
+        const newVal = (oldVal && excuteId === this.excuteId) ? (oldVal + ',' + ids) : ids;
+        instance.setFieldConfig(columnFieldName, {
+          designateFilterDataSource: newVal + '',
+          designateFilterDataSourceByName: '',
+          excuteId: this.excuteId
+        });
+      } else if (type === 0) {
+        let names = values;
+        if (!names) return;
+        const conf = instance.getFieldConfig(columnFieldName);
+        if (!conf) return;
+        const { designateFilterDataSourceByName: oldVal, excuteId } = conf;
+        const newVal = (oldVal && excuteId === this.excuteId) ? (oldVal + ',' + names) : names;
+        instance.setFieldConfig(columnFieldName, {
+          designateFilterDataSource: '',
+          designateFilterDataSourceByName: newVal,
+          excuteId: this.excuteId
+        });
       }
     };
 

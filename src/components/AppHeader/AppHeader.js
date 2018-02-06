@@ -6,6 +6,7 @@ import SiteLogo from './SiteLogo';
 import UserDropdown from './UserDropdown';
 import ImportTask from './ImportTask';
 import ProgressModal from './ProgressModal/ProgressModal';
+import ContactsPanel from "./ContactsPanel";
 
 
 const AppHeader = () => {
@@ -16,6 +17,7 @@ const AppHeader = () => {
       <Header.Right>
         <ImportTask />
         <ProgressModal />
+        <ContactsPanel />
         <MessageList />
         <UserDropdown />
       </Header.Right>

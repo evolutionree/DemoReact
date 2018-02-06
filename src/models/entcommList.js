@@ -132,6 +132,7 @@ export default {
       const location = yield select(({ routing }) => routing.locationBeforeTransitions);
       const { query } = location;
       const { menus, entityId } = yield select(({ entcommList }) => entcommList);
+      if (!entityId || !menus.length) return;
       const queries = {
         entityId,
         pageIndex: 1,
@@ -169,6 +170,7 @@ export default {
     },
     *queryFuntionbutton__({ payload }, { select, call, put }) {
       const { entityId, currItems } = yield select(state => state.entcommList);
+      if (!entityId) return;
       try {
         let { data: functionbutton } = yield call(getFunctionbutton, { entityid: entityId, RecIds: currItems.map((item) => item.recid) });
         /*

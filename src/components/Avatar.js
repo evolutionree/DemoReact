@@ -2,9 +2,22 @@ import React, { PropTypes } from 'react';
 import defaultAvatar from '../assets/img_default_avatar.png';
 
 const UserAvatar = ({ image, width, name, style, ...restProps }) => {
+  let _style = {
+    borderRadius: '100%'
+  };
+  if (width) {
+    _style.width = width + 'px';
+    _style.height = width + 'px';
+  }
+  if (style) {
+    _style = {
+      ..._style,
+      ...style
+    };
+  }
   return (
     <img
-      style={{ width, borderRadius: '100%', ...style }}
+      style={_style}
       title={name}
       src={image}
       onError={(e) => { e.target.src = defaultAvatar; }} //eslint-disable-line
