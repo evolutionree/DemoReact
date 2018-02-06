@@ -271,58 +271,58 @@ class ContactsPanel extends Component {
               {/*{hasMore ? <div className={styles.loadMore} onClick={this.loadMore}>加载更多</div> : <div>亲,没有更多数据加载了哦</div>}*/}
             </div>
           </Spin>
-          <div className={styles.detailPanel} style={{ display: this.state.detailVisible ? 'block' : 'none' }}>
-            <div className={styles.detailHeader}>
-              <span style={{ fontSize: '18px', marginRight: '12px' }}>{detailData.username}</span>
-              <span style={{ fontSize: '14px', color: '#999' }}>{detailData.deptname}</span>
-              <Icon type="close" onClick={this.closeDetail} />
+        </div>
+        <div className={styles.detailPanel} style={{ display: this.state.detailVisible ? 'block' : 'none' }}>
+          <div className={styles.detailHeader}>
+            <span style={{ fontSize: '18px', marginRight: '12px' }}>{detailData.username}</span>
+            <span style={{ fontSize: '14px', color: '#999' }}>{detailData.deptname}</span>
+            <Icon type="close" onClick={this.closeDetail} />
+          </div>
+          <div className={styles.detailContent}>
+            <div className={styles.detailAvatar}>
+              <Avatar image={`/api/fileservice/read?fileid=${detailData.usericon}`} width={120} />
             </div>
-            <div className={styles.detailContent}>
-              <div className={styles.detailAvatar}>
-                <Avatar image={`/api/fileservice/read?fileid=${detailData.usericon}`} width={120} />
-              </div>
-              <p className={styles.detailMeta}>
-                <span>姓名：</span>
-                <MetaValue>{detailData.username}</MetaValue>
-              </p>
-              <p className={styles.detailMeta}>
-                <span>部门：</span>
-                <MetaValue>{detailData.deptname}</MetaValue>
-              </p>
-              <p className={styles.detailMeta}>
-                <span>入职日期：</span>
-                <MetaValue>{formatDate(detailData.joineddate)}</MetaValue>
-              </p>
-              <p className={styles.detailMeta}>
-                <span>性别：</span>
-                <MetaValue>{['男', '女'][detailData.usersex]}</MetaValue>
-              </p>
-              <p className={styles.detailMeta}>
-                <span>职位：</span>
-                <MetaValue>{detailData.userjob}</MetaValue>
-              </p>
-              <p className={styles.detailMeta}>
-                <span>出生日期：</span>
-                <MetaValue>{formatDate(detailData.birthday)}</MetaValue>
-              </p>
-              <p className={styles.detailMeta}>
-                <span>备注：</span>
-                <MetaValue>{detailData.remark}</MetaValue>
-              </p>
-              <div style={{ height: '1px', background: '#f0f0f0', marginBottom: '15px' }} />
-              <p className={styles.detailMeta}>
-                <span>办公电话：</span>
-                <MetaValue>{detailData.usertel}</MetaValue>
-              </p>
-              <p className={styles.detailMeta}>
-                <span>手机号码：</span>
-                <MetaValue>{detailData.userphone}</MetaValue>
-              </p>
-              <p className={styles.detailMeta}>
-                <span>邮箱：</span>
-                <MetaValue>{detailData.useremail}</MetaValue>
-              </p>
-            </div>
+            <p className={styles.detailMeta}>
+              <span>姓名：</span>
+              <MetaValue>{detailData.username}</MetaValue>
+            </p>
+            <p className={styles.detailMeta}>
+              <span>部门：</span>
+              <MetaValue>{detailData.deptname}</MetaValue>
+            </p>
+            <p className={styles.detailMeta}>
+              <span>入职日期：</span>
+              <MetaValue>{formatDate(detailData.joineddate)}</MetaValue>
+            </p>
+            <p className={styles.detailMeta}>
+              <span>性别：</span>
+              <MetaValue>{['男', '女'][detailData.usersex]}</MetaValue>
+            </p>
+            <p className={styles.detailMeta}>
+              <span>职位：</span>
+              <MetaValue>{detailData.userjob}</MetaValue>
+            </p>
+            <p className={styles.detailMeta}>
+              <span>出生日期：</span>
+              <MetaValue>{formatDate(detailData.birthday)}</MetaValue>
+            </p>
+            <p className={styles.detailMeta}>
+              <span>备注：</span>
+              <MetaValue>{detailData.remark}</MetaValue>
+            </p>
+            <div style={{ height: '1px', background: '#f0f0f0', marginBottom: '15px' }} />
+            <p className={styles.detailMeta}>
+              <span>办公电话：</span>
+              <MetaValue>{detailData.usertel}</MetaValue>
+            </p>
+            <p className={styles.detailMeta}>
+              <span>手机号码：</span>
+              <MetaValue>{detailData.userphone}</MetaValue>
+            </p>
+            <p className={styles.detailMeta}>
+              <span>邮箱：</span>
+              <MetaValue>{detailData.useremail}</MetaValue>
+            </p>
           </div>
         </div>
       </div>
