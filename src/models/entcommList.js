@@ -24,7 +24,8 @@ export default {
     copyData: {},
     extraButtonData: [], //页面动态 按钮数据源
     extraToolbarData: [], //页面toolbar 动态按钮数据源
-    dynamicModalData: {}
+    dynamicModalData: {},
+    sortFieldAndOrder: null //当前排序的字段及排序顺序
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -100,6 +101,9 @@ export default {
     *search({ payload }, { select, call, put }) {
       const location = yield select(({ routing }) => routing.locationBeforeTransitions);
       const { pathname, query } = location;
+      if (payload.searchOrder) { //其他查询条件 发生改变  排序保持不变
+        yield put({ type: 'putState', payload: { sortFieldAndOrder: payload.searchOrder } });
+      }
       yield put(routerRedux.push({
         pathname,
         query: {
@@ -362,7 +366,8 @@ export default {
         copyData: {},
         extraButtonData: [], //页面动态 按钮数据源
         extraToolbarData: [], //页面toolbar 动态按钮数据源
-        dynamicModalData: {}
+        dynamicModalData: {},
+        sortFieldAndOrder: null //当前排序的字段及排序顺序
       };
     }
   }

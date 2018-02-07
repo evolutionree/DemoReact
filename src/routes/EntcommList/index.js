@@ -32,7 +32,8 @@ function EntcommList({
     currentUser,
     simpleSearchKey,
     extraButtonData,
-    extraToolbarData
+    extraToolbarData,
+    sortFieldAndOrder  //当前排序的字段及排序顺序
   }) {
   function selectItems(items) {
     dispatch({ type: 'entcommList/currItems', payload: items });
@@ -209,6 +210,7 @@ function EntcommList({
       <DynamicTable
         ref={(ref) => dynamicTableRef = ref }
         sorter={true}
+        sortFieldAndOrder={sortFieldAndOrder}
         entityId={entityId}
         protocol={protocol}
         rowKey="recid"

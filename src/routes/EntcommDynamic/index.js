@@ -23,7 +23,8 @@ function EntcommList({
                        total,
                        entityId,
                        currentUser,
-                       simpleSearchKey
+                       simpleSearchKey,
+                       sortFieldAndOrder
                      }) {
   function search(payload) {
     dispatch({ type: 'entcommDynamic/search', payload });
@@ -93,6 +94,7 @@ function EntcommList({
       <DynamicTable
         ref={(ref) => dynamicTableRef = ref }
         sorter={true}
+        sortFieldAndOrder={sortFieldAndOrder}
         protocol={protocol}
         rowKey="recid"
         entityId={entityId}

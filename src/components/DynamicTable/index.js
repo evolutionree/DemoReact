@@ -148,11 +148,13 @@ class DynamicTable extends Component {
         maxWidth: '340px'
       };
 
+      const sortFieldAndOrder = this.props.sortFieldAndOrder;
       return {
         key: field.fieldname,
         dataIndex: field.fieldname,
         title: field.displayname,
         sorter: this.props.sorter,
+        sortOrder: (this.props.sorter && sortFieldAndOrder) ? sortFieldAndOrder.split(' ')[0] === field.fieldname && (sortFieldAndOrder.split(' ')[1] + 'end') : false,
         width: this.props.fixedHeader ? setWidth + 22 : 0, //21：padding + border
         fixed: this.props.fixedHeader ? (index < this.state.fixedColumnCount ? 'left' : false) : false,
         render: (text, record) => {
