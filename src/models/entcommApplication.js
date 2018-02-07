@@ -103,9 +103,6 @@ export default {
     *search({ payload }, { select, call, put }) {
       const location = yield select(({ routing }) => routing.locationBeforeTransitions);
       const { pathname, query } = location;
-      if (payload.searchOrder) { //其他查询条件 发生改变  排序保持不变
-        yield put({ type: 'putState', payload: { sortFieldAndOrder: payload.searchOrder } });
-      }
       yield put(routerRedux.push({
         pathname,
         query: {
@@ -153,6 +150,9 @@ export default {
       queries.isAdvanceQuery = parseInt(queries.isAdvanceQuery);
       if (queries.searchData) {
         queries.searchData = JSON.parse(queries.searchData);
+      }
+      if (queries.searchOrder) { //其他查询条件 发生改变  排序保持不变
+        yield put({ type: 'putState', payload: { sortFieldAndOrder: queries.searchOrder } });
       }
       yield put({ type: 'queries', payload: queries });
       try {
