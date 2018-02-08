@@ -74,6 +74,33 @@ export default {
       } catch (err) {
         message.error(err.message || '删除失败');
       }
+    },
+    *orderMenu({ payload: { index, dir }}, { select, put, call }) {
+      try {
+        yield call(delMenu, menuId);
+        message.success('删除成功');
+        yield put({ type: 'query' });
+      } catch (err) {
+        message.error(err.message || '删除失败');
+      }
+
+      const list = yield select(state => state.entityMenus.list);
+      const tmpItem = list[index];
+      list[index] = list[index - 1];
+      list[index - 1] = tmpItem;
+      const ids = list.map(item => item.relid);
+      const entityId = yield select(state => state.entityTabs.entityId);
+      try {
+        yield call(orderbyreltab, ids);
+        yield put({
+          type: 'query',
+          payload: {
+            entityId
+          }
+        });
+      } catch (e) {
+        message.error(e.message || '更新失败');
+      }
     }
   },
   reducers: {
