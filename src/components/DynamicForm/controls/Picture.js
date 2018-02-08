@@ -73,6 +73,14 @@ class Picture extends Component {
     return isImage;
   };
 
+  handleImageLoaded = (fileId) => {
+    this.setState({ [fileId + 'imageLoading']: false });
+  }
+
+  handleImageErrored = (fileId) => {
+    this.setState({ [fileId + 'imageLoading']: false });
+  }
+
   // getPictureUrls = () => {
   //   const { value } = this.props;
   //   if (!value) return [];
@@ -91,7 +99,13 @@ class Picture extends Component {
         <div className={classnames({ [styles.wrap]: true, [styles.isTable]: isTable })}>
           {fileIds.map(fileId => (
             <span className={styles.holder} key={fileId}>
-              <img src={`/api/fileservice/read?fileid=${fileId}&filetype=1`} alt="" />
+              <img src={`/api/fileservice/read?fileid=${fileId}&filetype=1`}
+                   alt=""
+                   onLoad={this.handleImageLoaded.bind(this, fileId)}
+                   onError={this.handleImageErrored.bind(this, fileId)} />
+              <span className={styles.imgLoading} style={{ display: this.state[fileId + 'imageLoading'] === false ? 'none' : 'block' }}>
+                <Icon type="loading" style={{ fontSize: 24 }} />
+              </span>
               {showRemove && (
                 <Icon
                   type="close-circle"
