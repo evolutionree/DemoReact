@@ -308,10 +308,10 @@ class ContactsPanel extends Component {
                 <span>部门：</span>
                 <MetaValue>{detailData.deptname}</MetaValue>
               </p>
-              <p className={styles.detailMeta}>
-                <span>入职日期：</span>
-                <MetaValue>{formatDate(detailData.joineddate)}</MetaValue>
-              </p>
+              {/*<p className={styles.detailMeta}>*/}
+                {/*<span>入职日期：</span>*/}
+                {/*<MetaValue>{formatDate(detailData.joineddate)}</MetaValue>*/}
+              {/*</p>*/}
               <p className={styles.detailMeta}>
                 <span>性别：</span>
                 <MetaValue>{['男', '女'][detailData.usersex]}</MetaValue>
@@ -320,17 +320,17 @@ class ContactsPanel extends Component {
                 <span>职位：</span>
                 <MetaValue>{detailData.userjob}</MetaValue>
               </p>
-              <p className={styles.detailMeta}>
-                <span>出生日期：</span>
-                <MetaValue>{formatDate(detailData.birthday)}</MetaValue>
-              </p>
-              <p className={styles.detailMeta}>
-                <span>备注：</span>
-                <MetaValue>{detailData.remark}</MetaValue>
-              </p>
+              {/*<p className={styles.detailMeta}>*/}
+                {/*<span>出生日期：</span>*/}
+                {/*<MetaValue>{formatDate(detailData.birthday)}</MetaValue>*/}
+              {/*</p>*/}
+              {/*<p className={styles.detailMeta}>*/}
+                {/*<span>备注：</span>*/}
+                {/*<MetaValue>{detailData.remark}</MetaValue>*/}
+              {/*</p>*/}
               <div style={{ marginBottom: '15px', borderTop: '1px solid #f0f0f0' }} />
               <p className={styles.detailMeta}>
-                <span>办公电话：</span>
+                <span>电话：</span>
                 <MetaValue>{detailData.usertel}</MetaValue>
               </p>
               <p className={styles.detailMeta}>
