@@ -18,7 +18,8 @@ export default {
     total: 0,
     showModals: '',
     modalPending: false,
-    simpleSearchKey: 'recname'
+    simpleSearchKey: 'recname',
+    sortFieldAndOrder: null //当前排序的字段及排序顺序
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -109,6 +110,9 @@ export default {
       if (queries.searchData) {
         queries.searchData = JSON.parse(queries.searchData);
       }
+      if (queries.searchOrder) { //其他查询条件 发生改变  排序保持不变
+        yield put({ type: 'putState', payload: { sortFieldAndOrder: queries.searchOrder } });
+      }
       yield put({ type: 'queries', payload: queries });
       try {
         const params = {
@@ -186,7 +190,8 @@ export default {
         total: 0,
         showModals: '',
         modalPending: false,
-        simpleSearchKey: 'recname'
+        simpleSearchKey: 'recname',
+        sortFieldAndOrder: null //当前排序的字段及排序顺序
       };
     }
   }

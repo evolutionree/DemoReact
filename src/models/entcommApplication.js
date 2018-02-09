@@ -23,7 +23,8 @@ export default {
     simpleSearchKey: 'recname',
     extraButtonData: [], //页面动态 按钮数据源
     extraToolbarData: [], //页面toolbar 动态按钮数据源
-    dynamicModalData: {}
+    dynamicModalData: {},
+    sortFieldAndOrder: null //当前排序的字段及排序顺序
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -149,6 +150,9 @@ export default {
       queries.isAdvanceQuery = parseInt(queries.isAdvanceQuery);
       if (queries.searchData) {
         queries.searchData = JSON.parse(queries.searchData);
+      }
+      if (queries.searchOrder) { //其他查询条件 发生改变  排序保持不变
+        yield put({ type: 'putState', payload: { sortFieldAndOrder: queries.searchOrder } });
       }
       yield put({ type: 'queries', payload: queries });
       try {
@@ -344,7 +348,8 @@ export default {
         simpleSearchKey: 'recname',
         extraButtonData: [], //页面动态 按钮数据源
         extraToolbarData: [], //页面toolbar 动态按钮数据源
-        dynamicModalData: {}
+        dynamicModalData: {},
+        sortFieldAndOrder: null //当前排序的字段及排序顺序
       };
     }
   }

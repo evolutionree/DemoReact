@@ -64,28 +64,37 @@ class DynamicTable extends Component {
     });
   }
 
-  getcombineCustomProtocol() { //web列表返回的字段协议 与 个人列定义的协议 做交集处理
+  getDefaultProtocol() { //默认的协议
     const { protocol } = this.props;
+
+    let cloneProtocol = _.cloneDeep(protocol);
     // 过滤掉分组
-    let filterField = protocol.filter(field => {
+    let filterField = cloneProtocol.filter(field => {
       return field.controltype !== 20;
     });
-    let customProtocol = this.state.customProtocol;
 
-    for (let i = 0; i < filterField.length; i++) {
-      filterField[i].columnConfig = { //整合成 设置表头Modal需要的UI数据
-        fieldid: filterField[i].fieldid,
+    let defaultProtocol = filterField.map(item => {
+      item.columnConfig = { //整合成 设置表头Modal需要的UI数据
+        fieldid: item.fieldid,
         isdisplay: 1,
-        width: filterField[i].defaultwidth < 100 ? 100 : filterField[i].defaultwidth //后端会给定默认列宽，没给则默认设置为100
+        width: item.defaultwidth < 100 ? 100 : item.defaultwidth //后端会给定默认列宽，没给则默认设置为100
       };
-    }
+      return item;
+    })
+
+    return defaultProtocol;
+  }
+
+  getcombineCustomProtocol() { //web列表返回的字段协议 与 个人列定义的协议 做交集处理
+    let defaultProtocol = this.getDefaultProtocol();
+    let customProtocol = this.state.customProtocol;
 
     //个人定义的列表数据 可能和 web列表定义的数据 不一致（web列表定义的字段可以在配置做修改） 先优先处理个人定义的数据（在web列表定义中存在）,再添加在个人定义不存在但在web定义存在的数据
     let newProtocol = [];
     for (let i = 0; i < customProtocol.length; i++) {
-      const findFilterFieldIndex = _.findIndex(filterField, item => item.fieldid === customProtocol[i].fieldid);
+      const findFilterFieldIndex = _.findIndex(defaultProtocol, item => item.fieldid === customProtocol[i].fieldid);
       if (findFilterFieldIndex > -1) {
-        let column = filterField[findFilterFieldIndex];
+        let column = defaultProtocol[findFilterFieldIndex];
         column.columnConfig = {
           fieldid: customProtocol[i].fieldid,
           isdisplay: customProtocol[i].isdisplay,
@@ -96,9 +105,9 @@ class DynamicTable extends Component {
     }
 
 
-    for (let i = 0; i < filterField.length; i++) {
-      if (_.findIndex(newProtocol, item => item.fieldid === filterField[i].fieldid) === -1) {
-        newProtocol.push(filterField[i]);
+    for (let i = 0; i < defaultProtocol.length; i++) {
+      if (_.findIndex(newProtocol, item => item.fieldid === defaultProtocol[i].fieldid) === -1) {
+        newProtocol.push(defaultProtocol[i]);
       }
     }
     return newProtocol;
@@ -139,12 +148,14 @@ class DynamicTable extends Component {
         maxWidth: '340px'
       };
 
+      const sortFieldAndOrder = this.props.sortFieldAndOrder;
       return {
         key: field.fieldname,
         dataIndex: field.fieldname,
         title: field.displayname,
         sorter: this.props.sorter,
-        width: this.props.fixedHeader ? setWidth + 21 : 0, //21：padding + border
+        sortOrder: (this.props.sorter && sortFieldAndOrder) ? sortFieldAndOrder.split(' ')[0] === field.fieldname && (sortFieldAndOrder.split(' ')[1] + 'end') : false,
+        width: this.props.fixedHeader ? setWidth + 22 : 0, //21：padding + border
         fixed: this.props.fixedHeader ? (index < this.state.fixedColumnCount ? 'left' : false) : false,
         render: (text, record) => {
           const isLinkField = field === linkField;
@@ -387,7 +398,7 @@ class DynamicTable extends Component {
 
     let width = this.state.width - (this.props.siderFold ? 61 : 200); //系统左侧 200px显示菜单(未折叠  折叠61)
     width = width < 1080 ? 1080 : width; // 系统设置了最小宽度
-    if ((width - 52) > (parseInt(this.getColumnsTotalWidth(columns)) + 63)) { //如果表格没有横向滚动条，则不需要对列固定  -52:计算出表格真实占用的宽度 +63 表格各列宽+ 列头的checkBox宽
+    if ((width - 52) > (parseInt(this.getColumnsTotalWidth(columns)) + (this.props.rowSelection ? 63 : 0))) { //如果表格没有横向滚动条，则不需要对列固定  -52:计算出表格真实占用的宽度 +63 表格各列宽+ 列头的checkBox宽
       columns = columns.map((item) => {
         item.fixed = false;
         return item;
@@ -424,6 +435,7 @@ class DynamicTable extends Component {
         </Modal>
         <CustomHeaderModal visible={this.state.setCustomHeadersVisible}
                            dataSource={this.getcombineCustomProtocol()}
+                           defaultDataSource={this.getDefaultProtocol()}
                            fixedColumnCount={this.state.fixedColumnCount}
                            onCancel={this.hideSetCustomHeaders}
                            saveCustomHeaders={this.saveCustomHeaders} />

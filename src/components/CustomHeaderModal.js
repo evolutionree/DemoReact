@@ -160,8 +160,8 @@ class CustomHeaderModal extends Component {
 
   reset() {
     this.setState({
-      dataSource: this.setSeqNum(this.props.dataSource),
-      FixedColumnCount: this.props.fixedColumnCount
+      dataSource: this.setSeqNum(this.props.defaultDataSource),
+      FixedColumnCount: 0
     });
   }
 

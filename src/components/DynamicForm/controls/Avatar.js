@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import { Upload, Button, message } from 'antd';
+import { Upload, Button, message, Icon } from 'antd';
 import { connect } from 'dva';
 import defaultAvatar from '../../../assets/img_default_avatar.png';
 import styles from './Avatar.less';
@@ -43,22 +43,36 @@ class Avatar extends Component {
     return isImage;
   };
 
+  handleImageLoaded = () => {
+    this.setState({ [this.props.value + 'imageLoading']: false });
+  }
+
+  handleImageErrored = () => {
+    this.setState({ [this.props.value + 'imageLoading']: false });
+  }
+
   render() {
     const { value, headShape } = this.props;
     const imgSrc = value ? `/api/fileservice/read?fileid=${value}&filetype=3` : defaultAvatar
     return (
       <div className={styles.wrap}>
         <div className={styles.uploadrow}>
-          <img
-            className={styles.img}
-            style={{
-              width: '90px',
-              height: '90px',
-              borderRadius: headShape === 1 ? '50%' : '0'
-            }}
-            src={imgSrc}
-            alt="头像"
-          />
+          <span className={styles.imgWrap}>
+            <img
+              className={styles.img}
+              style={{
+                width: '100%',
+                height: '100%',
+                borderRadius: headShape === 1 ? '50%' : '0'
+              }}
+              src={imgSrc}
+              alt="头像"
+              onLoad={this.handleImageLoaded}
+              onError={this.handleImageErrored} />
+              <span className={styles.imgLoading} style={{ display: this.state[this.props.value + 'imageLoading'] === false ? 'none' : 'block' }}>
+                <Icon type="loading" style={{ fontSize: 24 }} />
+              </span>
+          </span>
           <Upload
             className={styles.upload}
             name="data"
