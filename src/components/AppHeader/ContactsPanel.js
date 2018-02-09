@@ -119,7 +119,7 @@ class ContactsPanel extends Component {
         userid: this.props.userInfo.userid,
         searchkey: searchKey,
         pageIndex: pageIndex,
-        pageSize: -1
+        pageSize:  currentTab === '1' ? 20 : -1
       };
       queryContacts(params).then(result => {
         this.setState({
