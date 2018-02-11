@@ -119,7 +119,7 @@ class ContactsPanel extends Component {
         userid: this.props.userInfo.userid,
         searchkey: searchKey,
         pageIndex: pageIndex,
-        pageSize: -1
+        pageSize:  currentTab === '1' ? 20 : -1
       };
       queryContacts(params).then(result => {
         this.setState({
@@ -203,13 +203,26 @@ class ContactsPanel extends Component {
   renderTabItems = () => {
     const tabs = [
       { key: '1', label: '最近联系' },
-      { key: '2', label: '星标' },
+      { key: '2', label: '星标同事' },
       { key: '3', label: '我的部门' },
       { key: '4', label: '团队组织' }
     ];
     return tabs.map(tab => {
       const cls = classnames(styles.panelTabItem, { [styles.isActive]: this.state.currentTab === tab.key });
       return <li key={tab.key} className={cls} onClick={() => this.onTabChange(tab.key)}>{tab.label}</li>;
+    });
+  };
+
+  onClickDetailStar = () => {
+    const params = {
+      userid: this.state.detailData.userid,
+      flag: !this.state.detailData.flag
+    };
+    flagContact(params).then(result => {
+      this.state.detailData.flag = !this.state.detailData.flag;
+      this.setState({ list: [...this.state.list] });
+    }, err => {
+      message.error(err.message || '操作失败');
     });
   };
 
@@ -224,6 +237,7 @@ class ContactsPanel extends Component {
         <Badge>
           <Icon
             type="contacts"
+            title="通讯录"
             style={{ fontSize: 24, cursor: "pointer", marginRight: '10px' }}
             onClick={this.togglePanelVisible}
           />
@@ -273,56 +287,61 @@ class ContactsPanel extends Component {
           </Spin>
         </div>
         <div className={styles.detailPanel} style={{ display: this.state.detailVisible ? 'block' : 'none' }}>
-          <div className={styles.detailHeader}>
-            <span style={{ fontSize: '18px', marginRight: '12px' }}>{detailData.username}</span>
-            <span style={{ fontSize: '14px', color: '#999' }}>{detailData.deptname}</span>
-            <Icon type="close" onClick={this.closeDetail} />
-          </div>
-          <div className={styles.detailContent}>
-            <div className={styles.detailAvatar}>
-              <Avatar image={`/api/fileservice/read?fileid=${detailData.usericon}`} width={120} />
+          <div className={styles.detailInner}>
+            <div className={styles.detailHeader}>
+              <span style={{ fontSize: '18px', marginRight: '12px' }}>{detailData.username}</span>
+              <span style={{ fontSize: '14px', color: '#999' }}>{detailData.deptname}</span>
+              <Icon type="close" onClick={this.closeDetail} />
             </div>
-            <p className={styles.detailMeta}>
-              <span>姓名：</span>
-              <MetaValue>{detailData.username}</MetaValue>
-            </p>
-            <p className={styles.detailMeta}>
-              <span>部门：</span>
-              <MetaValue>{detailData.deptname}</MetaValue>
-            </p>
-            <p className={styles.detailMeta}>
-              <span>入职日期：</span>
-              <MetaValue>{formatDate(detailData.joineddate)}</MetaValue>
-            </p>
-            <p className={styles.detailMeta}>
-              <span>性别：</span>
-              <MetaValue>{['男', '女'][detailData.usersex]}</MetaValue>
-            </p>
-            <p className={styles.detailMeta}>
-              <span>职位：</span>
-              <MetaValue>{detailData.userjob}</MetaValue>
-            </p>
-            <p className={styles.detailMeta}>
-              <span>出生日期：</span>
-              <MetaValue>{formatDate(detailData.birthday)}</MetaValue>
-            </p>
-            <p className={styles.detailMeta}>
-              <span>备注：</span>
-              <MetaValue>{detailData.remark}</MetaValue>
-            </p>
-            <div style={{ height: '1px', background: '#f0f0f0', marginBottom: '15px' }} />
-            <p className={styles.detailMeta}>
-              <span>办公电话：</span>
-              <MetaValue>{detailData.usertel}</MetaValue>
-            </p>
-            <p className={styles.detailMeta}>
-              <span>手机号码：</span>
-              <MetaValue>{detailData.userphone}</MetaValue>
-            </p>
-            <p className={styles.detailMeta}>
-              <span>邮箱：</span>
-              <MetaValue>{detailData.useremail}</MetaValue>
-            </p>
+            <div className={styles.detailContent}>
+              <div className={classnames([styles.contactStar, styles.detailStar], { [styles.isStared]: detailData.flag })}>
+                <Icon type="star" onClick={this.onClickDetailStar} />
+              </div>
+              <div className={styles.detailAvatar}>
+                <Avatar image={`/api/fileservice/read?fileid=${detailData.usericon}`} width={120} />
+              </div>
+              <p className={styles.detailMeta}>
+                <span>姓名：</span>
+                <MetaValue>{detailData.username}</MetaValue>
+              </p>
+              <p className={styles.detailMeta}>
+                <span>部门：</span>
+                <MetaValue>{detailData.deptname}</MetaValue>
+              </p>
+              {/*<p className={styles.detailMeta}>*/}
+                {/*<span>入职日期：</span>*/}
+                {/*<MetaValue>{formatDate(detailData.joineddate)}</MetaValue>*/}
+              {/*</p>*/}
+              <p className={styles.detailMeta}>
+                <span>性别：</span>
+                <MetaValue>{['男', '女'][detailData.usersex]}</MetaValue>
+              </p>
+              <p className={styles.detailMeta}>
+                <span>职位：</span>
+                <MetaValue>{detailData.userjob}</MetaValue>
+              </p>
+              {/*<p className={styles.detailMeta}>*/}
+                {/*<span>出生日期：</span>*/}
+                {/*<MetaValue>{formatDate(detailData.birthday)}</MetaValue>*/}
+              {/*</p>*/}
+              {/*<p className={styles.detailMeta}>*/}
+                {/*<span>备注：</span>*/}
+                {/*<MetaValue>{detailData.remark}</MetaValue>*/}
+              {/*</p>*/}
+              <div style={{ marginBottom: '15px', borderTop: '1px solid #f0f0f0' }} />
+              <p className={styles.detailMeta}>
+                <span>电话：</span>
+                <MetaValue>{detailData.usertel}</MetaValue>
+              </p>
+              <p className={styles.detailMeta}>
+                <span>手机号码：</span>
+                <MetaValue>{detailData.userphone}</MetaValue>
+              </p>
+              <p className={styles.detailMeta}>
+                <span>邮箱：</span>
+                <MetaValue>{detailData.useremail}</MetaValue>
+              </p>
+            </div>
           </div>
         </div>
       </div>

@@ -11,6 +11,7 @@
   &.panelVisible {
     //display: block;
     right: 0;
+    box-shadow: rgba(0, 0, 0, 0.176) 0px 6px 12px;
   }
 }
 .panelHeader {
@@ -84,21 +85,6 @@
     width: 30px;
     height: 30px;
   }
-  .contactStar {
-    position: absolute;
-    right: 20px;
-    top: 20px;
-    cursor: pointer;
-    color: #fff;
-    background: #dedfd0;
-    border-radius: 3px;
-    font-size: 10px;
-    padding: 5px;
-    transform: scale(0.8);
-    &.isStared {
-      background-color: #ff7d3d;
-    }
-  }
   p:first-of-type {
     font-size: 14px;
     color: #333;
@@ -110,17 +96,39 @@
     margin-bottom: 12px;
   }
 }
+.contactStar {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  cursor: pointer;
+  color: #fff;
+  background: #dedfd0;
+  border-radius: 3px;
+  font-size: 10px;
+  padding: 5px;
+  transform: scale(0.8);
+  &.isStared {
+    background-color: #ff7d3d;
+  }
+}
 
 .detailPanel {
   position: fixed;
-  right: 420px;
+  right: 410px;
   top: 70px;
   bottom: 0;
   left: 210px;
   //width: 800px;
-  background-color: #fff;
+  //background-color: #fff;
   //margin-right: 10px;
   line-height: 1;
+
+  .detailInner {
+    height: 100%;
+    background-color: #fff;
+    margin-right: 10px;
+    box-shadow: rgba(0, 0, 0, 0.176) 0px 6px 12px;
+  }
 }
 .detailHeader {
   padding: 15px 20px;
@@ -137,15 +145,21 @@
 }
 .detailContent {
   position: relative;
-  padding: 20px 20px 20px 176px;
+  padding: 20px 20px 20px 30%;
   overflow: auto;
 
   .detailAvatar {
     position: absolute;
-    left: 20px;
-    top: 15px;
+    right: 85%;
+    top: 30px;
     width: 120px;
     height: 120px;
+    transform: translateX(50%);
+  }
+  .detailStar {
+    position: absolute;
+    right: 20px;
+    top: 15px;
   }
   .detailMeta {
     font-size: 14px;

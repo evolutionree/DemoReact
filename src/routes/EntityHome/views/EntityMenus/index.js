@@ -8,46 +8,42 @@ import styles from './EntityMenus.less';
 const Column = Table.Column;
 
 function EntityMenus({
-  dispatch,
   list,
-  errMsg,
   add,
   edit,
-  del
+  del,
+  orderUp,
+  orderDown
 }) {
-  function renderOperationCell(text, item) {
-    const menu = (
-      <Menu onClick={onMenuClick}>
-        <Menu.Item key="1">编辑</Menu.Item>
-        {/*<Menu.Item key="2">手机列表定义</Menu.Item>*/}
-        <Menu.Item key="3">删除</Menu.Item>
-      </Menu>
-    );
+  function renderOperationCell(text, item, index) {
+    const setVisible = bool => bool ? { visibility: 'visible' } : { visibility: 'hidden' };
     return (
-      <Dropdown overlay={menu}>
-        <Button type="default" style={{ border: 'none' }}>
-          <Icon style={{ marginRight: 2 }} type="bars" />
-          <Icon type="down" />
-        </Button>
-      </Dropdown>
+      <div className={styles.opcell}>
+        <Icon
+          type="arrow-up"
+          style={setVisible(index !== 0)}
+          onClick={() => { orderUp(index); }}
+        />
+        <Icon
+          type="arrow-down"
+          style={setVisible(index !== (list.length - 1))}
+          onClick={() => { orderDown(index); }}
+        />
+        <Icon
+          type="edit"
+          onClick={() => edit(item)}
+        />
+        <Icon
+          type="delete"
+          onClick={() => {
+            Modal.confirm({
+              title: '您确定删除选中记录吗？',
+              onOk: () => { del(item); }
+            });
+          }}
+        />
+      </div>
     );
-
-    function onMenuClick(event) {
-      switch (event.key) {
-        case '1':
-          edit(item);
-          break;
-        case '2':
-          break;
-        case '3':
-          Modal.confirm({
-            title: '您确定删除选中记录吗？',
-            onOk: () => { del(item); }
-          });
-          break;
-        default:
-      }
-    }
   }
   return (
     <div>
@@ -74,6 +70,12 @@ function mapDispatchToProps(dispatch, ownProps) {
     },
     del: (item) => {
       dispatch({ type: 'entityMenus/delMenu', payload: item.menuid });
+    },
+    orderUp: (index) => {
+      dispatch({ type: 'entityMenus/orderMenu', payload: { index, dir: -1 } });
+    },
+    orderDown: (index) => {
+      dispatch({ type: 'entityMenus/orderMenu', payload: { index, dir: 1 } });
     }
   };
 }
