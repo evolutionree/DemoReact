@@ -57,8 +57,8 @@ function EntcommList({
     dynamicTableRef.getWrappedInstance().openSetCustomHeaders();
   }
 
-  const { menuId, searchData, pageIndex, pageSize } = queries;
-  const keyword = (searchData && searchData[simpleSearchKey]) || '';
+  const { searchData, pageIndex, pageSize, isAdvanceQuery } = queries;
+  const keyword = (!isAdvanceQuery && searchData && searchData[simpleSearchKey]) || '';
 
   function showDetail(record) {
     dispatch({
