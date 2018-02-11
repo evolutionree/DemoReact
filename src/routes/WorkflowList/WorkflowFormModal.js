@@ -128,7 +128,7 @@ class WorkflowFormModal extends Component {
           </FormItem>
           <FormItem label="允许退回">
             {getFieldDecorator('backflag', {
-              initialValue: 1,
+              initialValue: 0,
               rules: [{ required: true, message: '请设置是否允许退回' }]
             })(
               <Radio.Group>
