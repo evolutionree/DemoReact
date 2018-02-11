@@ -244,10 +244,10 @@ export function GetArgsFromHref(sArgName) {
 export function resolveTreeByPathSearch(treeData = [], pathSearches = [], excludeSearches = []) {
   let retTreeData = treeData;
   if (pathSearches.length) {
-    retTreeData = filterTreeByPathSearch(treeData, pathSearches);
+    retTreeData = filterTreeByPathSearch(_.cloneDeep(treeData), pathSearches);
   }
   if (excludeSearches.length) {
-    retTreeData = excludeTreeByPathSearch(retTreeData, excludeSearches);
+    retTreeData = excludeTreeByPathSearch(_.cloneDeep(treeData), excludeSearches);
   }
   return retTreeData;
 }
@@ -263,22 +263,24 @@ function filterTreeByPathSearch(treeData, pathSearches) {
       let selectable = presetSelectable || false;
       let childrenConPaths = [];
 
-      conPaths.forEach(item => {
-        const { path: conPath, includeSubNode = false } = item;
-        if (_.isEqual(nodePath, conPath)) { // ['广东省', '广州市'] equal ['广东省', '广州市']
-          show = true;
-          selectable = true;
-          if (!includeSubNode) {
-            showChildren = false;
-            forceShowChildren = false;
-          } else {
-            forceShowChildren = true;
+      // if (node.recstatus !== 0) {
+        conPaths.forEach(item => {
+          const { path: conPath, includeSubNode = false } = item;
+          if (_.isEqual(nodePath, conPath)) { // ['广东省', '广州市'] equal ['广东省', '广州市']
+            show = true;
+            selectable = true;
+            if (!includeSubNode) {
+              showChildren = false;
+              forceShowChildren = false;
+            } else {
+              forceShowChildren = true;
+            }
+          } else if (startWith(conPath, nodePath)) {
+            childrenConPaths.push(item);
+            show = true;
           }
-        } else if (startWith(conPath, nodePath)) {
-          childrenConPaths.push(item);
-          show = true;
-        }
-      });
+        });
+      // }
 
       if (show) {
         showNodes.push(node);
@@ -342,6 +344,8 @@ function resolvePathSearchSingle(searchString, treeData) {
     treeForEach(treeData, node => {
       const nodePath = node.path;
       if (!nodePath) return;
+      // if (node.productsetname === '测试编码') debugger;
+      if (node.recstatus === 0) return;
       if (endWith(nodePath, arrPathSearch)) {
         resultPaths.push(nodePath);
       }
