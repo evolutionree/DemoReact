@@ -59,7 +59,9 @@ class RoleFormModal extends Component {
     const isEdit = /edit/.test(showModals);
     const editingRecord = currentRecords[0];
     const { getFieldDecorator: decorate } = form;
-    const roleTypesOption = roleGroups.slice(1).map(item => (
+    const roleTypesOption = roleGroups.slice(1).filter(role => {
+      return role.grouptype !== 0; //过滤掉系统默认角色
+    }).map(item => (
       <Option key={item.rolegroupid} value={item.rolegroupid}>{item.rolegroupname}</Option>
     ));
 

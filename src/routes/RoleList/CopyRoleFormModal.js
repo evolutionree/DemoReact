@@ -21,6 +21,10 @@ class CopyRoleFormModal extends Component {
       form.resetFields();
 
       const record = currentRecords[0];
+      if (record.rolegroupid === '652d5e7b-59f2-436e-81a9-257ec70f05a2') { //系统默认角色 不允许复制 让用户选其他角色
+        record.rolegroupid = '';
+      }
+
       const tmp = _.pick(record, ['rolename', 'rolegroupid', 'roleremark']);
       form.setFieldsValue(tmp);
     }
@@ -53,7 +57,9 @@ class CopyRoleFormModal extends Component {
 
     const editingRecord = currentRecords[0];
     const { getFieldDecorator: decorate } = form;
-    const roleTypesOption = roleGroups.slice(1).map(item => (
+    const roleTypesOption = roleGroups.slice(1).filter(role => {
+      return role.grouptype !== 0; //过滤掉系统默认角色
+    }).map(item => (
       <Option key={item.rolegroupid} value={item.rolegroupid}>{item.rolegroupname}</Option>
     ));
 
