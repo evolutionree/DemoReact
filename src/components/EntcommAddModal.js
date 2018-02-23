@@ -167,7 +167,7 @@ class EntcommAddModal extends Component {
           extradata: this.props.extraData
         };
       }
-      this.setState({ dataModel, showWorkflowCaseModal: true, showFormModal: false });
+      this.setState({ dataModel, showWorkflowCaseModal: true, showFormModal: true });
     });
   };
   onWorkflowCaseCancel = () => {

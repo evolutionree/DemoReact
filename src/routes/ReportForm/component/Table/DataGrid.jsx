@@ -238,7 +238,9 @@ class DataGrid extends  React.Component {
         }, setWidth);
       } else {
         return new HeaderModel(item.title, item.fieldname, (text, record, rowIndex) => {
-          let cellText = text instanceof Object ? text.name : text;
+          // 先取 _name
+          const text_name = record[item.fieldname + '_name'];
+          let cellText = text_name !== undefined ? text_name : text instanceof Object ? text.name : text;
           // 格式化日期
           if ((item.controltype === 8 || item.controltype === 9) && item.formatstr) {
             cellText = this.formatDate(text, item.formatstr);

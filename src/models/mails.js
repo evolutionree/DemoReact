@@ -24,7 +24,8 @@ import {
   sendemail,
   distributeMails,
   transferMailCatalog,
-  recoverMails
+  recoverMails,
+  validMailPwd
 } from '../services/mails';
 import { treeForEach } from '../utils';
 
@@ -84,7 +85,7 @@ export default {
     }
   },
   effects: {
-    *init(action, { put }) {
+    *init(action, { put, call }) {
       yield put({ type: 'app/toggleSider', payload: true });
       yield put({ type: 'syncMails__' });
       yield put({ type: 'queryMyCatalogTree', payload: true });
@@ -96,7 +97,16 @@ export default {
       yield put({ type: 'fetchSignature' }); //获取签名
     },
     *syncMails__(action, { call }) {
-      yield call(syncMails);
+      try {
+        yield call(validMailPwd);
+        try {
+          yield call(syncMails);
+        } catch (e) {
+          console.error('syncmails failed..');
+        }
+      } catch (e) {
+        message.error(e.message);
+      }
     },
     *fetchMailContacts(action, { call, put }) {
       try {
