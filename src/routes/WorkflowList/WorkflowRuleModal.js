@@ -109,7 +109,7 @@ class WorkflowRuleModal extends Component {
     const { ruleList, ruleSet, fields, rawRuleData } = this.state;
     const entityid = this.props.currentItem.entityid;
     const params = {
-      typeid: 3,
+      typeid: 4,
       rulename: '',
       flowid: this.props.currentItem.flowid,
       ruleid: rawRuleData ? rawRuleData.ruleid : undefined,
