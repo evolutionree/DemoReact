@@ -13,6 +13,10 @@ import ScheduleWeekTable from './ScheduleWeekTable';
 import ScheduleCalendarTable from './ScheduleCalendarTable';
 import EmptyShow from './componnet/EmptyShow';
 import FormModal from './FormModal';
+import RelateCustomers from './modules/RelateCustomers';
+import SaleRecords from './modules/SaleRecords';
+import NoticeMessage from './modules/NoticeMessage';
+import AuditMessage from './modules/AuditMessage';
 
 
 import Styles from './index.less';
@@ -60,6 +64,28 @@ class Schedule extends Component {
     window.removeEventListener('resize', this.onWindowResize);
   }
 
+  renderModuleTabs() {
+    const { modules, activeModule } = this.props;
+    const ModuleComponents = {
+      customer: EmptyShow,
+      sale: EmptyShow,
+      notice: EmptyShow,
+      audit: AuditMessage
+    };
+    return (
+      <Tabs activeKey={activeModule} onChange={this.props.toggleModule}>
+        {modules.map(mod => {
+          const ModuleComponent = ModuleComponents[mod.name] || EmptyShow;
+          return (
+            <TabPane tab={mod.title} key={mod.name}>
+              <ModuleComponent height={this.state.height - 50} />
+            </TabPane>
+          );
+        })}
+      </Tabs>
+    );
+  }
+
   render() {
     const contentStyle = {
       background: 'transparent',
@@ -72,20 +98,7 @@ class Schedule extends Component {
       <Page title="工作台" contentStyle={contentStyle} contentWrapStyle={{ paddingBottom: 0, overflow: 'auto' }}>
         <div className={Styles.ScheduleWrap} style={{ height: this.state.height }}>
           <div className={Styles.Left} style={{ width: 'calc(100% - 420px)' }}>
-            <Tabs defaultActiveKey="2">
-              <TabPane tab="待跟进的客户" key="1">
-                <EmptyShow />
-              </TabPane>
-              <TabPane tab="销售记录" key="2">
-                <EmptyShow />
-              </TabPane>
-              <TabPane tab="公告通知" key="3">
-                <EmptyShow />
-              </TabPane>
-              <TabPane tab="审批通知" key="4">
-                <EmptyShow />
-              </TabPane>
-            </Tabs>
+            {this.renderModuleTabs()}
           </div>
           <div className={Styles.Right}>
             <Tabs defaultActiveKey="1">
@@ -122,6 +135,9 @@ export default connect(
     return {
       closeSchedulePanel() {
         dispatch({ type: 'schedule/putState', payload: { schedulePanelVisible: false } });
+      },
+      toggleModule(moduleName) {
+        dispatch({ type: 'schedule/putState', payload: { activeModule: moduleName } });
       }
     };
   }

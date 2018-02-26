@@ -7,6 +7,13 @@ import { listDirs, listObjects, saveobjectforbase, getobjectsql, saveobjectsql }
 export default {
   namespace: 'schedule',
   state: {
+    modules: [
+      { name: 'customer', title: '待跟进的客户' },
+      { name: 'sale', title: '销售记录' },
+      { name: 'notice', title: '公告通知' },
+      { name: 'audit', title: '审批通知' }
+    ],
+    activeModule: 'audit',
     scheduleWays: [{ name: 'day', title: '日', active: true }, { name: 'week', title: '周', active: false }, { name: 'month', title: '月', active: false }],
     taskWays: [{ name: 'myTask', title: '我的任务', active: true }, { name: 'myAssignment', title: '我分配的任务', active: false }],
     schedulePanelVisible: false,
