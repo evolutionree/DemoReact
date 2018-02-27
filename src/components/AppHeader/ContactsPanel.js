@@ -74,12 +74,23 @@ class ContactsPanel extends Component {
   }
 
   componentDidMount() {
-    // document.body.addEventListener('click', this.hidePanel, false);
+    document.body.addEventListener('click', this.clickOutsideClose, false);
   }
 
   componentWillUnmount() {
-    // document.body.removeEventListener('click', this.hidePanel);
+    document.body.removeEventListener('click', this.clickOutsideClose);
   }
+
+  clickOutsideClose = (event) => {
+    // if ($(event.target).closest(['#contacts-panel', '#contacts-panel-detail']).length) {
+    //   return;
+    // }
+    if ($(event.target).closest('#contacts-panel').length || $(event.target).closest('#contacts-panel-detail').length) {
+      return;
+    }
+    // console.log(event);
+    this.hidePanel();
+  };
 
   hidePanel = () => {
     this.togglePanelVisible(false);
@@ -242,7 +253,7 @@ class ContactsPanel extends Component {
             onClick={this.togglePanelVisible}
           />
         </Badge>
-        <div className={classnames(styles.panelWrap, { [styles.panelVisible]: this.state.panelVisible })}>
+        <div id="contacts-panel" className={classnames(styles.panelWrap, { [styles.panelVisible]: this.state.panelVisible })}>
           <div className={styles.panelHeader}>
             <Icon type='contacts' />
             <span>通讯录</span>
@@ -286,7 +297,7 @@ class ContactsPanel extends Component {
             </div>
           </Spin>
         </div>
-        <div className={styles.detailPanel} style={{ display: this.state.detailVisible ? 'block' : 'none' }}>
+        <div id="contacts-panel-detail" className={styles.detailPanel} style={{ display: this.state.detailVisible ? 'block' : 'none' }}>
           <div className={styles.detailInner}>
             <div className={styles.detailHeader}>
               <span style={{ fontSize: '18px', marginRight: '12px' }}>{detailData.username}</span>
