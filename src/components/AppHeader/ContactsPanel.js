@@ -278,7 +278,7 @@ class ContactsPanel extends Component {
                     data={item}
                     onClick={this.showContactDetail.bind(this, item)}
                     onStar={this.handleStar.bind(this, item)}
-                    showStar={currentTab !== '2'}
+                    showStar
                   />
                 ))}
               </ContactList>

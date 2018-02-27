@@ -47,9 +47,14 @@ class AuditMessage extends Component {
     };
     this.setState({ loading: true });
     getListData(params).then(result => {
-      const list = pageIndex === 1
-        ? result.data.pagedata
-        : [...this.state.list, ...result.data.pagedata];
+      const pageData = result.data.pagedata.map(item => {
+        const content = `${item.reccreator_name}发起了${item.flowname}，【${item.reccode}】申请，等待您的审批`
+        return {
+          ...item,
+          content: content
+        };
+      });
+      const list = pageIndex === 1 ? pageData : [...this.state.list, ...pageData];
       this.setState({
         loading: false,
         list: list,
@@ -67,14 +72,15 @@ class AuditMessage extends Component {
       <div style={{ height: this.props.height + 'px', overflow: 'auto' }}>
         <ul className={styles.list}>
           {list.map(item => (
-            <li className={styles.listItem}>
+            <li className={styles.listItem} key={item.recid}>
               <div className={styles.itemAvatar}>
                 <Avatar image={item.headicon} width={30} />
               </div>
+              <time>{item.reccreated.slice(0, -3)}</time>
               <div className={styles.itemContent}>{item.content}</div>
               <div className={styles.itemInfo}>
-                <span>{item.flowType}</span>
-                <Link to={`/affair/${item.id}`}>{item.flowName}</Link>
+                <span style={{ color: '#767f8b' }}>通用申请：</span>
+                <Link to={`/affair/${item.caseid}`}>{item.flowname}</Link>
               </div>
             </li>
           ))}
