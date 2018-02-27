@@ -1,7 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
-import { message } from 'antd';
+import { Button, message, Spin } from 'antd'
 import { getListData } from '../../../../services/entcomm';
 import styles from './styles.less';
 import Avatar from '../../../../components/Avatar';
@@ -58,6 +58,7 @@ class AuditMessage extends Component {
       this.setState({
         loading: false,
         list: list,
+        pageIndex: pageIndex,
         hasMore: result.data.pagecount[0].total > list.length
       });
     }, err => {
@@ -66,13 +67,17 @@ class AuditMessage extends Component {
     });
   }
 
+  onLoadMore = () => {
+    this.queryList(this.state.pageIndex + 1);
+  };
+
   render() {
-    const { list } = this.state;
+    const { loading, list, hasMore } = this.state;
     return (
       <div style={{ height: this.props.height + 'px', overflow: 'auto' }}>
         <ul className={styles.list}>
           {list.map(item => (
-            <li className={styles.listItem} key={item.recid}>
+            <li className={styles.listItem} key={item.caseid}>
               <div className={styles.itemAvatar}>
                 <Avatar image={item.headicon} width={30} />
               </div>
@@ -85,6 +90,12 @@ class AuditMessage extends Component {
             </li>
           ))}
         </ul>
+        {hasMore && (
+          <div style={{ textAlign: 'center', height: 60, lineHeight: '60px' }}>
+            {loading && <Spin />}
+            {!loading && <Button onClick={this.onLoadMore} type="default">加载更多</Button>}
+          </div>
+        )}
       </div>
     );
   }
