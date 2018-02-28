@@ -26,7 +26,8 @@ class DataGrid extends  React.Component {
       slectRows: this.props.slectRows,
       columns: this.props.columns, //表頭
       loading: this.props.loading,
-      url: this.props.url
+      url: this.props.url,
+      queryListParams: null
     };
   }
 
@@ -90,6 +91,17 @@ class DataGrid extends  React.Component {
       _.forIn(item1, function(value, key) {
         parameArray.push(value);  //value：前端查詢字段 key ：請求Url的參數名
       });
+    })
+
+    const queryListParams = {
+      DataSourceId: datasources.datasourcedefineid,
+      InstId: datasources.instid,
+      Parameters: {
+        ...getParameters()
+      }
+    };
+    this.setState({
+      queryListParams: queryListParams
     })
 
     for (let key in params) {
@@ -280,6 +292,21 @@ class DataGrid extends  React.Component {
     this.props.selectRowHandler && this.props.selectRowHandler(selectedRows);
   }
 
+  exportHandler() {
+    request('api/ReportEngine/export', {
+      method: 'post', body: JSON.stringify({
+        DataQueryModel: this.state.queryListParams,
+        Columns: this.state.columns
+      })
+    }).then(result => {
+      const fileid = result.data;
+      window.open('api/ReportEngine/export2file?fileid=' + fileid, '_self');
+    }).catch((e) => {
+      console.error(e);
+      message.error(e.message);
+    });
+  }
+
   render() {
     const key = this.props.rowKey ? this.props.rowKey : rowKey;
     const rowSelection = this.props.rowSelection ? {
@@ -303,17 +330,22 @@ class DataGrid extends  React.Component {
     }
 
     return (
-      <Table
-        loading={this.state.loading}
-        scroll={this.props.scroll}
-        dataSource={this.state.dataSource}
-        rowKey={key}
-        rowSelection={rowSelection}
-        pagination={pagination}
-        onChange={this.tableChange.bind(this)}
-        columns={this.getColumns()}
-        {...props}
-      />
+      <div>
+        <div style={{ textAlign: 'right', display: this.props.showExport === 1 ? 'block' : 'none' }}>
+          <Button className={styles.export} onClick={this.exportHandler.bind(this)}>导出</Button>
+        </div>
+        <Table
+          loading={this.state.loading}
+          scroll={this.props.scroll}
+          dataSource={this.state.dataSource}
+          rowKey={key}
+          rowSelection={rowSelection}
+          pagination={pagination}
+          onChange={this.tableChange.bind(this)}
+          columns={this.getColumns()}
+          {...props}
+        />
+      </div>
     );
   }
 }

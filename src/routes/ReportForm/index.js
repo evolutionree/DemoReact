@@ -543,6 +543,7 @@ class ReportForm extends React.Component {
         return (
           <div className={styles.reportDataGridWrap}>
             <DataGrid columns={item.tableextinfo.columns}
+                      showExport={item.tableextinfo.showexport}
                       pagination={true}
                       rowSelection={false}
                       params={this.state.serchValue}
