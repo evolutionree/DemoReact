@@ -20,7 +20,7 @@ class DateTimeRange extends Component {
   }
 
   handleMinChange = (date, dateString) => {
-    const min = dateString;
+    const min = date ? date.format('YYYY-MM-DD HH:mm:ss') : '';
     const max = this.parseValue().max;
     const newVal = min + ',' + max;
     if (newVal === ',') {
@@ -32,7 +32,7 @@ class DateTimeRange extends Component {
 
   handleMaxChange = (date, dateString) => {
     const min = this.parseValue().min;
-    const max = dateString;
+    const max = date ? date.format('YYYY-MM-DD HH:mm:ss') : '';
     const newVal = min + ',' + max;
     if (newVal === ',') {
       this.props.onChange();
@@ -58,8 +58,8 @@ class DateTimeRange extends Component {
     const { min, max } = this.parseValue();
     const mFormat = toMomentFormat(this.props.format);
     // const mFormat = 'YYYY-MM-DD HH:mm:ss';
-    const minDate = min ? moment(min, mFormat) : undefined;
-    const maxDate = max ? moment(max, mFormat) : undefined;
+    const minDate = min ? moment(moment(min, 'YYYY-MM-DD HH:mm:ss').format(mFormat), mFormat) : undefined;
+    const maxDate = max ? moment(moment(max, 'YYYY-MM-DD HH:mm:ss').format(mFormat), mFormat) : undefined;
     return (
       <Row>
         <Col span={11}>
