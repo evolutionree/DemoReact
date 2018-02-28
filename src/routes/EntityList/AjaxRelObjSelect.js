@@ -48,8 +48,11 @@ class SelectComponent extends Component {
   }
 
   render() {
+    const hiddenControlType = [15, 22, 24, 31, 6, 7, 8, 9, 1004, 1005, 1011];
     const filterDataSource = this.state.dataSource instanceof Array && this.state.dataSource.filter((item) => {
-      return item.controltype !== 15 && item.controltype !== 22 && item.controltype !== 24 && item.controltype !== 31 && item.controltype !== 6 && item.controltype !== 7 && item.controltype !== 8 && item.controltype !== 9;
+        if (hiddenControlType.indexOf(item.controltype) === -1) {
+          return item;
+        }
     });
     return (
       <Select value={this.props.value} style={{ width: 506 }} onChange={this.selectHandler.bind(this)}>
