@@ -54,7 +54,7 @@ class FlowStepModal extends Component {
     const steptypeid = stepUser && stepUser.type;
     return (
       <Modal
-        title={steptypeid === -1 ? '节点设置' : '审批人设置'}
+        title={steptypeid === -1 || steptypeid === 0 ? '函数设置' : '审批人设置'}
         visible={this.props.visible}
         onCancel={this.props.cancel}
         onOk={this.props.confirm}

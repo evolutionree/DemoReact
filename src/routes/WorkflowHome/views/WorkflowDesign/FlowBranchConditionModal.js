@@ -113,7 +113,7 @@ class FlowBranchConditionModal extends Component {
     if (!this.filterConfigBoard.validate()) return;
 
     const { ruleList, ruleSet, allFields } = this.state;
-    const { editingPath, flowEntities, ruleDetail } = this.props;
+    const { editingPath, flowEntities, ruleDetail, flowId } = this.props;
     const params = {
       typeid: 3,
       entityid: flowEntities[0].entityid,
@@ -125,7 +125,8 @@ class FlowBranchConditionModal extends Component {
         ruleset: ruleSet,
         userid: 0,
         ruleformat: ''
-      }
+      },
+      flowid: flowId
     };
     this.setState({ modalPending: true });
     saveEntityQueryRule(params).then(result => {
@@ -177,11 +178,12 @@ class FlowBranchConditionModal extends Component {
 
 export default connect(
   state => {
-    const { showModals, editingPath, flowEntities } = state.workflowDesign;
+    const { showModals, editingPath, flowEntities, flowId } = state.workflowDesign;
     return {
       visible: /branch/.test(showModals),
       editingPath,
-      flowEntities
+      flowEntities,
+      flowId
     };
   },
   dispatch => {

@@ -1,0 +1,85 @@
+.Calendar{
+
+}
+
+
+.CalendarHeader {
+  .header{
+    width: 100%;
+    height: 42px;
+    line-height: 42px;
+    text-align: center;
+    font-size: 18px;
+    color: #3a3c4f;
+
+    >i{
+      cursor: pointer;
+      background: transparent;
+      padding: 4px;
+      border-radius: 4px;
+    }
+    >i:hover{
+      background: rgba(232, 232, 232, 0.58);
+    }
+
+    >span{
+      margin:0 40px;
+    }
+  }
+}
+
+
+.CalendarBody{
+  .dayList{
+    overflow: hidden;
+    >li{
+      float: left;
+      width: 14.285714285714285714285714285714%;
+      height: 50px;
+      line-height: 50px;
+      text-align: center;
+      color: #30353c;
+      position: relative;
+      cursor: pointer;
+
+      >div{
+        width: 36px;
+        height: 36px;
+        line-height: 36px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin-left: -18px;
+        margin-top: -18px;
+        background: transparent;
+        border: 1px solid transparent;
+        -webkit-border-radius: 50%;
+        -moz-border-radius: 50%;
+        border-radius: 50%;
+      }
+    }
+    >li.otherMonthDay{
+      color: #979A9D;
+    }
+    >li:hover{
+      >div{
+        background: rgba(232, 232, 232, 0.58);
+      }
+    }
+    >li.active{
+      >div{
+        border-color: #ffd54f;
+      }
+    }
+    >li.today{
+      >div{
+        background: #ffd54f;
+      }
+    }
+    >li.hasScheduleOrTask{
+      >div{
+        border-color: #dddddd;
+      }
+    }
+  }
+}

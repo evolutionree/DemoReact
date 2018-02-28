@@ -1,0 +1,70 @@
+.TaskTab{
+  overflow: auto;
+  .Header {
+    width: 100%;
+    height: 136px;
+    position: relative;
+
+    .Title {
+      background: #3398db;
+      width: 100%;
+      height: 50px;
+      line-height: 50px;
+      padding-left: 50px;
+      margin-bottom: 20px;
+      font-size: 18px;
+      color: #ffffff;
+      position: relative;
+
+      > i:first-of-type {
+        font-size: 22px;
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        margin-top: -11px;
+      }
+
+      > i:last-of-type {
+        font-size: 24px;
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        margin-top: -12px;
+        cursor: pointer;
+      }
+    }
+  }
+
+  :global{
+    .ant-collapse-item{
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .ant-collapse-header{
+      height: 44px;
+      line-height: 44px;
+      padding: 0 0 0 24px;
+      background: #f8f8f8;
+    }
+    .ant-collapse-content{
+      border-top: none!important;
+      padding: 0px;
+      .ant-collapse-content-box{
+        padding: 0;
+      }
+    }
+    .ant-collapse-item:first-of-type{
+      .ant-collapse-header{
+        color: #3398db;
+      }
+    }
+    .ant-collapse-item:last-of-type{
+      border-bottom: none;
+      .ant-collapse-header{
+        color: #ff6662;
+      }
+    }
+    .taskList > li:last-of-type{
+      border-bottom: none;
+    }
+  }
+}

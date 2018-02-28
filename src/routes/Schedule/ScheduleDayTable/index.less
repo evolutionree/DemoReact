@@ -1,0 +1,23 @@
+.ScheduleDayTable{
+  .tableWrap{
+
+    .left{
+      float: left;
+      ul>li{
+        width: 50px;
+        height: 22px;
+        line-height: 22px;
+        border: 1px solid #f0f0f0;
+      }
+      ul>li:nth-of-type(odd){
+        border-bottom: none;
+      }
+      ul>li:nth-of-type(even){
+        border-top: none;
+      }
+      ul>li:nth-of-type(2n+1){
+        border-top: none;
+      }
+    }
+  }
+}

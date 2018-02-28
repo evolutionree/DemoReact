@@ -19,7 +19,7 @@ function ShowChart({
   if (!dataSource) {
     return null;
   }
-  const colors = ['#3398db', '#7ed321', '#675bba', '#61aced', '#ba6f0b', '#77ba07'];
+  const colors = ['#3398db', '#7ed321', '#A5CE3A', '#22B14A', '#FBD50B', '#FFB516', '#F46F21', '#A3228E', '#665ABB'];
   function transformData(item) {
     const seriesData = item.data;
     let newSeresData = [];
@@ -343,7 +343,23 @@ function ShowChart({
         trigger: 'item'
       },
       //原生图形元素组件
-      graphic: optionSet.graphic,
+      graphic: [
+        {
+          type: 'image',
+          id: 'logo',
+          right: 'center',
+          top: 'center',
+          z: -10,
+          bounding: 'raw',
+          origin: [75, 75],
+          style: {
+            image: '/img_site_logo.png',
+            width: 160,
+            height: 50,
+            opacity: 0.5
+          }
+        }
+      ],
       //工具栏
       toolbox: optionSet.toolbox,
       //图例组件
@@ -373,7 +389,7 @@ function ShowChart({
           },
           data: dataSource && dataSource instanceof Array && dataSource.map((dataItem) => {
             return { value: dataItem[item.fieldname], name: dataItem[component.commonextinfo.xfieldname] };
-          })
+          }).filter(item => item.value !== 0)
         };
       })
     };

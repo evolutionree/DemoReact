@@ -101,14 +101,14 @@ export default {
       yield call(logout);
       // yield put(routerRedux.push({ pathname: '/login' }));
       location.href = '/login.html';
-      storage.removeLocalItem('defaultPath');
+      sessionStorage.removeItem('defaultPathType');
     },
     *fetchGlobalMenus(action, { call, put }) {
       try {
         const type = /admin/.test(location.pathname) ? 1 : 0;
         const result = yield call(getGlobalMenus, type);
 
-        if (!storage.getLocalItem('defaultPath')) {
+        if (sessionStorage.getItem('defaultPathType') != type) {
           let defaultPath = '';
           let findFirstPath = true;
           function getDefaultPath(menus) {
@@ -132,11 +132,12 @@ export default {
           const firstPagePath = getDefaultPath(result.data);
           if (firstPagePath) {
             hashHistory.push(firstPagePath);
-            storage.setLocalItem('defaultPath', true);
           } else {
             hashHistory.push('/nopermission');
           }
         }
+
+        sessionStorage.setItem('defaultPathType', type);
         yield put({ type: 'putState', payload: { menus: result.data } });
       } catch (e) {
         console.error(e);

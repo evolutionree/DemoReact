@@ -1,0 +1,36 @@
+.checkbox {
+  width: 18px;
+  height: 18px;
+  border: 1px solid #e3e4e5;
+  display: inline-block;
+  position: relative;
+  border-radius: 4px;
+  cursor: pointer;
+  background: #00a0eb;
+}
+.blue{
+  background: #00a0eb;
+}
+.orange{
+  background: #ff8a65;
+}
+.purple{
+  background: #ac5dcf;
+}
+.checkbox.Checked:after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 5px;
+  background: transparent;
+  top: 4px;
+  left: 3px;
+  border: 2px solid #ffffff;
+  border-top: none;
+  border-right: none;
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}

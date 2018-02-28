@@ -53,7 +53,7 @@ export default {
         const params = {
           rulesql: sqlContent,
           viewstyleid: mobViewConfig.viewstyleid,
-          colnames: colNames.filter(n => !!n).join(','),
+          colnames: colNames.filter(n => !!n).map(v => v && v.replace(/^\s+|\s+$/g, '')).join(','),
           fonts: mobViewConfig.fonts,
           colors: mobViewConfig.colors
         };

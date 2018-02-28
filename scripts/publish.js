@@ -14,8 +14,8 @@ const LOCAL_PATH_SOURCE = path.resolve(__dirname, '../dist');
 const LOCAL_PATH_ZIP_FILE = path.resolve(__dirname, 'crmweb.zip');
 
 const REMOTE_PATH_ZIP_FILE = '/data/approot/crmweb.zip';
-const REMOTE_PATH_DEV = '/data/approot/crmweb';
-const REMOTE_PATH_TEST = '/data/approot/crmweb_v732';
+const REMOTE_PATH_DEV = '/data/approot/crmweb_v732';
+const REMOTE_PATH_TEST = '/data/approot/crmwebtest';
 
 __main();
 

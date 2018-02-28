@@ -21,16 +21,24 @@ class SelectProductBigData extends React.Component {
 
   constructor(props) {
     super(props);
+    let valMap = {};
+    if (props.value_name) {
+      const arrVal = props.value.split(',');
+      const arrName = props.value_name.split(',');
+      arrVal.forEach((val, index) => {
+        valMap[val] = arrName[index];
+      });
+    }
     this.state = {
       modalVisible: false,
-      valMap: {}
+      valMap: valMap
     };
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.value_name !== nextProps.value_name) {
       const arrVal = nextProps.value.split(',');
-      const arrName = nextProps.value_name;
+      const arrName = nextProps.value_name.split(',');
       let valMap = { ...this.state.valMap };
       arrVal.forEach((val, index) => {
         valMap[val] = arrName[index];

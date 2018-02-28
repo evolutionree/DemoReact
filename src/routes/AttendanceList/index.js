@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
-import { Table, Select, DatePicker } from 'antd';
+import { Table, Select, DatePicker, Button } from 'antd';
 import { routerRedux } from 'dva/router';
 import DepartmentSelect from '../../components/DepartmentSelect';
 import Page from '../../components/Page';
@@ -9,6 +9,7 @@ import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import { queryAttendanceList } from '../../services/attendance';
 import { getCurrentMonthFirstDay, getCurrentDay } from '../../utils';
+import * as _ from 'lodash';
 
 const Option = Select.Option;
 const Column = Table.Column;
@@ -117,6 +118,11 @@ class AttendanceList extends React.Component {
     );
   };
 
+  exportData = () => {
+    const params = JSON.stringify(_.mapValues({ ...this.state.queries, pageIndex: 1, pageSize: 65535 }, val => val + ''));
+    window.open(`/api/excel/exportdata?TemplateType=0&FuncName=attendance_export&QueryParameters=${params}&UserId=${this.props.currentUser}`);
+  };
+
   render() {
     const { list, queries, total } = this.state;
     return (
@@ -153,6 +159,7 @@ class AttendanceList extends React.Component {
               this.search('endDate', date ? moment(date).format('YYYY-MM-DD') : '' );
             }}
           />
+          <Button onClick={this.exportData}>导出</Button>
           <Toolbar.Right>
             <Search
               placeholder="请输入姓名搜索"
@@ -188,4 +195,10 @@ class AttendanceList extends React.Component {
   }
 }
 
-export default connect()(AttendanceList);
+export default connect(
+  state => {
+    return {
+      currentUser: state.app.user.userid
+    };
+  }
+)(AttendanceList);
