@@ -92,25 +92,41 @@ class CodeEditor extends Component {
     const line = cm.getLine(cursor.line);
     const start = cursor.ch;
 
-    const APIs = 'setValue,getValue,setValueByName,setRowValue,getRowValue,getTableRowCount,getTableHeader,request,' +
-      'designateDataSource,designateDataSourceByName,designateFilterDataSource,designateFilterDataSourceByName,clearFilter,' +
-      'designateNode,designateNodes,designateFilterNodes,alert';
+    const APIs = [
+      'alert', 'clearFilter',
+      'designateDataSource', 'designateDataSourceByName',
+      'designateFilterDataSource', 'designateFilterDataSourceByName', 'designateFilterNodes',
+      'designateNode',
+      'designateRowFieldDataSource', 'designateRowFieldFilterDataSource', 'designateRowFieldFilterNodes',
+      'getCurrentFormID', 'getMainFormID', 'getRowValue', 'getTableHeader', 'getTableRowCount', 'getValue',
+      'request',
+      'setReadOnly', 'setRequired', 'setRowFieldReadOnly', 'setRowFieldRequired', 'setRowFieldVisible',
+      'setRowValue', 'setValue', 'setValueByName', 'setVisible'
+    ];
 
-    if (start && line.charAt(start - 1) === '.') {
-      let word = '';
-      let pos = start - 2;
+    // if (start && line.charAt(start - 1) === '.') {
+    if (start) {
+      let matchCase = '';
+      let pos = start - 1;
       let ch = line.charAt(pos);
-      while (pos >= 0 && /\w/.test(ch)) {
-        word = ch + word;
+      while (pos >= 0 && /\w|\./.test(ch)) {
+        matchCase = ch + matchCase;
 
         pos -= 1;
         ch = line.charAt(pos);
       }
 
-      if (word === 'app') {
+      const match = matchCase.match(/^app\.(\w*)$/);
+
+      if (match) {
+        const word = match[1].toLowerCase();
+        const matchAPIs = word
+          ? APIs.filter(i => new RegExp('^' + word).test(i.toLowerCase()))
+          : APIs;
+
         return {
-          list: APIs.split(','),
-          from: CodeMirror.Pos(cursor.line, start),
+          list: matchAPIs,
+          from: CodeMirror.Pos(cursor.line, start - word.length),
           to: CodeMirror.Pos(cursor.line, start)
         };
       }
