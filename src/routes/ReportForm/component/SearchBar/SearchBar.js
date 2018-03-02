@@ -37,7 +37,7 @@ class SearchBarWrap extends React.Component {
 
   getModalType(item) {
     let modalType = '';
-    if (item.multichoosedata.relatectrlindex === 0) {
+    if (item.multichoosedata.relatectrlindex === 0) { //判断组件ModalSelect是单独存在还是与下列列表组件组合存在 relatectrlindex=0 表示单独存在
       modalType = item.multichoosedata.choosetype.toString();
     } else {
       modalType = this.props.value[this.props.model[item.multichoosedata.relatectrlindex - 1].parametername] ? this.props.value[this.props.model[item.multichoosedata.relatectrlindex - 1].parametername] : null

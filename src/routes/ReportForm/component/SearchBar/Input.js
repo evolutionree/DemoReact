@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import { Input, DatePicker } from 'antd';
 import Select from './Select';
 import SetSeriesModal from './SetSeriesModal';
+import SelectDataSource from '../../../../components/DynamicForm/controls/SelectDataSource';
 import moment from 'moment';
 const dateFormat = 'YYYY-MM-DD';
 
@@ -42,7 +43,9 @@ class InputComponent extends Component {
       case 4:
         return <DatePicker value={moment(this.props.value, dateFormat)} style={{ width: '120px' }} onChange={(date) => { this.props.onChange(date.format(dateFormat)) }} format={dateFormat} />;
       case 5:
-        return <SetSeriesModal settingData={this.props.value} onChange={(date) => { this.props.onChange(date)}} />
+        return <SetSeriesModal settingData={this.props.value} onChange={(date) => { this.props.onChange(date)}} />;
+      case 6:
+        return <SelectDataSource style={{ width: '120px' }} value={null} {...this.props.MultiChooseData} dataSource={this.props.MultiChooseData.datasource} onChange={(value) => { this.props.onChange(value) }} />
       default:
         return <div>searchBar未识别</div>;
     }

@@ -186,86 +186,107 @@ class DataGrid extends  React.Component {
       window.tableHasScrollX = false;
     }
 
-    const returnColumns = columns instanceof Array && columns.map((item, index) => {
-      const setWidth = window.tableHasScrollX ? (item.width > 0 ? item.width : 150) : 0;  //后端会给定列宽，没给则默认设置为150
-      const style = window.tableHasScrollX ? {
-        width: setWidth,
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        display: 'inline-block'
-      } : {
-        maxWidth: '340px',
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        display: 'inline-block'
-      };
+    const returnColumns = columns instanceof Array && columns.map((column, index) => {
+        if (column.iscolumngroup === 1) {
 
+          return getChildrenColumns(column.subcolumns);
 
-      if (item.linkscheme) { //有链接
-        return new HeaderModel(item.title, item.fieldname, (text, record, rowIndex) => {
-          const targetType = ['', '_self', '_blank'];
-
-          let cellText = text instanceof Object ? text.name : text;
-          // 格式化日期
-          if ((item.controltype === 8 || item.controltype === 9) && item.formatstr) {
-            cellText = this.formatDate(text, item.formatstr);
-          }
-
-          function getScheme(index = 0) {
-            let scheme = item.linkscheme;
-            const keys = scheme && scheme.match(/#.*?#/g, '');
-            if (keys && keys instanceof Array) {
-              for (let i = 0; i < keys.length; i++) {
-                const dataSourceKey = record[keys[i].replace(/#/g, '')];
-                scheme = scheme.replace(keys[i], dataSourceKey instanceof Object ? getValue(dataSourceKey.id, index) : getValue(dataSourceKey, index));
+          function getChildrenColumns(childrenColumns) {
+            const children = [];
+            for (let i = 0; i < childrenColumns.length; i++) {
+              if (childrenColumns[i].iscolumngroup === 1) {
+                children.push(getChildrenColumns(childrenColumns[i].subcolumns));
+              } else {
+                children.push(getFormatColumn(childrenColumns[i]));
               }
             }
-
-            return scheme;
+            return new HeaderModel(column.title, null, null, null, null, children);
           }
+        } else {
+          return getFormatColumn(column)
+        }
 
-          function getValue(value, index) {
-            if (value && value.toString().indexOf(',') > -1) {
-              return value.split(',')[index];
-            } else {
-              return value;
-            }
-          }
+        function getFormatColumn(item) {
+          const setWidth = window.tableHasScrollX ? (item.width > 0 ? item.width : 150) : 0;  //后端会给定列宽，没给则默认设置为150
+          const style = window.tableHasScrollX ? {
+            width: setWidth,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            display: 'inline-block'
+          } : {
+            maxWidth: '340px',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            display: 'inline-block'
+          };
 
-          if (cellText && cellText.toString().indexOf(',') > -1) { //多数据源
-            return (
-              <span style={style}>
-                {
-                  cellText.split(',').map((item, index) => {
-                    return <Link key={index} style={{ marginRight: '10px' }} title={item} target={targetType[item.targettype]} to={getScheme(index)}>{item}</Link>;
-                  })
+          if (item.linkscheme) { //有链接
+            return new HeaderModel(item.title, item.fieldname, (text, record, rowIndex) => {
+              const targetType = ['', '_self', '_blank'];
+
+              let cellText = text instanceof Object ? text.name : text;
+              // 格式化日期
+              if ((item.controltype === 8 || item.controltype === 9) && item.formatstr) {
+                cellText = this.formatDate(text, item.formatstr);
+              }
+
+              function getScheme(index = 0) {
+                let scheme = item.linkscheme;
+                const keys = scheme && scheme.match(/#.*?#/g, '');
+                if (keys && keys instanceof Array) {
+                  for (let i = 0; i < keys.length; i++) {
+                    const dataSourceKey = record[keys[i].replace(/#/g, '')];
+                    scheme = scheme.replace(keys[i], dataSourceKey instanceof Object ? getValue(dataSourceKey.id, index) : getValue(dataSourceKey, index));
+                  }
                 }
-              </span>
-            );
-          } else {
-            return <Link style={style} title={cellText} target={targetType[item.targettype]} to={getScheme()}>{cellText}</Link>;
-          }
-        }, setWidth);
-      } else {
-        return new HeaderModel(item.title, item.fieldname, (text, record, rowIndex) => {
-          // 先取 _name
-          const text_name = record[item.fieldname + '_name'];
-          let cellText = text_name !== undefined ? text_name : text instanceof Object ? text.name : text;
-          // 格式化日期
-          if ((item.controltype === 8 || item.controltype === 9) && item.formatstr) {
-            cellText = this.formatDate(text, item.formatstr);
-          }
-          return (
-            <span style={style} title={cellText} className={styles.datagridTdWrap}>
-              <DynamicFieldView value={cellText} value_name={cellText} controlType={item.controltype} />
-            </span>
-          );
-        }, setWidth);
-      }
-    });
 
+                return scheme;
+              }
+
+              function getValue(value, index) {
+                if (value && value.toString().indexOf(',') > -1) {
+                  return value.split(',')[index];
+                } else {
+                  return value;
+                }
+              }
+
+              if (cellText && cellText.toString().indexOf(',') > -1) { //多数据源
+                return (
+                  <span style={style}>
+                    {
+                      cellText.split(',').map((item, index) => {
+                        return <Link key={index} style={{ marginRight: '10px' }} title={item}
+                                     target={targetType[item.targettype]} to={getScheme(index)}>{item}</Link>;
+                      })
+                    }
+                  </span>
+                );
+              } else {
+                return <Link style={style} title={cellText} target={targetType[item.targettype]}
+                             to={getScheme()}>{cellText}</Link>;
+              }
+            }, setWidth);
+          } else {
+            return new HeaderModel(item.title, item.fieldname, (text, record, rowIndex) => {
+              // 先取 _name
+              const text_name = record[item.fieldname + '_name'];
+              let cellText = text_name !== undefined ? text_name : text instanceof Object ? text.name : text;
+              // 格式化日期
+              if ((item.controltype === 8 || item.controltype === 9) && item.formatstr) {
+                cellText = this.formatDate(text, item.formatstr);
+              }
+              return (
+                <span style={style} title={cellText} className={styles.datagridTdWrap}>
+                  <DynamicFieldView value={cellText} value_name={cellText} controlType={item.controltype} />
+                </span>
+              );
+            }, setWidth, null);
+          }
+        }
+    })
     return returnColumns;
   }
 
@@ -277,7 +298,20 @@ class DataGrid extends  React.Component {
     let columns = this.state.columns || [];
     let columnsTotalWidth = 0;
     columns instanceof Array && columns.map((item) => {
-      columnsTotalWidth += (item.width > 0 ? item.width + 20 + 2 : 150 + 20 + 2); //scroll.x 需要大于 表格每列的总宽度，否则 表头与内容行对不齐 20:td-padding 2: td-border
+      if (item.iscolumngroup === 1) { //表头有合并
+        getColumnWidth(item.subcolumns);
+        function getColumnWidth(column) {
+          for (let i = 0; i < column.length; i++) {
+            if (column[i].iscolumngroup === 1) {
+              getColumnWidth(column[i].subcolumns);
+            } else {
+              columnsTotalWidth += (column[i].width > 0 ? column[i].width + 20 + 2 : 150 + 20 + 2);
+            }
+          }
+        }
+      } else {
+        columnsTotalWidth += (item.width > 0 ? item.width + 20 + 2 : 150 + 20 + 2); //scroll.x 需要大于 表格每列的总宽度，否则 表头与内容行对不齐 20:td-padding 2: td-border
+      }
     });
     return columnsTotalWidth;
   }
