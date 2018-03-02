@@ -45,7 +45,7 @@ class InputComponent extends Component {
       case 5:
         return <SetSeriesModal settingData={this.props.value} onChange={(date) => { this.props.onChange(date)}} />;
       case 6:
-        return <SelectDataSource style={{ width: '120px' }} value={null} {...this.props.multichoosedatasource} dataSource={{
+        return <SelectDataSource style={{ width: '120px' }} value={this.props.value} {...this.props.multichoosedatasource} dataSource={{
           type: this.props.multichoosedatasource.datasource.type,
           sourceId: this.props.multichoosedatasource.datasource.sourceid
         }} onChange={(value) => { this.props.onChange(value) }} />
