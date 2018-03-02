@@ -41,7 +41,7 @@ export default {
         }
       }));
     },
-    *queryList(action, { select, call, put }) {
+    *queryList(action, { select, call, put, take }) {
       const { query } = yield select(({ routing }) => routing.locationBeforeTransitions);
       let { menus, entityId } = yield select(({ affairList }) => affairList);
 
@@ -51,6 +51,19 @@ export default {
           const { data: { rulemenu } } = yield call(queryMenus, entityId);
           menus = rulemenu.sort((a, b) => a.recorder - b.recorder)
             .map(item => ({ menuName: item.menuname, menuId: item.menuid }));
+          // 获取权限数据后再往下走
+          const { permissionFuncs } = yield select(state => state.permission);
+          let funcs = permissionFuncs[entityId];
+          if (!funcs) {
+            while (true) {
+              const result = yield take('permission/receivePermissionFunc');
+              funcs = result.payload && result.payload.entityId === entityId && result.payload.permissionData;
+              if (funcs) break;
+            }
+          }
+          menus = menus.filter(menu => {
+            return funcs.some(fun => fun.relationvalue === menu.menuId);
+          });
           yield put({ type: 'menus', payload: menus });
         } catch (e) {
           message.error(e.message || '获取菜单失败');
