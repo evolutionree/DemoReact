@@ -64,6 +64,8 @@ import UkqrtzManager from './routes/UkqrtzManager/index';
 
 import Schedule from './routes/Schedule/index';
 
+import AttendanceClassSet from './routes/AttendanceClassSet';
+
 const appRoutes = [
   { path: 'NoFoundPage', comp: NoFoundPage }, //进入系统会做菜单权限判断 Router的原因 首次让其先进入一个无任何Ajax的页面
   { path: 'home', comp: Home },
@@ -117,6 +119,7 @@ const appRoutes = [
   { path: 'ukqrtzmanager', comp: UkqrtzManager, model: require('./models/ukqrtzmanager') },
   { path: 'nopermission', comp: NoPermission },
   { path: 'schedule', comp: Schedule, model: require('./models/schedule') },
+  { path: 'attendanceClassSet', comp: AttendanceClassSet, model: require('./models/attendanceClassSet') },
   { path: '*', comp: NoFoundPage }
 ];
 
