@@ -75,9 +75,9 @@ export default {
       try {
         const params = {
           entityid: entityId,
-          newload: addScript.editingContent,
-          editload: editScript.editingContent,
-          checkload: viewScript.editingContent
+          newload: addScript.editingContent || '',
+          editload: editScript.editingContent || '',
+          checkload: viewScript.editingContent || ''
         };
         if (scriptName) {
           const { editingContent } = yield select(state => state.entityScripts[scriptName]);
