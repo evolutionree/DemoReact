@@ -24,7 +24,7 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       return history.listen(location => {
-        if (location.pathname === '/attendanceClassSet') {
+        if (location.pathname === '/attendanceclassset') {
           const entityId = 'e450bfd7-ff17-4b29-a2db-7ddaf1e79342'; //match[1]
           dispatch({ type: 'init', payload: entityId });
         } else {

@@ -3,6 +3,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { Modal, message, Spin, Button, Row, Col } from 'antd';
+import AddForm from './AddForm';
 import { connect } from 'dva';
 
 class AddClassModal extends Component {
@@ -14,7 +15,7 @@ class AddClassModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-
+      FormValue: null
     };
   }
 
@@ -44,6 +45,7 @@ class AddClassModal extends Component {
         onOk={this.handleOk}
         onCancel={cancel}
       >
+        <AddForm value={this.state.FormValue} onChange={(formValue) => { this.setState({ FormValue: formValue }) }} />
         <div>
           <div>
             <Row>

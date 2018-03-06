@@ -119,7 +119,7 @@ const appRoutes = [
   { path: 'ukqrtzmanager', comp: UkqrtzManager, model: require('./models/ukqrtzmanager') },
   { path: 'nopermission', comp: NoPermission },
   { path: 'schedule', comp: Schedule, model: require('./models/schedule') },
-  { path: 'attendanceClassSet', comp: AttendanceClassSet, model: require('./models/attendanceClassSet') },
+  { path: 'attendanceclassset', comp: AttendanceClassSet, model: require('./models/attendanceClassSet') },
   { path: '*', comp: NoFoundPage }
 ];
 
