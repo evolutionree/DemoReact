@@ -15,6 +15,7 @@ import EntityHome from './routes/EntityHome';
 import EntityTypes from './routes/EntityHome/views/EntityTypes';
 import EntityFields from './routes/EntityHome/views/EntityFields';
 import EntityRules from './routes/EntityHome/views/EntityRules';
+import EntityOfficeSet from './routes/EntityHome/views/EntityOfficeSet';
 import EntityMenus from './routes/EntityHome/views/EntityMenus';
 import EntityTabs from './routes/EntityHome/views/EntityTabs';
 import EntityFunc from './routes/EntityHome/views/EntityFunc';
@@ -91,6 +92,7 @@ const appRoutes = [
       { path: 'fields', comp: EntityFields, model: require('./models/entityFields') },
       { path: 'types', comp: EntityTypes, model: require('./models/entityTypes') },
       { path: 'rules', comp: EntityRules, model: require('./models/entityRules') },
+      { path: 'officeset', comp: EntityOfficeSet, model: require('./models/entityOfficeSet') },
       { path: 'menus', comp: EntityMenus, model: require('./models/entityMenus') },
       { path: 'tabs', comp: EntityTabs, model: require('./models/entityTabs') },
       { path: 'func', comp: EntityFunc, model: require('./models/entityFunc') },

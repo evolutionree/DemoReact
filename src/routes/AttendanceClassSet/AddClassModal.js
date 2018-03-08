@@ -31,46 +31,20 @@ class AddClassModal extends Component {
 
 
   handleOk = () => {
-
+    console.log(JSON.stringify(this.state.FormValue))
   };
 
 
   render() {
     const { visible, cancel } = this.props;
-    const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
     return (
       <Modal
-        title="新增"
+        title="考勤组设置"
         visible={visible}
         onOk={this.handleOk}
         onCancel={cancel}
       >
         <AddForm value={this.state.FormValue} onChange={(formValue) => { this.setState({ FormValue: formValue }) }} />
-        <div>
-          <div>
-            <Row>
-              <Col span={6}>工作日</Col>
-              <Col span={12}>班次</Col>
-              <Col span={6}>操作</Col>
-            </Row>
-          </div>
-          <ul>
-            {
-              days.map((item, index) => {
-                return (
-                  <li>
-                    <Row>
-                      <Col span={6}>{item}</Col>
-                      <Col span={12}>A班次</Col>
-                      <Col span={6}>更改班次</Col>
-                    </Row>
-                  </li>
-                );
-              })
-            }
-          </ul>
-        </div>
-
       </Modal>
     );
   }

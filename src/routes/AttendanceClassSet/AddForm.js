@@ -5,14 +5,18 @@ import React from 'react';
 import { Button, Form, Radio, Input, Checkbox, Select } from 'antd';
 import { connect } from 'dva';
 import _ from 'lodash';
+import WorkDaySet from './component/WorkDaySet';
+import OtherDaySet from './component/OtherDaySet';
+import SelectDept from './component/SelectDept';
+import AddressSet from './component/AddressSet';
 import classnames from 'classnames';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
 
 const formItemLayout = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 20 }
+  labelCol: { span: 6 },
+  wrapperCol: { span: 18 }
 };
 
 class AddForm extends React.Component {
@@ -45,12 +49,72 @@ class AddForm extends React.Component {
       <Form>
         <FormItem
           {...formItemLayout}
-          label="班次名称"
+          label="考勤组名称"
         >
-          {getFieldDecorator('relateBusin', {
+          {getFieldDecorator('1', {
             initialValue: ''
           })(
-            <Input placeholder="请输入班次名称" />
+            <Input placeholder="请输入考勤组名称" />
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="考勤组负责人"
+        >
+          {getFieldDecorator('2', {
+            initialValue: ''
+          })(
+            <Input placeholder="请输入负责人名称" />
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="参与考勤人员"
+        >
+          {getFieldDecorator('3', {
+            initialValue: ''
+          })(
+            <SelectDept />
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="考勤"
+        >
+          {getFieldDecorator('set', {
+            initialValue: ''
+          })(
+            <Checkbox>固定班制</Checkbox>
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="工作日设置"
+        >
+          {getFieldDecorator('se1t', {
+            initialValue: ''
+          })(
+            <WorkDaySet />
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="特殊日期设置"
+        >
+          {getFieldDecorator('ss', {
+            initialValue: ''
+          })(
+            <OtherDaySet />
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="考勤点设置"
+        >
+          {getFieldDecorator('ss', {
+            initialValue: ''
+          })(
+            <AddressSet />
           )}
         </FormItem>
       </Form>

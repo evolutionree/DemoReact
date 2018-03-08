@@ -41,7 +41,8 @@ class DataModalSelect extends React.Component {
   };
 
   renderValue = () => {
-    const { value, placeholder } = this.props;
+    const { placeholder } = this.props;
+    let value = this.props.value || this.props.defaultValue;
     if (!value || !value.length) {
       return <div className={styles.placeholder}>{placeholder || ''}</div>;
     }
@@ -51,12 +52,13 @@ class DataModalSelect extends React.Component {
   };
 
   renderComponent() {
+    let value = this.props.value || this.props.defaultValue;
     switch (this.props.type) {
       case 'DeptSelect':
         return (
           <DeptSelectModal
             visible={this.state.modalVisible}
-            selectValue={this.props.value}
+            selectValue={value}
             onOk={this.handleOk}
             onCancel={this.hideModal}
           />
@@ -65,7 +67,7 @@ class DataModalSelect extends React.Component {
         return (
           <UserSelectModal
             visible={this.state.modalVisible}
-            selectedUsers={this.props.value}
+            selectedUsers={value}
             onOk={this.handleOk}
             onCancel={this.hideModal}
           />
