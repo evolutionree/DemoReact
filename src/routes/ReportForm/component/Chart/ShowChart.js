@@ -384,6 +384,18 @@ function ShowChart({
           //图形上的文本标签，可用于说明图形的一些数据信息
           label: {
             normal: {
+              formatter: item.labelformat ? function (obj) {
+                let formatstr = item.labelformat;
+                const keys = formatstr && formatstr.match(/#.*?#/g, '');
+                if (dataSource && dataSource instanceof Array && dataSource.length > 0) {
+                  if (keys && keys instanceof Array) {
+                    for (let i = 0; i < keys.length; i++) {
+                      formatstr = formatstr.replace(keys[i], dataSource[obj instanceof Array ? obj[0].dataIndex : obj.dataIndex][keys[i].replace(/#/g, '')]);
+                    }
+                  }
+                }
+                return formatstr;
+              } : '{c}',
               show: true
             }
           },

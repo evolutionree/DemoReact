@@ -6,6 +6,7 @@ import { Input, DatePicker } from 'antd';
 import Select from './Select';
 import SetSeriesModal from './SetSeriesModal';
 import SelectDataSource from '../../../../components/DynamicForm/controls/SelectDataSource';
+import SelectProduct from '../../../../components/DynamicForm/controls/SelectProduct';
 import moment from 'moment';
 const dateFormat = 'YYYY-MM-DD';
 
@@ -49,6 +50,8 @@ class InputComponent extends Component {
           type: this.props.multichoosedatasource.datasource.type,
           sourceId: this.props.multichoosedatasource.datasource.sourceid
         }} onChange={(value) => { this.props.onChange(value) }} />
+      case 7:
+        return <div style={{ width: '200px' }}><SelectProduct value={this.props.value} onChange={value => this.props.onChange(value) } /></div>;
       default:
         return <div>searchBar未识别</div>;
     }

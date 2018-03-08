@@ -167,12 +167,6 @@ class DataGrid extends  React.Component {
     });
   }
 
-  formatDate(text, fmt) {
-    if (!text) return text;
-    if (!fmt) return text;
-    return moment(text, 'YYYY-MM-DD HH:mm:ss').format(fmt.replace(/y/g, 'Y').replace(/d/g, 'D'));
-  }
-
   getColumns(tableextinfo, datasourcename) {
     //DataGrid 列获取
     let columns = this.state.columns || [];
@@ -222,6 +216,12 @@ class DataGrid extends  React.Component {
           return getFormatColumn(column)
         }
 
+        function formatDate(text, fmt) {
+          if (!text) return text;
+          if (!fmt) return text;
+          return moment(text, 'YYYY-MM-DD HH:mm:ss').format(fmt.replace(/y/g, 'Y').replace(/d/g, 'D'));
+        }
+
         function getFormatColumn(item) {
           const setWidth = window.tableHasScrollX ? (item.width > 0 ? item.width : 150) : 0;  //后端会给定列宽，没给则默认设置为150
           const style = window.tableHasScrollX ? {
@@ -246,7 +246,7 @@ class DataGrid extends  React.Component {
               let cellText = text instanceof Object ? text.name : text;
               // 格式化日期
               if ((item.controltype === 8 || item.controltype === 9) && item.formatstr) {
-                cellText = this.formatDate(text, item.formatstr);
+                cellText = formatDate(text, item.formatstr);
               }
 
               function getScheme(index = 0) {
@@ -293,7 +293,7 @@ class DataGrid extends  React.Component {
               let cellText = text_name !== undefined ? text_name : text instanceof Object ? text.name : text;
               // 格式化日期
               if ((item.controltype === 8 || item.controltype === 9) && item.formatstr) {
-                cellText = this.formatDate(text, item.formatstr);
+                cellText = formatDate(text, item.formatstr);
               }
               return (
                 <span style={style} title={cellText} className={styles.datagridTdWrap}>
