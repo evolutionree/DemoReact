@@ -32,7 +32,7 @@ function EntcommActivities({
           return (
             <ImgCard
               key={plugin.name}
-              img={`/api/fileservice/read?fileid=${plugin.icon}&filetype=1`}
+              img={`/api/fileservice/read?fileid=${plugin.icon}`}
               onClick={pluginAdd.bind(null, index)}
               label={plugin.name}
             />
