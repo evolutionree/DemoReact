@@ -6,6 +6,7 @@ import { Modal } from 'antd';
 import { connect } from 'dva';
 import ScheduleForm from './ScheduleForm';
 import TaskForm from './TaskForm';
+import ScheduleAddForm from './ScheduleAddForm';
 import classnames from 'classnames';
 import Styles from './index.less';
 
@@ -83,7 +84,7 @@ class FormModal extends Component {
                                                   value={this.state.FormValue} onChange={(formValue) => { this.setState({ FormValue: formValue }) }} /> : null
         }
         {
-          titleNodeData[1].active ? <TaskForm ref={(ref) => { this.TaskFormRef = ref }}
+          titleNodeData[1].active ? <ScheduleAddForm ref={(ref) => { this.TaskFormRef = ref }}
                                               value={this.state.FormValue}
                                               onChange={(formValue) => { this.setState({ FormValue: formValue }) }} /> : null
         }

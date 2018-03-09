@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import { DatePicker, Checkbox, Select } from 'antd';
 import _ from 'lodash';
+import SelectSingle from '../../../../components/DynamicForm/controls/SelectSingle';
 import Styles from './TimePicker.less';
 
 const { RangePicker } = DatePicker;
@@ -60,13 +61,35 @@ class TimePicker extends Component {
 
   }
 
+  onFieldControlRef = (fieldname, ref) => {
+    this[`SelectInput${fieldname}`] = ref;
+  };
+
+  selectValueChange(fieldname, value, isFromApi = false) {
+    this.props.onChange && this.props.onChange({
+      ...this.props.value,
+      [fieldname]: value
+    }, fieldname, isFromApi);
+  }
+
   render() {
+    //<SelectSingle ref={this.onFieldControlRef.bind(this, item.fieldname)} onChange={this.selectValueChange.bind(this, item.fieldname)} value={itemValue} {...item.fieldconfig} />
     const options = [
       { label: '全天', value: 'allday' },
       { label: '重复', value: 'repeat' }
     ];
     const allDayChecked = _.indexOf(this.state.checkedList, 'allday') > -1 ? true : false;
     const repeatChecked = _.indexOf(this.state.checkedList, 'repeat') > -1 ? true : false;
+
+    if (!this.props.fields) {
+      return null;
+    }
+    const value = this.props.value;
+    const repeatTypeField = _.find(this.props.fields, item => item.fieldname === 'repeatType');
+   if (!repeatTypeField) {
+     return null;
+   }
+    const repeatTypeValue = value && value[repeatTypeField.fieldname] || repeatTypeField.fieldconfig.defaultValue;
     return (
       <div className={Styles.TimePickerWrap}>
         <RangePicker
@@ -84,11 +107,14 @@ class TimePicker extends Component {
               <ul>
                 <li>
                   <span>重复类型 :</span>
-                  <Select defaultValue="lucy" style={{ width: 120 }}>
-                    <Option value="jack">每日重复</Option>
-                    <Option value="lucy">每周重复</Option>
-                    <Option value="disabled">每月重复</Option>
-                  </Select>
+                  <div style={{ width: 120, display: 'inline-block' }}>
+                    <SelectSingle ref={this.onFieldControlRef.bind(this, repeatTypeField.fieldname)} onChange={this.selectValueChange.bind(this, repeatTypeField.fieldname)} value={repeatTypeValue} {...repeatTypeField.fieldconfig} />
+                  </div>
+                  {/*<Select defaultValue="lucy" style={{ width: 120 }}>*/}
+                    {/*<Option value="jack">每日重复</Option>*/}
+                    {/*<Option value="lucy">每周重复</Option>*/}
+                    {/*<Option value="disabled">每月重复</Option>*/}
+                  {/*</Select>*/}
                 </li>
                 <li>
                   <span>结束条件 :</span>
