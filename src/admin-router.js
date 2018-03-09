@@ -77,6 +77,7 @@ import CustomerRelationTree from './routes/CustomerHome/RelationTree';
 
 import DbManager from './routes/DbManager/index';
 import UkqrtzManager from './routes/UkqrtzManager/index';
+import PrintTemplate from './routes/PrintTemplate';
 import MailRecovery from './routes/MailRecovery';
 
 const appRoutes = [
@@ -155,6 +156,7 @@ const appRoutes = [
   { path: 'dbmanager', comp: DbManager, model: require('./models/dbmanager') },
   { path: 'mailrecovery', comp: MailRecovery, model: require('./models/mailRecovery') },
   { path: 'ukqrtzmanager', comp: UkqrtzManager, model: require('./models/ukqrtzmanager') },
+  { path: 'print-template', comp: PrintTemplate, model: require('./models/printTemplate') },
   { path: 'nopermission', comp: NoPermission },
   { path: '*', comp: NoFoundPage }
 ];

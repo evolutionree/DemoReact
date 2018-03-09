@@ -398,6 +398,14 @@ export async function queryPlugins({ entityid, recid }) {
               routepath:item.routepath,
               entity:item
             });
+          } else if (item.buttoncode === 'PrintEntity') {
+            plugins.push({
+              type: 'FunctionButton',
+              code: 'PrintEntity',
+              name: item.title,
+              icon: item.icon,
+              entity: item
+            })
           }else{
           if(item.extradata)
           {

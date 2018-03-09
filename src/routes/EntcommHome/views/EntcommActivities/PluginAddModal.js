@@ -15,7 +15,7 @@ class PluginAddModal extends Component {
     recordId: PropTypes.string,
     currPlugin: PropTypes.shape({
       //normal 普通动态实体， flow 填表单+提交审批,audit 提交审批,transform 单据转换按钮,upatebutton更新事件按钮 ,copybutton 复制按钮
-      type: PropTypes.oneOf(['normal', 'flow', 'audit','transform','upatebutton','copybutton']).isRequired,
+      type: PropTypes.oneOf(['normal', 'flow', 'audit','transform','upatebutton','copybutton', 'FunctionButton']).isRequired,
       entity: PropTypes.object,
       flowid: PropTypes.string,
       name: PropTypes.string,
@@ -84,6 +84,8 @@ class PluginAddModal extends Component {
       }else if (currPlugin.type === 'upatebutton'){
         this.props.cancel();
       }else if (currPlugin.type === 'CallService'){
+        this.props.cancel();
+      }else if (currPlugin.type === 'FunctionButton'){
         this.props.cancel();
       }else {
         this.setState({

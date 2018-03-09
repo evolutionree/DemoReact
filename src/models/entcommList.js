@@ -182,7 +182,7 @@ export default {
          */
         functionbutton = functionbutton.filter(item => _.indexOf(item.displayposition, 0) > -1);
         const extraButtonData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'ShowModals');
-        const extraToolbarData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'CallService' || item.buttoncode === 'CallService_showModal');
+        const extraToolbarData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'CallService' || item.buttoncode === 'CallService_showModal' || item.buttoncode === 'PrintEntity');
         yield put({ type: 'putState', payload: { extraButtonData, extraToolbarData } });
       } catch (e) {
         message.error(e.message);

@@ -134,6 +134,7 @@ app.model(require('./models/task'));
 app.model(require('./models/permission'));
 app.model(require('./models/navHistory'));
 app.model(require('./models/powerEdit'));
+app.model(require('./models/printEntity'));
 
 // 4. Router
 app.router(require('./admin-router'));

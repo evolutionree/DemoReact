@@ -10,6 +10,7 @@ import ModifyAvatarModal from './modals/ModifyAvatarModal';
 import UserFeedBackModal from './modals/UserFeedBackModal';
 import ImportModal from './modals/ImportModal/ImportModal';
 import ProgressModal from './modals/ProgressModal/ProgressModal';
+import PrintEntityModal from './modals/PrintEntityModal/PrintEntityModal';
 import ImageGallery from '../components/ImageGallery';
 import MapModal from '../components/MapModal';
 import JsonEditModal from '../components/JsonEditModal';
@@ -33,6 +34,7 @@ const App = ({ children, location, siderFold, loading, dispatch, user, noMinWidt
       <ImportModal />
       <ProgressModal />
       <JsonEditModal />
+      <PrintEntityModal />
     </div>
   );
 };
