@@ -15,7 +15,9 @@ function setDefaultProps(Component, defaultProps) {
 }
 setDefaultProps(Select, {
     size: 'default',
-    getPopupContainer: getPopupContainer
+    getPopupContainer: getPopupContainer,
+    showSearch: true,
+    optionFilterProp: "children"
 });
 setDefaultProps(Button, {
     size: 'default',
