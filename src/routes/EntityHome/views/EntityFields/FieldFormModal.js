@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import { Modal, Form } from 'antd';
+import { Modal, Form, message } from 'antd';
 import * as _ from 'lodash';
 import FieldForm from './FieldForm';
 import { getRandomLetters } from '../../../../utils';
@@ -104,6 +104,11 @@ class FieldFormModal extends Component {
     const isEdit = /edit/.test(showModals);
     form.validateFields((err, values) => {
       if (err) return;
+      const { encrypted, scanner } = values;
+      if (encrypted && scanner) {
+        message.error('加密文本不支持扫描功能，请检查');
+        return;
+      }
       const newVal = processFormValues(values, editingRecord, isEdit);
       this.props.onOk(newVal, () => {});
     });
