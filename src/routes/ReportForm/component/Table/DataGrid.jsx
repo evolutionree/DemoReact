@@ -167,20 +167,28 @@ class DataGrid extends  React.Component {
     });
   }
 
-  formatDate(text, fmt) {
-    if (!text) return text;
-    if (!fmt) return text;
-    return moment(text, 'YYYY-MM-DD HH:mm:ss').format(fmt.replace(/y/g, 'Y').replace(/d/g, 'D'));
-  }
-
   getColumns(tableextinfo, datasourcename) {
     //DataGrid 列获取
     let columns = this.state.columns || [];
 
     let columnsTotalWidth = 0;
     columns instanceof Array && columns.map((item) => {
-      columnsTotalWidth += (item.width > 0 ? item.width + 20 + 2 : 150 + 20 + 2); //scroll.x 需要大于 表格每列的总宽度，否则 表头与内容行对不齐 20:td-padding 2: td-border
+      if (item.iscolumngroup === 1) { //表头有合并
+        getColumnWidth(item.subcolumns);
+        function getColumnWidth(column) {
+          for (let i = 0; i < column.length; i++) {
+            if (column[i].iscolumngroup === 1) {
+              getColumnWidth(column[i].subcolumns);
+            } else {
+              columnsTotalWidth += (column[i].width > 0 ? column[i].width + 20 + 2 : 150 + 20 + 2);
+            }
+          }
+        }
+      } else {
+        columnsTotalWidth += (item.width > 0 ? item.width + 20 + 2 : 150 + 20 + 2); //scroll.x 需要大于 表格每列的总宽度，否则 表头与内容行对不齐 20:td-padding 2: td-border
+      }
     });
+
     window.tableHasScrollX = true;
     if ((this.props.width - 52) > columnsTotalWidth) { //不会出现横向滚动条 让表格适配整个页面
       window.tableHasScrollX = false;
@@ -193,17 +201,25 @@ class DataGrid extends  React.Component {
 
           function getChildrenColumns(childrenColumns) {
             const children = [];
-            for (let i = 0; i < childrenColumns.length; i++) {
-              if (childrenColumns[i].iscolumngroup === 1) {
-                children.push(getChildrenColumns(childrenColumns[i].subcolumns));
-              } else {
-                children.push(getFormatColumn(childrenColumns[i]));
+            if (childrenColumns instanceof Array) {
+              for (let i = 0; i < childrenColumns.length; i++) {
+                if (childrenColumns[i].iscolumngroup === 1) {
+                  children.push(getChildrenColumns(childrenColumns[i].subcolumns));
+                } else {
+                  children.push(getFormatColumn(childrenColumns[i]));
+                }
               }
             }
             return new HeaderModel(column.title, null, null, null, null, children);
           }
         } else {
           return getFormatColumn(column)
+        }
+
+        function formatDate(text, fmt) {
+          if (!text) return text;
+          if (!fmt) return text;
+          return moment(text, 'YYYY-MM-DD HH:mm:ss').format(fmt.replace(/y/g, 'Y').replace(/d/g, 'D'));
         }
 
         function getFormatColumn(item) {
@@ -222,6 +238,7 @@ class DataGrid extends  React.Component {
             display: 'inline-block'
           };
 
+          const hederModelWidth = window.tableHasScrollX ? setWidth + 22 : 0
           if (item.linkscheme) { //有链接
             return new HeaderModel(item.title, item.fieldname, (text, record, rowIndex) => {
               const targetType = ['', '_self', '_blank'];
@@ -229,7 +246,7 @@ class DataGrid extends  React.Component {
               let cellText = text instanceof Object ? text.name : text;
               // 格式化日期
               if ((item.controltype === 8 || item.controltype === 9) && item.formatstr) {
-                cellText = this.formatDate(text, item.formatstr);
+                cellText = formatDate(text, item.formatstr);
               }
 
               function getScheme(index = 0) {
@@ -268,7 +285,7 @@ class DataGrid extends  React.Component {
                 return <Link style={style} title={cellText} target={targetType[item.targettype]}
                              to={getScheme()}>{cellText}</Link>;
               }
-            }, setWidth);
+            }, hederModelWidth);
           } else {
             return new HeaderModel(item.title, item.fieldname, (text, record, rowIndex) => {
               // 先取 _name
@@ -276,41 +293,38 @@ class DataGrid extends  React.Component {
               let cellText = text_name !== undefined ? text_name : text instanceof Object ? text.name : text;
               // 格式化日期
               if ((item.controltype === 8 || item.controltype === 9) && item.formatstr) {
-                cellText = this.formatDate(text, item.formatstr);
+                cellText = formatDate(text, item.formatstr);
               }
               return (
                 <span style={style} title={cellText} className={styles.datagridTdWrap}>
                   <DynamicFieldView value={cellText} value_name={cellText} controlType={item.controltype} />
                 </span>
               );
-            }, setWidth, null);
+            }, hederModelWidth, null);
           }
         }
     })
     return returnColumns;
   }
 
-  getColumnsTotalWidth(tableextinfo, datasourcename) { //获取列表的总宽度
-    // let columns = tableextinfo.columns;
-    // if (this.state[datasourcename + 'columns']) {
-    //   columns = this.state[datasourcename + 'columns'];
-    // }
-    let columns = this.state.columns || [];
+  getColumnsTotalWidth(columns) { //获取列表的总宽度
     let columnsTotalWidth = 0;
     columns instanceof Array && columns.map((item) => {
-      if (item.iscolumngroup === 1) { //表头有合并
-        getColumnWidth(item.subcolumns);
+      if (!item.width) { //表头有合并
+        getColumnWidth(item.children);
         function getColumnWidth(column) {
-          for (let i = 0; i < column.length; i++) {
-            if (column[i].iscolumngroup === 1) {
-              getColumnWidth(column[i].subcolumns);
-            } else {
-              columnsTotalWidth += (column[i].width > 0 ? column[i].width + 20 + 2 : 150 + 20 + 2);
+          if (column instanceof Array) {
+            for (let i = 0; i < column.length; i++) {
+              if (!column[i].width) {
+                getColumnWidth(column[i].children);
+              } else {
+                columnsTotalWidth += column[i].width;
+              }
             }
           }
         }
       } else {
-        columnsTotalWidth += (item.width > 0 ? item.width + 20 + 2 : 150 + 20 + 2); //scroll.x 需要大于 表格每列的总宽度，否则 表头与内容行对不齐 20:td-padding 2: td-border
+        columnsTotalWidth += item.width; //scroll.x 需要大于 表格每列的总宽度，否则 表头与内容行对不齐 20:td-padding 2: td-border
       }
     });
     return columnsTotalWidth;
@@ -359,7 +373,7 @@ class DataGrid extends  React.Component {
     let props = {};
     if (this.props.width && this.props.height) {
       props = window.tableHasScrollX ? {
-        scroll: { x: this.getColumnsTotalWidth(), y: this.props.height }
+        scroll: { x: this.getColumnsTotalWidth(this.getColumns()), y: this.props.height }
       } : {
         scroll: { x: '100%' }
       };

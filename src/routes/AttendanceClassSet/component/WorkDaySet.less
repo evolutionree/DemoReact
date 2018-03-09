@@ -1,0 +1,29 @@
+.WorkDaySetWrap{
+  .header{
+    float: right;
+    width: 260px;
+    >span{
+      width: 180px;
+      padding-right: 6px;
+      display: inline-block;
+      position: relative;
+    }
+    >span:after{
+      position: absolute;
+      content: '';
+      width: 1px;
+      height: 16px;
+      background: #e6e4e4;
+      right: 20px;
+      top: 50%;
+      margin-top: -8px;
+    }
+  }
+
+  :global{
+    .ant-checkbox-wrapper{
+      position: relative;
+      top: -2px;
+    }
+  }
+}

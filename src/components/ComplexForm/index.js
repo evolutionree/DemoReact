@@ -21,14 +21,14 @@ class ComplexForm extends React.Component {
   }
 
 
-  renderComponent(componentType) {
+  renderComponent(componentType, name) {
     const placeholder = {
       UserSelect: '请选择接收人员',
       DeptSelect: '请选择接收团队'
     };
 
     if (componentType === 'UserSelect' || componentType === 'DeptSelect') {
-      return <DataModalSelect type={componentType} placeholder={placeholder[componentType]} />;
+      return <DataModalSelect type={componentType} placeholder={placeholder[componentType]} defaultValue={this.props.value && this.props.value[name] || []} />;
     } else {
       return <div>未识别到组件</div>;
     }
@@ -43,10 +43,11 @@ class ComplexForm extends React.Component {
           this.props.model && this.props.model instanceof Array && this.props.model.map((item, index) => {
             return (
               <FormItem label={item.label} key={index}>
+
                 {getFieldDecorator(item.name, {
                   initialValue: item.initialValue
                 })(
-                  this.renderComponent(item.childrenType)
+                  this.renderComponent(item.childrenType, item.name)
                 )}
               </FormItem>
             );

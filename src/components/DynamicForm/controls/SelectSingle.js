@@ -65,11 +65,10 @@ class SelectSingle extends Component {
     if (sourceKey === 'weekinfo') {
       queryYearWeekData().then(weeks => {
         const options = [...weeks];
-
         let arrayIndex;
         if (options && options instanceof Array) {
           for (let i = 0; i < options.length; i++) {
-            if (this.getTimeStamp(new Date()) <= this.getTimeStamp(options[i].weekEnd)) {
+            if (this.getTimeStamp(new Date()) <= this.getTimeStamp(options[i].weekEnd.replace(/-/g, '/'))) {
               arrayIndex = i;
               break;
             }

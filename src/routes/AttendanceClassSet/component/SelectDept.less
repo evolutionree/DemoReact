@@ -1,0 +1,37 @@
+.wrap {
+  &.disabled {
+    & > :global(.ant-input) {
+      cursor: not-allowed;
+      background-color: rgb(247, 247, 247);
+      color: rgba(0, 0, 0, 0.5);
+    }
+  }
+  &.empty {
+    & > :global(.ant-input) {
+      color: #cccccc;
+    }
+  }
+
+  & > :global(.ant-input) {
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  min-height: 31px;
+}
+
+.iconClose{
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: none;
+  color: #999999;
+}
+.iconClose:hover{
+  color: #333333;
+}
+.iconCloseShow{
+  display: inline-block;
+}
