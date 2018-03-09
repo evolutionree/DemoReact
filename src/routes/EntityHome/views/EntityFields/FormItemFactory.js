@@ -901,6 +901,22 @@ export default class FormItemFactory {
     );
   }
 
+  createScanner() {
+    return (
+      <FormItem label="是否支持扫描" key="scanner">
+        {this.getFieldDecorator('scanner', {
+          initialValue: 0,
+          rules: [{ required: true, message: '请选择是否支持扫描' }]
+        })(
+          <RadioGroup>
+            <Radio value={0}>普通文本</Radio>
+            <Radio value={1}>支持扫描</Radio>
+          </RadioGroup>
+        )}
+      </FormItem>
+    );
+  }
+
   createTextType() {
     return (
       <FormItem label="文本类型" key="textType">

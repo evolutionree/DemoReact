@@ -180,6 +180,18 @@ export default {
               message.error(e.message || '提交失败');
             }
           break;
+        case 'FunctionButton':
+          if (plugins[pluginIndex].code === 'PrintEntity') {
+            const { entityId, recordId } = yield select(state => state.entcommActivities);
+            yield put({
+              type: 'printEntity/initPrint',
+              payload: {
+                entityId: entityId,
+                recordId: recordId
+              }
+            });
+          }
+          break;
         default:
       }
     },

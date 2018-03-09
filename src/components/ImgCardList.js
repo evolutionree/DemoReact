@@ -84,7 +84,7 @@ class ImgCardList extends React.Component {
           selectUser && selectUser.map((item, index) => {
             return (
               <div className={Styles.imgCardList} key={index}>
-                <img src={'/api/fileservice/read?fileid=' + item.usericon + '&filetype=1'}
+                <img src={'/api/fileservice/read?fileid=' + item.usericon}
                      alt="图片"
                      onError={e => e.target.src = '/img_img_card.png'} />
                 <span title={item.username}>{item.username}</span>
