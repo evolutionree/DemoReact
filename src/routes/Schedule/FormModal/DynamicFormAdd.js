@@ -13,13 +13,12 @@ const FormItem = Form.Item;
 const typeCombine = ['recname', 'scheduleType'];
 const typeCombineFieldName = 'typeCombine';
 
-const startEndTimeCombine = ['starttime', 'endtime', 'allday', 'remindType', 'repeatType', 'repeatEnd', 'repeatEndtime'];
+const startEndTimeCombine = ['starttime', 'endtime', 'allday', 'repeatType', 'repeatEnd', 'repeatEndtime'];
 const startEndTimeCombineFieldName = 'typeCombine12';
 class DynamicFormAdd extends DynamicFormBase {
   usage = 0;
   getFieldControlInstance = fieldName => {
     if (typeCombine.indexOf(fieldName) > -1) {
-      console.log(this[`fieldControlInst${typeCombineFieldName}`])
       return this[`fieldControlInst${typeCombineFieldName}`];
     } else if (startEndTimeCombine.indexOf(fieldName) > -1) {
       return this[`fieldControlInst${startEndTimeCombineFieldName}`];
@@ -61,7 +60,7 @@ class DynamicFormAdd extends DynamicFormBase {
             <FormItem key={startEndTimeCombineFieldName}>
               {this.props.form.getFieldDecorator(startEndTimeCombineFieldName, {
                 initialValue: ''
-              })(<TimePicker ref={this.onFieldControlRef.bind(this, startEndTimeCombineFieldName)} fields={startEndTimeCombineFields} />)}
+              })(<TimePicker ref={this.onFieldControlRef.bind(this, startEndTimeCombineFieldName)} fields={startEndTimeCombineFields} onChange={(value, fileldName, isFromApi) => { this.onFieldValueChange(fileldName, value, isFromApi) }} />)}
             </FormItem>
           );
       } else {

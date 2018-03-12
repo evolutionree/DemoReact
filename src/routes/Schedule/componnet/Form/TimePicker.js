@@ -4,12 +4,11 @@
 import React, { Component } from 'react';
 import { DatePicker, Checkbox, Select } from 'antd';
 import _ from 'lodash';
+import moment from 'moment';
 import SelectSingle from '../../../../components/DynamicForm/controls/SelectSingle';
 import Styles from './TimePicker.less';
 
 const { RangePicker } = DatePicker;
-const CheckboxGroup = Checkbox.Group;
-const Option = Select.Option;
 
 
 class TimePicker extends Component {
@@ -26,7 +25,9 @@ class TimePicker extends Component {
       checkedList: [],
       data: {
         allDay: false,
-        repeat: false
+        repeat: false,
+        repeatCheckedVisible: false,
+        repeatEndTimeVisible: false
       }
     };
   }
@@ -41,88 +42,146 @@ class TimePicker extends Component {
     });
   }
 
-  onChange(value, dateString) {
+  setValue(value, length, fieldname) {
+    this.props.onChange && this.props.onChange({
+      ...this.props.value,
+      [fieldname]: value
+    }, fieldname, true);
+  }
+
+  dateTimeChange(value, dateString) {
     console.log('Selected Time: ', value);
     console.log('Formatted Selected Time: ', dateString);
+    //starttime  endtime
+
+    this.props.onChange && this.props.onChange({
+      ...this.props.value,
+      starttime: dateString[0]
+    }, 'starttime', false);
+    this.props.onChange && this.props.onChange({
+      ...this.props.value,
+      endtime: dateString[1]
+    }, 'endtime', false);
   }
 
   onOk(value) {
     console.log('onOk: ', value);
   }
 
-  checkChangeHandler = (checkedList) => {
-    console.log(checkedList)
+  alldayCheckHandler = (fieldname, e) => {
+    this.props.onChange && this.props.onChange({
+      ...this.props.value,
+      allday: e.target.checked ? 1 : 0
+    }, fieldname, false);
+  }
+
+  repeatCheckHandler = (e) => {
     this.setState({
-      checkedList
+      repeatCheckedVisible: e.target.checked
     });
   }
 
-  endDateChange() {
-
-  }
 
   onFieldControlRef = (fieldname, ref) => {
     this[`SelectInput${fieldname}`] = ref;
   };
 
-  selectValueChange(fieldname, value, isFromApi = false) {
+  repeatSelectChange(fieldname, value, isFromApi = false) {
     this.props.onChange && this.props.onChange({
       ...this.props.value,
       [fieldname]: value
     }, fieldname, isFromApi);
   }
 
-  render() {
-    //<SelectSingle ref={this.onFieldControlRef.bind(this, item.fieldname)} onChange={this.selectValueChange.bind(this, item.fieldname)} value={itemValue} {...item.fieldconfig} />
-    const options = [
-      { label: '全天', value: 'allday' },
-      { label: '重复', value: 'repeat' }
-    ];
-    const allDayChecked = _.indexOf(this.state.checkedList, 'allday') > -1 ? true : false;
-    const repeatChecked = _.indexOf(this.state.checkedList, 'repeat') > -1 ? true : false;
 
+  repeatEndSelectChange(fieldname, value, isFromApi = false) {
+    let repeatEndTimeVisible = false
+    if (value === 2) {
+      repeatEndTimeVisible = true;
+    }
+    this.props.onChange && this.props.onChange({
+      ...this.props.value,
+      [fieldname]: {
+        endtype: value,
+        enddate: ''
+      }
+    }, fieldname, isFromApi);
+
+    this.setState({
+      repeatEndTimeVisible: repeatEndTimeVisible
+    });
+  }
+
+  endDateChange(fieldname, value, dateString) {
+    this.props.onChange && this.props.onChange({
+      ...this.props.value,
+      [fieldname]: {
+        ...this.props.value && this.props.value[fieldname],
+        enddate: dateString
+      }
+    });
+  }
+
+  getFieldProcol(fieldname) {
+    return _.find(this.props.fields, item => item.fieldname === fieldname);
+  }
+
+  render() {
     if (!this.props.fields) {
       return null;
     }
     const value = this.props.value;
-    const repeatTypeField = _.find(this.props.fields, item => item.fieldname === 'repeatType');
-   if (!repeatTypeField) {
-     return null;
-   }
-    const repeatTypeValue = value && value[repeatTypeField.fieldname] || repeatTypeField.fieldconfig.defaultValue;
+
+    const starttimeField = this.getFieldProcol('starttime');
+    const starttimeValue = starttimeField && value && value[starttimeField.fieldname] || starttimeField.fieldconfig.defaultValue;
+
+    const endtimeField = this.getFieldProcol('endtime');
+    const endtimeValue = endtimeField && value && value[endtimeField.fieldname] || endtimeField.fieldconfig.defaultValue;
+
+    const alldayField = this.getFieldProcol('allday');
+    const alldayValue = alldayField && value && value[alldayField.fieldname] || alldayField.fieldconfig.defaultValue;
+
+    const repeatTypeField = this.getFieldProcol('repeatType');
+    const repeatTypeValue = repeatTypeField && value && value[repeatTypeField.fieldname] || repeatTypeField.fieldconfig.defaultValue;
+
+    const repeatEndField = this.getFieldProcol('repeatEnd');
+    const repeatEndValue = repeatEndField && value && value[repeatEndField.fieldname] && value[repeatEndField.fieldname].endtype || repeatEndField.fieldconfig.defaultValue;
+
+    const repeatEnddateValue = value && value[repeatEndField.fieldname] && value[repeatEndField.fieldname].enddate;
+
+    const format = alldayValue === 1 ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm';
+
     return (
       <div className={Styles.TimePickerWrap}>
         <RangePicker
-          showTime={allDayChecked ? false : { format: 'HH:mm' }}
-          format={allDayChecked ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm'}
+          showTime={alldayValue === 1 ? false : { format: 'HH:mm' }}
+          format={format}
+          value={(starttimeValue && endtimeValue) ? [moment(starttimeValue, format), moment(endtimeValue, format)] : null}
           placeholder={['开始时间', '结束时间']}
           style={{ marginBottom: '4px', width: '100%' }}
-          onChange={this.onChange.bind(this)}
+          onChange={this.dateTimeChange.bind(this)}
           onOk={this.onOk.bind(this)}
         />
-        <CheckboxGroup options={options} value={this.state.checkedList} onChange={this.checkChangeHandler} />
-        <div className={Styles.repertSetWrap} style={{ display: repeatChecked ? 'block' : 'none' }}>
+        <Checkbox onChange={this.alldayCheckHandler.bind(this, alldayField && alldayField.fieldname)} disabled={0 === 1} checked={alldayValue === 1}>全天</Checkbox>
+        <Checkbox onChange={this.repeatCheckHandler}>重复</Checkbox>
+        <div className={Styles.repertSetWrap} style={{ display: this.state.repeatCheckedVisible ? 'block' : 'none' }}>
           <div className={Styles.arrow_area_wrap}><div className={Styles.arrow_area_inside}></div></div>
           <div className={Styles.content}>
               <ul>
                 <li>
                   <span>重复类型 :</span>
                   <div style={{ width: 120, display: 'inline-block' }}>
-                    <SelectSingle ref={this.onFieldControlRef.bind(this, repeatTypeField.fieldname)} onChange={this.selectValueChange.bind(this, repeatTypeField.fieldname)} value={repeatTypeValue} {...repeatTypeField.fieldconfig} />
+                    <SelectSingle ref={this.onFieldControlRef.bind(this, repeatTypeField && repeatTypeField.fieldname)} onChange={this.repeatSelectChange.bind(this, repeatTypeField && repeatTypeField.fieldname)} value={repeatTypeValue} {...repeatTypeField.fieldconfig} />
                   </div>
-                  {/*<Select defaultValue="lucy" style={{ width: 120 }}>*/}
-                    {/*<Option value="jack">每日重复</Option>*/}
-                    {/*<Option value="lucy">每周重复</Option>*/}
-                    {/*<Option value="disabled">每月重复</Option>*/}
-                  {/*</Select>*/}
                 </li>
-                <li>
+                <li style={{ display: (repeatTypeValue && repeatTypeValue != 1) ? 'block' : 'none' }}>
                   <span>结束条件 :</span>
-                  <Select defaultValue="lucy" style={{ width: 120, marginRight: '8px' }}>
-                    <Option value="jack">永不结束</Option>
-                    <Option value="lucy">结束日期</Option>
-                  </Select>
-                  <DatePicker onChange={this.endDateChange.bind(this)} />
+                  <div style={{ width: 120, display: 'inline-block', marginRight: '8px' }}>
+                    <SelectSingle ref={this.onFieldControlRef.bind(this, repeatEndField && repeatEndField.fieldname)} onChange={this.repeatEndSelectChange.bind(this, repeatEndField && repeatEndField.fieldname)} value={repeatEndValue} {...repeatEndField.fieldconfig} />
+                  </div>
+                  <span style={{ display: this.state.repeatEndTimeVisible ? 'inline-block' : 'none' }}>
+                    <DatePicker onChange={this.endDateChange.bind(this, repeatEndField.fieldname)} value={repeatEnddateValue ? moment(repeatEnddateValue, 'YYYY/MM/DD') : null} format="YYYY/MM/DD" />
+                  </span>
                 </li>
               </ul>
           </div>
