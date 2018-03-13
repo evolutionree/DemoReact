@@ -110,7 +110,7 @@ class ReportForm extends React.Component {
         defaultSerchValue[item.parametername] = item.combodata.defaultvalue;
       } else if (item.ctrltype === 5) { // 设置区间
         defaultSerchValue[item.parametername] = item.seriessetting.defaultvalues;
-      } else if (item.ctrltype === 4) { //日期
+      } else if (item.ctrltype === 4 || item.ctrltype === 9) { //日期
         defaultSerchValue[item.parametername] = item.datedefaultvalue;
       } else if (item.ctrltype === 1) { //输入框
         defaultSerchValue[item.parametername] = item.textdefaultvalue;
