@@ -158,7 +158,7 @@ class EntityFormModal extends Component {
             )}
           </FormItem> : ''}
           {/* 动态实体必填 */}
-          {(typeid === '3' && relentityid) ? <FormItem label="关联对象显示字段">
+          {(typeid === '3' && relentityid && !isEdit) ? <FormItem label="关联对象显示字段">
             {getFieldDecorator('relfieldid', {
               initialValue: '',
               rules: [{ required: (typeid === '3' && relentityid), message: '前输入关联对象显示字段' }]
