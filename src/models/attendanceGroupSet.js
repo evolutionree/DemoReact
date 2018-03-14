@@ -1,5 +1,5 @@
 /**
- * Created by 0291 on 2018/3/5.
+ * Created by 0291 on 2018/3/14.
  */
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
@@ -7,7 +7,7 @@ import { getGeneralListProtocol, getListData, addEntcomm, getEntcommDetail, edit
 import { queryEntityDetail, queryTypes, queryListFilter } from '../services/entity';
 
 export default {
-  namespace: 'attendanceClassSet',
+  namespace: 'attendanceGroupSet',
   state: {
     entityId: '',
     entityName: '',
@@ -25,7 +25,7 @@ export default {
   subscriptions: {
     setup({ dispatch, history }) {
       return history.listen(location => {
-        if (location.pathname === '/attendanceclassset') {
+        if (location.pathname === '/attendancegroupset') {
           const entityId = '4648774d-9e30-46c3-8bb6-e83341760923'; //match[1]
           dispatch({ type: 'init', payload: entityId });
         } else {
@@ -76,14 +76,14 @@ export default {
       }));
     },
     *searchKeyword({ payload: keyword }, { select, call, put }) {
-      const { simpleSearchKey } = yield select(({ attendanceClassSet }) => attendanceClassSet);
+      const { simpleSearchKey } = yield select(({ attendanceGroupSet }) => attendanceGroupSet);
       const searchData = JSON.stringify({ [simpleSearchKey]: keyword || undefined });
       yield put({ type: 'search', payload: { searchData, isAdvanceQuery: 0 } });
     },
     *queryList(action, { select, call, put }) {
       const location = yield select(({ routing }) => routing.locationBeforeTransitions);
       const { query } = location;
-      const { entityId } = yield select(({ attendanceClassSet }) => attendanceClassSet);
+      const { entityId } = yield select(({ attendanceGroupSet }) => attendanceGroupSet);
       const queries = {
         entityId,
         pageIndex: 1,
@@ -127,14 +127,14 @@ export default {
         yield call(addEntcomm, submitData);
         message.success('新增成功');
         yield put({ type: 'showModals', payload: '' });
-        const { pageIndex } = yield select(state => state.attendanceClassSet.queries);
+        const { pageIndex } = yield select(state => state.attendanceGroupSet.queries);
         yield put({ type: 'search', payload: { pageIndex } });
       } catch (e) {
         message.error(e.message);
       }
     },
     *queryDetail({ payload }, { select, call, put }) {
-      const { currItems, entityId } = yield select(state => state.attendanceClassSet);
+      const { currItems, entityId } = yield select(state => state.attendanceGroupSet);
       try {
         const { data } = yield call(getEntcommDetail, {
           entityId,
@@ -150,7 +150,7 @@ export default {
       }
     },
     *edit({ payload: submitData }, { select, call, put }) {
-      const { currItems } = yield select(state => state.attendanceClassSet);
+      const { currItems } = yield select(state => state.attendanceGroupSet);
       try {
         yield call(editEntcomm, {
           ...submitData,
@@ -158,14 +158,14 @@ export default {
         });
         message.success('修改成功');
         yield put({ type: 'showModals', payload: '' });
-        const { pageIndex } = yield select(state => state.attendanceClassSet.queries);
+        const { pageIndex } = yield select(state => state.attendanceGroupSet.queries);
         yield put({ type: 'search', payload: { pageIndex } });
       } catch (e) {
         message.error(e.message);
       }
     },
     *del(action, { select, call, put }) {
-      const { currItems, entityId } = yield select(state => state.attendanceClassSet);
+      const { currItems, entityId } = yield select(state => state.attendanceGroupSet);
       try {
         const params = {
           entityId,

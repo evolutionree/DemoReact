@@ -90,7 +90,7 @@ class AdvanceSearchModal extends Component {
 
 export default connect(
   state => {
-    const { showModals, entityId, entityName } = state.attendanceClassSet;
+    const { showModals, entityId, entityName } = state.attendanceGroupSet;
     return {
       visible: /advanceSearch/.test(showModals),
       entityId,

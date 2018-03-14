@@ -2,9 +2,28 @@
  * Created by 0291 on 2018/3/5.
  */
 import React, { PropTypes, Component } from 'react';
-import { Modal, message, Spin, Button, Row, Col } from 'antd';
+import { Modal, message } from 'antd';
 import AddForm from './AddForm';
 import { connect } from 'dva';
+
+const defaultFormValue = {
+  recname: '',
+  workTime: {
+    startworktime: '',
+    offworktime: ''
+  },
+  restTime: {
+    hasresttime: 0,
+    startresttime: '',
+    endresttime: ''
+  },
+  flexTime: {
+    hasflextime: 0,
+    flextime: ''
+  },
+  earlysign: '',
+  latestsign: ''
+};
 
 class AddClassModal extends Component {
   static propTypes = {
@@ -15,36 +34,73 @@ class AddClassModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      FormValue: null
+      FormValue: this.props.formData ? this.getTransformFormData(this.props.formData) : defaultFormValue
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const isOpening = !this.props.visible && nextProps.visible;
-    const isClosing = this.props.visible && !nextProps.visible;
-    if (isOpening) {
-
-    } else if (isClosing) {
-
-    }
+    this.setState({
+      FormValue: nextProps.formData ? this.getTransformFormData(nextProps.formData) : defaultFormValue
+    });
   }
 
+  getTransformFormData (formData) {
+    let newFormData = {
+      ...formData
+    };
+    newFormData.workTime = {
+      startworktime: formData.startworktime,
+      offworktime: formData.offworktime
+    };
+    newFormData.restTime = {
+      hasresttime: formData.hasresttime,
+      startresttime: formData.startresttime,
+      endresttime: formData.endresttime
+    };
+    newFormData.flexTime = {
+      hasflextime: formData.hasflextime,
+      flextime: formData.flextime
+    };
+    return newFormData;
+  }
 
   handleOk = () => {
-    console.log(JSON.stringify(this.state.FormValue))
+    this.form.validateFields({ force: true }, (err, values) => {
+      if (err) {
+        return message.error('请检查表单');
+      }
+
+      const submitData = {
+        ...values,
+        ...values.workTime,
+        ...values.restTime,
+        ...values.flexTime
+      };
+      delete submitData.workTime;
+      delete submitData.restTime;
+      delete submitData.flexTime;
+
+      const params = {
+        typeid: this.props.entityId,
+        fieldData: submitData
+      };
+      this.setState({ confirmLoading: true });
+      this.props.submit(params, this.props.showModals);
+    });
   };
 
 
   render() {
-    const { visible, cancel } = this.props;
+    const { showModals, visible, cancel } = this.props;
     return (
       <Modal
-        title="考勤组设置"
+        title={showModals === 'add' ? '新增班次' : '编辑班次'}
         visible={visible}
         onOk={this.handleOk}
         onCancel={cancel}
+        width={600}
       >
-        <AddForm value={this.state.FormValue} onChange={(formValue) => { this.setState({ FormValue: formValue }) }} />
+        <AddForm ref={form => { this.form = form; }} value={this.state.FormValue} onChange={(formValue) => { this.setState({ FormValue: formValue }) }} />
       </Modal>
     );
   }
@@ -52,9 +108,12 @@ class AddClassModal extends Component {
 
 export default connect(
   state => {
-    const { showModals } = state.attendanceClassSet;
+    const { showModals, entityId, formData } = state.attendanceClassSet;
     return {
-      visible: /add/.test(showModals)
+      visible: /edit|add/.test(showModals),
+      showModals: showModals,
+      entityId,
+      formData
     };
   },
   dispatch => {
@@ -62,8 +121,12 @@ export default connect(
       cancel() {
         dispatch({ type: 'attendanceClassSet/showModals', payload: '' });
       },
-      submit(formData) {
-        dispatch({ type: 'attendanceClassSet/showModals', payload: '' });
+      submit(submitData, submitType) {
+        if (submitType === 'add') {
+          dispatch({ type: 'attendanceClassSet/add', payload: submitData });
+        } else {
+          dispatch({ type: 'attendanceClassSet/edit', payload: submitData });
+        }
       }
     };
   }
