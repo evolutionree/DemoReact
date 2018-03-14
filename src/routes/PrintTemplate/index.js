@@ -7,6 +7,7 @@ import styles from './styles.less';
 import Search from '../../components/Search';
 import Toolbar from '../../components/Toolbar';
 import PrintTemplateForm from './PrintTemplateForm';
+import TemplateRuleModal from './TemplateRuleModal';
 
 const Column = Table.Column;
 const Option = Select.Option;
@@ -40,7 +41,7 @@ class PrintTemplate extends Component {
       add,
       edit,
       del,
-      openVisibleRule,
+      openTemplateRule,
       toggleStatus
     } = this.props;
     const selectedEntity = _.find(entities, ['entityid', queries.entityId]);
@@ -81,7 +82,7 @@ class PrintTemplate extends Component {
                       show: () => currentItems[0].recstatus === 1 },
                     { label: '启用', handler: toggleStatus, single: true,
                       show: () => currentItems[0].recstatus === 0 },
-                    { label: '适用范围', handler: openVisibleRule }
+                    { label: '适用范围', handler: openTemplateRule }
                   ]}
                 >
                   <Select value={queries.recState} onChange={search.bind(null, 'recState')} style={{ width: '80px' }}>
@@ -116,6 +117,7 @@ class PrintTemplate extends Component {
           </div>
         </div>
         <PrintTemplateForm />
+        <TemplateRuleModal />
       </Page>
     );
   }
@@ -155,8 +157,8 @@ export default connect(
       toggleStatus() {
         dispatch({ type: 'printTemplate/toggleStatus' });
       },
-      openVisibleRule() {
-        dispatch({ type: 'printTemplate/showModals', payload: 'visibleRule' });
+      openTemplateRule() {
+        dispatch({ type: 'printTemplate/showModals', payload: 'templateRule' });
       }
     };
   }
