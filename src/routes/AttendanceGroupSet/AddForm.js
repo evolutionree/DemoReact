@@ -5,10 +5,10 @@ import React from 'react';
 import { Button, Form, Radio, Input, Checkbox, Select } from 'antd';
 import { connect } from 'dva';
 import _ from 'lodash';
-import WorkTime from './component/WorkTime';
-import ResetTime from './component/ResetTime';
-import FlexTime from './component/FlexTime';
-import LabelSelect from './component/LabelSelect';
+import WorkDaySet from './component/WorkDaySet';
+import OtherDaySet from './component/OtherDaySet';
+import SelectDept from './component/SelectDept';
+import AddressSet from './component/AddressSet';
 import classnames from 'classnames';
 
 const FormItem = Form.Item;
@@ -44,70 +44,77 @@ class AddForm extends React.Component {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const earlysign = [{ text: '1小时', value: 1 }, { text: '2小时', value: '2' }, { text: '3小时', value: '3' }, { text: '4小时', value: '4' }, { text: '5小时', value: '5' }, { text: '6小时', value: '6' }];
-    const latestsign = [{ text: '1小时', value: 1 }, { text: '2小时', value: '2' }, { text: '3小时', value: '3' }, { text: '4小时', value: '4' }, { text: '5小时', value: '5' }, { text: '6小时', value: '6' },
-      { text: '7小时', value: '7' }, { text: '8小时', value: '8' }, { text: '9小时', value: '9' }, { text: '10小时', value: '10' }, { text: '11小时', value: '11' }, { text: '12小时', value: '12' }];
 
     return (
       <Form>
         <FormItem
           {...formItemLayout}
-          label="班次名称"
+          label="考勤组名称"
         >
-          {getFieldDecorator('recname', {
+          {getFieldDecorator('1', {
             initialValue: ''
           })(
-            <Input placeholder="请输入班次名称" maxLength={10} />
+            <Input placeholder="请输入考勤组名称" />
           )}
         </FormItem>
         <FormItem
           {...formItemLayout}
-          label="工作时段"
+          label="考勤组负责人"
         >
-          {getFieldDecorator('workTime', {
+          {getFieldDecorator('2', {
             initialValue: ''
           })(
-            <WorkTime />
+            <Input placeholder="请输入负责人名称" />
           )}
         </FormItem>
         <FormItem
           {...formItemLayout}
-          label="休息时段"
+          label="参与考勤人员"
         >
-          {getFieldDecorator('restTime', {
+          {getFieldDecorator('3', {
             initialValue: ''
           })(
-            <ResetTime />
+            <SelectDept />
           )}
         </FormItem>
         <FormItem
           {...formItemLayout}
-          label="允许最早签到时间"
+          label="考勤"
         >
-          {getFieldDecorator('earlysign', {
+          {getFieldDecorator('set', {
             initialValue: ''
           })(
-            <LabelSelect dataSource={earlysign} label='上班前' />
+            <Checkbox>固定班制</Checkbox>
           )}
         </FormItem>
         <FormItem
           {...formItemLayout}
-          label="允许最晚签到时间"
+          label="工作日设置"
         >
-          {getFieldDecorator('latestsign', {
+          {getFieldDecorator('se1t', {
             initialValue: ''
           })(
-            <LabelSelect dataSource={latestsign} label='下周后' />
+            <WorkDaySet />
           )}
         </FormItem>
         <FormItem
           {...formItemLayout}
-          label="上班弹性时间"
+          label="特殊日期设置"
         >
-          {getFieldDecorator('flexTime', {
+          {getFieldDecorator('ss', {
             initialValue: ''
           })(
-            <FlexTime />
+            <OtherDaySet />
+          )}
+        </FormItem>
+        <FormItem
+          {...formItemLayout}
+          label="考勤点设置"
+        >
+          {getFieldDecorator('ss', {
+            initialValue: ''
+          })(
+            <AddressSet />
           )}
         </FormItem>
       </Form>
@@ -126,4 +133,13 @@ const WrappedAddForm = Form.create({
   }
 })(AddForm);
 
-export default WrappedAddForm;
+export default connect(
+  state => state.attendanceClassSet,
+  dispatch => {
+    return {
+
+    };
+  },
+  undefined,
+  { withRef: true }
+)(WrappedAddForm);

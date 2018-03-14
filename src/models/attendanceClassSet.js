@@ -3,7 +3,7 @@
  */
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
-import { getGeneralListProtocol, getListData } from '../services/entcomm';
+import { getGeneralListProtocol, getListData, addEntcomm, getEntcommDetail, editEntcomm, delEntcomm } from '../services/entcomm';
 import { queryEntityDetail, queryTypes, queryListFilter } from '../services/entity';
 
 export default {
@@ -19,13 +19,14 @@ export default {
     total: 0,
     showModals: '',
     simpleSearchKey: 'recname',
-    sortFieldAndOrder: null //当前排序的字段及排序顺序
+    sortFieldAndOrder: null, //当前排序的字段及排序顺序
+    formData: null
   },
   subscriptions: {
     setup({ dispatch, history }) {
       return history.listen(location => {
         if (location.pathname === '/attendanceclassset') {
-          const entityId = 'e450bfd7-ff17-4b29-a2db-7ddaf1e79342'; //match[1]
+          const entityId = '4648774d-9e30-46c3-8bb6-e83341760923'; //match[1]
           dispatch({ type: 'init', payload: entityId });
         } else {
           dispatch({ type: 'resetState' });
@@ -79,10 +80,6 @@ export default {
       const searchData = JSON.stringify({ [simpleSearchKey]: keyword || undefined });
       yield put({ type: 'search', payload: { searchData, isAdvanceQuery: 0 } });
     },
-    *advanceSearch({ payload }, { select, call, put }) {
-      const searchData = JSON.stringify(payload);
-      yield put({ type: 'search', payload: { searchData, isAdvanceQuery: 1 } });
-    },
     *queryList(action, { select, call, put }) {
       const location = yield select(({ routing }) => routing.locationBeforeTransitions);
       const { query } = location;
@@ -125,6 +122,48 @@ export default {
         message.error(e.message || '获取列表数据失败');
       }
     },
+    *add({ payload: submitData }, { select, call, put }) {
+      try {
+        yield call(addEntcomm, submitData);
+        message.success('新增成功');
+        yield put({ type: 'showModals', payload: '' });
+        const { pageIndex } = yield select(state => state.attendanceClassSet.queries);
+        yield put({ type: 'search', payload: { pageIndex } });
+      } catch (e) {
+        message.error(e.message);
+      }
+    },
+    *queryDetail({ payload }, { select, call, put }) {
+      const { currItems, entityId } = yield select(state => state.attendanceClassSet);
+      try {
+        const { data } = yield call(getEntcommDetail, {
+          entityId,
+          needPower: 1,
+          recId: currItems[0].recid
+        });
+        yield put({
+          type: 'putState',
+          payload: { formData: data.detail }
+        });
+      } catch (e) {
+        message.error(e.message);
+      }
+    },
+    *edit({ payload: submitData }, { select, call, put }) {
+      const { currItems } = yield select(state => state.attendanceClassSet);
+      try {
+        yield call(editEntcomm, {
+          ...submitData,
+          recid: currItems[0].recid
+        });
+        message.success('修改成功');
+        yield put({ type: 'showModals', payload: '' });
+        const { pageIndex } = yield select(state => state.attendanceClassSet.queries);
+        yield put({ type: 'search', payload: { pageIndex } });
+      } catch (e) {
+        message.error(e.message);
+      }
+    },
     *del(action, { select, call, put }) {
       const { currItems, entityId } = yield select(state => state.attendanceClassSet);
       try {
@@ -134,9 +173,9 @@ export default {
           pagecode: 'EntityListPage',
           pagetype: 1
         };
-        // yield call(delEntcomm, params);
-        // message.success('删除成功');
-        // yield put({ type: 'queryList' });
+        yield call(delEntcomm, params);
+        message.success('删除成功');
+        yield put({ type: 'queryList' });
       } catch (e) {
         message.error(e.message || '删除失败');
       }
@@ -193,7 +232,8 @@ export default {
         total: 0,
         showModals: '',
         simpleSearchKey: 'recname',
-        sortFieldAndOrder: null //当前排序的字段及排序顺序
+        sortFieldAndOrder: null, //当前排序的字段及排序顺序
+        formData: null
       };
     }
   }

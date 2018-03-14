@@ -2,14 +2,17 @@
  * Created by 0291 on 2018/3/5.
  */
 import React from 'react';
-import { Button, Modal, Icon } from 'antd';
+import { Select, Button, Modal, Icon } from 'antd';
 import { connect } from 'dva';
 import Page from '../../components/Page';
 import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import DynamicTable from '../../components/DynamicTable/index';
 import connectPermission from '../../models/connectPermission';
+import AdvanceSearchModal from './AdvanceSearchModal';
 import AddClassModal from './AddClassModal';
+
+const Option = Select.Option;
 
 function AttendanceClassSet({
                               checkFunc,
@@ -25,7 +28,7 @@ function AttendanceClassSet({
                               sortFieldAndOrder  //当前排序的字段及排序顺序
                             }) {
   function selectItems(items) {
-    dispatch({ type: 'attendanceClassSet/putState', payload: { currItems: items } });
+    dispatch({ type: 'attendanceClassSet/putState', payload: { items } });
   }
   function search(payload) {
     dispatch({ type: 'attendanceClassSet/search', payload });
@@ -39,20 +42,22 @@ function AttendanceClassSet({
       type: 'attendanceClassSet/showModals',
       payload: 'add'
     });
-    dispatch({ type: 'attendanceClassSet/putState', payload: { formData: null } });
+  }
+
+  function showDetail(record) {
+
   }
 
   function showEdit() {
     dispatch({
-      type: 'attendanceClassSet/queryDetail',
-      payload: ''
-    })
-    dispatch({
       type: 'attendanceClassSet/showModals',
-      payload: 'edit'
+      payload: `recordEdit?${entityId}:${currItems[0].recid}`
     });
   }
 
+  function advanceSearch() {
+    dispatch({ type: 'attendanceClassSet/showModals', payload: 'advanceSearch' });
+  }
   function del() {
     Modal.confirm({
       title: '确定删除选中数据吗？',
@@ -108,6 +113,7 @@ function AttendanceClassSet({
           >
             搜索
           </Search>
+          <Button onClick={advanceSearch} style={{ marginLeft: '10px', height: '31px' }}>高级搜索</Button>
           <Icon type="setting" onClick={openSetHeader} style={{ fontSize: '20px', marginLeft: '10px', cursor: 'pointer', color: '#9ba1ad', position: 'relative', top: '2px' }} />
         </Toolbar.Right>
       </Toolbar>
@@ -125,6 +131,8 @@ function AttendanceClassSet({
           total,
           pageSize,
           current: pageIndex
+          // onChange: val => search({ pageIndex: val }),
+          // onShowSizeChange: (curr, size) => search({ pageSize: size })
         }}
         onChange={handleTableChange}
         rowSelection={{
@@ -135,6 +143,7 @@ function AttendanceClassSet({
           <a href="javascript:;" style={titleStyle} title={text} onClick={() => { showDetail(record); }}>{text}</a>
         )}
       />
+      <AdvanceSearchModal />
       <AddClassModal />
     </Page>
   );
