@@ -100,7 +100,7 @@ class SeriesFormModal extends Component {
     const DynamicFormComponent = this.props.isEdit ? DynamicFormEdit : DynamicFormAdd;
     return (
       <Modal
-        title="新增产品"
+        title={this.props.isEdit ? '编辑产品' : '新增产品'}
         visible={this.props.visible}
         onCancel={this.props.cancel}
         onOk={this.submitForm}
