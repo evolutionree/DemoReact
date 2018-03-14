@@ -3,6 +3,7 @@ import { Modal, message, Spin, Checkbox } from 'antd';
 import { connect } from 'dva';
 import { queryFields } from '../../services/entity';
 import { queryBranchRule, saveWorkflowVisibleRule } from '../../services/workflow';
+import { updatePrintTemplates } from '../../services/printTemplate';
 import FilterConfigBoard, { parseRuleDetail, ruleListToItems } from '../../components/FilterConfigBoard';
 
 class TemplateRuleModal extends Component {
@@ -76,6 +77,7 @@ class TemplateRuleModal extends Component {
   };
 
   fetchRulesData = () => {
+    if (!this.props.currentItem.ruleid) return Promise.resolve();
     return queryBranchRule(this.props.currentItem.ruleid).then(result => {
       return result.data[0];
     });
@@ -87,8 +89,8 @@ class TemplateRuleModal extends Component {
     const { ruleList, ruleSet, fields } = this.state;
     const entityid = this.props.currentItem.entityid;
     const params = {
-      typeid: 1,
-      rulename: '模板适用规则',
+      typeid: 5,
+      rulename: '',
       // flowid: this.props.currentItem.flowid,
       ruleid: this.props.currentItem.ruleid || undefined,
       id: this.props.currentItem.ruleid || undefined,
@@ -102,10 +104,15 @@ class TemplateRuleModal extends Component {
     };
     this.setState({ confirmLoading: true });
     saveWorkflowVisibleRule(params).then(result => {
+      return updatePrintTemplates({
+        ...this.props.currentItem,
+        ruleid: result.data
+      });
+    }).then(result => {
       this.setState({ confirmLoading: false });
       message.success('保存成功');
-      this.props.close();
-    }, error => {
+      this.props.close(true);
+    }).catch(error => {
       this.setState({ confirmLoading: false });
       message.error(error.message || '保存失败');
     });
@@ -150,8 +157,11 @@ export default connect(
   },
   dispatch => {
     return {
-      close() {
+      close(isSuccess) {
         dispatch({ type: 'printTemplate/showModals', payload: '' });
+        if (isSuccess === true) {
+          dispatch({ type: 'printTemplate/queryList' });
+        }
       }
     };
   }
