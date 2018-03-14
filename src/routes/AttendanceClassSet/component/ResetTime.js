@@ -23,10 +23,10 @@ class ResetTime extends Component {
   }
 
   onCheckChange = (e) => {
-    console.log('到时候是否考虑清空时间')
     this.props.onChange && this.props.onChange({
-      ...this.props.value,
-      hasresttime: e.target.checked ? 1 : 0
+      hasresttime: e.target.checked ? 1 : 0,
+      startresttime: '',
+      endresttime: ''
     });
   }
 

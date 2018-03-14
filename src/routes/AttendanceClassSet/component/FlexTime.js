@@ -38,9 +38,9 @@ class FlexTime extends Component {
   }
 
   render() {
-    const time = [{ text: '10分钟', value: 10 }, { text: '20分钟', value: '20' }, { text: '30分钟', value: '30' }, { text: '40分钟', value: '40' },
-      { text: '50分钟', value: '50' }, { text: '60分钟', value: '60' }, { text: '70分钟', value: '70' }, { text: '80分钟', value: '80' }, { text: '90分钟', value: '90' },
-      { text: '100分钟', value: '100' }, { text: '110分钟', value: '110' }, { text: '120分钟', value: '120' }];
+    const time = [{ text: '10分钟', value: 10 }, { text: '20分钟', value: 20 }, { text: '30分钟', value: 30 }, { text: '40分钟', value: 40 },
+      { text: '50分钟', value: 50 }, { text: '60分钟', value: 60 }, { text: '70分钟', value: 70 }, { text: '80分钟', value: 80 }, { text: '90分钟', value: 90 },
+      { text: '100分钟', value: 100 }, { text: '110分钟', value: 110 }, { text: '120分钟', value: 120 }];
 
     const { hasflextime, flextime } = this.props.value;
     return (

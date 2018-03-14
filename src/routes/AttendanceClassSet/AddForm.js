@@ -41,12 +41,52 @@ class AddForm extends React.Component {
 
   }
 
+  componentValueRequire = (fileName, rule, value, callback) => {
+    const form = this.props.form;
+    switch (fileName) {
+      case 'workTime':
+        if (!value.startworktime || !value.offworktime) {
+          callback('请选择工作时段');
+        } else {
+          callback();
+        }
+        break;
+      case 'earlysign':
+        if (!value) {
+          callback('请选择');
+        } else {
+          callback();
+        }
+        break;
+      case 'latestsign':
+        if (!value) {
+          callback('请选择');
+        } else {
+          callback();
+        }
+        break;
+      case 'restTime':
+        if (value.hasresttime === 1 && (!value.startresttime || !value.endresttime)) {
+          callback('请选择休息时段');
+        } else {
+          callback();
+        }
+      case 'flexTime':
+        if (value.hasflextime === 1 && !value.flextime) {
+          callback('请选择上班弹性时间');
+        } else {
+          callback();
+        }
+    }
+  }
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const earlysign = [{ text: '1小时', value: 1 }, { text: '2小时', value: '2' }, { text: '3小时', value: '3' }, { text: '4小时', value: '4' }, { text: '5小时', value: '5' }, { text: '6小时', value: '6' }];
-    const latestsign = [{ text: '1小时', value: 1 }, { text: '2小时', value: '2' }, { text: '3小时', value: '3' }, { text: '4小时', value: '4' }, { text: '5小时', value: '5' }, { text: '6小时', value: '6' },
-      { text: '7小时', value: '7' }, { text: '8小时', value: '8' }, { text: '9小时', value: '9' }, { text: '10小时', value: '10' }, { text: '11小时', value: '11' }, { text: '12小时', value: '12' }];
+    const earlysign = [{ text: '1小时', value: 1 }, { text: '2小时', value: 2 }, { text: '3小时', value: 3 }, { text: '4小时', value: 4 },
+      { text: '5小时', value: 5 }, { text: '6小时', value: 6 }];
+    const latestsign = [{ text: '1小时', value: 1 }, { text: '2小时', value: 2 }, { text: '3小时', value: 3 }, { text: '4小时', value: 4 },
+      { text: '5小时', value: 5 }, { text: '6小时', value: 6 },
+      { text: '7小时', value: 7 }, { text: '8小时', value: 8 }, { text: '9小时', value: 9 }, { text: '10小时', value: 10 }, { text: '11小时', value: 11 }, { text: '12小时', value: 12 }];
 
     return (
       <Form>
@@ -55,7 +95,10 @@ class AddForm extends React.Component {
           label="班次名称"
         >
           {getFieldDecorator('recname', {
-            initialValue: ''
+            initialValue: '',
+            rules: [{
+              required: true, message: '请输入班次名称'
+            }]
           })(
             <Input placeholder="请输入班次名称" maxLength={10} />
           )}
@@ -65,7 +108,12 @@ class AddForm extends React.Component {
           label="工作时段"
         >
           {getFieldDecorator('workTime', {
-            initialValue: ''
+            initialValue: '',
+            rules: [{
+              required: true, message: '请选择工作时段'
+            }, {
+              validator: this.componentValueRequire.bind(this, 'workTime')
+            }]
           })(
             <WorkTime />
           )}
@@ -75,7 +123,10 @@ class AddForm extends React.Component {
           label="休息时段"
         >
           {getFieldDecorator('restTime', {
-            initialValue: ''
+            initialValue: '',
+            rules: [{
+              validator: this.componentValueRequire.bind(this, 'restTime')
+            }]
           })(
             <ResetTime />
           )}
@@ -85,7 +136,12 @@ class AddForm extends React.Component {
           label="允许最早签到时间"
         >
           {getFieldDecorator('earlysign', {
-            initialValue: ''
+            initialValue: '',
+            rules: [{
+              required: true, message: '请选择工作时段'
+            }, {
+              validator: this.componentValueRequire.bind(this, 'earlysign')
+            }]
           })(
             <LabelSelect dataSource={earlysign} label='上班前' />
           )}
@@ -95,7 +151,12 @@ class AddForm extends React.Component {
           label="允许最晚签到时间"
         >
           {getFieldDecorator('latestsign', {
-            initialValue: ''
+            initialValue: '',
+            rules: [{
+              required: true, message: '请选择工作时段'
+            }, {
+              validator: this.componentValueRequire.bind(this, 'latestsign')
+            }]
           })(
             <LabelSelect dataSource={latestsign} label='下周后' />
           )}
@@ -105,7 +166,10 @@ class AddForm extends React.Component {
           label="上班弹性时间"
         >
           {getFieldDecorator('flexTime', {
-            initialValue: ''
+            initialValue: '',
+            rules: [{
+              validator: this.componentValueRequire.bind(this, 'flexTime')
+            }]
           })(
             <FlexTime />
           )}

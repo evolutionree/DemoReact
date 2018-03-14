@@ -52,7 +52,8 @@ class AddClassModal extends Component {
 
 export default connect(
   state => {
-    const { showModals } = state.attendanceClassSet;
+    const { showModals } = state.attendanceGroupSet;
+    console.log(showModals)
     return {
       visible: /add/.test(showModals)
     };
@@ -60,10 +61,10 @@ export default connect(
   dispatch => {
     return {
       cancel() {
-        dispatch({ type: 'attendanceClassSet/showModals', payload: '' });
+        dispatch({ type: 'attendanceGroupSet/showModals', payload: '' });
       },
       submit(formData) {
-        dispatch({ type: 'attendanceClassSet/showModals', payload: '' });
+        dispatch({ type: 'attendanceGroupSet/showModals', payload: '' });
       }
     };
   }

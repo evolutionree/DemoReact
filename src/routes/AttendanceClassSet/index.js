@@ -132,7 +132,7 @@ function AttendanceClassSet({
           onChange: (keys, items) => selectItems(items)
         }}
         renderLinkField={(text, field, record, props) => (
-          <a href="javascript:;" style={titleStyle} title={text} onClick={() => { showDetail(record); }}>{text}</a>
+          <span href="javascript:;" style={titleStyle} title={text}>{text}</span>
         )}
       />
       <AddClassModal />

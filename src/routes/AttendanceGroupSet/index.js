@@ -14,7 +14,7 @@ import AddClassModal from './AddClassModal';
 
 const Option = Select.Option;
 
-function AttendanceClassSet({
+function AttendanceGroupSet({
                               checkFunc,
                               dispatch,
                               entityName,
@@ -28,18 +28,18 @@ function AttendanceClassSet({
                               sortFieldAndOrder  //当前排序的字段及排序顺序
                             }) {
   function selectItems(items) {
-    dispatch({ type: 'attendanceClassSet/putState', payload: { items } });
+    dispatch({ type: 'attendanceGroupSet/putState', payload: { currItems: items } });
   }
   function search(payload) {
-    dispatch({ type: 'attendanceClassSet/search', payload });
+    dispatch({ type: 'attendanceGroupSet/search', payload });
   }
   function searchKeyword(payload) {
-    dispatch({ type: 'attendanceClassSet/searchKeyword', payload });
+    dispatch({ type: 'attendanceGroupSet/searchKeyword', payload });
   }
 
   function openAdd() {
     dispatch({
-      type: 'attendanceClassSet/showModals',
+      type: 'attendanceGroupSet/showModals',
       payload: 'add'
     });
   }
@@ -50,19 +50,19 @@ function AttendanceClassSet({
 
   function showEdit() {
     dispatch({
-      type: 'attendanceClassSet/showModals',
+      type: 'attendanceGroupSet/showModals',
       payload: `recordEdit?${entityId}:${currItems[0].recid}`
     });
   }
 
   function advanceSearch() {
-    dispatch({ type: 'attendanceClassSet/showModals', payload: 'advanceSearch' });
+    dispatch({ type: 'attendanceGroupSet/showModals', payload: 'advanceSearch' });
   }
   function del() {
     Modal.confirm({
       title: '确定删除选中数据吗？',
       onOk() {
-        dispatch({ type: 'attendanceClassSet/del' });
+        dispatch({ type: 'attendanceGroupSet/del' });
       }
     });
   }
@@ -151,6 +151,6 @@ function AttendanceClassSet({
 
 export default connect(
   state => {
-    return { ...state.attendanceClassSet };
+    return { ...state.attendanceGroupSet };
   }
-)(connectPermission(props => props.entityId, AttendanceClassSet));
+)(connectPermission(props => props.entityId, AttendanceGroupSet));

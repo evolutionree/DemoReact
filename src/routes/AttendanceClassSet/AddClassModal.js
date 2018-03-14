@@ -98,7 +98,7 @@ class AddClassModal extends Component {
         visible={visible}
         onOk={this.handleOk}
         onCancel={cancel}
-        width={550}
+        width={600}
       >
         <AddForm ref={form => { this.form = form; }} value={this.state.FormValue} onChange={(formValue) => { this.setState({ FormValue: formValue }) }} />
       </Modal>
