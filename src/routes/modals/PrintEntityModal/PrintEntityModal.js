@@ -16,9 +16,20 @@ class PrintEntityModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedTemplate: null,
-      selectedOutput: null
+      selectedTemplate: props.templateList.length ? props.templateList[0].recid : null,
+      selectedOutput: props.outputTypes.length ? props.outputTypes[0].type : null
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const isOpening = this.props.currentStep === 0 && nextProps.currentStep === 1;
+    const isClosing = this.props.currentStep === 1 && nextProps.currentStep === 0;
+    if (isOpening) {
+      this.setState({
+        selectedTemplate: nextProps.templateList[0].recid,
+        selectedOutput: nextProps.outputTypes[0].type
+      });
+    }
   }
 
   handleCancel = () => {

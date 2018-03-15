@@ -118,7 +118,7 @@ class PrintTemplateForm extends Component {
       // values.templatetype = +values.templatetype;
       // values.datasourcetype = +values.datasourcetype;
       this.props.save({
-        datasourcefunc: '',
+        datasourcefunc: isEdit ? editingRecord.datasourcefunc : '',
         description: '',
         ruledesc: '',
         ...values,
@@ -187,13 +187,27 @@ class PrintTemplateForm extends Component {
               </Select>
             )}
           </FormItem>
-          {(srctype === '1' || srctype === '2') && <FormItem label="数据源接口">
+          <FormItem label="数据源接口" style={{ display: srctype === '1' ? 'block' : 'none' }}>
             {getFieldDecorator('datasourcefunc', {
-              rules: [{ required: true, message: '请输入数据源接口' }]
+              rules: [{ required: srctype === '1', message: '请输入数据源接口' }]
             })(
               <Input maxLength="50" placeholder="请输入数据源接口" />
             )}
-          </FormItem>}
+          </FormItem>
+          <FormItem label="程序集" style={{ display: srctype === '2' ? 'block' : 'none' }}>
+            {getFieldDecorator('assemblyname', {
+              rules: [{ required: srctype === '2', message: '请填写引用的程序集名称' }]
+            })(
+              <Input maxLength="50" placeholder="请填写引用的程序集名称" />
+            )}
+          </FormItem>
+          <FormItem label="类名" style={{ display: srctype === '2' ? 'block' : 'none' }}>
+            {getFieldDecorator('classtypename', {
+              rules: [{ required: srctype === '2', message: '请填写引用的类名' }]
+            })(
+              <Input maxLength="50" placeholder="请填写引用的类名" />
+            )}
+          </FormItem>
           <FormItem label="数据源JS">
             <Button onClick={this.openJsEdit}>编辑JS</Button>
           </FormItem>
@@ -243,23 +257,6 @@ class PrintTemplateForm extends Component {
               <Input.TextArea maxLength="500" placeholder="请输入适用范围说明" />
             )}
           </FormItem>
-          {/*<FormItem label="版本号">*/}
-            {/*{getFieldDecorator('recversion', {*/}
-              {/*rules: [{ required: true, message: '请填写版本号' }]*/}
-            {/*})(*/}
-              {/*<Input maxLength="50" placeholder="请填写版本号" />*/}
-            {/*)}*/}
-          {/*</FormItem>*/}
-          {/*<FormItem label="状态">*/}
-            {/*{getFieldDecorator('recstatus', {*/}
-              {/*rules: [{ required: true, message: '请设置是否启用' }]*/}
-            {/*})(*/}
-              {/*<Radio.Group>*/}
-                {/*<Radio value={1}>启用</Radio>*/}
-                {/*<Radio value={0}>停用</Radio>*/}
-              {/*</Radio.Group>*/}
-            {/*)}*/}
-          {/*</FormItem>*/}
         </Form>
         <Modal
           title="编辑JS"
