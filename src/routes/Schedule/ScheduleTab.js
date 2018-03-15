@@ -93,7 +93,7 @@ class ScheduleTab extends Component {
             <Radio data={ScheduleWays} onChange={this.scheduleWayChangeHandler.bind(this)} />
           </div>
           {
-            ScheduleWays[0].active ? <div style={{ padding: '0 17px' }}><Calendar  onSelect={this.calendarSelectHandler.bind(this)} /></div> : null
+            ScheduleWays[0].active ? <div style={{ padding: '0 17px' }}><Calendar onSelect={this.calendarSelectHandler.bind(this)} /></div> : null
           }
           {
             ScheduleWays[1].active ? <WeekList /> : null
