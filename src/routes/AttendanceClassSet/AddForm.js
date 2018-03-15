@@ -71,7 +71,6 @@ class AddForm extends React.Component {
         } else {
           callback();
         }
-        break;
       case 'flexTime':
         if (value.hasflextime === 1 && !value.flextime) {
           callback('请选择上班弹性时间');
