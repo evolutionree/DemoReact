@@ -16,7 +16,7 @@ export const fieldModels = [
   { name: '提示文本', value: 2, requires: ['tipContent', 'tipColor'] },
   { name: '单选', value: 3, requires: ['dataSource', 'defaultValue'] },
   { name: '多选', value: 4, requires: ['dataSource'] },
-  { name: '大文本', value: 5, requires: ['defaultValue']},
+  { name: '大文本', value: 5, requires: ['defaultValue'] },
   { name: '整数文本', value: 6, requires: ['maxLength', 'defaultValue', 'separator'] },
   { name: '小数文本', value: 7, requires: ['maxLength', 'decimalsLength', 'defaultValue', 'separator'] },
   { name: '日期', value: 8, requires: ['format', 'defaultValue'] },
@@ -39,5 +39,7 @@ export const fieldModels = [
   // { name: '树形控件多选', value: 27 },
   { name: '产品', value: 28, requires: ['multiple'] },
   { name: '产品系列', value: 29, requires: ['multiple'] },
-  { name: '引用对象', value: 31, requires: ['originEntity', 'originField', 'controlField'] }
+  { name: '引用对象', value: 31, requires: ['originEntity', 'originField', 'controlField'] },
+  { name: '关联业务', value: 32, requires: ['multipleDataSource'] },
+  { name: '开关', value: 33, requires: ['switch', 'defaultValue'] }
 ];
