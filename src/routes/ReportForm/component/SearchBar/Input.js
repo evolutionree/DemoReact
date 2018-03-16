@@ -6,7 +6,7 @@ import { Input, DatePicker } from 'antd';
 import Select from './Select';
 import SetSeriesModal from './SetSeriesModal';
 import SelectDataSource from '../../../../components/DynamicForm/controls/SelectDataSource';
-import SelectProduct from '../../../../components/DynamicForm/controls/SelectProduct';
+import SelectProductBigData from '../../../../components/DynamicForm/controls/SelectProductBigData';
 import SelectProductSerial from '../../../../components/DynamicForm/controls/SelectProductSerial';
 import moment from 'moment';
 
@@ -55,7 +55,7 @@ class InputComponent extends Component {
           sourceId: this.props.multichoosedatasource.datasource.sourceid
         }} onChange={(value) => { this.props.onChange(value) }} />
       case 7:
-        return <div style={{ width: '200px' }}><SelectProduct value={this.props.value} onChange={value => this.props.onChange(value) } {...this.props.multichoosedatasource} /></div>;
+        return <div style={{ width: '200px' }}><SelectProductBigData value={this.props.value} onChange={value => this.props.onChange(value) } {...this.props.multichoosedatasource} /></div>;
       case 8:
         return <div style={{ width: '200px' }}><SelectProductSerial value={this.props.value} onChange={value => this.props.onChange(value) } {...this.props.multichoosedatasource} /></div>;
       case 9:
