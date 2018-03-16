@@ -364,12 +364,20 @@ function ShowChart({
       toolbox: optionSet.toolbox,
       //图例组件
       legend: {
+        type: 'scroll',
+        orient: 'vertical',
+        right: 60,
+        top: 20,
+        bottom: 20,
+        pageIconColor: '#FF883E', //翻页按钮颜色
+        pageTextStyle: {
+          color: '#ffffff'
+        },
         textStyle: {
           color: '#9b9b9b'
         },
-        top: 20,
-        formatter: '{name} : ',
-        align: 'right',
+        // formatter: '{name} : ',
+        // align: 'right',
         data: dataSource && dataSource instanceof Array && dataSource.map((dataItem) => {
           return { name: dataItem[component.commonextinfo.xfieldname], icon: 'roundRect' };
         })
@@ -401,7 +409,7 @@ function ShowChart({
           },
           data: dataSource && dataSource instanceof Array && dataSource.map((dataItem) => {
             return { value: dataItem[item.fieldname], name: dataItem[component.commonextinfo.xfieldname] };
-          }).filter(item => item.value !== 0)
+          }).filter(item => item.value)
         };
       })
     };

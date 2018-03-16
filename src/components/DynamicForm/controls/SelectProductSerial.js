@@ -91,7 +91,7 @@ class SelectProductSerial extends React.Component {
       if (!value) return [];
       return value.split(',');
     } else {
-      if (!value) return '';
+      if (!value) return undefined; //不返回‘’，不然传placeholder 显示不了
       return value;
     }
   };

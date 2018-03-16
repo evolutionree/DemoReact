@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Select, Input, Radio, Checkbox } from 'antd';
+import { Form, Select, Input, Radio, Checkbox, message } from 'antd';
 import { queryDicTypes, queryDicOptions } from '../../../../services/dictionary';
 import { queryList as queryDataSource } from '../../../../services/datasource';
 import { query as queryEntity, queryFields } from '../../../../services/entity';
@@ -178,13 +178,27 @@ class DefaultValueSingleSelect extends React.Component {
 // 数据源数据源
 class DataSourceSelect extends React.Component {
   static propTypes = {
-    value: React.PropTypes.shape({
-      type: React.PropTypes.oneOf(['local', 'network']),
-      // sourceKey: React.PropTypes.string,
-      sourceId: React.PropTypes.string
-    }),
-    onChange: React.PropTypes.func
+    value: React.PropTypes.oneOfType([
+      React.PropTypes.shape({
+        type: React.PropTypes.oneOf(['local', 'network']),
+        // sourceKey: React.PropTypes.string,
+        sourceId: React.PropTypes.string
+      }),
+      React.PropTypes.shape({
+        sourceId: React.PropTypes.string,
+        sourceName: React.PropTypes.string,
+        entityId: React.PropTypes.string,
+        entityName: React.PropTypes.string
+      })
+    ]),
+    onChange: React.PropTypes.func,
+    multiple: React.PropTypes.bool
   };
+
+  static defaultProps = {
+    multiple: false
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -203,33 +217,101 @@ class DataSourceSelect extends React.Component {
     queryDataSource(params).then(result => {
       const options = result.data.pagedata.map(item => ({
         id: item.datasourceid + '',
-        label: item.datasourcename
+        label: item.datasourcename,
+        entityId: item.entityid,
+        entityName: item.entityname
       }));
-      this.setState({ options });
+      this.setState({ options: options.filter(item => item.entityId) }); //过滤掉没有entityid 的数据
     });
   };
 
   parseValue = () => {
-    const { value } = this.props;
-    if (!value) return '';
-    return value.sourceId;
+    if (this.props.multiple) { //多选
+      const { value } = this.props;
+      if (!value || !(value instanceof Array)) return [];
+      return value.map(item => item.sourceId);
+    } else {
+      const { value } = this.props;
+      if (!value) return '';
+      return value.sourceId;
+    }
   };
 
   handleChange = val => {
-    this.props.onChange({
-      type: 'network',
-      // sourceKey: 'dicitonary',
-      sourceId: val
-    });
+    if (this.props.multiple) { //多选
+      const selectData = this.state.options.filter(item => (',' + val.join() + ',').indexOf(',' + item.id + ',') > -1);
+
+      if (this.props.value instanceof Array && selectData instanceof Array) {
+        for (let i = 0; i < this.props.value.length; i++) {
+          for (let j = 0; j < selectData.length; j++) {
+            if (this.props.value[i].sourceId !== selectData[j].id && this.props.value[i].entityId === selectData[j].entityId) {
+              message.warning('已选择了实体为' + this.props.value[i].entityName + '的数据源【' + this.props.value[i].sourceName + '】');
+              return;
+            }
+          }
+        }
+      }
+
+      this.props.onChange(selectData.map(item => {
+        return {
+          sourceId: item.id,
+          sourceName: item.label,
+          entityId: item.entityId,
+          entityName: item.entityName
+        };
+      }));
+    } else {
+      this.props.onChange({
+        type: 'network',
+        // sourceKey: 'dicitonary',
+        sourceId: val
+      });
+    }
   };
 
   render() {
     return (
-      <Select value={this.parseValue()} onChange={this.handleChange}>
+      <Select mode={this.props.multiple ? 'multiple' : 'combobox'} value={this.parseValue()} onChange={this.handleChange}>
         {this.state.options.map(item => (
           <Option value={item.id} key={item.id}>{item.label}</Option>
         ))}
       </Select>
+    );
+  }
+}
+
+//开关 switch
+class SwitchSet extends React.Component {
+  static propTypes = {
+    onChange: React.PropTypes.func
+  };
+
+  static defaultProps = {};
+
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
+
+  handleChange = (type, e) => {
+    this.props.onChange && this.props.onChange({
+      ...this.props.value,
+      [type]: e.target.value
+    });
+  };
+
+  render() {
+    const { value } = this.props;
+    return (
+      <ul>
+        <li style={{ marginBottom: '6px' }}>
+          开启时显示文案: <Input style={{ width: 395, marginLeft: '6px' }} value={value && value['1']} onChange={this.handleChange.bind(this, '1')} />
+        </li>
+        <li>
+          关闭时显示文案: <Input style={{ width: 395, marginLeft: '6px' }} value={value && value['0']} onChange={this.handleChange.bind(this, '0')} />
+        </li>
+      </ul>
     );
   }
 }
@@ -598,6 +680,37 @@ export default class FormItemFactory {
     }
   }
 
+  createMultipleDataSource() {
+    return (
+      <FormItem label="数据源" key="multidataSource">
+        {this.getFieldDecorator('multidataSource', {
+          rules: [{ required: true, message: '请选择数据源' }]
+        })(<DataSourceSelect multiple={true} />)}
+      </FormItem>
+    );
+  }
+
+  switchValueRequire = (rule, value, callback) => {
+    if (!value['0'] || !value['1']) {
+      callback('请完成文案配置');
+    } else {
+      callback();
+    }
+  }
+
+  createSwitch() {
+    return (
+      <FormItem label="文案配置" key="switchinfo">
+        {this.getFieldDecorator('switchinfo', {
+          rules: [{ required: true, message: '请完成文案配置' },
+            {
+              validator: this.switchValueRequire
+            }]
+        })(<SwitchSet />)}
+      </FormItem>
+    );
+  }
+
   createDefaultValue(ctrlType) {
     switch (ctrlType) {
       case 3: // 单选
@@ -622,6 +735,20 @@ export default class FormItemFactory {
           <FormItem label="默认值" key="defaultValue">
             {this.getFieldDecorator('defaultValue')(
               <DefaultValueDate />
+            )}
+          </FormItem>
+        );
+      case 33: //开关
+        return (
+          <FormItem label="默认值" key="defaultValue">
+            {this.getFieldDecorator('defaultValue', {
+              initialValue: 0,
+              rules: [{ required: true, message: '请选择默认值' }]
+            })(
+              <Select>
+                <Option value={1}>开启</Option>
+                <Option value={0}>关闭</Option>
+              </Select>
             )}
           </FormItem>
         );
