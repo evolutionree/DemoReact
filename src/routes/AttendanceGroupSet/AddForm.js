@@ -6,7 +6,7 @@ import { Button, Form, Radio, Input, Checkbox, Select } from 'antd';
 import { connect } from 'dva';
 import _ from 'lodash';
 import WorkDaySet from './component/WorkDaySet';
-import OtherDaySet from './component/OtherDaySet';
+import OtherDaySetWrap from './component/OtherDaySetWrap';
 import SelectDept from './component/SelectDept';
 import AddressSet from './component/AddressSet';
 import classnames from 'classnames';
@@ -41,10 +41,22 @@ class AddForm extends React.Component {
 
   }
 
+  componentValueRequire = (fileName, rule, value, callback) => {
+    const form = this.props.form;
+    console.log(JSON.stringify(value))
+    switch (fileName) {
+      case 'workdayset':
+        if (!value.startworktime || !value.offworktime) {
+          callback('请选择工作时段');
+        } else {
+          callback();
+        }
+        break;
+    }
+  }
 
   render() {
     const { getFieldDecorator } = this.props.form;
-
     return (
       <Form>
         <FormItem
@@ -91,8 +103,13 @@ class AddForm extends React.Component {
           {...formItemLayout}
           label="工作日设置"
         >
-          {getFieldDecorator('se1t', {
-            initialValue: ''
+          {getFieldDecorator('workdayset', {
+            initialValue: '',
+            rules: [{
+              required: true, message: '请完成工作日设置'
+            }, {
+              validator: this.componentValueRequire.bind(this, 'workdayset')
+            }]
           })(
             <WorkDaySet />
           )}
@@ -101,17 +118,17 @@ class AddForm extends React.Component {
           {...formItemLayout}
           label="特殊日期设置"
         >
-          {getFieldDecorator('ss', {
+          {getFieldDecorator('otherdayset', {
             initialValue: ''
           })(
-            <OtherDaySet />
+            <OtherDaySetWrap />
           )}
         </FormItem>
         <FormItem
           {...formItemLayout}
           label="考勤点设置"
         >
-          {getFieldDecorator('ss', {
+          {getFieldDecorator('s12s', {
             initialValue: ''
           })(
             <AddressSet />
@@ -134,7 +151,7 @@ const WrappedAddForm = Form.create({
 })(AddForm);
 
 export default connect(
-  state => state.attendanceClassSet,
+  state => state.attendanceGroupSet,
   dispatch => {
     return {
 

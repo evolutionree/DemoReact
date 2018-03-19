@@ -17,50 +17,12 @@ class WorkDaySet extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      valueObj: {
-        mainClass: '1',
-        weekClass: {
-          1: {
-            checkbox: true,
-            class: '1'
-          },
-          2: {
-            checkbox: true,
-            class: '1'
-          },
-          3: {
-            checkbox: true,
-            class: '1'
-          },
-          4: {
-            checkbox: true,
-            class: '1'
-          },
-          5: {
-            checkbox: true,
-            class: '1'
-          },
-          6: {
-            checkbox: true,
-            class: '1'
-          },
-          7: {
-            checkbox: true,
-            class: '1'
-          }
-        }
-      }
+      mainClass: '1'
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const isOpening = !this.props.visible && nextProps.visible;
-    const isClosing = this.props.visible && !nextProps.visible;
-    if (isOpening) {
 
-    } else if (isClosing) {
-
-    }
   }
 
 
@@ -70,47 +32,62 @@ class WorkDaySet extends Component {
 
   changeMainRadio = (value) => {
     let newWeekClass = {};
-    for (let i in this.state.valueObj.weekClass) {
+    for (let i in this.props.value) {
       newWeekClass[i] = {
-        ...this.state.valueObj.weekClass,
+        ...this.props.value[i],
         class: value
       };
     }
     this.setState({
-      valueObj: {
-        mainClass: value,
-        weekClass: newWeekClass
-      }
+      mainClass: value
     });
+    this.props.onChange && this.props.onChange(newWeekClass);
+  }
+
+  changeWeekRadio(weekNum, value) {
+    let newWeekClass = _.cloneDeep(this.props.value);
+    newWeekClass[weekNum + 1] = {
+      ...this.props.value[weekNum + 1],
+      class: value
+    };
+    this.props.onChange && this.props.onChange(newWeekClass);
+  }
+
+  checkChange(weekNum, e) {
+    let newWeekClass = _.cloneDeep(this.props.value);
+    newWeekClass[weekNum + 1] = {
+      ...this.props.value[weekNum + 1],
+      checkbox: e.target.checked ? 1 : 0
+    };
+    this.props.onChange && this.props.onChange(newWeekClass);
   }
 
   render() {
+    const value = this.props.value;
     const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
     const dataSource = [{ text: 'A班次', value: '1' }, { text: 'B班次', value: '2' }, { text: 'C班次', value: '3' }, { text: 'D班次', value: '4' }];
-    const showObj = _.find(dataSource, item => item.value === this.state.valueObj.mainClass);
     return (
       <div className={Styles.WorkDaySetWrap}>
         <div>
           <span>快捷设置班次</span>
           <div className={Styles.header}>
-            <span>{showObj && showObj.text}</span>
-            <SelectBar defaultText="更改班次" dataSource={dataSource} value={this.state.valueObj.mainClass} onChange={this.changeMainRadio} />
+            <SelectBar defaultText="更改班次" dataSource={dataSource} value={this.state.mainClass} onChange={this.changeMainRadio} />
           </div>
         </div>
         <div>
           <Row>
-            <Col span={12}>工作日</Col>
-            <Col span={12}>班次</Col>
+            <Col span={12} style={{ color: '#767f8b' }}>工作日</Col>
+            <Col span={12} style={{ color: '#767f8b' }}>班次</Col>
           </Row>
         </div>
         <ul>
           {
             days.map((item, index) => {
               return (
-                <li>
+                <li key={index}>
                   <Row>
-                    <Col span={12}><Checkbox /><span style={{ paddingLeft: '8px' }}>{item}</span></Col>
-                    <Col span={12}><SelectBar dataSource={dataSource} value={this.state.valueObj.weekClass[index + 1].class} /></Col>
+                    <Col span={12}><Checkbox checked={value[index + 1].checkbox === 1} onChange={this.checkChange.bind(this, index)} /><span style={{ paddingLeft: '8px' }}>{item}</span></Col>
+                    <Col span={12}><SelectBar dataSource={dataSource} value={value[index + 1].class} onChange={this.changeWeekRadio.bind(this, index)} /></Col>
                   </Row>
                 </li>
               );

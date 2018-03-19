@@ -6,6 +6,43 @@ import { Modal, message, Spin, Button, Row, Col } from 'antd';
 import AddForm from './AddForm';
 import { connect } from 'dva';
 
+const defaultFormValue = {
+  workdayset: {
+    1: {
+      checkbox: 0,
+      class: '1'
+    },
+    2: {
+      checkbox: 0,
+      class: '1'
+    },
+    3: {
+      checkbox: 0,
+      class: '1'
+    },
+    4: {
+      checkbox: 0,
+      class: '1'
+    },
+    5: {
+      checkbox: 0,
+      class: '1'
+    },
+    6: {
+      checkbox: 0,
+      class: '1'
+    },
+    7: {
+      checkbox: 0,
+      class: '1'
+    }
+  },
+  otherdayset: {
+    need: [{ date: '2018-01-01', class: '1' }],
+    noneed: []
+  }
+};
+
 class AddClassModal extends Component {
   static propTypes = {
     visible: PropTypes.bool
@@ -15,7 +52,7 @@ class AddClassModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      FormValue: null
+      FormValue: defaultFormValue
     };
   }
 
@@ -53,7 +90,6 @@ class AddClassModal extends Component {
 export default connect(
   state => {
     const { showModals } = state.attendanceGroupSet;
-    console.log(showModals)
     return {
       visible: /add/.test(showModals)
     };

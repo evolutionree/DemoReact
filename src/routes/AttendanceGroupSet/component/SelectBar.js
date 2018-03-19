@@ -67,7 +67,7 @@ class SelectBar extends Component {
     const showObj = _.find(this.props.dataSource, item => item.value === this.state.value);
     return (
       <div className={Styles.Wrap}>
-        <div onClick={this.showList}>{this.props.defaultText ? this.props.defaultText : showObj && showObj.text} <Icon type="down" style={{ fontSize: 6, color: '#767f8b', ...iconStyle }} /></div>
+        <div onClick={this.showList}><span style={{ color: '#3398db' }}>{this.props.defaultText ? this.props.defaultText : showObj && showObj.text}</span> <Icon type="down" style={{ fontSize: 6, color: '#767f8b', ...iconStyle }} /></div>
         <div className={Styles.panel} style={{ display: this.state.visible ? 'block' : 'none' }} onClick={e => { e.nativeEvent.stopImmediatePropagation() }}>
           <RadioGroup onChange={this.RadioChange} value={this.state.value}>
             {
