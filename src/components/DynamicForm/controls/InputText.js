@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import QRCode from 'qrcode.react';
+import QRCode from '../../QRCode';
 import { createNormalInput } from './utils';
 import { DefaultTextView } from '../DynamicFieldView';
 import { Icon, Popover } from 'antd'

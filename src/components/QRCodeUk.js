@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import { Icon } from 'antd';
-import QRCode from 'qrcode.react';
+import QRCode from './QRCode';
 import { getAppDownloadUrl } from '../services/authentication';
 
 class QRCodeUk extends Component {

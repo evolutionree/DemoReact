@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { queryPrintTemplates } from '../services/printTemplate';
+import { queryRecPrintTemplates } from '../services/printTemplate';
 
 export default {
   namespace: 'printEntity',
@@ -20,9 +20,13 @@ export default {
       try {
         const params = {
           entityid: printConfig.entityId,
+          recid: printConfig.recordId,
           recstate: 1
         };
-        const { data } = yield call(queryPrintTemplates, params);
+        const { data } = yield call(queryRecPrintTemplates, params);
+        if (!data.length) {
+          message.error('找不到可用的模板');
+        }
         yield put({
           type: 'putState',
           payload: {

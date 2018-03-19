@@ -14,6 +14,19 @@ export async function queryPrintTemplates(params) {
 }
 
 /**
+ * 获取某条数据拥有的打印模板
+ * @param params
+ * { entityid, RecId }
+ * @returns {Promise.<Object>}
+ */
+export async function queryRecPrintTemplates(params) {
+  return request('/api/PrintForm/getrectemplatelist', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
  * 新增套打模板
  * @param params
  * {

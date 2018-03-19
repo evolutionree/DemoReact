@@ -54,7 +54,7 @@ class UploadButton extends React.Component {
       message.error('文件大小不可超过100M!');
       return false;
     }
-    if (file.size / 1024 / 1024 > 30) {
+    if (file.size / 1024 / 1024 > 15) {
       this.hideMsgCallback = message.loading('上传文件较大，请耐心等候', 0);
     }
     this.setState({ uploading: true });
