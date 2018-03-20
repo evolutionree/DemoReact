@@ -125,7 +125,7 @@ class PrintTemplateForm extends Component {
         extjs: this.state.jsCode,
         fileid: values.fileid[0].fileid,
         recid: isEdit ? editingRecord.recid : undefined,
-        entityid: isEdit ? undefined : entityId
+        entityid: entityId
       });
     })
   };
