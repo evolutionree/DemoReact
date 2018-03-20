@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
 import { query as queryEntities } from '../services/entity';
-import { queryPrintTemplates, addPrintTemplates, updatePrintTemplates, togglePrintTemplatesStatus } from '../services/printTemplate';
+import { queryPrintTemplates, addPrintTemplates, updatePrintTemplates, togglePrintTemplatesStatus, deletePrintTemplates } from '../services/printTemplate';
 
 export default {
   namespace: 'printTemplate',
@@ -103,8 +103,18 @@ export default {
         message.error(e.message || '保存失败');
       }
     },
-    *del() {
-
+    *del(action, { select, put, call }) {
+      try {
+        const { currentItems } = yield select(state => state.printTemplate);
+        const params = {
+          recids: currentItems.map(i => i.recid)
+        };
+        yield call(deletePrintTemplates, params);
+        message.success('操作成功');
+        yield put({ type: 'queryList' });
+      } catch (e) {
+        message.error(e.message || '操作失败');
+      }
     },
     *toggleStatus(action, { select, put, call }) {
       try {

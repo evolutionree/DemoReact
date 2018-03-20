@@ -87,6 +87,20 @@ export async function togglePrintTemplatesStatus(params) {
   });
 }
 
+
+/**
+ * 删除套打模板
+ * @param params
+ * { RecIds } // recstate: 0=已停用，1=启用
+ * @returns {Promise.<Object>}
+ */
+export async function deletePrintTemplates(params) {
+  return request('/api/PrintForm/deletetemplate', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
 /**
  * 生成实体pdf文件
  * @param params
