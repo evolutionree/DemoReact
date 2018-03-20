@@ -121,7 +121,7 @@ export default {
         const { currentItems } = yield select(state => state.printTemplate);
         const params = {
           recids: currentItems.map(i => i.recid),
-          recstate: currentItems[0].recstatus ? 0 : 1
+          recstatus: currentItems[0].recstatus ? 0 : 1
         };
         yield call(togglePrintTemplatesStatus, params);
         message.success('操作成功');
