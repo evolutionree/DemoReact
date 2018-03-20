@@ -30,6 +30,7 @@ import SelectEntityType from './controls/SelectEntityType';
 import SelectProductSerial from './controls/SelectProductSerial';
 import RelObject from './controls/RelObject';
 import CheckBox from './controls/CheckBox';
+import RelBusiness from './controls/RelBusiness';
 
 function presetProps(props, WrappedComponent) {
   return class NewComponent extends Component {
@@ -91,7 +92,7 @@ export const controlMap = {
   29: SelectProductSerial,
   30: null,
   31: RelObject,
-
+  32: RelBusiness,
   33: CheckBox,
 
   1002: SelectUser, // 1002 创建人

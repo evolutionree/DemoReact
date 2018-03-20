@@ -1,0 +1,57 @@
+.ReBusinessWrap{
+  .dataWrap {
+    zoom: 1;
+    position: relative;
+    >ul {
+      float: left;
+      >li {
+        font-size: 14px;
+        display: inline-block;
+        width: 50%;
+        padding-right: 10px;
+        background: #ffffff;
+        >i {
+          color: lightgrey;
+          padding-left: 4px;
+          cursor: pointer;
+          transition: .3s;
+        }
+        >i:hover{
+          color: #a8a8a8;
+        }
+      }
+    }
+    >i {
+      color: lightgrey;
+      font-size:24px;
+      position: absolute;
+      right: 0;
+      bottom: 5px;
+      cursor: pointer;
+      transition: .3s;
+    }
+    >i:hover{
+      color: #a8a8a8;
+    }
+  }
+  .dataWrap:after{
+    content:"";
+    display:block;
+    clear:both;
+  }
+
+
+  .addPanel{
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+    padding: 4px;
+    margin-top: 2px;
+
+    .footer{
+      text-align: right;
+      >button:first-of-type{
+        margin-right: 10px;
+      }
+    }
+  }
+}
+

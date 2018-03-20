@@ -65,7 +65,9 @@ import UkqrtzManager from './routes/UkqrtzManager/index';
 import Schedule from './routes/Schedule/index';
 
 import AttendanceClassSet from './routes/AttendanceClassSet';
+
 import AttendanceGroupSet from './routes/AttendanceGroupSet';
+import AttendanceGroupDetail from './routes/AttendanceGroupSet/Detail';
 
 const appRoutes = [
   { path: 'NoFoundPage', comp: NoFoundPage }, //进入系统会做菜单权限判断 Router的原因 首次让其先进入一个无任何Ajax的页面
@@ -122,6 +124,7 @@ const appRoutes = [
   { path: 'schedule', comp: Schedule, model: require('./models/schedule') },
   { path: 'attendanceclassset', comp: AttendanceClassSet, model: require('./models/attendanceClassSet') },
   { path: 'attendancegroupset', comp: AttendanceGroupSet, model: require('./models/attendanceGroupSet') },
+  { path: 'attendancegroupset/detail', comp: AttendanceGroupDetail, model: require('./models/attendanceGroupSet') },
   { path: '*', comp: NoFoundPage }
 ];
 
