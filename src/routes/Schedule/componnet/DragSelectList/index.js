@@ -330,7 +330,6 @@ class DragSelectList extends Component {
 
   componentDidUpdate() {
     console.log(this.listRef.offsetWidth)
-    this.listRef.addEventListener('mousedown', this.onDocumentMouseDown.bind(this));
     const totalHeight = 22 * 48;
     const totalWidth = this.listRef.offsetWidth;
     const dayTimeStamp = 86400; //每一天的总时间长度（时间戳）
@@ -357,36 +356,8 @@ class DragSelectList extends Component {
         findColumn = parseInt(key) + 1;
         other = true;
       }
-
-      // if (other) {
-      //   for (let key in columnMinWidth) {
-      //     if (key < findColumn) {
-      //
-      //     }
-      //   }
-      // } else {
-      //   columnMinWidth[findColumn] = columnMinWidth[findColumn] ? totalWidth : columnMinWidth[findColumn] + 'px';
-      //   let w = 0;
-      //   for (let key in columnMinWidth) {
-      //     if (key < findColumn) {
-      //       w += columnMinWidth[key] ? totalWidth : columnMinWidth[key];
-      //     }
-      //     break;
-      //   }
-      //   selDiv.style.left = w + 'px';
-      //   columnMinWidth[findColumn] = w;
-      // }
-
-
-      // selDiv.style.width = 100 + 'px';
-      // selDiv.style.left = (findColumn - 1) * 100 + 'px';
       selDiv.column = findColumn;
-
       divs['selDiv' + i] = selDiv;
-
-
-     // this.listRef.appendChild(selDiv);
-
       columnMaxHeights[findColumn] = top + height;
     }
 
@@ -399,7 +370,7 @@ class DragSelectList extends Component {
     for (let key in divs) {
       divs[key].style.width = w + 'px';
       divs[key].style.left = (divs[key].column - 1) * w + 'px';
-      this.listRef.appendChild(divs[key]);
+      //this.listRef.appendChild(divs[key]);
     }
   }
 
@@ -408,7 +379,7 @@ class DragSelectList extends Component {
   }
 
   componentWillUnmount() {
-    //document.removeEventListener('mousedown', this.onDocumentMouseDown);
+
   }
 
   onDocumentMouseDown(e) {
@@ -449,11 +420,13 @@ class DragSelectList extends Component {
 
   render() {
     return (
-      <ul className={Styles.DragSelectList} ref={(ref) => { this.listRef = ref }}>
-        {
-          this.getHtml()
-        }
-      </ul>
+      <div className={Styles.DragSelectListWrap}>
+        <ul className={Styles.DragSelectList} ref={(ref) => { this.listRef = ref }} onMouseDown={this.onDocumentMouseDown.bind(this)}>
+          {
+            this.getHtml()
+          }
+        </ul>
+      </div>
     );
   }
 }

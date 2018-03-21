@@ -40,29 +40,22 @@ class ScheduleAddForm extends Component {
 
   }
 
-  onFormModalConfirm = () => {
+  submit = () => {
     this.form.validateFields({ force: true }, (err, values) => {
-      // console.log('entcommadd validate callbacked err: ', err);
+      console.log(values);
+      console.log('entcommadd validate callbacked err: ', err);
       if (err) {
         return message.error('请检查表单');
       }
-      const params = {
-        typeid: this.state.selectedEntityType,
-        fieldData: values
-      };
-      if(this.state.commonid){//客户引用 新增
-        params.extraData = {commonid:this.state.commonid};
-      }
-      this.setState({ confirmLoading: true });
-      addEntcomm(params).then(result => {
-        this.setState({ confirmLoading: false });
-        message.success('新增成功');
-        this.props.done();
-      }).catch(e => {
-        this.setState({ confirmLoading: false });
-        console.error(e);
-        message.error(e.message || '新增失败');
-      });
+      // addEntcomm(params).then(result => {
+      //   this.setState({ confirmLoading: false });
+      //   message.success('新增成功');
+      //   this.props.done();
+      // }).catch(e => {
+      //   this.setState({ confirmLoading: false });
+      //   console.error(e);
+      //   message.error(e.message || '新增失败');
+      // });
     });
   };
 
@@ -98,6 +91,24 @@ class ScheduleAddForm extends Component {
     });
   };
 
+  getTransformFormData(data) {
+    let newFormData = {
+      ...data
+    };
+    newFormData.typeCombine = {
+      recname: data.recname,
+      scheduleType: data.scheduleType
+    };
+
+    newFormData.typeCombine12 = {
+      starttime: data.starttime,
+      endtime: data.endtime,
+      allday: data.allday,
+      repeatType: data.repeatType,
+      repeatEnd: data.repeatEnd
+    };
+    return newFormData;
+  }
 
   render() {
     const { entityId } = this.props;
@@ -105,12 +116,14 @@ class ScheduleAddForm extends Component {
       protocolFields,
       formData
     } = this.state;
+
+    formData.recname = 'recname测试';
     return (
       <DynamicFormAdd
         entityId={entityId}
         entityTypeId={entityId}
         fields={protocolFields}
-        value={formData}
+        value={this.getTransformFormData(formData)}
         onChange={val => { this.setState({ formData: val }); }}
         ref={form => { this.form = form; }}
       />
