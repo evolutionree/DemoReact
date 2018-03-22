@@ -384,11 +384,10 @@ class DragSelectList extends Component {
 
   onDocumentMouseDown(e) {
     let event = e || window.event;
-    console.log(event.offsetX + '-' + event.offsetY);
     const _this = this;
     document.onmousemove = function(moveE) {
       event = moveE || window.event;
-      console.log(event.offsetX + '-' + event.offsetY);
+      console.log(event.offsetY);
       _this.clearEventBubble(event);
     }
 
@@ -420,13 +419,11 @@ class DragSelectList extends Component {
 
   render() {
     return (
-      <div className={Styles.DragSelectListWrap}>
-        <ul className={Styles.DragSelectList} ref={(ref) => { this.listRef = ref }} onMouseDown={this.onDocumentMouseDown.bind(this)}>
-          {
-            this.getHtml()
-          }
-        </ul>
-      </div>
+      <ul className={Styles.DragSelectList} ref={(ref) => { this.listRef = ref }} onMouseDown={this.onDocumentMouseDown.bind(this)}>
+        {
+          this.getHtml()
+        }
+      </ul>
     );
   }
 }
