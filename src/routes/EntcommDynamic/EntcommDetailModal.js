@@ -1,7 +1,10 @@
+/**
+ * Created by 0291 on 2018/3/22.
+ */
 import React, { PropTypes, Component } from 'react';
 import { Modal, Select } from 'antd';
-import { DynamicFormView } from './DynamicForm';
-import { getGeneralProtocol, getEntcommDetail } from '../services/entcomm';
+import { DynamicFormView } from '../../components/DynamicForm';
+import { getGenralDynawebProtocol, getEntcommDetail } from '../../services/entcomm';
 
 class EntcommDetailModal extends Component {
   static propTypes = {
@@ -46,7 +49,7 @@ class EntcommDetailModal extends Component {
         detail = detail[0];
       }
       this.setState({ data: detail });
-      return getGeneralProtocol({
+      return getGenralDynawebProtocol({  //getGeneralProtocol 替换为 getGenralDynawebProtocol
         typeId: detail.rectype || entityId,
         OperateType: 2
       });
