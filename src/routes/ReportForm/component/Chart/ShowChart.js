@@ -215,6 +215,13 @@ function ShowChart({
       }
     },
     asisLineAndasisLabel: {
+      //坐标轴在 grid 区域中的分隔线。
+      splitLine: {
+        lineStyle: {
+          type: 'solid',
+          color: '#53516a'
+        }
+      },
       //是否显示坐标轴刻度
       axisTick: {
         show: false
@@ -448,14 +455,14 @@ function ShowChart({
           lineStyle: optionSet.axisLineLineStyle
         },
         ...optionSet.asisLineAndasisLabel,
-        data: dataSource && dataSource instanceof Array && dataSource.map((item) => {
-          return item[component.commonextinfo.xfieldname];
+        data: (component.commonextinfo && component.commonextinfo.landscape === 1) ? null : dataSource && dataSource instanceof Array && dataSource.map((item) => {
+            return item[component.commonextinfo.xfieldname];
         })
       },
       //Y轴坐标
       yAxis: component.commonextinfo.yfieldlist ? component.commonextinfo.yfieldlist.map((item) => { //多个Y轴
         return {
-          type: 'value',
+          type: (component.commonextinfo && component.commonextinfo.landscape === 1) ? 'category' : 'value', //横向显示 纵向显示
           name: getAxisName(item.name),
           //坐标轴名称的文字样式
           nameTextStyle: {
@@ -469,7 +476,10 @@ function ShowChart({
               fontSize: 14
             }
           },
-          ...optionSet.yAxisStyle
+          ...optionSet.yAxisStyle,
+          data: (component.commonextinfo && component.commonextinfo.landscape === 1) ? dataSource && dataSource instanceof Array && dataSource.map((item) => {
+            return item[component.commonextinfo.xfieldname];
+          }) : null
         };
       }) : {
         //坐标轴名称的文字样式
