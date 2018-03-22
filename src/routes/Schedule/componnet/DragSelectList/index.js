@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import { getTimeStamp } from '../../../../utils/index';
 import _ from 'lodash';
+import { connect } from 'dva';
 import Styles from './index.less';
 
 const data = [
@@ -383,16 +384,70 @@ class DragSelectList extends Component {
   }
 
   onDocumentMouseDown(e) {
+    let selList = this.listRef.children;
+
     let event = e || window.event;
     const _this = this;
+
+    let startX = (event.x || event.clientX);
+    let startY = (event.y || event.clientY);
+
+    let firstIndex = '';
+    for (let i = 0; i < selList.length; i++) {
+      let clientLeft = selList[i].getBoundingClientRect().left;
+      let clientRight = selList[i].getBoundingClientRect().right;
+      let clientTop = selList[i].getBoundingClientRect().top;
+      let clientBottom = selList[i].getBoundingClientRect().bottom;
+      if (startX > clientLeft && startX < clientRight && startY > clientTop && startY < clientBottom) {
+        firstIndex = i;
+      }
+    }
+
+    let _x = null;
+    let _y = null;
+    let finnalIndex = '';
+    let selDiv = null;
     document.onmousemove = function(moveE) {
       event = moveE || window.event;
-      console.log(event.offsetY);
+      _x = (event.x || event.clientX);
+      _y = (event.y || event.clientY);
+
+      for (let i = 0; i < selList.length; i++) {
+        let clientLeft = selList[i].getBoundingClientRect().left;
+        let clientRight = selList[i].getBoundingClientRect().right;
+        let clientTop = selList[i].getBoundingClientRect().top;
+        let clientBottom = selList[i].getBoundingClientRect().bottom;
+
+        if (_x > clientLeft && _x < clientRight && _y > clientTop && _y < clientBottom) {
+          finnalIndex = i;
+          break;
+        }
+      }
+
+
+      if (firstIndex !== '' && finnalIndex !== '') {
+        console.log(firstIndex, finnalIndex);
+        if (document.getElementById('addForm')) {
+          _this.listRef.removeChild(document.getElementById('addForm'));
+        }
+        selDiv = document.createElement('div');
+        selDiv.id='addForm';
+        selDiv.style.cssText = 'position:absolute;margin:0px;padding:0px;border:1px dashed #0099FF;background-color:red;z-index:10;filter:alpha(opacity:60);opacity:0.6;display:block;';
+        selDiv.style.top = Math.min(firstIndex, finnalIndex) * 22 + 'px';
+        selDiv.style.width = '100%';
+        selDiv.style.height = (Math.max(firstIndex, finnalIndex) - Math.min(firstIndex, finnalIndex)) * 22 + 'px';
+        _this.listRef.appendChild(selDiv);
+      } else {
+        selDiv ?  _this.listRef.removeChild(selDiv) : true;
+      }
+
       _this.clearEventBubble(event);
     }
 
-    this.listRef.onmouseup = () => {
-      document.onmousemove = null;
+    document.onmouseup = () => {
+      _this.props.openFormModal();
+      _this.listRef.removeChild(selDiv)
+      document.onmousemove = document.onmouseup = null;
       event = null;
     };
   }
@@ -429,4 +484,13 @@ class DragSelectList extends Component {
 }
 
 
-export default DragSelectList;
+export default connect(
+  state => state.schedule,
+  dispatch => {
+    return {
+      openFormModal() {
+        dispatch({ type: 'schedule/putState', payload: { showModals: 'formModal' } });
+      }
+    };
+  }
+)(DragSelectList);
