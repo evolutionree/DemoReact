@@ -71,12 +71,13 @@ class ScheduleTab extends Component {
 
   render() {
     const ScheduleWays = this.props.scheduleWays;
+    const iconStyle = this.state.searchPanelShow ? { transform: 'rotate(180deg)' } : {};
     return (
       <div className={Styles.ScheduleTab} style={{ height: this.props.height }}>
         <div style={{ padding: '20px' }}>
           <div className={Styles.Header}>
             <div className={Styles.Title}>
-              <Icon type="schedule" /><span>我的日程</span><Icon type="down" onClick={this.toggleSearchPanel.bind(this)} />
+              <Icon type="schedule" /><span>我的日程</span><Icon type="down" onClick={this.toggleSearchPanel.bind(this)} style={{ ...iconStyle }} />
               <Icon type="plus" onClick={this.props.openFormModal} />
             </div>
             <div className={Styles.SearchWrap} style={{ display: this.state.searchPanelShow ? 'block' : 'none' }}>

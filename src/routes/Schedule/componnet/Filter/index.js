@@ -2,7 +2,7 @@
  * Created by 0291 on 2017/12/25.
  */
 import React, { Component } from 'react';
-import { Switch } from 'antd';
+import { Switch, Icon } from 'antd';
 import CheckBox from './CheckBox';
 import Styles from './index.less';
 
@@ -35,13 +35,13 @@ class Filter extends Component {
   }
 
   hideList(e) {
-    console.log(e)
     this.setState({
       visible: false
     });
   }
 
   toggleVisible(e) {
+    e.nativeEvent.stopImmediatePropagation();
     this.setState({
       visible: !this.state.visible
     });
@@ -53,11 +53,16 @@ class Filter extends Component {
 
   render() {
     return (
-      <div className={Styles.filterWrap} onClick={(e) => {
-        e.nativeEvent.stopImmediatePropagation();
-      }}>
-        <div onClick={this.toggleVisible.bind(this)}>筛选</div>
-        <div style={{ display: this.state.visible ? 'block' : 'none' }} className={Styles.Panel}>
+      <div className={Styles.filterWrap}>
+        <div className={Styles.Header}>
+          <span onClick={this.toggleVisible.bind(this)}>
+            <Icon type="filter" /><span>筛选</span>
+          </span>
+          <span className={Styles.sperate}>|</span><span>返回今天</span>
+        </div>
+        <div style={{ display: this.state.visible ? 'block' : 'none' }} className={Styles.Panel} onClick={(e) => {
+          e.nativeEvent.stopImmediatePropagation();
+        }}>
           <div>筛选分类</div>
           <ul className={Styles.checkBoxWrap}>
             <li>

@@ -1,0 +1,60 @@
+.header{
+  height: 44px;
+  line-height: 44px;
+  background: #eaeaea;
+  padding-left: 40px;
+  font-size:16px;
+  color:#333333;
+  position: relative;
+
+  >div{
+    width: 12px;
+    height: 12px;
+    border: 1px solid #9ba1ad;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    margin-top: -8px;
+    cursor: pointer;
+    >i{
+      width: 0px;
+      height: 0px;
+      border-top: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-bottom: 4px solid #9ba1ad;
+      border-left: 4px solid transparent;
+
+      position: absolute;
+      left: 50%;
+      top: -1px;
+      margin-left: -4px;
+
+      -webkit-transition: .5s;
+      -moz-transition: .5s;
+      -ms-transition: .5s;
+      -o-transition: .5s;
+      transition: .5s;
+      -webkit-transform-origin:4px 6px;
+      -moz-transform-origin:4px 6px;
+      -ms-transform-origin:4px 6px;
+      -o-transform-origin:4px 6px;
+      transform-origin:4px 6px;
+    }
+  }
+}
+
+
+.body{
+  :global{
+    .ant-table-thead > tr > th{
+      background: #f6f6f6;
+    }
+    .ant-table-tbody > tr:nth-child(2n+1) > td{
+      background: transparent;
+    }
+
+    .ant-table-tbody > tr:hover > td{
+      background: #eff7fc;
+    }
+  }
+}
