@@ -717,16 +717,16 @@ class StageBar extends Component {
                                 <span>{file.fileName}({formatFileSize(file.fileSize)})</span>
                               {/*</a>*/}
                             </Col>
-                            <Col span={4} style={{ textAlign: 'center' }}>
-                              {/*<Icon*/}
-                                {/*type="delete"*/}
-                                {/*style={{ cursor: 'pointer' }}*/}
-                                {/*onClick={this.onFileDel.bind(this, evt.eventsetid, file.fileId)}*/}
-                              {/*/>*/}
-                              <a href={`/api/fileservice/read?fileid=${file.fileId}`} style={{ fontSize: '14px', color: '#666' }}>
+                            <Col span={4} style={{ textAlign: 'right' }}>
+                              <a href={`/api/fileservice/read?fileid=${file.fileId}`} style={{ fontSize: '14px', color: '#666', marginRight: '8px' }}>
                                 {/*<span>{file.fileName}({formatFileSize(file.fileSize)})</span>*/}
                                 <Icon type="download" />
                               </a>
+                              <Icon
+                                type="close"
+                                style={{ cursor: 'pointer' }}
+                                onClick={this.onFileDel.bind(this, evt.eventsetid, file.fileId)}
+                              />
                             </Col>
                           </Row>
                         </li>
