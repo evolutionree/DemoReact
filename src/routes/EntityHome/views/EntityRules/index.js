@@ -99,6 +99,11 @@ function EntityRules({
         .every(rule => rule.viewrule.style === 1);
     });
   }
+  let layoutStyle;
+  try {
+    layoutStyle = list[0].rules[0].viewrule.style || 0;
+    console.log('layoutstyle ' + layoutStyle)
+  } catch (e) {}
 
   return (
     <div>
@@ -108,7 +113,7 @@ function EntityRules({
         {showMenu && <Button type="default" style={useType === 1 ? btnAtiveStyles : {}}
                              onClick={() => dispatch({ type: 'entityRules/selectUseType', payload: 1 })}>按职能设置</Button>}
         {useType === 0 && <span style={{ marginLeft: '30px' }}>样式选择：</span>}
-        {useType === 0 && <Radio.Group value={style0 ? 0 : (style1 ? 1 : undefined)} onChange={onStyleChange}>
+        {useType === 0 && <Radio.Group value={layoutStyle} onChange={onStyleChange}>
           <Radio value={0}>横向</Radio>
           <Radio value={1}>纵向</Radio>
         </Radio.Group>}
