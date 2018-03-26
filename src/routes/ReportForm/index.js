@@ -49,7 +49,8 @@ class ReportForm extends React.Component {
       mapType: 'china',
       mapSeriesType: 'map',
       bmapCenter: [],
-      breadcrumbData: []
+      breadcrumbData: [],
+      selectedLegend: null
     };
     this.reloadReportData = this.reloadReportData.bind(this);
     this.echartsInstance = echarts;
@@ -227,7 +228,7 @@ class ReportForm extends React.Component {
                   this.setState({
                     serchValue: { ...this.state.serchValue, ...changeParams },
                     reload: true
-                  }, this.reloadReportData({ ...this.state.serchValue, ...changeParams }));
+                  }, this.reloadReportData(changeParams));
                   break;
                 }
               }
@@ -236,6 +237,12 @@ class ReportForm extends React.Component {
         });
       };
     });
+
+    event.legendselectchanged = (params) => { //图例状态发生改变时
+      this.setState({
+        selectedLegend: params.selected
+      });
+    };
     return event;
   }
 
@@ -533,7 +540,8 @@ class ReportForm extends React.Component {
                          axisDataSource={this.state[item.datasourceforsummary]} //坐标轴 Lable可能存在变量  需替换
                          dataSource={this.state[item.datasourcename]}
                          xseries={this.state[item.datasourcename + 'xseries']} //散点图 X轴坐标数据
-                         onEvents={this.getEvents(item, index)} />
+                         onEvents={this.getEvents(item, index)}
+                         legend={this.state.selectedLegend} />
             </div>
           </div>
         );

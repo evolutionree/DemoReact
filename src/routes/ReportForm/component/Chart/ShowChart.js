@@ -14,7 +14,8 @@ function ShowChart({
                      onEvents,
                      deviceType,
                      axisDataSource,
-                     xseries
+                     xseries,
+                     legend
                    }) {
   if (!dataSource) {
     return null;
@@ -387,7 +388,8 @@ function ShowChart({
         // align: 'right',
         data: dataSource && dataSource instanceof Array && dataSource.map((dataItem) => {
           return { name: dataItem[component.commonextinfo.xfieldname], icon: 'roundRect' };
-        })
+        }),
+        selected: legend
       },
       //系列列表。每个系列通过 type 决定自己的图表类型
       series: component.commonextinfo.series.map((item, index) => {
@@ -509,7 +511,8 @@ function ShowChart({
             name: item.seriesname,
             icon: 'roundRect'
           };
-        })
+        }),
+        selected: legend
       },
       //系列列表。每个系列通过 type 决定自己的图表类型
       series: component.commonextinfo.series.map((item, index) => {
