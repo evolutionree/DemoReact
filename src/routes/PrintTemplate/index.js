@@ -107,9 +107,9 @@ class PrintTemplate extends Component {
                   <Column title="状态" dataIndex="recstatus" key="recstatus" render={i => <span>{['停用', '启用'][i]}</span>} />
                   <Column title="适用规则说明" dataIndex="ruledesc" key="ruledesc" render={text => <span>{text}</span>} />
                   <Column title="版本号" dataIndex="recversion" key="recversion" render={text => <span>{text}</span>} />
-                  <Column title="创建人" dataIndex="reccreator" key="reccreator" render={text => <span>{text}</span>} />
+                  <Column title="创建人" dataIndex="reccreator_name" key="reccreator" render={text => <span>{text}</span>} />
                   <Column title="创建时间" dataIndex="reccreated" key="reccreated" render={text => <span>{text}</span>} />
-                  <Column title="最后修改人" dataIndex="recupdator" key="recupdator" render={text => <span>{text}</span>} />
+                  <Column title="最后修改人" dataIndex="recupdator_name" key="recupdator" render={text => <span>{text}</span>} />
                   <Column title="最后修改时间" dataIndex="recupdated" key="recupdated" render={text => <span>{text}</span>} />
                 </Table>
               </div>

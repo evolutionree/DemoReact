@@ -67,7 +67,7 @@ class PrintTemplateForm extends Component {
         callback();
       }
     } else {
-      callback('请上传模板文件');
+      callback();
     }
   };
 
@@ -223,7 +223,7 @@ class PrintTemplateForm extends Component {
           </FormItem>
           <FormItem label="模板文件">
             {getFieldDecorator('fileid', {
-              rules: [,
+              rules: [
                 { required: true, type: 'array', message: '请上传模板文件' },
                 { validator: this.validateFile }
               ],
