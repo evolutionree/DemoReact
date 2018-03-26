@@ -78,22 +78,6 @@ class SelectInput extends Component {
                     <InputRecName ref={this.onFieldControlRef.bind(this, item.fieldname)} onChange={this.selectValueChange.bind(this, item.fieldname)} value={itemValue} {...item.fieldconfig} />
                   </div>
                 )
-              // case 3:
-              //   return (
-              //     <Select disabled={isReadOnly === 1} value={itemValue} style={{ width: 120, marginRight: '4px' }}
-              //             onChange={this.selectValueChange.bind(this, item.fieldname)}>
-              //       {
-              //         this.props.options && this.props.options instanceof Array && this.props.options.map((option, i) => {
-              //           return <Option value={option.value} key={i}>{option.label}</Option>;
-              //         })
-              //       }
-              //     </Select>
-              //   );
-              // case 1012:
-              //   return (
-              //     <Input disabled={isReadOnly === 1} placeholder={this.props.placeholder} value={itemValue} style={{ width: this.props.toolTip ? 'calc(100% - 146px)' : 'calc(100% - 124px)' }}
-              //            onChange={this.inputValueChange.bind(this, item.fieldname)} />
-              //   );
               default:
                 return null;
             }

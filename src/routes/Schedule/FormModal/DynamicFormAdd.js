@@ -1,7 +1,7 @@
 /**
  * Created by 0291 on 2018/3/8.
  */
-import { Form, Input } from 'antd';
+import { Form } from 'antd';
 import DynamicFormBase from '../../../components/DynamicForm/DynamicFormBase';
 import createJSEngineProxy from '../../../components/DynamicForm/createJSEngineProxy';
 import createFormErrorsStore from '../../../components/DynamicForm/createFormErrorsStore';
@@ -13,7 +13,7 @@ const FormItem = Form.Item;
 const typeCombine = ['recname', 'scheduleType'];
 const typeCombineFieldName = 'typeCombine';
 
-const startEndTimeCombine = ['starttime', 'endtime', 'allday', 'repeatType', 'repeatEnd', 'repeatEndtime'];
+const startEndTimeCombine = ['starttime', 'endtime', 'allday', 'repeatType', 'repeatEnd'];
 const startEndTimeCombineFieldName = 'typeCombine12';
 class DynamicFormAdd extends DynamicFormBase {
   usage = 0;
@@ -30,14 +30,14 @@ class DynamicFormAdd extends DynamicFormBase {
 
   renderField = field => {
     let fields = this.processFields(this.props.fields).map(item => {
-        let { fieldconfig } = item;
-        if (fieldconfig && fieldconfig.isReadOnly !== 1 && (fieldconfig.isReadOnlyJS === 0 || fieldconfig.isReadOnlyJS === 1)) {
-          fieldconfig = {
-            ...fieldconfig,
-            isReadOnly: fieldconfig.isReadOnlyJS
-          };
-        }
-        return { ...item, fieldconfig };
+      let { fieldconfig } = item;
+      if (fieldconfig && fieldconfig.isReadOnly !== 1 && (fieldconfig.isReadOnlyJS === 0 || fieldconfig.isReadOnlyJS === 1)) {
+        fieldconfig = {
+          ...fieldconfig,
+          isReadOnly: fieldconfig.isReadOnlyJS
+        };
+      }
+      return { ...item, fieldconfig };
     });
 
     const typeCombineFields = fields && fields instanceof Array && fields.filter(item => typeCombine.indexOf(item.fieldname) > -1);
@@ -48,7 +48,9 @@ class DynamicFormAdd extends DynamicFormBase {
           <FormItem key={typeCombineFieldName}>
             {this.props.form.getFieldDecorator(typeCombineFieldName, {
               initialValue: ''
-            })(<SelectInput ref={this.onFieldControlRef.bind(this, typeCombineFieldName)} fields={typeCombineFields} onChange={(value, fileldName, isFromApi) => { this.onFieldValueChange(fileldName, value, isFromApi) }} />)}
+            })(<SelectInput ref={this.onFieldControlRef.bind(this, typeCombineFieldName)}
+                            fields={typeCombineFields}
+                            onChange={(value, fileldName, isFromApi) => { this.onFieldValueChange(fileldName, value, isFromApi) }} />)}
           </FormItem>
         );
       } else {
@@ -57,12 +59,14 @@ class DynamicFormAdd extends DynamicFormBase {
     } else if (startEndTimeCombine.indexOf(field.fieldname) > -1) {
       if (field.fieldname === 'starttime') {
         return (
-            <FormItem key={startEndTimeCombineFieldName}>
-              {this.props.form.getFieldDecorator(startEndTimeCombineFieldName, {
-                initialValue: ''
-              })(<TimePicker ref={this.onFieldControlRef.bind(this, startEndTimeCombineFieldName)} fields={startEndTimeCombineFields} onChange={(value, fileldName, isFromApi) => { this.onFieldValueChange(fileldName, value, isFromApi) }} />)}
-            </FormItem>
-          );
+          <FormItem key={startEndTimeCombineFieldName}>
+            {this.props.form.getFieldDecorator(startEndTimeCombineFieldName, {
+              initialValue: ''
+            })(<TimePicker ref={this.onFieldControlRef.bind(this, startEndTimeCombineFieldName)}
+                           fields={startEndTimeCombineFields}
+                           onChange={(value, fileldName, isFromApi) => { this.onFieldValueChange(fileldName, value, isFromApi) }} />)}
+          </FormItem>
+        );
       } else {
         return null;
       }

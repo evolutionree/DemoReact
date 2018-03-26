@@ -67,7 +67,7 @@ class Schedule extends Component {
   renderModuleTabs() {
     const { modules, activeModule } = this.props;
     const ModuleComponents = {
-      customer: EmptyShow,
+      customer: RelateCustomers,
       sale: EmptyShow,
       notice: EmptyShow,
       audit: AuditMessage

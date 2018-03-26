@@ -139,8 +139,8 @@ function AttendanceGroupSet({
           selectedRowKeys: currItems.map(item => item.recid),
           onChange: (keys, items) => selectItems(items)
         }}
-        renderLinkField={(text, field, record, props) => (
-          <a href="javascript:;" style={titleStyle} title={text} onClick={() => { showDetail(record); }}>{text}</a>
+        linkUrl={(textView, field, record) => (
+          'attendancegroupset/detail'
         )}
       />
       <AdvanceSearchModal />

@@ -60,9 +60,7 @@ class FormModal extends Component {
         console.log(fieldsValue)
       });
     } else {
-      this.TaskFormRef.getWrappedInstance().validateFields((err, fieldsValue) => {
-        console.log(fieldsValue)
-      });
+      this.TaskFormRef.submit();
     }
   }
 
@@ -80,8 +78,9 @@ class FormModal extends Component {
              onCancel={this.props.closeFormModal}
              >
         {
-          titleNodeData[0].active ? <ScheduleForm ref={(ref) => { this.ScheduleFormRef = ref }}
-                                                  value={this.state.FormValue} onChange={(formValue) => { this.setState({ FormValue: formValue }) }} /> : null
+          titleNodeData[0].active ? <ScheduleAddForm ref={(ref) => { this.TaskFormRef = ref }}
+                                                     value={this.state.FormValue}
+                                                     onChange={(formValue) => { this.setState({ FormValue: formValue }) }} /> : null
         }
         {
           titleNodeData[1].active ? <ScheduleAddForm ref={(ref) => { this.TaskFormRef = ref }}

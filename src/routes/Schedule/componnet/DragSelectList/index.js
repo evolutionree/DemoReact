@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import { getTimeStamp } from '../../../../utils/index';
 import _ from 'lodash';
+import { connect } from 'dva';
 import Styles from './index.less';
 
 const data = [
@@ -330,7 +331,6 @@ class DragSelectList extends Component {
 
   componentDidUpdate() {
     console.log(this.listRef.offsetWidth)
-    this.listRef.addEventListener('mousedown', this.onDocumentMouseDown.bind(this));
     const totalHeight = 22 * 48;
     const totalWidth = this.listRef.offsetWidth;
     const dayTimeStamp = 86400; //每一天的总时间长度（时间戳）
@@ -357,36 +357,8 @@ class DragSelectList extends Component {
         findColumn = parseInt(key) + 1;
         other = true;
       }
-
-      // if (other) {
-      //   for (let key in columnMinWidth) {
-      //     if (key < findColumn) {
-      //
-      //     }
-      //   }
-      // } else {
-      //   columnMinWidth[findColumn] = columnMinWidth[findColumn] ? totalWidth : columnMinWidth[findColumn] + 'px';
-      //   let w = 0;
-      //   for (let key in columnMinWidth) {
-      //     if (key < findColumn) {
-      //       w += columnMinWidth[key] ? totalWidth : columnMinWidth[key];
-      //     }
-      //     break;
-      //   }
-      //   selDiv.style.left = w + 'px';
-      //   columnMinWidth[findColumn] = w;
-      // }
-
-
-      // selDiv.style.width = 100 + 'px';
-      // selDiv.style.left = (findColumn - 1) * 100 + 'px';
       selDiv.column = findColumn;
-
       divs['selDiv' + i] = selDiv;
-
-
-     // this.listRef.appendChild(selDiv);
-
       columnMaxHeights[findColumn] = top + height;
     }
 
@@ -399,7 +371,7 @@ class DragSelectList extends Component {
     for (let key in divs) {
       divs[key].style.width = w + 'px';
       divs[key].style.left = (divs[key].column - 1) * w + 'px';
-      this.listRef.appendChild(divs[key]);
+      //this.listRef.appendChild(divs[key]);
     }
   }
 
@@ -408,21 +380,74 @@ class DragSelectList extends Component {
   }
 
   componentWillUnmount() {
-    //document.removeEventListener('mousedown', this.onDocumentMouseDown);
+
   }
 
   onDocumentMouseDown(e) {
+    let selList = this.listRef.children;
+
     let event = e || window.event;
-    console.log(event.offsetX + '-' + event.offsetY);
     const _this = this;
+
+    let startX = (event.x || event.clientX);
+    let startY = (event.y || event.clientY);
+
+    let firstIndex = '';
+    for (let i = 0; i < selList.length; i++) {
+      let clientLeft = selList[i].getBoundingClientRect().left;
+      let clientRight = selList[i].getBoundingClientRect().right;
+      let clientTop = selList[i].getBoundingClientRect().top;
+      let clientBottom = selList[i].getBoundingClientRect().bottom;
+      if (startX > clientLeft && startX < clientRight && startY > clientTop && startY < clientBottom) {
+        firstIndex = i;
+      }
+    }
+
+    let _x = null;
+    let _y = null;
+    let finnalIndex = '';
+    let selDiv = null;
     document.onmousemove = function(moveE) {
       event = moveE || window.event;
-      console.log(event.offsetX + '-' + event.offsetY);
+      _x = (event.x || event.clientX);
+      _y = (event.y || event.clientY);
+
+      for (let i = 0; i < selList.length; i++) {
+        let clientLeft = selList[i].getBoundingClientRect().left;
+        let clientRight = selList[i].getBoundingClientRect().right;
+        let clientTop = selList[i].getBoundingClientRect().top;
+        let clientBottom = selList[i].getBoundingClientRect().bottom;
+
+        if (_x > clientLeft && _x < clientRight && _y > clientTop && _y < clientBottom) {
+          finnalIndex = i;
+          break;
+        }
+      }
+
+
+      if (firstIndex !== '' && finnalIndex !== '') {
+        console.log(firstIndex, finnalIndex);
+        if (document.getElementById('addForm')) {
+          _this.listRef.removeChild(document.getElementById('addForm'));
+        }
+        selDiv = document.createElement('div');
+        selDiv.id='addForm';
+        selDiv.style.cssText = 'position:absolute;margin:0px;padding:0px;border:1px dashed #0099FF;background-color:red;z-index:10;filter:alpha(opacity:60);opacity:0.6;display:block;';
+        selDiv.style.top = Math.min(firstIndex, finnalIndex) * 22 + 'px';
+        selDiv.style.width = '100%';
+        selDiv.style.height = (Math.max(firstIndex, finnalIndex) - Math.min(firstIndex, finnalIndex)) * 22 + 'px';
+        _this.listRef.appendChild(selDiv);
+      } else {
+        selDiv ?  _this.listRef.removeChild(selDiv) : true;
+      }
+
       _this.clearEventBubble(event);
     }
 
-    this.listRef.onmouseup = () => {
-      document.onmousemove = null;
+    document.onmouseup = () => {
+      _this.props.openFormModal();
+      _this.listRef.removeChild(selDiv)
+      document.onmousemove = document.onmouseup = null;
       event = null;
     };
   }
@@ -449,7 +474,7 @@ class DragSelectList extends Component {
 
   render() {
     return (
-      <ul className={Styles.DragSelectList} ref={(ref) => { this.listRef = ref }}>
+      <ul className={Styles.DragSelectList} ref={(ref) => { this.listRef = ref }} onMouseDown={this.onDocumentMouseDown.bind(this)}>
         {
           this.getHtml()
         }
@@ -459,4 +484,13 @@ class DragSelectList extends Component {
 }
 
 
-export default DragSelectList;
+export default connect(
+  state => state.schedule,
+  dispatch => {
+    return {
+      openFormModal() {
+        dispatch({ type: 'schedule/putState', payload: { showModals: 'formModal' } });
+      }
+    };
+  }
+)(DragSelectList);
