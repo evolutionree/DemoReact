@@ -5,6 +5,7 @@ import { message } from 'antd';
 import { routerRedux } from 'dva/router';
 import { getGeneralListProtocol, getListData, addEntcomm, getEntcommDetail, editEntcomm, delEntcomm } from '../services/entcomm';
 import { queryEntityDetail, queryTypes, queryListFilter } from '../services/entity';
+import { queryDataSourceData } from '../services/datasource';
 
 export default {
   namespace: 'attendanceGroupSet',
@@ -20,13 +21,14 @@ export default {
     showModals: '',
     simpleSearchKey: 'recname',
     sortFieldAndOrder: null, //当前排序的字段及排序顺序
-    formData: null
+    formData: null,
+    classDataSource: [] //班次数据源
   },
   subscriptions: {
     setup({ dispatch, history }) {
       return history.listen(location => {
         if (location.pathname === '/attendancegroupset') {
-          const entityId = '4648774d-9e30-46c3-8bb6-e83341760923'; //match[1]
+          const entityId = '5b725b4a-0ac2-40cb-8e9d-0ac71c66caee'; //match[1]
           dispatch({ type: 'init', payload: entityId });
         } else {
           dispatch({ type: 'resetState' });
@@ -49,6 +51,13 @@ export default {
         // 获取协议
         const { data: protocol } = yield call(getGeneralListProtocol, { typeId: entityId });
         yield put({ type: 'protocol', payload: protocol });
+
+        // 获取班次数据源
+        const { data: { page: classDataSource } } = yield call(queryDataSourceData, {
+          sourceId: '15d608ee-5e8b-47d3-865c-949b2fe437bb',
+          keyword: '', pageSize: 1000, pageIndex: 1, queryData: []
+        });
+        yield put({ type: 'putState', payload: { classDataSource } });
 
         // 获取简单搜索
         const { data: { simple } } = yield call(queryListFilter, entityId);
@@ -233,7 +242,8 @@ export default {
         showModals: '',
         simpleSearchKey: 'recname',
         sortFieldAndOrder: null, //当前排序的字段及排序顺序
-        formData: null
+        formData: null,
+        classDataSource: []
       };
     }
   }

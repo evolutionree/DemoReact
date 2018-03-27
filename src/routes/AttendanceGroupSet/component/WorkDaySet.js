@@ -17,7 +17,7 @@ class WorkDaySet extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      mainClass: '1'
+      mainClass: this.props.classDataSource instanceof Array && this.props.classDataSource.length > 0 && this.props.classDataSource[0].id
     };
   }
 
@@ -44,19 +44,19 @@ class WorkDaySet extends Component {
     this.props.onChange && this.props.onChange(newWeekClass);
   }
 
-  changeWeekRadio(weekNum, value) {
+  changeWeekRadio(weekName, value) {
     let newWeekClass = _.cloneDeep(this.props.value);
-    newWeekClass[weekNum + 1] = {
-      ...this.props.value[weekNum + 1],
+    newWeekClass[weekName] = {
+      ...this.props.value[weekName],
       class: value
     };
     this.props.onChange && this.props.onChange(newWeekClass);
   }
 
-  checkChange(weekNum, e) {
+  checkChange(weekName, e) {
     let newWeekClass = _.cloneDeep(this.props.value);
-    newWeekClass[weekNum + 1] = {
-      ...this.props.value[weekNum + 1],
+    newWeekClass[weekName] = {
+      ...this.props.value[weekName],
       checkbox: e.target.checked ? 1 : 0
     };
     this.props.onChange && this.props.onChange(newWeekClass);
@@ -64,8 +64,9 @@ class WorkDaySet extends Component {
 
   render() {
     const value = this.props.value;
-    const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
-    const dataSource = [{ text: 'A班次', value: '1' }, { text: 'B班次', value: '2' }, { text: 'C班次', value: '3' }, { text: 'D班次', value: '4' }];
+    const days = [{ value: 'monschedule', text: '周一' }, { value: 'tuesschedule', text: '周二' }, { value: 'wednesschedule', text: '周三' }, { value: 'thursschedule', text: '周四' },
+      { value: 'frischedule', text: '周五' }, { value: 'saturschedule', text: '周六' }, { value: 'sunschedule', text: '周日' }];
+    const dataSource = this.props.classDataSource;
     return (
       <div className={Styles.WorkDaySetWrap}>
         <div>
@@ -86,8 +87,8 @@ class WorkDaySet extends Component {
               return (
                 <li key={index}>
                   <Row>
-                    <Col span={12}><Checkbox checked={value[index + 1].checkbox === 1} onChange={this.checkChange.bind(this, index)} /><span style={{ paddingLeft: '8px' }}>{item}</span></Col>
-                    <Col span={12}><SelectBar dataSource={dataSource} value={value[index + 1].class} onChange={this.changeWeekRadio.bind(this, index)} /></Col>
+                    <Col span={12}><Checkbox checked={value[item.value].checkbox === 1} onChange={this.checkChange.bind(this, item.value)} /><span style={{ paddingLeft: '8px' }}>{item.text}</span></Col>
+                    <Col span={12}><SelectBar dataSource={dataSource} value={value[item.value].class} onChange={this.changeWeekRadio.bind(this, item.value)} /></Col>
                   </Row>
                 </li>
               );
@@ -99,4 +100,10 @@ class WorkDaySet extends Component {
   }
 }
 
-export default WorkDaySet;
+export default connect(
+  state => {
+    const { classDataSource } = state.attendanceGroupSet;
+    return {
+      classDataSource: classDataSource
+    };
+  })(WorkDaySet);

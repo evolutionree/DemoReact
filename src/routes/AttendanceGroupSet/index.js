@@ -10,7 +10,7 @@ import Search from '../../components/Search';
 import DynamicTable from '../../components/DynamicTable/index';
 import connectPermission from '../../models/connectPermission';
 import AdvanceSearchModal from './AdvanceSearchModal';
-import AddClassModal from './AddClassModal';
+import AddGroupModal from './AddGroupModal';
 
 const Option = Select.Option;
 
@@ -50,8 +50,12 @@ function AttendanceGroupSet({
 
   function showEdit() {
     dispatch({
+      type: 'attendanceGroupSet/queryDetail',
+      payload: ''
+    })
+    dispatch({
       type: 'attendanceGroupSet/showModals',
-      payload: `recordEdit?${entityId}:${currItems[0].recid}`
+      payload: 'edit'
     });
   }
 
@@ -144,7 +148,7 @@ function AttendanceGroupSet({
         )}
       />
       <AdvanceSearchModal />
-      <AddClassModal />
+      <AddGroupModal />
     </Page>
   );
 }

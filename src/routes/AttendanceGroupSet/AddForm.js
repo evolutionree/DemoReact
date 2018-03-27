@@ -46,11 +46,7 @@ class AddForm extends React.Component {
     console.log(JSON.stringify(value))
     switch (fileName) {
       case 'workdayset':
-        if (!value.startworktime || !value.offworktime) {
-          callback('请选择工作时段');
-        } else {
-          callback();
-        }
+        callback();
         break;
     }
   }
@@ -63,7 +59,7 @@ class AddForm extends React.Component {
           {...formItemLayout}
           label="考勤组名称"
         >
-          {getFieldDecorator('1', {
+          {getFieldDecorator('recname', {
             initialValue: ''
           })(
             <Input placeholder="请输入考勤组名称" />
@@ -73,27 +69,27 @@ class AddForm extends React.Component {
           {...formItemLayout}
           label="考勤组负责人"
         >
-          {getFieldDecorator('2', {
+          {getFieldDecorator('recmanager', {
             initialValue: ''
           })(
             <Input placeholder="请输入负责人名称" />
           )}
         </FormItem>
-        <FormItem
-          {...formItemLayout}
-          label="参与考勤人员"
-        >
-          {getFieldDecorator('3', {
-            initialValue: ''
-          })(
-            <SelectDept />
-          )}
-        </FormItem>
+        {/*<FormItem*/}
+          {/*{...formItemLayout}*/}
+          {/*label="参与考勤人员"*/}
+        {/*>*/}
+          {/*{getFieldDecorator('3', {*/}
+            {/*initialValue: ''*/}
+          {/*})(*/}
+            {/*<SelectDept />*/}
+          {/*)}*/}
+        {/*</FormItem>*/}
         <FormItem
           {...formItemLayout}
           label="考勤"
         >
-          {getFieldDecorator('set', {
+          {getFieldDecorator('attendancetype', {
             initialValue: ''
           })(
             <Checkbox>固定班制</Checkbox>
@@ -128,7 +124,7 @@ class AddForm extends React.Component {
           {...formItemLayout}
           label="考勤点设置"
         >
-          {getFieldDecorator('s12s', {
+          {getFieldDecorator('addressset', {
             initialValue: ''
           })(
             <AddressSet />
@@ -150,13 +146,4 @@ const WrappedAddForm = Form.create({
   }
 })(AddForm);
 
-export default connect(
-  state => state.attendanceGroupSet,
-  dispatch => {
-    return {
-
-    };
-  },
-  undefined,
-  { withRef: true }
-)(WrappedAddForm);
+export default WrappedAddForm;

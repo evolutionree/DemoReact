@@ -4,6 +4,8 @@
 import React, { PropTypes, Component } from 'react';
 import { Modal, Form, Select, Icon, DatePicker, message } from 'antd';
 import moment from 'moment';
+import { connect } from 'dva';
+import _ from 'lodash';
 import Styles from './OtherDaySet.less';
 
 const confirm = Modal.confirm;
@@ -98,11 +100,18 @@ class OtherDaySet extends Component {
     });
   }
 
+  getClassName = (value) => {
+    const selectDataSource = this.props.classDataSource;
+    const showObj = _.find(selectDataSource, item => item.id === value);
+    return showObj.name;
+  }
+
+
   render() {
     const dataSource = this.props.value;
     const { getFieldDecorator } = this.props.form;
 
-    const selectDataSource = [{ text: 'A班次', value: '1' }, { text: 'B班次', value: '2' }, { text: 'C班次', value: '3' }, { text: 'D班次', value: '4' }];
+    const selectDataSource = this.props.classDataSource;
     return (
       <div className={Styles.Wrap}>
         <div className={Styles.header}>
@@ -115,7 +124,7 @@ class OtherDaySet extends Component {
               return (
                 <li key={index}>
                   <span>{item.date}</span>
-                  <span style={{ paddingLeft: '10px' }}>A班次</span>
+                  <span style={{ paddingLeft: '10px' }}>{this.getClassName(item.class)}</span>
                   <span className={Styles.operateWrap}>
                     <Icon type="edit" onClick={this.edit.bind(this, index)} />
                     <Icon type="delete" onClick={this.del.bind(this, index)} />
@@ -155,7 +164,7 @@ class OtherDaySet extends Component {
                 <Select>
                   {
                     selectDataSource.map((item, index) => {
-                      return <Option key={index} value={item.value}>{item.text}</Option>;
+                      return <Option key={index} value={item.id}>{`${item.name}(${item.worktime})`}</Option>;
                     })
                   }
                 </Select>
@@ -170,4 +179,11 @@ class OtherDaySet extends Component {
 
 const OtherDaySetForm = Form.create()(OtherDaySet);
 
-export default OtherDaySetForm;
+export default connect(
+  state => {
+    const { classDataSource } = state.attendanceGroupSet;
+    return {
+      classDataSource: classDataSource
+    };
+  }
+)(OtherDaySetForm);

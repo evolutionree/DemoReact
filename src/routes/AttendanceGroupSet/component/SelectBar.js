@@ -57,22 +57,24 @@ class SelectBar extends Component {
   }
 
   RadioChange = (e) => {
+    this.setState({
+      visible: false
+    });
     this.props.onChange && this.props.onChange(e.target.value);
-    this.hideList;
   }
 
   render() {
     const iconStyle = this.state.visible ? { transform: 'rotate(180deg)' } : {};
 
-    const showObj = _.find(this.props.dataSource, item => item.value === this.state.value);
+    const showObj = _.find(this.props.dataSource, item => item.id === this.state.value);
     return (
       <div className={Styles.Wrap}>
-        <div onClick={this.showList}><span style={{ color: '#3398db' }}>{this.props.defaultText ? this.props.defaultText : showObj && showObj.text}</span> <Icon type="down" style={{ fontSize: 6, color: '#767f8b', ...iconStyle }} /></div>
+        <div onClick={this.showList}><span style={{ color: '#3398db' }}>{this.props.defaultText ? this.props.defaultText : showObj && `${showObj.name}(${showObj.worktime})`}</span> <Icon type="down" style={{ fontSize: 6, color: '#767f8b', ...iconStyle }} /></div>
         <div className={Styles.panel} style={{ display: this.state.visible ? 'block' : 'none' }} onClick={e => { e.nativeEvent.stopImmediatePropagation() }}>
           <RadioGroup onChange={this.RadioChange} value={this.state.value}>
             {
               this.props.dataSource instanceof Array && this.props.dataSource.map((item, index) => {
-                return <Radio key={index} value={item.value} style={{ width: '100%' }}>{item.text}</Radio>;
+                return <Radio key={index} value={item.id} style={{ width: '100%' }}>{`${item.name}(${item.worktime})`}</Radio>;
               })
             }
           </RadioGroup>

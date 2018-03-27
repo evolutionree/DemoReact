@@ -24,23 +24,23 @@ class OtherDaySetWrap extends Component {
   changeNeedHandler = (data) => {
     this.props.onChange && this.props.onChange({
       ...this.props.value,
-      need: data
+      specworkdayset: data
     });
   }
 
   changeNoNeedHandler = (data) => {
     this.props.onChange && this.props.onChange({
       ...this.props.value,
-      noneed: data
+      ondutyset: data
     });
   }
 
   render() {
-    const { need, noneed } = this.props.value;
+    const { specworkdayset, ondutyset } = this.props.value;
     return (
       <div>
-        <OtherDaySet value={need} onChange={this.changeNeedHandler} />
-        <OtherDaySet value={noneed} onChange={this.changeNoNeedHandler} />
+        <OtherDaySet value={specworkdayset} onChange={this.changeNeedHandler} />
+        <OtherDaySet value={ondutyset} onChange={this.changeNoNeedHandler} />
       </div>
     );
   }

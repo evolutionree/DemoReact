@@ -24,20 +24,42 @@ class AddressSet extends Component {
   }
 
   updateAddress = (value) => {
-    this.props.onChange(value);
+    this.props.onChange({
+      ...this.props.value,
+      location: value
+    });
   }
 
   updateDistanceRange = (e) => {
-    this.props.onChange(e.target.value);
+    const { value } = e.target;
+    const reg = /^-?(0|[1-9][0-9]*)(\.[0-9]*)?$/;
+    if ((!isNaN(value) && reg.test(value)) || value === '' || value === '-') {
+      this.props.onChange({
+        ...this.props.value,
+        fencing: value
+      });
+    }
+  }
+
+  onBlur = () => {
+    const { onChange } = this.props;
+    const value = this.props.value.fencing
+    if (value.charAt(value.length - 1) === '.' || value === '-') {
+      onChange({
+        ...this.props.value,
+        fencing: value.slice(0, -1)
+      });
+    }
   }
 
   render() {
+    const { location, fencing } = this.props.value;
     return (
       <div>
         <div style={{ width: '40%', float: 'left', paddingRight: '10px' }}>
-          <InputAddress onChange={this.updateAddress} />
+          <InputAddress onChange={this.updateAddress} value={location} />
         </div>
-        <span>允许偏差距离<Input addonAfter="米" style={{ width: '30%', paddingLeft: '4px' }} onChange={this.updateDistanceRange} /></span>
+        <span>允许偏差距离<Input addonAfter="米" style={{ width: '30%', paddingLeft: '4px' }} onChange={this.updateDistanceRange} onBlur={this.onBlur} value={fencing} /></span>
       </div>
     );
   }
