@@ -225,7 +225,7 @@ class DataGrid extends  React.Component {
         function getFormatColumn(item) {
           const setWidth = window.tableHasScrollX ? (item.width > 0 ? item.width : 150) : 0;  //后端会给定列宽，没给则默认设置为150
           const style = window.tableHasScrollX ? {
-            width: setWidth,
+            width: setWidth - 4,
             whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -373,7 +373,7 @@ class DataGrid extends  React.Component {
     let props = {};
     if (this.props.width && this.props.height) {
       props = window.tableHasScrollX ? {
-        scroll: { x: this.getColumnsTotalWidth(this.getColumns()), y: this.props.height }
+        scroll: { x: this.getColumnsTotalWidth(this.getColumns()) + 6, y: this.props.height }
       } : {
         scroll: { x: '100%' }
       };

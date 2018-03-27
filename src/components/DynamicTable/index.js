@@ -142,7 +142,7 @@ class DynamicTable extends Component {
       };
       const style = this.props.fixedHeader ? {
         ...normalStyle,
-        width: setWidth
+        width: setWidth - 4
       } : {
         ...normalStyle,
         maxWidth: '340px'
@@ -155,7 +155,7 @@ class DynamicTable extends Component {
         title: field.displayname,
         sorter: this.props.sorter,
         sortOrder: (this.props.sorter && sortFieldAndOrder) ? sortFieldAndOrder.split(' ')[0] === field.fieldname && (sortFieldAndOrder.split(' ')[1] + 'end') : false,
-        width: this.props.fixedHeader ? setWidth + 22 : 0, //21：padding + border
+        width: this.props.fixedHeader ? setWidth + 22 : 0, //22：padding + border
         fixed: this.props.fixedHeader ? (index < this.state.fixedColumnCount ? 'left' : false) : false,
         render: (text, record) => {
           const isLinkField = field === linkField;
@@ -404,11 +404,10 @@ class DynamicTable extends Component {
         return item;
       });
     }
-
     return (
       <div>
         <Table
-          scroll={fixedHeader ? { x: scrollX, y: this.state.height - 316 } : { x: '100%' }}
+          scroll={fixedHeader ? { x: scrollX + 6, y: this.state.height - 316 } : { x: '100%' }}
           className={styles.dynamictable}
           {...restProps}
           columns={columns}
