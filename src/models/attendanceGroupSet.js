@@ -6,6 +6,8 @@ import { routerRedux } from 'dva/router';
 import { getGeneralListProtocol, getListData, addEntcomm, getEntcommDetail, editEntcomm, delEntcomm } from '../services/entcomm';
 import { queryEntityDetail, queryTypes, queryListFilter } from '../services/entity';
 import { queryDataSourceData } from '../services/datasource';
+import { querygroupuser } from '../services/attendance';
+import { getCorrectPager } from '../utils/common';
 
 export default {
   namespace: 'attendanceGroupSet',
@@ -22,7 +24,12 @@ export default {
     simpleSearchKey: 'recname',
     sortFieldAndOrder: null, //当前排序的字段及排序顺序
     formData: null,
-    classDataSource: [] //班次数据源
+    classDataSource: [], //班次数据源
+    detailPageTotal: 0,
+    detailList: [],
+    detailQueries: {
+      deptId: '7f74192d-b937-403f-ac2a-8be34714278b'
+    }
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -30,6 +37,8 @@ export default {
         if (location.pathname === '/attendancegroupset') {
           const entityId = '5b725b4a-0ac2-40cb-8e9d-0ac71c66caee'; //match[1]
           dispatch({ type: 'init', payload: entityId });
+        } else if (location.pathname === '/attendancegroupset/detail') {
+          dispatch({ type: 'searchdetail', payload: location.query });
         } else {
           dispatch({ type: 'resetState' });
         }
@@ -57,7 +66,14 @@ export default {
           sourceId: '15d608ee-5e8b-47d3-865c-949b2fe437bb',
           keyword: '', pageSize: 1000, pageIndex: 1, queryData: []
         });
-        yield put({ type: 'putState', payload: { classDataSource } });
+        yield put({ type: 'putState', payload: { classDataSource: [
+          {
+            id: '',
+            name: '无',
+            worktime: ''
+          },
+          ...classDataSource
+        ] } });
 
         // 获取简单搜索
         const { data: { simple } } = yield call(queryListFilter, entityId);
@@ -188,6 +204,33 @@ export default {
       } catch (e) {
         message.error(e.message || '删除失败');
       }
+    },
+    *searchdetail({ payload: queries }, { select, call, put }) {
+      const { detailPageTotal, detailQueries } = yield select(state => state.attendanceGroupSet);
+      const { pageIndex, pageSize } = getCorrectPager({ ...queries, detailPageTotal });
+      let { userName = '' } = queries;
+
+      const corrected = { pageIndex, pageSize, userName, deptId: queries.deptId || detailQueries.deptId };
+      yield put({
+        type: 'querygroupuser',
+        payload: corrected
+      });
+    },
+    *querygroupuser({ payload: queries }, { select, call, put }) { //获取考勤组设置列表
+      yield put({ type: 'detailQueries', payload: queries });
+      try {
+        const result = yield call(querygroupuser, queries);
+        yield put({
+          type: 'putState',
+          payload: {
+            detailList: result.data.page,
+            detailPageTotal: result.data.pagecount[0].total
+          }
+        });
+      } catch (e) {
+        console.error(e);
+        message.error(e.message || '获取数据失败');
+      }
     }
   },
   reducers: {
@@ -208,6 +251,9 @@ export default {
     },
     queries(state, { payload: queries }) {
       return { ...state, queries };
+    },
+    detailQueries(state, { payload: detailQueries }) {
+      return { ...state, detailQueries };
     },
     queryListSuccess(state, { payload: { list, total } }) {
       return {
@@ -243,7 +289,12 @@ export default {
         simpleSearchKey: 'recname',
         sortFieldAndOrder: null, //当前排序的字段及排序顺序
         formData: null,
-        classDataSource: []
+        classDataSource: [],
+        detailPageTotal: 0,
+        detailList: [],
+        detailQueries: {
+          deptId: '7f74192d-b937-403f-ac2a-8be34714278b'
+        }
       };
     }
   }

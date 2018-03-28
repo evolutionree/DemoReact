@@ -7,7 +7,7 @@ import { connect } from 'dva';
 import _ from 'lodash';
 import WorkDaySet from './component/WorkDaySet';
 import OtherDaySetWrap from './component/OtherDaySetWrap';
-import SelectDept from './component/SelectDept';
+import SelectUser from '../../components/DynamicForm/controls/SelectUser';
 import AddressSet from './component/AddressSet';
 import classnames from 'classnames';
 
@@ -42,11 +42,14 @@ class AddForm extends React.Component {
   }
 
   componentValueRequire = (fileName, rule, value, callback) => {
-    const form = this.props.form;
     console.log(JSON.stringify(value))
     switch (fileName) {
-      case 'workdayset':
-        callback();
+      case 'addressset':
+        if (!value.location || !value.fencing) {
+          callback('请完成考勤点设置');
+        } else {
+          callback();
+        }
         break;
     }
   }
@@ -60,9 +63,12 @@ class AddForm extends React.Component {
           label="考勤组名称"
         >
           {getFieldDecorator('recname', {
-            initialValue: ''
+            initialValue: '',
+            rules: [{
+              required: true, message: '请输入考勤组名称'
+            }]
           })(
-            <Input placeholder="请输入考勤组名称" />
+            <Input placeholder="请输入考勤组名称" maxLength={10} />
           )}
         </FormItem>
         <FormItem
@@ -70,9 +76,12 @@ class AddForm extends React.Component {
           label="考勤组负责人"
         >
           {getFieldDecorator('recmanager', {
-            initialValue: ''
+            initialValue: '',
+            rules: [{
+              required: true, message: '请设置考勤组负责人'
+            }]
           })(
-            <Input placeholder="请输入负责人名称" />
+            <SelectUser />
           )}
         </FormItem>
         {/*<FormItem*/}
@@ -90,9 +99,11 @@ class AddForm extends React.Component {
           label="考勤"
         >
           {getFieldDecorator('attendancetype', {
-            initialValue: ''
+            initialValue: '1',
+            validateTrigger: 'onChange',
+            valuePropName: 'checked'
           })(
-            <Checkbox>固定班制</Checkbox>
+            <Checkbox disabled>固定班制</Checkbox>
           )}
         </FormItem>
         <FormItem
@@ -100,12 +111,7 @@ class AddForm extends React.Component {
           label="工作日设置"
         >
           {getFieldDecorator('workdayset', {
-            initialValue: '',
-            rules: [{
-              required: true, message: '请完成工作日设置'
-            }, {
-              validator: this.componentValueRequire.bind(this, 'workdayset')
-            }]
+            initialValue: ''
           })(
             <WorkDaySet />
           )}
@@ -125,7 +131,12 @@ class AddForm extends React.Component {
           label="考勤点设置"
         >
           {getFieldDecorator('addressset', {
-            initialValue: ''
+            initialValue: '',
+            rules: [{
+              required: true, message: '请完成考勤点设置'
+            }, {
+              validator: this.componentValueRequire.bind(this, 'addressset')
+            }]
           })(
             <AddressSet />
           )}

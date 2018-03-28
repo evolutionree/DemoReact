@@ -144,7 +144,7 @@ function AttendanceGroupSet({
           onChange: (keys, items) => selectItems(items)
         }}
         linkUrl={(textView, field, record) => (
-          'attendancegroupset/detail'
+          'attendancegroupset/detail?groupname=' + encodeURIComponent(record.recname)
         )}
       />
       <AdvanceSearchModal />

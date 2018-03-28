@@ -7,38 +7,20 @@ import AddForm from './AddForm';
 import { connect } from 'dva';
 
 const defaultFormValue = {
+  recname: '',
+  recmanager: '',
+  attendancetype: 1,
   workdayset: {
-    monschedule: {
-      checkbox: 0,
-      class: '81f58fa9-f6ad-43b8-ad2a-4139d6861dc9'
-    },
-    tuesschedule: {
-      checkbox: 0,
-      class: '81f58fa9-f6ad-43b8-ad2a-4139d6861dc9'
-    },
-    wednesschedule: {
-      checkbox: 0,
-      class: '81f58fa9-f6ad-43b8-ad2a-4139d6861dc9'
-    },
-    thursschedule: {
-      checkbox: 0,
-      class: '81f58fa9-f6ad-43b8-ad2a-4139d6861dc9'
-    },
-    frischedule: {
-      checkbox: 0,
-      class: '81f58fa9-f6ad-43b8-ad2a-4139d6861dc9'
-    },
-    saturschedule: {
-      checkbox: 0,
-      class: '81f58fa9-f6ad-43b8-ad2a-4139d6861dc9'
-    },
-    sunschedule: {
-      checkbox: 0,
-      class: '81f58fa9-f6ad-43b8-ad2a-4139d6861dc9'
-    }
+    monschedule: { id: '', name: '' },
+    tuesschedule: { id: '', name: '' },
+    wednesschedule: { id: '', name: '' },
+    thursschedule: { id: '', name: '' },
+    frischedule: { id: '', name: '' },
+    saturschedule: { id: '', name: '' },
+    sunschedule: { id: '', name: '' }
   },
   otherdayset: {
-    specworkdayset: [{ date: '2018-01-01', class: '81f58fa9-f6ad-43b8-ad2a-4139d6861dc9' }],
+    specworkdayset: [],
     ondutyset: []
   },
   addressset: {
@@ -80,8 +62,8 @@ class AddGroupModal extends Component {
       sunschedule: formData.sunschedule
     };
     newFormData.otherdayset = {
-      specworkdayset: formData.specworkdayset,
-      ondutyset: formData.ondutyset
+      specworkdayset: JSON.parse(formData.specworkdayset),
+      ondutyset: JSON.parse(formData.ondutyset)
     };
     newFormData.addressset = {
       location: formData.location,
@@ -91,7 +73,6 @@ class AddGroupModal extends Component {
   }
 
   handleOk = () => {
-    console.log(JSON.stringify(this.state.FormValue));
     this.form.validateFields({ force: true }, (err, values) => {
       if (err) {
         return message.error('请检查表单');
@@ -112,7 +93,6 @@ class AddGroupModal extends Component {
         typeid: this.props.entityId,
         fieldData: submitData
       };
-
       this.props.submit(params, this.props.showModals);
     });
   };
@@ -152,7 +132,7 @@ export default connect(
         if (submitType === 'add') {
           dispatch({ type: 'attendanceGroupSet/add', payload: submitData });
         } else {
-          dispatch({ type: 'attendanceClassSet/edit', payload: submitData });
+          dispatch({ type: 'attendanceGroupSet/edit', payload: submitData });
         }
       }
     };

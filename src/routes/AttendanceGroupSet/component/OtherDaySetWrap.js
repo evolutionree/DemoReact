@@ -6,7 +6,6 @@ import OtherDaySet from './OtherDaySet';
 
 class OtherDaySetWrap extends Component {
   static propTypes = {
-    visible: PropTypes.bool
   };
   static defaultProps = {};
 

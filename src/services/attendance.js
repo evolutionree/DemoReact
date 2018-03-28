@@ -17,3 +17,21 @@ export async function queryAttendanceList(params) {
     body: JSON.stringify(params)
   });
 }
+
+/**
+ * 获取考勤组设置列表
+ * @param params
+ * {
+    "deptId":'',    部门id
+    "userName":"",   --用户名搜索
+    "PageIndex":1,
+    "PageSize":10
+  }
+ * @returns {Promise.<Object>}
+ */
+export async function querygroupuser(params) {
+  return request('/api/attendance/querygroupuser', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}

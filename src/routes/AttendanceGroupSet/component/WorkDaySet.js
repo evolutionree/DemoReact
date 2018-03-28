@@ -2,7 +2,7 @@
  * Created by 0291 on 2018/3/6.
  */
 import React, { PropTypes, Component } from 'react';
-import { Modal, message, Spin, Button, Row, Col, Checkbox } from 'antd';
+import { Row, Col } from 'antd';
 import SelectBar from './SelectBar';
 import { connect } from 'dva';
 import _ from 'lodash';
@@ -10,14 +10,14 @@ import Styles from './WorkDaySet.less';
 
 class WorkDaySet extends Component {
   static propTypes = {
-    visible: PropTypes.bool
+
   };
   static defaultProps = {};
 
   constructor(props) {
     super(props);
     this.state = {
-      mainClass: this.props.classDataSource instanceof Array && this.props.classDataSource.length > 0 && this.props.classDataSource[0].id
+      mainClass: ''
     };
   }
 
@@ -33,10 +33,7 @@ class WorkDaySet extends Component {
   changeMainRadio = (value) => {
     let newWeekClass = {};
     for (let i in this.props.value) {
-      newWeekClass[i] = {
-        ...this.props.value[i],
-        class: value
-      };
+      newWeekClass[i] = value;
     }
     this.setState({
       mainClass: value
@@ -46,19 +43,7 @@ class WorkDaySet extends Component {
 
   changeWeekRadio(weekName, value) {
     let newWeekClass = _.cloneDeep(this.props.value);
-    newWeekClass[weekName] = {
-      ...this.props.value[weekName],
-      class: value
-    };
-    this.props.onChange && this.props.onChange(newWeekClass);
-  }
-
-  checkChange(weekName, e) {
-    let newWeekClass = _.cloneDeep(this.props.value);
-    newWeekClass[weekName] = {
-      ...this.props.value[weekName],
-      checkbox: e.target.checked ? 1 : 0
-    };
+    newWeekClass[weekName] = value;
     this.props.onChange && this.props.onChange(newWeekClass);
   }
 
@@ -87,8 +72,8 @@ class WorkDaySet extends Component {
               return (
                 <li key={index}>
                   <Row>
-                    <Col span={12}><Checkbox checked={value[item.value].checkbox === 1} onChange={this.checkChange.bind(this, item.value)} /><span style={{ paddingLeft: '8px' }}>{item.text}</span></Col>
-                    <Col span={12}><SelectBar dataSource={dataSource} value={value[item.value].class} onChange={this.changeWeekRadio.bind(this, item.value)} /></Col>
+                    <Col span={12}><span style={{ paddingLeft: '8px' }}>{item.text}</span></Col>
+                    <Col span={12}><SelectBar dataSource={dataSource} value={value[item.value].id} onChange={this.changeWeekRadio.bind(this, item.value)} /></Col>
                   </Row>
                 </li>
               );

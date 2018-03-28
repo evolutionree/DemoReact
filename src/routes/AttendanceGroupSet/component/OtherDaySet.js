@@ -120,7 +120,7 @@ class OtherDaySet extends Component {
         </div>
         <ul className={Styles.clearfix}>
           {
-            dataSource.map((item, index) => {
+            dataSource && dataSource instanceof Array && dataSource.map((item, index) => {
               return (
                 <li key={index}>
                   <span>{item.date}</span>
@@ -164,7 +164,7 @@ class OtherDaySet extends Component {
                 <Select>
                   {
                     selectDataSource.map((item, index) => {
-                      return <Option key={index} value={item.id}>{`${item.name}(${item.worktime})`}</Option>;
+                      return <Option key={index} value={item.id}>{item.worktime ? `${item.name}(${item.worktime})` : `${item.name}`}</Option>;
                     })
                   }
                 </Select>
