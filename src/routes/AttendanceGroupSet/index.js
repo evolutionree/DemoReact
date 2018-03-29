@@ -88,14 +88,6 @@ function AttendanceGroupSet({
   const { searchData, pageIndex, pageSize } = queries;
   const keyword = (searchData && searchData[simpleSearchKey]) || '';
 
-  const titleStyle = {
-    display: 'inline-block',
-    maxWidth: '340px',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap'
-  };
-
   const defaultToolbarActions = [
     { label: '删除', handler: del, show: checkFunc('EntityDataDelete') },
     { label: '编辑', handler: showEdit, single: true, show: checkFunc('EntityDataEdit') }
