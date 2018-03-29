@@ -2,17 +2,14 @@
  * Created by 0291 on 2018/3/6.
  */
 import React from 'react';
-import { Button, Form, Radio, Input, Checkbox, Select } from 'antd';
-import { connect } from 'dva';
+import { Form, Input } from 'antd';
 import _ from 'lodash';
 import WorkTime from './component/WorkTime';
 import ResetTime from './component/ResetTime';
 import FlexTime from './component/FlexTime';
 import LabelSelect from './component/LabelSelect';
-import classnames from 'classnames';
 
 const FormItem = Form.Item;
-const Option = Select.Option;
 
 const formItemLayout = {
   labelCol: { span: 6 },
@@ -21,7 +18,8 @@ const formItemLayout = {
 
 class AddForm extends React.Component {
   static propTypes = {
-
+    value: React.PropTypes.string,
+    onChange: React.PropTypes.func
   };
   static defaultProps = {
 
@@ -33,16 +31,7 @@ class AddForm extends React.Component {
     };
   }
 
-  componentWillMount() {
-
-  }
-
-  componentWillReceiveProps(nextProps) {
-
-  }
-
   componentValueRequire = (fileName, rule, value, callback) => {
-    const form = this.props.form;
     switch (fileName) {
       case 'workTime':
         if (!value.startworktime || !value.offworktime) {

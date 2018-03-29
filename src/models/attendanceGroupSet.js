@@ -6,7 +6,7 @@ import { routerRedux } from 'dva/router';
 import { getGeneralListProtocol, getListData, addEntcomm, getEntcommDetail, editEntcomm, delEntcomm } from '../services/entcomm';
 import { queryEntityDetail, queryTypes, queryListFilter } from '../services/entity';
 import { queryDataSourceData } from '../services/datasource';
-import { querygroupuser } from '../services/attendance';
+import { querygroupuser, addgroupuser } from '../services/attendance';
 import { getCorrectPager } from '../utils/common';
 
 export default {
@@ -29,7 +29,8 @@ export default {
     detailList: [],
     detailQueries: {
       deptId: '7f74192d-b937-403f-ac2a-8be34714278b'
-    }
+    },
+    bindAttenceLoading: false
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -231,6 +232,28 @@ export default {
         console.error(e);
         message.error(e.message || '获取数据失败');
       }
+    },
+    *bindAttence({ payload: submitData }, { select, call, put }) {
+      yield put({ type: 'putState', payload: { bindAttenceLoading: true } });
+      try {
+        yield call(addgroupuser, submitData);
+        yield put({ type: 'showModals', payload: '' });
+        yield put({ type: 'refreshPage', payload: '' });
+        yield put({ type: 'putState', payload: { bindAttenceLoading: false } });
+      } catch (e) {
+        yield put({ type: 'putState', payload: { bindAttenceLoading: false } });
+        console.error(e);
+        message.error(e.message || '分组失败');
+      }
+    },
+    *refreshPage({ payload: payload }, { select, put }) {
+      const { query } = yield select(
+        ({ routing }) => routing.locationBeforeTransitions
+      );
+      yield put(routerRedux.replace({
+        pathname: '/attendancegroupset/detail',
+        query: query
+      }));
     }
   },
   reducers: {
@@ -294,7 +317,8 @@ export default {
         detailList: [],
         detailQueries: {
           deptId: '7f74192d-b937-403f-ac2a-8be34714278b'
-        }
+        },
+        bindAttenceLoading: false
       };
     }
   }

@@ -17,10 +17,6 @@ class ResetTime extends Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-
-  }
-
   timeChange = (value) => {
     this.props.onChange && this.props.onChange({
       startworktime: value[0],

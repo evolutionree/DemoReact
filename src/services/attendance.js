@@ -35,3 +35,21 @@ export async function querygroupuser(params) {
     body: JSON.stringify(params)
   });
 }
+
+
+/**
+ * 班组人员绑定
+ * @param params
+ * {
+    "DeptSelect":[{id, name}],    部门id
+    "UserSelect":[{id, name}],   --用户名搜索
+    "ScheduleGroup":{id, name},
+  }
+ * @returns {Promise.<Object>}
+ */
+export async function addgroupuser(params) {
+  return request('/api/attendance/addgroupuser', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}

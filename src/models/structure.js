@@ -15,7 +15,8 @@ import {
   updateDeptStatus
 } from '../services/structure';
 import { registerUser } from '../services/authentication';
-
+import { queryDataSourceData } from '../services/datasource';
+import { addgroupuser } from '../services/attendance';
 
 function getRootId(tree) {
   const rootFolder = _.find(tree, ['nodepath', 0]);
@@ -47,12 +48,14 @@ export default {
     currentItems: [],
     showModals: '',
     modalPending: false,
-    showDisabledDepts: false
+    showDisabledDepts: false,
+    attenceGroupDataSource: []
   },
   subscriptions: {
     setup({ dispatch, history }) {
       return history.listen(location => {
         if (location.pathname === '/structure') {
+          dispatch({ type: 'init' });
           dispatch({ type: 'queryList' });
         } else {
           dispatch({ type: 'resetState' });
@@ -61,6 +64,14 @@ export default {
     }
   },
   effects: {
+    *init({ payload }, { select, call, put }) {
+      // 获取考勤组数据源
+      const { data: { page: attenceGroupDataSource } } = yield call(queryDataSourceData, {
+        sourceId: 'b241f8e1-2e9d-4a22-9b6a-3e4c93f1de01',
+        keyword: '', pageSize: 1000, pageIndex: 1, queryData: []
+      });
+      yield put({ type: 'putState', payload: { attenceGroupDataSource: attenceGroupDataSource } });
+    },
     *search({ payload }, { select, call, put }) {
       const location = yield select(({ routing }) => routing.locationBeforeTransitions);
       const { pathname, query } = location;
@@ -281,6 +292,24 @@ export default {
         yield put({ type: 'queryList' });
       } catch (e) {
         message.error(e.message || '操作失败');
+      }
+    },
+    *bindAttence({ payload: groupObj }, { select, call, put }) {
+      const { currentItems } = yield select(state => state.structure);
+      const UserSelect = currentItems.map(item => {
+        return { name: item.accountname, id: item.accountid };
+      })
+      try {
+        yield call(addgroupuser, {
+          DeptSelect: [],
+          UserSelect,
+          ScheduleGroup: groupObj
+        });
+        yield put({ type: 'showModals', payload: '' });
+        yield put({ type: 'queryList' });
+      } catch (e) {
+        console.error(e);
+        message.error(e.message || '分组失败');
       }
     }
   },

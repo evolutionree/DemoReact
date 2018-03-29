@@ -2,17 +2,14 @@
  * Created by 0291 on 2018/3/6.
  */
 import React from 'react';
-import { Button, Form, Radio, Input, Checkbox, Select } from 'antd';
-import { connect } from 'dva';
+import { Form, Input, Checkbox } from 'antd';
 import _ from 'lodash';
 import WorkDaySet from './component/WorkDaySet';
 import OtherDaySetWrap from './component/OtherDaySetWrap';
 import SelectUser from '../../components/DynamicForm/controls/SelectUser';
 import AddressSet from './component/AddressSet';
-import classnames from 'classnames';
 
 const FormItem = Form.Item;
-const Option = Select.Option;
 
 const formItemLayout = {
   labelCol: { span: 6 },
@@ -42,7 +39,6 @@ class AddForm extends React.Component {
   }
 
   componentValueRequire = (fileName, rule, value, callback) => {
-    console.log(JSON.stringify(value))
     switch (fileName) {
       case 'addressset':
         if (!value.location || !value.fencing) {
@@ -84,16 +80,6 @@ class AddForm extends React.Component {
             <SelectUser />
           )}
         </FormItem>
-        {/*<FormItem*/}
-          {/*{...formItemLayout}*/}
-          {/*label="参与考勤人员"*/}
-        {/*>*/}
-          {/*{getFieldDecorator('3', {*/}
-            {/*initialValue: ''*/}
-          {/*})(*/}
-            {/*<SelectDept />*/}
-          {/*)}*/}
-        {/*</FormItem>*/}
         <FormItem
           {...formItemLayout}
           label="考勤"

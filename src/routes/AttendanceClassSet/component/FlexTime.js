@@ -3,12 +3,9 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { Select, Checkbox } from 'antd';
-import { connect } from 'dva';
-const Option = Select.Option;
 
 class FlexTime extends Component {
   static propTypes = {
-    visible: PropTypes.bool
   };
   static defaultProps = {};
 

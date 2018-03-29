@@ -88,8 +88,8 @@ function AttendanceClassSet({
   };
 
   const defaultToolbarActions = [
-    { label: '删除', handler: del, show: checkFunc('EntityDataDelete') },
-    { label: '编辑', handler: showEdit, single: true, show: checkFunc('EntityDataEdit') }
+    { label: '删除', handler: del },
+    { label: '编辑', handler: showEdit, single: true }
   ];
 
 

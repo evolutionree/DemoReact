@@ -24,7 +24,6 @@ class TimePickerRange extends Component {
   }
 
   onChange = (type, time, timeString) => {
-    console.log(moment(timeString, format).unix() , moment(this.props.value[0], format).unix())
     if (type === 'endTime' && moment(timeString, format).unix() < moment(this.props.value[0], format).unix()) {
       message.warning('结束时间不能小于开始时间');
       return;

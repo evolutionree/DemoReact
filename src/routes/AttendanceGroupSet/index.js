@@ -9,7 +9,6 @@ import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import DynamicTable from '../../components/DynamicTable/index';
 import connectPermission from '../../models/connectPermission';
-import AdvanceSearchModal from './AdvanceSearchModal';
 import AddGroupModal from './AddGroupModal';
 
 const Option = Select.Option;
@@ -44,10 +43,6 @@ function AttendanceGroupSet({
     });
   }
 
-  function showDetail(record) {
-
-  }
-
   function showEdit() {
     dispatch({
       type: 'attendanceGroupSet/queryDetail',
@@ -59,9 +54,6 @@ function AttendanceGroupSet({
     });
   }
 
-  function advanceSearch() {
-    dispatch({ type: 'attendanceGroupSet/showModals', payload: 'advanceSearch' });
-  }
   function del() {
     Modal.confirm({
       title: '确定删除选中数据吗？',
@@ -109,7 +101,6 @@ function AttendanceGroupSet({
           >
             搜索
           </Search>
-          <Button onClick={advanceSearch} style={{ marginLeft: '10px', height: '31px' }}>高级搜索</Button>
           <Icon type="setting" onClick={openSetHeader} style={{ fontSize: '20px', marginLeft: '10px', cursor: 'pointer', color: '#9ba1ad', position: 'relative', top: '2px' }} />
         </Toolbar.Right>
       </Toolbar>
@@ -127,8 +118,6 @@ function AttendanceGroupSet({
           total,
           pageSize,
           current: pageIndex
-          // onChange: val => search({ pageIndex: val }),
-          // onShowSizeChange: (curr, size) => search({ pageSize: size })
         }}
         onChange={handleTableChange}
         rowSelection={{
@@ -136,10 +125,9 @@ function AttendanceGroupSet({
           onChange: (keys, items) => selectItems(items)
         }}
         linkUrl={(textView, field, record) => (
-          'attendancegroupset/detail?groupname=' + encodeURIComponent(record.recname)
+          'attendancegroupset/detail?groupname=' + encodeURIComponent(record.recname) + '&groupid=' + record.recid
         )}
       />
-      <AdvanceSearchModal />
       <AddGroupModal />
     </Page>
   );

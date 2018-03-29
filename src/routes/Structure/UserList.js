@@ -7,6 +7,7 @@ import Search from '../../components/Search';
 import styles from './Structure.less';
 import ChangeDeptModal from './ChangeDeptModal';
 import SelectRole from "../../components/SelectRole";
+import BindAttence from './BindAttence';
 
 const Option = Select.Option;
 const Column = Table.Column;
@@ -28,7 +29,8 @@ function UserList({
   revertPassword,
   toggleSetLeader,
   importData,
-  currentUser
+  currentUser,
+   bindAttence
 }) {
   function exportData() {
     const params = JSON.stringify(_.mapValues({ ...queries, pageIndex: 1, pageSize: 65535 }, val => val + ''));
@@ -53,7 +55,9 @@ function UserList({
           { label: '取消设为领导', handler: toggleSetLeader, single: true,
             show: () => checkFunc('SetLeader') && !!currentItems[0].isleader },
           { label: '设为领导', handler: toggleSetLeader, single: true,
-            show: () => checkFunc('SetLeader') && !currentItems[0].isleader }
+            show: () => checkFunc('SetLeader') && !currentItems[0].isleader },
+          { label: '绑定考勤组', handler: bindAttence, single: false,
+            show: () => checkFunc('SetLeader') }
         ]}
       >
         {/*<SelectRole value={queries.roleId} onChange={search.bind(null, 'roleId')} style={{ width: '160px' }} />*/}
@@ -110,6 +114,7 @@ function UserList({
         <Column title="最后更新时间" dataIndex="recupdated" key="recupdated" render={text => <span>{text}</span>} />
       </Table>
       <ChangeDeptModal />
+      <BindAttence />
     </div>
   );
 }
@@ -156,6 +161,9 @@ export default connect(
       },
       toggleSetLeader: () => {
         dispatch({ type: 'structure/toggleSetLeader' });
+      },
+      bindAttence: () => {
+        dispatch({ type: 'structure/showModals', payload: 'bindAttence' });
       },
       importData: () => {
         dispatch({
