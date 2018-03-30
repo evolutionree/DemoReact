@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import * as _ from 'lodash';
-import { queryTabsList, delEntcomm, delRelItem } from '../services/entcomm';
+import { queryTabsList, delEntcomm, delRelItem, getGeneralListProtocol } from '../services/entcomm';
 import { queryMobFieldVisible, queryEntityDetail,queryTypes, DJCloudCall } from '../services/entity';
 import { parseConfigData } from '../components/ListStylePicker';
 
@@ -35,7 +35,8 @@ export default {
     iconField: null,
     listFields: [],
     currItem: null, // 当前展示记录id
-    showModals: ''
+    showModals: '',
+    protocol: []
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -62,8 +63,12 @@ export default {
       yield put({ type: 'fetchList' });
       const { relEntityId } = yield select(modelSelector);
       // 获取实体类型
-      const { data: { entitytypepros: entityTypes } } = yield call(queryTypes, { entityId:relEntityId });
+      const { data: { entitytypepros: entityTypes } } = yield call(queryTypes, { entityId: relEntityId });
       yield put({ type: 'entityTypes', payload: entityTypes });
+
+      // 获取协议
+      const { data: protocol } = yield call(getGeneralListProtocol, { typeId: relEntityId });
+      yield put({ type: 'protocol', payload: protocol });
     },
     *queryEntityDetail(action, { select, call, put }) {
       // const { relEntityId } = yield select(modelSelector);
@@ -186,6 +191,9 @@ export default {
         entityTypes
       };
     },
+    protocol(state, { payload: protocol }) {
+      return { ...state, protocol };
+    },
     resetState() {
       return {
         relId: '',
@@ -197,7 +205,8 @@ export default {
         iconField: null,
         listFields: [],
         currItem: null,
-        showModals: ''
+        showModals: '',
+        protocol: []
       };
     }
   }

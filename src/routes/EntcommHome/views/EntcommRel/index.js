@@ -8,6 +8,7 @@ import DetailModal from './DetailModal';
 import Avatar from '../../../../components/Avatar';
 import RelEntityAddModal from './RelEntityAddModal';
 import connectPermission from "../../../../models/connectPermission";
+import DynamicTable from '../../../../components/DynamicTable/index';
 
 function EntcommRel({
   list,
@@ -19,12 +20,23 @@ function EntcommRel({
   addRelEntity,
   tabInfo,
   checkFunc,
-  call //拨打客户联系人电话
+  call, //拨打客户联系人电话
+  protocol
 }) {
   const callHandler = (mobilephone, e) => {
     e.stopPropagation();
     call(mobilephone);
   }
+
+  function handleTableChange(pagination, filters, sorter) {
+    const searchOrder = sorter.field ? (sorter.field + (sorter.order === 'ascend' ? ' asc' : ' desc')) : ''
+    // search({
+    //   pageIndex: pagination.current,
+    //   pageSize: pagination.pageSize,
+    //   searchOrder: searchOrder
+    // });
+  }
+
   return (
     <div className={styles.pagecontainer}>
       {checkFunc('EntityDataAdd') && <Button onClick={addRelEntity} style={{ marginBottom: '10px' }}>{`新增${tabInfo.entityname || ''}`}</Button>}
@@ -64,6 +76,28 @@ function EntcommRel({
       ) : (
         <div><Icon type="frown-o" /> 暂无数据</div>
       )}
+      <DynamicTable
+        sorter={true}
+        sortFieldAndOrder={null}
+        entityId={tabInfo.relentityid}
+        protocol={protocol}
+        rowKey="recid"
+        dataSource={list}
+        total={10}
+        fixedHeader={true}
+        pagination={{
+          total: 10,
+          pageSize: 10,
+          current: 1
+          // onChange: val => search({ pageIndex: val }),  改用table提供的onChange事件
+          // onShowSizeChange: (curr, size) => search({ pageSize: size })
+        }}
+        onChange={handleTableChange}
+        // rowSelection={{
+        //   selectedRowKeys: currItems.map(item => item.recid),
+        //   onChange: (keys, items) => selectItems(items)
+        // }}
+      />
       <DetailModal />
       <RelEntityAddModal />
     </div>
@@ -73,7 +107,7 @@ function EntcommRel({
 export default connect(
   state => {
     const { relTabs } = state.entcommHome;
-    const { relId, relEntityId } = state.entcommRel;
+    const { relId, relEntityId, protocol } = state.entcommRel;
     let tabInfo = {};
     if (relTabs.length && relId && relEntityId) {
       tabInfo = _.find(relTabs, item => {
@@ -82,7 +116,8 @@ export default connect(
     }
     return {
       ...state.entcommRel,
-      tabInfo
+      tabInfo,
+      protocol
     };
   },
   dispatch => {
