@@ -590,6 +590,7 @@ class EditMailPanel extends Component {
         title: '还有附件未上传完成',
         content: '您确定关闭？',
         onOk: () => {
+          this.umEditor.setContent('');
           this.setState({
             fileList: [],
             uploadingFiles: []
@@ -603,6 +604,7 @@ class EditMailPanel extends Component {
         }
       });
     } else {
+      this.umEditor.setContent('');
       this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: '' } });
       this.props.dispatch({ type: 'mails/reloadCatalogTree' });
       this.props.dispatch({ type: 'mails/queryMailList' });
