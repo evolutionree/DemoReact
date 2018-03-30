@@ -6,7 +6,7 @@ import { connect } from 'dva';
 import { Select, Icon, Button, Menu, Modal, message, Checkbox, Input } from 'antd';
 import classnames from 'classnames';
 
-function EntityOfficeSet({
+function EntityAttenceSet({
                          createButton
                        }) {
 
@@ -37,7 +37,7 @@ function EntityOfficeSet({
 }
 
 export default connect(
-  state => state.entityOfficeSet,
+  state => state.entityAttenceSet,
   dispatch => {
     return {
       createButton() {
@@ -45,4 +45,4 @@ export default connect(
       }
     };
   }
-)(EntityOfficeSet);
+)(EntityAttenceSet);

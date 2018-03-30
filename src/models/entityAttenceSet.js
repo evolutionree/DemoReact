@@ -6,14 +6,14 @@ import { message } from 'antd';
 import { queryFields } from '../services/entity';
 
 export default {
-  namespace: 'entityOfficeSet',
+  namespace: 'entityAttenceSet',
   state: {
 
   },
   subscriptions: {
     setup({ dispatch, history }) {
       return history.listen(location => {
-        const pathReg = /^\/entity-config\/([^/]+)\/([^/]+)\/officeset/;
+        const pathReg = /^\/entity-config\/([^/]+)\/([^/]+)\/attenceset/;
         const match = location.pathname.match(pathReg);
         if (match) {
           const entityId = match[1];

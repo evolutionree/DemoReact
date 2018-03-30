@@ -26,7 +26,7 @@ function EntityConfig({
     <LinkTab key="3" to={`/entity-config/${entityId}/${entityType}/rules`}>字段属性设置</LinkTab>,
     <LinkTab key="4" to={`/entity-config/${entityId}/${entityType}/menus`}>常用筛选列表</LinkTab>,
     <LinkTab key="5" to={`/entity-config/${entityId}/${entityType}/tabs`}>页签设置</LinkTab>,
-    <LinkTab key="6" to={`/entity-config/${entityId}/${entityType}/officeset`}>外勤设置</LinkTab>
+    <LinkTab key="6" to={`/entity-config/${entityId}/${entityType}/attenceset`}>外勤设置</LinkTab>
   ];
   const tabbar = (
     <LinkTab.Group>
