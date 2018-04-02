@@ -141,6 +141,10 @@ function EntcommList({
     });
   }
 
+  function callHandler(mobilephone) {
+    dispatch({ type: 'entcommApplication/call', payload: mobilephone });
+  }
+
   let dynamicTableRef;
   function openSetHeader() {
     dynamicTableRef.getWrappedInstance().openSetCustomHeaders();
@@ -232,6 +236,7 @@ function EntcommList({
           // onShowSizeChange: (curr, size) => search({ pageSize: size })
         }}
         onChange={handleTableChange}
+        onCall={callHandler}
         rowSelection={{
           selectedRowKeys: currItems.map(item => item.recid),
           onChange: (keys, items) => selectItems(items)

@@ -201,9 +201,9 @@ class DetailModal extends Component {
             {this.props.checkFunc('EntityDataEdit') && <span onClick={this.startEdit}>
               <Icon type="edit" /> 编辑
             </span>}
-            {this.props.checkFunc('EntityDataDelete') && <span onClick={this.handleDel}>
-              <Icon type="delete" /> 删除
-            </span>}
+            {/*{this.props.checkFunc('EntityDataDelete') && <span onClick={this.handleDel}>*/}
+              {/*<Icon type="delete" /> 删除*/}
+            {/*</span>}*/}
           </div>
         )}
       </div>

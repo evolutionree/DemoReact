@@ -2,7 +2,7 @@ import { message } from 'antd';
 import _ from 'lodash';
 import { routerRedux } from 'dva/router';
 import { getGeneralListProtocol, getListData, delEntcomm, transferEntcomm, getFunctionbutton, extraToolbarClickSendData, savemailowner } from '../services/entcomm';
-import { queryMenus, queryEntityDetail, queryTypes, queryListFilter } from '../services/entity';
+import { queryMenus, queryEntityDetail, queryTypes, queryListFilter, DJCloudCall } from '../services/entity';
 
 export default {
   namespace: 'entcommApplication',
@@ -211,6 +211,33 @@ export default {
         yield put({ type: 'queryList' });
       } catch (e) {
         message.error(e.message || '删除失败');
+      }
+    },
+    *call({ payload: mobilephone }, { select, call, put }) {
+      try {
+        const params = {
+          subject: {
+            called: mobilephone, //被叫人手机号码
+            caller: ''//主叫人手机号码（Web可以不传，服务自行查询）
+          },
+          info: {
+            appID: 'eb9977aee4cce6fea895091c10f1ec00'//应用ID,暂时写死
+          },
+          timestamp: Date.parse(new Date()) / 1000 //当前时间戳
+        };
+
+        if (mobilephone) {
+          const data = yield call(DJCloudCall, params);
+          if (data.error_code === 0) {
+            message.success('云平台将给您的号码拨打电话，请留意!');
+          } else {
+            message.error(data.error_msg);
+          }
+        } else {
+          message.warning('当前无可拨打号码，无法拨通');
+        }
+      } catch (e) {
+        message.error(e.message || '拨打失败');
       }
     },
     *transfer({ payload: targetUser }, { select, call, put }) {

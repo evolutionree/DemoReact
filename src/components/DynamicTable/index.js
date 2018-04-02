@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { Table, Modal, Button, message } from 'antd';
+import { Table, Modal, Button, message, Icon } from 'antd';
 import { Link } from 'dva/router';
 import { connect } from 'dva';
 import _ from 'lodash';
@@ -295,6 +295,9 @@ class DynamicTable extends Component {
         return this.renderTable(cellText, field, record);
       case 1:
         return this.renderInputText(cellText, field, record);
+        //手机
+      case 10:
+        return this.renderTelePhone(cellText)
       // 普通文本，日期
       case 1012:
       case 2:
@@ -305,7 +308,6 @@ class DynamicTable extends Component {
       case 7:
       case 8:
       case 9:
-      case 10:
       case 11:
       case 12:
       case 13:
@@ -337,6 +339,22 @@ class DynamicTable extends Component {
     }
     return <span title={text_}>{text_}</span>;
   };
+
+  renderTelePhone = (text) => {
+    if (this.props.entityId === 'e450bfd7-ff17-4b29-a2db-7ddaf1e79342') {
+      return (
+        <span>
+          <span>{text}</span>
+          <span className={styles.call} onClick={() => { this.props.onCall && this.props.onCall(text) }}>
+            <Icon type="phone" />
+          </span>
+        </span>
+      );
+    } else {
+      return <span>{text}</span>;
+    }
+  };
+
   renderAvatar = (fileId, field) => {
     const { headShape } = field.fieldconfig || {};
     const url = `/api/fileservice/read?fileid=${fileId}&filetype=3`;
