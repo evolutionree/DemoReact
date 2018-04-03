@@ -3,9 +3,10 @@
  * desc: 设置自定义表头 Table
  */
 import React, { Component } from 'react';
-import { Modal, Button, Row, Col, InputNumber, Switch, Checkbox } from 'antd';
+import { Modal, Button, Row, Col, InputNumber, Switch, Checkbox, Icon } from 'antd';
 import _ from 'lodash';
 import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-hoc';
+import storage from '../utils/storage';
 import Styles from './CustomHeaderModal.less';
 
 let customTableBodyRef;
@@ -62,7 +63,8 @@ class CustomHeaderModal extends Component {
     super(props);
     this.state = {
       dataSource: this.setSeqNum(this.props.dataSource),
-      FixedColumnCount: this.props.fixedColumnCount
+      FixedColumnCount: this.props.fixedColumnCount,
+      tipInfoVisible: storage.getLocalItem('setHeaderTipInfoHide') == 1 ? false : true
     };
   }
 
@@ -165,6 +167,13 @@ class CustomHeaderModal extends Component {
     });
   }
 
+  hideTipInfo = () => {
+    storage.setLocalItem('setHeaderTipInfoHide', 1);
+    this.setState({
+      tipInfoVisible: false
+    });
+  }
+
   render() {
     let dataSource = this.state.dataSource;
     return (
@@ -196,6 +205,10 @@ class CustomHeaderModal extends Component {
             </Row>
           </div>
           <SortableList items={dataSource} onSortEnd={this.onSortEnd} widthChange={this.widthChange.bind(this)} isDisplayChange={this.isDisplayChange.bind(this)} />
+        </div>
+        <div className={Styles.tipInfo} style={{ display: this.state.tipInfoVisible ? 'block' : 'none' }}>
+          拖拽行可以调整排列顺序哦，试试吧！
+          <Icon type="close" onClick={this.hideTipInfo} />
         </div>
       </Modal>
     );
