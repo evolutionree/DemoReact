@@ -33,12 +33,12 @@ class AttendanceList extends React.Component {
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.fetchList();
   }
 
   componentWillReceiveProps(nextProps) {
-    // debugger;
+    if (this.props.location.key === nextProps.location.key) return;
     const queries = this.getQueries(nextProps);
     this.setState({ queries });
     this.fetchList(queries);
