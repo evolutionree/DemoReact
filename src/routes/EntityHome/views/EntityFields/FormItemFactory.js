@@ -271,7 +271,7 @@ class DataSourceSelect extends React.Component {
 
   render() {
     return (
-      <Select mode={this.props.multiple ? 'multiple' : 'combobox'} value={this.parseValue()} onChange={this.handleChange}>
+      <Select mode={this.props.multiple ? 'multiple' : 'single'} value={this.parseValue()} onChange={this.handleChange}>
         {this.state.options.map(item => (
           <Option value={item.id} key={item.id}>{item.label}</Option>
         ))}
