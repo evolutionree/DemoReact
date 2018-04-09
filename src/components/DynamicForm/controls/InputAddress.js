@@ -18,21 +18,29 @@ class InputAddress extends Component {
 
   constructor(props) {
     super(props);
+    const { address = '', lat = null, lon = null } = this.parseValue(props.value);
     this.state = {
-      inputValue: this.parseValue(props.value).address,
+      inputValue: address,
       modalVisible: false,
       currentPoint: {
-        lat: null,
-        lng: null,
-        address: ''
+        lat,
+        lon,
+        address
       },
       keyword: ''
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { address } = this.parseValue(nextProps.value);
-    this.setState({ inputValue: address });
+    const { address = '', lat = null, lon = null } = this.parseValue(nextProps.value);
+    this.setState({
+      inputValue: address,
+      currentPoint: {
+        lat,
+        lon,
+        address
+      }
+    });
   }
 
   setValue = val => {
@@ -44,7 +52,7 @@ class InputAddress extends Component {
     return {
       address: value.address,
       lat: value.lat,
-      lng: value.lon
+      lon: value.lon
     };
   };
 
@@ -53,13 +61,13 @@ class InputAddress extends Component {
     // this.props.onChange({
     //   address: event.target.value,
     //   lat: obj.lat,
-    //   lon: obj.lng
+    //   lon: obj.lon
     // });
     this.setState({
       inputValue: event.target.value,
       currentPoint: {
         lat: null,
-        lng: null,
+        lon: null,
         address: event.target.value
       }
     });
@@ -70,7 +78,7 @@ class InputAddress extends Component {
     // this.props.onChange({
     //   address: event.target.value,
     //   lat: obj.lat,
-    //   lon: obj.lng
+    //   lon: obj.lon
     // });
     this.props.onChange(this.state.currentPoint);
   };
@@ -81,14 +89,14 @@ class InputAddress extends Component {
   };
 
   initMap = () => {
-    const { address, lat, lng } = this.parseValue(this.props.value);
+    const { address, lat, lon } = this.parseValue(this.props.value);
     const mapOptions = { enableMapClick: false };
     const map = false || (this.map = new BMap.Map(this.mapContainer, mapOptions));
 
     let centerPoint;
     let markerPoint;
-    if (address && lat && lng) {
-      centerPoint = new BMap.Point(lng, lat);
+    if (address && lat && lon) {
+      centerPoint = new BMap.Point(lon, lat);
       markerPoint = centerPoint;
     } else {
       if (address) message.error('无法定位当前地址');
@@ -160,7 +168,7 @@ class InputAddress extends Component {
       currentPoint: {
         address,
         lat: point.lat,
-        lng: point.lng
+        lon: point.lon
       }
     }, () => { this.renderMarker(point, address, shouldCenter); });
   };
@@ -192,7 +200,7 @@ class InputAddress extends Component {
       modalVisible: false,
       currentPoint: {
         lat: null,
-        lng: null,
+        lon: null,
         address: ''
       },
       keyword: ''
@@ -204,7 +212,7 @@ class InputAddress extends Component {
     if (!currentPoint.lat) return message.error('请选择地址');
     this.props.onChange({
       lat: currentPoint.lat,
-      lon: currentPoint.lng,
+      lon: currentPoint.lon,
       address: currentPoint.address
     });
     this.closeModal();
