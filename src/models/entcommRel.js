@@ -158,28 +158,6 @@ export default {
     },
     *queryList(action, { select, call, put }) {
       const { recordId, relId, relEntityId, menus } = yield select(modelSelector);
-      try {
-        // 获取显示字段
-        const { data } = yield call(queryMobFieldVisible, relEntityId);
-        const { iconField, listFields } = parseConfigData(data.fieldmobstyleconfig[0]);
-        yield put({ type: 'putState', payload: { iconField, listFields } });
-
-        // const params = {
-        //   recid: recordId,
-        //   relId,
-        //   relEntityId
-        // };
-        // const { data: { pagedata: list } } = yield call(queryTabsList, params);
-        // yield put({
-        //   type: 'putState',
-        //   payload: {
-        //     list
-        //   }
-        // });
-      } catch (e) {
-        message.error(e.message || '获取数据失败');
-      }
-
       const location = yield select(({ routing }) => routing.locationBeforeTransitions);
       const { query } = location;
 
@@ -188,6 +166,10 @@ export default {
         entityId: relEntityId,
         pageIndex: 1,
         pageSize: 10,
+        relinfo: {
+          recid: recordId,
+          relid: relId
+        },
         menuId: menus.length ? menus[0].menuId : undefined,
         keyword: '',
         isAdvanceQuery: 0,
@@ -244,18 +226,6 @@ export default {
     },
     *del(action, { select, call, put }) {
       const { currItem, relEntityId, relId, recordId, currItems } = yield select(modelSelector);
-      // const { relTabs } = yield select(state => state.entcommHome);
-      // if (relTabs.length && relId && relEntityId) {
-      //   const tabInfo = _.find(relTabs, item => {
-      //     return item.relid === relId && item.relentityid === relEntityId;
-      //   });
-      //   alert(1)
-      //   if (tabInfo && tabInfo.ismanytomany) {
-      //     alert(2)
-      //
-      //   }
-      // }
-
       try {
         const params = {
           entityId: relEntityId,
