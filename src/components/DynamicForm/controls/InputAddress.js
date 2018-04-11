@@ -168,7 +168,7 @@ class InputAddress extends Component {
       currentPoint: {
         address,
         lat: point.lat,
-        lon: point.lon
+        lon: point.lng
       }
     }, () => { this.renderMarker(point, address, shouldCenter); });
   };
