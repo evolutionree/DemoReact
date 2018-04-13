@@ -88,10 +88,10 @@ function EntcommList({
         </Select>&nbsp;
         <span>状态</span>
         <Select style={{ minWidth: '110px' }} value={auditStatus} onChange={val => search({ auditStatus: val })}>
+          <Option key="-1">全部</Option>
           <Option key="0">审批中</Option>
           <Option key="1">通过</Option>
           <Option key="2">不通过</Option>
-          <Option key="-1">全部</Option>
         </Select>&nbsp;&nbsp;
         <span>提交时间</span>&nbsp;
         <DatePicker

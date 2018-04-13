@@ -76,7 +76,7 @@ export default {
         pageIndex: 1,
         pageSize: 10,
         menuId: menus[0].menuId,
-        auditStatus: '0',
+        auditStatus: '-1',
         ...query
       };
       queries.pageIndex = parseInt(queries.pageIndex);
