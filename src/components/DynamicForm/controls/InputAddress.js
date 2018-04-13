@@ -18,29 +18,22 @@ class InputAddress extends Component {
 
   constructor(props) {
     super(props);
-    const { address = '', lat = null, lon = null } = this.parseValue(props.value);
+    const { address } = this.parseValue(props.value);
     this.state = {
       inputValue: address,
       modalVisible: false,
       currentPoint: {
-        lat,
-        lon,
-        address
+        lat: null,
+        lon: null,
+        address: ''
       },
       keyword: ''
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const { address = '', lat = null, lon = null } = this.parseValue(nextProps.value);
-    this.setState({
-      inputValue: address,
-      currentPoint: {
-        lat,
-        lon,
-        address
-      }
-    });
+    const { address = '' } = this.parseValue(nextProps.value);
+    this.setState({ inputValue: address });
   }
 
   setValue = val => {
@@ -57,30 +50,17 @@ class InputAddress extends Component {
   };
 
   onInputChange = event => {
-    // const obj = this.parseValue(this.props.value);
-    // this.props.onChange({
-    //   address: event.target.value,
-    //   lat: obj.lat,
-    //   lon: obj.lon
-    // });
-    this.setState({
-      inputValue: event.target.value,
-      currentPoint: {
-        lat: null,
-        lon: null,
-        address: event.target.value
-      }
-    });
+    this.setState({ inputValue: event.target.value });
   };
 
   onInputBlur = event => {
-    // const obj = this.parseValue(this.props.value);
-    // this.props.onChange({
-    //   address: event.target.value,
-    //   lat: obj.lat,
-    //   lon: obj.lon
-    // });
-    this.props.onChange(this.state.currentPoint);
+    const { address = '', lat = null, lon = null } = this.parseValue(this.props.value);
+    const isInputChanged = event.target.value !== address;
+    this.props.onChange({
+      address: event.target.value,
+      lat: isInputChanged ? null : lat,
+      lon: isInputChanged ? null : lon
+    });
   };
 
   showAddressModal = () => {
@@ -198,11 +178,6 @@ class InputAddress extends Component {
   closeModal = () => {
     this.setState({
       modalVisible: false,
-      currentPoint: {
-        lat: null,
-        lon: null,
-        address: ''
-      },
       keyword: ''
     });
   };
