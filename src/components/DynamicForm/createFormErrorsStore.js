@@ -83,6 +83,7 @@ export default function createFormErrorsStore(WrappedFormComponent, isTable) {
                 }
               });
               if (flag) {
+                // this.validateFields(opts, callback);
                 callback(null, this.processRetValues(retValues));
               } else {
                 callback(err, this.processRetValues(retValues));
@@ -98,11 +99,19 @@ export default function createFormErrorsStore(WrappedFormComponent, isTable) {
       // }
     };
     handleFormValueChange = formValue => {
+      const removeUndefinedProps = obj => {
+        if (!obj) return obj;
+        const _obj = _.cloneDeep(obj);
+        Object.keys(_obj).forEach(k => {
+          if (_obj[k] === undefined) delete _obj[k];
+        });
+        return _obj;
+      };
       this.setState({
         innerFormValue: formValue
       }, () => {
         const values = _.mapValues(formValue, val => val.value);
-        if (!_.isEqual(values, this.props.value)) {
+        if (!_.isEqual(removeUndefinedProps(values), removeUndefinedProps(this.props.value))) {
           this.props.onChange(values);
         }
       });
