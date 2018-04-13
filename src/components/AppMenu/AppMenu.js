@@ -11,12 +11,12 @@ function renderMenus(menus) {
   return menus.map((menu) => {
     if (menu.children && menu.children.length > 0) {
       return (
-        <SubMenu key={menu.name} title={renderLink(menu)}>
+        <SubMenu key={menu.id} title={renderLink(menu)}>
           {renderMenus(menu.children)}
         </SubMenu>
       );
     } else {
-      return <Item key={menu.name}>{renderLink(menu)}</Item>;
+      return <Item key={menu.id}>{renderLink(menu)}</Item>;
     }
   });
 }
