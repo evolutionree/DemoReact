@@ -32,7 +32,8 @@ function EntcommList({
     extraButtonData,
     extraToolbarData,
     showModals,
-    sortFieldAndOrder  //当前排序的字段及排序顺序
+    sortFieldAndOrder,  //当前排序的字段及排序顺序
+    ColumnFilter
   }) {
   function selectItems(items) {
     dispatch({ type: 'entcommApplication/currItems', payload: items });
@@ -145,6 +146,15 @@ function EntcommList({
     dispatch({ type: 'entcommApplication/call', payload: mobilephone });
   }
 
+  function filterChange(filterData) {
+    dispatch({
+      type: 'entcommApplication/putState',
+      payload: { ColumnFilter: filterData }
+    });
+    dispatch({ type: 'entcommApplication/search', payload: { } });
+  }
+
+
   let dynamicTableRef;
   function openSetHeader() {
     dynamicTableRef.getWrappedInstance().openSetCustomHeaders();
@@ -236,6 +246,8 @@ function EntcommList({
           // onShowSizeChange: (curr, size) => search({ pageSize: size })
         }}
         onChange={handleTableChange}
+        ColumnFilter={ColumnFilter || {}}
+        onFilter={filterChange}
         onCall={callHandler}
         rowSelection={{
           selectedRowKeys: currItems.map(item => item.recid),

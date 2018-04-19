@@ -24,7 +24,8 @@ export default {
     extraButtonData: [], //页面动态 按钮数据源
     extraToolbarData: [], //页面toolbar 动态按钮数据源
     dynamicModalData: {},
-    sortFieldAndOrder: null //当前排序的字段及排序顺序
+    sortFieldAndOrder: null, //当前排序的字段及排序顺序
+    ColumnFilter: null //字段查询
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -134,7 +135,7 @@ export default {
     *queryList(action, { select, call, put }) {
       const location = yield select(({ routing }) => routing.locationBeforeTransitions);
       const { query } = location;
-      const { menus, entityId } = yield select(({ entcommApplication }) => entcommApplication);
+      const { menus, entityId, ColumnFilter } = yield select(({ entcommApplication }) => entcommApplication);
       if (!entityId || !menus.length) return;
       const queries = {
         entityId,
@@ -150,6 +151,9 @@ export default {
       queries.isAdvanceQuery = parseInt(queries.isAdvanceQuery);
       if (queries.searchData) {
         queries.searchData = JSON.parse(queries.searchData);
+      }
+      if (ColumnFilter) {
+        queries.ColumnFilter = ColumnFilter;
       }
       if (queries.searchOrder) { //其他查询条件 发生改变  排序保持不变
         yield put({ type: 'putState', payload: { sortFieldAndOrder: queries.searchOrder } });
@@ -376,7 +380,8 @@ export default {
         extraButtonData: [], //页面动态 按钮数据源
         extraToolbarData: [], //页面toolbar 动态按钮数据源
         dynamicModalData: {},
-        sortFieldAndOrder: null //当前排序的字段及排序顺序
+        sortFieldAndOrder: null, //当前排序的字段及排序顺序
+        ColumnFilter: null //字段查询
       };
     }
   }

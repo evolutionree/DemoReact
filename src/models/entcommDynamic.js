@@ -19,7 +19,8 @@ export default {
     showModals: '',
     modalPending: false,
     simpleSearchKey: 'recname',
-    sortFieldAndOrder: null //当前排序的字段及排序顺序
+    sortFieldAndOrder: null, //当前排序的字段及排序顺序
+    ColumnFilter: null //字段查询
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -94,7 +95,7 @@ export default {
     *queryList(action, { select, call, put }) {
       const location = yield select(({ routing }) => routing.locationBeforeTransitions);
       const { query } = location;
-      const { entityId } = yield select(({ entcommDynamic }) => entcommDynamic);
+      const { entityId, ColumnFilter } = yield select(({ entcommDynamic }) => entcommDynamic);
       const queries = {
         entityId,
         pageIndex: 1,
@@ -109,6 +110,9 @@ export default {
       queries.isAdvanceQuery = parseInt(queries.isAdvanceQuery);
       if (queries.searchData) {
         queries.searchData = JSON.parse(queries.searchData);
+      }
+      if (ColumnFilter) {
+        queries.ColumnFilter = ColumnFilter;
       }
       if (queries.searchOrder) { //其他查询条件 发生改变  排序保持不变
         yield put({ type: 'putState', payload: { sortFieldAndOrder: queries.searchOrder } });
@@ -191,7 +195,8 @@ export default {
         showModals: '',
         modalPending: false,
         simpleSearchKey: 'recname',
-        sortFieldAndOrder: null //当前排序的字段及排序顺序
+        sortFieldAndOrder: null, //当前排序的字段及排序顺序
+        ColumnFilter: null //字段查询
       };
     }
   }

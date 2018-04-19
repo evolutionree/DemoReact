@@ -24,7 +24,8 @@ function EntcommList({
                        entityId,
                        currentUser,
                        simpleSearchKey,
-                       sortFieldAndOrder
+                       sortFieldAndOrder,
+                       ColumnFilter
                      }) {
   function search(payload) {
     dispatch({ type: 'entcommDynamic/search', payload });
@@ -50,6 +51,14 @@ function EntcommList({
       pageSize: pagination.pageSize,
       searchOrder: searchOrder
     });
+  }
+
+  function filterChange(filterData) {
+    dispatch({
+      type: 'entcommDynamic/putState',
+      payload: { ColumnFilter: filterData }
+    });
+    dispatch({ type: 'entcommDynamic/search', payload: { } });
   }
 
   let dynamicTableRef;
@@ -107,6 +116,8 @@ function EntcommList({
           current: pageIndex
         }}
         onChange={handleTableChange}
+        ColumnFilter={ColumnFilter || {}}
+        onFilter={filterChange}
         renderLinkField={(text, field, record, props) => (
           <a href="javascript:;" style={titleStyle} title={text} onClick={() => { showDetail(record); }}>{text}</a>
         )}

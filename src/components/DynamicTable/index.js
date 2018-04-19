@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { Table, Modal, Button, message, Icon } from 'antd';
+import { Table, Modal, Button, message, Icon, Input } from 'antd';
 import { Link } from 'dva/router';
 import { connect } from 'dva';
 import _ from 'lodash';
@@ -7,6 +7,7 @@ import moment from 'moment';
 import { getGeneralProtocol, getEntcommDetail, getCustomHeaders, saveCustomHeaders } from '../../services/entcomm';
 import Avatar from '../../components/Avatar';
 import CustomHeaderModal from '../../components/CustomHeaderModal';
+import FilterDrop from './FilterDropComponent/index';
 import styles from './styles.less';
 
 function formatDate(text, fmt) {
@@ -15,6 +16,7 @@ function formatDate(text, fmt) {
   return moment(text, 'YYYY-MM-DD HH:mm:ss').format(fmt.replace(/y/g, 'Y').replace(/d/g, 'D'));
 }
 
+const has_No_Filter_Field = [15, 20, 22];
 class DynamicTable extends Component {
   static propTypes = {
     fixedHeader: false //是否固定表头
@@ -31,7 +33,8 @@ class DynamicTable extends Component {
       width: document.body.clientWidth,
       setCustomHeadersVisible: false, //是否显示 设置表头 Modal
       customProtocol: [], //自定义表列数据
-      fixedColumnCount: 0
+      fixedColumnCount: 0,
+      filterVisible: {}
     };
   }
 
@@ -46,6 +49,7 @@ class DynamicTable extends Component {
   componentWillUnmount() {
     window.removeEventListener('resize', this.onWindowResize);
   }
+
 
   componentWillReceiveProps(nextProps) {
     if(this.props.entityId !== nextProps.entityId) { //不同的实体之间切换页面了  需再次请求最新的表头自定义设置数据
@@ -113,6 +117,33 @@ class DynamicTable extends Component {
     return newProtocol;
   }
 
+  onFilter = (fieldname, value) => { //提交搜索
+    this.hideFilter(fieldname, false);
+    const newColumnFilter = { ...this.props.ColumnFilter };
+    newColumnFilter[fieldname] = value;
+    this.props.onFilter && this.props.onFilter(newColumnFilter);
+  }
+
+  hideFilter = (fieldname, visible) => {
+    const newFilterVisible = { ...this.state.filterVisible };
+    newFilterVisible[fieldname] = visible ? newFilterVisible[fieldname] ? true : false : visible;
+    this.setState({
+      filterVisible: newFilterVisible
+    });
+  }
+
+  toggleShowFilter = (fieldname, e) => { //点击icon[filter]显示/隐藏 搜索框
+    e.nativeEvent.stopImmediatePropagation();
+    const newFilterVisible = { ...this.state.filterVisible };
+    for (let key in newFilterVisible) {
+      newFilterVisible[key] = false;
+    }
+    newFilterVisible[fieldname] = !newFilterVisible[fieldname];
+    this.setState({
+      filterVisible: newFilterVisible
+    });
+  }
+
   getColumns = () => {
     const { protocol, ignoreRecName } = this.props;
 
@@ -157,6 +188,12 @@ class DynamicTable extends Component {
         sortOrder: (this.props.sorter && sortFieldAndOrder) ? sortFieldAndOrder.split(' ')[0] === field.fieldname && (sortFieldAndOrder.split(' ')[1] + 'end') : false,
         width: this.props.fixedHeader ? setWidth + 22 : 0, //22：padding + border
         fixed: this.props.fixedHeader ? (index < this.state.fixedColumnCount ? 'left' : false) : false,
+        filterDropdown: has_No_Filter_Field.indexOf(field.controltype) > -1 ? null : <FilterDrop visible={!!this.state.filterVisible[field.fieldname]} field={field} value={this.props.ColumnFilter[field.fieldname]} onFilter={this.onFilter} hideFilter={this.hideFilter} />,
+        filterIcon: <Icon type="filter" style={{ color: this.props.ColumnFilter[field.fieldname] ? '#108ee9' : '#aaa' }} onClick={this.toggleShowFilter.bind(this, field.fieldname)} />,
+        filterDropdownVisible: !!this.state.filterVisible[field.fieldname], //字段搜索框是否显示
+        onFilterDropdownVisibleChange: () => {
+          return false;
+        },
         render: (text, record) => {
           const isLinkField = field === linkField;
           return (
@@ -425,8 +462,9 @@ class DynamicTable extends Component {
     return (
       <div>
         <Table
-          scroll={fixedHeader ? { x: scrollX + 6, y: this.state.height - 316 } : { x: '100%' }}
+          scroll={fixedHeader ? { x: scrollX + 6, y: this.state.height - 290 } : { x: '100%' }}
           className={styles.dynamictable}
+          style={{ height: this.state.height - 185 }}
           {...restProps}
           columns={columns}
         />
