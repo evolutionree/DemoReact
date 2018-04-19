@@ -313,10 +313,14 @@ class ReportForm extends React.Component {
   }
 
 
-  collapseClickMapShow (name) {
-    let breadcrumbData = this.state.breadcrumbData;
-    breadcrumbData.push(name);
-    this.changeMapShow(name, breadcrumbData);
+  collapseClickMapShow (loading, name) {
+    if (!loading) {
+      let breadcrumbData = this.state.breadcrumbData;
+      breadcrumbData.push(name);
+      this.changeMapShow(name, breadcrumbData);
+    } else {
+      message.warning('正在加载数据中，请稍后请求');
+    }
   }
 
   queryData(item, params) {
@@ -596,7 +600,7 @@ class ReportForm extends React.Component {
         return (
           <div style={{ height: '100%', width: '100%', borderRadius: '4px', padding: '20px', boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)' }}>
             <div style={{ width: '260px', height: '100%', border: '1px solid rgb(212, 208, 208)', float: 'left', overflow: 'auto' }}>
-              <CollapseWrap mapSeriesType={this.state.mapSeriesType} changeMap={this.collapseClickMapShow.bind(this)} onChange={this.collapseValueChange.bind(this)} dataSource={this.getCollapseData(item)} value={this.state.serchValue} />
+              <CollapseWrap mapSeriesType={this.state.mapSeriesType} changeMap={this.collapseClickMapShow.bind(this, this.state[item.datasourcename + 'loading'])} onChange={this.collapseValueChange.bind(this)} dataSource={this.getCollapseData(item)} value={this.state.serchValue} />
             </div>
             <div style={{ width: 'calc(100% - 260px)', height: '100%', float: 'left', paddingLeft: '10px', overflow: 'hidden' }}>
               <BreadCrumb data={this.state.breadcrumbData} onClick={this.breadCrumbClickHandler.bind(this)} />
