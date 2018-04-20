@@ -45,7 +45,8 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       value: PropTypes.any,
       mode: PropTypes.string,
       refEntity: PropTypes.string,
-      refRecord: PropTypes.string
+      refRecord: PropTypes.string,
+      parentJsEngine: PropTypes.object
     };
 
     fieldExpandJS = {};
@@ -167,6 +168,20 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       } else {
         debugMsg(content);
       }
+    };
+
+    getParentForm = () => {
+      if (!this.props.parentJsEngine) return {};
+      return this.props.parentJsEngine.getFormValue();
+    };
+
+    getFormValue = () => {
+      const formValue = {};
+      this.props.fields.forEach(field => {
+        const val = this.getValue(field.fieldname);
+        formValue[field.fieldname] = val;
+      });
+      return formValue;
     };
 
     getValue = fieldName => {

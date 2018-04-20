@@ -320,6 +320,7 @@ class RelTable extends Component {
           onSelect={this.onRowSelect.bind(this, index)}
           ref={formInst => this.arrFormInstance[index] = formInst}
           onFieldControlFocus={this.onRowFieldFocus}
+          parentJsEngine={this.props.jsEngine}
         />
       );
     });

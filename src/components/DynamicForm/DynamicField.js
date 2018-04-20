@@ -19,7 +19,8 @@ class DynamicField extends React.Component {
       maxLength: PropTypes.number
     }),
     fieldLabel: PropTypes.string,
-    fieldId: PropTypes.string
+    fieldId: PropTypes.string,
+    jsEngine: PropTypes.object
   };
   static defaultProps = {
     isAdvanceSearch: false,
@@ -49,6 +50,7 @@ class DynamicField extends React.Component {
       onFocus: this.props.onFocus,
       quoteHandler: this.props.quoteHandler,
       ref: instRef => { this.instRef = instRef; },
+      jsEngine: this.props.jsEngine,
       ...this.props.config
     };
     let ControlComponent = controlMap[this.props.controlType];

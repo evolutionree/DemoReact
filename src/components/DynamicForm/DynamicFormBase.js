@@ -304,6 +304,7 @@ class DynamicFormBase extends Component {
         fieldLabel={displayname}
         onFocus={this.onFieldFocus.bind(this, fieldname)}
         quoteHandler={this.handleQuote.bind(this)}
+        jsEngine={this.props.jsEngine}
       />
     );
   };
