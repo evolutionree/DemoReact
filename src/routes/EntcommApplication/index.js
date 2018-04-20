@@ -238,6 +238,7 @@ function EntcommList({
         dataSource={list}
         total={total}
         fixedHeader={true}
+        otherHeight={186} //页面表格元素除外的元素的总高度
         pagination={{
           total,
           pageSize,

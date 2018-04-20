@@ -134,20 +134,6 @@ export default {
       const searchData = JSON.stringify({ [simpleSearchKey]: keyword || undefined });
       yield put({ type: 'search', payload: { searchData, isAdvanceQuery: 0 } });
     },
-    *selectMenu({ payload: menuId }, { select, call, put }) {
-      yield put({
-        type: 'search',
-        payload: {
-          menuId,
-          searchData: JSON.stringify({}),
-          isAdvanceQuery: 0
-        }
-      });
-    },
-    *advanceSearch({ payload }, { select, call, put }) {
-      const searchData = JSON.stringify(payload);
-      yield put({ type: 'search', payload: { searchData, isAdvanceQuery: 1 } });
-    },
     *queryEntityDetail(action, { select, call, put }) {
       // const { relEntityId } = yield select(modelSelector);
       // const { data: { entityproinfo } } = yield call(queryEntityDetail, relEntityId);

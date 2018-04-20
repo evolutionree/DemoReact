@@ -23,12 +23,14 @@ class DynamicTable extends Component {
     fixedHeader: React.PropTypes.bool,
     sorter: React.PropTypes.bool,
     ColumnFilter: React.PropTypes.object,
-    onFilter: React.PropTypes.func
+    onFilter: React.PropTypes.func,
+    otherHeight: React.PropTypes.number
   };
   static defaultProps = {
     fixedHeader: false, //是否固定表头
     sorter: false, //是否字段排序
-    ColumnFilter: {} //表格列（字段）排序集
+    ColumnFilter: {}, //表格列（字段）排序集
+    otherHeight: 0  //页面其他元素的总高度（除了Table以外的元素）
   };
 
   constructor(props) {
@@ -471,9 +473,9 @@ class DynamicTable extends Component {
     return (
       <div>
         <Table
-          scroll={fixedHeader ? { x: scrollX + 6, y: this.state.height - 290 } : { x: '100%' }}
+          scroll={fixedHeader ? { x: scrollX + 6, y: this.state.height - this.props.otherHeight - 104 } : { x: '100%' }}
           className={styles.dynamictable}
-          style={{ height: this.state.height - 185 }}
+          style={{ height: this.state.height - this.props.otherHeight }}
           {...restProps}
           columns={columns}
         />

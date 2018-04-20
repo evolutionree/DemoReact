@@ -12,7 +12,6 @@ import Search from '../../../../components/Search';
 import DynamicTable from '../../../../components/DynamicTable/index';
 import TransferModal from './TransferModal';
 import MerageModal from './MerageModal';
-import AdvanceSearchModal from './AdvanceSearchModal';
 import AllocateModal from './AllocateModal';
 import DynamicModal from './DynamicModal';
 import connectPermission from "../../../../models/connectPermission";
@@ -40,10 +39,6 @@ function EntcommRel({
                       sortFieldAndOrder,
                       currentUser
 }) {
-  function onMenuChange(payload) {
-    dispatch({ type: 'entcommRel/selectMenu', payload });
-  }
-
   function merageCustom() {
     dispatch({ type: 'entcommRel/showModals', payload: 'merage' });
   }
@@ -71,10 +66,6 @@ function EntcommRel({
     dispatch({ type: 'entcommRel/searchKeyword', payload });
   }
 
-  function advanceSearch() {
-    dispatch({ type: 'entcommRel/showModals', payload: 'advanceSearch' });
-  }
-
   let dynamicTableRef;
   function openSetHeader() {
     dynamicTableRef.getWrappedInstance().openSetCustomHeaders();
@@ -97,7 +88,6 @@ function EntcommRel({
     dispatch({ type: 'entcommRel/currItems', payload: items });
     dispatch({ type: 'entcommRel/queryFuntionbutton__', payload: {} });
   }
-
 
 
   function del() {
@@ -207,11 +197,6 @@ function EntcommRel({
           ...ajaxToolbarActions
         ]}
       >
-        <Select style={{ minWidth: '120px' }} value={menuId} onChange={onMenuChange} >
-          {menus.map(menu => (
-            <Option key={menu.menuId}>{menu.menuName}</Option>
-          ))}
-        </Select>
         {checkFunc('EntityDataAdd') && <Button onClick={addRelEntity}>{`新增${tabInfo.entityname || ''}`}</Button>}
         {checkFunc('EntityDataMerge') && <Button onClick={merageCustom}>客户合并</Button>}
         {/*{shouldShowImport() && <Button onClick={importData}>导入</Button>}*/}
@@ -229,7 +214,6 @@ function EntcommRel({
           >
             搜索
           </Search>
-          <Button onClick={advanceSearch} style={{ marginLeft: '10px', height: '31px' }}>高级搜索</Button>
           <Icon type="setting" onClick={openSetHeader} style={{ fontSize: '20px', marginLeft: '10px', cursor: 'pointer', color: '#9ba1ad', position: 'relative', top: '2px' }} />
         </Toolbar.Right>
       </Toolbar>
@@ -243,6 +227,7 @@ function EntcommRel({
         dataSource={list}
         total={total}
         fixedHeader={true}
+        otherHeight={190 + 66} //页面表格元素除外的元素的总高度
         pagination={{
           total,
           pageSize,
@@ -260,7 +245,6 @@ function EntcommRel({
       />
       <TransferModal />
       <MerageModal />
-      <AdvanceSearchModal />
       <AllocateModal />
       <DynamicModal />
       <DetailModal />
