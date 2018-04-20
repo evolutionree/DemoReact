@@ -62,7 +62,7 @@ function ModifyPwdModal({
             initialValue: '',
             rules: [{ required: true, message: '请输入原密码' }]
           })(
-            <Input type="password" maxLength={16} placeholder="请输入您的原密码" />
+            <Input type="password" maxLength="16" placeholder="请输入您的原密码" />
           )}
         </FormItem>
         <FormItem label="新密码">
@@ -80,7 +80,7 @@ function ModifyPwdModal({
               validator: checkSameChar
             }]
           })(
-            <Input type="password" maxLength={16} placeholder="请输入6-16位新密码" />
+            <Input type="password" maxLength="16" placeholder="请输入6-16位新密码" />
           )}
         </FormItem>
         <FormItem label="确认密码">
@@ -92,7 +92,7 @@ function ModifyPwdModal({
               validator: checkPasswordConfirm
             }]
           })(
-            <Input type="password" maxLength={16} placeholder="请输入确认密码" />
+            <Input type="password" maxLength="16" placeholder="请输入确认密码" />
           )}
         </FormItem>
       </Form>

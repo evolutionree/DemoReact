@@ -19,8 +19,17 @@ function formatDate(text, fmt) {
 const has_No_Filter_Field = [15, 20, 22];
 class DynamicTable extends Component {
   static propTypes = {
-    fixedHeader: false //是否固定表头
-  }
+    onChange: React.PropTypes.func,
+    fixedHeader: React.PropTypes.bool,
+    sorter: React.PropTypes.bool,
+    ColumnFilter: React.PropTypes.object,
+    onFilter: React.PropTypes.func
+  };
+  static defaultProps = {
+    fixedHeader: false, //是否固定表头
+    sorter: false, //是否字段排序
+    ColumnFilter: {} //表格列（字段）排序集
+  };
 
   constructor(props) {
     super(props);

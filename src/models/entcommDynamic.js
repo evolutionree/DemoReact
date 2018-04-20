@@ -114,9 +114,7 @@ export default {
       if (ColumnFilter) {
         queries.ColumnFilter = ColumnFilter;
       }
-      if (queries.searchOrder) { //其他查询条件 发生改变  排序保持不变
-        yield put({ type: 'putState', payload: { sortFieldAndOrder: queries.searchOrder } });
-      }
+      yield put({ type: 'putState', payload: { sortFieldAndOrder: queries.searchOrder } }); //其他查询条件 发生改变  排序保持不变
       yield put({ type: 'queries', payload: queries });
       try {
         const params = {

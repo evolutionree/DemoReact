@@ -143,7 +143,7 @@ function EntcommList({
     return isXiansuoEntity && canAllocate && checkFunc('BatchClueAllocate');
   }
   function handleTableChange(pagination, filters, sorter) {
-    const searchOrder = sorter.field ? (sorter.field + (sorter.order === 'ascend' ? ' asc' : ' desc')) : ''
+    const searchOrder = sorter.field ? (sorter.field + (sorter.order === 'ascend' ? ' asc' : ' desc')) : '';
     search({
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,

@@ -133,9 +133,9 @@ class AttendanceList extends React.Component {
             value={queries.type + ''}
             onChange={this.search.bind(this, 'type')}
           >
-            <Option value="2">全部</Option>
-            <Option value="0">上班</Option>
-            <Option value="1">下班</Option>
+            <Option value="0">全部</Option>
+            <Option value="2">外勤</Option>
+            <Option value="1">内勤</Option>
           </Select>
           <DepartmentSelect
             width="200px"
@@ -186,6 +186,8 @@ class AttendanceList extends React.Component {
           <Column title="团队" dataIndex="deptname" key="deptname" />
           <Column title="打卡时间" dataIndex="reccreated" key="reccreated" />
           <Column title="类型" dataIndex="signtype" key="signtype" render={v => ['上班', '下班'][v]} />
+          <Column title="内外勤标记" dataIndex="cardtype_name" key="cardtype_name" />
+          <Column title="数据来源" dataIndex="recordsource_name" key="recordsource_name" />
           <Column title="拍照" dataIndex="signimg" key="signimg" render={this.renderPhoto} />
           <Column title="定位" dataIndex="locations" key="locations" render={this.renderLocation} />
           <Column title="备注" dataIndex="signmark" key="signmark" />
