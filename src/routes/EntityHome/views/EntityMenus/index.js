@@ -51,7 +51,7 @@ function EntityMenus({
         <Button onClick={add}>新增</Button>
       </Toolbar>
       <Table rowKey="menuid" dataSource={list} pagination={false}>
-        <Column title="页签名称" dataIndex="menuname" key="menuname" />
+        <Column title="名称" dataIndex="menuname" key="menuname" />
         {/* <Column title="页签规则" dataIndex="menurule" key="menurule" /> */}
         <Column title="操作" key="operaiton" render={renderOperationCell} />
       </Table>
