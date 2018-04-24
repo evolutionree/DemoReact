@@ -85,7 +85,7 @@ class ContactsPanel extends Component {
     // if ($(event.target).closest(['#contacts-panel', '#contacts-panel-detail']).length) {
     //   return;
     // }
-    if ($(event.target).closest('#contacts-panel').length || $(event.target).closest('#contacts-panel-detail').length) {
+    if ($(event.target).closest('#contacts-panel').length || $(event.target).closest('#contacts-panel-detail').length || $(event.target).closest('.ant-select-dropdown').length) {
       return;
     }
     // console.log(event);
