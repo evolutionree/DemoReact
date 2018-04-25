@@ -129,6 +129,7 @@ class PluginAddModal extends Component {
   onAddDone = (result) => {
     const { entityId,recordId } = this.props;
     if (this.props.currPlugin.type === 'normal') {
+      this.props.auditDone(entityId, recordId);
       this.props.done();
     } else if (this.props.currPlugin.type === 'flow') {
       // const caseId = result.data;
