@@ -4,12 +4,12 @@
 import React from 'react';
 import { connect } from 'dva';
 import { Modal, Row, Col, Button, Icon, message } from 'antd';
-import * as _ from 'lodash';
-import { queryCommonRelField, saveCommonRelField } from '../../../../services/entity';
+import _ from 'lodash';
+import { querybasefield } from '../../../../services/entity';
 import styles from './WebListConfigModal.less';
 
 
-class SetCustMailConfigModal extends React.Component {
+class CheckRepeat extends React.Component {
   static propTypes = {};
   static defaultTypes = {};
 
@@ -25,14 +25,10 @@ class SetCustMailConfigModal extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     // 打开窗口时，查数据
-    const isOpening = !/customMailConfig/.test(this.props.showModals) &&
-      /customMailConfig/.test(nextProps.showModals);
+    const isOpening = !/checkRepeatConfig/.test(this.props.showModals) &&
+      /checkRepeatConfig/.test(nextProps.showModals);
     if (isOpening) {
-      const params = {
-        entityid: this.props.entityId,
-        commentityid: '349cba2f-42b0-44c2-89f5-207052f50a00' // 邮件客户实体id
-      };
-      queryCommonRelField(params)
+      querybasefield(this.props.entityId)
         .then(result => {
           this.setState({
             data: result.data
@@ -42,23 +38,7 @@ class SetCustMailConfigModal extends React.Component {
   }
 
   handleOk = () => {
-    const params = this.state.data.fieldvisible.map((item) => {
-      return {
-        entityid: this.props.entityId,
-        fieldid: item.fieldid,
-        fieldname: item.fieldname,
-        relentityid: '349cba2f-42b0-44c2-89f5-207052f50a00'
-      };
-    });
-    this.setState({ modalPending: true });
-    saveCommonRelField(params).then(result => {
-      this.setState({ modalPending: false });
-      message.success('保存成功');
-      this.props.cancel();
-    }, err => {
-      this.setState({ modalPending: false });
-      message.error(err.message || '保存失败');
-    });
+    this.props.submit(this.state.data);
   };
 
 
@@ -86,7 +66,7 @@ class SetCustMailConfigModal extends React.Component {
 
   pickAll = () => {
     let newData = _.cloneDeep(this.state.data);
-    newData.fieldnotvisible.forEach((field) => {
+    newData.fieldnotvisible.map((field) => {
       newData.fieldvisible.push(field);
     });
     newData.fieldnotvisible = [];
@@ -98,7 +78,7 @@ class SetCustMailConfigModal extends React.Component {
 
   removeAll = () => {
     let newData = _.cloneDeep(this.state.data);
-    newData.fieldvisible.forEach((field) => {
+    newData.fieldvisible.map((field) => {
       newData.fieldnotvisible.push(field);
     });
     newData.fieldvisible = [];
@@ -110,11 +90,11 @@ class SetCustMailConfigModal extends React.Component {
   render() {
     return (
       <Modal
-        title="设置邮件客户信息字段"
-        visible={/customMailConfig/.test(this.props.showModals)}
+        title="设置查重字段"
+        visible={/checkRepeatConfig/.test(this.props.showModals)}
         onCancel={this.props.cancel}
         onOk={this.handleOk}
-        confirmLoading={this.state.modalPending}
+        confirmLoading={this.props.modalPending}
       >
         <Row gutter={10}>
           <Col span={10}>
@@ -158,18 +138,15 @@ class SetCustMailConfigModal extends React.Component {
 }
 
 export default connect(
-  state => {
-    const { showModals, entityId } = state.entityFields;
-    return {
-      showModals,
-      entityId
-    };
-  },
+  state => state.entityFields,
   dispatch => {
     return {
+      submit: (visibleFields) => {
+        dispatch({ type: 'entityFields/setCustomBasicConfig', payload: visibleFields })
+      },
       cancel: () => {
         dispatch({ type: 'entityFields/showModals', payload: '' })
       }
     };
   }
-)(SetCustMailConfigModal);
+)(CheckRepeat);

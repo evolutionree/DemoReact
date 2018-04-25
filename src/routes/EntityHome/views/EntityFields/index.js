@@ -13,8 +13,8 @@ import SelListFilterModal from './SetListFilterModal';
 import SetDynamicFieldsModal from './SetDynamicFieldsModal';
 import SetCustomBasicConfigModal from './SetCustomBasicConfigModal';
 import SetCustomMailConfigModal from './SetCustomMailConfigModal';
+import SetCheckRepeatConfigModal from './SetCheckRepeatConfigModal';
 import ExpandJSModal from './ExpandJSModal';
-
 import styles from './EntityFields.less';
 
 function getCtrlNameByType(type) {
@@ -41,12 +41,12 @@ function getCtrlNameByType(type) {
  */
 function showBtns(entityType) {
   const btnVisibleMap = {
-    0: ['add', 'order', 'webvis', 'mobvis', 'topfield', 'setfilter'],
-    1: ['add', 'order', 'dynamic'],
-    2: ['add', 'order', 'webvis', 'mobvis', 'setfilter', 'dynamic'],
-    3: ['add', 'order', 'webvis', 'setfilter', 'dynamic']
+    0: ['add', 'order', 'webvis', 'mobvis', 'topfield', 'setfilter', 'checkrepeat'],
+    1: ['add', 'order', 'dynamic', 'checkrepeat'],
+    2: ['add', 'order', 'webvis', 'mobvis', 'setfilter', 'dynamic', 'checkrepeat'],
+    3: ['add', 'order', 'webvis', 'setfilter', 'dynamic', 'checkrepeat']
   };
-  const allBtns = ['add', 'order', 'webvis', 'mobvis', 'topfield', 'setfilter', 'dynamic'];
+  const allBtns = ['add', 'order', 'webvis', 'mobvis', 'topfield', 'setfilter', 'dynamic', 'checkrepeat'];
   const showButtons = btnVisibleMap[entityType];
   return allBtns.reduce((retObj, btnName) => {
     return { ...retObj, [btnName]: _.includes(showButtons, btnName) ? true : '' };
@@ -122,6 +122,10 @@ function EntityFields({
   function setCustomMailConfig() {
     dispatch({ type: 'entityFields/showModals', payload: 'customMailConfig' });
   }
+
+  function setCheckRepeatFields() {
+    dispatch({ type: 'entityFields/showModals', payload: 'checkRepeatConfig' });
+  }
   const columns = [
     { title: '序号',
       dataIndex: 'row_number',
@@ -180,6 +184,7 @@ function EntityFields({
         {btns.topfield && <Button onClick={setMainField}>设置主页顶部显示字段</Button>}
         {btns.setfilter && <Button onClick={setListFilter}>设置筛选条件</Button>}
         {btns.dynamic && <Button onClick={setDynamicFields}>动态摘要配置</Button>}
+        {btns.checkrepeat && <Button onClick={setCheckRepeatFields}>设置查重条件</Button>}
         {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={setCustomBasicConfig}>设置客户基础资料字段</Button> : null}
         {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={setCustomMailConfig}>设置邮件客户信息字段</Button> : null}
       </Toolbar>
@@ -214,6 +219,7 @@ function EntityFields({
       <SetDynamicFieldsModal />
       <SetCustomBasicConfigModal />
       <SetCustomMailConfigModal />
+      <SetCheckRepeatConfigModal />
       <ExpandJSModal />
     </div>
   );

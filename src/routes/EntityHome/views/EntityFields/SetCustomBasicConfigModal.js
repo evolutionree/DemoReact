@@ -88,7 +88,6 @@ class WebListConfigModal extends React.Component {
   };
 
   render() {
-    console.log(JSON.stringify(this.state.data))
     return (
       <Modal
         title="设置客户基础资料字段"

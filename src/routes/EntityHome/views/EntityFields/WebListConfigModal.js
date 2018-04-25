@@ -86,7 +86,6 @@ class WebListConfigModal extends React.Component {
     // const fieldVisible = this.state.fieldVisible.filter(item => item !== field);
     // const fieldNotVisible = [...this.state.fieldNotVisible, field];
     // this.setState({ fieldNotVisible, fieldVisible });
-    debugger;
     this.setState({
       pickedIds: this.state.pickedIds.filter(id => id !== field.fieldid)
     });
