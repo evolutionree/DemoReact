@@ -188,19 +188,46 @@ export default {
         message.error(e.message || '获取数据失败');
       }
     },
-    *startEdit(action, { select, put }) {
+    *startEdit(action, { select, put, call }) {
+      // fix 表格控件，加typeid
+      function genEditData(recordDetail, protocol) {
+        const retData = { ...recordDetail };
+        protocol.forEach(field => {
+          const { controltype, fieldname, fieldconfig } = field;
+          if (controltype === 24 && retData[fieldname]) {
+            retData[fieldname] = retData[fieldname].map(item => {
+              return {
+                TypeId: fieldconfig.entityId,
+                FieldData: item
+              };
+            });
+          }
+        });
+        return retData;
+      }
       const {
         entityEditProtocol,
         entityDetail
       } = yield select(state => state.affairDetail);
       if (!entityEditProtocol.length) {
-        yield put({ type: 'fetchEditProtocol' });
+        const { flowDetail, entityDetail } = yield select(state => state.affairDetail);
+        const rectype = entityDetail.rectype || flowDetail.entityid;
+        if (!rectype) return;
+        try {
+          const { data: entityEditProtocol } = yield call(getGeneralProtocol, {
+            typeid: rectype,
+            operatetype: 1
+          });
+          yield put({ type: 'putState', payload: { entityEditProtocol } });
+        } catch (e) {
+          message.error(e.message || '获取协议失败');
+        }
       }
       yield put({
         type: 'putState',
         payload: {
           editing: true,
-          editData: entityDetail
+          editData: genEditData(_.cloneDeep(entityDetail), entityEditProtocol)
         }
       });
     },
