@@ -46,7 +46,7 @@ class InputComponent extends Component {
         return this.props.combodata.datasource.instid ? <Select value={this.props.value} url="/api/ReportEngine/queryData" params={this.props.combodata.datasource} onChange={this.changeHandler.bind(this)} />
           : <Select value={this.props.value} dataSource={this.props.combodata.datalist} onChange={this.changeHandler.bind(this)} />;
       case 4:
-        return <DatePicker value={this.props.value ? moment(this.props.value, dateFormat) : null} style={{ width: '120px' }} onChange={(date) => { this.props.onChange(date.format(dateFormat)) }} format={dateFormat} />;
+        return <DatePicker value={this.props.value ? moment(this.props.value, dateFormat) : null} style={{ width: '120px' }} onChange={(date) => { this.props.onChange(date && date.format(dateFormat)) }} format={dateFormat} />;
       case 5:
         return <SetSeriesModal settingData={this.props.value} onChange={(date) => { this.props.onChange(date)}} />;
       case 6:
@@ -59,7 +59,7 @@ class InputComponent extends Component {
       case 8:
         return <div style={{ width: '200px' }}><SelectProductSerial value={this.props.value} onChange={value => this.props.onChange(value) } {...this.props.multichoosedatasource} /></div>;
       case 9:
-        return <MonthPicker value={this.props.value ? moment(this.props.value, monthFormat) : null} style={{ width: '120px' }} onChange={(date) => { this.props.onChange(date.format(monthFormat)) }} format={monthFormat} />;
+        return <MonthPicker value={this.props.value ? moment(this.props.value, monthFormat) : null} style={{ width: '120px' }} onChange={(date) => { this.props.onChange(date && date.format(monthFormat)) }} format={monthFormat} />;
       default:
         return <div>searchBar未识别</div>;
     }

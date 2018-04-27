@@ -381,8 +381,9 @@ class DataGrid extends  React.Component {
 
     return (
       <div>
-        <div style={{ textAlign: 'right', display: this.props.showExport === 1 ? 'block' : 'none' }}>
-          <Button className={styles.export} onClick={this.exportHandler.bind(this)}>导出</Button>
+        <div className={styles.headerWrap} style={{ display: this.props.titleinfo.title || this.props.showExport === 1 ? 'block' : 'none' }}>
+          <span style={{ display: this.props.titleinfo.title ? 'block' : 'none' }}>{this.props.titleinfo.title}</span>
+          <Button className={styles.export} onClick={this.exportHandler.bind(this)} style={{ display: this.props.showExport === 1 ? 'block' : 'none' }}>导出</Button>
         </div>
         <Table
           loading={this.state.loading}

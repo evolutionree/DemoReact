@@ -13,8 +13,18 @@
 }
 
 .reportDataGridWrap{
-  .export{
-    margin-bottom: 10px;
+  .headerWrap{
+    height: 40px;
+    line-height: 40px;
+    position: relative;
+    font-weight: bold;
+
+    >.export{
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
   }
   :global{
     // 表格和分页
