@@ -14,6 +14,7 @@ import ProgressModal from './modals/ProgressModal/ProgressModal';
 import ImageGallery from '../components/ImageGallery';
 import MapModal from '../components/MapModal';
 import JsonEditModal from '../components/JsonEditModal';
+import IntlWrap from './IntlWrap'; //国际版(多语言)容器
 
 const { Sider, Header, Content, Footer } = Layout;
 
@@ -100,4 +101,4 @@ const App = ({ children, location, siderFold, loading, permissionLevel, dispatch
   );
 };
 
-export default connect(state => ({ ...state.app, loading: state.loading > 0 }))(App);
+export default connect(state => ({ ...state.app, loading: state.loading > 0 }))(IntlWrap(App));

@@ -14,6 +14,7 @@ import PrintEntityModal from './modals/PrintEntityModal/PrintEntityModal';
 import ImageGallery from '../components/ImageGallery';
 import MapModal from '../components/MapModal';
 import JsonEditModal from '../components/JsonEditModal';
+import IntlWrap from './IntlWrap'; //国际版(多语言)容器
 
 const App = ({ children, location, siderFold, loading, dispatch, user, noMinWidth }) => {
   const cls = classnames({ [styles.app]: true, [styles.fold]: siderFold, [styles.noMinWidth]: noMinWidth });
@@ -39,4 +40,4 @@ const App = ({ children, location, siderFold, loading, dispatch, user, noMinWidt
   );
 };
 
-export default connect(state => ({ ...state.app, loading: state.loading > 0 }))(App);
+export default connect(state => ({ ...state.app, loading: state.loading > 0 }))(IntlWrap(App));
