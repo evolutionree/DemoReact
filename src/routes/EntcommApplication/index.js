@@ -68,6 +68,14 @@ function EntcommList({
           dynamicModalData: item
         }
       });
+    } else if (item.buttoncode === 'PrintEntity') {
+      dispatch({
+        type: 'printEntity/initPrint',
+        payload: {
+          entityId: entityId,
+          recordId: currItems && currItems[0] && currItems[0].recid
+        }
+      });
     }
   }
 
