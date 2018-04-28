@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Table, Icon } from 'antd';
 import { connect } from 'dva';
 import EntityTabFormModal from './EntityTabFormModal';
+import SetCountRuleModal from './SetCountRuleModal';
 import styles from './EntityTabs.less';
 
 const Column = Table.Column;
@@ -12,7 +13,8 @@ function EntityTabs({
   tablist,
   onUpCilck,
   onDownCilck,
-  onDel
+  onDel,
+  setCountRule
 }) {
   const list = tablist.reltablist ? tablist.reltablist : [];
   const lastIndex = list.length - 1;
@@ -33,12 +35,14 @@ function EntityTabs({
                 <Icon type="arrow-down" onClick={onDownCilck.bind(null, index)} style={index === lastIndex ? { visibility: 'hidden' } : null} />
                 <Icon type="edit" onClick={edit.bind(null, record)} />
                 {!record.entitytaburl && <Icon type="delete" onClick={onDel.bind(null, record.relid)} />}
+                {!record.entitytaburl && <Icon type="setting" onClick={setCountRule.bind(null, record.relid)} />}
               </div>
             )}
           />
         </Table>
       </div>
       <EntityTabFormModal />
+      <SetCountRuleModal />
     </div>
   );
 }
@@ -60,6 +64,9 @@ function mapDispatchToProps(dispatch) {
     },
     onDel: (RelId) => {
       dispatch({ type: 'entityTabs/disabledreltab', payload: RelId });
+    },
+    setCountRule: () => {
+      dispatch({ type: 'entityTabs/showModals', payload: 'setcountrule' });
     }
   };
 }
