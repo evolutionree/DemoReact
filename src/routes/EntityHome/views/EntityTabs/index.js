@@ -65,7 +65,8 @@ function mapDispatchToProps(dispatch) {
     onDel: (RelId) => {
       dispatch({ type: 'entityTabs/disabledreltab', payload: RelId });
     },
-    setCountRule: () => {
+    setCountRule: (RelId) => {
+      dispatch({ type: 'entityTabs/putState', payload: { RelId } });
       dispatch({ type: 'entityTabs/showModals', payload: 'setcountrule' });
     }
   };

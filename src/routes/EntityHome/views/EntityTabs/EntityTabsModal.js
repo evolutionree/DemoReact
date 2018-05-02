@@ -16,7 +16,7 @@ class EntityTabsModal extends React.Component {
       entityList: [],
       entityFieldListForEdit: []
     };
-    this.handleInputChange = this.handleInputChange.bind(this);   
+    this.handleInputChange = this.handleInputChange.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -70,7 +70,7 @@ class EntityTabsModal extends React.Component {
         entityField = item;
       }
     }
-    
+
     this.props.onSave(this.state.selectedField,this.state.icon,this.state.selectedEntity,this.state.relName,this.state.relId,this.state.type);
   }
 
@@ -98,7 +98,7 @@ class EntityTabsModal extends React.Component {
 	    </div>
        <div>关联实体</div>
       <div style={{ margin: '10px 0 20px' }}>
-      <Select 
+      <Select
           value={this.state.selectedEntity}
           onChange={this.entityChange}
           disabled={this.state.entitytaburl ? true : false}

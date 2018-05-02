@@ -5,7 +5,8 @@ import {
   getreltabentity,
   addreltab,
   editreltab,
-  disabledreltab
+  disabledreltab,
+  saverelconfig
 } from '../services/entity';
 
 export default {
@@ -133,9 +134,40 @@ export default {
       } catch (e) {
         message.error(e.message || '禁用失败');
       }
+    },
+    *setCountRule({ payload: params }, { call, put, select }) {
+      const { entityId, RelId } = yield select(state => state.entityTabs);
+      let Configs = params.configs.map(item => {
+        item.entityId = entityId;
+        item.RelId = RelId;
+        return item;
+      });
+
+      let submitData = { RelId };
+      submitData.configs = Configs;
+      submitData.configsets = params.configsets;
+      try {
+        yield call(saverelconfig, submitData);
+        yield put({
+          type: 'query',
+          payload: {
+            entityId
+          }
+        });
+        yield put({ type: 'showModals', payload: '' });
+        message.success('更新成功');
+      } catch (e) {
+        message.error(e.message || '更新失败');
+      }
     }
   },
   reducers: {
+    putState(state, { payload }) {
+      return {
+        ...state,
+        ...payload
+      };
+    },
     gotEntityId(state, { payload: entityId }) {
       return {
         ...state,

@@ -799,7 +799,19 @@ export async function orderbyreltab(RelIds) {
 export async function getreltabentity(entityId) {
   return request('api/dynamicentity/getreltabentity', {
     method: 'post',
-    body: JSON.stringify({entityId})
+    body: JSON.stringify({ entityId })
+  });
+}
+
+/**
+ * 获取关联实体计算字段
+ * @param  {[type]} relentityid [description]
+ * @return {[type]}          [description]
+ */
+export async function getrelconfigfields(relentityid) {
+  return request('api/dynamicentity/getrelconfigfields', {
+    method: 'post',
+    body: JSON.stringify({ relentityid })
   });
 }
 
@@ -863,6 +875,30 @@ export async function queryFunctionButtons(entityid) {
   return request('api/entitypro/functionbtnlist', {
     method: 'POST',
     body: JSON.stringify({ entityid })
+  });
+}
+
+/**
+ * 保存页签统计配置
+ * @param
+ * @returns {Promise.<Object>}
+ */
+export async function saverelconfig(params) {
+  return request('api/dynamicentity/saverelconfig', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
+ * 获取统计配置信息
+ * @param RelId
+ * @returns {Promise.<Object>}
+ */
+export async function getrelconfig(RelId) {
+  return request('api/dynamicentity/getrelconfig', {
+    method: 'POST',
+    body: JSON.stringify({ RelId })
   });
 }
 
