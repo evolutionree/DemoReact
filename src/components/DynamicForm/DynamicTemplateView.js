@@ -8,11 +8,13 @@ const propTypes = {
     fieldlabel: PropTypes.string.isRequired,
     controltype: PropTypes.number.isRequired
   })),
-  value: PropTypes.object
+  value: PropTypes.object,
+  entityId: PropTypes.string
 };
 function DynamicTemplateView({
     fields,
-    value
+    value,
+    entityId
   }) {
   return (
     <div className={styles.templatelist}>
@@ -26,6 +28,8 @@ function DynamicTemplateView({
                 value={value[fieldname]}
                 controlType={controltype}
                 value_name={value[fieldname + '_name']}
+                config={field.fieldconfig}
+                entityTypeId={value.rectype || entityId}
               />
             </div>
           </div>

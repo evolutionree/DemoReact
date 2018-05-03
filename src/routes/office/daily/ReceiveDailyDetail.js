@@ -13,9 +13,9 @@ function ReceiveDailyDetail({ location, receiveDailyDetailList,
                                routeJump,
                                comment,
                                commentParent,
-                              receiveDailyDetailListProtocal }) {
+                              allDailyDetailListProtocal }) {
   const dailyDetailData = receiveDailyDetailList && receiveDailyDetailList.detail;
-  const detailFields = receiveDailyDetailListProtocal && receiveDailyDetailListProtocal instanceof Array && receiveDailyDetailListProtocal.filter(field => !!field.fieldname);
+  const detailFields = allDailyDetailListProtocal && allDailyDetailListProtocal instanceof Array && allDailyDetailListProtocal.filter(field => !!field.fieldname);
   return (
     dailyDetailData ? <div className={Styles.wrapContent}>
       <div onClick={routeJump} style={{ cursor: 'pointer' }}>

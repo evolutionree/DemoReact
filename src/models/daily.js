@@ -26,7 +26,6 @@ export default {
     showModals: '', //显示哪个Modal
     myDailyOrSummaryRecid: '', //点击编辑时，当前周计划/周总结的recid
     receiveDailyDetailList: null, //收到的日报详情列表
-    receiveDailyDetailListProtocal: [], //收到的日报详情对应显示的字段定义
     route: '',
     allDailySearchData: {},
     allDailyDetailList: null,
@@ -48,7 +47,7 @@ export default {
           dispatch({ type: 'putState', payload: { route: '' } });
         } else if (match2) { //收到的日报详情页
           dispatch({ type: 'queryReceiveDailyDetail', payload: match2 && match2[1] });
-          dispatch({ type: 'queryReceiveDailyDetailProtocol' });
+          dispatch({ type: 'queryAllDailyDetailProtocol' });
           dispatch({ type: 'putState', payload: { route: `/daily/receivedaily/${match2 && match2[1]}}` } });
         } else if (match3) { //所有日报 列表 第一项链接的页面
           dispatch({ type: 'queryAllDailyDetail', payload: match3 && match3[1] });
@@ -197,14 +196,6 @@ export default {
       } catch (e) {
         message.error(e.message || '评论失败');
       }
-    },
-
-    *queryReceiveDailyDetailProtocol(action, { put, call }) {
-      const { data: receiveDailyDetailListProtocal } = yield call(selectdynamicabstract, {
-        EntityId: daily_entityId,
-        typeid: daily_entityId
-      });
-      yield put({ type: 'putState', payload: { receiveDailyDetailListProtocal } });
     },
 
     *queryReceiveDailyDetail({ payload: recid }, { put, call }) {
