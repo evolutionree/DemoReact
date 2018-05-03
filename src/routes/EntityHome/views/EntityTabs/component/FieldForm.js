@@ -21,7 +21,6 @@ class FieldForm extends React.Component {
   }
 
   checkConfigs = (rule, value, callback) => {
-    console.log(value)
     for (let i = 0; i < value.length; i++) {
       if ( value[i].type === 0 && value[i].relentityid === '' && value[i].fieldid === '' && value[i].fieldid === '') { //必填
         callback('统计字段设置中所有项必填');

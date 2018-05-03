@@ -58,7 +58,8 @@ class EntcommAddModal extends Component {
 
   onTypeModalConfirm = () => {
     this.setState({
-      showFormModal: true
+      showFormModal: true,
+      commonid: ''
     });
     this.fetchProtocol(this.state.selectedEntityType);
   };
@@ -141,7 +142,7 @@ class EntcommAddModal extends Component {
   };
   setFieldsConfig = (formData) => { //客户引用时 需要对部分字段(引用后填充值得字段)做禁用处理
     let protocolFields = this.state.protocolFields;
-    for (let i = 0 ; i < protocolFields.length ; i++) {
+    for (let i = 0; i < protocolFields.length; i++) {
       for (let key in formData) {
         if (protocolFields[i].fieldname === key) {
           protocolFields[i].fieldconfig.isReadOnly = 1;
@@ -149,8 +150,8 @@ class EntcommAddModal extends Component {
       }
     }
     this.setState({
-      protocolFields : protocolFields
-    })
+      protocolFields: protocolFields
+    });
   }
 
   render() {
