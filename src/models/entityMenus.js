@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { queryFields, queryMenus, delMenu, saveEntityQueryRule, orderbyreltab } from '../services/entity';
+import { queryFields, queryMenus, delMenu, saveEntityQueryRule, savemenuorderby } from '../services/entity';
 
 export default {
   namespace: 'entityMenus',
@@ -80,10 +80,16 @@ export default {
       const tmpItem = list[index];
       list[index] = list[index + dir];
       list[index + dir] = tmpItem;
-      const ids = list.map(item => item.menuid);
+      const orderbyList = list.map((item, i) => {
+        return {
+          menuid: item.menuid,
+          orderby: list.length - i
+        };
+      });
       try {
-        yield call(orderbyreltab, ids);
+        yield call(savemenuorderby, orderbyList);
         yield put({ type: 'query' });
+        message.success('更新成功');
       } catch (e) {
         message.error(e.message || '更新失败');
       }

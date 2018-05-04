@@ -780,6 +780,16 @@ export async function queryreltablist(entityId) {
 }
 
 /**
+ * 调整常用筛选列表顺序
+ */
+export async function savemenuorderby(params) {
+  return request('api/rule/savemenuorderby', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
  * 调整页签设置列表顺序
  */
 export async function orderbyreltab(RelIds) {
