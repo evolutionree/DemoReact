@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import * as _ from 'lodash';
 import { routerRedux } from 'dva/router';
-import { queryTabsList, delEntcomm, delRelItem, getGeneralListProtocol, getListData, getFunctionbutton, extraToolbarClickSendData, transferEntcomm } from '../services/entcomm';
+import { queryTabsList, delEntcomm, delRelItem, getGeneralListProtocol, getListData, getFunctionbutton, extraToolbarClickSendData, transferEntcomm, queryreldatasource } from '../services/entcomm';
 import { queryMobFieldVisible, queryEntityDetail, queryTypes, DJCloudCall, queryListFilter, queryMenus } from '../services/entity';
 import { parseConfigData } from '../components/ListStylePicker';
 
@@ -59,6 +59,7 @@ export default {
           const recordId = match[2];
           const relId = match[3];
           const relEntityId = match[4];
+
           dispatch({ type: 'putState', payload: { entityId, recordId, relId, relEntityId } });
           dispatch({ type: 'init' });
         } else {
@@ -71,7 +72,7 @@ export default {
     *init(action, { select, put, call, take }) {
       yield put({ type: 'putState', payload: { list: [], iconField: null, listFields: [] } });
       // yield put({ type: 'queryEntityDetail' });
-      const { relEntityId } = yield select(modelSelector);
+      const { relId, relEntityId } = yield select(modelSelector);
       const entityId = relEntityId;
       try {
         // 获取实体类型
@@ -113,6 +114,17 @@ export default {
         yield put({ type: 'putState', payload: { simpleSearchKey } });
 
         yield put({ type: 'queryList' });
+
+        const { relTabs } = yield select(state => state.entcommHome);
+        let tabInfo = {};
+        if (relTabs.length && relId && relEntityId) {
+          tabInfo = _.find(relTabs, item => {
+              return item.relid === relId && item.relentityid === relEntityId;
+          }) || tabInfo;
+        }
+        if (tabInfo.confitems > 0) {
+          yield put({ type: 'queryreldatasource' });
+        }
       } catch (e) {
         message.error(e.message || '获取协议失败');
       }
@@ -141,6 +153,18 @@ export default {
       //   type: 'putState',
       //   payload: { relEntityName: entityproinfo[0].entityname }
       // });
+    },
+    *queryreldatasource(action, { select, call, put }) {
+      const { recordId, relId } = yield select(modelSelector);
+      try {
+        const { data } = yield call(queryreldatasource, {
+          recordId,
+          relId
+        });
+        console.log(data)
+      } catch (e) {
+        message.error(e.message || '查询统计值失败');
+      }
     },
     *queryList(action, { select, call, put }) {
       const { recordId, relId, relEntityId, menus } = yield select(modelSelector);

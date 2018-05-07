@@ -190,6 +190,10 @@ function EntcommRel({
 
   return (
     <div className={styles.pagecontainer}>
+      <div className={styles.receivePayInfo}>
+        <span>总额(元)：<i>11</i></span>
+        <span>未收款(元)：<i>22</i></span>
+      </div>
       <Toolbar
         selectedCount={currItems.length}
         actions={[

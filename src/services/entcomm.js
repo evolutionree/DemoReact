@@ -451,6 +451,19 @@ export async function queryTabs(entityid) {
 }
 
 /**
+ * 客户端获取统计值
+ * @param RecId
+ * @param RelId
+ * @returns {Promise.<Object>}
+ */
+export async function queryreldatasource(params) {
+  return request('/api/dynamicentity/queryreldatasource', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
  * 获取主页顶部显示字段配置
  * @param params
  * { entityid, typeid }
