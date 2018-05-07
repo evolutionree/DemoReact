@@ -189,36 +189,17 @@ function EntcommRel({
     whiteSpace: 'nowrap'
   };
 
-  const renderCountHtml = () => {
-    if (!relCountData) {
-      return;
-    }
-
-    let html = [];
-    for(let key in relCountData) {
-      html.push(<span key={key} style={{ width: 100 / Object.getOwnPropertyNames(relCountData).length + '%' }}>
-        {
-          getFileldKeyValue(relCountData[key])
-        }
-      </span>);
-    }
-
-    function getFileldKeyValue(data) {
-      let html = [];
-      for(let key in data) {
-        html.push(<span key={key}>{key}：<i>{data[key]}</i></span>);
-      }
-      return html;
-    }
-
-    return html;
-  }
-
+  let test = [{ title: '阿斯利康揭发老大是建立房间啊老费劲啊是', value: 0 }, { title: 'ceshi', value: 1000 }, { title: '阿斯利康揭发老大是建立房间啊老费劲啊是阿斯利康揭发老大是建立房间啊老费劲啊是', value: 0 }]
   return (
     <div className={styles.pagecontainer}>
       <div className={styles.reldatasourceWrap} style={{ display: tabInfo.confitems > 0 ? 'block' : 'none' }}>
         {
-          renderCountHtml()
+          test && test instanceof Array && test.map((item, index) => {
+            const percentWidth = 100 / test.length;
+            return (
+              <span key={index} style={{ width: percentWidth + '%' }}><abbr title={item.title}>{`${item.title}`}</abbr><span>：</span><em>{item.value}</em></span>
+            );
+          })
         }
       </div>
       <Toolbar

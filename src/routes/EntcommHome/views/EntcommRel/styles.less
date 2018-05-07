@@ -141,8 +141,25 @@
 .reldatasourceWrap>span{
   display: inline-block;
   text-align: center;
+  position: relative;
 }
-.reldatasourceWrap>span>span>i{
-  font-style:normal;
+.reldatasourceWrap abbr{
+  text-decoration: none;
+  display: inline-block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 70%;
+}
+.reldatasourceWrap>span>span{
+  position: absolute;
+  top: 0px;
+}
+.reldatasourceWrap em{
+  padding-left: 16px;
+  font-style: normal;
   font-size: 24px;
+  position: absolute;
+  top: -4px;
 }
+
