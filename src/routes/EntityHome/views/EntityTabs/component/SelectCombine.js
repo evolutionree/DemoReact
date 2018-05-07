@@ -4,6 +4,7 @@
 import React from 'react';
 import { Input, Select, message, Icon } from 'antd';
 import { connect } from 'dva';
+import _ from 'lodash';
 import { getrelconfigfields } from '../../../../../services/entity';
 
 const Option = Select.Option;
@@ -52,7 +53,14 @@ class SelectCombine extends React.Component {
       this.props.onChange && this.props.onChange({
         ...this.props.value,
         [key]: value,
-        fieldid: ''
+        fieldid: '',
+        calcutetype: ''
+      });
+    } else if (key === 'fieldid') {
+      this.props.onChange && this.props.onChange({
+        ...this.props.value,
+        [key]: value,
+        calcutetype: ''
       });
     } else {
       this.props.onChange && this.props.onChange({
@@ -75,6 +83,13 @@ class SelectCombine extends React.Component {
 
   getHtml() {
     const itemValue = this.props.value;
+
+    let calcutetypeDatasource = [{ text: '直接取值', value: 0 }, { text: '求和', value: 1 }, { text: '求平均', value: 2 }, { text: '计数', value: 3 }]
+    let field = _.find(this.state.fields, item => item.fieldid === itemValue.fieldid);
+    if (field && field.controltype === 1001) {
+      calcutetypeDatasource = [{ text: '计数', value: 3 }];
+    }
+
     if (itemValue.type === 0) {
       return (
         <div style={{ display: 'inline-block' }}>
@@ -86,10 +101,11 @@ class SelectCombine extends React.Component {
             }
           </Select>
           <Select style={{ width: 140 }} onChange={this.selectChange.bind(this, 'calcutetype')} value={itemValue.calcutetype}>
-            <Option value={0}>直接取值</Option>
-            <Option value={1}>求和</Option>
-            <Option value={2}>求平均</Option>
-            <Option value={3}>计数</Option>
+            {
+              calcutetypeDatasource.map((item, index) => {
+                return <Option key={index} value={item.value}>{item.text}</Option>;
+              })
+            }
           </Select>
         </div>
       );

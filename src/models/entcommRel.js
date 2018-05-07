@@ -47,7 +47,8 @@ export default {
     extraButtonData: [], //页面动态 按钮数据源
     extraToolbarData: [], //页面toolbar 动态按钮数据源
     dynamicModalData: {},
-    sortFieldAndOrder: null //当前排序的字段及排序顺序
+    sortFieldAndOrder: null, //当前排序的字段及排序顺序
+    relCountData: null
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -119,10 +120,10 @@ export default {
         let tabInfo = {};
         if (relTabs.length && relId && relEntityId) {
           tabInfo = _.find(relTabs, item => {
-              return item.relid === relId && item.relentityid === relEntityId;
+            return item.relid === relId && item.relentityid === relEntityId;
           }) || tabInfo;
         }
-        if (tabInfo.confitems > 0) {
+        if (tabInfo.confitems > 0) { //当前页签需显示  页签统计
           yield put({ type: 'queryreldatasource' });
         }
       } catch (e) {
@@ -157,11 +158,11 @@ export default {
     *queryreldatasource(action, { select, call, put }) {
       const { recordId, relId } = yield select(modelSelector);
       try {
-        const { data } = yield call(queryreldatasource, {
-          recordId,
+        const { data: relCountData } = yield call(queryreldatasource, {
+          RecId: recordId,
           relId
         });
-        console.log(data)
+        yield put({ type: 'putState', payload: { relCountData } });
       } catch (e) {
         message.error(e.message || '查询统计值失败');
       }
@@ -384,7 +385,8 @@ export default {
         extraButtonData: [], //页面动态 按钮数据源
         extraToolbarData: [], //页面toolbar 动态按钮数据源
         dynamicModalData: {},
-        sortFieldAndOrder: null //当前排序的字段及排序顺序
+        sortFieldAndOrder: null, //当前排序的字段及排序顺序
+        relCountData: null
       };
     }
   }

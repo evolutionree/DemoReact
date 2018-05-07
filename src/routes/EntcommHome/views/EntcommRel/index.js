@@ -37,7 +37,8 @@ function EntcommRel({
                       extraToolbarData,
                       extraButtonData,
                       sortFieldAndOrder,
-                      currentUser
+                      currentUser,
+                      relCountData
 }) {
   function merageCustom() {
     dispatch({ type: 'entcommRel/showModals', payload: 'merage' });
@@ -188,11 +189,37 @@ function EntcommRel({
     whiteSpace: 'nowrap'
   };
 
+  const renderCountHtml = () => {
+    if (!relCountData) {
+      return;
+    }
+
+    let html = [];
+    for(let key in relCountData) {
+      html.push(<span key={key} style={{ width: 100 / Object.getOwnPropertyNames(relCountData).length + '%' }}>
+        {
+          getFileldKeyValue(relCountData[key])
+        }
+      </span>);
+    }
+
+    function getFileldKeyValue(data) {
+      let html = [];
+      for(let key in data) {
+        html.push(<span key={key}>{key}：<i>{data[key]}</i></span>);
+      }
+      return html;
+    }
+
+    return html;
+  }
+
   return (
     <div className={styles.pagecontainer}>
-      <div className={styles.receivePayInfo}>
-        <span>总额(元)：<i>11</i></span>
-        <span>未收款(元)：<i>22</i></span>
+      <div className={styles.reldatasourceWrap} style={{ display: tabInfo.confitems > 0 ? 'block' : 'none' }}>
+        {
+          renderCountHtml()
+        }
       </div>
       <Toolbar
         selectedCount={currItems.length}
