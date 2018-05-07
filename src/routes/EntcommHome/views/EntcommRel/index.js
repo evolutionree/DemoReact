@@ -192,11 +192,11 @@ function EntcommRel({
   return (
     <div className={styles.pagecontainer}>
       <ul className={styles.reldatasourceWrap} style={{ display: tabInfo.confitems > 0 ? 'block' : 'none' }}>
-        {//<span key={index} style={{ width: percentWidth + '%' }}><abbr title={item.title}>{`${item.title}`}</abbr><span>：</span><em>{item.value}</em></span>
+        {
           relCountData && relCountData instanceof Array && relCountData.map((item, index) => {
             const percentWidth = 100 / relCountData.length;
             return (
-              <li style={{ width: percentWidth + '%' }}>
+              <li style={{ width: percentWidth + '%' }} key={index}>
                 <div>
                   <abbr title={item.title}>{`${item.title}`}</abbr>
                   <span>：</span>
