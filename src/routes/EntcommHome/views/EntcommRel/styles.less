@@ -138,28 +138,35 @@
   background: #e9f5ff;
   margin-bottom: 14px;
 }
-.reldatasourceWrap>span{
-  display: inline-block;
-  text-align: center;
+.reldatasourceWrap>li{
+  float: left;
+  height: 100%;
   position: relative;
+}
+.reldatasourceWrap>li>div{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 .reldatasourceWrap abbr{
   text-decoration: none;
-  display: inline-block;
+  display: block;
+  float: left;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
   max-width: 70%;
+
+  position: relative;
+  top: 2px;
 }
-.reldatasourceWrap>span>span{
-  position: absolute;
-  top: 0px;
+.reldatasourceWrap>li>div span{
+  position: relative;
+  top: -4px;
 }
 .reldatasourceWrap em{
-  padding-left: 16px;
   font-style: normal;
   font-size: 24px;
-  position: absolute;
-  top: -4px;
 }
 

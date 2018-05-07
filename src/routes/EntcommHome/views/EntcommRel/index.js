@@ -189,19 +189,24 @@ function EntcommRel({
     whiteSpace: 'nowrap'
   };
 
-  let test = [{ title: '阿斯利康揭发老大是建立房间啊老费劲啊是', value: 0 }, { title: 'ceshi', value: 1000 }, { title: '阿斯利康揭发老大是建立房间啊老费劲啊是阿斯利康揭发老大是建立房间啊老费劲啊是', value: 0 }]
   return (
     <div className={styles.pagecontainer}>
-      <div className={styles.reldatasourceWrap} style={{ display: tabInfo.confitems > 0 ? 'block' : 'none' }}>
-        {
-          test && test instanceof Array && test.map((item, index) => {
-            const percentWidth = 100 / test.length;
+      <ul className={styles.reldatasourceWrap} style={{ display: tabInfo.confitems > 0 ? 'block' : 'none' }}>
+        {//<span key={index} style={{ width: percentWidth + '%' }}><abbr title={item.title}>{`${item.title}`}</abbr><span>：</span><em>{item.value}</em></span>
+          relCountData && relCountData instanceof Array && relCountData.map((item, index) => {
+            const percentWidth = 100 / relCountData.length;
             return (
-              <span key={index} style={{ width: percentWidth + '%' }}><abbr title={item.title}>{`${item.title}`}</abbr><span>：</span><em>{item.value}</em></span>
+              <li style={{ width: percentWidth + '%' }}>
+                <div>
+                  <abbr title={item.title}>{`${item.title}`}</abbr>
+                  <span>：</span>
+                  <em>{item.value}</em>
+                </div>
+              </li>
             );
           })
         }
-      </div>
+      </ul>
       <Toolbar
         selectedCount={currItems.length}
         actions={[

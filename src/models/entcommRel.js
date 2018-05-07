@@ -162,7 +162,7 @@ export default {
           RecId: recordId,
           relId
         });
-        yield put({ type: 'putState', payload: { relCountData } });
+        yield put({ type: 'putState', payload: { relCountData: relCountData.data } });
       } catch (e) {
         message.error(e.message || '查询统计值失败');
       }
