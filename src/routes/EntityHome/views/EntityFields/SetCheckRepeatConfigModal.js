@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'dva';
 import { Modal, Row, Col, Button, Icon, message } from 'antd';
 import _ from 'lodash';
-import { querybasefield } from '../../../../services/entity';
+import { queryentitycondition } from '../../../../services/entity';
 import styles from './WebListConfigModal.less';
 
 
@@ -28,7 +28,7 @@ class CheckRepeat extends React.Component {
     const isOpening = !/checkRepeatConfig/.test(this.props.showModals) &&
       /checkRepeatConfig/.test(nextProps.showModals);
     if (isOpening) {
-      querybasefield(this.props.entityId)
+      queryentitycondition(this.props.entityId)
         .then(result => {
           this.setState({
             data: result.data
@@ -142,7 +142,7 @@ export default connect(
   dispatch => {
     return {
       submit: (visibleFields) => {
-        dispatch({ type: 'entityFields/setCustomBasicConfig', payload: visibleFields })
+        dispatch({ type: 'entityFields/setCheckRepeatConfig', payload: visibleFields })
       },
       cancel: () => {
         dispatch({ type: 'entityFields/showModals', payload: '' })

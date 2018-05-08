@@ -8,7 +8,8 @@ import {
   saveWebFieldVisible,
   saveCustomBasicConfig,
   updateFieldExpandJS,
-  updateFieldExpandFilterJS
+  updateFieldExpandFilterJS,
+  updateentitycondition
 } from '../services/entity';
 
 export default {
@@ -116,6 +117,23 @@ export default {
           fieldids: fieldIds.join(',')
         };
         yield call(saveWebFieldVisible, params);
+        message.success('保存成功');
+        yield put({ type: 'modalPending', payload: false });
+        yield put({ type: 'hideModal' });
+      } catch (err) {
+        message.error(err.message || '保存失败');
+        yield put({ type: 'modalPending', payload: false });
+      }
+    },
+    *setCheckRepeatConfig({ payload: data }, { select, put, call }) {
+      yield put({ type: 'modalPending', payload: true });
+      try {
+        const EntityId = yield select(state => state.entityFields.entityId);
+        const params = {
+          EntityId,
+          FieldIds: data.fieldvisible.map(item => item.fieldid).join(',')
+        };
+        yield call(updateentitycondition, params);
         message.success('保存成功');
         yield put({ type: 'modalPending', payload: false });
         yield put({ type: 'hideModal' });

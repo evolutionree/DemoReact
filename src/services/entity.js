@@ -712,6 +712,19 @@ export async function querybasefield(entityId) {
   });
 }
 
+
+/**
+ * 查询查重字段
+ * @param entityId
+ * @returns {Promise.<Object>}
+ */
+export async function queryentitycondition(entityId) {
+  return request('api/DynamicEntity/queryentitycondition', {
+    method: 'post',
+    body: JSON.stringify({ entityId })
+  });
+}
+
 /**
  * 保存客户基础资料字段
  * @param params
@@ -729,6 +742,19 @@ export async function querybasefield(entityId) {
  */
 export async function saveCustomBasicConfig(params) {
   return request('/api/entitypro/saveentitybasedata', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+
+/**
+ * 保存字段查重
+ * @param params
+ * @returns {Promise.<Object>}
+ */
+export async function updateentitycondition(params) {
+  return request('/api/DynamicEntity/updateentitycondition', {
     method: 'post',
     body: JSON.stringify(params)
   });
