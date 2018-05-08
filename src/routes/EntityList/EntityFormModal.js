@@ -18,8 +18,13 @@ let RelateEntitySelect = (props) => {
       return entity.modeltype === 0;
     }
   };
+
+  const handleSelectChange = (value) => {
+    props.onChange && props.onChange(value);
+  }
+
   return (
-    <Select {...props}>
+    <Select {...props} onChange={handleSelectChange}>
       <Option value={''}>无</Option>
       {bizParam.filter(filter).map(item => (
         <Option key={item.entityid}>{item.entityname}</Option>
@@ -95,6 +100,12 @@ class EntityFormModal extends Component {
     });
   };
 
+  RelateEntitySelectChange = () => {
+    this.props.form.setFieldsValue({
+      relfieldid: ''
+    });
+  }
+
   render() {
     const {
       showModals,
@@ -154,7 +165,7 @@ class EntityFormModal extends Component {
               initialValue: '',
               rules: [{ required: typeid === '1' || typeid === '3', message: '请选择关联实体' }]
             })(
-              <RelateEntitySelect disabled={isEdit} showSimpleEntity={typeid === '1' || typeid === '2'} />
+              <RelateEntitySelect disabled={isEdit} showSimpleEntity={typeid === '1' || typeid === '2'} onChange={this.RelateEntitySelectChange} />
             )}
           </FormItem> : ''}
           {/* 动态实体必填 */}

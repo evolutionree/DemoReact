@@ -24,12 +24,12 @@ class SelectComponent extends Component {
   }
 
   componentWillMount() {
-    this.queryDataSource();
+    this.queryDataSource(this.props.entityId);
   }
 
-  queryDataSource() {
+  queryDataSource(entityId) {
     request('api/EntityPro/queryentityfield', {
-      method: 'post', body: JSON.stringify({ entityId: this.props.entityId })
+      method: 'post', body: JSON.stringify({ entityId })
     }).then((getData) => {
       this.setState({
         dataSource: getData.data.entityfieldpros
@@ -39,7 +39,7 @@ class SelectComponent extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.entityId !== nextProps.entityId) {
-      this.queryDataSource();
+      this.queryDataSource(nextProps.entityId);
     }
   }
 
