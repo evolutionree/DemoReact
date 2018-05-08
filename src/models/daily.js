@@ -48,7 +48,7 @@ export default {
         } else if (match2) { //收到的日报详情页
           dispatch({ type: 'queryReceiveDailyDetail', payload: match2 && match2[1] });
           dispatch({ type: 'queryAllDailyDetailProtocol' });
-          dispatch({ type: 'putState', payload: { route: `/daily/receivedaily/${match2 && match2[1]}}` } });
+          dispatch({ type: 'putState', payload: { route: `/daily/receivedaily/${match2 && match2[1]}` } });
         } else if (match3) { //所有日报 列表 第一项链接的页面
           dispatch({ type: 'queryAllDailyDetail', payload: match3 && match3[1] });
           dispatch({ type: 'queryAllDailyDetailProtocol' });
