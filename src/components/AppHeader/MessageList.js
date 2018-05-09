@@ -52,7 +52,7 @@ class MessageList extends React.Component {
   }
 
   componentDidMount() {
-    document.addEventListener('click', this.hideList.bind(this), false);
+    document.body.addEventListener('click', this.hideList.bind(this), false);
     window.addEventListener('resize', this.onWindowResize.bind(this), false);
     const clientHeight = document.body.offsetHeight && document.documentElement.clientHeight;
     this.setState({
@@ -61,7 +61,7 @@ class MessageList extends React.Component {
   }
 
   componentWillUnmount() {
-    document.removeEventListener('click', this.hideList, false);
+    document.body.removeEventListener('click', this.hideList, false);
     window.removeEventListener('resize', this.onWindowResize, false);
     // 去掉定时器任务
     if (this.interval) {
@@ -144,8 +144,11 @@ class MessageList extends React.Component {
     });
   }
 
-  hideList(e) {
+  hideList(event) {
     if (this.state.modalVisible) return;
+    if ($(event.target).closest('#message-panel').length) {
+      return;
+    }
     this.setState({
       visible: false
     });
@@ -277,7 +280,7 @@ class MessageList extends React.Component {
         <Badge count={this.state.unReadCount}>
           <Icon type='bell' title="系统通知" style={{ fontSize: 24, cursor: "pointer" }} onClick={this.toggleList.bind(this)} />
         </Badge>
-        <div className={styles.listContent}
+        <div id="message-panel" className={styles.listContent}
              style={{ right: this.state.visible ? 0 : "-440px", height: this.state.clientHeight - 60 }}
              onClick={(e) => {
                e.nativeEvent.stopImmediatePropagation()

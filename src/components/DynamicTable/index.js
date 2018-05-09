@@ -7,6 +7,7 @@ import moment from 'moment';
 import { getGeneralProtocol, getEntcommDetail, getCustomHeaders, saveCustomHeaders } from '../../services/entcomm';
 import Avatar from '../../components/Avatar';
 import CustomHeaderModal from '../../components/CustomHeaderModal';
+import DSourceDetail from './DSourceDetail';
 import FilterDrop from './FilterDropComponent/index';
 import styles from './styles.less';
 
@@ -45,7 +46,10 @@ class DynamicTable extends Component {
       setCustomHeadersVisible: false, //是否显示 设置表头 Modal
       customProtocol: [], //自定义表列数据
       fixedColumnCount: 0,
-      filterVisible: {}
+      filterVisible: {},
+      dSourceDetailVisible: false,
+      EntityId: '',
+      RecId: ''
     };
   }
 
@@ -55,12 +59,19 @@ class DynamicTable extends Component {
 
   componentDidMount() {
     window.addEventListener('resize', this.onWindowResize.bind(this));
+    document.addEventListener('click', this.hideList.bind(this), false);
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.onWindowResize);
+    document.removeEventListener('click', this.hideList, false);
   }
 
+  hideList(e) {
+    this.setState({
+      dSourceDetailVisible: false
+    });
+  }
 
   componentWillReceiveProps(nextProps) {
     if(this.props.entityId !== nextProps.entityId) { //不同的实体之间切换页面了  需再次请求最新的表头自定义设置数据
@@ -332,6 +343,9 @@ class DynamicTable extends Component {
       // 头像
       case 15:
         return this.renderAvatar(cellText, field);
+      // 数据源
+      case 18:
+        return this.renderdSourceDetail(cellText, field, record);
       // 图片
       case 22:
         return this.renderPictures(cellText, field);
@@ -380,6 +394,25 @@ class DynamicTable extends Component {
 
     return <Link to={linkUrl} title={textView}>{textView || '(查看详情)'}</Link>;
   };
+
+  renderdSourceDetail = (text, field, record) => {
+    let text_ = text;
+    if (typeof text_ === 'object' && text_ !== null) {
+      text_ = JSON.stringify(text_);
+    }
+
+    const { fieldconfig: { DataSource: { EntityId } } } = field;
+    const RecId = record[field.fieldname] && record[field.fieldname].id;
+    return <a title={text_} onClick={(e) => {
+      e.nativeEvent.stopImmediatePropagation();
+      this.setState({
+        dSourceDetailVisible: true,
+        EntityId,
+        RecId
+      });
+    }}>{text_}</a>;
+  };
+
   renderText = (text) => {
     let text_ = text;
     if (typeof text_ === 'object' && text_ !== null) {
@@ -505,6 +538,7 @@ class DynamicTable extends Component {
                            fixedColumnCount={this.state.fixedColumnCount}
                            onCancel={this.hideSetCustomHeaders}
                            saveCustomHeaders={this.saveCustomHeaders} />
+        <DSourceDetail visible={this.state.dSourceDetailVisible} entityId={this.state.EntityId} recordId={this.state.RecId} />
       </div>
     );
   }
