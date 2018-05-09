@@ -2,7 +2,7 @@
  * Created by 0291 on 2018/5/9.
  * desc: 查看数据源详情
  */
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes, Component, PureComponent } from 'react';
 import { message, Spin } from 'antd';
 import { Link } from 'dva/router';
 import { DynamicFormView } from '../../DynamicForm';
@@ -11,7 +11,7 @@ import { getGeneralProtocol, getEntcommDetail } from '../../../services/entcomm'
 import classnames from 'classnames';
 import Styles from './index.less';
 
-class DSourceDetail extends Component {
+class DSourceDetail extends PureComponent {
   static propTypes = {
     visible: PropTypes.bool.isRequired,
     entityId: PropTypes.string,
@@ -38,15 +38,10 @@ class DSourceDetail extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const isOpening = !this.props.visible && nextProps.visible;
-    const isClosing = this.props.visible && !nextProps.visible;
     const { entityId, recordId } = nextProps;
     if (entityId && recordId && (this.props.recordId !== recordId) || this.props.entityId !== entityId) {
       this.fetchDetailAndProtocol(entityId, recordId);
       this.fetchEntityDetail(entityId);
-    }
-    if (isClosing) {
-      this.resetState();
     }
   }
 
@@ -88,13 +83,6 @@ class DSourceDetail extends Component {
       this.setState({
         loading: false
       });
-    });
-  };
-
-  resetState = () => {
-    this.setState({
-      protocol: [],
-      data: {}
     });
   };
 

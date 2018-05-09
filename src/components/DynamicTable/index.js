@@ -376,7 +376,6 @@ class DynamicTable extends Component {
       case 14:
       case 16:
       case 17:
-      case 18:
       case 25:
       case 28:
       case 29:
