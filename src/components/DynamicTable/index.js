@@ -401,7 +401,11 @@ class DynamicTable extends Component {
       text_ = JSON.stringify(text_);
     }
 
-    const { fieldconfig: { DataSource: { EntityId } } } = field;
+    let EntityId = '';
+    if (field.fieldconfig && field.fieldconfig.DataSource) {
+      EntityId = field.fieldconfig.DataSource.EntityId;
+    }
+
     const RecId = record[field.fieldname] && record[field.fieldname].id;
     return <a title={text_} onClick={(e) => {
       e.nativeEvent.stopImmediatePropagation();
