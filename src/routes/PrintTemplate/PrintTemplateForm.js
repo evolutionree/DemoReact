@@ -160,6 +160,7 @@ class PrintTemplateForm extends Component {
     const { isEdit, form, visible, modalPending } = this.props;
     const { getFieldDecorator, getFieldValue } = form;
     const srctype = getFieldValue('datasourcetype');
+    const formItemLayout = { labelCol: { span: 5 }, wrapperCol: { span: 19 } }
     return (
       <Modal
         visible={visible}
@@ -169,14 +170,14 @@ class PrintTemplateForm extends Component {
         confirmLoading={modalPending}
       >
         <Form layout="horizontal">
-          <FormItem label="模板名称">
+          <FormItem label="模板名称" {...formItemLayout}>
             {getFieldDecorator('templatename', {
               rules: [{ required: true, message: '请输入模板名称' }]
             })(
               <Input maxLength="50" placeholder="请输入模板名称" />
             )}
           </FormItem>
-          <FormItem label="数据源类型">
+          <FormItem label="数据源类型" {...formItemLayout}>
             {getFieldDecorator('datasourcetype', {
               rules: [{ required: true, message: '请选择数据源类型' }]
             })(
@@ -187,41 +188,41 @@ class PrintTemplateForm extends Component {
               </Select>
             )}
           </FormItem>
-          <FormItem label="数据源接口" style={{ display: srctype === '1' ? 'block' : 'none' }}>
+          <FormItem label="数据源接口" style={{ display: srctype === '1' ? 'block' : 'none' }} {...formItemLayout}>
             {getFieldDecorator('datasourcefunc', {
               rules: [{ required: srctype === '1', message: '请输入数据源接口' }]
             })(
               <Input maxLength="50" placeholder="请输入数据源接口" />
             )}
           </FormItem>
-          <FormItem label="程序集" style={{ display: srctype === '2' ? 'block' : 'none' }}>
+          <FormItem label="程序集" style={{ display: srctype === '2' ? 'block' : 'none' }} {...formItemLayout}>
             {getFieldDecorator('assemblyname', {
               rules: [{ required: srctype === '2', message: '请填写引用的程序集名称' }]
             })(
               <Input maxLength="50" placeholder="请填写引用的程序集名称" />
             )}
           </FormItem>
-          <FormItem label="类名" style={{ display: srctype === '2' ? 'block' : 'none' }}>
+          <FormItem label="类名" style={{ display: srctype === '2' ? 'block' : 'none' }} {...formItemLayout}>
             {getFieldDecorator('classtypename', {
               rules: [{ required: srctype === '2', message: '请填写引用的类名' }]
             })(
               <Input maxLength="50" placeholder="请填写引用的类名" />
             )}
           </FormItem>
-          <FormItem label="数据源JS">
-            <Button onClick={this.openJsEdit}>编辑JS</Button>
-          </FormItem>
-          <FormItem label="模板类型">
+          {/*<FormItem label="数据源JS" {...formItemLayout}>*/}
+            {/*<Button onClick={this.openJsEdit}>编辑JS</Button>*/}
+          {/*</FormItem>*/}
+          <FormItem label="模板类型" {...formItemLayout}>
             {getFieldDecorator('templatetype', {
               rules: [{ required: true, message: '请选择模板类型' }]
             })(
               <Select placeholder="请选择模板类型">
                 <Option value="0">Excel模板</Option>
-                <Option value="1">Word模板</Option>
+                {/*<Option value="1">Word模板</Option>*/}
               </Select>
             )}
           </FormItem>
-          <FormItem label="模板文件">
+          <FormItem label="模板文件" {...formItemLayout}>
             {getFieldDecorator('fileid', {
               rules: [
                 { required: true, type: 'array', message: '请上传模板文件' },
@@ -247,12 +248,12 @@ class PrintTemplateForm extends Component {
               </Upload>
             )}
           </FormItem>
-          <FormItem label="模板备注">
+          <FormItem label="模板备注" {...formItemLayout}>
             {getFieldDecorator('description')(
               <Input.TextArea maxLength="500" placeholder="请输入模板备注" />
             )}
           </FormItem>
-          <FormItem label="适用范围说明">
+          <FormItem label="适用范围说明" {...formItemLayout}>
             {getFieldDecorator('ruledesc')(
               <Input.TextArea maxLength="500" placeholder="请输入适用范围说明" />
             )}

@@ -54,6 +54,7 @@ class PrintEntityModal extends Component {
     };
     printEntity(params).then(result => {
       window.open(`api/PrintForm/exportfile?fileid=${result.data.fileid}&fileName=${result.data.filename}`);
+      this.props.close && this.props.close();
     }, err => {
       message.error(err.message || '打印失败');
     });
@@ -89,5 +90,12 @@ class PrintEntityModal extends Component {
 }
 
 export default connect(
-  state => state.printEntity
+  state => state.printEntity,
+  dispatch => {
+    return {
+      close() {
+        dispatch({ type: 'printEntity/cancel', payload: '' });
+      }
+    };
+  }
 )(PrintEntityModal);
