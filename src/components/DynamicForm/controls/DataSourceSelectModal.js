@@ -57,17 +57,11 @@ class DataSourceSelectModal extends Component {
     this.setState({ loading: true });
     const params = {
       sourceId: this.props.sourceId,
-      keyword: '',
+      keyword: this.state.keyword,
       pageSize: 10,
       pageIndex: this.state.pageIndex,
       queryData: []
     };
-    if (this.state.keyword) {
-      params.queryData.push({
-        recname: this.state.keyword,
-        islike: 1
-      });
-    }
     const { designateDataSource } = this.props;
     if (designateDataSource && typeof designateDataSource === 'object') {
       Object.keys(designateDataSource).forEach(key => {
