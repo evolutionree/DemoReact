@@ -112,7 +112,8 @@ class EntcommAddModal extends Component {
       protocolFields: [], // 协议字段
       formData: {}, // 表单数据
       confirmLoading: false,
-      key: new Date().getTime()
+      key: new Date().getTime(),
+      commonid: ''
     });
   };
 
