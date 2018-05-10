@@ -54,6 +54,18 @@ class RelTable extends Component {
     return value;
   };
 
+  setValue = val => {
+    if (val === '' || val === undefined || val === null) {
+      this.props.onChange([], true);
+      return;
+    }
+    if (Array.isArray(val)) {
+      const entityId = this.props.entityId;
+      const newValue = entityId ? val.map(item => ({ TypeId: entityId, FieldData: item })) : val;
+      this.props.onChange(newValue, true);
+    }
+  };
+
   queryFields = entityId => {
     const modeMap = {
       ADD: 0,

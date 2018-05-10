@@ -196,6 +196,8 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
             return { lat: 0, lon: 0, address: '' };
           case 18:
             return {};
+          case 24:
+            return [];
           default:
             return value;
         }
@@ -206,6 +208,9 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
           return toNumber(value);
         case 18:
           return typeof value === 'string' ? JSON.parse(value) : value;
+        case 24:
+          if (!Array.isArray(value)) return value;
+          return value.map(item => item.FieldData || item);
         default:
           return value;
       }
