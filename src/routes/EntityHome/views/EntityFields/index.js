@@ -42,7 +42,7 @@ function getCtrlNameByType(type) {
 function showBtns(entityType) {
   const btnVisibleMap = {
     0: ['add', 'order', 'webvis', 'mobvis', 'topfield', 'setfilter', 'checkrepeat'],
-    1: ['add', 'order', 'dynamic', 'checkrepeat'],
+    1: ['add', 'order', 'webvis', 'dynamic', 'checkrepeat'],
     2: ['add', 'order', 'webvis', 'mobvis', 'setfilter', 'dynamic', 'checkrepeat'],
     3: ['add', 'order', 'webvis', 'setfilter', 'dynamic', 'checkrepeat']
   };
