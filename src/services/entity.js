@@ -1086,3 +1086,23 @@ export async function savefunctions(params) {
     body: JSON.stringify(params)
   });
 }
+
+/*
+ 获取扩展配置数据
+ */
+export async function getfunctionconfig(entityId) {
+  return request('/api/EntityPro/getfunctionconfig', {
+    method: 'POST',
+    body: JSON.stringify({ entityId })
+  });
+}
+
+/*
+ 更新扩展配置数据
+ */
+export async function updatefuncconfig(params) {
+  return request('/api/EntityPro/updatefuncconfig', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}

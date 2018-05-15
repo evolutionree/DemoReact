@@ -5,10 +5,10 @@ import LinkTab from '../../components/LinkTab';
 import { checkIsDev } from '../../utils';
 
 const tabVisibleMap = {
-  0: [1, 2, 3, 4, 5, 6],
+  0: [1, 2, 3, 4, 5, 6,7],
   1: [2, 3],
-  2: [2, 3, 4],
-  3: [0, 2, 3]
+  2: [2, 3, 4, 6],
+  3: [0, 2, 3, 6]
 };
 function EntityConfig({
   dispatch,
@@ -26,7 +26,8 @@ function EntityConfig({
     <LinkTab key="3" to={`/entity-config/${entityId}/${entityType}/rules`}>字段属性设置</LinkTab>,
     <LinkTab key="4" to={`/entity-config/${entityId}/${entityType}/menus`}>常用筛选列表</LinkTab>,
     <LinkTab key="5" to={`/entity-config/${entityId}/${entityType}/tabs`}>页签设置</LinkTab>,
-    <LinkTab key="6" to={`/entity-config/${entityId}/${entityType}/attenceset`}>外勤设置</LinkTab>
+    <LinkTab key="6" to={`/entity-config/${entityId}/${entityType}/extendconfig`}>扩展配置</LinkTab>,
+    <LinkTab key="7" to={`/entity-config/${entityId}/${entityType}/attenceset`}>外勤设置</LinkTab>
   ];
   const tabbar = (
     <LinkTab.Group>

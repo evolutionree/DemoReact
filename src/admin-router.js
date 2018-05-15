@@ -15,6 +15,7 @@ import EntityHome from './routes/EntityHome';
 import EntityTypes from './routes/EntityHome/views/EntityTypes';
 import EntityFields from './routes/EntityHome/views/EntityFields';
 import EntityRules from './routes/EntityHome/views/EntityRules';
+import ExtendConfig from './routes/EntityHome/views/ExtendConfig';
 import EntityAttenceSet from './routes/EntityHome/views/EntityAttenceSet';
 import EntityMenus from './routes/EntityHome/views/EntityMenus';
 import EntityTabs from './routes/EntityHome/views/EntityTabs';
@@ -93,6 +94,7 @@ const appRoutes = [
       { path: 'fields', comp: EntityFields, model: require('./models/entityFields') },
       { path: 'types', comp: EntityTypes, model: require('./models/entityTypes') },
       { path: 'rules', comp: EntityRules, model: require('./models/entityRules') },
+      { path: 'extendconfig', comp: ExtendConfig, model: require('./models/extendconfig') },
       { path: 'attenceset', comp: EntityAttenceSet, model: require('./models/entityAttenceSet') },
       { path: 'menus', comp: EntityMenus, model: require('./models/entityMenus') },
       { path: 'tabs', comp: EntityTabs, model: require('./models/entityTabs') },
