@@ -11,6 +11,7 @@ import DynamicTable from '../../components/DynamicTable/index';
 import RecordDetailModal from './RecordDetailModal';
 import connectPermission from '../../models/connectPermission';
 import AdvanceSearchModal from './AdvanceSearchModal';
+import ExportModal from './ExportModal';
 
 
 function EntcommList({
@@ -35,8 +36,10 @@ function EntcommList({
   }
 
   function exportData() {
-    const params = JSON.stringify({ ...queries, pageIndex: 1, pageSize: 65535 });
-    window.open(`/api/excel/exportdata?TemplateType=1&DynamicQuery=${params}&UserId=${currentUser}`);
+    dispatch({
+      type: 'entcommDynamic/showModals',
+      payload: 'export'
+    });
   }
   function advanceSearch() {
     dispatch({ type: 'entcommDynamic/showModals', payload: 'advanceSearch' });
@@ -125,6 +128,7 @@ function EntcommList({
       />
       <AdvanceSearchModal />
       <RecordDetailModal />
+      <ExportModal currentUser={currentUser} />
     </Page>
   );
 }
