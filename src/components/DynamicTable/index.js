@@ -506,6 +506,7 @@ class DynamicTable extends Component {
         return item;
       });
     }
+
     return (
       <div>
         <Table
@@ -525,14 +526,17 @@ class DynamicTable extends Component {
           ]}
         >
           {this.state.innerTableProtocol.length ? (
-            <DynamicTable
-              ignoreRecName
-              protocol={this.state.innerTableProtocol}
-              rowKey="recid"
-              dataSource={this.state.innerTableRecords}
-              total={this.state.innerTableRecords.length}
-              pagination={false}
-            />
+            <div className={styles.innerTableWrap}>
+              <DynamicTable
+                ignoreRecName
+                protocol={this.state.innerTableProtocol}
+                rowKey="recid"
+                dataSource={this.state.innerTableRecords}
+                total={this.state.innerTableRecords.length}
+                pagination={false}
+                fixedHeader={false}
+              />
+            </div>
           ) : 'loading..'}
         </Modal>
         <CustomHeaderModal visible={this.state.setCustomHeadersVisible}
