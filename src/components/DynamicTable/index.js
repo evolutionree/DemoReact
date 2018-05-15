@@ -48,8 +48,8 @@ class DynamicTable extends Component {
       fixedColumnCount: 0,
       filterVisible: {},
       dSourceDetailVisible: false,
-      EntityId: '',
-      RecId: ''
+      DataSourceRelEntityId: '', //数据源关联实体Id
+      DataSourceRelRecId: ''
     };
   }
 
@@ -400,18 +400,18 @@ class DynamicTable extends Component {
       text_ = JSON.stringify(text_);
     }
 
-    let EntityId = '';
+    let DataSourceRelEntityId = '';
     if (field.fieldconfig && field.fieldconfig.DataSource) {
-      EntityId = field.fieldconfig.DataSource.EntityId;
+      DataSourceRelEntityId = field.fieldconfig.DataSource.EntityId;
     }
 
-    const RecId = record[field.fieldname] && record[field.fieldname].id;
+    const DataSourceRelRecId = record[field.fieldname] && record[field.fieldname].id;
     return <a title={text_} onClick={(e) => {
       e.nativeEvent.stopImmediatePropagation();
       this.setState({
         dSourceDetailVisible: true,
-        EntityId,
-        RecId
+        DataSourceRelEntityId,
+        DataSourceRelRecId
       });
     }}>{text_}</a>;
   };
@@ -541,7 +541,7 @@ class DynamicTable extends Component {
                            fixedColumnCount={this.state.fixedColumnCount}
                            onCancel={this.hideSetCustomHeaders}
                            saveCustomHeaders={this.saveCustomHeaders} />
-        <DSourceDetail visible={this.state.dSourceDetailVisible} entityId={this.state.EntityId} recordId={this.state.RecId} />
+        <DSourceDetail visible={this.state.dSourceDetailVisible} entityId={this.state.DataSourceRelEntityId} recordId={this.state.DataSourceRelRecId} />
       </div>
     );
   }
