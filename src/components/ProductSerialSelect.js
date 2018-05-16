@@ -93,10 +93,12 @@ class ProductSerialSelect extends React.Component {
 
   getDefaultSerial = (callback) => {
     if (this.props.productSerial.length) {
-      callback(this.props.productSerial[0].productsetid);
+      const rootNode = _.find(this.props.productSerial, ['nodepath', 0]);
+      callback(rootNode && rootNode.productsetid);
     } else {
       this.onSerialDataCallback = () => {
-        callback(this.props.productSerial[0].productsetid);
+        const rootNode = _.find(this.props.productSerial, ['nodepath', 0]);
+        callback(rootNode && rootNode.productsetid);
       }
     }
   };
