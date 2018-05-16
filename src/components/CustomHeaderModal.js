@@ -81,7 +81,7 @@ class CustomHeaderModal extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.visible) {
+    if (nextProps.visible && nextProps.visible !== this.props.visible) { //点击显示列  会触发DynamicTable的全局绑定事件click 然后又会重新渲染本组件  所以。。
       this.setState({
         dataSource: this.setSeqNum(nextProps.dataSource),
         FixedColumnCount: nextProps.fixedColumnCount

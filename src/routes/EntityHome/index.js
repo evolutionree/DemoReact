@@ -5,7 +5,7 @@ import LinkTab from '../../components/LinkTab';
 import { checkIsDev } from '../../utils';
 
 const tabVisibleMap = {
-  0: [1, 2, 3, 4, 5, 6,7],
+  0: [1, 2, 3, 4, 5, 6, 7],
   1: [2, 3],
   2: [2, 3, 4, 6],
   3: [0, 2, 3, 6]
@@ -19,6 +19,7 @@ function EntityConfig({
 }) {
   const entityId = params.id;
   const entityType = params.type;
+  /*<LinkTab key="7" to={`/entity-config/${entityId}/${entityType}/attenceset`}>外勤设置</LinkTab>*/
   const tabs = [
     <LinkTab key="0" to={`/entity-config/${entityId}/${entityType}/dynamic-visible`}>可见规则</LinkTab>,
     <LinkTab key="1" to={`/entity-config/${entityId}/${entityType}/types`}>类型</LinkTab>,
@@ -26,8 +27,7 @@ function EntityConfig({
     <LinkTab key="3" to={`/entity-config/${entityId}/${entityType}/rules`}>字段属性设置</LinkTab>,
     <LinkTab key="4" to={`/entity-config/${entityId}/${entityType}/menus`}>常用筛选列表</LinkTab>,
     <LinkTab key="5" to={`/entity-config/${entityId}/${entityType}/tabs`}>页签设置</LinkTab>,
-    <LinkTab key="6" to={`/entity-config/${entityId}/${entityType}/extendconfig`}>扩展配置</LinkTab>,
-    {/*<LinkTab key="7" to={`/entity-config/${entityId}/${entityType}/attenceset`}>外勤设置</LinkTab>*/}
+    <LinkTab key="6" to={`/entity-config/${entityId}/${entityType}/extendconfig`}>扩展配置</LinkTab>
   ];
   const tabbar = (
     <LinkTab.Group>
