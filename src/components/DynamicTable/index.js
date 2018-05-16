@@ -507,12 +507,13 @@ class DynamicTable extends Component {
       });
     }
 
+    const style = fixedHeader ? { height: this.state.height - this.props.otherHeight } : {}
     return (
       <div>
         <Table
           scroll={fixedHeader ? { x: scrollX + 6, y: this.state.height - this.props.otherHeight - 104 } : { x: '100%' }}
           className={styles.dynamictable}
-          style={{ height: this.state.height - this.props.otherHeight }}
+          style={{ ...style }}
           {...restProps}
           columns={columns}
         />
