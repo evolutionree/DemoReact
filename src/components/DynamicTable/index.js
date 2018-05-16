@@ -203,6 +203,19 @@ class DynamicTable extends Component {
       };
 
       const sortFieldAndOrder = this.props.sortFieldAndOrder;
+
+      let filterObj = {};
+      if (this.props.onFilter) {
+        filterObj = {
+          filterDropdown: has_No_Filter_Field.indexOf(field.controltype) > -1 ? null : <FilterDrop visible={!!this.state.filterVisible[field.fieldname]} field={field} value={this.props.ColumnFilter[field.fieldname]} onFilter={this.onFilter} hideFilter={this.hideFilter} />,
+          filterIcon: <Icon type="filter" style={{ color: this.props.ColumnFilter[field.fieldname] ? '#108ee9' : '#aaa' }} onClick={this.toggleShowFilter.bind(this, field.fieldname)} />,
+          filterDropdownVisible: !!this.state.filterVisible[field.fieldname], //字段搜索框是否显示
+          onFilterDropdownVisibleChange: () => {
+            return false;
+          }
+        };
+      }
+
       return {
         key: field.fieldname,
         dataIndex: field.fieldname,
@@ -211,12 +224,7 @@ class DynamicTable extends Component {
         sortOrder: (this.props.sorter && sortFieldAndOrder) ? sortFieldAndOrder.split(' ')[0] === field.fieldname && (sortFieldAndOrder.split(' ')[1] + 'end') : false,
         width: this.props.fixedHeader ? setWidth + 22 : 0, //22：padding + border
         fixed: this.props.fixedHeader ? (index < this.state.fixedColumnCount ? 'left' : false) : false,
-        filterDropdown: has_No_Filter_Field.indexOf(field.controltype) > -1 ? null : <FilterDrop visible={!!this.state.filterVisible[field.fieldname]} field={field} value={this.props.ColumnFilter[field.fieldname]} onFilter={this.onFilter} hideFilter={this.hideFilter} />,
-        filterIcon: <Icon type="filter" style={{ color: this.props.ColumnFilter[field.fieldname] ? '#108ee9' : '#aaa' }} onClick={this.toggleShowFilter.bind(this, field.fieldname)} />,
-        filterDropdownVisible: !!this.state.filterVisible[field.fieldname], //字段搜索框是否显示
-        onFilterDropdownVisibleChange: () => {
-          return false;
-        },
+        ...filterObj,
         render: (text, record) => {
           const isLinkField = field === linkField;
           return (
@@ -525,23 +533,22 @@ class DynamicTable extends Component {
           title={this.state.innerTableTitle}
           visible={this.state.innerTableVisible}
           onCancel={this.hideInnerTable}
+          className="innerTableWrap"
           footer={[
             <Button key="close" type="default" onClick={this.hideInnerTable}>关闭</Button>
           ]}
         >
           {this.state.innerTableProtocol.length ? (
-            <div className={styles.innerTableWrap}>
-              <DynamicTable
-                ignoreRecName
-                protocol={this.state.innerTableProtocol}
-                rowKey="recid"
-                dataSource={this.state.innerTableRecords}
-                total={this.state.innerTableRecords.length}
-                pagination={false}
-                fixedHeader={false}
-                fetchCustomHeader={false}
-              />
-            </div>
+            <DynamicTable
+              ignoreRecName
+              protocol={this.state.innerTableProtocol}
+              rowKey="recid"
+              dataSource={this.state.innerTableRecords}
+              total={this.state.innerTableRecords.length}
+              pagination={false}
+              fixedHeader={false}
+              fetchCustomHeader={false}
+            />
           ) : 'loading..'}
         </Modal>
         <CustomHeaderModal visible={this.state.setCustomHeadersVisible}
