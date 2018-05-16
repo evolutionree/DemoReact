@@ -14,7 +14,7 @@ import AdvanceSearchModal from './AdvanceSearchModal';
 import AllocateModal from './AllocateModal';
 import connectPermission from '../../models/connectPermission';
 import DynamicModal from './DynamicModal';
-
+import ExportModal from './ExportModal';
 
 const Option = Select.Option;
 
@@ -63,12 +63,10 @@ function EntcommList({
     });
   }
   function exportData() {
-    const params = JSON.stringify({ ...queries, pageIndex: 1, pageSize: 65535 });
-    window.open(`/api/excel/exportdata?TemplateType=1&DynamicQuery=${params}&UserId=${currentUser}`);
-    // dispatch({
-    //   type: 'entcommList/exportData',
-    //   payload: 'import'
-    // });
+    dispatch({
+      type: 'entcommList/showModals',
+      payload: 'export'
+    });
   }
   function merageCustom() {
     dispatch({ type: 'entcommList/showModals', payload: 'merage' });
@@ -257,6 +255,7 @@ function EntcommList({
       <AdvanceSearchModal />
       <AllocateModal />
       <DynamicModal />
+      <ExportModal currentUser={currentUser} />
     </Page>
   );
 }

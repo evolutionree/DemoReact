@@ -25,7 +25,8 @@ class DSourceDetail extends PureComponent {
       protocol: [], // 协议字段
       data: {}, // 表单数据
       visible: this.props.visible,
-      pemissonLink: false
+      pemissonLink: false,
+      loading: false
     };
   }
 

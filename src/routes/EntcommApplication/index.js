@@ -13,6 +13,7 @@ import TransferModal from './TransferModal';
 import connectPermission from '../../models/connectPermission';
 import AdvanceSearchModal from './AdvanceSearchModal';
 import DynamicModal from './DynamicModal';
+import ExportModal from './ExportModal';
 
 const Option = Select.Option;
 
@@ -108,12 +109,10 @@ function EntcommList({
     });
   }
   function exportData() {
-    const params = JSON.stringify({ ...queries, pageIndex: 1, pageSize: 65535 });
-    window.open(`/api/excel/exportdata?TemplateType=1&DynamicQuery=${params}&UserId=${currentUser}`);
-    // dispatch({
-    //   type: 'entcommList/exportData',
-    //   payload: 'import'
-    // });
+    dispatch({
+      type: 'entcommApplication/showModals',
+      payload: 'export'
+    });
   }
   function advanceSearch() {
     dispatch({ type: 'entcommApplication/showModals', payload: 'advanceSearch' });
@@ -272,6 +271,7 @@ function EntcommList({
       <RecordEditModal />
       <AdvanceSearchModal />
       <DynamicModal />
+      <ExportModal currentUser={currentUser} />
     </Page>
   );
 }

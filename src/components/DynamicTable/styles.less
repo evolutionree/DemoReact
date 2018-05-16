@@ -1,5 +1,4 @@
 .dynamictable {
-
   :global {
     .ant-table-thead > tr > th,
     .ant-table-tbody > tr > td {
@@ -12,5 +11,14 @@
     width: 40px;
     font-size: 18px;
     cursor: pointer;
+  }
+}
+
+.innerTableWrap{
+  :global{
+    .ant-table-thead > tr > th,
+    .ant-table-tbody > tr > td {
+      white-space: nowrap;
+    }
   }
 }

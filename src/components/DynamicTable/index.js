@@ -48,8 +48,8 @@ class DynamicTable extends Component {
       fixedColumnCount: 0,
       filterVisible: {},
       dSourceDetailVisible: false,
-      EntityId: '',
-      RecId: ''
+      DataSourceRelEntityId: '', //数据源关联实体Id
+      DataSourceRelRecId: ''
     };
   }
 
@@ -400,18 +400,18 @@ class DynamicTable extends Component {
       text_ = JSON.stringify(text_);
     }
 
-    let EntityId = '';
+    let DataSourceRelEntityId = '';
     if (field.fieldconfig && field.fieldconfig.DataSource) {
-      EntityId = field.fieldconfig.DataSource.EntityId;
+      DataSourceRelEntityId = field.fieldconfig.DataSource.EntityId;
     }
 
-    const RecId = record[field.fieldname] && record[field.fieldname].id;
+    const DataSourceRelRecId = record[field.fieldname] && record[field.fieldname].id;
     return <a title={text_} onClick={(e) => {
       e.nativeEvent.stopImmediatePropagation();
       this.setState({
         dSourceDetailVisible: true,
-        EntityId,
-        RecId
+        DataSourceRelEntityId,
+        DataSourceRelRecId
       });
     }}>{text_}</a>;
   };
@@ -506,6 +506,7 @@ class DynamicTable extends Component {
         return item;
       });
     }
+
     return (
       <div>
         <Table
@@ -525,14 +526,17 @@ class DynamicTable extends Component {
           ]}
         >
           {this.state.innerTableProtocol.length ? (
-            <DynamicTable
-              ignoreRecName
-              protocol={this.state.innerTableProtocol}
-              rowKey="recid"
-              dataSource={this.state.innerTableRecords}
-              total={this.state.innerTableRecords.length}
-              pagination={false}
-            />
+            <div className={styles.innerTableWrap}>
+              <DynamicTable
+                ignoreRecName
+                protocol={this.state.innerTableProtocol}
+                rowKey="recid"
+                dataSource={this.state.innerTableRecords}
+                total={this.state.innerTableRecords.length}
+                pagination={false}
+                fixedHeader={false}
+              />
+            </div>
           ) : 'loading..'}
         </Modal>
         <CustomHeaderModal visible={this.state.setCustomHeadersVisible}
@@ -541,7 +545,7 @@ class DynamicTable extends Component {
                            fixedColumnCount={this.state.fixedColumnCount}
                            onCancel={this.hideSetCustomHeaders}
                            saveCustomHeaders={this.saveCustomHeaders} />
-        <DSourceDetail visible={this.state.dSourceDetailVisible} entityId={this.state.EntityId} recordId={this.state.RecId} />
+        <DSourceDetail visible={this.state.dSourceDetailVisible} entityId={this.state.DataSourceRelEntityId} recordId={this.state.DataSourceRelRecId} />
       </div>
     );
   }
