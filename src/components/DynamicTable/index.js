@@ -30,6 +30,7 @@ class DynamicTable extends Component {
   static defaultProps = {
     fixedHeader: false, //是否固定表头
     sorter: false, //是否字段排序
+    fetchCustomHeader: true, //是否请求自定义列表数据接口
     ColumnFilter: {}, //表格列（字段）排序集
     otherHeight: 0  //页面其他元素的总高度（除了Table以外的元素）
   };
@@ -279,14 +280,16 @@ class DynamicTable extends Component {
   }
 
   fetchCustomHeaderData = (entityId = this.props.entityId) => { //放在这个组件里去请求数据 主要是考虑 一次代码多次复用 不然交给上一层组件去请求，那么独立实体 简单实体 动态实体列表都得写一遍
-    getCustomHeaders({
-      EntityId: entityId
-    }).then((result) => {
-      this.setState({
-        customProtocol: result.data.columns,
-        fixedColumnCount: result.data.fixedcolumncount
+    if(this.props.fetchCustomHeader) {
+      getCustomHeaders({
+        EntityId: entityId
+      }).then((result) => {
+        this.setState({
+          customProtocol: result.data.columns,
+          fixedColumnCount: result.data.fixedcolumncount
+        });
       });
-    });
+    }
   };
 
 
@@ -536,6 +539,7 @@ class DynamicTable extends Component {
                 total={this.state.innerTableRecords.length}
                 pagination={false}
                 fixedHeader={false}
+                fetchCustomHeader={false}
               />
             </div>
           ) : 'loading..'}
