@@ -314,7 +314,7 @@ class DynamicTable extends Component {
         needPower: 0
       })
     ]).then(([res1, res2]) => {
-      const protocol = res1.data;
+      const protocol = this.processFields(res1.data);
       const recordDetail = res2.data.detail;
       const tableData = (recordDetail && recordDetail[field.fieldname]) || [];
       this.setState({
@@ -323,6 +323,21 @@ class DynamicTable extends Component {
       });
     });
   };
+
+  processFields = fields => {
+    return fields.filter(field => {
+      if ((field.controltype === 31) || (field.controltype > 1000 && field.controltype !== 1012 && field.controltype !== 1006)) {
+        return false;
+      }
+      if (field.fieldconfig.isVisible !== 1) {
+        return false;
+      } else if (field.fieldconfig.isVisibleJS === 0) {
+        return false;
+      }
+      return true;
+    });
+  };
+
   renderCell = (text, field, record, isLinkField) => {
     // 先取 _name
     const text_name = record[field.fieldname + '_name'];
