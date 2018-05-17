@@ -45,11 +45,15 @@ class FlowConnection extends Component {
   }
   componentWillUnmount() {
     const { jspInstance, from, to } = this.props;
-    jspInstance.detach({
-      source: `${from}`,
-      target: `${to}`,
-      anchor: ['Right', 'Left']
-    });
+    // jspInstance.detach({
+    //   source: `${from}`,
+    //   target: `${to}`,
+    //   anchor: ['Right', 'Left']
+    // });
+    const conn = jspInstance.getConnections({ scope: '*', source: from, target: to })[0];
+    if (conn) {
+      jspInstance.detach(conn);
+    }
   }
   render() {
     return null;
