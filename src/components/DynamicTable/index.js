@@ -50,7 +50,8 @@ class DynamicTable extends Component {
       filterVisible: {},
       dSourceDetailVisible: false,
       DataSourceRelEntityId: '', //数据源关联实体Id
-      DataSourceRelRecId: ''
+      DataSourceRelRecId: '',
+      DataSourceDetailModalTitle: ''
     };
   }
 
@@ -432,12 +433,14 @@ class DynamicTable extends Component {
     }
 
     const DataSourceRelRecId = record[field.fieldname] && record[field.fieldname].id;
+    const DataSourceDetailModalTitle = field.displayname;
     return <a title={text_} onClick={(e) => {
       e.nativeEvent.stopImmediatePropagation();
       this.setState({
         dSourceDetailVisible: true,
         DataSourceRelEntityId,
-        DataSourceRelRecId
+        DataSourceRelRecId,
+        DataSourceDetailModalTitle
       });
     }}>{text_}</a>;
   };
@@ -572,7 +575,7 @@ class DynamicTable extends Component {
                            fixedColumnCount={this.state.fixedColumnCount}
                            onCancel={this.hideSetCustomHeaders}
                            saveCustomHeaders={this.saveCustomHeaders} />
-        <DSourceDetail visible={this.state.dSourceDetailVisible} entityId={this.state.DataSourceRelEntityId} recordId={this.state.DataSourceRelRecId} />
+        <DSourceDetail visible={this.state.dSourceDetailVisible} entityId={this.state.DataSourceRelEntityId} recordId={this.state.DataSourceRelRecId} title={this.state.DataSourceDetailModalTitle} />
       </div>
     );
   }

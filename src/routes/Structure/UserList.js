@@ -30,7 +30,9 @@ function UserList({
   toggleSetLeader,
   importData,
   currentUser,
-   bindAttence
+   bindAttence,
+                    setPwdValid,
+                    setForceLogout
 }) {
   function exportData() {
     const params = JSON.stringify(_.mapValues({ ...queries, pageIndex: 1, pageSize: 65535 }, val => val + ''));
@@ -57,7 +59,9 @@ function UserList({
           { label: '设为领导', handler: toggleSetLeader, single: true,
             show: () => checkFunc('SetLeader') && !currentItems[0].isleader },
           { label: '绑定考勤组', handler: bindAttence, single: false,
-            show: () => checkFunc('SetLeader') }
+            show: () => checkFunc('SetLeader') },
+          { label: '密码失效', handler: setPwdValid, single: false },
+          { label: '注销设备', handler: setForceLogout, single: false }
         ]}
       >
         {/*<SelectRole value={queries.roleId} onChange={search.bind(null, 'roleId')} style={{ width: '160px' }} />*/}
@@ -164,6 +168,12 @@ export default connect(
       },
       bindAttence: () => {
         dispatch({ type: 'structure/showModals', payload: 'bindAttence' });
+      },
+      setPwdValid: () => {
+        dispatch({ type: 'structure/setPwdValid', payload: null });
+      },
+      setForceLogout: () => {
+        dispatch({ type: 'structure/setForceLogout', payload: null });
       },
       importData: () => {
         dispatch({

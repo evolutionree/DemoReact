@@ -15,7 +15,8 @@ class DSourceDetail extends PureComponent {
   static propTypes = {
     visible: PropTypes.bool.isRequired,
     entityId: PropTypes.string,
-    recordId: PropTypes.string
+    recordId: PropTypes.string,
+    title: PropTypes.string
   };
   static defaultProps = {};
 
@@ -87,6 +88,20 @@ class DSourceDetail extends PureComponent {
     });
   };
 
+  testSocket = () => {
+    //let socket = new WebSocket('ws://118.25.40.163:8088');
+    let socket = new WebSocket('ws://10.187.133.221:8880/ws');
+    socket.onopen = (event) => {
+      socket.send('I am the client and I\'m listening!');
+      socket.onmessage = (event) => {
+        console.log('Client received a message',event)
+      };
+      socket.onclose = (event) => {
+        console.log('Client notified socket has closed',event)
+      };
+    };
+  }
+
   render() {
     const { visible, entityId, recordId } = this.props;
     const { protocol, data } = this.state;
@@ -97,19 +112,22 @@ class DSourceDetail extends PureComponent {
     //width={hasTable ? 900 : 550}
     let linkUrl = `/entcomm/${entityId}/${recordId}`;
     return (
-      <div className={classnames(Styles.Wrap, { [Styles.panelVisible]: visible })} onClick={e => e.nativeEvent.stopImmediatePropagation()}>
+      <div className={classnames(Styles.Wrap, { [Styles.panelVisible]: visible })} onClick={e => e.nativeEvent.stopImmediatePropagation()} style={{ width: visible ? '550px' : '0px' }}>
         <Spin spinning={this.state.loading}>
-          <div className={Styles.link}>
+          <div className={Styles.header}>
+            <label>{this.props.title}</label>
             {
               this.state.pemissonLink ? <Link to={linkUrl}>进入主页</Link> : null
             }
           </div>
-          <DynamicFormView
-            entityId={entityId}
-            entityTypeId={data.rectype || entityId}
-            fields={protocol}
-            value={data}
-          />
+          <div className={Styles.formViewWrap}>
+            <DynamicFormView
+              entityId={entityId}
+              entityTypeId={data.rectype || entityId}
+              fields={protocol}
+              value={data}
+            />
+          </div>
         </Spin>
       </div>
     );

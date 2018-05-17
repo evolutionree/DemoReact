@@ -12,7 +12,9 @@ import {
   updateUserDept,
   batchhRevertPassword,
   setLeader,
-  updateDeptStatus
+  updateDeptStatus,
+  passwordvalid,
+  forcelogout
 } from '../services/structure';
 import { registerUser } from '../services/authentication';
 import { queryDataSourceData } from '../services/datasource';
@@ -310,6 +312,36 @@ export default {
       } catch (e) {
         console.error(e);
         message.error(e.message || '分组失败');
+      }
+    },
+    *setPwdValid({ payload }, { select, call, put }) {
+      const { currentItems } = yield select(state => state.structure);
+      const submitData = currentItems.map(item => item.userid);
+      try {
+        yield call(passwordvalid, submitData);
+        message.success('设置成功');
+        yield put({ type: 'queryList' });
+      } catch (e) {
+        console.error(e);
+        message.error(e.message || '设置密码失效失败');
+      }
+    },
+    *setForceLogout({ payload }, { select, call, put }) {
+      const { currentItems } = yield select(state => state.structure);
+      const submitData = currentItems.map(item => {
+        return {
+          userid: item.userid,
+          ForceType: 0
+        };
+      });
+
+      try {
+        yield call(forcelogout, submitData);
+        message.success('设置成功');
+        yield put({ type: 'queryList' });
+      } catch (e) {
+        console.error(e);
+        message.error(e.message || '注销设备失败');
       }
     }
   },

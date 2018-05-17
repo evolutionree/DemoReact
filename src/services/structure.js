@@ -333,3 +333,29 @@ export async function flagContact(params) {
     body: JSON.stringify(params)
   });
 }
+
+/**
+ * 密码失效
+ * @param params
+ * [userid1, userid2]
+ * @returns {Promise.<Object>}
+ */
+export async function passwordvalid(params) {
+  return request('/api/account/passwordvalid', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
+ * 注销设备
+ * @param params
+ * [{userid: 1, ForceType: 0 }]
+ * @returns {Promise.<Object>}
+ */
+export async function forcelogout(params) {
+  return request('/api/account/forcelogout', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}

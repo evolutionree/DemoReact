@@ -54,7 +54,6 @@ class MobFieldViewer extends React.Component {
     return layoutRemark.slice(1).split('').map((flag, index) => {
       if (flag === '1') {
         dataIndex += 1;
-        debugger;
         return (
           <FieldHolder
             field={{ color: colors[dataIndex], font: +fonts[dataIndex] }}

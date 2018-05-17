@@ -9,7 +9,7 @@ import Styles from './index.less';
 import _ from 'lodash';
 const CheckboxGroup = Checkbox.Group;
 
-const allOptionValue = ['issetpwdlength', 'isnumber', 'isupper', 'isspecialstr', 'islikeletter', 'iscontainaccount', 'isfirstupdatepwd', 'ispwdexpiry', 'iscueuserdate', 'isgistorypwd'];
+const allOptionValue = ['issetpwdlength', 'isnumber', 'isupper', 'isspecialstr', 'islikeletter', 'iscontainaccount', 'isfirstupdatepwd', 'ispwdexpiry', 'iscueuserdate', 'ishistorypwd'];
 
 class PasswordStrategy extends React.Component {
   static propTypes = {};
@@ -140,7 +140,7 @@ class PasswordStrategy extends React.Component {
       { label: '首次必须修改密码', value: 'isfirstupdatepwd' },
       { label: <label>密码有效期<InputNumber min={0} step={1} onChange={this.InputChange.bind(this, 'pwdexpiry')} value={this.state.pwdexpiry} />天</label>, value: 'ispwdexpiry' },
       { label: <label>提前<InputNumber min={0} step={1} onChange={this.InputChange.bind(this, 'cueuserdate')} value={this.state.cueuserdate} />天提示用户</label>, value: 'iscueuserdate' },
-      { label: '允许修改历史密码', value: 'isgistorypwd' }
+      { label: '允许修改历史密码', value: 'ishistorypwd' }
     ];
     return (
       <div className={Styles.passwordStrategyWrap}>

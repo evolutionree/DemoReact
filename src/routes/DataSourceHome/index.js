@@ -63,6 +63,9 @@ const DataSourceHome = ({
               <FormItem label="列名3">
                 <Input value={colNames[2]} onChange={onColNameChange(2)} placeholder="请输入字段列名" />
               </FormItem>
+              <FormItem label="列名4">
+                <Input value={colNames[3]} onChange={onColNameChange(3)} placeholder="请输入字段列名" />
+              </FormItem>
             </Form>
           </div>
         </div>
