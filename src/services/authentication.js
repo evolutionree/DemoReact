@@ -75,10 +75,10 @@ export async function login(params) {
         userNumber: result.data.usernumber
       },
       token: result.data.access_token,
-      permissionLevel: toPermissionLevel(result.data.accesstype) // TODO
+      permissionLevel: toPermissionLevel(result.data.accesstype), // TODO
+      security: result.data.security
     };
     rememberpwd ? setRememberedPwd({ account: accountname, pwd: accountpwd }) : setRememberedPwd(null);
-    setLogin(loginInfo);
     return { loginInfo };
   });
 }
@@ -177,7 +177,7 @@ export function logout() {
   }
  * @returns {Promise.<Object>}
  */
-export async function modifyPassword(params) {
+export async function modifyPassword(params, headers = {}) {
   const { accountpwd, orginpwd } = params;
   return encryptPassword([accountpwd, orginpwd]).then(result => {
     const _params = {
@@ -188,7 +188,8 @@ export async function modifyPassword(params) {
     };
     return request('/api/account/pwd', {
       method: 'post',
-      body: JSON.stringify(_params)
+      body: JSON.stringify(_params),
+      headers
     });
   });
 }
