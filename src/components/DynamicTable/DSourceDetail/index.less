@@ -5,7 +5,6 @@
   bottom: 0;
   width: 550px;
   overflow: auto;
-  padding: 10px;
   background: #ffffff;
   transition: all ease 0.5s;
   &.panelVisible {
@@ -13,8 +12,31 @@
     box-shadow: rgba(0, 0, 0, 0.176) 0px 6px 12px;
   }
 
-  .link{
-    text-align: right;
-    cursor: pointer;
+  .header{
+    height: 50px;
+    line-height: 50px;
+    background: #3398db;
+    color: #ffffff;
+    text-align: left;
+    padding: 0 20px;
+
+    position: fixed;
+    width: 100%;
+    z-index: 2;
+    a{
+      float: right;
+      color: #ffffff;
+      cursor: pointer;
+      position: fixed;
+      right: 35px;
+      &:hover{
+        color: #ccf1f9;
+      }
+    }
+  }
+
+  .formViewWrap{
+    padding: 0 10px;
+    padding-top: 50px;
   }
 }
