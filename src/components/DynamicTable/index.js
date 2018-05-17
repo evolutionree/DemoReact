@@ -433,7 +433,7 @@ class DynamicTable extends Component {
     }
 
     const DataSourceRelRecId = record[field.fieldname] && record[field.fieldname].id;
-    const DataSourceDetailModalTitle = field.displayname + '-' + text;
+    const DataSourceDetailModalTitle = field.displayname;
     return <a title={text_} onClick={(e) => {
       e.nativeEvent.stopImmediatePropagation();
       this.setState({

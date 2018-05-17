@@ -112,7 +112,7 @@ class DSourceDetail extends PureComponent {
     //width={hasTable ? 900 : 550}
     let linkUrl = `/entcomm/${entityId}/${recordId}`;
     return (
-      <div className={classnames(Styles.Wrap, { [Styles.panelVisible]: visible })} onClick={e => e.nativeEvent.stopImmediatePropagation()}>
+      <div className={classnames(Styles.Wrap, { [Styles.panelVisible]: visible })} onClick={e => e.nativeEvent.stopImmediatePropagation()} style={{ width: visible ? '550px' : '0px' }}>
         <Spin spinning={this.state.loading}>
           <div className={Styles.header}>
             <label>{this.props.title}</label>
