@@ -10,6 +10,7 @@ import _ from 'lodash';
 const CheckboxGroup = Checkbox.Group;
 
 const allOptionValue = ['issetpwdlength', 'isnumber', 'isupper', 'isspecialstr', 'islikeletter', 'iscontainaccount', 'isfirstupdatepwd', 'ispwdexpiry', 'iscueuserdate', 'ishistorypwd'];
+const hasInputOption = ['setpwdlength', 'likeletter', 'pwdexpiry', 'cueuserdate', 'historypwd']; //UI中存在Input的CheckBox项
 
 class PasswordStrategy extends React.Component {
   static propTypes = {};
@@ -24,7 +25,8 @@ class PasswordStrategy extends React.Component {
       setpwdlength: this.props.pwdpolicyData.setpwdlength || '',
       likeletter: this.props.pwdpolicyData.likeletter || '',
       pwdexpiry: this.props.pwdpolicyData.pwdexpiry || '',
-      cueuserdate: this.props.pwdpolicyData.cueuserdate || ''
+      cueuserdate: this.props.pwdpolicyData.cueuserdate || '',
+      historypwd: this.props.pwdpolicyData.historypwd || ''
     };
   }
 
@@ -39,7 +41,8 @@ class PasswordStrategy extends React.Component {
       setpwdlength: nextProps.pwdpolicyData.setpwdlength || '',
       likeletter: nextProps.pwdpolicyData.likeletter || '',
       pwdexpiry: nextProps.pwdpolicyData.pwdexpiry || '',
-      cueuserdate: nextProps.pwdpolicyData.cueuserdate || ''
+      cueuserdate: nextProps.pwdpolicyData.cueuserdate || '',
+      historypwd: this.props.pwdpolicyData.historypwd || ''
     });
   }
 
@@ -54,11 +57,14 @@ class PasswordStrategy extends React.Component {
   }
 
   onChange = (checkedList) => {
-    const option = ['setpwdlength', 'likeletter', 'pwdexpiry', 'cueuserdate']; //UI中存在Input的CheckBox项
-    for (let i = 0; i < option.length; i++) { //如果用户取消勾选这项  后面的Input的数据清空
-      if (checkedList.indexOf('is' + option[i]) === -1) {
+    for (let i = 0; i < hasInputOption.length; i++) { //如果用户取消勾选这项  后面的Input的数据清空
+      if (checkedList.indexOf('is' + hasInputOption[i]) === -1) {
         this.setState({
-          [option[i]]: ''
+          [hasInputOption[i]]: ''
+        });
+      } else {
+        this.setState({
+          [hasInputOption[i]]: hasInputOption[i] === 'setpwdlength' ? 3 : 1
         });
       }
     }
@@ -102,28 +108,25 @@ class PasswordStrategy extends React.Component {
     let submitData = {
       isuserpolicy: this.state.isuserpolicy ? 1 : 0
     };
-    if (this.state.isuserpolicy === 1) {
-      const option = ['setpwdlength', 'likeletter', 'pwdexpiry', 'cueuserdate'];
-      for (let i = 0; i < option.length; i++) {
-        if (checkedList.indexOf('is' + option[i]) > -1) {
-          if (!this.state[option[i]]) {
-            checkedList = checkedList.filter(item => item !== ('is' + option[i]));  //过滤掉输入框没填值得项
-          }
+    for (let i = 0; i < hasInputOption.length; i++) {
+      if (checkedList.indexOf('is' + hasInputOption[i]) > -1) {
+        if (!this.state[hasInputOption[i]]) {
+          checkedList = checkedList.filter(item => item !== ('is' + hasInputOption[i]));  //过滤掉输入框没填值得项
         }
       }
+    }
 
-      for (let i = 0; i < allOptionValue.length; i++) {
-        if (checkedList.indexOf(allOptionValue[i]) > -1) {
-          submitData[allOptionValue[i]] = 1;
-        } else {
-          submitData[allOptionValue[i]] = 0;
-        }
+    for (let i = 0; i < allOptionValue.length; i++) {
+      if (checkedList.indexOf(allOptionValue[i]) > -1) {
+        submitData[allOptionValue[i]] = 1;
+      } else {
+        submitData[allOptionValue[i]] = 0;
       }
+    }
 
-      for(let i = 0; i < option.length; i++) {
-        if (this.state[option[i]]) {
-          submitData[option[i]] = this.state[option[i]];
-        }
+    for(let i = 0; i < hasInputOption.length; i++) {
+      if (this.state[hasInputOption[i]]) {
+        submitData[hasInputOption[i]] = this.state[hasInputOption[i]];
       }
     }
     this.props.dispatch({ type: 'passwordstrategy/save', payload: submitData });
@@ -140,7 +143,7 @@ class PasswordStrategy extends React.Component {
       { label: '首次必须修改密码', value: 'isfirstupdatepwd' },
       { label: <label>密码有效期<InputNumber min={0} step={1} onChange={this.InputChange.bind(this, 'pwdexpiry')} value={this.state.pwdexpiry} />天</label>, value: 'ispwdexpiry' },
       { label: <label>提前<InputNumber min={0} step={1} onChange={this.InputChange.bind(this, 'cueuserdate')} value={this.state.cueuserdate} />天提示用户</label>, value: 'iscueuserdate' },
-      { label: '允许修改历史密码', value: 'ishistorypwd' }
+      { label: <label>不能与最近<InputNumber min={0} step={1} onChange={this.InputChange.bind(this, 'historypwd')} value={this.state.historypwd} />次密码相同</label>, value: 'ishistorypwd' }
     ];
     return (
       <div className={Styles.passwordStrategyWrap}>
@@ -154,12 +157,14 @@ class PasswordStrategy extends React.Component {
             </Checkbox>
           </div>
           <br />
-          {
-            this.state.isuserpolicy ? (
-              <CheckboxGroup options={options} value={this.state.checkedList} onChange={this.onChange} />
-            ) : null
-          }
-          <Button style={{ position: 'absolute', top: '6px', right: '10px' }} onClick={this.savepwdpolicy}>保存</Button>
+          <div style={{ paddingLeft: '22px' }}>
+            {
+              this.state.isuserpolicy ? (
+                <CheckboxGroup options={options} value={this.state.checkedList} onChange={this.onChange} />
+              ) : null
+            }
+            <Button style={{ marginTop: '20px' }} onClick={this.savepwdpolicy}>保存</Button>
+          </div>
         </Page>
       </div>
     );
