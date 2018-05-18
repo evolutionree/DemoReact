@@ -2,67 +2,72 @@
  * Created by 0291 on 2018/5/18.
  */
 import React from 'react';
-import { Form, Select, Input, Radio, Checkbox, message, Icon, Modal, Table } from 'antd';
+import { Select, Modal, Table } from 'antd';
+import { querywithdatasource } from '../../../../services/entity';
 import classnames from 'classnames';
 import _ from 'lodash';
 import styles from './RelBusDataSource.less';
 
 const Option = Select.Option;
-class RelBusDataSource extends React.Component {
+
+class RelBusDataSource extends React.PureComponent {
   static propTypes = {
-    value: React.PropTypes.oneOfType([
-      React.PropTypes.shape({
-        type: React.PropTypes.oneOf(['local', 'network']),
-        // sourceKey: React.PropTypes.string,
-        sourceId: React.PropTypes.string
-      }),
-      React.PropTypes.shape({
-        sourceId: React.PropTypes.string,
-        sourceName: React.PropTypes.string,
-        entityId: React.PropTypes.string,
-        entityName: React.PropTypes.string
-      })
-    ]),
-    onChange: React.PropTypes.func,
-    multiple: React.PropTypes.bool
+    value: React.PropTypes.shape({
+      type: React.PropTypes.oneOf(['free']),
+      config: React.PropTypes.array
+    }),
+    onChange: React.PropTypes.func
   };
 
   static defaultProps = {
-    multiple: false
+
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      options: [],
       currItems: [],
-      formItemValue: this.props.value
+      dataSource: []
     };
-    this.fetchOptions();
+  }
+
+  componentWillMount() {
+    this.fetchOptions(this.props.value);
   }
 
   componentWillReceiveProps(nextprops) {
-    this.setState({
-      formItemValue: nextprops.value
-    });
+    if (!_.isEqual(nextprops.value, this.props.value)) {
+      this.fetchOptions(nextprops.value);
+    }
   }
 
-  fetchOptions = () => {
-    // const params = {
-    //   datasourcename: '',
-    //   recstatus: 1,
-    //   pageindex: 1,
-    //   pagesize: 999
-    // };
-    // queryDataSource(params).then(result => {
-    //   const options = result.data.pagedata.map(item => ({
-    //     id: item.datasourceid + '',
-    //     label: item.datasourcename,
-    //     entityId: item.entityid,
-    //     entityName: item.entityname
-    //   }));
-    //   this.setState({ options: options.filter(item => item.entityId) }); //过滤掉没有entityid 的数据
-    // });
+  fetchOptions = (formItemValue) => {
+    let config = [];
+    if (formItemValue) {
+      config = formItemValue.config;
+    }
+
+
+    let currItems = [];
+    querywithdatasource().then(result => {
+      let resultData = result.data;
+      for (let i = 0; i < resultData.length; i ++) { //将表单数据 与 弹出层表格初始化数据  融合
+        resultData[i].selectDatasourceId = resultData[i].datasources[0].datasourceid;
+        resultData[i].selectDatasourceName = resultData[i].datasources[0].datasourcename;
+        for (let j = 0; j < config.length; j++) {
+          if (resultData[i].entityid === config[j].entityid) {
+            resultData[i].selectDatasourceId = config[j].datasourceid;
+            resultData[i].selectDatasourceName = config[j].datasourcename;
+
+            currItems.push(resultData[i].entityid);
+          }
+        }
+      }
+      this.setState({
+        dataSource: resultData,
+        currItems
+      });
+    });
   };
 
   showModal = () => {
@@ -71,43 +76,33 @@ class RelBusDataSource extends React.Component {
     this.setState({ modalVisible: true });
   };
 
-  iconClearHandler = (e) => {
-    e.stopPropagation();
-    this.props.onChange();
-  };
-
-  parseValue = () => {
-    // const users = [];
-    // const { userNameMap } = this.state;
-    // let { value } = this.props;
-    // if (typeof value === 'number') value += '';
-    // if (value) {
-    //   value.split(',').forEach(userId => {
-    //     users.push({
-    //       id: +userId,
-    //       name: userNameMap[userId] || ''
-    //     });
-    //   });
-    // }
-    // return {
-    //   users,
-    //   text: users.map(u => u.name).join(',')
-    // };
-    return {
-      text: 'test'
-    }
-  };
-
-  onSelectDataSource = (index, value) => {
-    let newFormItemValue = _.cloneDeep(this.state.formItemValue);
-    newFormItemValue[index].sourceid = value;
+  onSelectDataSource = (index, datasourceArray, value) => {
+    let newDataSource = _.cloneDeep(this.state.dataSource);
+    let currentSelectDataSourceObj = _.find(datasourceArray, item => item.datasourceid === value);
+    newDataSource[index].selectDatasourceId = value;
+    newDataSource[index].selectDatasourceName = currentSelectDataSourceObj.datasourcename;
     this.setState({
-      formItemValue: newFormItemValue
+      dataSource: newDataSource
     });
   }
 
   handleChange = () => {
-    this.props.onChange && this.props.onChange(this.state.formItemValue);
+    const { currItems } = this.state;
+    let newFormItemValue = [];
+    this.state.dataSource.map(item => {
+      if (currItems.indexOf(item.entityid) > -1) {
+        newFormItemValue.push({
+          entityid: item.entityid,
+          entityname: item.entityname,
+          datasourceid: item.selectDatasourceId,
+          datasourcename: item.selectDatasourceName
+        });
+      }
+    })
+    this.props.onChange && this.props.onChange({
+      type: 'free',
+      config: newFormItemValue
+    });
     this.setState({
       modalVisible: false
     });
@@ -119,45 +114,45 @@ class RelBusDataSource extends React.Component {
     });
   }
 
+
+  parseValue = () => {
+    let config = [];
+    if (this.props.value) {
+      config = this.props.value.config;
+    }
+
+    let text = [];
+    text = config.map(item => {
+      return item.entityname + '-' + item.datasourcename;
+    });
+    return text.join(',');
+  };
+
   render() {
-    const { text } = this.parseValue();
+    const text = this.parseValue();
     const cls = classnames([styles.wrap, {
       [styles.empty]: !text,
       [styles.disabled]: this.props.isReadOnly === 1
     }]);
-    const iconCls = classnames([styles.iconClose, {//非禁用状态且有值得时候  支持删除操作
-      [styles.iconCloseShow]: text !== '' && this.props.isReadOnly !== 1
-    }]);
 
-    const option = [{text: '所属商机', value: '0'}, {text: '所属客户', value: '1'}]
     const columns = [{
       title: '实体',
-      dataIndex: 'entityid'
+      dataIndex: 'entityname'
     }, {
       title: '数据源',
-      dataIndex: 'sourceid',
+      dataIndex: 'datasources',
       width: 260,
       render: (text, record, index) => {
         return (
-          <Select style={{ width: '100%' }} onChange={this.onSelectDataSource.bind(this, index)} value={(this.state.formItemValue[index] && this.state.formItemValue[index].sourceid) || option[0].value}>
+          <Select style={{ width: '100%' }} onChange={this.onSelectDataSource.bind(this, index, text)} value={record.selectDatasourceId}>
             {
-              option.map((item, itemIndex) => {
-                return <Option value={item.value} key={itemIndex}>{item.text}</Option>;
+              text.map((item, itemIndex) => {
+                return <Option value={item.datasourceid} key={item.datasourceid}>{item.datasourcename}</Option>;
               })
             }
           </Select>
         );
       }
-    }];
-
-    const dataSource = [{
-      key: '1',
-      entityid: '客户',
-      sourceid: '0'
-    }, {
-      key: '2',
-      entityid: '商机',
-      sourceid: '1'
     }];
 
     return (
@@ -166,22 +161,22 @@ class RelBusDataSource extends React.Component {
           {
             text || this.props.placeholder
           }
-          <Icon type="close-circle" className={iconCls} onClick={this.iconClearHandler} />
         </div>
         <Modal
-          title="选择"
+          title="选择数据源"
           visible={this.state.modalVisible}
           onOk={this.handleChange}
           onCancel={this.onCancel}
+          wrapClassName="selectDatasourceWrap"
         >
           <Table rowSelection={{
             onChange: (selectedRowKeys, selectedRows) => {
               this.setState({
-                currItems: selectedRows
+                currItems: selectedRowKeys
               });
             },
-            selectedRowKeys: this.state.currItems.map(item => item.key)
-          }} columns={columns} dataSource={dataSource} pagination={false} />
+            selectedRowKeys: this.state.currItems
+          }} columns={columns} dataSource={this.state.dataSource} pagination={false} rowKey="entityid" />
         </Modal>
       </div>
     );

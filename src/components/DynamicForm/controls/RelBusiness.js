@@ -8,7 +8,6 @@ import _ from 'lodash';
 import Styles from './RelBusiness.less';
 
 const Option = Select.Option;
-const confirm = Modal.confirm;
 
 class RelBusiness extends Component {
   static propTypes = {
@@ -16,11 +15,11 @@ class RelBusiness extends Component {
     // value_name: PropTypes.string,
     onChange: PropTypes.func.isRequired,
     onFocus: PropTypes.func,
-    multidataSource: PropTypes.shape({
-      sourceId: PropTypes.string.isRequired,
+    dataSource: PropTypes.shape({
       entityId: PropTypes.string,
       entityName: PropTypes.string,
-      sourceName: PropTypes.string
+      datasourceid: PropTypes.string.isRequired,
+      datasourcename: PropTypes.string
     }),
     designateDataSource: PropTypes.object,
     multiple: PropTypes.oneOf([0, 1]),
@@ -28,15 +27,15 @@ class RelBusiness extends Component {
     placeholder: PropTypes.string
   };
   static defaultProps = {
-    dataRange: 0
+
   };
 
   constructor(props) {
     super(props);
-    const { multidataSource, value } = this.props;
+    const { dataSource } = this.props;
+    const config = dataSource && dataSource.config;
     this.state = {
-      panelVisible: value && value instanceof Array && value.length > 0 ? false : true,
-      sourceId: multidataSource && multidataSource instanceof Array && multidataSource.length > 0 && multidataSource[0].sourceId,
+      sourceId: config && config instanceof Array && config.length > 0 && config[0].datasourceid,
       dataSourceValue: undefined
     };
   }
@@ -45,84 +44,38 @@ class RelBusiness extends Component {
     this.props.onChange(val, true);
   };
 
-  openAddPanel = (e) => {
-    const { multidataSource } = this.props;
-    this.setState({
-      panelVisible: true,
-      sourceId: multidataSource && multidataSource instanceof Array && multidataSource.length > 0 && multidataSource[0].sourceId
-    });
-  }
-
-  closeAddPanel = () => {
-    this.setState({
-      panelVisible: false
-    });
-  }
-
   changeSourceId = (value) => {
-    this.setState({
+    const newValue = {
       sourceId: value,
       dataSourceValue: undefined
-    });
-  }
-
-  addData = () => {
-    if (!this.state.dataSourceValue) {
-      message.warning('请选择数据源');
-      return false;
     }
-    const addData = JSON.parse(this.state.dataSourceValue);
-
-    const { multidataSource, value } = this.props;
-    const selectSource = _.find(multidataSource, item => this.state.sourceId === item.sourceId);
-
-    this.props.onChange && this.props.onChange([
-      ...(value || []),
-      {
-        sourceId: selectSource.sourceId,
-        sourceName: selectSource.sourceName,
-        ...addData
-      }
-    ]);
-
-    this.setState({
-      panelVisible: false,
-      sourceId: multidataSource && multidataSource[0].sourceId,
-      dataSourceValue: undefined
-    });
+    this.props.onChange(newValue, true);
   }
 
-  delData = (delIndex) => {
-    confirm({
-      title: '你确定删除该数据吗?',
-      content: '',
-      onOk: () => {
-        const { value } = this.props;
-        const newValue = value && value instanceof Array && value.filter((item, index) => {
-            return index !== delIndex;
-          });
-        this.props.onChange && this.props.onChange(newValue);
-      },
-      onCancel() {}
-    });
+  onSelectDataSource = (value) => {
+    const { sourceId } = this.props.value;
+    const newValue = {
+      sourceId: sourceId,
+      dataSourceValue: value
+    };
+    this.props.onChange(newValue, true);
   }
 
   render() {
-    const { multidataSource, value } = this.props;
-    const hasData = value && value instanceof Array && value.length > 0;
+    const { dataSource, value: formItemValue, multiple } = this.props;
     return (
       <div className={Styles.ReBusinessWrap}>
-        <Select style={{ width: '150px', float: 'left' }} onChange={this.changeSourceId} value={this.state.sourceId}>
+        <Select style={{ width: '150px', float: 'left' }} onChange={this.changeSourceId} value={formItemValue && formItemValue.sourceId}>
           {
-            multidataSource && multidataSource instanceof Array && multidataSource.map((item, index) => {
-              return <Option key={index} value={item.sourceId}>{item.entityName || '无'}</Option>;
+            dataSource && dataSource.config && dataSource.config instanceof Array && dataSource.config.map((item, index) => {
+              return <Option key={index} value={item.datasourceid}>{item.entityname || '无'}</Option>;
             })
           }
         </Select>
         <SelectDataSource style={{ width: 'calc(100% - 154px)', display: 'inline-block', marginLeft: '4px' }} dataSource={{
           type: 'network',
           sourceId: this.state.sourceId
-        }} placeholder="请选择数据源" value={this.state.dataSourceValue} onChange={value => this.setState({ dataSourceValue: value })} />
+        }} placeholder="请选择数据源" value={formItemValue && formItemValue.dataSourceValue} onChange={this.onSelectDataSource} multiple={multiple} />
       </div>
     );
   }

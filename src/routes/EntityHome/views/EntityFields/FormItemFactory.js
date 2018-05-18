@@ -684,8 +684,7 @@ export default class FormItemFactory {
   createMultipleDataSource() {
     return (
       <FormItem label="数据源" key="multidataSource">
-        {this.getFieldDecorator('multidataSource', {
-          initialValue: [],
+        {this.getFieldDecorator('dataSource', {
           rules: [{ required: true, message: '请选择数据源' }]
         })(<RelBusDataSource />)}
       </FormItem>

@@ -1106,3 +1106,14 @@ export async function updatefuncconfig(params) {
     body: JSON.stringify(params)
   });
 }
+
+
+/*
+  获取实体下 含有数据源的 实体
+ */
+export async function querywithdatasource() {
+  return request('/api/EntityPro/querywithdatasource', {
+    method: 'POST',
+    body: JSON.stringify({})
+  });
+}
