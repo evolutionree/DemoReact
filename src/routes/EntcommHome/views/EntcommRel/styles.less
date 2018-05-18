@@ -144,30 +144,27 @@
   height: 100%;
   position: relative;
 }
-.reldatasourceWrap>li>div{
+.reldatasourceWrap>li>ul{
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+
+  padding-left: 20px;
+  min-width: 260px;
 }
-.reldatasourceWrap abbr{
-  text-decoration: none;
-  display: block;
+
+.reldatasourceWrap>li>ul>li{
   float: left;
+}
+
+.reldatasourceWrap>li>ul>li:nth-child(1), .reldatasourceWrap>li>ul>li:nth-child(3) {
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
   max-width: 100px;
-
-  position: relative;
-  top: 2px;
-}
-.reldatasourceWrap>li>div span{
-  position: relative;
-  top: -4px;
-}
-.reldatasourceWrap em{
-  font-style: normal;
-  font-size: 24px;
 }
 
+.reldatasourceWrap>li>ul>li:nth-child(3){
+
+}

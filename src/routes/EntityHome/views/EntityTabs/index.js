@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Table, Icon } from 'antd';
+import { Button, Table, Icon, Modal } from 'antd';
 import { connect } from 'dva';
 import EntityTabFormModal from './EntityTabFormModal';
 import SetCountRuleModal from './SetCountRuleModal';
@@ -34,8 +34,8 @@ function EntityTabs({
                 <Icon type="arrow-up" onClick={onUpCilck.bind(null, index)} style={index === 0 ? { visibility: 'hidden' } : null} />
                 <Icon type="arrow-down" onClick={onDownCilck.bind(null, index)} style={index === lastIndex ? { visibility: 'hidden' } : null} />
                 <Icon type="edit" onClick={edit.bind(null, record)} />
-                {!record.entitytaburl && <Icon type="delete" onClick={onDel.bind(null, record.relid)} />}
                 {!record.entitytaburl && <Icon type="setting" onClick={setCountRule.bind(null, record.relid)} />}
+                {!record.entitytaburl && <Icon type="delete" onClick={onDel.bind(null, record.relid)} />}
               </div>
             )}
           />
@@ -63,7 +63,12 @@ function mapDispatchToProps(dispatch) {
       dispatch({ type: 'entityTabs/down', payload: index });
     },
     onDel: (RelId) => {
-      dispatch({ type: 'entityTabs/disabledreltab', payload: RelId });
+      Modal.confirm({
+        title: '确定删除该记录吗',
+        onOk() {
+          dispatch({ type: 'entityTabs/disabledreltab', payload: RelId });
+        }
+      });
     },
     setCountRule: (RelId) => {
       dispatch({ type: 'entityTabs/putState', payload: { RelId } });

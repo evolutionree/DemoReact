@@ -197,11 +197,11 @@ function EntcommRel({
             const percentWidth = 100 / relCountData.length;
             return (
               <li style={{ width: percentWidth + '%' }} key={index}>
-                <div>
-                  <abbr title={item.title}>{`${item.title}`}</abbr>
-                  <span>：</span>
-                  <em>{item.value}</em>
-                </div>
+                <ul>
+                  <li title={item.title}>{`${item.title}`}</li>
+                  <li>：</li>
+                  <li title={item.value}>{item.value}</li>
+                </ul>
               </li>
             );
           })

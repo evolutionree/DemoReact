@@ -454,18 +454,19 @@ class DynamicTable extends Component {
   };
 
   renderTelePhone = (text) => {
-    if (this.props.entityId === 'e450bfd7-ff17-4b29-a2db-7ddaf1e79342') {
-      return (
-        <span>
-          <span>{text}</span>
-          <span className={styles.call} onClick={() => { this.props.onCall && this.props.onCall(text) }}>
-            <Icon type="phone" />
-          </span>
-        </span>
-      );
-    } else {
-      return <span>{text}</span>;
-    }
+    // if (this.props.entityId === 'e450bfd7-ff17-4b29-a2db-7ddaf1e79342') { //云拨号 暂停开发
+    //   return (
+    //     <span>
+    //       <span>{text}</span>
+    //       <span className={styles.call} onClick={() => { this.props.onCall && this.props.onCall(text) }}>
+    //         <Icon type="phone" />
+    //       </span>
+    //     </span>
+    //   );
+    // } else {
+    //
+    // }
+    return <span>{text}</span>;
   };
 
   renderAvatar = (fileId, field) => {
