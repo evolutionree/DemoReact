@@ -1,5 +1,6 @@
 import React from 'react';
 import { Form, Select, Input, Radio, Checkbox, message } from 'antd';
+import RelBusDataSource from './RelBusDataSource';
 import { queryDicTypes, queryDicOptions } from '../../../../services/dictionary';
 import { queryList as queryDataSource } from '../../../../services/datasource';
 import { query as queryEntity, queryFields } from '../../../../services/entity';
@@ -684,8 +685,9 @@ export default class FormItemFactory {
     return (
       <FormItem label="数据源" key="multidataSource">
         {this.getFieldDecorator('multidataSource', {
+          initialValue: [],
           rules: [{ required: true, message: '请选择数据源' }]
-        })(<DataSourceSelect multiple={true} />)}
+        })(<RelBusDataSource />)}
       </FormItem>
     );
   }
