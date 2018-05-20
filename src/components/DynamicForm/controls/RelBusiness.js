@@ -35,7 +35,6 @@ class RelBusiness extends Component {
     const { dataSource } = this.props;
     const config = dataSource && dataSource.config;
     this.state = {
-      sourceId: config && config instanceof Array && config.length > 0 && config[0].datasourceid,
       dataSourceValue: undefined
     };
   }
@@ -74,7 +73,7 @@ class RelBusiness extends Component {
         </Select>
         <SelectDataSource style={{ width: 'calc(100% - 154px)', display: 'inline-block', marginLeft: '4px' }} dataSource={{
           type: 'network',
-          sourceId: this.state.sourceId
+          sourceId: formItemValue && formItemValue.sourceId
         }} placeholder="请选择数据源" value={formItemValue && formItemValue.dataSourceValue} onChange={this.onSelectDataSource} multiple={multiple} />
       </div>
     );
