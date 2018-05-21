@@ -407,6 +407,8 @@ class DynamicTable extends Component {
       case 28:
       case 29:
       case 31:
+      case 32:
+        return this.renderRelBusiness(cellText)
       default:
         return this.renderText(cellText);
     }
@@ -420,6 +422,36 @@ class DynamicTable extends Component {
 
     return <Link to={linkUrl} title={textView}>{textView || '(查看详情)'}</Link>;
   };
+
+
+  renderRelBusiness = (text) => {
+    const relBusinessData = text && text.dataSourceValue;
+   if (relBusinessData && relBusinessData instanceof Object) {
+     const relId = relBusinessData.id.split(',');
+     const relName = relBusinessData.name.split(',');
+
+     let arr = [];
+     for (let i = 0; i < relId.length; i++) {
+       arr.push({
+         id: relId[i],
+         name: relName[i]
+       });
+     }
+
+     return arr.map((item, index) => {
+       return <a key={index} title={item.name} className={styles.relbusinessLink} onClick={(e) => {
+         e.nativeEvent.stopImmediatePropagation();
+         this.setState({
+           dSourceDetailVisible: true,
+           DataSourceRelEntityId: text.entityId,
+           DataSourceRelRecId: item.id,
+           DataSourceDetailModalTitle: ''
+         });
+       }}>{item.name}{index === arr.length - 1 ? '' : ','}</a>;
+     });
+   }
+    return '';
+  }
 
   renderdSourceDetail = (text, field, record) => {
     let text_ = text;

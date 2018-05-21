@@ -71,8 +71,6 @@ class RelBusDataSource extends React.PureComponent {
   };
 
   showModal = () => {
-    this.props.onFocus && this.props.onFocus();
-    if (this.props.isReadOnly === 1) return;
     this.setState({ modalVisible: true });
   };
 

@@ -2,7 +2,7 @@
  * Created by 0291 on 2018/3/20.
  */
 import React, { Component, PropTypes } from 'react';
-import { Select, Button, Icon, Modal, message } from 'antd';
+import { Select } from 'antd';
 import SelectDataSource from './SelectDataSource';
 import _ from 'lodash';
 import Styles from './RelBusiness.less';
@@ -11,17 +11,13 @@ const Option = Select.Option;
 
 class RelBusiness extends Component {
   static propTypes = {
-    value: PropTypes.oneOfType([PropTypes.string, PropTypes.array]), // JSON格式, { id, name }
-    // value_name: PropTypes.string,
     onChange: PropTypes.func.isRequired,
     onFocus: PropTypes.func,
-    dataSource: PropTypes.shape({
+    value: PropTypes.shape({
       entityId: PropTypes.string,
-      entityName: PropTypes.string,
-      datasourceid: PropTypes.string.isRequired,
-      datasourcename: PropTypes.string
+      sourceId: PropTypes.string,
+      dataSourceValue: PropTypes.object
     }),
-    designateDataSource: PropTypes.object,
     multiple: PropTypes.oneOf([0, 1]),
     isReadOnly: PropTypes.oneOf([0, 1]),
     placeholder: PropTypes.string
@@ -32,10 +28,8 @@ class RelBusiness extends Component {
 
   constructor(props) {
     super(props);
-    const { dataSource } = this.props;
-    const config = dataSource && dataSource.config;
     this.state = {
-      dataSourceValue: undefined
+
     };
   }
 
@@ -44,42 +38,77 @@ class RelBusiness extends Component {
   };
 
   changeSourceId = (value) => {
-    const newValue = {
-      sourceId: value,
-      dataSourceValue: undefined
+    const { dataSource } = this.props;
+    const config = dataSource && dataSource.config;
+    let newValue = {};
+    if (value === '') {
+      newValue = {
+        entityId: '',
+        sourceId: '',
+        dataSourceValue: undefined
+      };
+    } else {
+      const sourceId = _.find(config, item => item.entityid === value).datasourceid;
+      newValue = {
+        entityId: value,
+        sourceId: sourceId,
+        dataSourceValue: undefined
+      };
     }
     this.props.onChange(newValue, true);
   }
 
   onSelectDataSource = (value) => {
-    const { sourceId } = this.props.value;
+    const { sourceId, entityId } = this.props.value;
     const newValue = {
+      entityId,
       sourceId: sourceId,
-      dataSourceValue: value
+      dataSourceValue: value && JSON.parse(value)
     };
     this.props.onChange(newValue, true);
   }
 
   render() {
-    const { dataSource, value: formItemValue, multiple } = this.props;
+    const { dataSource, value: formItemValue, multiple, isReadOnly } = this.props;
     return (
       <div className={Styles.ReBusinessWrap}>
-        <Select style={{ width: '150px', float: 'left' }} onChange={this.changeSourceId} value={formItemValue && formItemValue.sourceId}>
+        <Select style={{ width: '150px', float: 'left' }} onChange={this.changeSourceId} value={formItemValue && formItemValue.entityId || ''} disabled={!!isReadOnly}>
+          <Option key="no" value="">- 请选择 -</Option>
           {
             dataSource && dataSource.config && dataSource.config instanceof Array && dataSource.config.map((item, index) => {
-              return <Option key={index} value={item.datasourceid}>{item.entityname || '无'}</Option>;
+              return <Option key={index} value={item.entityid}>{item.entityname || '无'}</Option>;
             })
           }
         </Select>
         <SelectDataSource style={{ width: 'calc(100% - 154px)', display: 'inline-block', marginLeft: '4px' }} dataSource={{
           type: 'network',
           sourceId: formItemValue && formItemValue.sourceId
-        }} placeholder="请选择数据源" value={formItemValue && formItemValue.dataSourceValue} onChange={this.onSelectDataSource} multiple={multiple} />
+        }} placeholder="请选择数据源"
+                          value={formItemValue && formItemValue.dataSourceValue}
+                          onChange={this.onSelectDataSource}
+                          multiple={multiple}
+                          isReadOnly={Number(!(formItemValue && formItemValue.sourceId)) || isReadOnly}
+        />
       </div>
     );
   }
 }
 
+RelBusiness.View = ({ value }) => {
+  const relBusinessData = value && value.dataSourceValue;
+  if (relBusinessData && relBusinessData instanceof Object) {
+    const relName = relBusinessData.name.split(',');
+
+    return (
+      <div>
+        {
+          relName.join(',')
+        }
+      </div>
+    );
+  };
+  return <span style={{ color: '#999999' }}>(空)</span>;
+}
 
 export default RelBusiness;
 
