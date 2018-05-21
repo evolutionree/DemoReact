@@ -1,0 +1,34 @@
+.Wrap{
+  border: 1px solid #979797;
+  .Header{
+    background: #a8a8a8;
+    font-size: 14px;
+    color: #3A3C4F;
+  }
+
+  .body{
+    &:hover{
+      background: #ccf1f9;
+    }
+
+    &:nth-child(odd){
+      background: #f9f9f9;
+    }
+  }
+  :global{
+    .ant-col-8{
+      text-align: center;
+      position: relative;
+      height: 40px;
+      line-height: 40px;
+
+      .ant-select{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 80%;
+        transform: translate(-50%, -50%);
+      }
+    }
+  }
+}
