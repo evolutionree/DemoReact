@@ -148,37 +148,41 @@ export default {
         case 'copybutton': //复制按钮
           break;
         case 'CallService'://直接调用服务
-          const { entityId, recordId } = yield select(state => state.entcommActivities);
-          let params = {};
-          params = {
-            Recids: [recordId],
-            EntityId:entityId,
-            ...plugins[pluginIndex].extradata
-          };
-          yield call(extraToolbarClickSendData, plugins[pluginIndex].routepath, params);
-          message.success('提交成功');
+          try {
+            const { entityId, recordId } = yield select(state => state.entcommActivities);
+            let params = {};
+            params = {
+              Recids: [recordId],
+              EntityId: entityId,
+              ...plugins[pluginIndex].extradata
+            };
+            yield call(extraToolbarClickSendData, plugins[pluginIndex].routepath, params);
+            message.success('提交成功');
+          } catch (e) {
+            message.error(e.message || '提交失败');
+          }
           break;
         case 'upatebutton': //更新事件按钮
-            const confirmed = yield cps(
-              confirmModal,
-              '确定将'+plugins[pluginIndex].name
-            );
-            if (!confirmed) return;
-            try {
-              const { entityId, recordId } = yield select(state => state.entcommActivities);
-              if(plugins[pluginIndex].entity&&plugins[pluginIndex].entity.extradata){
-                const { routepath } = plugins[pluginIndex].entity;
-                yield call(dynamicRequest,'/'+routepath, {
-                  RecId:recordId,
-                  Status:plugins[pluginIndex].entity.extradata.status
-                });
-                message.success('提交成功');
-                yield put({ type: 'init', payload: { entityId, recordId } });
-                yield put({ type: 'entcommHome/fetchRecordDetail' });
-              }
-            } catch (e) {
-              message.error(e.message || '提交失败');
+          const confirmed = yield cps(
+            confirmModal,
+            '确定将' + plugins[pluginIndex].name
+          );
+          if (!confirmed) return;
+          try {
+            const { entityId, recordId } = yield select(state => state.entcommActivities);
+            if(plugins[pluginIndex].entity&&plugins[pluginIndex].entity.extradata){
+              const { routepath } = plugins[pluginIndex].entity;
+              yield call(dynamicRequest,'/'+routepath, {
+                RecId: recordId,
+                Status: plugins[pluginIndex].entity.extradata.status
+              });
+              message.success('提交成功');
+              yield put({ type: 'init', payload: { entityId, recordId } });
+              yield put({ type: 'entcommHome/fetchRecordDetail' });
             }
+          } catch (e) {
+            message.error(e.message || '提交失败');
+          }
           break;
         case 'FunctionButton':
           if (plugins[pluginIndex].code === 'PrintEntity') {
