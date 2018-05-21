@@ -13,7 +13,7 @@ class SelectDataSource extends React.Component {
     onChange: PropTypes.func.isRequired,
     onFocus: PropTypes.func,
     dataSource: PropTypes.shape({
-      sourceId: PropTypes.string.isRequired,
+      sourceId: PropTypes.string,
       type: PropTypes.string
     }),
     designateDataSource: PropTypes.object,
