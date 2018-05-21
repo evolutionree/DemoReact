@@ -1,14 +1,13 @@
 /**
  * Created by 0291 on 2018/5/21.
  */
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 import { connect } from 'dva';
 import { Modal, Form, Input, Select, Radio, Checkbox, InputNumber, message, Row, Col } from 'antd';
-import { query as queryEntities } from '../../../services/entity';
 
 const Option = Select.Option;
 
-class SchemeSelect extends Component {
+class SchemeSelect extends PureComponent {
   static propTypes = {
 
   };
@@ -33,15 +32,28 @@ class SchemeSelect extends Component {
 
   };
 
+  onSelectChange = (value) => {
+    this.props.onChange && this.props.onChange(value);
+  }
 
   render() {
+    const { entities, value } = this.props;
     return (
-      <Select>
-        <Option value="jack">Jack</Option>
-        <Option value="lucy">Lucy</Option>
+      <Select value={value} onChange={this.onSelectChange}>
+        {
+          entities && entities instanceof Array && entities.map((entity) => {
+            return <Option key={entity.entityid}>{entity.entityname}</Option>;
+          })
+        }
       </Select>
     );
   }
 }
 
-export default SchemeSelect;
+export default connect(
+  state => {
+    const { entities } = state.transferscheme;
+    return {
+      entities
+    };
+  })(SchemeSelect);

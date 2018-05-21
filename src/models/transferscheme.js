@@ -3,6 +3,7 @@
  */
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
+import { query as queryEntities } from '../services/entity';
 
 const columns = [{
   title: '转移方案名',
@@ -28,6 +29,7 @@ for (let i = 0; i < 46; i++) {
 export default {
   namespace: 'transferscheme',
   state: {
+    entities: [],
     protocol: columns,
     queries: {},
     list: data,
@@ -49,7 +51,23 @@ export default {
   },
   effects: {
     *init(action, { put, call, select }) {
+      yield put({ type: 'queryEntity' });
       yield put({ type: 'queryList' });
+    },
+    *queryEntity(action, { put, call, select }) {
+      const params = {
+        pageIndex: 1,
+        pageSize: 999,
+        typeId: -1,
+        entityName: '',
+        status: 1
+      };
+      try {
+        const { data: { pagedata } } = yield call(queryEntities, params);
+        yield put({ type: 'putState', payload: { entities: pagedata } });
+      } catch (e) {
+        message.error(e.message || '获取列表数据失败');
+      }
     },
     *queryList(action, { put, call, select }) {
       const { query } = yield select(({ routing }) => routing.locationBeforeTransitions);
@@ -114,6 +132,7 @@ export default {
     },
     resetState() {
       return {
+        entities: [],
         protocol: [],
         queries: {},
         list: [],

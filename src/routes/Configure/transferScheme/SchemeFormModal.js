@@ -5,7 +5,6 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Modal, Form, Input, Select, Radio, Checkbox, InputNumber, message } from 'antd';
 import RelTable from './RelTable';
-import { query as queryEntities } from '../../../services/entity';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -29,8 +28,6 @@ class SchemeFormModal extends Component {
   componentWillReceiveProps(nextProps) {
     const isOpening = !this.props.visible && nextProps.visible;
     if (isOpening) {
-      this.fetchRelEntities();
-
       const { form, editingRecord } = nextProps;
       if (editingRecord) {
         form.setFieldsValue({
@@ -43,27 +40,12 @@ class SchemeFormModal extends Component {
     }
   }
 
-  fetchRelEntities = () => {
-    const params = {
-      pageIndex: 1,
-      pageSize: 999,
-      typeId: -1,
-      entityName: '',
-      status: 1
-    };
-    queryEntities(params).then(result => {
-      const entities = result.data.pagedata;
-      const entitiesRelAudit = entities.filter(
-        ({ modeltype, relaudit }) => modeltype === 0 || (relaudit && modeltype === 2) || (relaudit && modeltype === 3)
-      );
-      this.setState({ entities: entitiesRelAudit });
-    });
-  };
 
   onOk = () => {
     const { form, editingRecord } = this.props;
     form.validateFields((err, values) => {
       if (err) return;
+
       // this.props.confirm({
       //   resetflag: 1,
       //   ...values,
@@ -73,8 +55,16 @@ class SchemeFormModal extends Component {
     });
   };
 
+  componentValueRequire = (rule, value, callback) => {
+    if (!value || value instanceof Array && value.length === 0) {
+      callback('请选择关联转移对象');
+    } else {
+      callback();
+    }
+  }
+
   render() {
-    const { getFieldDecorator, getFieldValue } = this.props.form;
+    const { getFieldDecorator } = this.props.form;
     const isEdit = !!this.props.editingRecord;
     return (
       <Modal
@@ -98,7 +88,7 @@ class SchemeFormModal extends Component {
               rules: [{ required: true, message: '请选择关联实体' }]
             })(
               <Select placeholder="请选择关联实体">
-                {this.state.entities.map(entity => (
+                {this.props.entities.map(entity => (
                   <Option key={entity.entityid}>{entity.entityname}</Option>
                 ))}
               </Select>
@@ -106,7 +96,9 @@ class SchemeFormModal extends Component {
           </FormItem>
           <FormItem label="关联转移对象">
             {getFieldDecorator('relentityid', {
-              rules: [{ required: true, message: '请选择关联转移对象' }]
+              rules: [{
+                validator: this.componentValueRequire
+              }]
             })(
               <RelTable />
             )}
@@ -126,11 +118,20 @@ class SchemeFormModal extends Component {
 
 export default connect(
   state => {
-    const { showModals, currItems, modalPending } = state.transferscheme;
-    console.log(showModals)
+    const { showModals, currItems, modalPending, entities } = state.transferscheme;
+    // const data = [{
+    //   entityid: '72d518b4-12f1-4ed7-a4ee-e9be658aa567',
+    //   jilian: true,
+    //   same: true
+    // }, {
+    //   entityid: '1',
+    //   jilian: true,
+    //   same: true
+    // }];
     return {
       visible: /add|edit/.test(showModals),
       editingRecord: /edit/.test(showModals) ? currItems[0] : undefined,
+      entities,
       modalPending
     };
   },
