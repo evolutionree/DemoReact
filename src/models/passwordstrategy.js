@@ -26,7 +26,7 @@ export default {
         const { data } = yield call(getpwdpolicy);
         yield put({ type: 'putState', payload: { pwdpolicyData: data } });
       } catch (e) {
-        message.error(e.message || '保存失败');
+        message.error(e.message || '查询失败');
       }
     },
     *save({ payload: data }, { select, call, put }) {
