@@ -1,6 +1,6 @@
 import { routerRedux } from 'dva/router';
 import { message } from 'antd';
-import { queryList, addFlow, updateFlow, updateFlowStatus, unDeleteWorkFlow, saveFreeFlowEvent } from '../services/workflow';
+import { queryList, addFlow, updateFlow, updateFlowStatus, unDeleteWorkFlow, saveFreeFlowEvent, savetitleconfig } from '../services/workflow';
 
 export default {
   namespace: 'workflowList',
@@ -111,6 +111,18 @@ export default {
       yield put({ type: 'putState', payload: { modalPending: true } });
       try {
         yield call(saveFreeFlowEvent, data);
+        message.success('保存成功');
+        yield put({ type: 'showModals', payload: '' });
+        yield put({ type: 'queryList' });
+      } catch (e) {
+        yield put({ type: 'putState', payload: { modalPending: false } });
+        message.error(e.message || '保存失败');
+      }
+    },
+    *saveTitleConfig({ payload: data }, { select, put, call }) {
+      yield put({ type: 'putState', payload: { modalPending: true } });
+      try {
+        yield call(savetitleconfig, data);
         message.success('保存成功');
         yield put({ type: 'showModals', payload: '' });
         yield put({ type: 'queryList' });

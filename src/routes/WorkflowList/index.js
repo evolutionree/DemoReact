@@ -6,8 +6,9 @@ import Page from '../../components/Page';
 import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import WorkflowFormModal from './WorkflowFormModal';
-import WorkflowEventModal from "./WorkflowEventModal";
-import WorkflowRuleModal from "./WorkflowRuleModal";
+import WorkflowEventModal from './WorkflowEventModal';
+import WorkflowRuleModal from './WorkflowRuleModal';
+import SetTitleConfigModal from './SetTitleConfigModal';
 
 const Option = Select.Option;
 const Column = Table.Column;
@@ -24,7 +25,8 @@ function WorkflowList({
     unDeleteWorkFlow,
     selectItems,
     openFlowEvent,
-    openFlowVisibleRule
+    openFlowVisibleRule,
+    setTitleConfig
   }) {
   const { flowStatus, pageIndex, pageSize, searchName } = queries;
   return (
@@ -42,7 +44,8 @@ function WorkflowList({
           { label: '设置流程函数', handler: openFlowEvent, single: true,
             show: () => currentItems[0].flowtype === 0 },
           { label: '设置可见规则', handler: openFlowVisibleRule, single: true,
-            show: () => currentItems[0].entitymodeltype === 0 }
+            show: () => currentItems[0].entitymodeltype === 0 },
+          { label: '设置审批主题', handler: setTitleConfig, single: true }
         ]}
       >
         <Select value={flowStatus + ''} onChange={val => search({ flowStatus: val })}>
@@ -94,6 +97,7 @@ function WorkflowList({
       <WorkflowFormModal />
       <WorkflowEventModal />
       <WorkflowRuleModal />
+      <SetTitleConfigModal />
     </Page>
   );
 }
@@ -123,8 +127,11 @@ export default connect(
       openFlowVisibleRule() {
         dispatch({ type: 'workflowList/showModals', payload: 'workflowRule' });
       },
+      setTitleConfig() {
+        dispatch({ type: 'workflowList/showModals', payload: 'titleConfig' });
+      },
       selectItems(items) {
-        dispatch({ type: 'workflowList/putState', payload: { currentItems: items } })
+        dispatch({ type: 'workflowList/putState', payload: { currentItems: items } });
       }
     };
   }

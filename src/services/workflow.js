@@ -161,6 +161,23 @@ export async function saveFreeFlowEvent(params){
 }
 
 /**
+ * 保存标题配置信息
+ * @param params
+ * {
+    "flowid":"xxxx",
+    "titleconfig":"xxxx"
+    }
+ * @returns {Promise.<Object>}
+ */
+export async function savetitleconfig(params) {
+  return request('api/WorkFlow/savetitleconfig', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}
+
+
+/**
  * 查询自由流程函数
  * @param params
  * {
@@ -168,8 +185,38 @@ export async function saveFreeFlowEvent(params){
     }
  * @returns {Promise.<Object>}
  */
-export async function queryFreeFlowEvent(params){
+export async function queryFreeFlowEvent(params) {
   return request('/api/workflow/getfreeflowevent', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
+ * 获取工作流定义详情（包含标题配置信息)
+ * @param params
+ * {
+    "FlowId":"dsfdf"
+    }
+ * @returns {Promise.<Object>}
+ */
+export async function getWorkFlowDetail(params){
+  return request('api/WorkFlow/detail', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
+ * 获取工作流定义中标题配置的可用字段信息
+ * @param params
+ * {
+    "FlowId":"dsfdf"
+    }
+ * @returns {Promise.<Object>}
+ */
+export async function gettitlefields(params){
+  return request('api/WorkFlow/titlefields', {
     method: 'POST',
     body: JSON.stringify(params)
   });
