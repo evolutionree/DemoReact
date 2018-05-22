@@ -22,7 +22,7 @@ export default {
         if (match) {
           const [whole, reminderId, reminderName] = match;
           dispatch({ type: 'init', payload: reminderId });
-          dispatch({ type: 'putState', payload: { reminderName } });
+          dispatch({ type: 'putState', payload: { reminderName: decodeURI(reminderName) } });
           modelDirty = true;
         } else {
           modelDirty && dispatch({ type: 'resetState' });
