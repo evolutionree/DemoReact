@@ -48,7 +48,8 @@ function EntcommList({
       flowName,
       creatorName,
       pageIndex,
-      pageSize
+      pageSize,
+      title
     },
     list,
     total,
@@ -66,10 +67,12 @@ function EntcommList({
   function handleSearchClick() {
     const fn = flowNameInput.getValue();
     const cn = creatorNameInput.getValue();
-    search({ flowName: fn, creatorName: cn });
+    const tn = titleNameInput.getValue();
+    search({ flowName: fn, creatorName: cn, title: tn });
   }
   let flowNameInput;
   let creatorNameInput;
+  let titleNameInput;
 
   const inputStyle = {
     width: '120px',
@@ -121,6 +124,7 @@ function EntcommList({
           {/*</Search>*/}
           <InputWithInitValue style={inputStyle} initValue={flowName} ref={ref => flowNameInput = ref} placeholder="流程名称" />
           <InputWithInitValue style={inputStyle} initValue={creatorName} ref={ref => creatorNameInput = ref} placeholder="申请人姓名" />
+          <InputWithInitValue style={inputStyle} initValue={title} ref={ref => titleNameInput = ref} placeholder="搜索主题" />
           <Button onClick={handleSearchClick}>搜索</Button>
         </Toolbar.Right>
       </Toolbar>
@@ -144,6 +148,7 @@ function EntcommList({
           <Link to={`/affair/${record.caseid}`}>{text}</Link>
         )} />
         <Column title="流程名称" key="flowname" dataIndex="flowname" />
+        <Column title="审批主题" key="title" dataIndex="title" />
         <Column title="申请人" key="reccreator_name" dataIndex="reccreator_name" />
         <Column title="步骤/处理人" key="handleuser_name" dataIndex="handleuser_name" />
         <Column title="状态" key="auditstatus_name" dataIndex="auditstatus_name" />
