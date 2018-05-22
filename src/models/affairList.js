@@ -102,11 +102,15 @@ export default {
         if (queries.creatorName) {
           params.searchData.reccreator = queries.creatorName;
         }
+        if (queries.title) {
+          params.searchData.title = queries.title;
+        }
         delete params.auditStatus;
         delete params.searchBegin;
         delete params.searchEnd;
         delete params.flowName;
         delete params.creatorName;
+        delete params.title;
         const { data } = yield call(getListData, params);
         yield put({
           type: 'queryListSuccess',
