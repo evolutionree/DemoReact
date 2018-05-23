@@ -244,7 +244,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
               val = +(val.toFixed(2));
             }
           }
-          this.getFieldComponentInstance(fieldName).setValue(val, decimalLength, fieldName);
+          this.getFieldComponentInstance(fieldName) && this.getFieldComponentInstance(fieldName).setValue(val, decimalLength, fieldName);
         } catch (e) {
           console.error(e);
           // this.props.form.setFields({ [fieldName]: { value } });

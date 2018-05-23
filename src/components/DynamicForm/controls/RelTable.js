@@ -288,7 +288,7 @@ class RelTable extends Component {
     const value = this.parseValue();
     const isAllSelected = value.length && value.every((item, index) => _.includes(this.state.selectedRows, index));
     const fields = this.getShowFields();
-   
+
     return (
       <div>
         <div className={styles.tr}>
