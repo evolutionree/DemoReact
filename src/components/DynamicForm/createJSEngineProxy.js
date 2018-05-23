@@ -72,7 +72,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
 
     componentWillReceiveProps(nextProps) {
       if (this.props.value !== nextProps.value) {
-        console.log('valueChange', this.props.value, nextProps.value);
+        //console.log('valueChange', this.props.value, nextProps.value);
       }
 
       this.setState({ fields: nextProps.fields }, () => {
@@ -569,7 +569,6 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     handleFieldControlFocus = (fieldName) => {
-      const app = this;
       const filterJS = this.fieldExpandFilterJS[fieldName];
       if (filterJS) {
         if (this.globalJSLoading) {

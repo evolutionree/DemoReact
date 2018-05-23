@@ -198,7 +198,10 @@ class DynamicFormBase extends Component {
   };
 
   onFieldFocus = fieldName => {
-    this.props.onFieldControlFocus(fieldName);
+    const { jsEngine } = this.props;
+    if (jsEngine) {
+      jsEngine.handleFieldControlFocus(fieldName);
+    }
   };
 
   onFieldValueChange = (fieldName, newValue, isFromApi) => {

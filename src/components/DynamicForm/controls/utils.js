@@ -48,6 +48,7 @@ export function createNormalInput(type, options) {
         this.hasFocused = true;
         this.props.onChange('');
       }
+      this.props.onFocus && this.props.onFocus(); //触发 过滤脚本
     };
 
     render() {
