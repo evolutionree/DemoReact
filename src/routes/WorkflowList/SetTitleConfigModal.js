@@ -77,9 +77,7 @@ class SetTitleConfigModal extends Component {
       >
         <Form>
           <FormItem label="设置审批主题内容">
-            {getFieldDecorator('titleconfig', {
-              rules: [{ required: true, message: '请设置审批主题内容' }]
-            })(
+            {getFieldDecorator('titleconfig')(
               <TextAreaTemplate placeholder="请编写主题内容，如：请审批{商机.负责人}提交的关于商机：{商机.商机名称}的相关内容" fields={this.state.titleFields} />
             )}
           </FormItem>
