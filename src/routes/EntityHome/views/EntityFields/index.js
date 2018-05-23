@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import _ from 'lodash';
-import { Button, Table, Dropdown, Menu, Icon, message, Popconfirm, Modal } from 'antd';
+import { Button, Table, Dropdown, Menu, Icon, Popconfirm, Modal } from 'antd';
 import Toolbar from '../../../../components/Toolbar';
 import FieldFormModal from './FieldFormModal';
 import { fieldModels } from '../../controlTypes';
@@ -151,6 +151,20 @@ function EntityFields({
       dataIndex: 'recstatus',
       key: 'recstatus',
       render: val => (['禁用', '启用'][val]) },
+    { title: '配置JS',
+      dataIndex: 'expandjs',
+      key: 'expandjs',
+      width: 60,
+      render: (val) => {
+        return val ? <Icon type="check" /> : null;
+      } },
+    { title: '过滤JS',
+      dataIndex: 'filterjs',
+      key: 'filterjs',
+      width: 60,
+      render: (val) => {
+        return val ? <Icon type="check" /> : null;
+      } },
     { title: '操作',
       key: 'operation',
       render: (val, record) => {
