@@ -21,6 +21,17 @@
 .td {
   display: table-cell;
 }
+.required{
+  &:before{
+    display: inline-block;
+    margin-right: 4px;
+    content: "*";
+    font-family: SimSun;
+    line-height: 1;
+    font-size: 14px;
+    color: #f04134;
+  }
+}
 .table {
   width: 100%;
   border: 1px solid #e9e9e9;

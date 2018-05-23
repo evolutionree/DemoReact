@@ -288,6 +288,7 @@ class RelTable extends Component {
     const value = this.parseValue();
     const isAllSelected = value.length && value.every((item, index) => _.includes(this.state.selectedRows, index));
     const fields = this.getShowFields();
+   
     return (
       <div>
         <div className={styles.tr}>
@@ -296,11 +297,17 @@ class RelTable extends Component {
               <Checkbox checked={isAllSelected} onChange={this.onCheckAllChange} />
             </span>
           </div>}
-          {fields.map(field => (
-            <div className={styles.th} key={field.fieldname}>
-              <span>{field.displayname}</span>
-            </div>
-          ))}
+          {fields.map(field => {
+            const fieldConfig = field.fieldconfig || {};
+            const required = field.isrequire || fieldConfig.isRequiredJS;
+            return (
+              <div className={classnames([styles.th, {
+                [styles.required]: !!required
+              }])} key={field.fieldname}>
+                <span>{field.displayname}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
     );
