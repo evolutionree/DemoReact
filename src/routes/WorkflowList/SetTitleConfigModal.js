@@ -49,17 +49,19 @@ class SetTitleConfigModal extends Component {
     getWorkFlowDetail(params).then(result => {
       const data = result.data.data[0];
       this.props.form.setFieldsValue({
-        flowid: data.flowid || '',
         titleconfig: data.titleconfig || ''
       });
     });
   };
 
   onOk = () => {
-    const { form } = this.props;
+    const { form, currentItem } = this.props;
     form.validateFields((err, values) => {
       if (err) return;
-      this.props.confirm(values);
+      this.props.confirm({
+        ...values,
+        flowid: currentItem.flowid
+      });
     });
   };
 
@@ -74,9 +76,6 @@ class SetTitleConfigModal extends Component {
         confirmLoading={this.props.modalPending}
       >
         <Form>
-          {getFieldDecorator('flowid')(
-            <Input maxLength={10} type="hidden" />
-          )}
           <FormItem label="设置审批主题内容">
             {getFieldDecorator('titleconfig', {
               rules: [{ required: true, message: '请设置审批主题内容' }]
