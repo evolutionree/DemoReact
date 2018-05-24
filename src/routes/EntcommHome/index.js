@@ -20,7 +20,6 @@ function EntcommHome({
 }) {
   const entityId = params.entityId;
   const recordId = params.recordId;
-
   const tabbar = (
     <LinkTab.Group>
 {/*   <LinkTab to={`/entcomm/${entityId}/${recordId}/activities`}>动态</LinkTab>

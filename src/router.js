@@ -29,6 +29,7 @@ import EntcommActivities from './routes/EntcommHome/views/EntcommActivities';
 import EntcommInfo from './routes/EntcommHome/views/EntcommInfo';
 import EntcommDocs from './routes/EntcommHome/views/EntcommDocs';
 import EntcommRel from './routes/EntcommHome/views/EntcommRel';
+import EntcommAffair from './routes/EntcommHome/views/EntcommAffair';
 
 import ContractReceivePay from './routes/ContractHome/ReceivePay';
 
@@ -94,6 +95,7 @@ const appRoutes = [
       { path: 'docs', comp: EntcommDocs, model: require('./models/entcommDocs') },
       { path: 'receivepay', comp: ContractReceivePay, model: require('./models/contractReceivePay') },
       { path: 'relationtree', comp: CustomerRelationTree, model: require('./models/customerRelationTree') },
+      { path: 'affairlist', comp: EntcommAffair, model: require('./models/entcommAffair') },
       { path: 'rel/:relId/:relEntityId', comp: EntcommRel, model: require('./models/entcommRel') }
     ] },
   { path: 'products', comp: ProductManager, entid: '33240d14-a543-4357-b696-c8cc77f82f7c', model: require('./models/productManager') },
