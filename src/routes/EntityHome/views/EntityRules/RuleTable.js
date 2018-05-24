@@ -82,6 +82,12 @@ function RuleTable({
         { title: '显示', key: 'rule-import-isVisible', dataIndex: 'rule-import-isVisible', render: checkboxRender.bind(null, 'rule-import-isVisible') },
         { title: '必填', key: 'rule-import-isRequired', dataIndex: 'rule-import-isRequired', render: checkboxRender.bind(null, 'rule-import-isRequired') }
       ]
+    },
+    {
+      title: '同步',
+      children: [
+        { title: '显示', key: 'rule-snyc-isVisible', dataIndex: 'rule-sync-isVisible', render: checkboxRender.bind(null, 'rule-sync-isVisible') }
+      ]
     }
   ] : [
     { title: '序号', key: 'order', dataIndex: 'order' },
@@ -111,6 +117,12 @@ function RuleTable({
       title: '导入',
       children: [
         { title: '隐藏', key: 'rule-import-isVisible', dataIndex: 'rule-import-isVisible', render: checkboxRender1.bind(null, 'rule-import-isVisible') }
+      ]
+    },
+    {
+      title: '同步',
+      children: [
+        { title: '隐藏', key: 'rule-snyc-isVisible', dataIndex: 'rule-sync-isVisible', render: checkboxRender1.bind(null, 'rule-sync-isVisible') }
       ]
     }
   ];

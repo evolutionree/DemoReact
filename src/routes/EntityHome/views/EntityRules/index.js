@@ -30,6 +30,7 @@ function EntityRules({
       delete li[i]['rule-import-isVisible'];
       delete li[i]['rule-import-isRequired'];
       delete li[i]['rule-import-isReadOnly'];
+      delete li[i]['rule-sync-isVisible'];
 
       if (useType === 0) {
         li[i].rules.forEach((rule, index) => {

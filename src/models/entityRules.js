@@ -150,7 +150,7 @@ export default {
       }
       function completeSubRules(subRules) {
         // 补充子规则
-        return [0, 1, 2, 4].map(type => {
+        return [0, 1, 2, 4, 5].map(type => {
           let retRule = _.find(subRules, ['operatetype', type]);
           if (!retRule) {
             retRule = {
@@ -172,7 +172,8 @@ export default {
         const EDIT = 1;
         const DETAIL = 2;
         const IMPORT = 4;
-        const subRules = [ADD, EDIT, DETAIL, IMPORT].map(type => {
+        const SYNC = 5;
+        const subRules = [ADD, EDIT, DETAIL, IMPORT, SYNC].map(type => {
           const readonly = type === DETAIL ? 1 : 0;
           return {
             fieldrulesid: '',
@@ -195,7 +196,7 @@ export default {
       function flattenRule (rule) {
         return rule.rules.reduce((retObj, rule) => {
           const opType = rule.operatetype;
-          const usage = ['add', 'edit', 'detail', null, 'import'][opType];
+          const usage = ['add', 'edit', 'detail', null, 'import', 'sync'][opType];
           retObj[`rule-${usage}-isVisible`] = !!rule.isvisible;
           retObj[`rule-${usage}-isRequired`] = !!rule.isrequired;
           retObj[`rule-${usage}-isReadOnly`] = !!rule.isreadonly;
@@ -227,7 +228,7 @@ export default {
       const match = key.match(/rule-(\w+)-(\w+)/);
       if (match) {
         const [i, operationTypeStr, innerKey] = match;
-        const operationType = ['add', 'edit', 'detail', null, 'import'].indexOf(operationTypeStr);
+        const operationType = ['add', 'edit', 'detail', null, 'import', 'sync'].indexOf(operationTypeStr);
         const subRule = newList[index].rules.find(item => item.operatetype === operationType);
         const boolVal = value ? 1 : 0;
         if (innerKey === 'isVisible') {
