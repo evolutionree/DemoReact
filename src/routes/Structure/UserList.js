@@ -8,6 +8,7 @@ import styles from './Structure.less';
 import ChangeDeptModal from './ChangeDeptModal';
 import SelectRole from "../../components/SelectRole";
 import BindAttence from './BindAttence';
+import TransferDataModal from './TransferDataModal';
 
 const Option = Select.Option;
 const Column = Table.Column;
@@ -32,7 +33,8 @@ function UserList({
   currentUser,
    bindAttence,
                     setPwdValid,
-                    setForceLogout
+                    setForceLogout,
+                    transferData
 }) {
   function exportData() {
     const params = JSON.stringify(_.mapValues({ ...queries, pageIndex: 1, pageSize: 65535 }, val => val + ''));
@@ -61,7 +63,8 @@ function UserList({
           { label: '绑定考勤组', handler: bindAttence, single: false,
             show: () => checkFunc('SetLeader') },
           { label: '密码失效', handler: setPwdValid, single: false },
-          { label: '注销设备', handler: setForceLogout, single: false }
+          { label: '注销设备', handler: setForceLogout, single: false },
+          { label: '一键转移数据', handler: transferData, single: false }
         ]}
       >
         {/*<SelectRole value={queries.roleId} onChange={search.bind(null, 'roleId')} style={{ width: '160px' }} />*/}
@@ -119,6 +122,7 @@ function UserList({
       </Table>
       <ChangeDeptModal />
       <BindAttence />
+      <TransferDataModal />
     </div>
   );
 }
@@ -174,6 +178,9 @@ export default connect(
       },
       setForceLogout: () => {
         dispatch({ type: 'structure/setForceLogout', payload: null });
+      },
+      transferData: () => {
+        dispatch({ type: 'structure/showModals', payload: 'transferData' });
       },
       importData: () => {
         dispatch({
