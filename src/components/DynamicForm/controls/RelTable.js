@@ -162,7 +162,7 @@ class RelTable extends Component {
   getShowFields = () => {
     // return this.state.fields.filter(item => !!(item.fieldconfig && item.fieldconfig.isVisible && (item.fieldconfig.isVisibleJS !== 0)));
     return this.state.fields.filter(field => {
-      if ((field.controltype === 31) || (field.controltype > 1000 && field.controltype !== 1012 && field.controltype !== 1006)) {
+      if ((field.controltype > 1000 && field.controltype !== 1012 && field.controltype !== 1006)) { //(field.controltype === 31) ||
         return false;
       }
       if (field.fieldconfig.isVisible !== 1) {

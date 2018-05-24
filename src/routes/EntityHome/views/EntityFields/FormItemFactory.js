@@ -3,7 +3,7 @@ import { Form, Select, Input, Radio, Checkbox, message } from 'antd';
 import RelBusDataSource from './RelBusDataSource';
 import { queryDicTypes, queryDicOptions } from '../../../../services/dictionary';
 import { queryList as queryDataSource } from '../../../../services/datasource';
-import { query as queryEntity, queryFields } from '../../../../services/entity';
+import { query as queryEntity, queryFields, getreffieldsbyfield } from '../../../../services/entity';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -320,39 +320,61 @@ class SwitchSet extends React.Component {
 // 引用对象，来源对象选择
 class OriginEntitySelect extends React.Component {
   static propTypes = {
+    form: React.PropTypes.object,
     value: React.PropTypes.string,
     onChange: React.PropTypes.func
   };
   constructor(props) {
     super(props);
     this.state = {
-      options: []
+      options: [],
+      intervalId: this.watchControlFieldChange(),
+      controlField: undefined
     };
     this.fetchOptions();
   }
 
-  fetchOptions = () => {
-    const params = {
-      EntityName: '',
-      typeid: -1,
-      status: 1,
-      pageindex: 1,
-      pagesize: 999
-    };
-    queryEntity(params).then(result => {
-      const options = result.data.pagedata.filter(item => {
-        return item.modeltype === 0 || item.modeltype === 2;
-      }).map(item => ({
-        id: item.entityid + '',
-        label: item.entityname
-      }));
+  componentWillUnmount() {
+    clearInterval(this.state.intervalId);
+  }
+
+  watchControlFieldChange = () => {
+    let flag = true;
+    const intervalId = setInterval(() => {
+      if (flag) return flag = false; // 跳出第一次执行
+      const controlField = this.props.form.getFieldValue('controlField');
+      if (!controlField) {
+        if (this.state.options.length) {
+          this.setState({ options: [] });
+          this.props.onChange('');
+        }
+      } else {
+        if (this.state.controlField !== controlField) {
+          this.setState({ controlField });
+          this.fetchOptions(controlField);
+        }
+      }
+    }, 50);
+    return intervalId;
+  };
+
+  fetchOptions = (controlField) => {
+    if (!controlField) return;
+    getreffieldsbyfield(controlField).then(result => {
+      const entityObj = result.data.entity;
+      const options = [{
+        id: entityObj.entityid + '',
+        label: entityObj.entityname
+      }];
+
       this.setState({ options });
+      this.props.onChange(options[0].id);
     });
   };
 
   render() {
     return (
-      <Select value={this.props.value} onChange={this.props.onChange}>
+      <Select value={this.props.value} onChange={this.props.onChange} disabled>
         {this.state.options.map(item => (
           <Option value={item.id} key={item.id}>{item.label}</Option>
         ))}
@@ -374,8 +396,8 @@ class OriginFieldSelect extends React.Component {
     super(props);
     this.state = {
       options: [],
-      intervalId: this.watchOriginEntityChange(),
-      originEntity: undefined
+      intervalId: this.watchControlFieldChange(),
+      controlField: undefined
     };
     // const dataSource = this.props.form.getFieldValue('dataSource');
     // if (dataSource && dataSource.sourceId) {
@@ -388,45 +410,52 @@ class OriginFieldSelect extends React.Component {
     clearInterval(this.state.intervalId);
   }
 
-  watchOriginEntityChange = () => {
+  watchControlFieldChange = () => {
     let flag = true;
     const intervalId = setInterval(() => {
       if (flag) return flag = false; // 跳出第一次执行
-      const originEntity = this.props.form.getFieldValue('originEntity');
-      if (!originEntity) {
+      const controlField = this.props.form.getFieldValue('controlField');
+      if (!controlField) {
         if (this.state.options.length) {
           this.setState({ options: [] });
           this.props.onChange('');
         }
       } else {
-        if (this.state.originEntity !== originEntity) {
-          this.setState({ originEntity });
-          this.fetchOptions(originEntity);
+        if (this.state.controlField !== controlField) {
+          this.setState({ controlField });
+          this.fetchOptions(controlField);
         }
       }
     }, 50);
     return intervalId;
   };
 
-  fetchOptions = (originEntity) => {
-    queryFields(originEntity).then(result => {
-      const options = result.data.entityfieldpros.map(item => ({
-        id: item.fieldid + '',
+  fetchOptions = (controlField) => {
+    getreffieldsbyfield(controlField).then(result => {
+      const options = result.data.fields.map(item => ({
+        id: item.fieldid,
+        fieldname: item.fieldname,
         label: item.fieldlabel
       }));
       this.setState({ options });
-      const flag = options.some(item => item.id === this.props.value);
+      const flag = options.some(item => item.fieldname === this.props.value);
       if (options.length && !flag) {
-        this.props.onChange(options[0].id);
+        this.props.onChange(options[0].fieldname);
       }
     });
   };
 
+  controlFieldFocus = () => {
+    if (this.state.options.length === 0) {
+      message.warning('请先选择控制字段');
+    }
+  }
+
   render() {
     return (
-      <Select value={this.props.value} onChange={this.props.onChange}>
+      <Select value={this.props.value} onChange={this.props.onChange} onFocus={this.controlFieldFocus}>
         {this.state.options.map(item => (
-          <Option value={item.id} key={item.id}>{item.label}</Option>
+          <Option value={item.fieldname} key={item.id}>{item.label}</Option>
         ))}
       </Select>
     );
@@ -988,15 +1017,15 @@ export default class FormItemFactory {
       <FormItem label="来源对象" key="originEntity">
         {this.getFieldDecorator('originEntity', {
           rules: [{ required: true, message: '请选择来源对象' }]
-        })(<OriginEntitySelect />)}
+        })(<OriginEntitySelect form={this.form} />)}
       </FormItem>
     );
   }
 
   createOriginField() {
     return (
-      <FormItem label="来源字段" key="originField">
-        {this.getFieldDecorator('originField', {
+      <FormItem label="来源字段" key="originFieldname">
+        {this.getFieldDecorator('originFieldname', {
           rules: [{ required: true, message: '请选择来源字段' }]
         })(<OriginFieldSelect form={this.form} />)}
       </FormItem>

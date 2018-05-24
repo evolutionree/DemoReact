@@ -3,6 +3,7 @@ import { Form } from 'antd';
 import classnames from 'classnames';
 import FoldableGroup from './FoldableGroup';
 import DynamicField from './DynamicField';
+import { getEntcommDetail } from '../../services/entcomm';
 
 const FormItem = Form.Item;
 
@@ -61,16 +62,28 @@ class DynamicFormBase extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      fieldsDecorator: this.generateFieldsDecorators(props.fields)
+      fieldsDecorator: this.generateFieldsDecorators(props.fields),
+      RelObjectConfig: this.getRelObjectConfig(props.fields) //引用对象集合
     };
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.fields !== nextProps.fields) {
       this.setState({
-        fieldsDecorator: this.generateFieldsDecorators(nextProps.fields)
+        fieldsDecorator: this.generateFieldsDecorators(nextProps.fields),
+        RelObjectConfig: this.getRelObjectConfig(nextProps.fields)
       });
     }
+  }
+
+  getRelObjectConfig = (fields) => {
+    let RelObjectConfig = [];
+    this.processFields(fields).map(item => {
+      if (item.controltype === 31) {  //引用对象 的相关配置先存起来 对相关项进行监听
+        RelObjectConfig.push(item);
+      }
+    });
+    return RelObjectConfig;
   }
 
   generateFieldsDecorators = (fields) => {
@@ -184,7 +197,6 @@ class DynamicFormBase extends Component {
       }
       lastGroup.fields.push(field);
     });
-
     return groups;
   };
 
@@ -204,14 +216,40 @@ class DynamicFormBase extends Component {
     }
   };
 
-  onFieldValueChange = (fieldName, newValue, isFromApi) => {
+  onFieldValueChange = (fieldName, fieldid, newValue, isFromApi) => {
     if (isFromApi) return;
+    const relObject = this.state.RelObjectConfig;
+    relObject.map(item => {
+      const fieldconfig = item.fieldconfig;
+      if (fieldconfig.controlField === fieldid) {
+        if (newValue instanceof Array) {
+          console.info('引用对象不允许数据源多选的情况下setValue()');
+        } else {
+          const dataSourceData = typeof newValue === 'string' ? JSON.parse(newValue) : newValue;
+          this.fetchEntcommDetail(fieldconfig.originEntity, dataSourceData.id, fieldconfig.originFieldname, item.fieldname); //数据源关联的实体id  记录recid  记录详情下要取得字段id
+        }
+      }
+    })
     const { jsEngine } = this.props;
     if (jsEngine) {
       setTimeout(() => {
         jsEngine.handleFieldValueChange(fieldName);
       }, 0);
     }
+  };
+
+  fetchEntcommDetail = (entityId, recId, originFieldname, fieldname) => {
+    getEntcommDetail({
+      entityId,
+      recId,
+      needPower: 0
+    }).then(result => {
+      const detailData = result.data.detail;
+      const value_name = detailData[originFieldname + '_name'] || detailData[originFieldname];
+      this.getFieldControlInstance(fieldname).setTitle(value_name);
+    }, err => {
+      console.error(err.message);
+    });
   };
 
   // 用于客户引用
@@ -224,7 +262,7 @@ class DynamicFormBase extends Component {
 
   processFields = fields => {
     return fields.filter(field => {
-      if ((field.controltype === 31) || (field.controltype > 1000 && field.controltype !== 1012 && field.controltype !== 1006)) {
+      if ((field.controltype > 1000 && field.controltype !== 1012 && field.controltype !== 1006)) { //(field.controltype === 31) ||
         return false;
       }
       if (field.fieldconfig.isVisible !== 1) {
@@ -291,7 +329,7 @@ class DynamicFormBase extends Component {
     return fieldDecorator(
       <DynamicField
         isCommonForm
-        onChange={this.onFieldValueChange.bind(this, fieldname)}
+        onChange={this.onFieldValueChange.bind(this, fieldname, fieldid)}
         entityId={entityId}
         entityTypeId={entityTypeId}
         usage={this.usage}

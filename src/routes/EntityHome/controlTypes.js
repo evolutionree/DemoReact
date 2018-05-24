@@ -39,7 +39,7 @@ export const fieldModels = [
   // { name: '树形控件多选', value: 27 },
   { name: '产品', value: 28, requires: ['multiple'] },
   { name: '产品系列', value: 29, requires: ['multiple'] },
-  { name: '引用对象', value: 31, requires: ['originEntity', 'originField', 'controlField'] },
+  { name: '引用对象', value: 31, requires: ['controlField', 'originEntity', 'originField'] },
   { name: '关联业务', value: 32, requires: ['multipleDataSource', 'multiple'] },
   { name: '开关', value: 33, requires: ['switch', 'defaultValue'] }
 ];

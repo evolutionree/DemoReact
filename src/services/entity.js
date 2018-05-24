@@ -209,6 +209,18 @@ export async function queryFields(entityId) {
 }
 
 /**
+ * 获取数据源关联实体下的字段
+ * @param Fieldid
+ * @returns {Promise.<object>}
+ */
+export async function getreffieldsbyfield(fieldId) {
+  return request('/api/EntityPro/getreffieldsbyfield', {
+    method: 'post',
+    body: JSON.stringify({ fieldId })
+  });
+}
+
+/**
  * 新增实体字段
  * @param params
  * @returns {Promise.<Object>}
