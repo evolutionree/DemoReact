@@ -48,15 +48,16 @@ export default {
       const { query } = yield select(({ routing }) => routing.locationBeforeTransitions);
       let { menus, entityId } = yield select(({ entcommAffair }) => entcommAffair);
 
+      const rootEntityId = '00000000-0000-0000-0000-000000000001';
       if (!menus.length) {
         try {
           // 获取下拉菜单
-          const { data: { rulemenu } } = yield call(queryMenus, entityId);
-          // menus = rulemenu.sort((a, b) => a.recorder - b.recorder)
-          //   .map(item => ({ menuName: item.menuname, menuId: item.menuid }));
+          const { data: { rulemenu } } = yield call(queryMenus, rootEntityId);
+          menus = rulemenu.sort((a, b) => a.recorder - b.recorder)
+            .map(item => ({ menuName: item.menuname, menuId: item.menuid }));
           // // 获取权限数据后再往下走
           // const { permissionFuncs } = yield select(state => state.permission);
-          // let funcs = permissionFuncs[entityId];
+          // let funcs = permissionFuncs[rootEntityId];
           // if (!funcs) {
           //   while (true) {
           //     const result = yield take('permission/receivePermissionFunc');
@@ -67,8 +68,6 @@ export default {
           // menus = menus.filter(menu => {
           //   return funcs.some(fun => fun.relationvalue === menu.menuId);
           // });
-
-          menus = [{"menuName":"收到的申请","menuId":"6d1dad42-9301-49cf-b9c8-79c108937a2e"},{"menuName":"我的申请","menuId":"ec1624fe-c466-4854-8ccc-812a153f8c73"}];
           yield put({ type: 'menus', payload: menus });
         } catch (e) {
           message.error(e.message || '获取菜单失败');
@@ -80,7 +79,7 @@ export default {
         entityId,
         pageIndex: 1,
         pageSize: 10,
-        menuId: menus[0].menuId,
+        menuId: menus.length > 0 && menus[0].menuId,
         auditStatus: '-1',
         ...query
       };
