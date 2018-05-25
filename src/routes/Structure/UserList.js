@@ -8,7 +8,7 @@ import styles from './Structure.less';
 import ChangeDeptModal from './ChangeDeptModal';
 import SelectRole from "../../components/SelectRole";
 import BindAttence from './BindAttence';
-import TransferDataModal from './TransferDataModal';
+import TransferData from './TransferDataModal/TransferData';
 
 const Option = Select.Option;
 const Column = Table.Column;
@@ -122,7 +122,7 @@ function UserList({
       </Table>
       <ChangeDeptModal />
       <BindAttence />
-      <TransferDataModal />
+      <TransferData />
     </div>
   );
 }

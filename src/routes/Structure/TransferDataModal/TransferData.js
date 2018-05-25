@@ -3,13 +3,13 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Modal, Form, Input, Select, Radio, Checkbox, InputNumber, message } from 'antd';
-import DataModalSelect from '../../components/ComplexForm/DataModalSelect';
+import { Modal, Form, Input, Select, Radio, Checkbox, InputNumber, message, Button } from 'antd';
+import EntitySelectModal from './EntitySelectModal';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
 
-class TransferDataModal extends Component {
+class TransferData extends Component {
   static propTypes = {
     form: PropTypes.object,
     visible: PropTypes.bool,
@@ -64,7 +64,7 @@ class TransferDataModal extends Component {
               initialValue: '',
               rules: [{ required: true, message: '请选择待转移数据' }]
             })(
-              <DataModalSelect type="UserSelect" placeholder="请选择接收人员" defaultValue={this.props.value && this.props.value[name] || []} />
+              <EntitySelectModal type="UserSelect" placeholder="请选择待转移数据" defaultValue={this.props.value && this.props.value[name] || []} />
             )}
           </FormItem>
           <FormItem label="选择新负责人">
@@ -99,4 +99,4 @@ export default connect(
       }
     };
   }
-)(Form.create()(TransferDataModal));
+)(Form.create()(TransferData));
