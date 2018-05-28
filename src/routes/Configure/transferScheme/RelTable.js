@@ -2,7 +2,7 @@
  * Created by 0291 on 2018/5/21.
  */
 import React, { PropTypes, Component } from 'react';
-import { Icon, Checkbox, InputNumber, message, Row, Col } from 'antd';
+import { Icon, Checkbox, InputNumber, message, Row, Col, Tooltip } from 'antd';
 import SchemeSelect from './SchemeSelect';
 import _ from 'lodash';
 import Styles from './RelTable.less';
@@ -89,8 +89,15 @@ class RelTable extends Component {
       <div className={Styles.Wrap}>
         <Row className={Styles.Header}>
           <Col span={8}>选择对象</Col>
-          <Col span={8}>级联</Col>
-          <Col span={8}>相同数据</Col>
+          <Col span={8}>
+            级联
+          </Col>
+          <Col span={8}>
+            相同数据
+            <Tooltip placement="top" title="仅转移同目标对象负责人相同的数据">
+              <Icon type="info-circle" style={{ color: '#cdcdcd', cursor: 'pointer', paddingLeft: '4px' }} />
+            </Tooltip>
+          </Col>
         </Row>
         {
           value && value instanceof Array && value.map((item, index) => {
