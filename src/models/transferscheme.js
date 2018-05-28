@@ -3,40 +3,19 @@
  */
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
-import { query as queryEntities } from '../services/entity';
-
-const columns = [{
-  title: '转移方案名',
-  dataIndex: 'name'
-}, {
-  title: '目标转移对象',
-  dataIndex: 'age'
-}, {
-  title: '备注',
-  dataIndex: 'address'
-}];
-
-const data = [];
-for (let i = 0; i < 46; i++) {
-  data.push({
-    recid: i,
-    name: `Edward King ${i}`,
-    age: 32,
-    address: `London, Park Lane no. ${i}`,
-  });
-}
+import { query as queryEntities, getreltabentity } from '../services/entity';
+import { savetransferscheme, transferschemelist, setstatus } from '../services/transferscheme';
 
 export default {
   namespace: 'transferscheme',
   state: {
     entities: [],
-    protocol: columns,
     queries: {},
-    list: data,
-    total: 46,
+    list: [],
     currItems: [],
     showModals: '',
-    modalPending: false
+    modalPending: false,
+    relTabEntity: []
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -75,26 +54,23 @@ export default {
     *queryList(action, { put, call, select }) {
       const { query } = yield select(({ routing }) => routing.locationBeforeTransitions);
       const queries = {
-        pageIndex: 1,
-        pageSize: 10,
         searchName: '',
-        flowStatus: 1,
+        RecStatus: 1,
         ...query
       };
       yield put({ type: 'putState', payload: { queries } });
-      // try {
-      //   const { data } = yield call(queryList, queries);
-      //   yield put({
-      //     type: 'putState',
-      //     payload: {
-      //       list: data.data,
-      //       total: data.page[0].total,
-      //       currentItems: []
-      //     }
-      //   });
-      // } catch (e) {
-      //   message.error(e.message || '获取列表数据失败');
-      // }
+      try {
+        const { data } = yield call(transferschemelist, queries);
+        yield put({
+          type: 'putState',
+          payload: {
+            list: data,
+            currItems: []
+          }
+        });
+      } catch (e) {
+        message.error(e.message || '获取列表数据失败');
+      }
     },
     *search({ payload }, { select, call, put }) {
       const location = yield select(({ routing }) => routing.locationBeforeTransitions);
@@ -103,14 +79,55 @@ export default {
         pathname,
         query: {
           ...query,
-          pageIndex: 1,
           ...payload
         }
       }));
     },
-    *searchKeyword({ payload: keyword }, { select, call, put }) {
-      const searchData = JSON.stringify({ recname: keyword || undefined });
-      yield put({ type: 'search', payload: { searchData, isAdvanceQuery: 0 } });
+    *targetEntitySelect({ payload: entityid }, { select, call, put }) {
+      const { data } = yield call(getreltabentity, entityid);
+      yield put({ type: 'putState', payload: { relTabEntity: data } });
+    },
+    *save({ payload: data }, { select, call, put }) {
+      const { currItems } = yield select(state => state.transferscheme);
+      let submitData = data;
+      if (currItems[0]) {
+        submitData.transschemeid = currItems[0].transschemeid;
+      }
+      if (submitData.associationtransfer instanceof Array && submitData.associationtransfer.length > 0) {
+        submitData.associationtransfer = submitData.associationtransfer.map(item => {
+          item.cascade = item.cascade ? 1 : 0;
+          item.same = item.same ? 1 : 0;
+          return item;
+        });
+      }
+
+      submitData.associationtransfer = JSON.stringify(submitData.associationtransfer)
+
+      try {
+        yield call(savetransferscheme, submitData);
+        message.success('保存成功');
+        yield put({ type: 'queryList' });
+        yield put({ type: 'showModals', payload: '' });
+      } catch (e) {
+        message.error(e.message || '保存失败');
+      }
+    },
+    *setstatus({ payload: setStatusValue }, { select, call, put }) {
+      const { currItems } = yield select(state => state.transferscheme);
+      const RecIds = currItems.map(item => {
+        return item.transschemeid;
+      })
+      const messageinfo = setStatusValue === 1 ? '启用' : '禁用';
+      try {
+        yield call(setstatus, {
+          RecIds: RecIds.join(','),
+          status: setStatusValue
+        });
+        message.success(messageinfo + '成功');
+        yield put({ type: 'queryList' });
+      } catch (e) {
+        message.error(e.message || messageinfo + '失败');
+      }
     }
   },
   reducers: {
@@ -136,13 +153,12 @@ export default {
     resetState() {
       return {
         entities: [],
-        protocol: [],
         queries: {},
         list: [],
-        total: 0,
         currItems: [],
         showModals: '',
-        modalPending: false
+        modalPending: false,
+        relTabEntity: []
       };
     }
   }

@@ -5,6 +5,7 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Modal, Form, Input, Select, Radio, Checkbox, InputNumber, message } from 'antd';
 import RelTable from './RelTable';
+import _ from 'lodash';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -31,8 +32,7 @@ class SchemeFormModal extends Component {
       const { form, editingRecord } = nextProps;
       if (editingRecord) {
         form.setFieldsValue({
-          ...editingRecord,
-          expireflag: editingRecord.expireday > 0
+          ...editingRecord
         });
       } else {
         form.resetFields();
@@ -43,24 +43,15 @@ class SchemeFormModal extends Component {
 
   onOk = () => {
     const { form, editingRecord } = this.props;
+
     form.validateFields((err, values) => {
       if (err) return;
-
-      // this.props.confirm({
-      //   resetflag: 1,
-      //   ...values,
-      //   expireflag: undefined,
-      //   flowid: editingRecord ? editingRecord.flowid : undefined
-      // });
+      this.props.confirm(values);
     });
   };
 
-  componentValueRequire = (rule, value, callback) => {
-    if (!value || value instanceof Array && value.length === 0) {
-      callback('请选择关联转移对象');
-    } else {
-      callback();
-    }
+  handleChange = (value) => {
+    this.props.targetEntitySelect && this.props.targetEntitySelect(value);
   }
 
   render() {
@@ -78,16 +69,16 @@ class SchemeFormModal extends Component {
           <FormItem label="转移方案名称">
             {getFieldDecorator('transschemename', {
               initialValue: '',
-              rules: [{ required: true, message: '请输入流程名称' }]
+              rules: [{ required: true, message: '请输入转移方案名称' }]
             })(
               <Input placeholder="请输入流程名称" maxLength="10" />
             )}
           </FormItem>
           <FormItem label="目标转移对象">
             {getFieldDecorator('targettransferid', {
-              rules: [{ required: true, message: '请选择关联实体' }]
+              rules: [{ required: true, message: '请选择目标转移对象' }]
             })(
-              <Select placeholder="请选择关联实体">
+              <Select placeholder="请选择目标转移对象" onChange={this.handleChange}>
                 {this.props.entities.map(entity => (
                   <Option key={entity.entityid}>{entity.entityname}</Option>
                 ))}
@@ -95,11 +86,7 @@ class SchemeFormModal extends Component {
             )}
           </FormItem>
           <FormItem label="关联转移对象">
-            {getFieldDecorator('associationtransfer', {
-              rules: [{
-                validator: this.componentValueRequire
-              }]
-            })(
+            {getFieldDecorator('associationtransfer')(
               <RelTable />
             )}
           </FormItem>
@@ -119,18 +106,16 @@ class SchemeFormModal extends Component {
 export default connect(
   state => {
     const { showModals, currItems, modalPending, entities } = state.transferscheme;
-    // const data = [{
-    //   entityid: '72d518b4-12f1-4ed7-a4ee-e9be658aa567',
-    //   jilian: true,
-    //   same: true
-    // }, {
-    //   entityid: '1',
-    //   jilian: true,
-    //   same: true
-    // }];
+
+    let editData = {};
+    if (/edit/.test(showModals)) {
+      editData = _.cloneDeep(currItems[0]);
+      editData.associationtransfer = JSON.parse(editData.associationtransfer);
+    }
+
     return {
       visible: /add|edit/.test(showModals),
-      editingRecord: /edit/.test(showModals) ? currItems[0] : undefined,
+      editingRecord: /edit/.test(showModals) ? editData : undefined,
       entities,
       modalPending
     };
@@ -142,6 +127,9 @@ export default connect(
       },
       confirm(data) {
         dispatch({ type: 'transferscheme/save', payload: data });
+      },
+      targetEntitySelect(entityid) {
+        dispatch({ type: 'transferscheme/targetEntitySelect', payload: entityid });
       }
     };
   }

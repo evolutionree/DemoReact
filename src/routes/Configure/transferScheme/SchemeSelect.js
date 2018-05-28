@@ -37,12 +37,12 @@ class SchemeSelect extends PureComponent {
   }
 
   render() {
-    const { entities, value } = this.props;
+    const { relTabEntity, value } = this.props;
     return (
       <Select value={value} onChange={this.onSelectChange}>
         {
-          entities && entities instanceof Array && entities.map((entity) => {
-            return <Option key={entity.entityid}>{entity.entityname}</Option>;
+          relTabEntity && relTabEntity instanceof Array && relTabEntity.map((entity, index) => {
+            return <Option key={entity.entityid + '1' + index}>{entity.entityname}</Option>;
           })
         }
       </Select>
@@ -52,8 +52,8 @@ class SchemeSelect extends PureComponent {
 
 export default connect(
   state => {
-    const { entities } = state.transferscheme;
+    const { relTabEntity } = state.transferscheme;
     return {
-      entities
+      relTabEntity
     };
   })(SchemeSelect);

@@ -9,7 +9,7 @@ import Styles from './RelTable.less';
 
 const columnName = {
   EntityId: 'entityid',
-  Cascase: 'jilian',
+  Cascade: 'cascade',
   SameData: 'same'
 }
 
@@ -51,7 +51,7 @@ class RelTable extends Component {
       ...this.props.value || [],
       {
         [columnName.EntityId]: '',
-        [columnName.Cascase]: false,
+        [columnName.Cascade]: false,
         [columnName.SameData]: false
       }
     ];
@@ -83,7 +83,7 @@ class RelTable extends Component {
 
   render() {
     const { value } = this.props;
-    const allCascaseChecked = this.IsAllChecked(columnName.Cascase);
+    const allCascadeChecked = this.IsAllChecked(columnName.Cascade);
     const allSameChecked = this.IsAllChecked(columnName.SameData);
     return (
       <div className={Styles.Wrap}>
@@ -97,7 +97,7 @@ class RelTable extends Component {
             return (
               <Row className={Styles.body} key={index}>
                 <Col span={8}><SchemeSelect value={item[columnName.EntityId]} onChange={this.onSelectHandler.bind(this, index)} /></Col>
-                <Col span={8}><Checkbox checked={item[columnName.Cascase]} onChange={this.onCheckboxChange.bind(this, index, columnName.Cascase)} /></Col>
+                <Col span={8}><Checkbox checked={item[columnName.Cascade]} onChange={this.onCheckboxChange.bind(this, index, columnName.Cascade)} /></Col>
                 <Col span={8}>
                   <Checkbox checked={item[columnName.SameData]} onChange={this.onCheckboxChange.bind(this, index, columnName.SameData)} />
                   <Icon type="close-circle" onClick={this.onDel.bind(this, index)} />
@@ -108,7 +108,7 @@ class RelTable extends Component {
         }
         <Row>
           <Col span={8}><a href="javascript:;" onClick={this.add}>添加</a></Col>
-          <Col span={8}><a href="javascript:;" onClick={this.AllOperate.bind(this, columnName.Cascase, !allCascaseChecked)}>{allCascaseChecked ? '反选' : '全选'}</a></Col>
+          <Col span={8}><a href="javascript:;" onClick={this.AllOperate.bind(this, columnName.Cascade, !allCascadeChecked)}>{allCascadeChecked ? '反选' : '全选'}</a></Col>
           <Col span={8}><a href="javascript:;" onClick={this.AllOperate.bind(this, columnName.SameData, !allSameChecked)}>{allSameChecked ? '反选' : '全选'}</a></Col>
         </Row>
       </div>

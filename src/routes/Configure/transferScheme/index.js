@@ -14,12 +14,27 @@ import _ from 'lodash';
 const CheckboxGroup = Checkbox.Group;
 const Option = Select.Option;
 
+const columns = [{
+  title: '转移方案名',
+  dataIndex: 'transschemename'
+}, {
+  title: '目标转移对象',
+  dataIndex: 'entityname'
+}, {
+  title: '状态',
+  dataIndex: 'recstatus',
+  render: (text, record) => {
+    return text === 1 ? '启用' : '禁用';
+  }
+}, {
+  title: '备注',
+  dataIndex: 'remark'
+}];
+
 function TransferScheme({
                        dispatch,
-                       protocol,
                        queries,
                        list,
-                       total,
                        currItems
                      }) {
   function searchKeyword(val) {
@@ -27,44 +42,40 @@ function TransferScheme({
   }
 
   function onMenuChange(val) {
-    dispatch({ type: 'transferscheme/search', payload: { flowStatus: val } });
+    dispatch({ type: 'transferscheme/search', payload: { RecStatus: val } });
   }
 
   function selectItems(items) {
     dispatch({ type: 'transferscheme/currItems', payload: items });
   }
 
-  function handleTableChange(pagination) {
-    dispatch({ type: 'transferscheme/search', payload: {
-      pageIndex: pagination.current,
-      pageSize: pagination.pageSize
-    } });
-  }
-
   function addScheme() {
     dispatch({ type: 'transferscheme/showModals', payload: 'add' });
   }
 
-  function del() {
-
+  function setstatus(setStatusValue) {
+    dispatch({ type: 'transferscheme/setstatus', payload: setStatusValue });
   }
 
-  const { pageIndex, pageSize, searchName, flowStatus } = queries;
+  function edit() {
+    dispatch({ type: 'transferscheme/targetEntitySelect', payload: currItems[0].targettransferid });
+    dispatch({ type: 'transferscheme/showModals', payload: 'edit' });
+  }
 
+  const { searchName, RecStatus } = queries;
   return (
     <Page title="设置业务对象转移方案" contentStyle={{ minHeight: '600px', position: 'relative' }}>
       <Toolbar
         selectedCount={currItems.length}
         actions={[
-          { label: '编辑', handler: del, single: true },
-          { label: '停用', handler: del, single: true,
-            show: () => currItems[0].recstatus === 1 },
-          { label: '启用', handler: del, single: true,
-            show: () => currItems[0].recstatus === 0 },
-          { label: '删除', handler: del, single: true }
+          { label: '编辑', handler: edit, single: true },
+          { label: '停用', handler: setstatus.bind(this, 0), single: false,
+            show: () => currItems[0] && currItems[0].recstatus === 1 },
+          { label: '启用', handler: setstatus.bind(this, 1), single: false,
+            show: () => currItems[0] && currItems[0].recstatus === 0 }
         ]}
       >
-        <Select value={flowStatus + ''} onChange={onMenuChange}>
+        <Select value={RecStatus + ''} onChange={onMenuChange}>
           <Option key="1">启用</Option>
           <Option key="0">停用</Option>
         </Select>
@@ -79,17 +90,12 @@ function TransferScheme({
           </Search>
         </Toolbar.Right>
       </Toolbar>
-      <Table rowKey="recid"
-             columns={protocol}
+      <Table rowKey="transschemeid"
+             columns={columns}
              dataSource={list}
-             pagination={{
-               total,
-               pageSize,
-               current: pageIndex
-             }}
-             onChange={handleTableChange}
+             pagination={false}
              rowSelection={{
-               selectedRowKeys: currItems.map(item => item.recid),
+               selectedRowKeys: currItems.map(item => item.transschemeid),
                onChange: (keys, items) => selectItems(items)
              }} />
       <SchemeFormModal />
