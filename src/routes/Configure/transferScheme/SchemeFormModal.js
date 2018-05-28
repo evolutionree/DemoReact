@@ -76,7 +76,7 @@ class SchemeFormModal extends Component {
       >
         <Form>
           <FormItem label="转移方案名称">
-            {getFieldDecorator('flowname', {
+            {getFieldDecorator('transschemename', {
               initialValue: '',
               rules: [{ required: true, message: '请输入流程名称' }]
             })(
@@ -84,7 +84,7 @@ class SchemeFormModal extends Component {
             )}
           </FormItem>
           <FormItem label="目标转移对象">
-            {getFieldDecorator('entityid', {
+            {getFieldDecorator('targettransferid', {
               rules: [{ required: true, message: '请选择关联实体' }]
             })(
               <Select placeholder="请选择关联实体">
@@ -95,7 +95,7 @@ class SchemeFormModal extends Component {
             )}
           </FormItem>
           <FormItem label="关联转移对象">
-            {getFieldDecorator('relentityid', {
+            {getFieldDecorator('associationtransfer', {
               rules: [{
                 validator: this.componentValueRequire
               }]

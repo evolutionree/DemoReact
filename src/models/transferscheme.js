@@ -64,7 +64,10 @@ export default {
       };
       try {
         const { data: { pagedata } } = yield call(queryEntities, params);
-        yield put({ type: 'putState', payload: { entities: pagedata } });
+        const filertEntities = pagedata.filter(item => {
+          return item.modeltype === 0 || item.modeltype === 2;
+        });
+        yield put({ type: 'putState', payload: { entities: filertEntities } });
       } catch (e) {
         message.error(e.message || '获取列表数据失败');
       }
