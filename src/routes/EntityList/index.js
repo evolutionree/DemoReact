@@ -8,6 +8,7 @@ import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import EntityFormModal from './EntityFormModal';
 import SetEntryModal from './SetEntryModal';
+import ImportModal from './ImportModal';
 
 const Option = Select.Option;
 const Column = Table.Column;
@@ -63,6 +64,11 @@ function EntityList({
     const match = _.find(entityTypes, ['id', entityType + '']);
     return match ? match.label : '';
   }
+
+  function importData() {
+    dispatch({ type: 'entityList/showModals', payload: 'import' });
+  }
+
   // function handleAdd() {
   //   dispatch({ type: 'entityList/add' });
   // }
@@ -107,6 +113,7 @@ function EntityList({
           ))}
         </Select>
         {checkFunc('EntityAdd') && <Button onClick={bindAction('add')}>新增</Button>}
+        <Button onClick={importData}>导入</Button>
         {checkFunc('EntityEntrance') && <Button onClick={bindAction('showModals', 'setEntry')}>入口定义</Button>}
         <Toolbar.Right>
           <Search
@@ -160,6 +167,7 @@ function EntityList({
       />
 
       <SetEntryModal />
+      <ImportModal />
     </Page>
   );
 }
