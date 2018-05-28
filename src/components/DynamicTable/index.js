@@ -365,7 +365,7 @@ class DynamicTable extends Component {
       if (this.props.renderLinkField) return this.props.renderLinkField(cellText, field, record, this.props);
       return this.renderDetailLink(cellText, field, record);
     }
-
+    
     switch (field.controltype) {
       // 头像
       case 15:
@@ -386,7 +386,9 @@ class DynamicTable extends Component {
         return this.renderInputText(cellText, field, record);
         //手机
       case 10:
-        return this.renderTelePhone(cellText)
+        return this.renderTelePhone(cellText);
+      case 32:
+        return this.renderRelBusiness(cellText);
       // 普通文本，日期
       case 1012:
       case 2:
@@ -407,8 +409,6 @@ class DynamicTable extends Component {
       case 28:
       case 29:
       case 31:
-      case 32:
-        return this.renderRelBusiness(cellText)
       default:
         return this.renderText(cellText);
     }
