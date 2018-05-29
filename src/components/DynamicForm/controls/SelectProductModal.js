@@ -1,13 +1,15 @@
 import React, { PropTypes, Component } from 'react';
 import * as _ from 'lodash';
-import { Modal, Col, Row, Icon, message, Spin, Pagination } from 'antd';
+import { Modal, Col, Row, Icon, message, Spin, Pagination, Table, Tabs } from 'antd';
 import Search from '../../../components/Search';
 import Toolbar from '../../../components/Toolbar';
 import { queryProductData } from '../../../services/basicdata';
-import styles from './SelectUser.less';
+import styles from './SelectProductModal.less';
 import SelectProductSerial from "./SelectProductSerial";
 import { getSeries, getProducts } from '../../../services/products';
 import ProductSerialSelect from "../../ProductSerialSelect";
+
+const TabPane = Tabs.TabPane;
 
 class SelectProductModal extends Component {
   static propTypes = {
@@ -38,7 +40,11 @@ class SelectProductModal extends Component {
       list: [],
       pageIndex: 1,
       total: 0,
-      loading: false
+      loading: false,
+      currentTabsKey: '1',
+      filterKeyWord: '',
+      selectedRows: [...props.selected],
+      currentRemoveItems: []  //准备删除的数据  存的是key值
     };
   }
 
@@ -46,10 +52,13 @@ class SelectProductModal extends Component {
     if (!this.props.visible && nextProps.visible) {
       this.setState({
         currentSelected: [...nextProps.selected],
+        selectedRows: [...nextProps.selected],
         keyword: '',
         list: [],
         pageIndex: 1,
-        total: 0
+        total: 0,
+        currentTabsKey: '1',
+        filterKeyWord: ''
       }, () => {
         this.serialSelectRef && this.serialSelectRef.getDefaultSerial(serialId => {
           this.setState({ currentSerial: serialId }, this.fetchList);
@@ -95,6 +104,7 @@ class SelectProductModal extends Component {
   };
 
   handleOk = () => {
+    console.log(this.state.currentSelected)
     this.props.onOk(this.state.currentSelected);
   };
 
@@ -103,8 +113,20 @@ class SelectProductModal extends Component {
   };
 
   onSearch = keyword => {
-    this.setState({ keyword, pageIndex: 1 }, this.fetchList);
+    if (this.state.currentTabsKey === '1') {
+      this.setState({ keyword, pageIndex: 1 }, this.fetchList);
+    } else {
+      this.setState({
+        filterKeyWord: keyword
+      });
+    }
   };
+
+  tabsKeyChange = (key) => {
+    this.setState({
+      currentTabsKey: key
+    });
+  }
 
   selectAll = () => {
     this.setState({
@@ -141,10 +163,49 @@ class SelectProductModal extends Component {
     // return this.state.currentSelected.map(id => _.find(allProducts, ['productid', id])).filter(i => !!i);
   };
 
+  handleTableChange = (pagination) => {
+    this.setState({ pageIndex: pagination.current }, this.fetchList);
+  }
+
+  onSelectItems = (keys, selectedRows) => {
+    const allData = _.uniqBy([...this.state.selectedRows, ...selectedRows], 'productid'); //因为selectedRows只会记录当前页选中的数据  则需存储所有选择过的数据 然后配合key选出当前所有页选中的数据
+    const currentSelected = allData.filter(item => keys.indexOf(item.productid) > -1);
+    this.setState({
+      currentSelected: currentSelected,
+      selectedRows: allData
+    });
+  }
+
+  onSelectRemoveItems = (keys) => {
+    this.setState({
+      currentRemoveItems: keys
+    });
+  }
+
+  removeCurentItems = () => { //移除 已选列表中  选择的数据
+    const currentSelected = this.state.currentSelected.filter(item => this.state.currentRemoveItems.indexOf(item.productid) === -1);
+    this.setState({
+      currentSelected: currentSelected
+    });
+  }
+
   render() {
+    const columns = [{
+      title: '产品名称',
+      dataIndex: 'productname'
+    }, {
+      title: '产品编号',
+      dataIndex: 'productcode'
+    }, {
+      title: '修改时间',
+      dataIndex: 'recupdated'
+    }];
+
     const { visible, onCancel, multiple } = this.props;
     const { currentSelected, list } = this.state;
     const selectedItems = this.getSelectedItems();
+
+    const filterSelectedItems = selectedItems.filter(item => item.productname.indexOf(this.state.filterKeyWord) > -1);
     const pagination = (
       <Pagination
         size="small"
@@ -159,72 +220,114 @@ class SelectProductModal extends Component {
       <Modal
         title="选择产品"
         visible={visible}
+        width={700}
         onOk={this.handleOk}
         onCancel={onCancel}
-        wrapClassName={multiple ? 'ant-modal-custom-large' : ''}
+        wrapClassName={multiple ? 'selectProductModal ant-modal-custom-large' : 'selectProductModal'}
       >
-        <Toolbar>
-          <ProductSerialSelect
-            width="200px"
-            value={this.state.currentSerial}
-            onChange={this.onSerialChange}
-            ref={this.onSerialRef}
-          />
+        <Toolbar style={{ position: 'absolute', zIndex: 9 }}>
+          {
+            this.state.currentTabsKey === '1' ? <ProductSerialSelect
+              width="200px"
+              value={this.state.currentSerial}
+              onChange={this.onSerialChange}
+              ref={this.onSerialRef}
+            /> : null
+          }
           <Search
             width="220px"
-            value={this.state.keyword}
+            value={this.state.currentTabsKey === '1' ? this.state.keyword : this.state.filterKeyWord}
             onSearch={this.onSearch}
             placeholder="请输入产品名称"
           >
             搜索
           </Search>
         </Toolbar>
-        <Spin spinning={this.state.loading}>
-          {multiple ? (
-            <Row gutter={20}>
-              <Col span={11}>
-                <ul className={styles.userlist}>
-                  {list.map(item => (
-                    <li key={item.productid} onClick={this.select.bind(this, item)}>
-                      <span title={item.productname}>{item.productname}</span>
-                    </li>
-                  ))}
-                </ul>
-                {pagination}
-              </Col>
-              <Col span={2}>
-                <div style={{ height: '400px' }} className={styles.midcontrol}>
-                  <Icon type="right" onClick={this.selectAll} />
-                  <Icon type="left" onClick={this.removeAll} />
+        <Tabs defaultActiveKey="1" onChange={this.tabsKeyChange}>
+          <TabPane tab="可选" key="1">
+            <Spin spinning={this.state.loading}>
+              <Table columns={columns}
+                     dataSource={list}
+                     pagination={{
+                       total: this.state.total,
+                       pageSize: 10,
+                       current: this.state.pageIndex,
+                       showSizeChanger: false
+                     }}
+                     onChange={this.handleTableChange}
+                     rowSelection={{
+                       type: multiple ? 'checkbox' : 'radio',
+                       selectedRowKeys: selectedItems.map(item => item.productid),
+                       onChange: (keys, items) => this.onSelectItems(keys, items)
+                     }}
+                     rowKey="productid" />
+            </Spin>
+          </TabPane>
+          <TabPane tab="已选" key="2">
+            {
+              this.state.currentRemoveItems.length > 0 ? (
+                <div className={styles.toolbarToggle}>
+                  <span className={styles.count}>已选中{this.state.currentRemoveItems.length}项</span>
+                  <a className={styles.action} onClick={this.removeCurentItems}>从已选列表中删除</a>
                 </div>
-              </Col>
-              <Col span={11}>
-                <ul className={styles.userlist}>
-                  {selectedItems.map(item => (
-                    <li key={item.productid}>
-                      <span title={item.productname}>{item.productname}</span>
-                      <Icon type="close" onClick={this.remove.bind(this, item)} />
-                    </li>
-                  ))}
-                </ul>
-              </Col>
-            </Row>
-          ) : (
-            <div>
-              <ul className={styles.userlist}>
-                {list.map(item => {
-                  const cls = (currentSelected[0] && currentSelected[0].productid) === item.productid ? styles.highlight : '';
-                  return (
-                    <li key={item.productid} onClick={this.selectSingle.bind(this, item)} className={cls}>
-                      <span title={item.productname}>{item.productname}</span>
-                    </li>
-                  );
-                })}
-              </ul>
-              {pagination}
-            </div>
-          )}
-        </Spin>
+              ) : null
+            }
+            <Table columns={columns}
+                   dataSource={filterSelectedItems}
+                   pagination={false}
+                   rowSelection={{
+                     selectedRowKeys: this.state.currentRemoveItems,
+                     onChange: (keys, items) => this.onSelectRemoveItems(keys)
+                   }}
+                   rowKey="productid" />
+          </TabPane>
+        </Tabs>
+        {/*<Spin spinning={this.state.loading}>*/}
+          {/*{multiple ? (*/}
+            {/*<Row gutter={20}>*/}
+              {/*<Col span={11}>*/}
+                {/*<ul className={styles.userlist}>*/}
+                  {/*{list.map(item => (*/}
+                    {/*<li key={item.productid} onClick={this.select.bind(this, item)}>*/}
+                      {/*<span title={item.productname}>{item.productname}</span>*/}
+                    {/*</li>*/}
+                  {/*))}*/}
+                {/*</ul>*/}
+                {/*{pagination}*/}
+              {/*</Col>*/}
+              {/*<Col span={2}>*/}
+                {/*<div style={{ height: '400px' }} className={styles.midcontrol}>*/}
+                  {/*<Icon type="right" onClick={this.selectAll} />*/}
+                  {/*<Icon type="left" onClick={this.removeAll} />*/}
+                {/*</div>*/}
+              {/*</Col>*/}
+              {/*<Col span={11}>*/}
+                {/*<ul className={styles.userlist}>*/}
+                  {/*{selectedItems.map(item => (*/}
+                    {/*<li key={item.productid}>*/}
+                      {/*<span title={item.productname}>{item.productname}</span>*/}
+                      {/*<Icon type="close" onClick={this.remove.bind(this, item)} />*/}
+                    {/*</li>*/}
+                  {/*))}*/}
+                {/*</ul>*/}
+              {/*</Col>*/}
+            {/*</Row>*/}
+          {/*) : (*/}
+            {/*<div>*/}
+              {/*<ul className={styles.userlist}>*/}
+                {/*{list.map(item => {*/}
+                  {/*const cls = (currentSelected[0] && currentSelected[0].productid) === item.productid ? styles.highlight : '';*/}
+                  {/*return (*/}
+                    {/*<li key={item.productid} onClick={this.selectSingle.bind(this, item)} className={cls}>*/}
+                      {/*<span title={item.productname}>{item.productname}</span>*/}
+                    {/*</li>*/}
+                  {/*);*/}
+                {/*})}*/}
+              {/*</ul>*/}
+              {/*{pagination}*/}
+            {/*</div>*/}
+          {/*)}*/}
+        {/*</Spin>*/}
       </Modal>
     );
   }
