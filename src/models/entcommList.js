@@ -188,7 +188,8 @@ export default {
          */
         functionbutton = functionbutton.filter(item => _.indexOf(item.displayposition, 0) > -1);
         const extraButtonData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'DataTransfer' || item.buttoncode === 'ShowModals');
-        const extraToolbarData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'DataTransfer' || item.buttoncode === 'CallService' || item.buttoncode === 'CallService_showModal' || item.buttoncode === 'PrintEntity');
+        const buttoncode = ['DataTransfer', 'CallService', 'CallService_showModal', 'PrintEntity', 'EntityDataOpenH5'];
+        const extraToolbarData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => buttoncode.indexOf(item.buttoncode) > -1);
         yield put({ type: 'putState', payload: { extraButtonData, extraToolbarData } });
       } catch (e) {
         message.error(e.message);
@@ -274,9 +275,13 @@ export default {
         ...item.extradata
       };
       try {
-        yield call(extraToolbarClickSendData, item.routepath, params);
-        yield put({ type: 'queryList' });
-        message.success('更新成功');
+        const { data } = yield call(extraToolbarClickSendData, item.routepath, params);
+        if (item.buttoncode === 'EntityDataOpenH5') {
+          window.open(data.htmlurl);
+        } else {
+          yield put({ type: 'queryList' });
+          message.success('更新成功');
+        }
       } catch (e) {
         message.error(e.message);
       }

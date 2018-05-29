@@ -122,7 +122,7 @@ function EntcommRel({
   }
 
   function extraToolbarClickHandler(item) {
-    if (item.buttoncode === 'CallService') {
+    if (item.buttoncode === 'CallService' || item.buttoncode === 'EntityDataOpenH5') {
       dispatch({
         type: 'entcommRel/extraToolbarClick',
         payload: item
