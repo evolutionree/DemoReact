@@ -88,7 +88,7 @@ class SelectProductModal extends Component {
       pageSize: 10,
       searchKey: this.state.keyword,
       includeChild: true,
-      recVersion: 1
+      recVersion: 0
     };
     this.setState({ loading: true });
     getProducts(params).then(result => {

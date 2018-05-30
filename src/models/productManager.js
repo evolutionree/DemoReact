@@ -75,7 +75,7 @@ export default {
         pageSize: 10,
         searchKey: '',
         includeChild: true,
-        recVersion: 1,
+        recVersion: 0,
         ...query
       };
       yield put({ type: 'putState', payload: { queries: params } });
