@@ -5,9 +5,10 @@ import Search from '../../../components/Search';
 import Toolbar from '../../../components/Toolbar';
 import { queryProductData } from '../../../services/basicdata';
 import styles from './SelectProductModal.less';
-import SelectProductSerial from "./SelectProductSerial";
+import SelectProductSerial from './SelectProductSerial';
+import { queryMobFieldVisible } from '../../../services/entity';
 import { getSeries, getProducts } from '../../../services/products';
-import ProductSerialSelect from "../../ProductSerialSelect";
+import ProductSerialSelect from '../../ProductSerialSelect';
 
 const TabPane = Tabs.TabPane;
 
@@ -41,6 +42,7 @@ class SelectProductModal extends Component {
       pageIndex: 1,
       total: 0,
       loading: false,
+      columns: [], //控件列定义
       currentTabsKey: '1',
       filterKeyWord: '',
       selectedRows: [...props.selected],
@@ -50,6 +52,7 @@ class SelectProductModal extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (!this.props.visible && nextProps.visible) {
+      this.getColumns();
       this.setState({
         currentSelected: [...nextProps.selected],
         selectedRows: [...nextProps.selected],
@@ -79,6 +82,24 @@ class SelectProductModal extends Component {
   onSerialChange = val => {
     this.setState({ currentSerial: val, pageIndex: 1, keyword: '' }, this.fetchList);
   };
+
+  getColumns = () => {
+    queryMobFieldVisible('59cf141c-4d74-44da-bca8-3ccf8582a1f2').then(result => {
+      const columns = result.data.fieldvisible.map(item => {
+        return {
+          key: item.fieldname,
+          dataIndex: item.fieldname,
+          title: item.displayname
+        };
+      });
+
+      this.setState({
+        columns: columns
+      });
+    }).catch(e => {
+      console.error(e.message);
+    });
+  }
 
   fetchList = () => {
     const params = {
@@ -190,18 +211,7 @@ class SelectProductModal extends Component {
   }
 
   render() {
-    const columns = [{
-      title: '产品名称',
-      dataIndex: 'productname'
-    }, {
-      title: '产品编号',
-      dataIndex: 'productcode'
-    }, {
-      title: '修改时间',
-      dataIndex: 'recupdated'
-    }];
-
-    const { visible, onCancel, multiple } = this.props;
+    const { visible, onCancel, multiple, designateNodes, designateFilterNodes } = this.props;
     const { currentSelected, list } = this.state;
     const selectedItems = this.getSelectedItems();
 
@@ -232,6 +242,8 @@ class SelectProductModal extends Component {
               value={this.state.currentSerial}
               onChange={this.onSerialChange}
               ref={this.onSerialRef}
+              designateNodes={designateNodes}
+              designateFilterNodes={designateFilterNodes}
             /> : null
           }
           <Search
@@ -246,7 +258,7 @@ class SelectProductModal extends Component {
         <Tabs defaultActiveKey="1" onChange={this.tabsKeyChange}>
           <TabPane tab="可选" key="1">
             <Spin spinning={this.state.loading}>
-              <Table columns={columns}
+              <Table columns={this.state.columns}
                      dataSource={list}
                      pagination={{
                        total: this.state.total,
@@ -272,7 +284,7 @@ class SelectProductModal extends Component {
                 </div>
               ) : null
             }
-            <Table columns={columns}
+            <Table columns={this.state.columns}
                    dataSource={filterSelectedItems}
                    pagination={false}
                    rowSelection={{

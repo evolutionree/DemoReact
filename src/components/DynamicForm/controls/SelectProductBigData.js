@@ -135,6 +135,7 @@ class SelectProductBigData extends React.Component {
       [styles.iconCloseShow]: text !== '' && this.props.isReadOnly !== 1
     }]);
 
+    const { designateNodes, designateFilterNodes } = this.props;
     return (
       <div className={cls} style={{ ...this.props.style }}>
         <div
@@ -152,6 +153,8 @@ class SelectProductBigData extends React.Component {
           onOk={this.handleOk}
           onCancel={this.hideModal}
           multiple={this.props.multiple === 1}
+          designateNodes={designateNodes}
+          designateFilterNodes={designateFilterNodes}
         />
       </div>
     );

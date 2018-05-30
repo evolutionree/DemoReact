@@ -2,6 +2,7 @@ import React from 'react';
 import { TreeSelect } from 'antd';
 import * as _ from 'lodash';
 import connectBasicData from '../models/connectBasicData';
+import { treeForEach, treeFilter, resolveTreeByPathSearch } from '../utils';
 import styles from './DepartmentTree.less';
 
 const TreeNode = TreeSelect.TreeNode;
@@ -104,7 +105,39 @@ class ProductSerialSelect extends React.Component {
   };
 
   getTreeData = () => {
-    return transformData(this.props.productSerial || []);
+    return transformData(this.props.productSerial || [])
+    // const retTree = transformData(this.props.productSerial || []);
+    // const productBySerial = {};
+    // treeForEach(retTree, node => {
+    //   const belongProducts = productBySerial[node.productsetid];
+    //   if (belongProducts) {
+    //     node.children = [...node.children, ...belongProducts];
+    //     node.children.forEach(child => {
+    //       if (!child.path) {
+    //         child.path = [...node.path, child.productname];
+    //       }
+    //     });
+    //   }
+    // });
+    //
+    // const { designateNodes, designateFilterNodes } = this.props;
+    // console.log(designateNodes)
+    // let treeData = treeFilter(retTree, node => {
+    //   if (node.productid) return false;
+    //   node.label = node.productsetname;
+    //   node.key = node.value = node.productsetid;
+    //   return true;
+    // });
+    //
+    // if (designateNodes || designateFilterNodes) {
+    //   treeData = resolveTreeByPathSearch(treeData, designateNodes, designateFilterNodes);
+    // }
+    //
+    // // hack 根节点不可选择
+    // // treeData.forEach(item => item.selectable = false);
+    // treeData = treeData[0] ? treeData[0].children : [];
+    //
+    // return treeData;
   };
 
   handleChange = (value, nodes, evt) => {
@@ -123,7 +156,7 @@ class ProductSerialSelect extends React.Component {
     return treeNodes ? (
       <TreeSelect
         allowClear
-        showSearch={false}
+        showSearch={true}
         treeNodeFilterProp="title"
         style={width ? { width } : {}}
         dropdownStyle={{ maxHeight: 250, overflow: 'auto' }}
