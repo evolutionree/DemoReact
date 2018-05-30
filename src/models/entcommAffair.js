@@ -5,6 +5,7 @@ import { message } from 'antd';
 import { routerRedux } from 'dva/router';
 import { getListData } from '../services/entcomm';
 import { queryMenus } from '../services/entity';
+import _ from 'lodash';
 
 export default {
   namespace: 'entcommAffair',
@@ -23,7 +24,7 @@ export default {
         if (match) {
           const entityId = match[1];
           const recordId = match[2];
-          dispatch({ type: 'putState', payload: { entityId } });
+          dispatch({ type: 'putState', payload: { entityId, recordId } });
           dispatch({ type: 'queryList' });
         } else {
           dispatch({ type: 'resetState' });
@@ -46,7 +47,10 @@ export default {
     },
     *queryList(action, { select, call, put, take }) {
       const { query } = yield select(({ routing }) => routing.locationBeforeTransitions);
-      let { menus, entityId } = yield select(({ entcommAffair }) => entcommAffair);
+      let { menus, entityId, recordId } = yield select(({ entcommAffair }) => entcommAffair);
+
+      const { relTabs } = yield select(state => state.entcommHome);
+      let currentTabInfo = _.find(relTabs, item => item.entitytaburl === 'affairlist');
 
       const rootEntityId = '00000000-0000-0000-0000-000000000001';
       if (!menus.length) {
@@ -55,19 +59,6 @@ export default {
           const { data: { rulemenu } } = yield call(queryMenus, rootEntityId);
           menus = rulemenu.sort((a, b) => a.recorder - b.recorder)
             .map(item => ({ menuName: item.menuname, menuId: item.menuid }));
-          // // 获取权限数据后再往下走
-          // const { permissionFuncs } = yield select(state => state.permission);
-          // let funcs = permissionFuncs[rootEntityId];
-          // if (!funcs) {
-          //   while (true) {
-          //     const result = yield take('permission/receivePermissionFunc');
-          //     funcs = result.payload && result.payload.entityId === entityId && result.payload.permissionData;
-          //     if (funcs) break;
-          //   }
-          // }
-          // menus = menus.filter(menu => {
-          //   return funcs.some(fun => fun.relationvalue === menu.menuId);
-          // });
           yield put({ type: 'menus', payload: menus });
         } catch (e) {
           message.error(e.message || '获取菜单失败');
@@ -76,7 +67,11 @@ export default {
       }
 
       const queries = {
-        entityId,
+        entityId: rootEntityId,
+        RelInfo: {
+          recid: recordId,
+          relid: currentTabInfo && currentTabInfo.relid
+        },
         pageIndex: 1,
         pageSize: 10,
         menuId: menus.length > 0 && menus[0].menuId,

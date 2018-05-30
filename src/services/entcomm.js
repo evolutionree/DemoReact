@@ -815,3 +815,21 @@ export async function saveCustomHeaders(params) {
     body: JSON.stringify(params)
   });
 }
+
+
+/**
+ * 获取实体动态页签下 新增表单中动态字段
+ * @param params
+ * {
+ * "EntityId":"f9db9d79-e94b-4678-a5cc-aa6e281c1246",
+ * "RecId":"2306b7da-292b-4f3e-ac02-c2f79a06ac8f",
+ * "FieldId":"699eebb9-60bf-46dd-9925-e4023931fe7d"
+ * }
+ * @returns {Promise.<Object>}
+ */
+export async function queryvaluefornewdata(params) {
+  return request('/api/dynamicentity/queryvaluefornewdata', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}

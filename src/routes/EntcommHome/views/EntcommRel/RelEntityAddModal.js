@@ -6,7 +6,7 @@ import { Modal, Row, Col, Button, Avatar, message, Checkbox } from 'antd';
 import EntcommAddModal from '../../../../components/EntcommAddModal';
 import styles from './RelEntityAddModal.less';
 import { parseConfigData } from '../../../../components/ListStylePicker';
-import { queryRelAddList, addRelByList } from '../../../../services/entcomm';
+import { queryRelAddList, addRelByList, queryvaluefornewdata } from '../../../../services/entcomm';
 
 class RelEntityAddModal extends Component {
   static propTypes = {};
@@ -20,6 +20,7 @@ class RelEntityAddModal extends Component {
       itemList: [],
       selectedItems: [],
       listModalPending: false,
+      initFormData: {}
     };
   }
 
@@ -31,6 +32,7 @@ class RelEntityAddModal extends Component {
         this.setState({ listModalVisible: true });
         this.fetchItemList();
       } else {
+        this.fetchVariableFormItem();
         this.setState({ addModalVisible: true });
       }
     } else if (isClosing) {
@@ -46,7 +48,7 @@ class RelEntityAddModal extends Component {
 
   processProtocol = fields => {
     let fields_ = fields;
-    const readOnlyFieldKeys = Object.keys(this.props.initFormData);
+    const readOnlyFieldKeys = Object.keys(this.state.initFormData);
     if (readOnlyFieldKeys.length) {
       fields_ = fields.map(field => {
         if (_.includes(readOnlyFieldKeys, field.fieldname)) {
@@ -75,6 +77,21 @@ class RelEntityAddModal extends Component {
       message.error(err.message || '获取列表数据失败');
     });
   };
+
+  fetchVariableFormItem = () => {
+    const params = {
+      EntityId: this.props.entityId,
+      RecId: this.props.recordId,
+      FieldId: this.props.fieldId
+    };
+    queryvaluefornewdata(params).then(result => { //动态获取 关联字段的值
+      this.setState({
+        initFormData: { [this.props.fieldname]: result.data }
+      });
+    }).catch(err => {
+      message.error(err.message || '获取动态字段数据失败');
+    });
+  }
 
   handleAddFromList = () => {
     if (!this.state.selectedItems.length) {
@@ -196,7 +213,7 @@ class RelEntityAddModal extends Component {
           entityId={this.props.relEntityId}
           entityName={this.props.entityName}
           refEntity={undefined && this.props.entityId}
-          initFormData={this.props.initFormData}
+          initFormData={this.state.initFormData}
           entityTypes={this.props.entityTypes}
           cancel={this.handleAddNewCancel}
           done={this.props.onAddDone}
@@ -209,21 +226,14 @@ class RelEntityAddModal extends Component {
 
 export default connect(
   state => {
-    const { entityId, recordId, relId, relEntityId, showModals,entityTypes } = state.entcommRel;
+    const { entityId, recordId, relId, relEntityId, showModals, entityTypes } = state.entcommRel;
     const { relTabs, recordDetail } = state.entcommHome;
 
-    let initFormData = null;
     let tabInfo = {};
     if (relTabs.length && relId && relEntityId) {
       tabInfo = _.find(relTabs, item => {
         return item.relid === relId && item.relentityid === relEntityId;
       });
-      if (tabInfo) {
-        const { fieldname } = tabInfo;
-        initFormData = {
-          [fieldname]: { id: recordId, name: recordDetail.recname }
-        };
-      }
     }
 
     return {
@@ -231,10 +241,10 @@ export default connect(
       entityTypes,
       entityName: (tabInfo && tabInfo.entityname) || '',
       visible: /add/.test(showModals),
-      initFormData,
       shouldShowList: !!(tabInfo && tabInfo.ismanytomany),
       showListTitle: tabInfo && tabInfo.srctitle,
-      fieldId: tabInfo && tabInfo.fieldid
+      fieldId: tabInfo && tabInfo.fieldid,
+      fieldname: tabInfo && tabInfo.fieldname
     };
   },
   dispatch => {
