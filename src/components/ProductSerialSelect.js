@@ -14,12 +14,13 @@ function transformData(data) {
   loopChildren(tree);
   return tree;
 
-  function loopChildren(nodes) {
+  function loopChildren(nodes, parentNode) {
     nodes.forEach((node, index) => {
+      node.path = parentNode ? [...parentNode.path, node.productsetname] : [node.productsetname];
       const id = node.productsetid;
       const children = data.filter(item => item.pproductsetid === id);
       nodes[index].children = children;
-      loopChildren(children);
+      loopChildren(children, node);
     });
   }
 }
@@ -73,7 +74,7 @@ class ProductSerialSelect extends React.Component {
             className={item.recstatus === 0 ? styles.hiddenNode : ''}
             value={item.productsetid}
             key={item.productsetid}
-            title={<span title={item.productsetname} style={titleStyle}>{item.productsetname}</span>}
+            title={item.productsetname}
           >
             {this.renderTreeNodes(item.children)}
           </TreeNode>
@@ -84,7 +85,7 @@ class ProductSerialSelect extends React.Component {
             className={item.recstatus === 0 ? styles.hiddenNode : ''}
             value={item.productsetid}
             key={item.productsetid}
-            title={<span title={item.productsetname} style={titleStyle}>{item.productsetname}</span>}
+            title={item.productsetname}
             isLeaf
           />
         );
@@ -105,39 +106,20 @@ class ProductSerialSelect extends React.Component {
   };
 
   getTreeData = () => {
-    return transformData(this.props.productSerial || [])
-    // const retTree = transformData(this.props.productSerial || []);
-    // const productBySerial = {};
-    // treeForEach(retTree, node => {
-    //   const belongProducts = productBySerial[node.productsetid];
-    //   if (belongProducts) {
-    //     node.children = [...node.children, ...belongProducts];
-    //     node.children.forEach(child => {
-    //       if (!child.path) {
-    //         child.path = [...node.path, child.productname];
-    //       }
-    //     });
-    //   }
-    // });
-    //
-    // const { designateNodes, designateFilterNodes } = this.props;
-    // console.log(designateNodes)
-    // let treeData = treeFilter(retTree, node => {
-    //   if (node.productid) return false;
-    //   node.label = node.productsetname;
-    //   node.key = node.value = node.productsetid;
-    //   return true;
-    // });
-    //
-    // if (designateNodes || designateFilterNodes) {
-    //   treeData = resolveTreeByPathSearch(treeData, designateNodes, designateFilterNodes);
-    // }
-    //
-    // // hack 根节点不可选择
-    // // treeData.forEach(item => item.selectable = false);
-    // treeData = treeData[0] ? treeData[0].children : [];
-    //
-    // return treeData;
+    //return transformData(this.props.productSerial || [])
+
+    const { productSerial, designateNodes, designateFilterNodes } = this.props;
+    const retTree = transformData(productSerial);
+    let treeData = treeFilter(retTree, node => {
+      if (node.productid) return false;
+      return true;
+    });
+
+    if (designateNodes || designateFilterNodes) {
+      treeData = resolveTreeByPathSearch(treeData, designateNodes, designateFilterNodes);
+    }
+
+    return treeData;
   };
 
   handleChange = (value, nodes, evt) => {
