@@ -1,0 +1,39 @@
+.clearFix{
+  zoom:1;
+  &:after{
+    content: '';
+    display: block;
+    clear: both;
+  }
+}
+
+.panelWrap {
+  position: fixed;
+  top: 60px;
+  right: -650px;
+  bottom: 0;
+  width: 640px;
+  background-color: #fff;
+  line-height: 1;
+  //display: none;
+  transition: all ease 0.5s;
+  &.panelVisible {
+    //display: block;
+    right: 0;
+    box-shadow: rgba(0, 0, 0, 0.176) 0px 6px 12px;
+  }
+
+  .header{
+    .clearFix;
+    width: 100%;
+    height: 70px;
+    line-height: 70px;
+    background: #464E5D;
+    padding-left: 26px;
+
+    >li{
+      float: left;
+      height: 100%;
+    }
+  }
+}

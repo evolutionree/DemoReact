@@ -7,6 +7,7 @@ import UserDropdown from './UserDropdown';
 import ImportTask from './ImportTask';
 import ProgressModal from './ProgressModal/ProgressModal';
 import ContactsPanel from "./ContactsPanel";
+import WebIMPanel from './WebIMPanel';
 
 
 const AppHeader = () => {
@@ -17,6 +18,7 @@ const AppHeader = () => {
       <Header.Right>
         <ImportTask />
         <ProgressModal />
+        <WebIMPanel />
         <ContactsPanel />
         <MessageList />
         <UserDropdown />
