@@ -85,7 +85,7 @@ class WebIMPanel extends Component {
   render() {
     const tabModel = this.state.tabModel;
     return (
-      <div>
+      <div style={{ display: 'none' }}>
         <Icon
           type="contacts"
           title="通讯录"
@@ -105,7 +105,7 @@ class WebIMPanel extends Component {
             {
               tabModel.map((item, index) => {
                 return (
-                  <div style={{ display: item.name === this.state.showTabPage ? 'block' : 'none' }}>
+                  <div style={{ display: item.name === this.state.showTabPage ? 'block' : 'none' }} key={index}>
                     {
                       item.content
                     }
