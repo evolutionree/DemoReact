@@ -7,7 +7,7 @@ import { queryProductData } from '../../../services/basicdata';
 import styles from './SelectProductModal.less';
 import SelectProductSerial from './SelectProductSerial';
 import { queryMobFieldVisible } from '../../../services/entity';
-import { getSeries, getProducts } from '../../../services/products';
+import { getSeries, getProducts, searchproductformobile } from '../../../services/products';
 import ProductSerialSelect from '../../ProductSerialSelect';
 
 const TabPane = Tabs.TabPane;
@@ -102,6 +102,7 @@ class SelectProductModal extends Component {
   }
 
   fetchList = () => {
+    //istopset psetid  searchkey includefilter excludefilter pageindex pagecount
     const params = {
       productSeriesId: this.state.currentSerial,
       recStatus: 1,
@@ -122,6 +123,30 @@ class SelectProductModal extends Component {
       this.setState({ loading: false });
       message.error(e.message || '获取产品列表失败');
     });
+
+
+// console.log(this.state.currentSerial)
+//
+//     const params = {
+//       istopset: 1,
+//       psetid: this.state.currentSerial,
+//       searchKey: this.state.keyword,
+//       pageIndex: this.state.pageIndex,
+//       pagecount: 10,
+//       includefilter: '',
+//       excludefilter: ''
+//     };
+//     this.setState({ loading: true });
+//     searchproductformobile(params).then(result => {
+//       this.setState({
+//         loading: false,
+//         list: result.data.pagedata.map(item => ({ ...item, productid: item.recid })),
+//         total: result.data.pagecount[0].total
+//       });
+//     }, e => {
+//       this.setState({ loading: false });
+//       message.error(e.message || '获取产品列表失败');
+//     });
   };
 
   handleOk = () => {

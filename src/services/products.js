@@ -152,3 +152,25 @@ export async function getProducts(params) {
     body: JSON.stringify(params)
   });
 }
+
+
+/**
+ * 获取产品数据(2018-06-04改用新接口  通过传includefilter excludefilter  查询js动态过滤后得到的数据)
+ * @param params
+ * {
+    istopset: 1,
+      psetid: this.state.currentSerial,
+      searchKey: this.state.keyword,
+      pageIndex: this.state.pageIndex,
+      pagecount: 10,
+      includefilter: '',
+      excludefilter: ''
+  }
+ * @returns {Promise.<Object>}
+ */
+export async function searchproductformobile(params) {
+  return request('/api/Products/searchproductformobile', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
