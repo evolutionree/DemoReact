@@ -101,24 +101,21 @@ class ProductSerialSelect extends React.Component {
       this.onSerialDataCallback = () => {
         const rootNode = _.find(this.props.productSerial, ['nodepath', 0]);
         callback(rootNode && rootNode.productsetid);
-      }
+      };
     }
   };
 
   getTreeData = () => {
-    //return transformData(this.props.productSerial || [])
-
-    const { productSerial, designateNodes, designateFilterNodes } = this.props;
+    const { productSerial } = this.props;
     const retTree = transformData(productSerial);
     let treeData = treeFilter(retTree, node => {
       if (node.productid) return false;
       return true;
     });
 
-    if (designateNodes || designateFilterNodes) {
-      treeData = resolveTreeByPathSearch(treeData, designateNodes, designateFilterNodes);
-    }
-
+    // if (designateNodes || designateFilterNodes) {   //之前是前端进行筛选  2018-06-05 三端统一 调用接口 获取筛选数据
+    //   treeData = resolveTreeByPathSearch(treeData, designateNodes, designateFilterNodes);
+    // }
     return treeData;
   };
 
@@ -154,4 +151,5 @@ class ProductSerialSelect extends React.Component {
   }
 }
 
-export default connectBasicData('productSerial', ProductSerialSelect);
+export default ProductSerialSelect;
+//export default connectBasicData('productSerial', ProductSerialSelect);

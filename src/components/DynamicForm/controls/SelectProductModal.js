@@ -35,8 +35,10 @@ class SelectProductModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentSerial: '',
-      currentSelected: [...props.selected],
+      currentSerial: '', //当前选择的系列
+      productSerial: [], //所有产品系列的树 数据
+      currentSelected: [...props.selected], //当前选择的数据
+      selectedRows: [...props.selected], //因为antd 表格前的checkbox控件选择时，第二个参数只会记录当前页的选中的值，所有需要记录所有分页的选中的数据
       keyword: '',
       list: [],
       pageIndex: 1,
@@ -45,7 +47,6 @@ class SelectProductModal extends Component {
       columns: [], //控件列定义
       currentTabsKey: '1',
       filterKeyWord: '',
-      selectedRows: [...props.selected],
       currentRemoveItems: []  //准备删除的数据  存的是key值
     };
   }
@@ -53,6 +54,7 @@ class SelectProductModal extends Component {
   componentWillReceiveProps(nextProps) {
     if (!this.props.visible && nextProps.visible) {
       this.getColumns();
+      this.getProductSerial();
       this.setState({
         currentSelected: [...nextProps.selected],
         selectedRows: [...nextProps.selected],
@@ -62,26 +64,9 @@ class SelectProductModal extends Component {
         total: 0,
         currentTabsKey: '1',
         filterKeyWord: ''
-      }, () => {
-        this.serialSelectRef && this.serialSelectRef.getDefaultSerial(serialId => {
-          this.setState({ currentSerial: serialId }, this.fetchList);
-        });
       });
     }
   }
-
-  onSerialRef = ref => {
-    this.serialSelectRef = ref && ref.refs.wrappedInstance.wrappedInstance;
-    if (this.props.visible && this.serialSelectRef) {
-      this.serialSelectRef.getDefaultSerial(serialId => {
-        this.setState({ currentSerial: serialId }, this.fetchList);
-      });
-    }
-  };
-
-  onSerialChange = val => {
-    this.setState({ currentSerial: val, pageIndex: 1, keyword: '' }, this.fetchList);
-  };
 
   getColumns = () => {
     queryMobFieldVisible('59cf141c-4d74-44da-bca8-3ccf8582a1f2').then(result => {
@@ -101,61 +86,64 @@ class SelectProductModal extends Component {
     });
   }
 
-  fetchList = () => {
-    //istopset psetid  searchkey includefilter excludefilter pageindex pagecount
+  getProductSerial = () => {
+    const { designateNodes, designateFilterNodes } = this.props;
+
+    const includefilter = designateNodes && designateNodes.map(item => item.path).join(',');
+    const excludefilter = designateFilterNodes && designateFilterNodes.join(',');
     const params = {
-      productSeriesId: this.state.currentSerial,
-      recStatus: 1,
-      pageIndex: this.state.pageIndex,
-      pageSize: 10,
-      searchKey: this.state.keyword,
-      includeChild: true,
-      recVersion: 0
+      istopset: -1,
+      includefilter: includefilter,
+      excludefilter: excludefilter
     };
     this.setState({ loading: true });
-    getProducts(params).then(result => {
+    searchproductformobile(params).then(result => {
+      const productSerial = result.data.pagedata;
+      const rootNode = _.find(productSerial, ['nodepath', 0]);
+      const currentSerial = rootNode && rootNode.productsetid;
+      console.log(currentSerial)
+      this.setState({
+        productSerial: productSerial,
+        currentSerial
+      }, this.fetchList);
+    }, e => {
+      this.setState({ loading: false });
+      message.error(e.message);
+    });
+  }
+
+  fetchList = () => {
+    const { designateNodes, designateFilterNodes } = this.props;
+    const includefilter = designateNodes && designateNodes.map(item => item.path).join(',');
+    const excludefilter = designateFilterNodes && designateFilterNodes.join(',');
+    const params = {
+      istopset: 0,
+      psetid: this.state.currentSerial,
+      searchKey: this.state.keyword,
+      pageIndex: this.state.pageIndex,
+      pagecount: 10,
+      includefilter: includefilter,
+      excludefilter: excludefilter
+    };
+    this.setState({ loading: true });
+    searchproductformobile(params).then(result => {
       this.setState({
         loading: false,
-        list: result.data.pagedata.map(item => ({ ...item, productid: item.recid })),
-        total: result.data.pagecount[0].total
+        list: result.data.pagedata.map(item => ({ ...item.productdetail, productid: item.productdetail.recid })),
+        total: result.data.pagecount.total
       });
     }, e => {
       this.setState({ loading: false });
       message.error(e.message || '获取产品列表失败');
     });
+  };
 
-
-// console.log(this.state.currentSerial)
-//
-//     const params = {
-//       istopset: 1,
-//       psetid: this.state.currentSerial,
-//       searchKey: this.state.keyword,
-//       pageIndex: this.state.pageIndex,
-//       pagecount: 10,
-//       includefilter: '',
-//       excludefilter: ''
-//     };
-//     this.setState({ loading: true });
-//     searchproductformobile(params).then(result => {
-//       this.setState({
-//         loading: false,
-//         list: result.data.pagedata.map(item => ({ ...item, productid: item.recid })),
-//         total: result.data.pagecount[0].total
-//       });
-//     }, e => {
-//       this.setState({ loading: false });
-//       message.error(e.message || '获取产品列表失败');
-//     });
+  onSerialChange = val => {
+    this.setState({ currentSerial: val, pageIndex: 1, keyword: '' }, this.fetchList);
   };
 
   handleOk = () => {
-    console.log(this.state.currentSelected)
     this.props.onOk(this.state.currentSelected);
-  };
-
-  onPageChange = pageIndex => {
-    this.setState({ pageIndex }, this.fetchList);
   };
 
   onSearch = keyword => {
@@ -174,40 +162,6 @@ class SelectProductModal extends Component {
     });
   }
 
-  selectAll = () => {
-    this.setState({
-      currentSelected: _.unionBy(this.state.currentSelected, this.state.list, 'productid')
-    });
-  };
-
-  select = data => {
-    // if (this.state.currentSelected.some(item => item.productid === data.id)) return;
-    this.setState({
-      currentSelected: _.unionBy(this.state.currentSelected, [data], 'productid')
-    });
-  };
-
-  selectSingle = data => {
-    this.setState({
-      currentSelected: [data]
-    });
-  };
-
-  remove = data => {
-    this.setState({
-      currentSelected: this.state.currentSelected.filter(item => item.productid !== data.productid)
-    });
-  };
-
-  removeAll = () => {
-    this.setState({ currentSelected: [] });
-  };
-
-  getSelectedItems = () => {
-    return this.state.currentSelected;
-    // const allProducts = this.props.data.products;
-    // return this.state.currentSelected.map(id => _.find(allProducts, ['productid', id])).filter(i => !!i);
-  };
 
   handleTableChange = (pagination) => {
     this.setState({ pageIndex: pagination.current }, this.fetchList);
@@ -238,19 +192,7 @@ class SelectProductModal extends Component {
   render() {
     const { visible, onCancel, multiple, designateNodes, designateFilterNodes } = this.props;
     const { currentSelected, list } = this.state;
-    const selectedItems = this.getSelectedItems();
-
-    const filterSelectedItems = selectedItems.filter(item => item.productname.indexOf(this.state.filterKeyWord) > -1);
-    const pagination = (
-      <Pagination
-        size="small"
-        current={this.state.pageIndex}
-        total={this.state.total}
-        showSizeChanger={false}
-        showQuickJumper={false}
-        onChange={this.onPageChange}
-      />
-    );
+    const filterSelectedItems = currentSelected.filter(item => item.productname.indexOf(this.state.filterKeyWord) > -1);
     return (
       <Modal
         title="选择产品"
@@ -264,9 +206,9 @@ class SelectProductModal extends Component {
           {
             this.state.currentTabsKey === '1' ? <ProductSerialSelect
               width="200px"
+              productSerial={this.state.productSerial}
               value={this.state.currentSerial}
               onChange={this.onSerialChange}
-              ref={this.onSerialRef}
               designateNodes={designateNodes}
               designateFilterNodes={designateFilterNodes}
             /> : null
@@ -294,7 +236,7 @@ class SelectProductModal extends Component {
                      onChange={this.handleTableChange}
                      rowSelection={{
                        type: multiple ? 'checkbox' : 'radio',
-                       selectedRowKeys: selectedItems.map(item => item.productid),
+                       selectedRowKeys: currentSelected.map(item => item.productid),
                        onChange: (keys, items) => this.onSelectItems(keys, items)
                      }}
                      rowKey="productid" />
@@ -319,52 +261,6 @@ class SelectProductModal extends Component {
                    rowKey="productid" />
           </TabPane>
         </Tabs>
-        {/*<Spin spinning={this.state.loading}>*/}
-          {/*{multiple ? (*/}
-            {/*<Row gutter={20}>*/}
-              {/*<Col span={11}>*/}
-                {/*<ul className={styles.userlist}>*/}
-                  {/*{list.map(item => (*/}
-                    {/*<li key={item.productid} onClick={this.select.bind(this, item)}>*/}
-                      {/*<span title={item.productname}>{item.productname}</span>*/}
-                    {/*</li>*/}
-                  {/*))}*/}
-                {/*</ul>*/}
-                {/*{pagination}*/}
-              {/*</Col>*/}
-              {/*<Col span={2}>*/}
-                {/*<div style={{ height: '400px' }} className={styles.midcontrol}>*/}
-                  {/*<Icon type="right" onClick={this.selectAll} />*/}
-                  {/*<Icon type="left" onClick={this.removeAll} />*/}
-                {/*</div>*/}
-              {/*</Col>*/}
-              {/*<Col span={11}>*/}
-                {/*<ul className={styles.userlist}>*/}
-                  {/*{selectedItems.map(item => (*/}
-                    {/*<li key={item.productid}>*/}
-                      {/*<span title={item.productname}>{item.productname}</span>*/}
-                      {/*<Icon type="close" onClick={this.remove.bind(this, item)} />*/}
-                    {/*</li>*/}
-                  {/*))}*/}
-                {/*</ul>*/}
-              {/*</Col>*/}
-            {/*</Row>*/}
-          {/*) : (*/}
-            {/*<div>*/}
-              {/*<ul className={styles.userlist}>*/}
-                {/*{list.map(item => {*/}
-                  {/*const cls = (currentSelected[0] && currentSelected[0].productid) === item.productid ? styles.highlight : '';*/}
-                  {/*return (*/}
-                    {/*<li key={item.productid} onClick={this.selectSingle.bind(this, item)} className={cls}>*/}
-                      {/*<span title={item.productname}>{item.productname}</span>*/}
-                    {/*</li>*/}
-                  {/*);*/}
-                {/*})}*/}
-              {/*</ul>*/}
-              {/*{pagination}*/}
-            {/*</div>*/}
-          {/*)}*/}
-        {/*</Spin>*/}
       </Modal>
     );
   }

@@ -244,12 +244,12 @@ export function GetArgsFromHref(sArgName) {
  * @returns {Array}
  */
 export function resolveTreeByPathSearch(treeData = [], pathSearches = [], excludeSearches = []) {
-  let retTreeData = treeData;
+  let retTreeData = _.cloneDeep(treeData);
   if (pathSearches.length) {
-    retTreeData = filterTreeByPathSearch(_.cloneDeep(treeData), pathSearches);
+    retTreeData = filterTreeByPathSearch(retTreeData, pathSearches);
   }
   if (excludeSearches.length) {
-    retTreeData = excludeTreeByPathSearch(_.cloneDeep(treeData), excludeSearches);
+    retTreeData = excludeTreeByPathSearch(retTreeData, excludeSearches);
   }
   return retTreeData;
 }
