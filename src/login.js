@@ -94,20 +94,20 @@ class LoginPageContainer extends Component {
     this.setState({ loginPending: true });
     login(data).then(result => {
       this.setState({ loginPending: false, loginInfo: result.loginInfo });
-      // const { security: { policy_reuslt, policy_msg } } = result.loginInfo;   //security.policy_reuslt: 1 则密码即将过期  2,密码已过期
-      //
-      // if (policy_reuslt === 1) {
-      //   this.confirmLogin(policy_msg);
-      // } else if (policy_reuslt === 2) { //密码过期 需要修改密码
-      //   this.setState({
-      //     modifyPwdVisible: true,
-      //     loginError: policy_msg
-      //   });
-      // } else {
-      //   this.go();
-      // }
+      const { security: { policy_reuslt, policy_msg } } = result.loginInfo;   //security.policy_reuslt: 1 则密码即将过期  2,密码已过期
 
-     this.go();
+      if (policy_reuslt === 1) {
+        this.confirmLogin(policy_msg);
+      } else if (policy_reuslt === 2) { //密码过期 需要修改密码
+        this.setState({
+          modifyPwdVisible: true,
+          loginError: policy_msg
+        });
+      } else {
+        this.go();
+      }
+
+     //this.go();
     }, err => {
       this.setState({
         loginPending: false,
