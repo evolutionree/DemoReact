@@ -181,7 +181,7 @@ class DynamicTable extends Component {
 
     // 把第一列作为跳转详情列
     const linkField = ignoreRecName ? undefined : filterField.filter(field => {
-      return [13, 14, 15, 20, 22, 23, 24].indexOf(field.controltype) === -1;
+      return [13, 14, 15, 18, 20, 22, 23, 24, 32].indexOf(field.controltype) === -1;
     })[0];
 
     return filterField instanceof Array && filterField.map((field, index) => {
@@ -365,7 +365,7 @@ class DynamicTable extends Component {
       if (this.props.renderLinkField) return this.props.renderLinkField(cellText, field, record, this.props);
       return this.renderDetailLink(cellText, field, record);
     }
-    
+
     switch (field.controltype) {
       // 头像
       case 15:
@@ -387,6 +387,7 @@ class DynamicTable extends Component {
         //手机
       case 10:
         return this.renderTelePhone(cellText);
+        //关联业务
       case 32:
         return this.renderRelBusiness(cellText);
       // 普通文本，日期

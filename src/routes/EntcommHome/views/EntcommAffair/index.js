@@ -6,6 +6,7 @@ import { connect } from 'dva';
 import { Table, Select, Button, DatePicker, Input } from 'antd';
 import Toolbar from '../../../../components/Toolbar';
 import moment from 'moment';
+import { Link } from 'dva/router';
 
 const Column = Table.Column;
 const Option = Select.Option;
@@ -130,7 +131,9 @@ function EntcommAffair({
           onShowSizeChange: (curr, size) => search({ pageSize: size })
         }}
       >
-        <Column title="流水号" key="reccode" dataIndex="reccode" />
+        <Column title="流水号" key="reccode" dataIndex="reccode" render={(text, record) => (
+          <Link to={`/affair/${record.caseid}`}>{text}</Link>
+        )} />
         <Column title="流程名称" key="flowname" dataIndex="flowname" />
         <Column title="审批主题" key="title" dataIndex="title" />
         <Column title="申请人" key="reccreator_name" dataIndex="reccreator_name" />

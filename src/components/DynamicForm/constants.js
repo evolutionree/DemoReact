@@ -91,8 +91,8 @@ export const controlMap = {
   28: SelectProductBigData,
   29: SelectProductSerial,
   30: null,
-  31: RelObject,
-  32: RelBusiness,
+  31: RelObject, //引用对象
+  32: RelBusiness, //关联业务
   33: CheckBox,
 
   1002: SelectUser, // 1002 创建人

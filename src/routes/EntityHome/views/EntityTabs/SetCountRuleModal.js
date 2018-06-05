@@ -117,7 +117,7 @@ class SetCountRuleModal extends Component {
     const { visible, cancel } = this.props;
     return (
       <Modal
-        width={640}
+        width={660}
         title="统计规则设置"
         visible={visible}
         onOk={this.handleSubmit}

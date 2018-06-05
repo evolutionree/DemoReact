@@ -61,7 +61,17 @@ class FieldSet extends React.Component {
       <div>
         {
           this.props.value.map((item, index) => {
-            return <SelectCombine key={index} value={item} onChange={this.onChange.bind(this, index)} onDelete={this.delFieldSet.bind(this, index)} />;
+            return (
+              <div key={index} style={{ position: 'relative' }}>
+                <span style={{
+                  position: 'absolute',
+                  left: '0px',
+                  top: '50%',
+                  transform: 'translateY(-50%)'
+                }}>q{index + 1}</span>
+                <SelectCombine value={item} onChange={this.onChange.bind(this, index)} onDelete={this.delFieldSet.bind(this, index)} />
+              </div>
+            );
           })
         }
         <Dropdown overlay={menu} placement="bottomCenter">

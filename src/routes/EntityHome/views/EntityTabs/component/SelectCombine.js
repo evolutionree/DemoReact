@@ -120,7 +120,7 @@ class SelectCombine extends React.Component {
     const entityList = this.props.entityList;
     const itemValue = this.props.value;
     return (
-      <div style={{ marginBottom: '4px' }}>
+      <div style={{ marginBottom: '4px', paddingLeft: '30px' }}>
         <Select style={{ width: 100, marginRight: '10px' }} disabled value={itemValue.type}>
           <Option value={0}>配置</Option>
           <Option value={1}>函数</Option>

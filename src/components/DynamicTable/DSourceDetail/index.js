@@ -41,10 +41,13 @@ class DSourceDetail extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { entityId, recordId } = nextProps;
-    if (entityId && recordId && (this.props.recordId !== recordId) || this.props.entityId !== entityId) {
+    if (entityId && recordId) { //&& (this.props.recordId !== recordId) || this.props.entityId !== entityId  考虑到可能关联对象已经被删除了，查无数据就需要关闭窗口，所有，用户重新点击同一个数据源，需要继续请求
       this.fetchDetailAndProtocol(entityId, recordId);
       this.fetchEntityDetail(entityId);
     }
+    this.setState({
+      visible: nextProps.visible
+    });
   }
 
   fetchEntityDetail = (entityId) => {
@@ -83,7 +86,8 @@ class DSourceDetail extends PureComponent {
       console.error(e.message);
       message.error(e.message);
       this.setState({
-        loading: false
+        loading: false,
+        visible: false
       });
     });
   };
@@ -103,8 +107,8 @@ class DSourceDetail extends PureComponent {
   }
 
   render() {
-    const { visible, entityId, recordId } = this.props;
-    const { protocol, data } = this.state;
+    const { entityId, recordId } = this.props;
+    const { protocol, data, visible } = this.state;
 
     const hasTable = protocol.some(field => {
       return field.controltype === 24 && (field.fieldconfig.isVisible === 1);
