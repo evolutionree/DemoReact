@@ -19,14 +19,17 @@ function parseFlowJSON(data) {
   const nodesByIdCollection = data.nodes.reduce((collect, curr) => {
     return { ...collect, [curr.nodeid]: curr };
   }, {});
+
   const nodesByPositionCollection = {};
 
   // 用 position 标记层级
   const startNode = _.find(data.nodes, node => node.steptypeid === 0);
   startNode.position = 0;
   let restLines = data.lines;
-  while (restLines.length) {
+  let index = 0;
+  while (restLines.length && index < data.lines.length) {
     restLines = loopRestLines(restLines);
+    index ++;
   }
   Object.keys(nodesByIdCollection).forEach(id => {
     const node = nodesByIdCollection[id];
@@ -79,6 +82,7 @@ function parseFlowJSON(data) {
 
   function loopRestLines(lines) {
     const nextRest = [...lines];
+    let removecount = 0 ;
     lines.forEach((line, index) => {
       const { fromnodeid: fromId, tonodeid: endId } = line;
       const fromNode = nodesByIdCollection[fromId];
@@ -87,8 +91,10 @@ function parseFlowJSON(data) {
       endNode.position = endNode.position !== undefined
         ? Math.max(endNode.position, fromNode.position + 1)
         : (fromNode.position + 1);
-      nextRest.splice(index, 1);
+      nextRest.splice(index- removecount, 1);
+      removecount ++;
     });
+
     return nextRest;
   }
 
