@@ -1,0 +1,88 @@
+.leftNav{
+  float: left;
+}
+
+
+
+
+.rightList{
+  float: left;
+}
+
+.rightList>div{
+  margin-bottom: 16px;
+}
+
+
+.businessList{
+  width: 238px;
+  height: 100%;
+  margin: 0 20px 20px 16px;
+  border:1px solid #f4f4f4;
+}
+.businessList>li{
+  width: 100%;
+  height: 48px;
+  line-height: 48px;
+  border-bottom:1px solid #f4f4f4;
+  cursor: pointer;
+  font-size:14px;
+  color:#000000;
+  padding-left: 16px;
+  position: relative;
+}
+.businessList>li:last-child{
+  border-bottom: none;
+}
+
+.businessList>li.businessLiActive:after{
+  content: '';
+  width:5px;
+  height:48px;
+  position: absolute;
+  left: 0px;
+  background:#3398db;
+  display: inline-block;
+}
+
+
+.hightGradeCheck{
+  padding-left: 20px;
+}
+
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.row {
+  height: 48px;
+  line-height: 48px;
+  border-left: 6px solid #596372;
+  padding-left: 15px;
+  color: #4a4a4a;
+  font-size: 14px;
+}
+
+.row:nth-child(2n+1) {
+  background-color: #f9f9f9;
+}
+
+.order {
+  display: inline-block;
+  width: 2em;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+.text {
+  display: inline-block;
+  width: 200px; /* 页面重写width */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  margin-right: 10px;
+}

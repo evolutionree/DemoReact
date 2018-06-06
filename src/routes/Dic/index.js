@@ -1,183 +1,119 @@
-import React, { PropTypes, Component } from 'react';
+import React from 'react';
 import { connect } from 'dva';
-import { Spin, message, Select } from 'antd';
+import { Form, Button, Input, Checkbox, message } from 'antd';
 import Page from '../../components/Page';
-import ParamsBoard from '../../components/ParamsBoard/ParamsBoard';
-import { queryDicTypes, queryDicOptions, saveDicOption, delDicOption, orderDicOptions } from '../../services/dictionary';
+//import ParamsList from './component/ParamsList';
+import styles from './index.less';
+import classnames from 'classnames';
+import { hashHistory } from 'react-router';
 
-const Option = Select.Option;
 
-class DicPage extends Component {
-  static propTypes = {};
-  static defaultProps = {};
+const FormItem = Form.Item;
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      loading: false,
-      dicTypes: [],
-      selectedDicType: '',
-      dicOptions: []
-    };
-  }
 
-  componentDidMount() {
-    this.fetchDicTypes();
-  }
+let fields = [{
+  key: 'stagename',
+  name: '阶段名称',
+  link: true,
+  maxLength: 10
+},{
+  key: 'winrate',
+  name: 'winrate'
+}];
 
-  onCreate = data => {
-    const params = {
-      datavalue: data.dataval,
-      dictypeid: +this.state.selectedDicType,
-      dicid: ''
-    };
-    this.showLoading();
-    saveDicOption(params).then(result => {
-      this.hideLoading();
-      this.fetchDicOptions(this.state.selectedDicType);
-    }, err => {
-      this.hideLoading();
-      message.error(err.message || '保存失败');
+function DicPage({
+                     form: {
+                       getFieldDecorator,
+                       validateFields,
+                       resetFields
+                     },
+                     handleSubmit,
+                     changeTypeHandler,
+                     navList,
+                     currentActiveId
+                   }) {
+  const addParams = (e) => {
+    e.preventDefault();
+    validateFields((err, fieldsValue) => {
+      if (err) {
+        return;
+      } else {
+        resetFields(); //清空表单数据
+        handleSubmit(fieldsValue);
+      }
     });
   };
 
-  onUpdate = data => {
-    const params = {
-      dictypeid: +this.state.selectedDicType,
-      datavalue: data.dataval,
-      dicid: data.dicid
-    };
-    this.showLoading();
-    saveDicOption(params).then(result => {
-      this.hideLoading();
-      this.fetchDicOptions(this.state.selectedDicType);
-    }, err => {
-      this.hideLoading();
-      message.error(err.message || '保存失败');
-    });
-  };
 
-  onDel = data => {
-    this.showLoading();
-    delDicOption(data.dicid).then(result => {
-      this.hideLoading();
-      this.fetchDicOptions(this.state.selectedDicType);
-    }, err => {
-      this.hideLoading();
-      message.error(err.message || '获取字典失败');
-    });
-  };
-  onOrderDown = (data, index) => {
-    const params = this.state.dicOptions.map((item, i) => {
-      return item;
-    });
-    let x,
-      y;
-    x = index;
-    y = index + 1;
-    params.splice(x, 1, ...params.splice(y, 1, params[x]));
-    this.showLoading();
-    orderDicOptions(params).then(result => {
-      this.hideLoading();
-      this.fetchDicOptions(this.state.selectedDicType);
-    }, err => {
-      this.hideLoading();
-      message.error(err.message || '获取字典失败');
-    });
-  };
-  onOrderUp = (data, index) => {
-    const params = this.state.dicOptions.map((item, i) => {
-      return item;
-    });
-    let x,
-      y;
-    x = index - 1;
-    y = index;
-    params.splice(x, 1, ...params.splice(y, 1, params[x]));
-    this.showLoading();
-    orderDicOptions(params).then(result => {
-      this.hideLoading();
-      this.fetchDicOptions(this.state.selectedDicType);
-    }, err => {
-      this.hideLoading();
-      message.error(err.message || '获取字典失败');
-    });
-  };
-
-  onDicTypeChange = val => {
-    this.setState({ selectedDicType: val });
-    this.fetchDicOptions(val);
-  };
-
-  showLoading = () => {
-    this.setState({ loading: true });
-  };
-
-  hideLoading = () => {
-    this.setState({ loading: false });
-  };
-
-  fetchDicTypes = () => {
-    this.showLoading();
-    queryDicTypes().then(result => {
-      this.hideLoading();
-      this.setState({
-        dicTypes: result.data.fielddictype.map(item => ({
-          id: item.dictypeid + '',
-          name: item.dictypename
-        }))
-      });
-      this.onDicTypeChange(result.data.fielddictype[0].dictypeid + '');
-    }, err => {
-      this.hideLoading();
-      message.error(err.message || '获取字典失败');
-    });
-  };
-
-  fetchDicOptions = (dictypeid) => {
-    this.showLoading();
-    queryDicOptions(dictypeid).then(result => {
-      this.hideLoading();
-      this.setState({ dicOptions: result.data.fielddictypevalue });
-    }, err => {
-      this.hideLoading();
-      message.error(err.message || '获取字典失败');
-    });
-  };
-
-  render() {
-    const fields = [{
-      key: 'dataval',
-      name: '字典参数'
-    }];
-    return (
-      <Spin spinning={this.state.loading}>
-        <Page title="字典参数">
-          <ParamsBoard
-            toolbarNode={(
-              <Select value={this.state.selectedDicType} onChange={this.onDicTypeChange} style={{ minWidth: '120px' }}>
-                {this.state.dicTypes.map(t => (
-                  <Option value={t.id} key={t.id}>{t.name}</Option>
-                ))}
-              </Select>
-            )}
-            items={this.state.dicOptions}
-            fields={fields}
-            itemKey="groupId"
-            onCreate={this.onCreate}
-            onUpdate={this.onUpdate}
-            onDel={this.onDel}
-            onOrderDown={this.onOrderDown}
-            onOrderUp={this.onOrderUp}
-            showAdd={this.props.checkFunc('DictionaryParamAdd')}
-            showEdit={() => this.props.checkFunc('DictionaryParamEdit')}
-            showDel={() => this.props.checkFunc('DictionaryParamDelete')}
-            showOrder={() => this.props.checkFunc('DictionaryParamOrderBy')}
-          />
-        </Page>
-      </Spin>
-    );
-  }
+  return (
+    <Page title="字典参数" >
+      <div className={styles.leftNav}>
+        <ul className={styles.businessList}>
+          {
+            navList.map((item, index) => {
+              const cls = classnames({
+                [styles.businessLiActive]: currentActiveId == item.id  //当前商机
+              });
+              return <li key={item.id} className={cls} onClick={changeTypeHandler.bind(this, item.id)}>{item.text}</li>;
+            })
+          }
+        </ul>
+      </div>
+      <div className={styles.rightList} style={{ width: 'calc(100% - 280px)' }}>
+        <div>
+          <Form layout="inline" onSubmit={addParams}>
+            <FormItem>
+              {getFieldDecorator('stageName', {
+                initialValue: '',
+                validateTrigger: 'onChange',
+                rules: [{ required: true, message: '销售阶段名称不能为空' },
+                  { pattern: new RegExp(/^.{1,10}$/), message: '请输入10个以内的字符' }]
+              })(
+                <Input placeholder='请输入销售阶段名称' />
+              )}
+            </FormItem>
+            <FormItem>
+              {getFieldDecorator('winRate', {
+                initialValue: '',
+                validateTrigger: 'onChange',
+                rules: [{ required: true, message: '赢率不能为空' },
+                  { pattern: new RegExp(/^[1-9][0-9]{0,1}$/), message: '请输入1-99的整数' }]
+              })(
+                <Input placeholder='请输入赢率' style={{ width: 130 }} />
+              )}
+            </FormItem>
+            <FormItem>
+              <Button type="primary" htmlType="submit">添加</Button>
+            </FormItem>
+          </Form>
+        </div>
+        {/*<ParamsList*/}
+          {/*items={noOrderSaleStage}*/}
+          {/*fields={fields}*/}
+          {/*itemKey="groupId"*/}
+          {/*onClick={(item) => { paramsClickHandler(currentActiveId, item) }}*/}
+          {/*onOrderUp={stageOrderBy.bind(this, 'up')}*/}
+          {/*onOrderDown={stageOrderBy.bind(this, 'down')}*/}
+          {/*onSwitch={onSwitch}*/}
+          {/*onUpdate={onUpdate}*/}
+          {/*onDel={onDel}*/}
+          {/*showEdit={() => checkFunc('SalesstageSettingEdit')}*/}
+          {/*showSwitch={() => checkFunc('SalesstageSettingDisabled')}*/}
+          {/*showOrder={() => checkFunc('SalesstageSettingOrder')}*/}
+        {/*/>*/}
+      </div>
+    </Page>
+  );
 }
 
-export default DicPage;
+const DicPageWrap = Form.create()(DicPage);
+export default connect(
+  state => state.dic,
+  dispatch => {
+    return {
+      changeTypeHandler: () => {
+
+      }
+    };
+  }
+)(DicPageWrap);
