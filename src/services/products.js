@@ -174,3 +174,17 @@ export async function searchproductformobile(params) {
     body: JSON.stringify(params)
   });
 }
+
+
+/**
+ * 根据产品id获取相应的详情数据
+ * @param params
+ * {"recids":"254e367d-a32d-4e6f-8251-6e12aad1a1d6,90cf4b31-1e28-4202-ae83-54cd5f566398"}
+ * @returns {Promise.<Object>}
+ */
+export async function getProductdetail(params) {
+  return request('/api/Products/productdetail', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}

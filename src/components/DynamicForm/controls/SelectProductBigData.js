@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import SelectProductModal from './SelectProductModal';
 import styles from './SelectUser.less';
 import { Icon } from "antd";
+import { getProductdetail } from '../../../services/products';
 import connectBasicData from "../../../models/connectBasicData";
 
 class SelectProductBigData extends React.Component {
@@ -17,34 +18,36 @@ class SelectProductBigData extends React.Component {
     placeholder: PropTypes.string
   };
   static defaultProps = {
+
   };
 
   constructor(props) {
     super(props);
-    let valMap = {};
-    if (props.value_name) {
-      const arrVal = props.value.split(',');
-      const arrName = props.value_name.split(',');
-      arrVal.forEach((val, index) => {
-        valMap[val] = arrName[index];
-      });
+    if (props.value) {
+      this.fetchProductsDetail(this.props.value);
     }
     this.state = {
       modalVisible: false,
-      valMap: valMap
+      productsDetail: []
     };
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.value_name !== nextProps.value_name) {
-      const arrVal = nextProps.value.split(',');
-      const arrName = nextProps.value_name.split(',');
-      let valMap = { ...this.state.valMap };
-      arrVal.forEach((val, index) => {
-        valMap[val] = arrName[index];
-      });
-      this.setState({ valMap });
+      this.fetchProductsDetail(nextProps.value);
     }
+  }
+
+  fetchProductsDetail = (productId) => {
+    getProductdetail({
+      recids: productId
+    }).then(result => {
+      this.setState({
+        productsDetail: result.data.map(item => ({ ...item, productid: item.recid }))
+      });
+    }).catch(e => {
+      console.error(e.message);
+    });
   }
 
   setValue = val => {
@@ -78,7 +81,7 @@ class SelectProductBigData extends React.Component {
     this.props.onChange(validVals);
   };
 
-  parseValue = () => {
+  parseTextValue = () => {
     // const { multiple, value, value_name, productsRaw } = this.props;
     // let text = value;
     // let array = value ? value.split(',') : [];
@@ -88,12 +91,9 @@ class SelectProductBigData extends React.Component {
     //   .map(obj => obj.productname)
     //   .join(',');
     // return { text, array };
-    const { value } = this.props;
-    const { valMap } = this.state;
-    let arrVal = value ? value.split(',') : [];
-    let array = arrVal.map(val => ({ productid: val, productname: valMap[val] }));
-    let text = array.map(item =>item.productname).join(',');
-    return { text, array };
+    const productsDetail = this.state.productsDetail;
+    let text = productsDetail.map(item =>item.productname).join(',');
+    return { text };
   };
 
   showModal = () => {
@@ -110,13 +110,7 @@ class SelectProductBigData extends React.Component {
 
   handleOk = array => {
     this.hideModal();
-    let valMap = { ...this.state.valMap };
-    array.forEach(item => {
-      valMap[item.productid] = item.productname;
-    });
-    this.setState({ valMap }, () => {
-      this.props.onChange(array.map(item => item.productid).join(','));
-    });
+    this.props.onChange(array.map(item => item.productid).join(','));
   };
 
   iconClearHandler = (e) => {
@@ -125,7 +119,7 @@ class SelectProductBigData extends React.Component {
   };
 
   render() {
-    const { text, array } = this.parseValue();
+    const { text } = this.parseTextValue();
     const cls = classnames([styles.wrap, {
       [styles.empty]: !text,
       [styles.disabled]: this.props.isReadOnly === 1
@@ -148,7 +142,7 @@ class SelectProductBigData extends React.Component {
         </div>
         <SelectProductModal
           visible={this.state.modalVisible}
-          selected={array}
+          selected={this.state.productsDetail}
           data={this.props.productsRaw}
           onOk={this.handleOk}
           onCancel={this.hideModal}
