@@ -37,6 +37,7 @@ export default {
       const { token, permissionLevel } = getLocalAuthentication();
       dispatch({ type: 'authCompany' });
       if (!token) {
+        localStorage.removeItem('defaultPathType');
         location.href = '/login.html';
         // dispatch(routerRedux.push({ pathname: '/login' }));
       } else {
@@ -101,14 +102,14 @@ export default {
       yield call(logout);
       // yield put(routerRedux.push({ pathname: '/login' }));
       location.href = '/login.html';
-      sessionStorage.removeItem('defaultPathType');
+      localStorage.removeItem('defaultPathType');
     },
     *fetchGlobalMenus(action, { call, put }) {
       try {
         const type = /admin/.test(location.pathname) ? 1 : 0;
         const result = yield call(getGlobalMenus, type);
 
-        if (sessionStorage.getItem('defaultPathType') != type) {
+        if (localStorage.getItem('defaultPathType') != type) {
           let defaultPath = '';
           let findFirstPath = true;
           function getDefaultPath(menus) {
@@ -137,7 +138,7 @@ export default {
           }
         }
 
-        sessionStorage.setItem('defaultPathType', type);
+        localStorage.setItem('defaultPathType', type);
         yield put({ type: 'putState', payload: { menus: result.data } });
       } catch (e) {
         console.error(e);
