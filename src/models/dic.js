@@ -7,7 +7,7 @@ import _ from 'lodash';
 import {
   queryTypes
 } from '../services/entity.js';
-import { querysalesstage, insertsalesstage, openhighsetting, updatesalesstage, orderbysalesstage, disabledsalesstage } from '../services/saleStage.js';
+import { queryDicTypes } from '../services/dictionary.js';
 import { GetArgsFromHref } from '../utils/index.js';
 
 export default {
@@ -32,9 +32,18 @@ export default {
     }
   },
   effects: {
-    *init({ payload: queries }, { select, put, call }) { //进入页面就查商机类型
-      const { currentActiveId } = yield select(state => state.dic);
-    }
+    *init({ payload: action }, { select, put, call }) { //进入页面就查商机类型
+      // const { currentActiveId } = yield select(state => state.dic);
+      yield put({ type: 'queryList', payload: entities });
+    },
+    *queryList(action, { put, call }) {
+      try {
+        const { data } = yield call(queryDicTypes);
+      } catch (e) {
+        console.error(e);
+        message.error('查询数据失败');
+      }
+    },
   },
   reducers: {
     putState(state, { payload: payload }) {

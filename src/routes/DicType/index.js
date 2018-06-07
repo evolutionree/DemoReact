@@ -6,6 +6,7 @@ import { connect } from 'dva';
 import { Modal, Form, Input, Select, Radio, Checkbox, InputNumber, message, Row, Col, Table, Button } from 'antd';
 import Toolbar from '../../components/Toolbar';
 import Page from '../../components/Page';
+import FormModal from './formModal';
 import _ from 'lodash';
 
 const CheckboxGroup = Checkbox.Group;
@@ -41,12 +42,12 @@ function DicType({
 
   const columns = [{
     title: '字典类型ID',
-    dataIndex: 'name',
-    key: 'name'
+    dataIndex: 'dictypeid',
+    key: 'dictypeid'
   }, {
     title: '字典类型名称',
-    dataIndex: 'age',
-    key: 'age'
+    dataIndex: 'dictypename',
+    key: 'dictypename'
   }, {
     title: '关联字典名称',
     dataIndex: 'address',
@@ -66,7 +67,8 @@ function DicType({
         <Button onClick={add}>新增字典类型</Button>
         <Button>全局扩展字典配置</Button>
       </Toolbar>
-      <Table dataSource={list} columns={columns} />
+      <Table dataSource={list} columns={columns} rowKey="dictypeid" />
+      <FormModal />
     </Page>
   );
 }

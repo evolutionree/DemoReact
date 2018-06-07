@@ -86,10 +86,17 @@ class FormModal extends Component {
               rules: [{ required: true, message: '请选择关联字典类型' }]
             })(
               <Select placeholder="请选择关联字典类型">
-                {this.props.entities.map(entity => (
-                  <Option key={entity.entityid}>{entity.entityname}</Option>
+                {this.props.list.map(entity => (
+                  <Option key={entity.dictypeid}>{entity.dictypename}</Option>
                 ))}
               </Select>
+            )}
+          </FormItem>
+          <FormItem>
+            {getFieldDecorator('chekc', {
+              valuePropName: 'checked'
+            })(
+              <Checkbox>使用全局扩展配置</Checkbox>
             )}
           </FormItem>
           {/*<FormItem label="关联转移对象">*/}
@@ -109,7 +116,7 @@ class FormModal extends Component {
 
 export default connect(
   state => {
-    const { showModals, currItems, modalPending } = state.dictype;
+    const { showModals, list, currItems, modalPending } = state.dictype;
     // const data = [{
     //   entityid: '72d518b4-12f1-4ed7-a4ee-e9be658aa567',
     //   jilian: true,
@@ -121,6 +128,7 @@ export default connect(
     // }];
     return {
       visible: /add|edit/.test(showModals),
+      list,
       editingRecord: /edit/.test(showModals) ? currItems[0] : undefined,
       modalPending
     };

@@ -3,13 +3,13 @@
  */
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
+import { queryDicTypes } from '../services/dictionary.js';
 
 export default {
   namespace: 'dictype',
   state: {
     queries: {},
     list: [],
-    total: 0,
     currItems: [],
     showModals: '',
     modalPending: false
@@ -30,17 +30,13 @@ export default {
       yield put({ type: 'queryList' });
     },
     *queryList(action, { put, call, select }) {
-      const location = yield select(({ routing }) => routing.locationBeforeTransitions);
-      const { query } = location;
-      const queries = {
-        entityId: '',
-        pageIndex: 1,
-        pageSize: 10,
-        keyword: '',
-        ...query
-      };
-      queries.pageIndex = parseInt(queries.pageIndex);
-      queries.pageSize = parseInt(queries.pageSize);
+      try {
+        const { data } = yield call(queryDicTypes);
+        yield put({ type: 'putState', payload: { list: data.fielddictype } });
+      } catch (e) {
+        console.error(e);
+        message.error('查询列表数据失败');
+      }
     },
     *search({ payload }, { select, call, put }) {
       const location = yield select(({ routing }) => routing.locationBeforeTransitions);
@@ -69,6 +65,12 @@ export default {
       return {
         ...state,
         currItems
+      };
+    },
+    showModals(state, { payload: type }) {
+      return {
+        ...state,
+        showModals: type
       };
     },
     resetState() {
