@@ -3,7 +3,8 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Modal, Form, Input, Select, Radio, Checkbox, InputNumber, message } from 'antd';
+import { Modal, Form, Input, Select, Checkbox } from 'antd';
+import DataTable from './DataTable';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -20,21 +21,17 @@ class FormModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      entities: []
+
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    const isOpening = !this.props.visible && nextProps.visible;
-    if (isOpening) {
-      const { form, editingRecord } = nextProps;
-      if (editingRecord) {
-        form.setFieldsValue({
-          ...editingRecord
-        });
-      } else {
-        form.resetFields();
-      }
+    const { form, editingRecord, showModals } = nextProps;
+    const isEdit = /edit/.test(showModals);
+    if (showModals !== this.props.showModals && isEdit) {
+      form.setFieldsValue({
+        ...editingRecord
+      });
     }
   }
 
@@ -43,71 +40,73 @@ class FormModal extends Component {
     const { form, editingRecord } = this.props;
     form.validateFields((err, values) => {
       if (err) return;
-
-      // this.props.confirm({
-      //   resetflag: 1,
-      //   ...values,
-      //   expireflag: undefined,
-      //   flowid: editingRecord ? editingRecord.flowid : undefined
-      // });
+      this.props.confirm({
+        ...values,
+        fieldconfig: JSON.stringify(values.fieldconfig),
+        isconfig: values.isconfig ? 1 : 0,
+        recstatus: 1,
+        recorder: editingRecord.recorder ? editingRecord.recorder : '',
+        dictypeid: editingRecord ? editingRecord.dictypeid : ''
+      });
     });
   };
 
-  componentValueRequire = (rule, value, callback) => {
-    if (!value || value instanceof Array && value.length === 0) {
-      callback('请选择关联转移对象');
-    } else {
-      callback();
-    }
+  closeModal = () => {
+    this.props.form.resetFields();
+    this.props.cancel();
   }
 
   render() {
-    const { getFieldDecorator } = this.props.form;
-    const isEdit = !!this.props.editingRecord;
+    const { getFieldDecorator, getFieldValue } = this.props.form;
+    const { showModals } = this.props;
+    const isEdit = /edit/.test(showModals);
+    const isconfigValue = getFieldValue('isconfig');
+
+    const relatedictypeList = this.props.list.filter(item => item.dictypeid !== this.props.editingRecord.dictypeid)
     return (
       <Modal
-        visible={this.props.visible}
-        title={isEdit ? '编辑字典' : '新增字典'}
-        onCancel={this.props.cancel}
+        visible={/add|edit/.test(showModals)}
+        title={isEdit ? '编辑字典类型' : '新增字典类型'}
+        onCancel={this.closeModal}
         onOk={this.onOk}
         confirmLoading={this.props.modalPending}
       >
         <Form>
-          <FormItem label="字典名称">
-            {getFieldDecorator('flowname', {
+          <FormItem label="字典类型名称">
+            {getFieldDecorator('dictypename', {
               initialValue: '',
-              rules: [{ required: true, message: '请输入字典名称' }]
+              rules: [{ required: true, message: '请输入字典类型名称' }]
             })(
               <Input placeholder="请输入字典名称" maxLength="10" />
             )}
           </FormItem>
           <FormItem label="关联字典类型">
-            {getFieldDecorator('entityid', {
-              rules: [{ required: true, message: '请选择关联字典类型' }]
+            {getFieldDecorator('relatedictypeid', {
+              initialValue: ''
             })(
               <Select placeholder="请选择关联字典类型">
-                {this.props.list.map(entity => (
-                  <Option key={entity.dictypeid}>{entity.dictypename}</Option>
+                <Option value="">- 无 -</Option>
+                {relatedictypeList.map(item => (
+                  <Option key={item.dictypeid}>{item.dictypename}</Option>
                 ))}
               </Select>
             )}
           </FormItem>
           <FormItem>
-            {getFieldDecorator('chekc', {
-              valuePropName: 'checked'
+            {getFieldDecorator('isconfig', {
+              valuePropName: 'checked',
+              initialValue: false
             })(
               <Checkbox>使用全局扩展配置</Checkbox>
             )}
           </FormItem>
-          {/*<FormItem label="关联转移对象">*/}
-            {/*{getFieldDecorator('relentityid', {*/}
-              {/*rules: [{*/}
-                {/*validator: this.componentValueRequire*/}
-              {/*}]*/}
-            {/*})(*/}
-              {/*<RelTable />*/}
-            {/*)}*/}
-          {/*</FormItem>*/}
+          {
+            isconfigValue ? null : <FormItem label="扩展字典配置">
+              {getFieldDecorator('fieldconfig')(
+                <DataTable />
+              )}
+            </FormItem>
+          }
         </Form>
       </Modal>
     );
@@ -116,20 +115,11 @@ class FormModal extends Component {
 
 export default connect(
   state => {
-    const { showModals, list, currItems, modalPending } = state.dictype;
-    // const data = [{
-    //   entityid: '72d518b4-12f1-4ed7-a4ee-e9be658aa567',
-    //   jilian: true,
-    //   same: true
-    // }, {
-    //   entityid: '1',
-    //   jilian: true,
-    //   same: true
-    // }];
+    const { showModals, list, currItem, modalPending } = state.dictype;
     return {
-      visible: /add|edit/.test(showModals),
+      showModals,
       list,
-      editingRecord: /edit/.test(showModals) ? currItems[0] : undefined,
+      editingRecord: /edit/.test(showModals) ? currItem : {},
       modalPending
     };
   },

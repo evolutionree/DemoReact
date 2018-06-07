@@ -38,8 +38,8 @@ function DicPage({
       if (err) {
         return;
       } else {
-        resetFields(); //清空表单数据
         handleSubmit(fieldsValue);
+        resetFields(); //清空表单数据
       }
     });
   };
@@ -50,11 +50,11 @@ function DicPage({
       <div className={styles.leftNav}>
         <ul className={styles.businessList}>
           {
-            navList.map((item, index) => {
+            navList instanceof Array && navList.map((item, index) => {
               const cls = classnames({
-                [styles.businessLiActive]: currentActiveId == item.id  //当前商机
+                [styles.businessLiActive]: currentActiveId === item.dicid  //当前商机
               });
-              return <li key={item.id} className={cls} onClick={changeTypeHandler.bind(this, item.id)}>{item.text}</li>;
+              return <li key={item.dicid} className={cls} onClick={changeTypeHandler.bind(this, item.dicid)}>{item.dataval}</li>;
             })
           }
         </ul>
@@ -66,20 +66,10 @@ function DicPage({
               {getFieldDecorator('stageName', {
                 initialValue: '',
                 validateTrigger: 'onChange',
-                rules: [{ required: true, message: '销售阶段名称不能为空' },
+                rules: [{ required: true, message: '字典值不能为空' },
                   { pattern: new RegExp(/^.{1,10}$/), message: '请输入10个以内的字符' }]
               })(
-                <Input placeholder='请输入销售阶段名称' />
-              )}
-            </FormItem>
-            <FormItem>
-              {getFieldDecorator('winRate', {
-                initialValue: '',
-                validateTrigger: 'onChange',
-                rules: [{ required: true, message: '赢率不能为空' },
-                  { pattern: new RegExp(/^[1-9][0-9]{0,1}$/), message: '请输入1-99的整数' }]
-              })(
-                <Input placeholder='请输入赢率' style={{ width: 130 }} />
+                <Input placeholder='请输入字典值' />
               )}
             </FormItem>
             <FormItem>
@@ -111,8 +101,8 @@ export default connect(
   state => state.dic,
   dispatch => {
     return {
-      changeTypeHandler: () => {
-
+      changeTypeHandler: (newActiveId) => {
+        dispatch({ type: 'dic/changeType', payload: newActiveId });
       }
     };
   }

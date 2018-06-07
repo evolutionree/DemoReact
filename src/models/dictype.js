@@ -2,16 +2,15 @@
  * Created by 0291 on 2018/6/6.
  */
 import { message } from 'antd';
-import { routerRedux } from 'dva/router';
-import { queryDicTypes } from '../services/dictionary.js';
+import { queryDicTypes, saveDicType, dictypedetail, delDicType, getfieldconfig } from '../services/dictionary.js';
 
 export default {
   namespace: 'dictype',
   state: {
-    queries: {},
     list: [],
-    currItems: [],
+    currItem: {},
     showModals: '',
+    searchName: '',
     modalPending: false
   },
   subscriptions: {
@@ -38,17 +37,50 @@ export default {
         message.error('查询列表数据失败');
       }
     },
-    *search({ payload }, { select, call, put }) {
-      const location = yield select(({ routing }) => routing.locationBeforeTransitions);
-      const { pathname, query } = location;
-      yield put(routerRedux.push({
-        pathname,
-        query: {
-          ...query,
-          pageIndex: 1,
-          ...payload
+    *search({ payload: { searchName } }, { select, call, put }) {
+      yield put({ type: 'putState', payload: { searchName: searchName } });
+    },
+    *save({ payload: data }, { select, call, put }) {
+      try {
+        yield call(saveDicType, data);
+        message.success('保存成功');
+        yield put({ type: 'showModals', payload: '' });
+        yield put({ type: 'queryList', payload: '' });
+      } catch (e) {
+        console.error(e.message);
+        message.error(e.message);
+      }
+    },
+    *del({ payload: DicTypeId }, { select, call, put }) {
+      try {
+        yield call(delDicType, DicTypeId);
+        message.success('删除成功');
+        yield put({ type: 'queryList', payload: '' });
+      } catch (e) {
+        console.error(e.message);
+        message.error(e.message);
+      }
+    },
+    *getdictypedetail({ payload: DicTypeId }, { select, call, put }) {
+      try {
+        const { data } = yield call(dictypedetail, { DicTypeId: DicTypeId });
+        let dictypedetailData = data.dictypedetail;
+        dictypedetailData = {
+          ...dictypedetailData,
+          relatedictypeid: dictypedetailData.relatedictypeid ? dictypedetailData.relatedictypeid : '',
+          isconfig: !!dictypedetailData.isconfig
         }
-      }));
+        yield put({ type: 'putState', payload: { currItem: dictypedetailData } });
+        yield put({ type: 'showModals', payload: 'edit' });
+      } catch (e) {
+        console.error(e.message);
+        message.error(e.message);
+      }
+    },
+    *setGlobalConfig(action, { select, call, put }) {
+      yield put({ type: 'showModals', payload: 'setGlobalConfig' });
+      const { data } = yield call(getfieldconfig, -1);
+      yield put({ type: 'putState', payload: { globalConfig: data.fieldconfig } });
     }
   },
   reducers: {
@@ -56,15 +88,6 @@ export default {
       return {
         ...state,
         ...assignment
-      };
-    },
-    queries(state, { payload: queries }) {
-      return { ...state, queries };
-    },
-    currItems(state, { payload: currItems }) {
-      return {
-        ...state,
-        currItems
       };
     },
     showModals(state, { payload: type }) {
@@ -75,11 +98,10 @@ export default {
     },
     resetState() {
       return {
-        queries: {},
         list: [],
-        total: 0,
-        currItems: [],
+        currItem: {},
         showModals: '',
+        searchName: '',
         modalPending: false
       };
     }

@@ -6,7 +6,8 @@ import request from '../utils/request';
  */
 export async function queryDicTypes() {
   return request('/api/datasource/queryfieldopt', {
-    method: 'post'
+    method: 'post',
+    body: JSON.stringify({ })
   });
 }
 
@@ -22,7 +23,22 @@ export async function queryDicTypes() {
 export async function saveDicType(params) {
   return request('/api/datasource/savefielddictype', {
     method: 'post',
-    body: JSON.stringify({ dictypeid: '', ...params, dicremark: '' })
+    body: JSON.stringify({ ...params, dicremark: '' })
+  });
+}
+
+/**
+ * 查询字典分类详情
+ * @param params
+ * {
+    dictypeid: 'asdf',
+  }
+ * @returns {Promise.<Object>}
+ */
+export async function dictypedetail(params) {
+  return request('api/DataSource/dictypedetail', {
+    method: 'post',
+    body: JSON.stringify(params)
   });
 }
 
@@ -100,3 +116,41 @@ export async function orderDicOptions(params) {
     body: JSON.stringify(params)
   });
 }
+
+
+/**
+ * 获取字典类型配置接口
+ * @param params
+ *  "dictypeid":"" //-1查全局
+ * @returns {Promise.<Object>}
+ */
+export async function getfieldconfig(dictypeid) {
+  return request('api/DataSource/getfieldconfig', {
+    method: 'post',
+    body: JSON.stringify({ dictypeid })
+  });
+}
+
+
+
+
+
+
+
+
+
+
+/**
+ * 获取字典值列表
+ * @param params
+ *  "dictypeid":""
+ * @returns {Promise.<Object>}
+ */
+export async function queryfielddicvalue(dictypeid) {
+  return request('api/DataSource/queryfielddicvalue', {
+    method: 'post',
+    body: JSON.stringify({ dictypeid })
+  });
+}
+
+
