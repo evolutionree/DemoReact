@@ -128,7 +128,7 @@ class UserSelect extends React.Component {
       this.props.onChange('', true);
       return;
     }
-    const newValue = valueName.split(',').map(item => {
+    const newValue = valueName && valueName.split(',').map(item => {
       const user = _.find(this.state.allUsers, ['accountname', item]);
       return user && user.userid;
     }).filter(item => !!item).join(',');
@@ -177,11 +177,11 @@ class UserSelect extends React.Component {
     if (!value) return [];
     const users = [];
     const arrUserId = value.split(',');
-    const arrUserName = value_name.split(',');
+    const arrUserName = value_name ? value_name.split(',') : [];
     arrUserId.forEach((userId, index) => {
       users.push({
         id: +userId,
-        name: arrUserName[index]
+        name: arrUserName.length > index ? arrUserName[index] : ''
       });
     });
     return users;
