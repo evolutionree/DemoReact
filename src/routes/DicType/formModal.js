@@ -32,6 +32,8 @@ class FormModal extends Component {
       form.setFieldsValue({
         ...editingRecord
       });
+    } else if (showModals !== this.props.showModals && showModals) {
+      form.resetFields();
     }
   }
 
@@ -52,7 +54,6 @@ class FormModal extends Component {
   };
 
   closeModal = () => {
-    this.props.form.resetFields();
     this.props.cancel();
   }
 
@@ -95,7 +96,7 @@ class FormModal extends Component {
           <FormItem>
             {getFieldDecorator('isconfig', {
               valuePropName: 'checked',
-              initialValue: false
+              initialValue: true
             })(
               <Checkbox>使用全局扩展配置</Checkbox>
             )}

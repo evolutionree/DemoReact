@@ -44,6 +44,14 @@
   z-index: 99999;
   background: #ffffff;
   cursor: move;
+
+  :global{
+    .ant-row{
+      >div:last-of-type{
+        cursor: default;
+      }
+    }
+  }
 }
 .row:nth-child(odd){
   background: #f9f9f9;

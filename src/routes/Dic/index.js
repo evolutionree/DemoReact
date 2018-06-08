@@ -88,7 +88,7 @@ function DicPage({
     dispatch({ type: 'dic/orderby', payload: list });
   }
 
-  let span = 6;
+  let span = 8;
   if (extConfig && extConfig instanceof Object) {
     let extConfigLength = Object.keys(extConfig).length;
     span = 24 / (3 + extConfigLength);
