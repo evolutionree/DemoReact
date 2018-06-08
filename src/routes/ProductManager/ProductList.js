@@ -110,6 +110,7 @@ function ProductList({
           onChange: search.bind(null, 'pageIndex'),
           onShowSizeChange: (page, size) => { search('pageSize', size); }
         }}
+        fixedHeader={false}
       />
       <ProductFormModal />
     </div>

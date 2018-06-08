@@ -9,6 +9,7 @@ import Avatar from '../../components/Avatar';
 import CustomHeaderModal from '../../components/CustomHeaderModal';
 import DSourceDetail from './DSourceDetail';
 import FilterDrop from './FilterDropComponent/index';
+import classnames from 'classnames';
 import styles from './styles.less';
 
 function formatDate(text, fmt) {
@@ -575,7 +576,10 @@ class DynamicTable extends Component {
       <div>
         <Table
           scroll={fixedHeader ? { x: scrollX + 6, y: this.state.height - this.props.otherHeight - 104 } : { x: '100%' }}
-          className={styles.dynamictable}
+          className={classnames({
+            [styles.dynamictable]: true,
+            [styles.notFixedHeaderTable]: !fixedHeader
+          })}
           style={{ ...style }}
           {...restProps}
           columns={columns}
