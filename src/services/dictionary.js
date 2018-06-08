@@ -153,4 +153,36 @@ export async function queryfielddicvalue(dictypeid) {
   });
 }
 
+/**
+ * 新增字典值
+ * @param params
+ *  {
+    "DicTypeId": "1235",
+    "DataId": "1",
+    "DataVal": "测试312",
+    "RecOrder": 2,
+    "RecStatus": 1,
+    "RelateDataId": "",
+    "ExtField1": 123,   // ExtField2、ExtField3、ExtField4 ...
+}
+ * @returns {Promise.<Object>}
+ */
+export async function savedictionary(params) {
+  return request('/api/DataSource/savedictionary', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
+ * 字典排序
+ * @param params
+ * @returns {Promise.<Object>}
+ */
+export async function orderbydictionary(params) {
+  return request('/api/DataSource/orderbydictionary', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
 

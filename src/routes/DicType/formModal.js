@@ -84,7 +84,7 @@ class FormModal extends Component {
             {getFieldDecorator('relatedictypeid', {
               initialValue: ''
             })(
-              <Select placeholder="请选择关联字典类型">
+              <Select placeholder="请选择关联字典类型" disabled>
                 <Option value="">- 无 -</Option>
                 {relatedictypeList.map(item => (
                   <Option key={item.dictypeid}>{item.dictypename}</Option>

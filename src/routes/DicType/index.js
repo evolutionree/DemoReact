@@ -13,7 +13,7 @@ import Search from '../../components/Search';
 function DicType({
                           dispatch,
                           list,
-                   searchName
+                          searchName
                         }) {
   function add() {
     dispatch({ type: 'dictype/showModals', payload: 'add' });
