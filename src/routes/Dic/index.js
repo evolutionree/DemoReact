@@ -1,15 +1,14 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Form, Button, Input, Checkbox, message } from 'antd';
+import { Form, Button, Input, Checkbox, message, Select, Row, Col } from 'antd';
 import Page from '../../components/Page';
-//import ParamsList from './component/ParamsList';
+import DragList from './DragList';
 import styles from './index.less';
 import classnames from 'classnames';
-import { hashHistory } from 'react-router';
 
 
 const FormItem = Form.Item;
-
+const Option = Select.Option;
 
 let fields = [{
   key: 'stagename',
@@ -27,10 +26,15 @@ function DicPage({
                        validateFields,
                        resetFields
                      },
-                     handleSubmit,
-                     changeTypeHandler,
+                   dispatch,
+                   dicTypes,
                      navList,
-                     currentActiveId
+                     currentActiveId,
+                   handleSubmit,
+                   changeTypeHandler,
+                   dicdata,
+                   currentDicType,
+                   extConfig
                    }) {
   const addParams = (e) => {
     e.preventDefault();
@@ -44,23 +48,66 @@ function DicPage({
     });
   };
 
+  function handleChange(value) {
+    dispatch({ type: 'dic/changeDicType', payload: value });
+  }
+
+  let span = 6;
+  if (extConfig && extConfig instanceof Object) {
+    let extConfigLength = Object.keys(extConfig).length;
+    span = 24 / (3 + extConfigLength);
+  }
+  const column = [
+    {
+      key: 'dataid',
+      name: '字典ID',
+      span: span,
+      maxLength: 10
+    },
+    {
+      key: 'dataval',
+      name: '字典值',
+      span: span,
+      maxLength: 10
+    }
+  ];
+  if (extConfig && extConfig instanceof Object){
+    let index = 1;
+    for (let key in extConfig) {
+        column.push({
+          key: key,
+          name: '扩展字段' + index,
+          span: span,
+          maxLength: 10
+        });
+        index ++;
+    }
+  }
+  column.push({
+    key: 'operate',
+    name: '操作',
+    span: span,
+    maxLength: 10
+  })
+
+  console.log(column)
 
   return (
     <Page title="字典参数" >
-      <div className={styles.leftNav}>
-        <ul className={styles.businessList}>
+      <div>
+        <Select
+          showSearch
+          style={{ width: 200 }}
+          onChange={handleChange}
+          value={currentDicType}
+        >
           {
-            navList instanceof Array && navList.map((item, index) => {
-              const cls = classnames({
-                [styles.businessLiActive]: currentActiveId === item.dicid  //当前商机
-              });
-              return <li key={item.dicid} className={cls} onClick={changeTypeHandler.bind(this, item.dicid)}>{item.dataval}</li>;
+            dicTypes instanceof Array && dicTypes.map((item, index) => {
+              return <Option value={item.dictypeid} key={index}>{item.dictypename}</Option>;
             })
           }
-        </ul>
-      </div>
-      <div className={styles.rightList} style={{ width: 'calc(100% - 280px)' }}>
-        <div>
+        </Select>
+        <div style={{ display: 'inline-block' }}>
           <Form layout="inline" onSubmit={addParams}>
             <FormItem>
               {getFieldDecorator('stageName', {
@@ -77,20 +124,23 @@ function DicPage({
             </FormItem>
           </Form>
         </div>
-        {/*<ParamsList*/}
-          {/*items={noOrderSaleStage}*/}
-          {/*fields={fields}*/}
-          {/*itemKey="groupId"*/}
-          {/*onClick={(item) => { paramsClickHandler(currentActiveId, item) }}*/}
-          {/*onOrderUp={stageOrderBy.bind(this, 'up')}*/}
-          {/*onOrderDown={stageOrderBy.bind(this, 'down')}*/}
-          {/*onSwitch={onSwitch}*/}
-          {/*onUpdate={onUpdate}*/}
-          {/*onDel={onDel}*/}
-          {/*showEdit={() => checkFunc('SalesstageSettingEdit')}*/}
-          {/*showSwitch={() => checkFunc('SalesstageSettingDisabled')}*/}
-          {/*showOrder={() => checkFunc('SalesstageSettingOrder')}*/}
-        {/*/>*/}
+      </div>
+      <div className={styles.leftNav} style={{ display: currentActiveId ? 'block' : 'none' }}>
+        <ul className={styles.navList}>
+          {
+            navList instanceof Array && navList.map((item, index) => {
+              const cls = classnames({
+                [styles.navListActive]: currentActiveId === item.dicid  //当前商机
+              });
+              return <li key={item.dicid} className={cls} onClick={changeTypeHandler.bind(this, item.dicid)}>{item.dataval}</li>;
+            })
+          }
+        </ul>
+      </div>
+      <div className={styles.rightList} style={{ paddingLeft: currentActiveId ? '274px' : 0 }}>
+        {
+          currentActiveId ? <DragList dataSource={dicdata[currentActiveId]} column={column} /> : <DragList dataSource={dicdata} column={column} />
+        }
       </div>
     </Page>
   );
@@ -103,7 +153,8 @@ export default connect(
     return {
       changeTypeHandler: (newActiveId) => {
         dispatch({ type: 'dic/changeType', payload: newActiveId });
-      }
+      },
+      dispatch
     };
   }
 )(DicPageWrap);

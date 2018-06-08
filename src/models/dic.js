@@ -9,10 +9,12 @@ import _ from 'lodash';
 export default {
   namespace: 'dic',
   state: {
-    dicTyps: [],
+    dicTypes: [],
+    currentDicType: '',
     currentActiveId: '',
     navList: null,
-    dicdata: null
+    dicdata: null,
+    extConfig: null
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -34,34 +36,38 @@ export default {
         if (data.fielddictype.length > 0) {
           yield put({ type: 'fetchdicvalue', payload: data.fielddictype[0].dictypeid });
         }
-        yield put({ type: 'putState', payload: { dicTyps: data.fielddictype } });
+        yield put({ type: 'putState', payload: { dicTypes: data.fielddictype } });
       } catch (e) {
         console.error(e);
         message.error('查询字典类型数据失败');
       }
     },
-    *fetchdicvalue({ payload }, { put, call, select }) {
+    *fetchdicvalue({ payload: dicType }, { put, call, select }) {
       try {
-        const { data } = yield call(queryfielddicvalue, 16);
+        const { data } = yield call(queryfielddicvalue, dicType);
         const dicdata = data.data;
         const parentdata = data.parentdata
-
+        yield put({ type: 'putState', payload: { currentDicType: dicType, extConfig: data.config } });
         if (parentdata instanceof Array && parentdata.length > 0) {
           let relateCategoryData = {}; //字典类型可能存在关联字段类型  则该字典值数据展示会按关联字典的字典值分类显示
-          parentdata.map(item => {
-            relateCategoryData[item.dicid] = dicdata.filter(item => item.relatedataid === item.dicid);
+          parentdata.map(parentItem => {
+            relateCategoryData[parentItem.dicid] = dicdata.filter(item => item.relatedataid === parentItem.dicid);
           });
           yield put({ type: 'putState', payload: {
             navList: data.parentdata,
             currentActiveId: data.parentdata[0].dicid,
             dicdata: relateCategoryData
           } });
+        } else {
+          yield put({ type: 'putState', payload: { dicdata } });
         }
-        yield put({ type: 'putState', payload: { dicdata } });
       } catch (e) {
         console.error(e);
         message.error('查询列表数据失败');
       }
+    },
+    *changeDicType({ payload: dicType }, { put, call, select }) {
+      yield put({ type: 'fetchdicvalue', payload: dicType });
     }
   },
   reducers: {
@@ -80,7 +86,7 @@ export default {
     },
     resetState() {
       return {
-        dicTyps: [],
+        dicTypes: [],
         currentActiveId: '',
         navList: null,
         dicdata: null
