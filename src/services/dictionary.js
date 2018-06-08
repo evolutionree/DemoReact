@@ -67,7 +67,7 @@ export async function queryDicOptions(dictypeid, showDeleted = false) {
   }).then(result => {
     if (!showDeleted) {
       return {
-        data: { fielddictypevalue: result.data.fielddictypevalue.filter(item => item.recstatus !== 0) }
+        data: { fielddictypevalue: result.data.data.filter(item => item.recstatus !== 0) }
       };
     }
     return result;
