@@ -3,7 +3,7 @@
  */
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
-import { query as queryEntities, getreltabentity } from '../services/entity';
+import { query as queryEntities, getreltabentity, queryFields } from '../services/entity';
 import { savetransferscheme, transferschemelist, setstatus } from '../services/transferscheme';
 
 export default {
@@ -15,7 +15,8 @@ export default {
     currItems: [],
     showModals: '',
     modalPending: false,
-    relTabEntity: []
+    relTabEntity: [],
+    entityFields: []
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -83,9 +84,14 @@ export default {
         }
       }));
     },
-    *targetEntitySelect({ payload: entityid }, { select, call, put }) {
+    *targetEntitySelect__({ payload: entityid }, { select, call, put }) {
       const { data } = yield call(getreltabentity, entityid);
       yield put({ type: 'putState', payload: { relTabEntity: data } });
+      yield put({ type: 'queryEntityFields', payload: entityid });
+    },
+    *queryEntityFields({ payload: entityid }, { select, call, put }) {
+      const { data: { entityfieldpros } } = yield call(queryFields, entityid);
+      yield put({ type: 'putState', payload: { entityFields: entityfieldpros } });
     },
     *save({ payload: data }, { select, call, put }) {
       const { currItems } = yield select(state => state.transferscheme);
@@ -158,7 +164,8 @@ export default {
         currItems: [],
         showModals: '',
         modalPending: false,
-        relTabEntity: []
+        relTabEntity: [],
+        entityFields: []
       };
     }
   }

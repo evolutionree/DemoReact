@@ -51,6 +51,7 @@ class SchemeFormModal extends Component {
   };
 
   handleChange = (value) => {
+    this.props.form.setFieldsValue({ field:  '' });
     this.props.targetEntitySelect && this.props.targetEntitySelect(value);
   }
 
@@ -85,6 +86,17 @@ class SchemeFormModal extends Component {
               </Select>
             )}
           </FormItem>
+          <FormItem label="目标转移对象字段">
+            {getFieldDecorator('field', {
+              rules: [{ required: true, message: '请选择目标转移对象字段' }]
+            })(
+              <Select placeholder="请选择目标转移对象字段">
+                {this.props.entityFields.map(entity => (
+                  <Option key={entity.fieldid}>{entity.displayname}</Option>
+                ))}
+              </Select>
+            )}
+          </FormItem>
           <FormItem label="关联转移对象">
             {getFieldDecorator('associationtransfer')(
               <RelTable />
@@ -105,7 +117,7 @@ class SchemeFormModal extends Component {
 
 export default connect(
   state => {
-    const { showModals, currItems, modalPending, entities } = state.transferscheme;
+    const { showModals, currItems, modalPending, entities, entityFields } = state.transferscheme;
 
     let editData = {};
     if (/edit/.test(showModals)) {
@@ -117,6 +129,7 @@ export default connect(
       visible: /add|edit/.test(showModals),
       editingRecord: /edit/.test(showModals) ? editData : undefined,
       entities,
+      entityFields,
       modalPending
     };
   },
@@ -129,7 +142,7 @@ export default connect(
         dispatch({ type: 'transferscheme/save', payload: data });
       },
       targetEntitySelect(entityid) {
-        dispatch({ type: 'transferscheme/targetEntitySelect', payload: entityid });
+        dispatch({ type: 'transferscheme/targetEntitySelect__', payload: entityid });
       }
     };
   }

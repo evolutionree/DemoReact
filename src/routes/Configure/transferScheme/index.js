@@ -58,7 +58,7 @@ function TransferScheme({
   }
 
   function edit() {
-    dispatch({ type: 'transferscheme/targetEntitySelect', payload: currItems[0].targettransferid });
+    dispatch({ type: 'transferscheme/targetEntitySelect__', payload: currItems[0].targettransferid });
     dispatch({ type: 'transferscheme/showModals', payload: 'edit' });
   }
 

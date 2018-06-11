@@ -1,11 +1,26 @@
 /**
  * Created by 0291 on 2018/5/21.
  */
-import React, { PropTypes, Component } from 'react';
-import { Icon, Checkbox, InputNumber, message, Row, Col, Tooltip } from 'antd';
+import React, { PropTypes, Component, PureComponent } from 'react';
+import { Icon, Checkbox, Select, message, Row, Col, Tooltip } from 'antd';
 import SchemeSelect from './SchemeSelect';
 import _ from 'lodash';
 import Styles from './RelTable.less';
+
+class FieldSelect extends PureComponent {
+  onSelectChange = (value) => {
+    this.props.onChange && this.props.onChange(value);
+  }
+  render() {
+    const { value } = this.props;
+    return (
+      <Select value={value} onChange={this.onSelectChange}>
+        <Option value={11}>11</Option>
+        <Option value={22}>22</Option>
+      </Select>
+    );
+  }
+}
 
 const columnName = {
   EntityId: 'entityid',
@@ -88,11 +103,12 @@ class RelTable extends Component {
     return (
       <div className={Styles.Wrap}>
         <Row className={Styles.Header}>
-          <Col span={8}>选择对象</Col>
-          <Col span={8}>
+          <Col span={6}>选择对象</Col>
+          <Col span={6}>字段</Col>
+          <Col span={6}>
             级联
           </Col>
-          <Col span={8}>
+          <Col span={6}>
             相同数据
             <Tooltip placement="top" title="仅转移同目标对象负责人相同的数据">
               <Icon type="info-circle" style={{ color: '#cdcdcd', cursor: 'pointer', paddingLeft: '4px' }} />
@@ -103,9 +119,10 @@ class RelTable extends Component {
           value && value instanceof Array && value.map((item, index) => {
             return (
               <Row className={Styles.body} key={index}>
-                <Col span={8}><SchemeSelect value={item[columnName.EntityId]} onChange={this.onSelectHandler.bind(this, index)} /></Col>
-                <Col span={8}><Checkbox checked={item[columnName.Cascade]} onChange={this.onCheckboxChange.bind(this, index, columnName.Cascade)} /></Col>
-                <Col span={8}>
+                <Col span={6}><SchemeSelect value={item[columnName.EntityId]} onChange={this.onSelectHandler.bind(this, index)} /></Col>
+                <Col span={6}><FieldSelect value={item[columnName.EntityId]} onChange={this.onSelectHandler.bind(this, index)} /></Col>
+                <Col span={6}><Checkbox checked={item[columnName.Cascade]} onChange={this.onCheckboxChange.bind(this, index, columnName.Cascade)} /></Col>
+                <Col span={6}>
                   <Checkbox checked={item[columnName.SameData]} onChange={this.onCheckboxChange.bind(this, index, columnName.SameData)} />
                   <Icon type="close-circle" onClick={this.onDel.bind(this, index)} />
                 </Col>
@@ -114,9 +131,9 @@ class RelTable extends Component {
           })
         }
         <Row>
-          <Col span={8}><a href="javascript:;" onClick={this.add}>添加</a></Col>
-          <Col span={8}><a href="javascript:;" onClick={this.AllOperate.bind(this, columnName.Cascade, !allCascadeChecked)}>{allCascadeChecked ? '反选' : '全选'}</a></Col>
-          <Col span={8}><a href="javascript:;" onClick={this.AllOperate.bind(this, columnName.SameData, !allSameChecked)}>{allSameChecked ? '反选' : '全选'}</a></Col>
+          <Col span={12}><a href="javascript:;" onClick={this.add}>添加</a></Col>
+          <Col span={6}><a href="javascript:;" onClick={this.AllOperate.bind(this, columnName.Cascade, !allCascadeChecked)}>{allCascadeChecked ? '反选' : '全选'}</a></Col>
+          <Col span={6}><a href="javascript:;" onClick={this.AllOperate.bind(this, columnName.SameData, !allSameChecked)}>{allSameChecked ? '反选' : '全选'}</a></Col>
         </Row>
       </div>
     );

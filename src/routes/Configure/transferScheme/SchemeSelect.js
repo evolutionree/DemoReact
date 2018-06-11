@@ -28,10 +28,6 @@ class SchemeSelect extends PureComponent {
 
   }
 
-  onOk = () => {
-
-  };
-
   onSelectChange = (value) => {
     this.props.onChange && this.props.onChange(value);
   }
