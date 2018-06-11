@@ -5,7 +5,7 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Badge, Icon, Tabs, message, Spin } from "antd";
 import classnames from 'classnames';
-import styles from './index.less';
+import styles from '../index.less';
 import Avatar from "../../../../Avatar";
 import Search from "../../../../Search";
 import DepartmentSelect from "../../../../DepartmentSelect";
@@ -24,14 +24,13 @@ const ContactItem = ({ data, onStar, onClick, showStar = false }) => {
         <Avatar image={`/api/fileservice/read?fileid=${data.usericon}`} width={30} />
       </div>
       <p>{data.username}</p>
-      <p>{data.deptname}</p>
       <p>
         <Icon type="mobile" style={{ marginRight: '5px' }} />
         <MetaValue>{data.userphone}</MetaValue>
-        <Icon type="phone" style={{ marginLeft: '12px', marginRight: '5px' }} />
-        <MetaValue>{data.usertel}</MetaValue>
+        <Icon type="usergroup-add" style={{ marginLeft: '10px', marginRight: '5px' }} />
+        <MetaValue>{data.deptname}</MetaValue>
       </p>
-      {showStar && <div className={classnames(styles.contactStar, { [styles.isStared]: data.flag })}>
+      {false && <div className={classnames(styles.contactStar, { [styles.isStared]: data.flag })}>
         <Icon type="star" onClick={onClickStar} />
       </div>}
     </li>
@@ -71,64 +70,20 @@ class GroupPanel extends Component {
     };
   }
 
-  componentDidMount() {
-    document.body.addEventListener('click', this.clickOutsideClose, false);
+  componentWillMount() {
+    this.fetchList();
   }
-
-  componentWillUnmount() {
-    document.body.removeEventListener('click', this.clickOutsideClose);
-  }
-
-  clickOutsideClose = (event) => {
-    // if ($(event.target).closest(['#contacts-panel', '#contacts-panel-detail']).length) {
-    //   return;
-    // }
-    if ($(event.target).closest('#contacts-panel').length || $(event.target).closest('#contacts-panel-detail').length || $(event.target).closest('.ant-select-dropdown').length) {
-      return;
-    }
-    // console.log(event);
-    this.hidePanel();
-  };
-
-  hidePanel = () => {
-    this.togglePanelVisible(false);
-  };
-
-  togglePanelVisible = (visible) => {
-    const panelVisible = typeof visible === 'boolean' ? visible : !this.state.panelVisible;
-    this.setState({ panelVisible }, () => {
-      if (panelVisible) {
-        this.setState({
-          panelVisible: true,
-          searchKey: '',
-          searchDept: '7f74192d-b937-403f-ac2a-8be34714278b',
-          currentTab: '1',
-          pageIndex: 1,
-          pageSize: 20,
-          list: [],
-          detailVisible: false,
-          detailData: {},
-          loading: false,
-          hasMore: true
-        }, this.fetchList);
-      } else {
-        this.setState({
-          detailVisible: false
-        });
-      }
-    });
-  };
 
   fetchList = (pageIndex = 1) => {
     const { currentTab, searchKey, searchDept } = this.state;
-    if (currentTab === '1' || currentTab === '2') {
+    if (currentTab === '1') {
       this.setState({ loading: true });
       const params = {
         type: currentTab === '1' ? 0 : 1,
         userid: this.props.userInfo.userid,
         searchkey: searchKey,
         pageIndex: pageIndex,
-        pageSize:  currentTab === '1' ? 20 : -1
+        pageSize: currentTab === '1' ? 20 : -1
       };
       queryContacts(params).then(result => {
         this.setState({
@@ -142,11 +97,11 @@ class GroupPanel extends Component {
       });
     } else {
       const params = {
-        deptId: currentTab === '3' ? this.props.userInfo.deptid : searchDept,
+        deptId: currentTab === '2' ? this.props.userInfo.deptid : searchDept,
         pageIndex: pageIndex,
         pageSize: -1,
         recStatus: 1,
-        userName: currentTab === '3' ? (searchKey || '') : '',
+        userName: currentTab === '2' ? (searchKey || '') : '',
         userPhone: ''
       };
       this.setState({ loading: true });
@@ -211,10 +166,9 @@ class GroupPanel extends Component {
 
   renderTabItems = () => {
     const tabs = [
-      { key: '1', label: '最近联系' },
-      { key: '2', label: '星标同事' },
-      { key: '3', label: '我的部门' },
-      { key: '4', label: '团队组织' }
+      { key: '1', label: '星标同事' },
+      { key: '2', label: '我的部门' },
+      { key: '3', label: '团队组织' }
     ];
     return tabs.map(tab => {
       const cls = classnames(styles.panelTabItem, { [styles.isActive]: this.state.currentTab === tab.key });
@@ -243,22 +197,17 @@ class GroupPanel extends Component {
     };
 
     return (
-      <div className={styles.tabPanel}>
+      <div className={styles.group_tabPanel}>
         <div className={styles.title}>通讯录</div>
 
-        <div id="contacts-panel" className={classnames(styles.panelWrap, { [styles.panelVisible]: this.state.panelVisible })}>
-          <div className={styles.panelHeader}>
-            <Icon type='contacts' />
-            <span>通讯录</span>
-            <Icon type="close" onClick={this.hidePanel} />
-          </div>
-          <ul className={styles.panelTabs}>
+        <div id="contacts-panel" className={styles.contactsPanel}>
+          <ul className={styles.categoryTabs}>
             {this.renderTabItems()}
           </ul>
-          <Spin spinning={this.state.loading}>
-            <div className={styles.panelContent}>
+          <div className={styles.panelContent}>
+            <Spin spinning={this.state.loading}>
               <div className={styles.panelSearch}>
-                {this.state.currentTab === '4' ? (
+                {this.state.currentTab === '3' ? (
                   <DepartmentSelect
                     showSearch
                     value={this.state.searchDept}
@@ -287,8 +236,8 @@ class GroupPanel extends Component {
                 ))}
               </ContactList>
               {/*{hasMore ? <div className={styles.loadMore} onClick={this.loadMore}>加载更多</div> : <div>亲,没有更多数据加载了哦</div>}*/}
-            </div>
-          </Spin>
+            </Spin>
+          </div>
         </div>
         <div id="contacts-panel-detail" className={styles.detailPanel} style={{ display: this.state.detailVisible ? 'block' : 'none' }}>
           <div className={styles.detailInner}>

@@ -19,7 +19,7 @@ class ReactPanel extends Component {
 
   render() {
     return (
-      <div className={styles.tabPanel}>
+      <div className={styles.recent_tabPanel}>
         <div className={styles.title}>最近聊天</div>
         <List />
       </div>

@@ -105,7 +105,7 @@ class WebIMPanel extends Component {
             {
               tabModel.map((item, index) => {
                 return (
-                  <div style={{ display: item.name === this.state.showTabPage ? 'block' : 'none' }} key={index}>
+                  <div style={{ display: item.name === this.state.showTabPage ? 'block' : 'none' }} className={styles.bodyWrap} key={index}>
                     {
                       item.content
                     }

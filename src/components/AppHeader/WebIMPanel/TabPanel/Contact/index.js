@@ -19,7 +19,7 @@ class ReactPanel extends Component {
 
   render() {
     return (
-      <div className={styles.tabPanel}>
+      <div className={styles.contact_tabPanel}>
         <div className={styles.title}>群聊</div>
         <List />
       </div>
