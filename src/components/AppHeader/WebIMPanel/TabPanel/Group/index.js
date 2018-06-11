@@ -5,7 +5,7 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Badge, Icon, Tabs, message, Spin } from "antd";
 import classnames from 'classnames';
-import styles from '../index.less';
+import styles from './index.less';
 import Avatar from "../../../../Avatar";
 import Search from "../../../../Search";
 import DepartmentSelect from "../../../../DepartmentSelect";

@@ -85,7 +85,7 @@ class WebIMPanel extends Component {
   render() {
     const tabModel = this.state.tabModel;
     return (
-      <div style={{ display: 'none' }}>
+      <div>
         <Icon
           type="contacts"
           title="通讯录"
