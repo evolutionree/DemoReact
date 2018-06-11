@@ -42,9 +42,9 @@ class NoticeList extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     // debugger;
-    const queries = this.getQueries(nextProps);
-    this.setState({ queries });
-    this.fetchList(queries);
+    // const queries = this.getQueries(nextProps);
+    // this.setState({ queries });
+    // this.fetchList(queries);
   }
 
   handleAdd = () => {
@@ -262,4 +262,4 @@ class NoticeList extends React.Component {
   }
 }
 
-export default connect()(NoticeList);
+export default NoticeList;
