@@ -42,9 +42,12 @@ class NoticeList extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     // debugger;
-    // const queries = this.getQueries(nextProps);
-    // this.setState({ queries });
-    // this.fetchList(queries);
+    const lastQueries = this.getQueries(this.props);
+    const queries = this.getQueries(nextProps);
+    if (!(_.isEqual(lastQueries, queries))) {
+      this.setState({ queries });
+      this.fetchList(queries);
+    }
   }
 
   handleAdd = () => {
