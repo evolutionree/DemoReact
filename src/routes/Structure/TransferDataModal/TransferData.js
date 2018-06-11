@@ -4,7 +4,7 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Modal, Form, Input, Select, Radio, Checkbox, InputNumber, message, Button } from 'antd';
-import EntitySelectModal from './EntitySelectModal';
+import FormList from './FormList';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -32,6 +32,13 @@ class TransferData extends Component {
     }
   }
 
+  formRequire = (rule, value, callback) => {
+    if (!value) {
+      callback('请选择待转移数据');
+    } else {
+      callback();
+    }
+  }
 
   onOk = () => {
     const { form } = this.props;
@@ -62,9 +69,11 @@ class TransferData extends Component {
           <FormItem label="选择待转移数据">
             {getFieldDecorator('flowname', {
               initialValue: '',
-              rules: [{ required: true, message: '请选择待转移数据' }]
+              rules: [{
+                validator: this.formRequire
+              }]
             })(
-              <EntitySelectModal type="UserSelect" placeholder="请选择待转移数据" defaultValue={this.props.value && this.props.value[name] || []} />
+              <FormList model={[1, 2]} />
             )}
           </FormItem>
           <FormItem label="选择新负责人">
