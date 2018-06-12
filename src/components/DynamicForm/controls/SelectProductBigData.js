@@ -33,21 +33,27 @@ class SelectProductBigData extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.value_name !== nextProps.value_name) {
+    if (this.props.value !== nextProps.value) {
       this.fetchProductsDetail(nextProps.value);
     }
   }
 
   fetchProductsDetail = (productId) => {
-    getProductdetail({
-      recids: productId
-    }).then(result => {
-      this.setState({
-        productsDetail: result.data.map(item => ({ ...item, productid: item.recid }))
+    if (productId) {
+      getProductdetail({
+        recids: productId
+      }).then(result => {
+        this.setState({
+          productsDetail: result.data.map(item => ({ ...item, productid: item.recid }))
+        });
+      }).catch(e => {
+        console.error(e.message);
       });
-    }).catch(e => {
-      console.error(e.message);
-    });
+    } else { //value为空 清空
+      this.setState({
+        productsDetail: []
+      });
+    }
   }
 
   setValue = val => {
