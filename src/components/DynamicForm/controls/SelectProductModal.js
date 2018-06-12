@@ -54,7 +54,7 @@ class SelectProductModal extends Component {
   componentWillReceiveProps(nextProps) {
     if (!this.props.visible && nextProps.visible) {
       this.getColumns();
-      this.getProductSerial();
+      this.getProductSerial(nextProps);
       this.setState({
         currentSelected: [...nextProps.selected],
         selectedRows: [...nextProps.selected],
@@ -86,8 +86,8 @@ class SelectProductModal extends Component {
     });
   }
 
-  getProductSerial = () => {
-    const { designateNodes, designateFilterNodes } = this.props;
+  getProductSerial = (props) => {
+    const { designateNodes, designateFilterNodes } = props;
 
     const includefilter = designateNodes && designateNodes.map(item => item.path).join(',');
     const excludefilter = designateFilterNodes && designateFilterNodes.join(',');
