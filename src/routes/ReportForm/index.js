@@ -633,24 +633,33 @@ class ReportForm extends React.Component {
   render() {
     let width = this.state.width - (this.props.siderFold ? 61 : 200); //系统左侧 200px显示菜单(未折叠  折叠61)
     width = width < 1080 ? 1080 : width; // 系统设置了最小宽度
+    let components = this.state.components;
+    let maxWidth = _.max(components.map(item => item.width));
+    if (maxWidth <= 2) {
+      components = this.state.components.map(item => {
+        item.width = item.width * 12;
+        return item;
+      });
+    }
     return (
       <Page contentStyle={{ background: '#ffffff' }} title={this.state.pageName || ''}>
         <Row>
           {
-            this.state.components.map((item, index) => {
-              let widthActually = item.width === 2 ? width : width / 2;
+
+            components.map((item, index) => {
+              let widthActually = item.width * width / 24;
               let height = (item.height > 0 ? item.height : widthActually * Math.abs(item.height));
               let style;
               if (item.ctrltype === 2) {
-                style = { padding: '10px 0px' } //表格不给固定高  通过scroll.y去设置
+                style = { padding: '10px 10px' } //表格不给固定高  通过scroll.y去设置
               } else if (item.ctrltype === 3) {
                 style = {};
               } else {
-                style = { height: height, padding: '10px 0px' };
+                style = { height: height, padding: '10px 10px' };
               }
               item.ctrltype === 4 ? style.overflowX = 'auto' : style;
               return (
-                <Col key={index} span={item.width === 2 ? 24 : 12} style={style} className={styles.scroll}>
+                <Col key={index} span={item.width} style={style} className={styles.scroll}>
                   {
                     this.renderComponent(item, index, height, widthActually)
                   }
