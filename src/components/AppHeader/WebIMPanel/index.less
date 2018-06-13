@@ -6,13 +6,15 @@
     clear: both;
   }
 }
+@panel-top: 60px;
+@panel-width: 640px;
 
 .panelWrap {
   position: fixed;
-  top: 60px;
-  right: -650px;
+  top: @panel-top;
+  right: -(@panel-width + 10);
   bottom: 0;
-  width: 640px;
+  width: @panel-width;
   background-color: #fff;
   line-height: 1;
   //display: none;
@@ -45,4 +47,16 @@
       height: 100%;
     }
   }
+}
+
+
+.otherPanelWrap{
+  display: none;
+  position: fixed;
+  box-shadow: rgba(0, 0, 0, 0.176) 0px 6px 12px;
+  right: @panel-width + 10;
+  top: @panel-top + 10;
+  bottom: 10px;
+  width: 600px;
+  background: #ffffff;
 }

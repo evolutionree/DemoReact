@@ -1,0 +1,98 @@
+.clearFix{
+  zoom:1;
+  &:after{
+    content: '';
+    display: block;
+    clear: both;
+  }
+}
+
+.PersonalDetailWrap {
+  overflow: hidden;
+  height: 100%;
+
+  .header {
+    height: 70px;
+    line-height: 70px;
+    background: #FAFAFE;
+
+    position: relative;
+    width: 100%;
+    h3 {
+      text-align: center;
+      font-size: 16px;
+      color: #333333;
+    }
+    i {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      color: #979797;
+      cursor: pointer;
+    }
+    i:first-of-type {
+      left: 45px;
+    }
+    i:last-of-type {
+      right: 45px;
+    }
+  }
+
+  .body{
+    .clearFix;
+    padding: 66px 30px;
+    line-height: normal;
+    .fl{
+      width: 180px;
+      float: left;
+      text-align: center;
+      img{
+        width: 100px;
+        height: 100px;
+        margin-bottom: 12px;
+      }
+      .usernameWrap{
+        line-height: 72px;
+        position: relative;
+        h4{
+          font-size: 18px;
+          color: #333333;
+        }
+        i{
+          position: absolute;
+          left: 124px;
+          top: 50%;
+          transform: translateY(-50%);
+        }
+      }
+      .mobileWrap{
+        >i{
+          margin-right: 12px;
+        }
+      }
+    }
+
+    .separateLine{
+      width: 1px;
+      height: 400px;
+      position: absolute;
+      left: 240px;
+      background: linear-gradient(#ffffff 0%, #E3E7EC 10%, #E3E7EC 80%, #ffffff 100%);
+    }
+
+    .fr{
+      padding-left: 260px;
+      ul{
+        li{
+          height: 30px;
+          line-height: 30px;
+        }
+      }
+
+      ul:last-of-type{
+        margin-top: 20px;
+      }
+    }
+  }
+}
