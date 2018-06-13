@@ -6,7 +6,8 @@ import {
   addreltab,
   editreltab,
   disabledreltab,
-  saverelconfig
+  saverelconfig,
+  getrelconfigentity
 } from '../services/entity';
 
 export default {
@@ -17,6 +18,7 @@ export default {
     tablist: [],
     entityId: null,
     entityList: [],
+    configentityList: [],
     currentItem: null,
     modalPending: false
   },
@@ -47,10 +49,11 @@ export default {
         const { data: reltablist } = yield call(queryreltablist, entityId);
         const tablist = reltablist;
         const { data } = yield call(getreltabentity, entityId);
+        const { data: configentityList } = yield call(getrelconfigentity, entityId);
         const entityList = data;
         yield put({
           type: 'querySuccess',
-          payload: { tablist, entityList }
+          payload: { tablist, entityList, configentityList }
         });
       } catch (e) {
         message.error(e.message || '查询失败');
@@ -191,10 +194,11 @@ export default {
       }
       return { ...state, showModals: payload };
     },
-    querySuccess(state, { payload: { tablist, entityList } }) {
+    querySuccess(state, { payload: { tablist, entityList, configentityList } }) {
       return {
         ...state,
         entityList,
+        configentityList,
         tablist
       };
     },
@@ -211,6 +215,7 @@ export default {
         tablist: [],
         entityId: null,
         entityList: [],
+        configentityList: [],
         currentItem: null,
         modalPending: false
       };

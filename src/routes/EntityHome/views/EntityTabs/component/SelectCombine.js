@@ -117,7 +117,7 @@ class SelectCombine extends React.Component {
   }
 
   render() {
-    const entityList = this.props.entityList;
+    const configentityList = this.props.configentityList;
     const itemValue = this.props.value;
     return (
       <div style={{ marginBottom: '4px', paddingLeft: '30px' }}>
@@ -128,7 +128,7 @@ class SelectCombine extends React.Component {
         </Select>
         <Select style={{ width: 140, marginRight: '10px' }} onChange={this.selectChange.bind(this, 'relentityid')} value={itemValue.relentityid}>
           {
-            entityList.map(item => {
+            configentityList.map(item => {
               return <Option key={item.entityid} value={item.entityid}>{item.entityname}</Option>;
             })
           }
@@ -145,9 +145,9 @@ class SelectCombine extends React.Component {
 
 export default connect(
   state => {
-    const { entityList } = state.entityTabs;
+    const { configentityList } = state.entityTabs;
     return {
-      entityList
+      configentityList
     };
   }
 )(SelectCombine);
