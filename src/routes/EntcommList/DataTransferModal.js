@@ -82,7 +82,7 @@ class DataTransferModal extends React.Component {
       >
         <Form>
           <FormItem
-            label="转移数据的范围 "
+            label="转移数据的范围"
           >
             {getFieldDecorator('range', {
               initialValue: currItems.length > 0 ? 1 : 2
@@ -94,10 +94,13 @@ class DataTransferModal extends React.Component {
             )}
           </FormItem>
           <FormItem
-            label="选择要转移的客户字段 "
+            label="选择要转移的客户字段"
           >
             {getFieldDecorator('fieldid', {
-              initialValue: schemelist.length > 0 ? schemelist[0].fieldid : ''
+              initialValue: schemelist.length > 0 ? 0 : '',
+              rules: [{
+                required: true, message: '请选择要转移的客户字段'
+              }]
             })(
               <RadioGroup>
                 {
