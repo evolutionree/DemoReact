@@ -43,6 +43,6 @@ class RelObject extends React.Component {
   }
 }
 
-RelObject.AdvanceSearch = createNormalInput('text');
+RelObject.AdvanceSearch = RelObject;
 
 export default RelObject;
