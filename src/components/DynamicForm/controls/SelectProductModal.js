@@ -46,8 +46,7 @@ class SelectProductModal extends Component {
       loading: false,
       columns: [], //控件列定义
       currentTabsKey: '1',
-      filterKeyWord: '',
-      currentRemoveItems: []  //准备删除的数据  存的是key值
+      filterKeyWord: ''
     };
   }
 
@@ -101,7 +100,6 @@ class SelectProductModal extends Component {
       const productSerial = result.data.pagedata;
       const rootNode = _.find(productSerial, ['nodepath', 0]);
       const currentSerial = rootNode && rootNode.productsetid;
-      console.log(currentSerial)
       this.setState({
         productSerial: productSerial,
         currentSerial
@@ -176,14 +174,8 @@ class SelectProductModal extends Component {
     });
   }
 
-  onSelectRemoveItems = (keys) => {
-    this.setState({
-      currentRemoveItems: keys
-    });
-  }
-
-  removeCurentItems = () => { //移除 已选列表中  选择的数据
-    const currentSelected = this.state.currentSelected.filter(item => this.state.currentRemoveItems.indexOf(item.productid) === -1);
+  removeCurentItems = (record) => { //移除 已选列表中  的数据
+    const currentSelected = this.state.currentSelected.filter(item => item.productid !== record.productid);
     this.setState({
       currentSelected: currentSelected
     });
@@ -193,6 +185,19 @@ class SelectProductModal extends Component {
     const { visible, onCancel, multiple, designateNodes, designateFilterNodes } = this.props;
     const { currentSelected, list } = this.state;
     const filterSelectedItems = currentSelected.filter(item => item.productname.indexOf(this.state.filterKeyWord) > -1);
+
+    const alreadyColumns = [
+      ...this.state.columns,
+      {
+        key: 'operate',
+        dataIndex: 'operate',
+        title: '操作',
+        render: (text, record) => {
+          return <a onClick={this.removeCurentItems.bind(this, record)}>删除</a>
+        }
+      }
+    ];
+
     return (
       <Modal
         title="选择产品"
@@ -243,21 +248,9 @@ class SelectProductModal extends Component {
             </Spin>
           </TabPane>
           <TabPane tab="已选" key="2">
-            {
-              this.state.currentRemoveItems.length > 0 ? (
-                <div className={styles.toolbarToggle}>
-                  <span className={styles.count}>已选中{this.state.currentRemoveItems.length}项</span>
-                  <a className={styles.action} onClick={this.removeCurentItems}>从已选列表中删除</a>
-                </div>
-              ) : null
-            }
-            <Table columns={this.state.columns}
+            <Table columns={alreadyColumns}
                    dataSource={filterSelectedItems}
                    pagination={false}
-                   rowSelection={{
-                     selectedRowKeys: this.state.currentRemoveItems,
-                     onChange: (keys, items) => this.onSelectRemoveItems(keys)
-                   }}
                    rowKey="productid" />
           </TabPane>
         </Tabs>
