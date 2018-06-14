@@ -3,7 +3,7 @@
  */
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
-import { getListData } from '../services/entcomm';
+import { getListData, queryTabs } from '../services/entcomm';
 import { queryMenus } from '../services/entity';
 import _ from 'lodash';
 
@@ -49,9 +49,8 @@ export default {
       const { query } = yield select(({ routing }) => routing.locationBeforeTransitions);
       let { menus, entityId, recordId } = yield select(({ entcommAffair }) => entcommAffair);
 
-      const { relTabs } = yield select(state => state.entcommHome);
+      const { data: { reltablist: relTabs } } = yield call(queryTabs, entityId);
       let currentTabInfo = _.find(relTabs, item => item.entitytaburl === 'affairlist');
-
       const rootEntityId = '00000000-0000-0000-0000-000000000001';
       if (!menus.length) {
         try {

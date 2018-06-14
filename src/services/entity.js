@@ -852,6 +852,18 @@ export async function getreltabentity(entityId) {
 }
 
 /**
+ * 获取配置实体
+ * @param  {[type]} entityId [description]
+ * @return {[type]}          [description]
+ */
+export async function getrelconfigentity(entityId) {
+  return request('api/dynamicentity/getrelconfigentity', {
+    method: 'post',
+    body: JSON.stringify({ entityId })
+  });
+}
+
+/**
  * 获取关联实体计算字段
  * @param  {[type]} relentityid [description]
  * @return {[type]}          [description]
