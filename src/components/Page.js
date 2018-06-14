@@ -3,6 +3,7 @@ import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import classnames from 'classnames';
 import { Icon } from 'antd';
+import _ from 'lodash';
 import styles from './Page.less';
 
 class Page extends Component {
@@ -21,15 +22,18 @@ class Page extends Component {
     layout: 'default',
     contentStyleFree: false
   };
-  lastLocation = null;
+
 
   componentDidMount() {
     const navStack = this.props.navStack;
-    this.lastLocation = navStack[navStack.length - 2];
+    const lastLocation = navStack[navStack.length - 2];
+    if (!this.props.history && lastLocation) { //如果是后退操作 则不往redux【lastLocation】里添加路由  【lastLocation】：记录后退操作需要 退回的路由
+      this.props.dispatch({ type: 'navHistory/pushLastLocation', payload: lastLocation });
+    }
   }
 
   handleGoBack = () => {
-    const { dispatch, goBackPath } = this.props;
+    const { dispatch, goBackPath, lastLocation } = this.props;
 
     // FIXED getComponent没有缓存组件导致
     // HACK 临时解决bug739，页面后退功能
@@ -55,13 +59,17 @@ class Page extends Component {
     // }
 
 
-    if (this.lastLocation) {
+    if (lastLocation.length > 0) {
+      const goPath = lastLocation[lastLocation.length - 1]
+      dispatch({ type: 'navHistory/putState', payload: { history: true } });
+      dispatch({ type: 'navHistory/removeLastLocation' });
       dispatch(routerRedux.push({
-        pathname: this.lastLocation.pathname,
-        search: this.lastLocation.search
+        pathname: goPath.pathname,
+        search: goPath.search
       }));
       return;
     }
+    dispatch({ type: 'navHistory/putState', payload: { history: false } });
     if (goBackPath) {
       dispatch(routerRedux.push({ pathname: goBackPath }));
     } else {
