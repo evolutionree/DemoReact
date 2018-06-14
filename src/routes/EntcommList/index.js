@@ -15,6 +15,8 @@ import AllocateModal from './AllocateModal';
 import connectPermission from '../../models/connectPermission';
 import DynamicModal from './DynamicModal';
 import ExportModal from './ExportModal';
+import DataTransferModal from './DataTransferModal';
+
 
 const Option = Select.Option;
 
@@ -111,17 +113,23 @@ function EntcommList({
           recordId: currItems && currItems[0] && currItems[0].recid
         }
       });
+    } else if (item.buttoncode === 'DataTransfer') {
+      dispatch({ type: 'entcommList/showModals', payload: 'datatransfer' });
     }
   }
 
   function extraButtonClickHandler(item) {
-    dispatch({
-      type: 'entcommList/putState',
-      payload: {
-        showModals: 'dynamicModal',
-        dynamicModalData: item
-      }
-    });
+    if (item.buttoncode === 'ShowModals') {
+      dispatch({
+        type: 'entcommList/putState',
+        payload: {
+          showModals: 'dynamicModal',
+          dynamicModalData: item
+        }
+      });
+    } else if (item.buttoncode === 'DataTransfer') {
+      dispatch({ type: 'entcommList/showModals', payload: 'datatransfer' });
+    }
   }
 
   function shouldShowTransfer() {
@@ -165,11 +173,14 @@ function EntcommList({
   const { menuId, searchData, pageIndex, pageSize, isAdvanceQuery } = queries;
   const keyword = (!isAdvanceQuery && searchData && searchData[simpleSearchKey]) || '';
 
-  const defaultToolbarActions = [
+  let defaultToolbarActions = [
     { label: '删除', handler: del, show: checkFunc('EntityDataDelete') },
-    { label: entityId === '1ce5e2d5-6cf7-440d-83f4-0d500c4a2cd9' ? '分配' : '转移', handler: openTransfer, show: shouldShowTransfer },
     { label: '分配线索', handler: allocate, show: shouldShowAllocate }//db330ae1-b78c-4e39-bbb5-cc3c4a0c2e3b 销售线索批量分配
   ];
+  if (entityId === '1ce5e2d5-6cf7-440d-83f4-0d500c4a2cd9') {
+    defaultToolbarActions.push({ label: '分配', handler: openTransfer, show: shouldShowTransfer });
+  }
+  //{ label: entityId === '1ce5e2d5-6cf7-440d-83f4-0d500c4a2cd9' ? '分配' : '转移', handler: openTransfer, show: shouldShowTransfer },
 
   let ajaxToolbarActions = extraToolbarData && extraToolbarData instanceof Array && extraToolbarData.map((item) => {
       let single = true;
@@ -256,6 +267,7 @@ function EntcommList({
       <AllocateModal />
       <DynamicModal />
       <ExportModal currentUser={currentUser} />
+      <DataTransferModal />
     </Page>
   );
 }

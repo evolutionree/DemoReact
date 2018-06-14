@@ -223,6 +223,25 @@ export async function transferEntcomm(params) {
 }
 
 /**
+ * 转移实体数据
+ * @param params
+ *  public DynamicEntityListModel DataFilter { get; set; }
+ //优先recids
+ public string RecIds { get; set; }
+ public Guid  SchemeId{get;set;}
+ public Guid FieldId { get; set; }
+ public Guid EntityId { get; set; }
+ public int NewUserId { get; set; }
+ * @returns {Promise.<Object>}
+ */
+export async function transferdata(params) {
+  return request('api/DynamicEntity/transfer_pro', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
  * 记录详情
  * @param params
  * {

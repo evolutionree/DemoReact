@@ -123,7 +123,7 @@ export default connect(
   state => {
     const { showModals, modalPending } = state.entcommList;
     return {
-      visible: /transfer/.test(showModals),
+      visible: showModals === 'transfer',
       modalPending
     };
   },

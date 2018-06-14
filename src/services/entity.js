@@ -1141,3 +1141,14 @@ export async function querywithdatasource() {
     body: JSON.stringify({})
   });
 }
+
+
+/*
+ 获取数据转移方案
+ */
+export async function getlistschemebyentity(entityid) {
+  return request('api/TransferScheme/listschemebyentity', {
+    method: 'POST',
+    body: JSON.stringify({ entityid })
+  });
+}

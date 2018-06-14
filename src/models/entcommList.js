@@ -1,8 +1,8 @@
 import { message } from 'antd';
 import _ from 'lodash';
 import { routerRedux } from 'dva/router';
-import { getGeneralListProtocol, getListData, delEntcomm, transferEntcomm, getFunctionbutton, extraToolbarClickSendData, getEntcommDetail } from '../services/entcomm';
-import { queryMenus, queryEntityDetail, queryTypes, queryListFilter} from '../services/entity';
+import { getGeneralListProtocol, getListData, delEntcomm, transferEntcomm, getFunctionbutton, extraToolbarClickSendData, getEntcommDetail, transferdata } from '../services/entcomm';
+import { queryMenus, queryEntityDetail, queryTypes, queryListFilter, getlistschemebyentity } from '../services/entity';
 
 export default {
   namespace: 'entcommList',
@@ -26,7 +26,8 @@ export default {
     extraToolbarData: [], //页面toolbar 动态按钮数据源
     dynamicModalData: {},
     sortFieldAndOrder: null, //当前排序的字段及排序顺序
-    ColumnFilter: null //字段查询
+    ColumnFilter: null, //字段查询
+    schemelist: []
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -66,6 +67,9 @@ export default {
 
         // 获取页面操作按钮
         yield put({ type: 'queryFuntionbutton__', payload: {} });
+
+        // 获取数据转移方案
+        yield put({ type: 'queryschemebyentity', payload: entityId });
 
         // 获取下拉菜单
         const { data: { rulemenu } } = yield call(queryMenus, entityId);
@@ -183,12 +187,16 @@ export default {
          DisplayPosition	按钮的显示位置（int数组）：web列表=0，web详情=1，手机列表=100，手机详情=101	array<number>	@mock=$order(0,1)
          */
         functionbutton = functionbutton.filter(item => _.indexOf(item.displayposition, 0) > -1);
-        const extraButtonData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'ShowModals');
-        const extraToolbarData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'CallService' || item.buttoncode === 'CallService_showModal' || item.buttoncode === 'PrintEntity');
+        const extraButtonData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'DataTransfer' || item.buttoncode === 'ShowModals');
+        const extraToolbarData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'DataTransfer' || item.buttoncode === 'CallService' || item.buttoncode === 'CallService_showModal' || item.buttoncode === 'PrintEntity');
         yield put({ type: 'putState', payload: { extraButtonData, extraToolbarData } });
       } catch (e) {
         message.error(e.message);
       }
+    },
+    *queryschemebyentity({ payload: entityid }, { select, call, put }) {
+      const { data } = yield call(getlistschemebyentity, entityid);
+      yield put({ type: 'putState', payload: { schemelist: data } });
     },
     *addDone(action, { select, put }) {
       yield put({ type: 'showModals', payload: '' });
@@ -238,6 +246,18 @@ export default {
         };
         yield put({ type: 'modalPending', payload: true });
         yield call(transferEntcomm, params);
+        message.success('转移成功');
+        yield put({ type: 'showModals', payload: '' });
+        yield put({ type: 'queryList' });
+      } catch (e) {
+        yield put({ type: 'modalPending', payload: false });
+        message.error(e.message || '转移失败');
+      }
+    },
+    *datatransfer({ payload: submitData }, { select, call, put }) {
+      try {
+        yield put({ type: 'modalPending', payload: true });
+        yield call(transferdata, submitData);
         message.success('转移成功');
         yield put({ type: 'showModals', payload: '' });
         yield put({ type: 'queryList' });
@@ -370,7 +390,8 @@ export default {
         extraToolbarData: [], //页面toolbar 动态按钮数据源
         dynamicModalData: {},
         sortFieldAndOrder: null, //当前排序的字段及排序顺序
-        ColumnFilter: null //字段查询
+        ColumnFilter: null, //字段查询
+        schemelist: []
       };
     }
   }
