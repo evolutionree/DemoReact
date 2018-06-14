@@ -10,7 +10,7 @@ import storage from '../utils/storage';
 import Styles from './CustomHeaderModal.less';
 
 let customTableBodyRef;
-const SortableItem = SortableElement(({ item, isDisplayChange, widthChange }) => {
+const SortableItem = SortableElement(({ item, isDisplayChange, widthChange, preventDefault }) => {
   const inputNumberChange = (value) => {
     const reg = /^[1-9]+\d*$/;
     if ((!isNaN(value) && reg.test(value))) {
@@ -18,36 +18,45 @@ const SortableItem = SortableElement(({ item, isDisplayChange, widthChange }) =>
     }
   }
 
+  const cellMouseOver = (key) => {
+    if (key === 'operate') { //操作栏  阻止组件默认事件  让其可以点击
+      preventDefault(200);
+    } else {
+      preventDefault(0);
+    }
+  }
+
   return (
     <div className={Styles.customTableRow}>
       <Row>
-        <Col span={4}>
+        <Col span={4} onMouseOver={cellMouseOver}>
           <div className={Styles.customTableColumn}>{item.columnConfig.seq}</div>
         </Col>
-        <Col span={8}>
+        <Col span={8} onMouseOver={cellMouseOver}>
           <div className={Styles.customTableColumn}>{item.displayname}</div>
         </Col>
-        <Col span={6}>
+        <Col span={6} onMouseOver={cellMouseOver}>
           <div className={Styles.customTableColumn}>
             <InputNumber min={100} step={1} value={item.columnConfig.width}
                          onChange={inputNumberChange}
                          style={{ position: 'absolute', top: '50%', left: '50%', marginLeft: '-39px', marginTop: '-16px' }} /></div>
         </Col>
-        <Col span={6}>
-          <div className={Styles.customTableColumn}>
-            <Checkbox onChange={isDisplayChange} checked={item.columnConfig.isdisplay === 1 ? true : false} />
+        <Col span={6} onMouseOver={cellMouseOver.bind(this, 'operate')}>
+          <div className={Styles.customTableColumn} style={{ cursor: 'default' }}>
+            <Switch checked={item.columnConfig.isdisplay === 1 ? true : false} onChange={isDisplayChange} />
+
           </div>
         </Col>
       </Row>
     </div>
   );
 });
-const SortableList = SortableContainer(({ items, isDisplayChange, widthChange }) => {
+const SortableList = SortableContainer(({ items, isDisplayChange, widthChange, preventDefault, ...props }) => {
   return (
-    <div className={Styles.customTableBody} ref={ref => customTableBodyRef = ref}>
+    <div className={Styles.customTableBody} ref={ref => customTableBodyRef = ref} {...props}>
       {
         items.map((item, index) => {
-          return <SortableItem key={index} index={index} item={item} isDisplayChange={isDisplayChange.bind(this, index)} widthChange={widthChange.bind(this, index)} />;
+          return <SortableItem key={index} index={index} item={item} isDisplayChange={isDisplayChange.bind(this, index)} widthChange={widthChange.bind(this, index)} preventDefault={preventDefault} />;
         })
       }
     </div>
@@ -64,16 +73,17 @@ class CustomHeaderModal extends Component {
     this.state = {
       dataSource: this.setSeqNum(this.props.dataSource),
       FixedColumnCount: this.props.fixedColumnCount,
-      tipInfoVisible: storage.getLocalItem('setHeaderTipInfoHide') == 1 ? false : true
+      tipInfoVisible: storage.getLocalItem('setHeaderTipInfoHide') == 1 ? false : true,
+      pressDelay: 0
     };
   }
 
   setSeqNum(data) {
     const cloneData = _.cloneDeep(data);
     return cloneData instanceof Array && cloneData.map((item, index) => {
-      item.columnConfig.seq = index + 1;
-      return item;
-    });
+        item.columnConfig.seq = index + 1;
+        return item;
+      });
   }
 
   componentDidMount() {
@@ -143,9 +153,9 @@ class CustomHeaderModal extends Component {
     });
   }
 
-  isDisplayChange(rowIndex, e) {
+  isDisplayChange(rowIndex, checked) {
     let newDataSource = this.state.dataSource;
-    newDataSource[rowIndex].columnConfig.isdisplay = e.target.checked ? 1 : 0;
+    newDataSource[rowIndex].columnConfig.isdisplay = checked ? 1 : 0;
     this.setState({
       dataSource: newDataSource
     });
@@ -171,6 +181,12 @@ class CustomHeaderModal extends Component {
     storage.setLocalItem('setHeaderTipInfoHide', 1);
     this.setState({
       tipInfoVisible: false
+    });
+  }
+
+  preventDefault = (time) => {
+    this.setState({
+      pressDelay: time
     });
   }
 
@@ -204,7 +220,12 @@ class CustomHeaderModal extends Component {
               <Col span={6}><div className={Styles.customTableColumn}>显示</div></Col>
             </Row>
           </div>
-          <SortableList items={dataSource} onSortEnd={this.onSortEnd} widthChange={this.widthChange.bind(this)} isDisplayChange={this.isDisplayChange.bind(this)} />
+          <SortableList items={dataSource}
+                        onSortEnd={this.onSortEnd}
+                        widthChange={this.widthChange.bind(this)}
+                        isDisplayChange={this.isDisplayChange.bind(this)}
+                        pressDelay={this.state.pressDelay}
+                        preventDefault={this.preventDefault} />
         </div>
         <div className={Styles.tipInfo} style={{ display: this.state.tipInfoVisible ? 'block' : 'none' }}>
           拖拽行可以调整排列顺序哦，试试吧！
