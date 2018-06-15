@@ -35,7 +35,8 @@ import html2canvas from './component/Chart/html2canvas';
 
 class ReportForm extends React.Component {
   static propTypes = {
-    url: React.PropTypes.string
+    url: React.PropTypes.string,
+    injectedParams: React.PropTypes.object
   };
 
   constructor(props) {
@@ -149,6 +150,7 @@ class ReportForm extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    if (!nextProps.reportId || nextProps.reportId === this.props.reportId) return;
     this.setState({
       components: [],
       datasources: [],
@@ -325,8 +327,18 @@ class ReportForm extends React.Component {
   }
 
   queryData(item, params) {
+    let _params = params;
+    if (this.props.injectedParams) {
+      _params = {
+        ...params,
+        Parameters: {
+          ...(params.Parameters || {}),
+          ...this.props.injectedParams
+        }
+      };
+    }
     request('/api/ReportEngine/queryData', {
-      method: 'post', body: JSON.stringify(params)
+      method: 'post', body: JSON.stringify(_params)
     }).then((getData) => {
       this.setState({
         [item.instid]: getData.data.data,
@@ -553,6 +565,7 @@ class ReportForm extends React.Component {
       //表格
       case 2:
         //为分解业务逻辑，表格的数据源 交给DataGrid组件自己去处理，自主处理分页、分页大小，后续可处理排序等等
+        //const dataGridParams = this.props.injectedParams ? { ...(this.state.serchValue || {}), ...this.props.injectedParams } : this.state.serchValue;
         return (
           <div className={styles.reportDataGridWrap}>
             <DataGrid columns={item.tableextinfo.columns}
@@ -568,6 +581,7 @@ class ReportForm extends React.Component {
                       height={height}
                       ref={(ref) => { this[item.datasourcename + 'dataGridRef'] = ref }}
                       datasources={_.find(this.state.datasources, ['instid', item.datasourcename])}
+                      reportDataInjectedParams={this.props.injectedParams}
             />
           </div>
         );

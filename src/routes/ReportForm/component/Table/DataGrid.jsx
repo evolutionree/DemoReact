@@ -32,23 +32,23 @@ class DataGrid extends  React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-   if (nextProps.url) { //  区分开 父组件传url则表示数据源通过url获取，否则通过更新父组件传过来的dataSource更新
-     this.setState({
-       params: nextProps.params,
-       url: nextProps.url,
-       slectRows: nextProps.slectRows
-     });
-     if (this.state.url !== nextProps.url || (JSON.stringify(nextProps.params) !== JSON.stringify(this.state.params) && nextProps.reload)) {
-       this.reloadReportData(nextProps.url, nextProps.params, 1, 10);
-     }
-   } else {
-     this.setState({
-       dataSource: this.transformDataSource(nextProps.dataSource),
-       current: nextProps.current,
-       slectRows: nextProps.slectRows,
-       loading: nextProps.loading
-     });
-   }
+    if (nextProps.url) { //  区分开 父组件传url则表示数据源通过url获取，否则通过更新父组件传过来的dataSource更新
+      this.setState({
+        params: nextProps.params,
+        url: nextProps.url,
+        slectRows: nextProps.slectRows
+      });
+      if (this.state.url !== nextProps.url || (JSON.stringify(nextProps.params) !== JSON.stringify(this.state.params) && nextProps.reload)) {
+        this.reloadReportData(nextProps.url, nextProps.params, 1, 10);
+      }
+    } else {
+      this.setState({
+        dataSource: this.transformDataSource(nextProps.dataSource),
+        current: nextProps.current,
+        slectRows: nextProps.slectRows,
+        loading: nextProps.loading
+      });
+    }
   }
 
   transformDataSource(dataSource) {
@@ -97,7 +97,8 @@ class DataGrid extends  React.Component {
       DataSourceId: datasources.datasourcedefineid,
       InstId: datasources.instid,
       Parameters: {
-        ...getParameters()
+        ...getParameters(),
+        ...(this.props.reportDataInjectedParams || {})
       }
     };
     this.setState({
@@ -112,7 +113,8 @@ class DataGrid extends  React.Component {
           Parameters: {
             ...getParameters(),
             ['@pageindex']: current,
-            ['@pagesize']: pageSize
+            ['@pagesize']: pageSize,
+            ...(this.props.reportDataInjectedParams || {})
           }
         }, current, pageSize);
         break;
@@ -303,7 +305,7 @@ class DataGrid extends  React.Component {
             }, hederModelWidth, null);
           }
         }
-    })
+      })
     return returnColumns;
   }
 
