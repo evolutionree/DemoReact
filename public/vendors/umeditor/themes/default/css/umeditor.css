@@ -763,7 +763,7 @@
     height: 20px;
     padding: 1px 2px;
     background: url(../images/icons.png) -179px 1px;
-    background: url(../images/icons.gif) -179px 1px \9;
+    background: url(../images/icons.gif) -179px 1px;
     display: inline-block ;
     vertical-align: top;
     *display: inline ;
@@ -771,3 +771,11 @@
     border:none;
 
 }
+
+/*
+2018-06-15
+UEditor控件的图片无法正常缩放(“大坑”)
+检查发现页面上引入了Bootstrap，而Bootstrap默认将box-sizing样式统一设成border-box了。正是这个坑导致ueditor的图片无法进行缩放
+*/
+.edui-container *{-webkit-box-sizing: content-box;-moz-box-sizing: content-box;box-sizing: content-box;}
+.edui-container *:before,.edui-container *:after {-webkit-box-sizing: content-box;-moz-box-sizing: content-box;box-sizing: content-box;}
