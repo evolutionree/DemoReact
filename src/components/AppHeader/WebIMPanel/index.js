@@ -10,6 +10,7 @@ import Tabs from './Component/Tabs';
 import { ContactPanel, GroupPanel, RecentPanel } from './TabPanel';
 import IMPanel from './OtherPanel/IMPanel';
 import PersonalDetail from './OtherPanel/PersonalDetail';
+import OriginGroup from './OtherPanel/OriginGroup';
 import styles from './index.less';
 
 class WebIMPanel extends Component {
@@ -118,7 +119,7 @@ class WebIMPanel extends Component {
           </div>
         </div>
         <div className={styles.otherPanelWrap}>
-          <PersonalDetail />
+          <OriginGroup />
         </div>
       </div>
     );

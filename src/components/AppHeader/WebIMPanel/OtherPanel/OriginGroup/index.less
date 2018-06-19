@@ -7,10 +7,9 @@
   }
 }
 
-.PersonalDetailWrap {
+.OriginGroupWrap {
   overflow: hidden;
   height: 100%;
-
   .header {
     height: 70px;
     line-height: 70px;
@@ -36,6 +35,24 @@
     }
     i:last-of-type {
       right: 45px;
+    }
+  }
+
+  .body{
+    .clearFix;
+
+    .fl{
+      width: 360px;
+      float: left;
+
+      .operateWrap{
+        text-align: center;
+      }
+    }
+
+    .fr{
+      width: ~'calc(100% - 360px)';
+      float: left;
     }
   }
 }

@@ -11,12 +11,12 @@
 
 .panelWrap {
   position: fixed;
+  line-height: normal;
   top: @panel-top;
   right: -(@panel-width + 10);
   bottom: 0;
   width: @panel-width;
   background-color: #fff;
-  line-height: 1;
   //display: none;
   transition: all ease 0.5s;
   &.panelVisible {
@@ -51,7 +51,7 @@
 
 
 .otherPanelWrap{
-  display: none;
+  display: block;
   position: fixed;
   box-shadow: rgba(0, 0, 0, 0.176) 0px 6px 12px;
   right: @panel-width + 10;
