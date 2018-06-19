@@ -12,6 +12,9 @@ import IMPanel from './OtherPanel/IMPanel';
 import PersonalDetail from './OtherPanel/PersonalDetail';
 import OriginGroup from './OtherPanel/OriginGroup';
 import styles from './index.less';
+import { getLocalAuthentication } from '../../../services/authentication';
+
+const { token } = getLocalAuthentication();
 
 class WebIMPanel extends Component {
   constructor(props) {
@@ -50,6 +53,21 @@ class WebIMPanel extends Component {
 
   componentWillUnmount() {
     document.body.removeEventListener('click', this.clickOutsideClose);
+  }
+
+
+  testSocket = () => {
+    //let socket = new WebSocket('ws://118.25.40.163:8088');
+    let socket = new WebSocket('ws://10.187.134.10:732/ws/wechat');
+    socket.onopen = (event) => { //"Bearer ${getAccessToken()}"
+      socket.send(JSON.stringify({ Cmd: 1, data: { userid: this.props.user.userid, authorizedcode: 'Bearer' + token } }));
+      socket.onmessage = (event) => {
+        console.log('Client received a message',event)
+      };
+      socket.onclose = (event) => {
+        console.log('Client notified socket has closed',event)
+      };
+    };
   }
 
   clickOutsideClose = (event) => {

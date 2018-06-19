@@ -42,9 +42,36 @@ class OriginGroup extends Component {
               <ButtonGroup model={buttonModel} />
               <Search />
             </div>
+            <div className={styles.contactlistWrap}>
+              <h3>Y</h3>
+              <ul>
+                <li>
+                  <img src="./img_demo_avatar.png" />
+                  <span>余萍</span>
+                </li>
+                <li>
+                  <img src="./img_demo_avatar.png" />
+                  <span>余萍</span>
+                </li>
+                <li>
+                  <img src="./img_demo_avatar.png" />
+                  <span>余萍</span>
+                </li>
+              </ul>
+            </div>
           </div>
           <div className={styles.fr}>
-
+            <div className={styles.frHeader}>
+              <h2>已选择</h2>
+              <h3>清空</h3>
+            </div>
+            <div className={styles.categoryList}>
+              <h4>联系人（2）</h4>
+              <ul>
+                <li>余萍<Icon type="close-circle" /></li>
+                <li>何德生<Icon type="close-circle" /></li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>

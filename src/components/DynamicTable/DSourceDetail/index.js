@@ -92,20 +92,6 @@ class DSourceDetail extends PureComponent {
     });
   };
 
-  testSocket = () => {
-    //let socket = new WebSocket('ws://118.25.40.163:8088');
-    let socket = new WebSocket('ws://10.187.133.221:8880/ws');
-    socket.onopen = (event) => {
-      socket.send('I am the client and I\'m listening!');
-      socket.onmessage = (event) => {
-        console.log('Client received a message',event)
-      };
-      socket.onclose = (event) => {
-        console.log('Client notified socket has closed',event)
-      };
-    };
-  }
-
   render() {
     const { entityId, recordId } = this.props;
     const { protocol, data, visible } = this.state;

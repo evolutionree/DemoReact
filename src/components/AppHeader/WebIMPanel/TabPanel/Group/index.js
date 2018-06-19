@@ -23,7 +23,10 @@ const ContactItem = ({ data, onStar, onClick, showStar = false }) => {
       <div className={styles.contactAvatar}>
         <Avatar image={`/api/fileservice/read?fileid=${data.usericon}`} width={30} />
       </div>
-      <p>{data.username}</p>
+      <div>
+        <span>{data.username}</span>
+        <Icon type="message" style={{ marginLeft: '5px', curson: 'pointer' }} />
+      </div>
       <p>
         <Icon type="mobile" style={{ marginRight: '5px' }} />
         <MetaValue>{data.userphone}</MetaValue>
