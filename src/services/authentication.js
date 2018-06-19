@@ -61,7 +61,7 @@ export async function registerUser(params) {
  *  { accountname, accountpwd, rememberpwd }
  * @returns {Promise.<Object>}
  */
-export async function login(params) {
+export async function login(params, type) {
   const { accountname, accountpwd, rememberpwd } = params;
   return encryptPassword(accountpwd, true).then(encryptedPwd => {
     return _login({
@@ -79,6 +79,9 @@ export async function login(params) {
       security: result.data.security
     };
     rememberpwd ? setRememberedPwd({ account: accountname, pwd: accountpwd }) : setRememberedPwd(null);
+    if (type === 'mobile') {
+      setLogin(loginInfo);
+    }
     return { loginInfo };
   });
 }
@@ -288,4 +291,55 @@ export async function checkPagePermission(params) {
     method: 'post',
     body: JSON.stringify(params)
   })
+}
+
+
+// /**
+//  * 清除缓存
+//  * @returns {Promise.<Object>}
+//  */
+// export async function connectSocket(userid) {
+//   const { token } = getLocalAuthentication();
+//   return new Promise(function(resolve, reject) {
+//     let socket = new WebSocket('ws://10.187.134.10:732/ws/wechat');
+//     socket.onopen = (event) => {
+//       socket.send(JSON.stringify({ Cmd: 1, data: { userid: userid, authorizedcode: 'Bearer ' + token } }));
+//       socket.onmessage = (event) => {
+//         console.log('Client received a message',event)
+//         resolve(event);
+//       };
+//       // socket.onclose = (event) => {
+//       //   console.log('Client notified socket has closed',event)
+//       // };
+//     };
+//   }).then((response) => {
+//     // const errorCode = response.data.error_code;
+//     // if (!errorCode) {
+//     //   return response;
+//     // } else {
+//     //   const error = new Error(response.data.error_msg);
+//     //   error.error_code = errorCode;
+//     //   error.response = response;
+//     //   throw error;
+//     // }
+//     return '成功';
+//   }).then(result => result);
+// }
+
+/**
+ * webIMSocket连接
+ * @returns {Promise.<Object>}
+ */
+export async function connectWebIMSocket(userid) {
+  const { token } = getLocalAuthentication();
+  return new Promise(function(resolve, reject) {
+    let socket = new WebSocket('ws://10.187.134.10:732/ws/wechat');
+    socket.onopen = (event) => {
+      socket.send(JSON.stringify({ Cmd: 1, data: { userid: userid, authorizedcode: 'Bearer ' + token } }));
+      alert(1)
+      resolve(socket);
+    };
+  }).then((response) => {
+    return response;
+  });
 }

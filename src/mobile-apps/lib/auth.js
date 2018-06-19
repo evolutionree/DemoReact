@@ -3,7 +3,7 @@ import UKBridge from './uk-bridge';
 import log from './log';
 import { genRandomCode } from './common';
 import request from '../../utils/request';
-import { setLogin, getLocalAuthentication, login as webLogin } from '../../services/authentication';
+import { setLogin, getLocalAuthentication, login as mobileLogin } from '../../services/authentication';
 import env from './enviroment';
 
 export function hasLogin() {
@@ -22,10 +22,10 @@ export function login() {
 function mockWebLogin() {
   log.log('本地调试')
   const params = {
-    accountname: 10888008001,
-    accountpwd: '123456'
+    accountname: 'BW-MD-1383',
+    accountpwd: '999999'
   };
-  return webLogin(params);
+  return mobileLogin(params, 'mobile');
 }
 
 function _requestToken() {

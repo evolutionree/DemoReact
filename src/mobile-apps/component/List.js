@@ -28,7 +28,7 @@ function List({
         <span className={styles.miniTitleWrap} style={{ display: subtitle ? 'inline-block' : 'none' }}>
           <span className={styles.miniTitle}>{subtitle}</span>
         </span>
-        <img src='/arrow.png' className={styles.icon} />
+        <img src='/arrow.png' className={styles.icon} style={{ display: tableInfo && tableInfo.entityid ? 'inline' : 'none' }} />
       </div>
       <ul>
         {
