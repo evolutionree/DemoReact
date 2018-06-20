@@ -8,13 +8,8 @@ import classnames from 'classnames';
 import Search from './Component/Search';
 import Tabs from './Component/Tabs';
 import { ContactPanel, GroupPanel, RecentPanel } from './TabPanel';
-import IMPanel from './OtherPanel/IMPanel';
-import PersonalDetail from './OtherPanel/PersonalDetail';
-import OriginGroup from './OtherPanel/OriginGroup';
+import { OtherPanelRender } from './OtherPanelRender';
 import styles from './index.less';
-import { getLocalAuthentication } from '../../../services/authentication';
-
-const { token } = getLocalAuthentication();
 
 class WebIMPanel extends Component {
   constructor(props) {
@@ -55,23 +50,8 @@ class WebIMPanel extends Component {
     document.body.removeEventListener('click', this.clickOutsideClose);
   }
 
-
-  testSocket = () => {
-    //let socket = new WebSocket('ws://118.25.40.163:8088');
-    let socket = new WebSocket('ws://10.187.134.10:732/ws/wechat');
-    socket.onopen = (event) => { //"Bearer ${getAccessToken()}"
-      socket.send(JSON.stringify({ Cmd: 1, data: { userid: this.props.user.userid, authorizedcode: 'Bearer' + token } }));
-      socket.onmessage = (event) => {
-        console.log('Client received a message',event)
-      };
-      socket.onclose = (event) => {
-        console.log('Client notified socket has closed',event)
-      };
-    };
-  }
-
   clickOutsideClose = (event) => {
-    if ($(event.target).closest('#web-IM-Panel').length || $(event.target).closest('.webIMTooltip').length) {
+    if ($(event.target).closest('#web-IM-Panel').length || $(event.target).closest('.webIMTooltip').length || $(event.target).closest('#otherPanelWrap').length || $(event.target).closest('#otherPanelChildrenWrap').length) {
       return;
     }
     this.hidePanel();
@@ -105,6 +85,8 @@ class WebIMPanel extends Component {
 
   render() {
     const tabModel = this.state.tabModel;
+    let OtherPanelComponent = OtherPanelRender[this.props.showPanel];
+    let OtherPanelChildrenComponent = OtherPanelRender[this.props.showChildrenPanel];
     return (
       <div>
         <Icon
@@ -136,17 +118,32 @@ class WebIMPanel extends Component {
             }
           </div>
         </div>
-        <div className={styles.otherPanelWrap}>
-          <OriginGroup />
-        </div>
+        {
+          this.state.panelVisible && OtherPanelComponent ? <div className={styles.otherPanelWrap} id="otherPanelWrap">
+            {
+              React.createElement(OtherPanelComponent, { panelInfo: this.props.panelInfo })
+            }
+          </div> : null
+        }
+        {
+          this.state.panelVisible && OtherPanelChildrenComponent ? <div className={styles.otherPanelWrap} id="otherPanelChildrenWrap">
+            {
+              React.createElement(OtherPanelChildrenComponent, { panelInfo: this.props.childrenPanelInfo, showGoBack: true })
+            }
+          </div> : null
+        }
       </div>
     );
   }
 }
 
-export default connect(state => state.app,
+export default connect(state => {
+  return {
+    ...state.webIM
+  };
+},
   dispatch => {
     return {
-
+      dispatch
     };
   })(WebIMPanel);

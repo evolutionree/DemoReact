@@ -10,13 +10,11 @@ import {
   getLocalAuthentication,
   logout,
   onTokenChange,
-  initRsaPublicKey,
-  connectWebIMSocket
+  initRsaPublicKey
 } from '../services/authentication';
 import { getGlobalMenus } from '../services/webmenus';
 import { clearServerCache, queryYearWeekData } from '../services/basicdata';
 
-const { token } = getLocalAuthentication();
 const KEY_SIDER_FOLD = 'uke100_siderFold';
 
 export default {
@@ -30,8 +28,7 @@ export default {
     permissionLevel: 3,
     imageGallery: {},
     mapModal: {},
-    noMinWidth: false,
-    webIMSocket: null
+    noMinWidth: false
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -152,7 +149,6 @@ export default {
       const { user, role } = result.data;
       user[0].role = role;
       yield put({ type: 'putState', payload: { user: user[0] } });
-      yield put({ type: 'connectSocket' });
     },
     *clearServerCache(action, { call }) {
       try {
@@ -171,31 +167,6 @@ export default {
     },
     *initRsaPublicKey(action, { call, put }) {
       yield call(initRsaPublicKey);
-    },
-    *connectSocket(action, { select, call, put }) {
-      const { userid } = yield select(state => state.app.user);
-      const webIMSocket = yield call(connectWebIMSocket, userid);
-      yield put({
-        type: 'putState',
-        payload: { webIMSocket: webIMSocket }
-      });
-      // let socket = new WebSocket('ws://10.187.134.10:732/ws/wechat');
-      // console.log(JSON.stringify({ Cmd: 1, data: { userid: userid, authorizedcode: token } }))
-      // // const promise = new Promise(function (resolve, reject) {
-      // //
-      // // });
-      // // promise.then(function (value) { console.log(value) });
-      //
-      // socket.onopen = (event) => {
-      //   socket.send(JSON.stringify({ Cmd: 1, data: { userid: userid, authorizedcode: 'Bearer ' + token } }));
-      //   socket.onmessage = (event) => {
-      //     console.log('Client received a message',event)
-      //   };
-      //   socket.onclose = (event) => {
-      //     console.log('Client notified socket has closed',event)
-      //   };
-      // };
-
     }
   },
   reducers: {

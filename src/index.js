@@ -138,6 +138,7 @@ app.model(require('./models/permission'));
 app.model(require('./models/navHistory'));
 app.model(require('./models/powerEdit'));
 app.model(require('./models/printEntity'));
+app.model(require('./models/webIM'));
 
 // 4. Router
 app.router(require('./router'));

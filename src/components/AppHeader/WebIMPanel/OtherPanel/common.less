@@ -1,0 +1,37 @@
+.clearFix{
+  zoom:1;
+  &:after{
+    content: '';
+    display: block;
+    clear: both;
+  }
+}
+
+.header{
+  height: 70px;
+  line-height: 70px;
+  background: #FAFAFE;
+  position: relative;
+  width: 100%;
+  h3{
+    text-align: center;
+    font-size: 16px;
+    color: #333333;
+  }
+  i{
+    position: absolute;
+    top: 50%;
+    transform: translateY( -50% );
+    font-size: 16px;
+    color: #979797;
+    cursor: pointer;
+  }
+  :global{
+    .anticon-left{
+      left: 45px;
+    }
+    .anticon-close{
+      right: 45px;
+    }
+  }
+}

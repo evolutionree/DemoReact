@@ -1,42 +1,7 @@
-.clearFix{
-  zoom:1;
-  &:after{
-    content: '';
-    display: block;
-    clear: both;
-  }
-}
-
+@import "../common.less";
 .OriginGroupWrap {
   overflow: hidden;
   height: 100%;
-  .header {
-    height: 70px;
-    line-height: 70px;
-    background: #FAFAFE;
-
-    position: relative;
-    width: 100%;
-    h3 {
-      text-align: center;
-      font-size: 16px;
-      color: #333333;
-    }
-    i {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 16px;
-      color: #979797;
-      cursor: pointer;
-    }
-    i:first-of-type {
-      left: 45px;
-    }
-    i:last-of-type {
-      right: 45px;
-    }
-  }
 
   .body{
     .clearFix;

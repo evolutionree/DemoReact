@@ -3,43 +3,74 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { Dropdown, Menu, Modal, Icon, Button } from 'antd';
+import { connect } from 'dva';
 import ButtonGroup from '../../Component/ButtonGroup';
 import Search from '../../Component/Search';
 import styles from './index.less';
 
 class OriginGroup extends Component {
+  static propTypes = {
+    showGoBack: PropTypes.bool
+  };
+  static defaultProps = {
+    showGoBack: false
+  };
   constructor(props) {
     super(props);
     this.state = {
-
+      buttonModel: [{
+        name: 'contact',
+        title: '联系人',
+        active: true
+      }, {
+        name: 'dept',
+        title: '部门',
+        active: false
+      }]
     };
   }
   componentWillReceiveProps(nextProps) {
 
   }
 
-  render() {
-    const buttonModel = [{
-      name: 'contact',
-      title: '联系人',
-      active: true
-    }, {
-      name: 'dept',
-      title: '部门',
-      active: false
-    }];
+  backHandler = () => {
+    this.props.dispatch({ type: 'webIM/putState', payload: {
+      showChildrenPanel: '',
+      childrenPanelInfo: ''
+    } });
+  }
 
+  closePanel = () => {
+    this.props.dispatch({ type: 'webIM/closeOtherPanel' });
+  }
+
+  btnGroupClickHandler = (btnName) => {
+    const newBtnModel = this.state.buttonModel.map(item => {
+      item.active = false;
+      if (item.name === btnName) {
+        item.active = true;
+      };
+      return item;
+    });
+    this.setState({
+      buttonModel: newBtnModel
+    });
+  }
+
+  render() {
     return (
       <div className={styles.OriginGroupWrap}>
         <div className={styles.header}>
-          <Icon type="left" />
+          {
+            this.props.showGoBack ? <Icon type="left" onClick={this.backHandler} /> : null
+          }
           <h3>发起群聊</h3>
-          <Icon type="close" />
+          <Icon type="close" onClick={this.closePanel} />
         </div>
         <div className={styles.body}>
           <div className={styles.fl}>
             <div className={styles.operateWrap}>
-              <ButtonGroup model={buttonModel} />
+              <ButtonGroup model={this.state.buttonModel} onClick={this.btnGroupClickHandler} />
               <Search />
             </div>
             <div className={styles.contactlistWrap}>
@@ -79,4 +110,13 @@ class OriginGroup extends Component {
   }
 }
 
-export default OriginGroup;
+export default connect(state => {
+    return {
+      ...state.webIM
+    };
+  },
+  dispatch => {
+    return {
+      dispatch
+    };
+  })(OriginGroup);

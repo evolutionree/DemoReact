@@ -1,29 +1,68 @@
 /**
  * Created by 0291 on 2018/6/13.
  */
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes, PureComponent } from 'react';
 import { Dropdown, Menu, Input, Icon } from 'antd';
 import classnames from 'classnames';
+import { connect } from 'dva';
 import styles from './index.less';
 
-class IMPanel extends Component {
+class IMPanel extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-
+      sendMessage: ''
     };
   }
   componentWillReceiveProps(nextProps) {
 
   }
 
+  closePanel = () => {
+    this.props.dispatch({ type: 'webIM/closeOtherPanel', payload: '' });
+  }
+
+  usernameClickHandler = () => {
+    this.props.dispatch({ type: 'webIM/putState', payload: { showChildrenPanel: 'PersonalDetail', childrenPanelInfo: this.props.panelInfo } });
+  }
+
+  sendMessageChangeHandler = (e) => {
+    this.setState({
+      sendMessage: e.target.value
+    });
+  }
+
+  sendMessage = () => {
+    const { webIMSocket } = this.props;
+    console.log(JSON.stringify({
+      Cmd: 3,
+      data: {
+        ctype: 0,
+        gid: '00000000-0000-0000-0000-000000000000',
+        ct: 1,
+        cont: this.state.sendMessage,
+        rec: this.props.panelInfo.userid
+      }
+    }))
+    webIMSocket.send(JSON.stringify({
+      Cmd: 3,
+      data: {
+        ctype: 0,
+        gid: '00000000-0000-0000-0000-000000000000',
+        ct: 1,
+        cont: this.state.sendMessage,
+        rec: this.props.panelInfo.userid
+      }
+    }));
+  }
+
   render() {
+    const { panelInfo } = this.props;
     return (
       <div className={styles.IMPanelWrap}>
         <div className={styles.header}>
-          <Icon type="left" />
-          <h3>杜丽</h3>
-          <Icon type="close" />
+          <h3 onClick={this.usernameClickHandler}>{panelInfo.username}</h3>
+          <Icon type="close" onClick={this.closePanel} />
         </div>
         <div className={styles.body}>
           <div className={classnames(styles.chatItem, styles.itemLeft)}>
@@ -46,11 +85,11 @@ class IMPanel extends Component {
             <Icon type="smile-o" />
           </div>
           <div className={styles.inputWrap}>
-            <textarea />
+            <textarea onChange={this.sendMessageChangeHandler} />
           </div>
           <div className={styles.submitWrap}>
             <div className={styles.buttonWrap}>
-              <div>发送</div>
+              <div onClick={this.sendMessage}>发送</div>
               <div>
                 <i></i>
               </div>
@@ -62,4 +101,10 @@ class IMPanel extends Component {
   }
 }
 
-export default IMPanel;
+export default connect(state => state.webIM,
+  dispatch => {
+    return {
+      dispatch
+    };
+  }
+)(IMPanel);

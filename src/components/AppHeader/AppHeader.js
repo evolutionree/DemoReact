@@ -18,7 +18,7 @@ const AppHeader = () => {
       <Header.Right>
         <ImportTask />
         <ProgressModal />
-        
+
         <ContactsPanel />
         <MessageList />
         <UserDropdown />

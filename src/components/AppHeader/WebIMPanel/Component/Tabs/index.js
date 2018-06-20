@@ -8,7 +8,7 @@ import classnames from 'classnames';
 import _ from 'lodash';
 import styles from './index.less';
 
-class Search extends Component {
+class Tabs extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -41,6 +41,15 @@ class Search extends Component {
     }, 200);
   }
 
+  originGroup = () => {
+    this.props.dispatch({
+      type: 'webIM/showPanel',
+      payload: {
+        showPanel: 'OriginGroup'
+      }
+    });
+  }
+
   render() {
     const addTab = _.find(this.props.model, item => item.name === 'add');
     return (
@@ -60,7 +69,7 @@ class Search extends Component {
           }
         </ul>
         <ul className={classnames(styles.addWrap, { [styles.visible]: this.state.addOperateListVisible })} onMouseOver={this.showAddOperateList.bind(this, 'add')} onMouseOut={this.hideAddOperateList} >
-          <li>发起群聊</li>
+          <li onClick={this.originGroup}>发起群聊</li>
           <li>群发通知</li>
         </ul>
       </div>
@@ -68,4 +77,13 @@ class Search extends Component {
   }
 }
 
-export default Search;
+export default connect(state => {
+    return {
+      ...state.webIM
+    };
+},
+  dispatch => {
+    return {
+      dispatch
+    };
+  })(Tabs);

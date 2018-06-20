@@ -334,11 +334,18 @@ export async function connectWebIMSocket(userid) {
   const { token } = getLocalAuthentication();
   return new Promise(function(resolve, reject) {
     let socket = new WebSocket('ws://10.187.134.10:732/ws/wechat');
-    socket.onopen = (event) => {
-      socket.send(JSON.stringify({ Cmd: 1, data: { userid: userid, authorizedcode: 'Bearer ' + token } }));
-      alert(1)
-      resolve(socket);
+    socket.onopen = connectHandler;
+    socket.onmessage = (event) => {
+      console.log('Client received a message', event);
     };
+    socket.onclose = (event) => {
+      console.log('Client notified socket has closed', event);
+    };
+
+    function connectHandler() {
+      socket.send(JSON.stringify({ Cmd: 1, data: { userid: userid, authorizedcode: 'Bearer ' + token } }));
+      resolve(socket);
+    }
   }).then((response) => {
     return response;
   });
