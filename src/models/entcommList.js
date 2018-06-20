@@ -184,7 +184,7 @@ export default {
       try {
         let { data: functionbutton } = yield call(getFunctionbutton, { entityid: entityId, RecIds: currItems.map((item) => item.recid) });
         /*
-         DisplayPosition	按钮的显示位置（int数组）：web列表=0，web详情=1，手机列表=100，手机详情=101	array<number>	@mock=$order(0,1)
+         DisplayPosition	按钮的显示位置（int数组）：web列表=0，web详情=1，手机列表=100，手机详情=101	array<number>	@mock=$order(0,1) 1
          */
         functionbutton = functionbutton.filter(item => _.indexOf(item.displayposition, 0) > -1);
         const extraButtonData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'DataTransfer' || item.buttoncode === 'ShowModals');
