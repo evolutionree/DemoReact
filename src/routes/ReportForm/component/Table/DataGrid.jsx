@@ -361,6 +361,9 @@ class DataGrid extends  React.Component {
 
   render() {
     const key = this.props.rowKey ? this.props.rowKey : rowKey;
+
+    const columns = this.getColumns(); //先执行 更新window.tableHasScrollX的值 后面代码设置scroll的值 需要用到
+
     const rowSelection = this.props.rowSelection ? {
       selectedRowKeys: this.state.slectRows.map(item => item[key]),
       onChange: this.rowSelectHandler.bind(this)
@@ -395,7 +398,7 @@ class DataGrid extends  React.Component {
           rowSelection={rowSelection}
           pagination={pagination}
           onChange={this.tableChange.bind(this)}
-          columns={this.getColumns()}
+          columns={columns}
           {...props}
         />
       </div>
