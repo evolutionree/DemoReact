@@ -136,6 +136,7 @@ export default {
           } else {
             rule.rules = completeSubRules(rule.rules);
           }
+          rule.displayname = field.displayname;
           rule.order = field.row_number;
           rule.controlType = field.controltype;
           return rule;

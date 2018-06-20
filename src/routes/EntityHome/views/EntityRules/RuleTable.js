@@ -52,7 +52,7 @@ function RuleTable({
   }
   const columns = useType === 0 ? [
     { title: '序号', key: 'order', dataIndex: 'order' },
-    { title: '字段名称', key: 'fieldlabel', dataIndex: 'fieldlabel' },
+    { title: '名称', key: 'displayname', dataIndex: 'displayname' },
     { title: '是否使用', key: 'recstatus', dataIndex: 'recstatus', render: checkboxRender.bind(null, 'recstatus') },
     {
       title: '新增',
@@ -91,7 +91,7 @@ function RuleTable({
     }
   ] : [
     { title: '序号', key: 'order', dataIndex: 'order' },
-    { title: '字段名称', key: 'fieldlabel', dataIndex: 'fieldlabel' },
+    { title: '名称', key: 'displayname', dataIndex: 'displayname' },
     { title: '是否禁用', key: 'recstatus', dataIndex: 'recstatus', render: checkboxRender1.bind(null, 'recstatus') },
     {
       title: '新增',
