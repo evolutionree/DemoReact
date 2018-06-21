@@ -8,7 +8,8 @@ import styles from './index.less';
 class ButtonGroup extends Component {
   static propTypes = {
     model: React.PropTypes.array.isRequired,
-    onClick: React.PropTypes.func
+    onClick: React.PropTypes.func,
+    style: React.PropTypes.object
   };
   static defaultProps = {
 
@@ -30,7 +31,7 @@ class ButtonGroup extends Component {
 
   render() {
     return (
-      <div className={styles.btnGroup}>
+      <div className={styles.btnGroup} style={{ ...this.props.style }}>
         {
           this.props.model.map(item => {
             return <div key={item.name} onClick={this.btnClickHandler.bind(this, item.name)} className={classnames({ [styles.active]: item.active })}>{item.title}</div>;

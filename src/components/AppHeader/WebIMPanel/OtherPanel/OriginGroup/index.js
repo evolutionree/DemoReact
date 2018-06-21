@@ -58,6 +58,7 @@ class OriginGroup extends Component {
   }
 
   render() {
+    const textAlignStyle = { position: 'relative', left: '50%', transform: 'translateX(-50%)' };
     return (
       <div className={styles.OriginGroupWrap}>
         <div className={styles.header}>
@@ -69,26 +70,26 @@ class OriginGroup extends Component {
         </div>
         <div className={styles.body}>
           <div className={styles.fl}>
-            <div className={styles.operateWrap}>
-              <ButtonGroup model={this.state.buttonModel} onClick={this.btnGroupClickHandler} />
-              <Search />
-            </div>
-            <div className={styles.contactlistWrap}>
-              <h3>Y</h3>
-              <ul>
-                <li>
-                  <img src="./img_demo_avatar.png" />
-                  <span>余萍</span>
-                </li>
-                <li>
-                  <img src="./img_demo_avatar.png" />
-                  <span>余萍</span>
-                </li>
-                <li>
-                  <img src="./img_demo_avatar.png" />
-                  <span>余萍</span>
-                </li>
-              </ul>
+            <ButtonGroup model={this.state.buttonModel} onClick={this.btnGroupClickHandler} style={{ ...textAlignStyle }} />
+            <div>
+              <Search style={{ ...textAlignStyle }} />
+              <div className={styles.contactlistWrap}>
+                <h3>Y</h3>
+                <ul>
+                  <li>
+                    <img src="./img_demo_avatar.png" />
+                    <span>余萍</span>
+                  </li>
+                  <li>
+                    <img src="./img_demo_avatar.png" />
+                    <span>余萍</span>
+                  </li>
+                  <li>
+                    <img src="./img_demo_avatar.png" />
+                    <span>余萍</span>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
           <div className={styles.fr}>

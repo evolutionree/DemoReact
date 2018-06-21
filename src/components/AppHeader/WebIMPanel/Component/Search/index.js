@@ -9,6 +9,12 @@ import styles from './index.less';
 
 
 class Search extends Component {
+  static propTypes = {
+
+  };
+  static defaultProps = {
+
+  };
   constructor(props) {
     super(props);
     this.state = {
