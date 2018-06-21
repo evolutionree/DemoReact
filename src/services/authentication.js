@@ -342,11 +342,17 @@ export async function connectWebIMSocket(userid) {
       console.log('Client notified socket has closed', event);
     };
 
+    socket.onerror = () => {
+      reject(new Error('连接webSocker失败，webIM聊天功能暂时无法使用，请稍后重试'));
+    }
+
     function connectHandler() {
       socket.send(JSON.stringify({ Cmd: 1, data: { userid: userid, authorizedcode: 'Bearer ' + token } }));
       resolve(socket);
     }
   }).then((response) => {
     return response;
+  }).catch(err=> {
+    throw err;
   });
 }
