@@ -224,6 +224,7 @@ export default {
          DisplayPosition	按钮的显示位置（int数组）：web列表=0，web详情=1，手机列表=100，手机详情=101	array<number>	@mock=$order(0,1)
          */
         functionbutton = functionbutton.filter(item => _.indexOf(item.displayposition, 0) > -1);
+        const extraButtonData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'ShowModals');
         const buttoncode = ['CallService', 'CallService_showModal', 'PrintEntity', 'EntityDataOpenH5'];
         const extraToolbarData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => buttoncode.indexOf(item.buttoncode) > -1);
         yield put({ type: 'putState', payload: { extraButtonData, extraToolbarData } });
