@@ -103,7 +103,6 @@ class AffairDetail extends Component {
     }
     this.validateColumnConfigForms().then(result => {
       if (result) {
-        alert('提交')
         this.props.submitPreAuditCase();
       } else {
         message.error('请检查表单');
@@ -384,7 +383,6 @@ export default connect(
         dispatch({ type: 'affairDetail/submitAuditCase', payload: data });
       },
       submitPreAuditCase() {
-        alert(1)
         dispatch({ type: 'affairDetail/submitPreAuditCase' });
       },
       closeFlow() {
