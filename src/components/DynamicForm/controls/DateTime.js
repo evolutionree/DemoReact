@@ -18,7 +18,7 @@ class DateTime extends Component {
   };
   onDateChange = (date, dateString) => {
     // this.props.onChange(dateString);
-    this.props.onChange(date.format('YYYY-MM-DD HH:mm:ss'));
+    this.props.onChange(date && date.format('YYYY-MM-DD HH:mm:ss'));
   };
   render() {
     const { value, isReadOnly, format } = this.props;
