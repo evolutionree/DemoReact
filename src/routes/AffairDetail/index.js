@@ -26,24 +26,34 @@ class AffairDetail extends Component {
   };
   columnConfigFormInstance = {};
   workflowCaseFormRef = null;
-  validateColumnConfigForms = () => {
-    const validateNext = () => {
+  validateColumnConfigForms = async () => {
+    const validateNext = async () => { //并行执行
       const item = formArray[0];
       if (!item) return;
 
       const formInstance = this.columnConfigFormInstance[item.entityId];
       formArray.shift();
-      formInstance.validateFields((err, values) => {
-        if (err) result = false;
-        validateNext();
-      });
-    };
+      async function syncValidate() {
+        return await new Promise(resolve => {
+          formInstance.validateFields((err, values) => {
+            if (err) {
+              result = false;
+              resolve();
+            } else {
+              resolve();
+              validateNext();
+            }
+          });
+        });
+      }
+      await syncValidate();
+    }
 
     const { columnConfigFormProtocols, selectedOperate } = this.props;
     if (selectedOperate !== 1) return true;
     const formArray = _.map(columnConfigFormProtocols, (val, key) => ({ entityId: key, protocols: val }));
     let result = true;
-    validateNext();
+    await validateNext();
     return result;
   };
   validateWorkflowCaseForm = () => {
@@ -65,37 +75,40 @@ class AffairDetail extends Component {
     }
     return {};
   };
-  onNextClick = () => {
-    // 0拒绝 1通过 2退回 3中止';
-    if (this.props.selectedOperate === undefined) {
-      return message.error('请选择操作');
-    }
-    if (this.props.selectedOperate === 1 && !this.validateColumnConfigForms()) return message.error('请检查表单');
-    this.props.submitAuditCase();
-  };
-  onSubmitAudit = () => {
-    // 0拒绝 1通过 2退回 3中止';
-    const op = this.props.selectedOperate;
-    if (op === undefined) {
-      return message.error('请选择操作');
-    }
-    if (this.validateWorkflowCaseForm() && this.validateColumnConfigForms()) {
-      this.props.submitAuditCase(this.getWorkflowCaseFormValue());
-    } else {
-      message.error('请检查表单');
-    }
-  };
+  // onNextClick = () => {
+  //   // 0拒绝 1通过 2退回 3中止';
+  //   if (this.props.selectedOperate === undefined) {
+  //     return message.error('请选择操作');
+  //   }
+  //   if (this.props.selectedOperate === 1 && !this.validateColumnConfigForms()) return message.error('请检查表单');
+  //   this.props.submitAuditCase();
+  // };
+  // onSubmitAudit = () => {
+  //   // 0拒绝 1通过 2退回 3中止';
+  //   const op = this.props.selectedOperate;
+  //   if (op === undefined) {
+  //     return message.error('请选择操作');
+  //   }
+  //   if (this.validateWorkflowCaseForm() && this.validateColumnConfigForms()) {
+  //     this.props.submitAuditCase(this.getWorkflowCaseFormValue());
+  //   } else {
+  //     message.error('请检查表单');
+  //   }
+  // };
   onSubmitPreAudit = () => {
     // 0拒绝 1通过 2退回 3中止';
     const op = this.props.selectedOperate;
     if (op === undefined) {
       return message.error('请选择操作');
     }
-    if (this.validateColumnConfigForms()) {
-      this.props.submitPreAuditCase();
-    } else {
-      message.error('请检查表单');
-    }
+    this.validateColumnConfigForms().then(result => {
+      if (result) {
+        alert('提交')
+        this.props.submitPreAuditCase();
+      } else {
+        message.error('请检查表单');
+      }
+    });
   };
   getCaseData = () => {
     const { columnConfigForms, columnConfigFormProtocols } = this.props;
@@ -371,6 +384,7 @@ export default connect(
         dispatch({ type: 'affairDetail/submitAuditCase', payload: data });
       },
       submitPreAuditCase() {
+        alert(1)
         dispatch({ type: 'affairDetail/submitPreAuditCase' });
       },
       closeFlow() {
