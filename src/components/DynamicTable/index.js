@@ -320,7 +320,7 @@ class DynamicTable extends Component {
       const recordDetail = res2.data.detail;
       const tableData = (recordDetail && recordDetail[field.fieldname]) || [];
       this.setState({
-        innerTableProtocol: protocol,
+        innerTableProtocol: protocol.filter(item => item.fieldconfig.isVisible === 1),
         innerTableRecords: tableData
       });
     });
