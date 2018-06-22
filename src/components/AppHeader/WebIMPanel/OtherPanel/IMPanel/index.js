@@ -48,7 +48,8 @@ class IMPanel extends PureComponent {
   }
 
   render() {
-    const { panelInfo } = this.props;
+    const { panelInfo, messagelist } = this.props;
+    console.log(messagelist)
     return (
       <div className={styles.IMPanelWrap}>
         <div className={styles.header}>
@@ -68,6 +69,16 @@ class IMPanel extends PureComponent {
             <Avatar image={`/api/fileservice/read?fileid=${panelInfo.usericon}`} width={30} />
             <div className={styles.message}>对方电话是18166980982</div>
           </div>
+          {
+            messagelist && messagelist instanceof Array && messagelist.map(item => {
+              return (
+                <div className={classnames(styles.chatItem, styles.itemLeft)} key={item.CustomContent.mid}>
+                  <Avatar image={`/api/fileservice/read?fileid=${panelInfo.usericon}`} width={30} />
+                  <div className={styles.message}>{item.Message}</div>
+                </div>
+              );
+            })
+          }
         </div>
         <div className={styles.footer}>
           <div className={styles.toolbar}>

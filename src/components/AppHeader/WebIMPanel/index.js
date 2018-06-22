@@ -51,10 +51,13 @@ class WebIMPanel extends Component {
     if (webIMSocket) {
       webIMSocket.onmessage = (event) => {
         console.log('Client received a message', event);
-        dispatch({
-          type: 'webIM/receivemessage',
-          payload: JSON.parse(event.data)
-        });
+        const message = JSON.parse(event.data);
+        if (message.ResultCode === undefined) {
+          dispatch({
+            type: 'webIM/receivemessage',
+            payload: message
+          });
+        }
       };
     }
   }
