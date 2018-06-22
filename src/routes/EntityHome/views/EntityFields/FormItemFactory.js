@@ -694,7 +694,7 @@ export default class FormItemFactory {
       case 18: // 数据源控件
         return (
           <FormItem label="数据源" key="dataSource">
-            {this.getFieldDecorator('dataSource', {
+            {this.getFieldDecorator('dataSource_', {
               rules: [{ required: true, message: '请选择数据源' }]
             })(<DataSourceSelect />)}
           </FormItem>
@@ -702,7 +702,7 @@ export default class FormItemFactory {
       default:
         return (
           <FormItem label="数据源" key="dataSource">
-            {this.getFieldDecorator('dataSource', {
+            {this.getFieldDecorator('dataSource__', {
               rules: [{ required: true, message: '请选择数据源' }]
             })(<DicTypeSelect />)}
           </FormItem>
@@ -713,7 +713,7 @@ export default class FormItemFactory {
   createMultipleDataSource() {
     return (
       <FormItem label="数据源" key="multidataSource">
-        {this.getFieldDecorator('dataSource', {
+        {this.getFieldDecorator('dataSource___', {
           rules: [{ required: true, message: '请选择数据源' }]
         })(<RelBusDataSource />)}
       </FormItem>
