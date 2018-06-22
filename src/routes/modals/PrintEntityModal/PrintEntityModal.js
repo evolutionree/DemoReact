@@ -95,7 +95,8 @@ export default connect(
     return {
       close() {
         dispatch({ type: 'printEntity/cancel', payload: '' });
-      }
+      },
+      dispatch
     };
   }
 )(PrintEntityModal);

@@ -26,16 +26,17 @@ export default {
         const { data } = yield call(queryRecPrintTemplates, params);
         if (!data.length) {
           message.error('找不到可用的模板');
+        } else {
+          yield put({
+            type: 'putState',
+            payload: {
+              currentStep: 1,
+              templateList: data,
+              entityId: printConfig.entityId,
+              recordId: printConfig.recordId
+            }
+          });
         }
-        yield put({
-          type: 'putState',
-          payload: {
-            currentStep: 1,
-            templateList: data,
-            entityId: printConfig.entityId,
-            recordId: printConfig.recordId
-          }
-        });
       } catch (e) {
         message.error(e.message || '获取打印模板失败');
       }
