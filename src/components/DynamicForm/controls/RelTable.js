@@ -322,7 +322,7 @@ class RelTable extends Component {
           mode={this.props.mode}
           selected={_.includes(this.state.selectedRows, index)}
           fields={this.state.fields}
-          value={item.FieldData || item}
+          value={item && item.FieldData || item}
           onChange={this.onRowValueChange.bind(this, index)}
           onSelect={this.onRowSelect.bind(this, index)}
           ref={formInst => this.arrFormInstance[index] = formInst}
