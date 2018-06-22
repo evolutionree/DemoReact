@@ -10,13 +10,14 @@ export default {
     showPanel: '',
     panelInfo: null,
     showChildrenPanel: '',
-    childrenPanelInfo: ''
+    childrenPanelInfo: '',
+    messagelist: null
   },
   subscriptions: {
     setup({ dispatch, history }) {
       dispatch({ type: 'init' });
       return history.listen(location => {
-        dispatch({ type: 'resetState' });  //切换到其他路由页面时  所有有关WebIM的面板隐藏及数据初始化
+        dispatch({ type: 'closePanel' });  //切换到其他路由页面时  所有有关WebIM的面板隐藏
       });
     }
   },
@@ -62,7 +63,13 @@ export default {
         childrenPanelInfo: ''
       };
     },
-    resetState() {
+    receivemessage(state, { payload: message }) {
+      return {
+        ...state,
+        messagelist: state.messagelist ? [...state.messagelist, message] : [message]
+      };
+    },
+    closePanel() {
       return {
         showPanel: '',
         panelInfo: null,

@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import IMPanel from './OtherPanel/IMPanel';
 import PersonalDetail from './OtherPanel/PersonalDetail';
 import OriginGroup from './OtherPanel/OriginGroup';
+import GroupIMPanel from './OtherPanel/GroupIMPanel';
 
 function presetProps(props, WrappedComponent) {
   return class NewComponent extends Component {
@@ -28,5 +29,6 @@ function presetProps(props, WrappedComponent) {
 export const OtherPanelRender = {
   IMPanel: IMPanel,
   PersonalDetail: PersonalDetail,
-  OriginGroup: OriginGroup
+  OriginGroup: OriginGroup,
+  GroupIMPanel: GroupIMPanel
 };

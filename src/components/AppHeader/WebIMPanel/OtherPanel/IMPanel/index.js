@@ -5,6 +5,7 @@ import React, { PropTypes, PureComponent } from 'react';
 import { Dropdown, Menu, Input, Icon } from 'antd';
 import classnames from 'classnames';
 import { connect } from 'dva';
+import Avatar from '../../../../Avatar';
 import styles from './index.less';
 
 class IMPanel extends PureComponent {
@@ -34,16 +35,6 @@ class IMPanel extends PureComponent {
 
   sendMessage = () => {
     const { webIMSocket } = this.props;
-    console.log(JSON.stringify({
-      Cmd: 3,
-      data: {
-        ctype: 0,
-        gid: '00000000-0000-0000-0000-000000000000',
-        ct: 1,
-        cont: this.state.sendMessage,
-        rec: this.props.panelInfo.userid
-      }
-    }))
     webIMSocket.send(JSON.stringify({
       Cmd: 3,
       data: {
@@ -66,15 +57,15 @@ class IMPanel extends PureComponent {
         </div>
         <div className={styles.body}>
           <div className={classnames(styles.chatItem, styles.itemLeft)}>
-            <img src="/img_img_card.png" />
+            <Avatar image={`/api/fileservice/read?fileid=${panelInfo.usericon}`} width={30} />
             <div className={styles.message}>昨天下午我们拜访的客户联系方式你有吗昨天下午我们拜访的客户联系方式你有吗昨天下午我们拜访的客户联系方式你有吗昨天下午我们拜访的客户联系方式你有吗？</div>
           </div>
           <div className={classnames(styles.chatItem, styles.itemLeft)}>
-            <img src="/img_img_card.png" />
+            <Avatar image={`/api/fileservice/read?fileid=${panelInfo.usericon}`} width={30} />
             <div className={styles.message}>我要他的电话就可以了</div>
           </div>
           <div className={classnames(styles.chatItem, styles.itemRight)}>
-            <img src="/img_img_card.png" />
+            <Avatar image={`/api/fileservice/read?fileid=${panelInfo.usericon}`} width={30} />
             <div className={styles.message}>对方电话是18166980982</div>
           </div>
         </div>

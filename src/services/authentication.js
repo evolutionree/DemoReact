@@ -335,9 +335,9 @@ export async function connectWebIMSocket(userid) {
   return new Promise(function(resolve, reject) {
     let socket = new WebSocket('ws://10.187.134.10:732/ws/wechat');
     socket.onopen = connectHandler;
-    socket.onmessage = (event) => {
-      console.log('Client received a message', event);
-    };
+    // socket.onmessage = (event) => {
+    //   console.log('Client received a message', event);
+    // };
     socket.onclose = (event) => {
       console.log('Client notified socket has closed', event);
     };

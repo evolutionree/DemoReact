@@ -22,14 +22,14 @@ class WebIMPanel extends Component {
         content: <RecentPanel />,
         active: true
       }, {
-        name: 'group',
+        name: 'contact',
         tooltip: '通讯录',
-        content: <GroupPanel />,
+        content: <ContactPanel />,
         active: false
       }, {
-        name: 'contact',
+        name: 'group',
         tooltip: '群聊',
-        content: <ContactPanel />,
+        content: <GroupPanel />,
         active: false
       }, {
         name: 'add',
@@ -44,6 +44,19 @@ class WebIMPanel extends Component {
 
   componentDidMount() {
     document.body.addEventListener('click', this.clickOutsideClose, false);
+  }
+
+  componentDidUpdate() {
+    const { webIMSocket, dispatch } = this.props;
+    if (webIMSocket) {
+      webIMSocket.onmessage = (event) => {
+        console.log('Client received a message', event);
+        dispatch({
+          type: 'webIM/receivemessage',
+          payload: JSON.parse(event.data)
+        });
+      };
+    }
   }
 
   componentWillUnmount() {

@@ -6,6 +6,7 @@ import { Dropdown, Menu, Modal, Icon, Button } from 'antd';
 import { connect } from 'dva';
 import ButtonGroup from '../../Component/ButtonGroup';
 import Search from '../../Component/Search';
+import _ from 'lodash';
 import styles from './index.less';
 
 class OriginGroup extends Component {
@@ -57,8 +58,19 @@ class OriginGroup extends Component {
     });
   }
 
+  nextStep = () => {
+    this.props.dispatch({
+      type: 'webIM/showPanel',
+      payload: {
+        showPanel: 'GroupIMPanel',
+        panelInfo: {}
+      }
+    });
+  }
+
   render() {
     const textAlignStyle = { position: 'relative', left: '50%', transform: 'translateX(-50%)' };
+    const activeBtnObj = _.find(this.state.buttonModel, item => item.active);
     return (
       <div className={styles.OriginGroupWrap}>
         <div className={styles.header}>
@@ -70,8 +82,11 @@ class OriginGroup extends Component {
         </div>
         <div className={styles.body}>
           <div className={styles.fl}>
-            <ButtonGroup model={this.state.buttonModel} onClick={this.btnGroupClickHandler} style={{ ...textAlignStyle }} />
-            <div>
+            <div className={styles.btnGroupWrap}>
+              <ButtonGroup model={this.state.buttonModel} onClick={this.btnGroupClickHandler} />
+            </div>
+
+            <div style={{ display: activeBtnObj.name === 'contact' ? 'block' : 'none' }}>
               <Search style={{ ...textAlignStyle }} />
               <div className={styles.contactlistWrap}>
                 <h3>Y</h3>
@@ -91,6 +106,10 @@ class OriginGroup extends Component {
                 </ul>
               </div>
             </div>
+
+            <div style={{ display: activeBtnObj.name === 'dept' ? 'block' : 'none' }}>
+              部门
+            </div>
           </div>
           <div className={styles.fr}>
             <div className={styles.frHeader}>
@@ -105,6 +124,11 @@ class OriginGroup extends Component {
               </ul>
             </div>
           </div>
+        </div>
+
+        <div className={styles.footer}>
+          <Button type="default">取消</Button>
+          <Button onClick={this.nextStep}>下一步</Button>
         </div>
       </div>
     );
