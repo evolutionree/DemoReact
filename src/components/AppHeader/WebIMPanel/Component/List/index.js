@@ -9,6 +9,12 @@ import styles from './index.less';
 
 
 class Search extends Component {
+  static propTypes = {
+    onClick: PropTypes.func
+  };
+  static defaultProps = {
+
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -43,11 +49,15 @@ class Search extends Component {
     });
   }
 
+  listClickHandler = () => {
+    this.props.onClick && this.props.onClick();
+  }
+
   render() {
     return (
       <div>
         <ul className={styles.listWrap} onClick={this.hideMenuPanel}>
-          <li onContextMenu={this.contextMenuHandler}>
+          <li onContextMenu={this.contextMenuHandler} onClick={this.listClickHandler}>
             <div className={styles.fl}>
               <div>杜丽</div>
               <div>2017/01/08</div>

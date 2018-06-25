@@ -1,14 +1,20 @@
 /**
  * Created by 0291 on 2018/6/13.
  */
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PropTypes, Component } from 'react';
 import { Dropdown, Menu, Input, Icon } from 'antd';
 import classnames from 'classnames';
 import { connect } from 'dva';
 import Avatar from '../../../../Avatar';
 import styles from './index.less';
 
-class IMPanel extends PureComponent {
+class IMPanel extends Component {
+  static propTypes = {
+    panelInfo: PropTypes.object
+  };
+  static defaultProps = {
+
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -49,7 +55,6 @@ class IMPanel extends PureComponent {
 
   render() {
     const { panelInfo, messagelist } = this.props;
-    console.log(messagelist)
     return (
       <div className={styles.IMPanelWrap}>
         <div className={styles.header}>

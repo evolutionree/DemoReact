@@ -8,7 +8,7 @@ export default {
   state: {
     webIMSocket: null,
     showPanel: '',
-    panelInfo: null,
+    panelInfo: {},
     showChildrenPanel: '',
     childrenPanelInfo: '',
     messagelist: null
@@ -48,7 +48,7 @@ export default {
       return {
         ...state,
         showPanel: '',
-        panelInfo: null,
+        panelInfo: {},
         showChildrenPanel: '',
         childrenPanelInfo: '',
         ...payload
@@ -58,7 +58,7 @@ export default {
       return {
         ...state,
         showPanel: '',
-        panelInfo: null,
+        panelInfo: {},
         showChildrenPanel: '',
         childrenPanelInfo: ''
       };
@@ -72,7 +72,7 @@ export default {
     closePanel() {
       return {
         showPanel: '',
-        panelInfo: null,
+        panelInfo: {},
         showChildrenPanel: '',
         childrenPanelInfo: ''
       };
