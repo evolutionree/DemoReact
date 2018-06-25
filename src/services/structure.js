@@ -359,3 +359,16 @@ export async function forcelogout(params) {
     body: JSON.stringify(params)
   });
 }
+
+/**
+ * 查询部门及用户
+ * @param params
+ * DeptId
+ * @returns {Promise.<Object>}
+ */
+export async function getlistsub(DeptId) {
+  return request('/api/Department/listsub', {
+    method: 'post',
+    body: JSON.stringify({ DeptId })
+  });
+}

@@ -8,7 +8,7 @@ import classnames from 'classnames';
 import styles from './index.less';
 
 
-class Search extends Component {
+class List extends Component {
   static propTypes = {
     onClick: PropTypes.func
   };
@@ -71,4 +71,4 @@ class Search extends Component {
   }
 }
 
-export default Search;
+export default List;

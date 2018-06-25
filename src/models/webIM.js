@@ -1,7 +1,7 @@
 import {
   connectWebIMSocket
 } from '../services/authentication';
-import { queryUserInfo } from '../services/structure';
+import { queryUserInfo, getlistsub } from '../services/structure';
 
 export default {
   namespace: 'webIM',
@@ -24,9 +24,9 @@ export default {
   },
   effects: {
     *init({ payload }, { select, put }) {
-      yield put({ type: 'connectSocket' });
+      yield put({ type: 'connectSocket__' });
     },
-    *connectSocket(action, { select, call, put, take }) { //链接webStocket
+    *connectSocket__(action, { select, call, put, take }) { //链接webStocket
       const result = yield call(queryUserInfo);
       const { user } = result.data;
       const userid = user[0].userid;
