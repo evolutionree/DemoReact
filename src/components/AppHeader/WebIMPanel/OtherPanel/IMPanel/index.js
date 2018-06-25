@@ -55,6 +55,7 @@ class IMPanel extends Component {
 
   render() {
     const { panelInfo, messagelist } = this.props;
+    console.log(panelInfo)
     return (
       <div className={styles.IMPanelWrap}>
         <div className={styles.header}>

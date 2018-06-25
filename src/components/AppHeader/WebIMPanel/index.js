@@ -9,6 +9,7 @@ import Search from './Component/Search';
 import Tabs from './Component/Tabs';
 import { ContactPanel, GroupPanel, RecentPanel } from './TabPanel';
 import { OtherPanelRender } from './OtherPanelRender';
+import ContextMenuPanel from './Component/ContextMenuPanel';
 import styles from './index.less';
 
 class WebIMPanel extends Component {
@@ -46,6 +47,19 @@ class WebIMPanel extends Component {
     document.body.addEventListener('click', this.clickOutsideClose, false);
   }
 
+  componentWillUnmount() {
+    document.body.removeEventListener('click', this.clickOutsideClose);
+  }
+
+  clickOutsideClose = (event) => {
+    this.props.dispatch({ type: 'webIM/setContextMenu', payload: { visible: false } });  //隐藏 上下文菜单列表
+
+    if ($(event.target).closest('#web-IM-Panel').length || $(event.target).closest('.webIMTooltip').length || $(event.target).closest('#otherPanelWrap').length || $(event.target).closest('#otherPanelChildrenWrap').length) {
+      return;
+    }
+    this.hidePanel();
+  };
+
   componentDidUpdate() {
     const { webIMSocket, dispatch } = this.props;
     if (webIMSocket) {
@@ -61,17 +75,6 @@ class WebIMPanel extends Component {
       };
     }
   }
-
-  componentWillUnmount() {
-    document.body.removeEventListener('click', this.clickOutsideClose);
-  }
-
-  clickOutsideClose = (event) => {
-    if ($(event.target).closest('#web-IM-Panel').length || $(event.target).closest('.webIMTooltip').length || $(event.target).closest('#otherPanelWrap').length || $(event.target).closest('#otherPanelChildrenWrap').length) {
-      return;
-    }
-    this.hidePanel();
-  };
 
   hidePanel = () => {
     this.setState({
@@ -100,9 +103,10 @@ class WebIMPanel extends Component {
   }
 
   render() {
+    const { showPanel, showChildrenPanel, contextMenuInfo } = this.props;
     const tabModel = this.state.tabModel;
-    let OtherPanelComponent = OtherPanelRender[this.props.showPanel];
-    let OtherPanelChildrenComponent = OtherPanelRender[this.props.showChildrenPanel];
+    let OtherPanelComponent = OtherPanelRender[showPanel];
+    let OtherPanelChildrenComponent = OtherPanelRender[showChildrenPanel];
     return (
       <div>
         <Icon
@@ -148,16 +152,18 @@ class WebIMPanel extends Component {
             }
           </div> : null
         }
+        <ContextMenuPanel />
       </div>
     );
   }
 }
 
-export default connect(state => {
-  return {
-    ...state.webIM
-  };
-},
+export default connect(
+  state => {
+    return {
+      ...state.webIM
+    };
+  },
   dispatch => {
     return {
       dispatch

@@ -11,7 +11,8 @@ export default {
     panelInfo: {},
     showChildrenPanel: '',
     childrenPanelInfo: '',
-    messagelist: null
+    messagelist: null,
+    contextMenuInfo: {} //上下文菜单
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -69,12 +70,19 @@ export default {
         messagelist: state.messagelist ? [...state.messagelist, message] : [message]
       };
     },
+    setContextMenu(state, { payload: contextMenuInfo }) {
+      return {
+        ...state,
+        contextMenuInfo
+      };
+    },
     closePanel() {
       return {
         showPanel: '',
         panelInfo: {},
         showChildrenPanel: '',
-        childrenPanelInfo: ''
+        childrenPanelInfo: '',
+        contextMenuInfo: {}
       };
     }
   }

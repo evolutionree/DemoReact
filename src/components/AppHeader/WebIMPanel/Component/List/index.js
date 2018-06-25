@@ -18,9 +18,7 @@ class Search extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      menuVisible: false,
-      menuLeft: 0,
-      menuTop: 0
+
     };
   }
   componentWillReceiveProps(nextProps) {
@@ -36,17 +34,7 @@ class Search extends Component {
       pageX = document.documentElement.clientWidth - 180;
     }
 
-    this.setState({
-      menuVisible: true,
-      menuLeft: pageX,
-      menuTop: pageY
-    });
-  }
-
-  hideMenuPanel = () => {
-    this.setState({
-      menuVisible: false
-    });
+    this.props.onContextMenu && this.props.onContextMenu(pageX, pageY);
   }
 
   listClickHandler = () => {
@@ -56,7 +44,7 @@ class Search extends Component {
   render() {
     return (
       <div>
-        <ul className={styles.listWrap} onClick={this.hideMenuPanel}>
+        <ul className={styles.listWrap}>
           <li onContextMenu={this.contextMenuHandler} onClick={this.listClickHandler}>
             <div className={styles.fl}>
               <div>杜丽</div>
@@ -77,12 +65,6 @@ class Search extends Component {
               <div>余苹：您好，我是市场部跟你对接的余苹</div>
             </div>
           </li>
-        </ul>
-        <ul className={classnames(styles.contextMenuWrap, { [styles.showMenuList]: this.state.menuVisible })}
-            style={{ position: 'fixed', left: this.state.menuLeft + 'px', top: this.state.menuTop + 'px' }}>
-          <li>设为星标同事</li>
-          <li>查看资料</li>
-          <li>隐藏该会话</li>
         </ul>
       </div>
     );

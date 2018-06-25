@@ -2,6 +2,7 @@
  * Created by 0291 on 2018/6/1.
  */
 import React, { PropTypes, Component } from 'react';
+import { connect } from 'dva';
 import { Dropdown, Menu, Modal, Icon } from 'antd';
 import List from '../../Component/List';
 import IMPanel from '../../OtherPanel/IMPanel';
@@ -25,11 +26,20 @@ class ReactPanel extends Component {
     });
   }
 
+  onContextMenu = (left, top) => {
+    this.props.dispatch({ type: 'webIM/setContextMenu', payload: {
+      visible: true,
+      type: 1,
+      left,
+      top
+    } });
+  }
+
   render() {
     return (
       <div className={styles.recent_tabPanel}>
         <div className={styles.title}>最近聊天</div>
-        <List onClick={this.listClickHandler} />
+        <List onClick={this.listClickHandler} onContextMenu={this.onContextMenu} />
         <div className={classnames(styles.Recent_IMPanelWrap, { [styles.visible]: this.state.IMPanelVisible })}>
           <IMPanel panelInfo={{ username: 'test' }} />
         </div>
@@ -38,4 +48,13 @@ class ReactPanel extends Component {
   }
 }
 
-export default ReactPanel;
+export default connect(state => {
+    return {
+      ...state.webIM
+    };
+  },
+  dispatch => {
+    return {
+      dispatch
+    };
+  })(ReactPanel);
