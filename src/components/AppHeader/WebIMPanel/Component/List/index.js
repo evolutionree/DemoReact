@@ -34,7 +34,7 @@ class List extends Component {
       pageX = document.documentElement.clientWidth - 180;
     }
 
-    this.props.onContextMenu && this.props.onContextMenu(pageX, pageY);
+    this.props.onContextMenu && this.props.onContextMenu(pageX, pageY, );
   }
 
   listClickHandler = () => {

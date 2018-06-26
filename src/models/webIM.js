@@ -1,7 +1,7 @@
 import {
   connectWebIMSocket
 } from '../services/authentication';
-import { queryUserInfo, getlistsub } from '../services/structure';
+import { queryUserInfo } from '../services/structure';
 
 export default {
   namespace: 'webIM',

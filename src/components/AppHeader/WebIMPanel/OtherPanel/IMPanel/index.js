@@ -6,6 +6,7 @@ import { Dropdown, Menu, Input, Icon } from 'antd';
 import classnames from 'classnames';
 import { connect } from 'dva';
 import Avatar from '../../../../Avatar';
+import _ from 'lodash';
 import styles from './index.less';
 
 class IMPanel extends Component {
@@ -41,7 +42,7 @@ class IMPanel extends Component {
 
   sendMessage = () => {
     const { webIMSocket } = this.props;
-    webIMSocket.send(JSON.stringify({
+    const sendData = {
       Cmd: 3,
       data: {
         ctype: 0,
@@ -50,12 +51,34 @@ class IMPanel extends Component {
         cont: this.state.sendMessage,
         rec: this.props.panelInfo.userid
       }
-    }));
+    };
+    webIMSocket.send(JSON.stringify(sendData));
+    const nowTime = new Date().getTime();
+    this.props.dispatch({
+      type: 'webIM/receivemessage',
+      payload: {
+        ...sendData,
+        time: nowTime,
+        type: 'sendMessage'
+      }
+    });
+    this.setState({
+      sendMessage: ''
+    });
   }
 
   render() {
-    const { panelInfo, messagelist } = this.props;
-    console.log(panelInfo)
+    const { panelInfo, messagelist, userInfo } = this.props;
+    const currentUserIMData = messagelist instanceof Array && messagelist.filter(item => {
+      if (item.type === 'sendMessage') {
+        return item.data.rec === panelInfo.userid;
+      } else if (item.type === 'receiveMessage') {
+        return item.CustomContent.s = panelInfo.userid;
+      }
+    });
+
+    const currentUserIMData_sortBy = _.sortBy(currentUserIMData, item => item.time);
+
     return (
       <div className={styles.IMPanelWrap}>
         <div className={styles.header}>
@@ -63,25 +86,20 @@ class IMPanel extends Component {
           <Icon type="close" onClick={this.closePanel} />
         </div>
         <div className={styles.body}>
-          <div className={classnames(styles.chatItem, styles.itemLeft)}>
-            <Avatar image={`/api/fileservice/read?fileid=${panelInfo.usericon}`} width={30} />
-            <div className={styles.message}>昨天下午我们拜访的客户联系方式你有吗昨天下午我们拜访的客户联系方式你有吗昨天下午我们拜访的客户联系方式你有吗昨天下午我们拜访的客户联系方式你有吗？</div>
-          </div>
-          <div className={classnames(styles.chatItem, styles.itemLeft)}>
-            <Avatar image={`/api/fileservice/read?fileid=${panelInfo.usericon}`} width={30} />
-            <div className={styles.message}>我要他的电话就可以了</div>
-          </div>
-          <div className={classnames(styles.chatItem, styles.itemRight)}>
-            <Avatar image={`/api/fileservice/read?fileid=${panelInfo.usericon}`} width={30} />
-            <div className={styles.message}>对方电话是18166980982</div>
-          </div>
           {
-            messagelist && messagelist instanceof Array && messagelist.map(item => {
+            currentUserIMData_sortBy && currentUserIMData_sortBy instanceof Array && currentUserIMData_sortBy.map(item => {
+              console.log(item);
+              console.log(item.ud)
               return (
-                <div className={classnames(styles.chatItem, styles.itemLeft)} key={item.CustomContent.mid}>
-                  <Avatar image={`/api/fileservice/read?fileid=${panelInfo.usericon}`} width={30} />
-                  <div className={styles.message}>{item.Message}</div>
-                </div>
+                item.type === 'sendMessage' ?
+                  <div className={classnames(styles.chatItem, styles.itemRight)} key={item.time}>
+                    <Avatar image={`/api/fileservice/read?fileid=${userInfo.usericon}`} width={30} />
+                    <div className={styles.message}>{item.data.cont}</div>
+                  </div> :
+                  <div className={classnames(styles.chatItem, styles.itemLeft)} key={item.time}>
+                    <Avatar image={`/api/fileservice/read?fileid=${item.CustomContent.ud.UserIcon}`} width={30} />
+                    <div className={styles.message}>{item.Message}</div>
+                  </div>
               );
             })
           }
@@ -93,7 +111,7 @@ class IMPanel extends Component {
             <Icon type="smile-o" />
           </div>
           <div className={styles.inputWrap}>
-            <textarea onChange={this.sendMessageChangeHandler} />
+            <textarea onChange={this.sendMessageChangeHandler} value={this.state.sendMessage} />
           </div>
           <div className={styles.submitWrap}>
             <div className={styles.buttonWrap}>
@@ -109,7 +127,13 @@ class IMPanel extends Component {
   }
 }
 
-export default connect(state => state.webIM,
+export default connect(
+  state => {
+    return {
+      userInfo: state.app.user,
+      ...state.webIM
+    };
+  },
   dispatch => {
     return {
       dispatch

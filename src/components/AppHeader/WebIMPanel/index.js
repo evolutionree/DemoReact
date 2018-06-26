@@ -45,16 +45,18 @@ class WebIMPanel extends Component {
 
   componentDidMount() {
     document.body.addEventListener('click', this.clickOutsideClose, false);
+    document.body.addEventListener('contextmenu', this.clickOutsideClose, false);
   }
 
   componentWillUnmount() {
     document.body.removeEventListener('click', this.clickOutsideClose);
+    document.body.removeEventListener('contextmenu', this.clickOutsideClose);
   }
 
   clickOutsideClose = (event) => {
     this.props.dispatch({ type: 'webIM/setContextMenu', payload: { visible: false } });  //隐藏 上下文菜单列表
 
-    if ($(event.target).closest('#web-IM-Panel').length || $(event.target).closest('.webIMTooltip').length || $(event.target).closest('#otherPanelWrap').length || $(event.target).closest('#otherPanelChildrenWrap').length) {
+    if ($(event.target).closest('#webIM').length) {
       return;
     }
     this.hidePanel();
@@ -67,6 +69,8 @@ class WebIMPanel extends Component {
         console.log('Client received a message', event);
         const message = JSON.parse(event.data);
         if (message.ResultCode === undefined) {
+          message.type = 'receiveMessage';
+          message.time = new Date(message.CustomContent.t).getTime();
           dispatch({
             type: 'webIM/receivemessage',
             payload: message
@@ -108,14 +112,14 @@ class WebIMPanel extends Component {
     let OtherPanelComponent = OtherPanelRender[showPanel];
     let OtherPanelChildrenComponent = OtherPanelRender[showChildrenPanel];
     return (
-      <div>
+      <div id="webIM">
         <Icon
           type="contacts"
           title="通讯录"
           style={{ fontSize: 24, cursor: 'pointer', marginRight: '10px', verticalAlign: 'middle' }}
           onClick={this.togglePanelVisible}
         />
-        <div id="web-IM-Panel" className={classnames(styles.panelWrap, { [styles.panelVisible]: this.state.panelVisible })}>
+        <div className={classnames(styles.panelWrap, { [styles.panelVisible]: this.state.panelVisible })}>
           <ul className={styles.header}>
             <li>
               <Search style={{ top: '50%', transform: 'translateY(-50%)' }} />
@@ -139,14 +143,14 @@ class WebIMPanel extends Component {
           </div>
         </div>
         {
-          this.state.panelVisible && OtherPanelComponent ? <div className={styles.otherPanelWrap} id="otherPanelWrap">
+          this.state.panelVisible && OtherPanelComponent ? <div className={styles.otherPanelWrap}>
             {
               React.createElement(OtherPanelComponent, { panelInfo: this.props.panelInfo })
             }
           </div> : null
         }
         {
-          this.state.panelVisible && OtherPanelChildrenComponent ? <div className={styles.otherPanelWrap} id="otherPanelChildrenWrap">
+          this.state.panelVisible && OtherPanelChildrenComponent ? <div className={styles.otherPanelWrap}>
             {
               React.createElement(OtherPanelChildrenComponent, { panelInfo: this.props.childrenPanelInfo, showGoBack: true })
             }

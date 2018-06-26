@@ -3,13 +3,13 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Badge, Icon, Tabs, message, Spin } from "antd";
+import { Icon, message, Spin } from 'antd';
 import classnames from 'classnames';
 import styles from '../index.less';
-import Avatar from "../../../../Avatar";
-import Search from "../../../../Search";
-import DepartmentSelect from "../../../../DepartmentSelect";
-import { queryContacts, queryUsers, flagContact } from '../../../../../services/structure';
+import Avatar from '../../../../Avatar';
+import Search from '../../../../Search';
+import DepartmentCrumb from '../../Component/DepartmentCrumb';
+import { queryContacts, queryUsers, flagContact, getlistsub } from '../../../../../services/structure';
 
 const ContactItem = ({ dispatch, data, onStar, showStar = false }) => {
   const onClickStar = (e) => {
@@ -75,6 +75,13 @@ const MetaValue = ({ children }) => {
 };
 
 class ContactPanel extends Component {
+  static propTypes = {
+
+  };
+  static defaultProps = {
+
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -86,7 +93,8 @@ class ContactPanel extends Component {
       pageSize: 20,
       list: [],
       loading: false,
-      hasMore: true
+      hasMore: true,
+      childrenDept: [] //团队组织Tab-- 当前查询部门的子部门数据
     };
   }
 
@@ -115,9 +123,9 @@ class ContactPanel extends Component {
         this.setState({ loading: false });
         message.error(err.message || '获取通讯录列表失败');
       });
-    } else {
+    } else if (currentTab === '2') {
       const params = {
-        deptId: currentTab === '2' ? this.props.userInfo.deptid : searchDept,
+        deptId: this.props.userInfo.deptid,
         pageIndex: pageIndex,
         pageSize: -1,
         recStatus: 1,
@@ -127,6 +135,14 @@ class ContactPanel extends Component {
       this.setState({ loading: true });
       queryUsers(params).then(result => {
         this.setState({ list: result.data.pagedata, loading: false });
+      }, err => {
+        this.setState({ loading: false });
+        message.error(err.message || '获取通讯录列表失败');
+      });
+    } else {
+      this.setState({ loading: true });
+      getlistsub(searchDept).then(result => {
+        this.setState({ list: result.data.subusers, childrenDept: result.data.subdepts, loading: false });
       }, err => {
         this.setState({ loading: false });
         message.error(err.message || '获取通讯录列表失败');
@@ -199,15 +215,10 @@ class ContactPanel extends Component {
           </ul>
           <div className={styles.panelContent}>
             <Spin spinning={this.state.loading}>
-              <div className={styles.panelSearch}>
-                {this.state.currentTab === '3' ? (
-                  <DepartmentSelect
-                    showSearch
-                    value={this.state.searchDept}
-                    onChange={this.onDepartmentChange}
-                    style={{ width: '100%' }}
-                  />
-                ) : (
+              {this.state.currentTab === '3' ? (
+                <DepartmentCrumb childrenDept={this.state.childrenDept} onSelect={this.onDepartmentChange} />
+              ) : (
+                <div className={styles.searchWrap}>
                   <Search
                     mode="icon"
                     placeholder="按姓名搜索"
@@ -215,8 +226,8 @@ class ContactPanel extends Component {
                     onSearch={this.onSearch}
                     width="100%"
                   />
-                )}
-              </div>
+                </div>
+              )}
               <ContactList>
                 {this.state.list.map(item => (
                   <ContactItem
@@ -249,3 +260,11 @@ export default connect(
     };
   }
 )(ContactPanel);
+
+
+{/*<DepartmentSelect*/}
+  {/*showSearch*/}
+  {/*value={this.state.searchDept}*/}
+  {/*onChange={this.onDepartmentChange}*/}
+  {/*style={{ width: '100%' }}*/}
+{/*/>*/}
