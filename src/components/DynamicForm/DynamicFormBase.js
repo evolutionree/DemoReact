@@ -122,7 +122,7 @@ class DynamicFormBase extends Component {
         }
       });
     }
-    if (field.isrequire || isRequiredJS) {
+    if ((field.isrequire || isRequiredJS) && field.controltype !== 31) { //31:引用对象 永远不做必填校验
       rules.push({
         validator(rule, value, callback) {
           const isEmptyArray = Array.isArray(value) && !value.length;

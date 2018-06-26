@@ -27,10 +27,6 @@ class RelObject extends React.Component {
     });
   }
 
-  onCheckChange = (e) => {
-    this.props.onChange(e.target.checked);
-  };
-
   render() {
     const { value_name } = this.props; //编辑页 数据源不允许修改  直接取value_name值
     return (
