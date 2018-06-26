@@ -48,6 +48,7 @@ class DataTransferModal extends React.Component {
       const selectSchemeObj = _.find(this.props.schemelist, (item, index) => index === values.fieldid);
 
       let submitData = {
+        ouserid: values.ouserid,
         newuserid: values.newuserid,
         fieldid: selectSchemeObj.fieldid,
         schemeid: selectSchemeObj.schemeid,
@@ -71,7 +72,8 @@ class DataTransferModal extends React.Component {
 
   render() {
     const { visible, onCancel, modalPending, entityName, schemelist, currItems } = this.props;
-    const { getFieldDecorator } = this.props.form;
+    const { getFieldDecorator, getFieldValue } = this.props.form;
+    const selectSchemeObj = _.find(schemelist, (item, index) => index === getFieldValue('fieldid'));
     return (
       <Modal
         title={'转移' + entityName}
@@ -112,6 +114,20 @@ class DataTransferModal extends React.Component {
               </RadioGroup>
             )}
           </FormItem>
+          {
+            selectSchemeObj && selectSchemeObj.ismultifield ? <FormItem
+              label="选择旧的用户"
+            >
+              {getFieldDecorator('ouserid', {
+                initialValue: '',
+                rules: [{
+                  required: true, message: '请选择旧的用户'
+                }]
+              })(
+                <SelectUser />
+              )}
+            </FormItem> : null
+          }
           <FormItem
             label="选择新的用户"
           >
