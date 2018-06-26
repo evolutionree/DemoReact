@@ -134,7 +134,7 @@ class DefaultValueSingleSelect extends React.Component {
     let flag = true;
     const intervalId = setInterval(() => {
       if (flag) return flag = false; // 跳出第一次执行
-      const dataSource = this.props.form.getFieldValue('dataSource');
+      const dataSource = this.props.form.getFieldValue('dataSource__');
       if (!dataSource || !dataSource.sourceId) { // 数据源是空
         if (this.state.options.length) {
           // this.setState({ options: [] });
@@ -694,7 +694,7 @@ export default class FormItemFactory {
       case 18: // 数据源控件
         return (
           <FormItem label="数据源" key="dataSource">
-            {this.getFieldDecorator('dataSource_', {
+            {this.getFieldDecorator('dataSource_', { //表单中有部分字段是动态切换的 出现了字段名一样的数据 所有加_以区分 不然ant design会报错，说校验规则变为undefined 具体原因不详
               rules: [{ required: true, message: '请选择数据源' }]
             })(<DataSourceSelect />)}
           </FormItem>
@@ -702,7 +702,7 @@ export default class FormItemFactory {
       default:
         return (
           <FormItem label="数据源" key="dataSource">
-            {this.getFieldDecorator('dataSource__', {
+            {this.getFieldDecorator('dataSource__', { //注意： 是否存在其他项 获取DataSource项的值  需要核对有几个【_】
               rules: [{ required: true, message: '请选择数据源' }]
             })(<DicTypeSelect />)}
           </FormItem>

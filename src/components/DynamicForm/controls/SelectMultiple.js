@@ -160,6 +160,7 @@ class SelectMultiple extends Component {
         mode="multiple"
         style={{ width: '100%' }}
       >
+        <Option value="">- 请选择 -</Option>
         {options.map(opt => (
           <Option key={opt.value} style={opt.disabled ? { display: 'none'} : null}>{opt.label}</Option>
         ))}
