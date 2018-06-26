@@ -89,7 +89,7 @@ class SelectProductSerial extends React.Component {
     const { multiple, value } = this.props;
     if (multiple === 1) {
       if (!value) return [];
-      return value.split(',');
+      return value && value.split(',');
     } else {
       if (!value) return undefined; //不返回‘’，不然传placeholder 显示不了
       return value;
@@ -102,7 +102,7 @@ class SelectProductSerial extends React.Component {
       this.props.onChange('', true);
       return;
     }
-    const arrVal = val.split(',');
+    const arrVal = val && val.split(',');
     const treeData = this.getTreeData();
     const matchIds = arrVal.filter(id => {
       let flag = false;
