@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import { Modal, Select,Button,Radio,message} from 'antd';
-import { DynamicFormEdit,DynamicFormAdd } from './DynamicForm';
+import { DynamicFormEdit,DynamicFormAdd, generateDefaultFormData } from './DynamicForm';
 import { getGeneralProtocol, getEntcommDetail,editEntcomm,addEntcomm } from '../services/entcomm';
 import { queryrules,trnasfer } from '../services/entityTransfer';
 
@@ -123,7 +123,7 @@ class EntcommTransferModal extends Component {
     });
     // fix 表格控件，加typeid
     function genEditData(recordDetail, protocol) {
-      const retData = { ...recordDetail };
+      const retData = generateDefaultFormData(protocol, recordDetail);
       protocol.forEach(field => {
         const { controltype, fieldname, fieldconfig } = field;
         if (controltype === 24 && retData[fieldname]) {
@@ -263,7 +263,7 @@ class EntcommTransferModal extends Component {
       detailData: {}, // 记录详情
       protocol: [], // 协议字段
       data: {}, // 表单数据
-      title: '新增',      
+      title: '新增',
       key: new Date().getTime(),
       commonid: '',
       funccode: ''//发送消息用

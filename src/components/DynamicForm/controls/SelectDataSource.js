@@ -101,7 +101,7 @@ class SelectDataSource extends React.Component {
     }]);
 
     const iconCls = classnames([styles.iconClose, {//非禁用状态且有值得时候  支持删除操作
-      [styles.iconCloseShow]: text !== '' && this.props.isReadOnly !== 1
+      [styles.iconCloseShow]: text !== '' && text !== undefined && this.props.isReadOnly !== 1
     }]);
 
     return (
