@@ -150,6 +150,12 @@ class SelectMultiple extends Component {
     const { value, isReadOnly, onFocus } = this.props;
     const options = this.getOptions();
     const arrValue = value ? value.split(',') : [];
+
+    const children = [];//<Option value="">- 请选择 -</Option> 不加这个
+    options.map(opt => {
+      children.push(<Option key={opt.value} style={opt.disabled ? { display: 'none' } : null}>{opt.label}</Option>);
+    });
+
     return (
       <Select
         value={arrValue}
@@ -160,10 +166,9 @@ class SelectMultiple extends Component {
         mode="multiple"
         style={{ width: '100%' }}
       >
-        <Option value="">- 请选择 -</Option>
-        {options.map(opt => (
-          <Option key={opt.value} style={opt.disabled ? { display: 'none'} : null}>{opt.label}</Option>
-        ))}
+        {
+          children
+        }
       </Select>
     );
   }
