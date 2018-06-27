@@ -86,6 +86,8 @@ import PasswordStrategy from './routes/Configure/passwordStrategy';
 
 import TransferScheme from './routes/Configure/transferScheme';
 
+import QRCodeEntrance from './routes/Configure/QRCodeEntrance';
+
 const appRoutes = [
   { path: 'NoFoundPage', comp: NoFoundPage }, //进入系统会做菜单权限判断 Router的原因 首次让其先进入一个无任何Ajax的页面
   { path: 'structure', comp: Structure, entid: '3d77dfd2-60bb-4552-bb69-1c3e73cf4095', model: require('./models/structure') },
@@ -167,6 +169,7 @@ const appRoutes = [
   { path: 'print-template', comp: PrintTemplate, model: require('./models/printTemplate') },
   { path: 'passwordstrategy', comp: PasswordStrategy, model: require('./models/passwordstrategy') },
   { path: 'transferscheme', comp: TransferScheme, model: require('./models/transferscheme') },
+  { path: 'qrcodeentrance', comp: QRCodeEntrance, model: require('./models/transferscheme') },
   { path: 'nopermission', comp: NoPermission },
   { path: '*', comp: NoFoundPage }
 ];
