@@ -83,11 +83,22 @@ class FieldFormModal extends Component {
     const isClosing = thisVisible && !nextVisible;
     if (isOpening) {
       const { form, showModals, editingRecord } = nextProps;
+
       if (/edit/.test(showModals)) {
+        const fieldConfig = editingRecord.fieldConfig || {};
+        let newFieldConfig = {};
+        for (let key in fieldConfig) {
+          let newKey = key;
+          if (key === 'dataSource') {
+            newKey = 'dataSource_' + editingRecord.controlType;
+          }
+          newFieldConfig[newKey] = fieldConfig[key];
+        }
+
         form.resetFields();
         form.setFields(_.mapValues({
           ...editingRecord,
-          ...(editingRecord.fieldConfig || {}),
+          ...newFieldConfig,
           fieldConfig: undefined
         }, val => ({ value: val })), 1000);
       } else {
@@ -111,11 +122,10 @@ class FieldFormModal extends Component {
       }
 
       let newValues = {};
-      for (let key in values) { //把后缀为_的key值 去掉‘_’(表单中有部分字段是动态切换的 出现了字段名一样的数据 所有加_以区分 不然ant design会报错，说校验规则变为undefined 具体原因不详)
+      for (let key in values) { //把dataSource_开头的的key值 替换成【dataSource】(表单中有部分字段是动态切换的 出现了字段名一样的数据 所有加_以区分 不然ant design会报错，说校验规则变为undefined 具体原因不详)
         let newKey = key;
-        if (/_$/.test(key)) {
-          let reg = /_/g;
-          newKey = key.replace(reg, '');
+        if (/^dataSource_/.test(key)) {
+          newKey = 'dataSource';
         }
         newValues[newKey] = values[key];
       }
