@@ -22,7 +22,7 @@ export default {
         if (match) {
           const [whole, collectorId, collectorName] = match;
           dispatch({ type: 'init', payload: collectorId });
-          dispatch({ type: 'putState', payload: { collectorName } });
+          dispatch({ type: 'putState', payload: { collectorName: decodeURI(collectorName) } });
           modelDirty = true;
         } else {
           modelDirty && dispatch({ type: 'resetState' });

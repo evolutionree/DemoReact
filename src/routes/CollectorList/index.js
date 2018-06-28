@@ -65,7 +65,8 @@ function CollectorList({
           key="remindername"
           dataIndex="remindername"
           render={(val, record) => {
-            return <Link to={`collector/${record.reminderid}/${record.remindername}`}>{val}</Link>;
+            const remindername = encodeURI(record.remindername);
+            return <Link to={`collector/${record.reminderid}/${remindername}`}>{val}</Link>;
           }}
         />
         <Column title="关联实体" key="entityname" dataIndex="entityname" />
