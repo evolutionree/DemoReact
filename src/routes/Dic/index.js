@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'dva';
 import { Form, Button, Input, Checkbox, message, Select, Row, Col, Modal } from 'antd';
 import Page from '../../components/Page';
-import DragList from './DragList';
+import DragList from '../../components/UKComponent/Data/DragList';
 import styles from './index.less';
 import classnames from 'classnames';
 
@@ -203,7 +203,8 @@ function DicPage({
         {
           currentActiveId ? <DragList dataSource={dicdata[currentActiveId]}
                                       column={column}
-                                      onSortEnd={listSortEnd} /> : <DragList dataSource={dicdata} column={column} onSortEnd={listSortEnd} />
+                                      onSortEnd={listSortEnd}
+                                      delayDragColumn={['operate']} /> : <DragList dataSource={dicdata} column={column} onSortEnd={listSortEnd} delayDragColumn={['operate']} />
         }
       </div>
     </Page>

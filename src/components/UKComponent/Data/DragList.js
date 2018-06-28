@@ -5,14 +5,15 @@ import React, { Component } from 'react';
 import { Row, Col } from 'antd';
 import _ from 'lodash';
 import { SortableContainer, SortableElement, arrayMove, SortableHandle } from 'react-sortable-hoc';
+import classnames from 'classnames';
 import Styles from './DragList.less';
 
 let tableBodyRef;
-const DragHandle = SortableHandle(props => {
-  return props.children;
-});
+// const DragHandle = SortableHandle(props => {
+//   return props.children;
+// });
 
-const SortableItem = SortableElement(({ column, item, rowIndex, preventDefault }) => {
+const SortableItem = SortableElement(({ column, item, rowIndex, preventDefault, delayDragColumn }) => {
   const renderCell = (columnItem, rowData) => {
     if (typeof columnItem.render === 'function') {
       return columnItem.render(rowData[columnItem.key], rowData, rowIndex);
@@ -22,7 +23,7 @@ const SortableItem = SortableElement(({ column, item, rowIndex, preventDefault }
   }
 
   const cellMouseOver = (columnItem) => {
-    if (columnItem.key === 'operate') { //操作栏  阻止组件默认事件  让其可以点击
+    if (delayDragColumn.indexOf(columnItem.key) > -1) { //操作栏  阻止组件默认事件  让其可以点击
       preventDefault(200);
     } else {
       preventDefault(0);
@@ -34,9 +35,10 @@ const SortableItem = SortableElement(({ column, item, rowIndex, preventDefault }
       <Row>
         {
           column.map((columnItem, index) => {
+            const isDelayDragColumn = delayDragColumn.indexOf(columnItem.key) > -1;
             return (
               <Col span={columnItem.span} key={index}>
-                <div className={Styles.tableColumn} onMouseOver={cellMouseOver.bind(this, columnItem)}>
+                <div className={classnames(Styles.tableColumn, { [Styles.delayDragColumn]: isDelayDragColumn })} onMouseOver={cellMouseOver.bind(this, columnItem)}>
                   {
                     renderCell(columnItem, item)
                   }
@@ -50,12 +52,12 @@ const SortableItem = SortableElement(({ column, item, rowIndex, preventDefault }
   );
 });
 
-const SortableList = SortableContainer(({ column, items, preventDefault, ...props }) => {
+const SortableList = SortableContainer(({ column, items, preventDefault, delayDragColumn, ...props }) => {
   return (
     <div className={Styles.body} ref={ref => tableBodyRef = ref} {...props}>
       {
-        items instanceof Array && items.map((item, index) => {
-          return <SortableItem key={index} column={column} index={index} rowIndex={index} item={item} preventDefault={preventDefault} />;
+        items instanceof Array && items.map((item, index) => { //一定要加Index属性 否则拖拽不了 preventDefault： 延时拖拽
+          return <SortableItem key={index} column={column} index={index} rowIndex={index} item={item} preventDefault={preventDefault} delayDragColumn={delayDragColumn} />;
         })
       }
     </div>
@@ -64,8 +66,21 @@ const SortableList = SortableContainer(({ column, items, preventDefault, ...prop
 
 class DragList extends Component {
   static propTypes = {
-
+    onSortEnd: React.PropTypes.func,
+    column: React.PropTypes.shape({
+      key: React.PropTypes.string,
+      name: React.PropTypes.string,
+      span: React.PropTypes.number
+    }),
+    delayDragColumn: React.PropTypes.oneOfType([ //列的key值 延时拖拽的列（当插件拖拽时，不允许用户点击，所以采用pressDelay，让用户可以点击操作当前列进行一些行为）
+      React.PropTypes.array,
+      React.PropTypes.string
+    ])
   }
+
+  static defaultProps = {
+    delayDragColumn: []
+  };
 
   constructor(props) {
     super(props);
@@ -92,7 +107,7 @@ class DragList extends Component {
 
   onSortEnd = ({ oldIndex, newIndex }) => {
     const newDataSource = this.setSeqNum(arrayMove(this.props.dataSource, oldIndex, newIndex));
-    this.props.onSortEnd(newDataSource);
+    this.props.onSortEnd && this.props.onSortEnd(newDataSource);
   };
 
   preventDefault = (time) => {
@@ -104,7 +119,7 @@ class DragList extends Component {
   render() {
     let dataSource = this.setSeqNum(this.props.dataSource);
     return (
-      <div className={Styles.Wrap}>
+      <div className={Styles.DragListWrap}>
         <div className={Styles.Header} ref={ref => this.customTableHeaderRef = ref}>
           <Row>
             {
@@ -118,7 +133,8 @@ class DragList extends Component {
                       items={dataSource}
                       onSortEnd={this.onSortEnd}
                       pressDelay={this.state.pressDelay}
-                      preventDefault={this.preventDefault} />
+                      preventDefault={this.preventDefault}
+                      delayDragColumn={this.props.delayDragColumn} />
       </div>
     );
   }
