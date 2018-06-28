@@ -7,7 +7,7 @@ import { Form, Button, Input, Checkbox, message, Select, Row, Col, Modal, Table 
 import Page from '../../../components/Page';
 import Toolbar from '../../../components/Toolbar';
 import Search from '../../../components/Search';
-import DragList from './DragList';
+import DragList from '../../../components/UKComponent/Data/DragList';
 import FormModal from './FormModal';
 import ParamsFormModal from './ParamsFormModal';
 import styles from './index.less';
@@ -20,7 +20,9 @@ function QRCodeEntrance({
                    list,
                    keyword,
                           add,
-                          currItems
+                          currItems,
+                          cancel,
+                          showModals
                  }) {
   function selectItems(items) {
     dispatch({ type: 'qrcodeentrance/currItems', payload: items });
@@ -30,8 +32,8 @@ function QRCodeEntrance({
 
   }
 
-  function listSortEnd(list) {
-    //dispatch({ type: 'qrcodeentrance/orderby', payload: list });
+  function orderby() {
+    dispatch({ type: 'qrcodeentrance/showModals', payload: 'orderby' });
   }
 
   function handleAction(actionName) {
@@ -54,7 +56,23 @@ function QRCodeEntrance({
         break;
     }
   }
-  //<DragList dataSource={list} column={column} onSortEnd={listSortEnd} />
+
+  function listSortEnd(list) {
+    dispatch({ type: 'qrcodeentrance/orderby', payload: list });
+  }
+
+  const orderByColumns = [
+    {
+      key: 'recorder',
+      name: '序号',
+      span: 12
+    },
+    {
+      key: 'recname',
+      name: '规则名称',
+      span: 12
+    }
+  ]
 
   return (
     <Page title="二维码入口列表定义">
@@ -68,6 +86,7 @@ function QRCodeEntrance({
         ]}
       >
         <Button onClick={add}>新增</Button>
+        <Button onClick={orderby}>排序</Button>
         <Toolbar.Right>
           <Search
             placeholder="请输入关键字"
@@ -99,6 +118,15 @@ function QRCodeEntrance({
         <Column title="状态" key="recstatus" dataIndex="recstatus" render={text => ['停用', '启用'][text]} />
         <Column title="规则描述" key="remark" dataIndex="remark" />
       </Table>
+      <Modal
+        visible={/orderby/.test(showModals)}
+        title='排序'
+        style={{ height: 300 }}
+        onCancel={cancel}
+        onOk={orderby}
+      >
+        <DragList dataSource={list} column={orderByColumns} onSortEnd={listSortEnd} />
+      </Modal>
       <FormModal />
       <ParamsFormModal />
     </Page>
@@ -109,6 +137,9 @@ export default connect(
   state => state.qrcodeentrance,
   dispatch => {
     return {
+      cancel: () => {
+        dispatch({ type: 'qrcodeentrance/showModals', payload: '' });
+      },
       add: () => {
         dispatch({ type: 'qrcodeentrance/showModals', payload: 'add' });
       },

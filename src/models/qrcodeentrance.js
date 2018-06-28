@@ -2,7 +2,7 @@
  * Created by 0291 on 2018/6/27.
  */
 import { message } from 'antd';
-import { queryqrcodelist, addqrcodelist, editqrcodelist, getmatchparam } from '../services/qrcodeentrance.js';
+import { queryqrcodelist, addqrcodelist, editqrcodelist, getmatchparam, orderbyrule } from '../services/qrcodeentrance.js';
 import { GetArgsFromHref } from '../utils/index.js';
 import _ from 'lodash';
 
@@ -12,7 +12,8 @@ export default {
     list: [],
     keyword: '',
     currItems: [],
-    matchParams: {}
+    matchParams: {},
+    showModals: ''
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -66,6 +67,17 @@ export default {
       // } catch (e) {
       //   console.error(e.message);
       //   message.error(e.message || '删除失败');
+      // }
+    },
+    *orderby({ payload: listData }, { put, call, select }) {
+      console.log(listData)
+      // try {
+      //   yield call(orderbyrule, listData);
+      //   message.success('排序成功');
+      //   yield put({ type: 'fetchList' });
+      // } catch (e) {
+      //   console.error(e);
+      //   message.error(e.message);
       // }
     },
     *queryMatchParam({ payload: recid }, { put, call, select }) {

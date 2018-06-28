@@ -37,6 +37,18 @@ export async function editqrcodelist(params) {
 }
 
 /**
+ * 二维码入口列表排序
+ * RecIds: 按顺序的ids，逗号分隔
+ * @returns {Promise.<Object>}
+ */
+export async function orderbyrule(params) {
+  return request('api/qrcode/orderrule', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
  * 获取匹配定义详情
  * RecId
  * @returns {Promise.<Object>}
