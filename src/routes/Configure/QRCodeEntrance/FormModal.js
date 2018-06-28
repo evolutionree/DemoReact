@@ -4,6 +4,7 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Modal, Form, Input } from 'antd';
+import _ from 'lodash';
 
 const { TextArea } = Input;
 const FormItem = Form.Item;
@@ -86,12 +87,17 @@ class FormModal extends Component {
 
 export default connect(
   state => {
-    const { showModals, currItem, modalPending } = state.qrcodeentrance;
+    const { showModals, currItems, modalPending } = state.qrcodeentrance;
+
+    let editData = {};
+    if (/edit/.test(showModals)) {
+      editData = _.cloneDeep(currItems[0]);
+    }
 
     return {
       visible: /add|edit/.test(showModals),
       showModals: showModals,
-      editingRecord: /edit/.test(showModals) ? currItem : undefined,
+      editingRecord: /edit/.test(showModals) ? editData : undefined,
       modalPending
     };
   },

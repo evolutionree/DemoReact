@@ -35,3 +35,15 @@ export async function editqrcodelist(params) {
     body: JSON.stringify(params)
   });
 }
+
+/**
+ * 获取匹配定义详情
+ * RecId
+ * @returns {Promise.<Object>}
+ */
+export async function getmatchparam(recid) {
+  return request('api/qrcode/getmatchparam', {
+    method: 'post',
+    body: JSON.stringify({ recid })
+  });
+}

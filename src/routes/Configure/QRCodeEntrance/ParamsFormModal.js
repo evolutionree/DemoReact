@@ -43,13 +43,34 @@ class ParamsFormModal extends Component {
 
     form.validateFields((err, values) => {
       if (err) return;
-      console.log(values)
+
+      let {
+        checktype,
+        uscriptparam,
+        ...checkparam
+      } = values;
+      const submitData = {
+        checktype: checktype,
+        checkparam: {
+          ...checkparam,
+          uscriptparam: {
+            uscript: uscriptparam
+          }
+        }
+      };
+
+      console.log(submitData);
     });
   };
 
   render() {
     const { visible } = this.props;
     const { getFieldDecorator } = this.props.form;
+
+    const checktype = [{ value: 1, name: '字符串匹配' }, { value: 2, name: '正则表达式' },
+      { value: 3, name: 'UScript' }, { value: 4, name: '实体查询' },
+      { value: 5, name: '数据库脚本' }, { value: 6, name: '数据库函数' },
+      { value: 7, name: '内部服务' }]
     return (
       <Modal
         visible={visible}
@@ -59,29 +80,28 @@ class ParamsFormModal extends Component {
         confirmLoading={this.props.modalPending}
       >
         <Form>
-          <FormItem label="规则名称">
-            {getFieldDecorator('recname', {
+          <FormItem label="匹配规则类型">
+            {getFieldDecorator('checktype', { //1=字符串匹配，2=正则表达式，3是UScript，4=实体查询，5=数据库脚本6=数据库函数7=内部服务
               initialValue: '',
-              rules: [{ required: true, message: '请输入规则名称' }]
+              rules: [{ required: true, message: '请选择匹配规则类型' }]
             })(
-              <Select style={{ width: 120 }}>
-                <Option value="jack">Jack</Option>
-                <Option value="lucy">Lucy</Option>
-                <Option value="disabled" disabled>Disabled</Option>
-                <Option value="Yiminghe">yiminghe</Option>
+              <Select>
+                {
+                  checktype.map(item => {
+                    return <Option value={item.value}>{item.name}</Option>;
+                  })
+                }
               </Select>
             )}
           </FormItem>
-          <FormItem label="规则描述">
-            {getFieldDecorator('remark')(
+          <FormItem label="规则说明">
+            {getFieldDecorator('checkremark')(
               <TextArea />
             )}
           </FormItem>
-          <FormItem label="规则描述">
-            {getFieldDecorator('rluwe')(
-              <CodeEditor
-                style={{ border: '1px solid #ddd', height: '400px' }}
-              />
+          <FormItem label="U脚本">
+            {getFieldDecorator('uscriptparam')(
+              <CodeEditor />
             )}
           </FormItem>
         </Form>
@@ -92,10 +112,10 @@ class ParamsFormModal extends Component {
 
 export default connect(
   state => {
-    const { showModals, modalPending } = state.qrcodeentrance;
-
+    const { showModals, matchParams, modalPending } = state.qrcodeentrance;
     return {
-      visible: /test/.test(showModals),
+      visible: /matchparams/.test(showModals),
+      editingRecord: matchParams,
       modalPending
     };
   },

@@ -2,7 +2,7 @@
  * Created by 0291 on 2018/6/27.
  */
 import { message } from 'antd';
-import { queryqrcodelist, addqrcodelist, editqrcodelist } from '../services/qrcodeentrance.js';
+import { queryqrcodelist, addqrcodelist, editqrcodelist, getmatchparam } from '../services/qrcodeentrance.js';
 import { GetArgsFromHref } from '../utils/index.js';
 import _ from 'lodash';
 
@@ -11,7 +11,8 @@ export default {
   state: {
     list: [],
     keyword: '',
-    currItem: {}
+    currItems: [],
+    matchParams: {}
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -66,6 +67,21 @@ export default {
       //   console.error(e.message);
       //   message.error(e.message || '删除失败');
       // }
+    },
+    *queryMatchParam({ payload: recid }, { put, call, select }) {
+      const { currItems } = yield select(state => state.qrcodeentrance);
+      try {
+        const { data } = yield call(getmatchparam, currItems[0].recid);
+        yield put({ type: 'putState', payload: { matchParams: {
+          checktype: data.checktype,
+          ...data.checkparam,
+          uscriptparam: data.checkparam.uscriptparam.uscript
+        } } });
+        yield put({ type: 'showModals', payload: 'matchparams' });
+      } catch (e) {
+        console.error(e);
+        message.error(e.message || '获取匹配定义详情失败');
+      }
     }
   },
   reducers: {
@@ -81,10 +97,18 @@ export default {
         showModals: payload
       };
     },
+    currItems(state, { payload: currItems }) {
+      return {
+        ...state,
+        currItems
+      };
+    },
     resetState() {
       return {
         list: [],
-        keyword: ''
+        keyword: '',
+        currItems: [],
+        matchParams: {}
       };
     }
   }
