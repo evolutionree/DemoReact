@@ -67,11 +67,15 @@ const SortableList = SortableContainer(({ column, items, preventDefault, delayDr
 class DragList extends Component {
   static propTypes = {
     onSortEnd: React.PropTypes.func,
-    column: React.PropTypes.shape({
-      key: React.PropTypes.string,
-      name: React.PropTypes.string,
-      span: React.PropTypes.number
-    }),
+    column: React.PropTypes.array,
+    /*
+     [{
+       key: React.PropTypes.string,
+       name: React.PropTypes.string,
+       span: React.PropTypes.number
+     }]
+     */
+    dataSource: React.PropTypes.array,
     delayDragColumn: React.PropTypes.oneOfType([ //列的key值 延时拖拽的列（当插件拖拽时，不允许用户点击，所以采用pressDelay，让用户可以点击操作当前列进行一些行为）
       React.PropTypes.array,
       React.PropTypes.string
@@ -85,7 +89,8 @@ class DragList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      pressDelay: 0
+      pressDelay: 0,
+      list: this.setSeqNum(this.props.dataSource)
     };
   }
 
@@ -102,11 +107,16 @@ class DragList extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-
+    this.setState({
+      list: this.setSeqNum(nextProps.dataSource)
+    });
   }
 
   onSortEnd = ({ oldIndex, newIndex }) => {
-    const newDataSource = this.setSeqNum(arrayMove(this.props.dataSource, oldIndex, newIndex));
+    const newDataSource = this.setSeqNum(arrayMove(this.state.list, oldIndex, newIndex));
+    this.setState({
+      list: newDataSource
+    });
     this.props.onSortEnd && this.props.onSortEnd(newDataSource);
   };
 
@@ -116,8 +126,11 @@ class DragList extends Component {
     });
   }
 
+  getData = () => {
+    return this.state.list;
+  }
+
   render() {
-    let dataSource = this.setSeqNum(this.props.dataSource);
     return (
       <div className={Styles.DragListWrap}>
         <div className={Styles.Header} ref={ref => this.customTableHeaderRef = ref}>
@@ -130,7 +143,7 @@ class DragList extends Component {
           </Row>
         </div>
         <SortableList column={this.props.column}
-                      items={dataSource}
+                      items={this.state.list}
                       onSortEnd={this.onSortEnd}
                       pressDelay={this.state.pressDelay}
                       preventDefault={this.preventDefault}

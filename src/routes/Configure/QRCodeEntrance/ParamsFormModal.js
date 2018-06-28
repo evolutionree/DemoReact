@@ -3,7 +3,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Modal, Form, Input, Select } from 'antd';
+import { Modal, Form, Input, Select, message, Button } from 'antd';
 import CodeEditor from '../../../components/CodeEditor';
 
 const { TextArea } = Input;
@@ -19,7 +19,7 @@ class ParamsFormModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-
+      childModalVisible: false
     };
   }
 
@@ -37,6 +37,33 @@ class ParamsFormModal extends Component {
     }
   }
 
+  checkTypeChange = (value) => {
+    const { form: { setFieldsValue } } = this.props;
+    if (value !== 3) {
+      message.warning('目前只支持编辑【UScript】类型的匹配规则');
+      setTimeout(() => {
+        setFieldsValue({ checktype: 3 });
+      }, 100);
+    }
+  }
+
+  openChildModal = () => {
+    this.setState({
+      childModalVisible: true
+    });
+  }
+
+  closeChildModal = () => {
+    this.setState({
+      childModalVisible: false
+    });
+  }
+
+  submitTest = () => {
+    this.setState({
+      showTest: true
+    });
+  }
 
   onOk = () => {
     const { form, showModals, editingRecord } = this.props;
@@ -50,6 +77,7 @@ class ParamsFormModal extends Component {
         ...checkparam
       } = values;
       const submitData = {
+        recid: editingRecord.recid,
         checktype: checktype,
         checkparam: {
           ...checkparam,
@@ -59,7 +87,7 @@ class ParamsFormModal extends Component {
         }
       };
 
-      console.log(submitData);
+      this.props.update && this.props.update(submitData);
     });
   };
 
@@ -74,21 +102,24 @@ class ParamsFormModal extends Component {
     return (
       <Modal
         visible={visible}
-        title={'新增规则'}
+        title={'更新匹配参数'}
         onCancel={this.props.cancel}
-        onOk={this.onOk}
-        confirmLoading={this.props.modalPending}
+        footer={[
+          <Button onClick={this.props.cancel}>取消</Button>,
+          <Button onClick={this.openChildModal}>测试</Button>,
+          <Button onClick={this.onOk}>保存</Button>
+        ]}
       >
         <Form>
           <FormItem label="匹配规则类型">
             {getFieldDecorator('checktype', { //1=字符串匹配，2=正则表达式，3是UScript，4=实体查询，5=数据库脚本6=数据库函数7=内部服务
-              initialValue: '',
+              initialValue: 3,
               rules: [{ required: true, message: '请选择匹配规则类型' }]
             })(
-              <Select>
+              <Select onChange={this.checkTypeChange}>
                 {
                   checktype.map(item => {
-                    return <Option value={item.value}>{item.name}</Option>;
+                    return <Option value={item.value} key={item.value}>{item.name}</Option>;
                   })
                 }
               </Select>
@@ -101,10 +132,29 @@ class ParamsFormModal extends Component {
           </FormItem>
           <FormItem label="U脚本">
             {getFieldDecorator('uscriptparam')(
-              <CodeEditor />
+              <CodeEditor style={{ border: '1px solid #ddd' }} />
             )}
           </FormItem>
         </Form>
+        <Modal
+          visible={this.state.childModalVisible}
+          onCancel={this.closeChildModal}
+          footer={null}
+        >
+          <div style={{ margin: '30px 0 15px' }}>
+            <span>测试字符串：</span>
+            <Input style={{ width: 400 }} />
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <Button onClick={this.submitTest}>提交测试</Button>
+          </div>
+          <div style={{ display: this.state.showTest ? 'block' : 'none' }}>
+            测试字符串
+            测试结果匹配/不匹配/执行异常
+            失败日志XXXXXX不成功
+            执行耗时300毫秒
+          </div>
+        </Modal>
       </Modal>
     );
   }
@@ -112,11 +162,10 @@ class ParamsFormModal extends Component {
 
 export default connect(
   state => {
-    const { showModals, matchParams, modalPending } = state.qrcodeentrance;
+    const { showModals, matchParams } = state.qrcodeentrance;
     return {
       visible: /matchparams/.test(showModals),
-      editingRecord: matchParams,
-      modalPending
+      editingRecord: matchParams
     };
   },
   dispatch => {
@@ -124,11 +173,8 @@ export default connect(
       cancel() {
         dispatch({ type: 'qrcodeentrance/showModals', payload: '' });
       },
-      add(data) {
-        dispatch({ type: 'qrcodeentrance/add', payload: data });
-      },
-      edit(data) {
-        dispatch({ type: 'qrcodeentrance/edit', payload: data });
+      update(data) {
+        dispatch({ type: 'qrcodeentrance/updatematchparams', payload: data });
       }
     };
   }

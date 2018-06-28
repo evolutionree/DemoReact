@@ -59,3 +59,15 @@ export async function getmatchparam(recid) {
     body: JSON.stringify({ recid })
   });
 }
+
+/**
+ * 更新匹配定义详情
+ * RecId
+ * @returns {Promise.<Object>}
+ */
+export async function updatematchparam(params) {
+  return request('api/qrcode/updatematchparam', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}

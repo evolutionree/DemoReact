@@ -3,18 +3,20 @@
  */
 import React from 'react';
 import { connect } from 'dva';
-import { Form, Button, Input, Checkbox, message, Select, Row, Col, Modal, Table } from 'antd';
+import { Button, Modal, Table } from 'antd';
 import Page from '../../../components/Page';
 import Toolbar from '../../../components/Toolbar';
 import Search from '../../../components/Search';
 import DragList from '../../../components/UKComponent/Data/DragList';
 import FormModal from './FormModal';
 import ParamsFormModal from './ParamsFormModal';
-import styles from './index.less';
-import classnames from 'classnames';
+import EntryFormModal from './EntryFormModal';
+import _ from 'lodash';
+
 
 const Column = Table.Column;
 
+let dragListRef = null;
 function QRCodeEntrance({
                    dispatch,
                    list,
@@ -28,11 +30,11 @@ function QRCodeEntrance({
     dispatch({ type: 'qrcodeentrance/currItems', payload: items });
   }
 
-  function searchKeyword() {
-
+  function searchKeyword(value) {
+    dispatch({ type: 'qrcodeentrance/putState', payload: { keyword: value } });
   }
 
-  function orderby() {
+  function showOrderbyModal() {
     dispatch({ type: 'qrcodeentrance/showModals', payload: 'orderby' });
   }
 
@@ -54,11 +56,14 @@ function QRCodeEntrance({
       case 'editParams':
         dispatch({ type: 'qrcodeentrance/queryMatchParam' });
         break;
+      case 'editEntry':
+        dispatch({ type: 'qrcodeentrance/queryEntry' });
+        break;
     }
   }
 
-  function listSortEnd(list) {
-    dispatch({ type: 'qrcodeentrance/orderby', payload: list });
+  function orderby() {
+    dispatch({ type: 'qrcodeentrance/orderby', payload: dragListRef.getData() });
   }
 
   const orderByColumns = [
@@ -82,14 +87,15 @@ function QRCodeEntrance({
         actions={[
           { name: 'edit', label: '编辑', single: true },
           { name: 'del', label: '删除', single: true },
-          { name: 'editParams', label: '编辑匹配参数', single: true }
+          { name: 'editParams', label: '编辑匹配参数', single: true },
+          { name: 'editEntry', label: '编辑智能入口', single: true }
         ]}
       >
         <Button onClick={add}>新增</Button>
-        <Button onClick={orderby}>排序</Button>
+        <Button onClick={showOrderbyModal}>排序</Button>
         <Toolbar.Right>
           <Search
-            placeholder="请输入关键字"
+            placeholder="请输入规则名称"
             value={keyword}
             onSearch={val => searchKeyword(val)}
           >
@@ -100,7 +106,7 @@ function QRCodeEntrance({
 
       <Table
         rowKey="recid"
-        dataSource={list}
+        dataSource={list.filter(item => item.recname.indexOf(_.trim(keyword)) > -1)}
         pagination={false}
         rowSelection={{
           selectedRowKeys: currItems.map(item => item.recid),
@@ -120,15 +126,15 @@ function QRCodeEntrance({
       </Table>
       <Modal
         visible={/orderby/.test(showModals)}
-        title='排序'
-        style={{ height: 300 }}
+        title="列表排序"
         onCancel={cancel}
         onOk={orderby}
       >
-        <DragList dataSource={list} column={orderByColumns} onSortEnd={listSortEnd} />
+        <DragList dataSource={list} column={orderByColumns} ref={ref => dragListRef = ref} />
       </Modal>
       <FormModal />
       <ParamsFormModal />
+      <EntryFormModal />
     </Page>
   );
 }

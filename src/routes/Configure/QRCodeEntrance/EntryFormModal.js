@@ -10,7 +10,7 @@ const { TextArea } = Input;
 const FormItem = Form.Item;
 const Option = Select.Option;
 
-class ParamsFormModal extends Component {
+class EntryFormModal extends Component {
   static propTypes = {
     form: PropTypes.object
   };
@@ -132,7 +132,15 @@ class ParamsFormModal extends Component {
           </FormItem>
           <FormItem label="U脚本">
             {getFieldDecorator('uscriptparam')(
-              <CodeEditor />
+              <CodeEditor style={{ border: '1px solid #ddd' }} />
+            )}
+          </FormItem>
+          <FormItem label="执行失败返回">
+            {getFieldDecorator('reurun')(
+              <Select onChange={this.checkTypeChange}>
+                <Option value='1'>没有后续操作</Option>
+                <Option value='2'>错误提示</Option>
+              </Select>
             )}
           </FormItem>
         </Form>
@@ -164,7 +172,7 @@ export default connect(
   state => {
     const { showModals, matchParams } = state.qrcodeentrance;
     return {
-      visible: /matchparams/.test(showModals),
+      visible: /entry/.test(showModals),
       editingRecord: matchParams
     };
   },
@@ -178,4 +186,4 @@ export default connect(
       }
     };
   }
-)(Form.create()(ParamsFormModal));
+)(Form.create()(EntryFormModal));
