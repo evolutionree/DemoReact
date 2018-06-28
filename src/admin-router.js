@@ -169,7 +169,7 @@ const appRoutes = [
   { path: 'print-template', comp: PrintTemplate, model: require('./models/printTemplate') },
   { path: 'passwordstrategy', comp: PasswordStrategy, model: require('./models/passwordstrategy') },
   { path: 'transferscheme', comp: TransferScheme, model: require('./models/transferscheme') },
-  { path: 'qrcodeentrance', comp: QRCodeEntrance, model: require('./models/transferscheme') },
+  { path: 'qrcodeentrance', comp: QRCodeEntrance, model: require('./models/qrcodeentrance') },
   { path: 'nopermission', comp: NoPermission },
   { path: '*', comp: NoFoundPage }
 ];
