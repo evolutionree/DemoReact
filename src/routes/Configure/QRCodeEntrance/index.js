@@ -79,14 +79,14 @@ function QRCodeEntrance({
     }
   ]
 
-  return (
+  return (//   { name: 'del', label: '删除', single: true },
     <Page title="二维码入口列表定义">
       <Toolbar
         onAction={handleAction}
         selectedCount={currItems.length}
         actions={[
           { name: 'edit', label: '编辑', single: true },
-          { name: 'del', label: '删除', single: true },
+
           { name: 'editParams', label: '编辑匹配参数', single: true },
           { name: 'editEntry', label: '编辑智能入口', single: true }
         ]}
@@ -115,12 +115,10 @@ function QRCodeEntrance({
       >
         <Column title="序号" key="recorder" dataIndex="recorder" />
         <Column title="规则名称" key="recname" dataIndex="recname" />
-        <Column title="匹配方法" key="ds" dataIndex="ds" />
-        <Column title="匹配说明" key="pubstatus" dataIndex="pubstatus" />
-        <Column title="匹配参数" key="remar43k" dataIndex="remar43k" />
-        <Column title="结果计算方式" key="dealtype" dataIndex="dealtype" />
-        <Column title="结果计算说明" key="dealparam" dataIndex="dealparam" />
-        <Column title="结果计算概要" key="rema23rk" dataIndex="rema23rk" />
+        <Column title="匹配方法" key="checktype_name" dataIndex="checktype_name" />
+        <Column title="匹配说明" key="checkremark" dataIndex="checkremark" />
+        <Column title="结果计算方式" key="dealtype_name" dataIndex="dealtype_name" />
+        <Column title="结果计算说明" key="dealremark" dataIndex="dealremark" />
         <Column title="状态" key="recstatus" dataIndex="recstatus" render={text => ['停用', '启用'][text]} />
         <Column title="规则描述" key="remark" dataIndex="remark" />
       </Table>

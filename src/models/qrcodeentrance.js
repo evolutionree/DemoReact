@@ -2,7 +2,7 @@
  * Created by 0291 on 2018/6/27.
  */
 import { message } from 'antd';
-import { queryqrcodelist, addqrcodelist, editqrcodelist, getmatchparam, orderbyrule, updatematchparam } from '../services/qrcodeentrance.js';
+import { queryqrcodelist, addqrcodelist, editqrcodelist, getmatchparam, getdealparam, orderbyrule, updatematchparam, updatedealparam } from '../services/qrcodeentrance.js';
 import { GetArgsFromHref } from '../utils/index.js';
 import _ from 'lodash';
 
@@ -85,18 +85,20 @@ export default {
       const { currItems } = yield select(state => state.qrcodeentrance);
       try {
         const { data } = yield call(getmatchparam, currItems[0].recid);
-        if (data.checktype !== 3) {
-          message.error('目前只支持编辑【UScript】类型的匹配规则');
-          return;
+        if (data.checktype === 0) {
+          yield put({ type: 'putState', payload: { matchParams: {
+            recid: currItems[0].recid
+          } } });
         } else {
           yield put({ type: 'putState', payload: { matchParams: {
             recid: currItems[0].recid,
             checktype: data.checktype,
+            checkremark: data.checkremark,
             ...data.checkparam,
             uscriptparam: data.checkparam.uscriptparam.uscript
           } } });
-          yield put({ type: 'showModals', payload: 'matchparams' });
         }
+        yield put({ type: 'showModals', payload: 'matchparams' });
       } catch (e) {
         console.error(e);
         message.error(e.message || '获取匹配定义详情失败');
@@ -114,7 +116,38 @@ export default {
       }
     },
     *queryEntry({ payload: recid }, { put, call, select }) {
-      yield put({ type: 'showModals', payload: 'entry' });
+      const { currItems } = yield select(state => state.qrcodeentrance);
+      try {
+        const { data } = yield call(getdealparam, currItems[0].recid);
+        if (data.dealtype === 0) {
+          yield put({ type: 'putState', payload: { matchParams: {
+            recid: currItems[0].recid
+          } } });
+        } else {
+          yield put({ type: 'putState', payload: { matchParams: {
+            recid: currItems[0].recid,
+            dealtype: data.dealtype,
+            dealremark: data.dealremark,
+            ...data.dealparam,
+            uscriptparam: data.dealparam.uscriptparam.uscript
+          } } });
+        }
+        yield put({ type: 'showModals', payload: 'dealparams' });
+      } catch (e) {
+        console.error(e);
+        message.error(e.message || '获取智能入口定义详情失败');
+      }
+    },
+    *updatedelParams({ payload: submitData }, { put, call, select }) {
+      try {
+        yield call(updatedealparam, submitData);
+        yield put({ type: 'fetchList' });
+        yield put({ type: 'showModals', payload: '' });
+        message.success('更新成功');
+      } catch (e) {
+        console.error(e.message);
+        message.error(e.message || '更新失败');
+      }
     }
   },
   reducers: {

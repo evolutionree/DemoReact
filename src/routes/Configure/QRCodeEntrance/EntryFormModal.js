@@ -3,7 +3,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Modal, Form, Input, Select, message, Button } from 'antd';
+import { Modal, Form, Input, Select, message, Button, Tooltip, Icon } from 'antd';
 import CodeEditor from '../../../components/CodeEditor';
 
 const { TextArea } = Input;
@@ -74,13 +74,15 @@ class EntryFormModal extends Component {
       let {
         checktype,
         uscriptparam,
-        ...checkparam
+        dealremark,
+        ...dealparam
       } = values;
       const submitData = {
         recid: editingRecord.recid,
         checktype: checktype,
-        checkparam: {
-          ...checkparam,
+        dealremark,
+        dealparam: {
+          ...dealparam,
           uscriptparam: {
             uscript: uscriptparam
           }
@@ -102,17 +104,17 @@ class EntryFormModal extends Component {
     return (
       <Modal
         visible={visible}
-        title={'更新匹配参数'}
+        title={'更新智能入口'}
         onCancel={this.props.cancel}
         footer={[
           <Button onClick={this.props.cancel}>取消</Button>,
-          <Button onClick={this.openChildModal}>测试</Button>,
+          <Button onClick={this.openChildModal} disabled>测试</Button>,
           <Button onClick={this.onOk}>保存</Button>
         ]}
       >
         <Form>
           <FormItem label="匹配规则类型">
-            {getFieldDecorator('checktype', { //1=字符串匹配，2=正则表达式，3是UScript，4=实体查询，5=数据库脚本6=数据库函数7=内部服务
+            {getFieldDecorator('dealtype', { //1=字符串匹配，2=正则表达式，3是UScript，4=实体查询，5=数据库脚本6=数据库函数7=内部服务
               initialValue: 3,
               rules: [{ required: true, message: '请选择匹配规则类型' }]
             })(
@@ -126,20 +128,36 @@ class EntryFormModal extends Component {
             )}
           </FormItem>
           <FormItem label="规则说明">
-            {getFieldDecorator('checkremark')(
+            {getFieldDecorator('dealremark')(
               <TextArea />
             )}
           </FormItem>
-          <FormItem label="U脚本">
+          <FormItem label={
+            <span>
+              U脚本
+              <Tooltip placement="top" title={<div>
+                <p>UScript引擎会传入"UScriptService"对象，根据这个对象可以访问数据库（详见UScript服务端API）。同时传入“ScanResult”对象，对象中包含ScanCode,和ScanCodeType两个字段（注意区分大小写）。</p>
+                <p>其他注意事项：</p>
+                <ul>
+                  <li>1、UScript中所有整数类型将被转换为double型，使用时建议采用string（字符串)</li>
+                  <li>2、必须有return语句，且必须为json对象（类型参照智能二维码入口返回结构）</li>
+                </ul>
+              </div>}>
+                 <Icon type="info-circle" style={{ fontSize: '16px', marginLeft: '4px', color: '#797979' }} />
+              </Tooltip>
+            </span>
+          }>
             {getFieldDecorator('uscriptparam')(
               <CodeEditor style={{ border: '1px solid #ddd' }} />
             )}
           </FormItem>
           <FormItem label="执行失败返回">
-            {getFieldDecorator('reurun')(
-              <Select onChange={this.checkTypeChange}>
-                <Option value='1'>没有后续操作</Option>
-                <Option value='2'>错误提示</Option>
+            {getFieldDecorator('defaultaction', {
+              initialValue: 1
+            })(
+              <Select>
+                <Option value={1}>没有后续操作</Option>
+                <Option value={2}>错误提示</Option>
               </Select>
             )}
           </FormItem>
@@ -172,7 +190,7 @@ export default connect(
   state => {
     const { showModals, matchParams } = state.qrcodeentrance;
     return {
-      visible: /entry/.test(showModals),
+      visible: /dealparams/.test(showModals),
       editingRecord: matchParams
     };
   },
@@ -182,7 +200,7 @@ export default connect(
         dispatch({ type: 'qrcodeentrance/showModals', payload: '' });
       },
       update(data) {
-        dispatch({ type: 'qrcodeentrance/updatematchparams', payload: data });
+        dispatch({ type: 'qrcodeentrance/updatedelParams', payload: data });
       }
     };
   }

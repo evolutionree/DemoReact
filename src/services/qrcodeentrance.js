@@ -71,3 +71,27 @@ export async function updatematchparam(params) {
     body: JSON.stringify(params)
   });
 }
+
+/**
+ * 获取智能入口定义详情
+ * RecId
+ * @returns {Promise.<Object>}
+ */
+export async function getdealparam(recid) {
+  return request('api/qrcode/getdealparam', {
+    method: 'post',
+    body: JSON.stringify({ recid })
+  });
+}
+
+/**
+ * 更新智能入口定义详情
+ * RecId
+ * @returns {Promise.<Object>}
+ */
+export async function updatedealparam(params) {
+  return request('api/qrcode/updatedealparam', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}

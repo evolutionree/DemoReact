@@ -3,7 +3,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Modal, Form, Input, Select, message, Button } from 'antd';
+import { Modal, Form, Input, Select, message, Button, Tooltip, Icon } from 'antd';
 import CodeEditor from '../../../components/CodeEditor';
 
 const { TextArea } = Input;
@@ -74,11 +74,13 @@ class ParamsFormModal extends Component {
       let {
         checktype,
         uscriptparam,
+        checkremark,
         ...checkparam
       } = values;
       const submitData = {
         recid: editingRecord.recid,
         checktype: checktype,
+        checkremark,
         checkparam: {
           ...checkparam,
           uscriptparam: {
@@ -106,7 +108,7 @@ class ParamsFormModal extends Component {
         onCancel={this.props.cancel}
         footer={[
           <Button onClick={this.props.cancel}>取消</Button>,
-          <Button onClick={this.openChildModal}>测试</Button>,
+          <Button onClick={this.openChildModal} disabled>测试</Button>,
           <Button onClick={this.onOk}>保存</Button>
         ]}
       >
@@ -130,7 +132,21 @@ class ParamsFormModal extends Component {
               <TextArea />
             )}
           </FormItem>
-          <FormItem label="U脚本">
+          <FormItem label={
+            <span>
+              U脚本
+              <Tooltip placement="top" title={<div>
+                <p>UScript引擎会传入"ukservice"对象，根据这个对象可以访问数据库（详见UScript服务端API）。同时传入“JsParam”对象，对象中包含ScanCode,和ScanCodeType两个字段（注意区分大小写）。</p>
+                <p>其他注意事项：</p>
+                <ul>
+                  <li>1、UScript中所有整数类型将被转换为double型，使用时建议采用string（字符串)</li>
+                  <li>2、必须有return语句，且必须为布尔类型(true/false)</li>
+                </ul>
+              </div>}>
+                 <Icon type="info-circle" style={{ fontSize: '16px', marginLeft: '4px', color: '#797979' }} />
+              </Tooltip>
+            </span>
+          }>
             {getFieldDecorator('uscriptparam')(
               <CodeEditor style={{ border: '1px solid #ddd' }} />
             )}
