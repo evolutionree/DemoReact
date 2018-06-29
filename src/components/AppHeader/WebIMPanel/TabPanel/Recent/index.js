@@ -43,7 +43,9 @@ class ReactPanel extends Component {
     return (
       <div className={styles.recent_tabPanel}>
         <div className={styles.title}>最近聊天</div>
-        <List onClick={this.listClickHandler} onContextMenu={this.onContextMenu} />
+        <div className={styles.listWrap}>
+          <List onClick={this.listClickHandler} onContextMenu={this.onContextMenu} dataSource={this.props.recentChatList} />
+        </div>
         <div className={classnames(styles.Recent_IMPanelWrap, { [styles.visible]: this.state.IMPanelVisible })}>
           <IMPanel panelInfo={{ username: 'test' }} />
         </div>

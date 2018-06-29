@@ -5,12 +5,14 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Dropdown, Menu, Modal, Icon } from 'antd';
 import classnames from 'classnames';
+import Avatar from '../../../../Avatar';
 import styles from './index.less';
 
 
 class List extends Component {
   static propTypes = {
-    onClick: PropTypes.func
+    onClick: PropTypes.func,
+    dataSource: PropTypes.array
   };
   static defaultProps = {
 
@@ -42,29 +44,32 @@ class List extends Component {
   }
 
   render() {
+    const { dataSource } = this.props;
     return (
       <div>
         <ul className={styles.listWrap}>
-          <li onContextMenu={this.contextMenuHandler} onClick={this.listClickHandler}>
-            <div className={styles.fl}>
-              <div>杜丽</div>
-              <div>2017/01/08</div>
-            </div>
-            <div className={styles.fr}>
-              <div>陈晓明：明天有时间吗？我准备和你去拜访一</div>
-              <div>余苹：您好，我是市场部跟你对接的余苹</div>
-            </div>
-          </li>
-          <li onContextMenu={this.contextMenuHandler}>
-            <div className={styles.fl}>
-              <div>Test</div>
-              <div>2017/01/08</div>
-            </div>
-            <div className={styles.fr}>
-              <div>陈晓明：明天有时间吗？我准备和你去拜访一</div>
-              <div>余苹：您好，我是市场部跟你对接的余苹</div>
-            </div>
-          </li>
+          {
+            dataSource instanceof Array && dataSource.map(item => {
+              return (
+                <li onContextMenu={this.contextMenuHandler} onClick={this.listClickHandler}>
+                  <div className={styles.contactAvatar}>
+                    <Avatar image={`/api/fileservice/read?fileid=${item.chaticon}`} width={30} />
+                  </div>
+                  <div className={styles.fl}>
+                    <div>{item.chatname}</div>
+                    <div>{item.recentlydate}</div>
+                  </div>
+                  <div className={styles.fr}>
+                    {
+                      item.msglist instanceof Array && item.msglist.map(mesItem => {
+                        return <div>陈晓明：明天有时间吗？我准备和你去拜访一</div>;
+                      })
+                    }
+                  </div>
+                </li>
+              );
+            })
+          }
         </ul>
       </div>
     );
