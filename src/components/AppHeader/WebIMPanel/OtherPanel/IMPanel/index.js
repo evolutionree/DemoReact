@@ -125,26 +125,35 @@ class IMPanel extends Component {
   renderMessage = (data) => {
     const { userInfo } = this.props;
     if (data.type === 'sendMessage') {
-      if (data.data.ct === 1) {
+      if (data.data.ct === 1) { //文字
         return (
           <div className={classnames(styles.chatItem, styles.itemRight)} key={data.time}>
             <Avatar image={`/api/fileservice/read?fileid=${userInfo.usericon}`} width={30} />
             <div className={styles.message}>{data.data.cont}</div>
           </div>
         );
-      } else if (data.data.ct === 2) {
+      } else if (data.data.ct === 2) { //图片
         const imgSrc = data.data.loading ? data.data.fid : `/api/fileservice/read?fileid=${data.data.fid}`;
         return (
           <div className={classnames(styles.chatItem, styles.itemRight)} key={data.time}>
             <Avatar image={`/api/fileservice/read?fileid=${userInfo.usericon}`} width={30} />
-            <div className={classnames(styles.message, styles.picture)}><img src={imgSrc} key={data.time} /></div>
+            <div className={classnames(styles.message, styles.pictureMessage)}><img src={imgSrc} key={data.time} /></div>
           </div>
         );
-      } else if (data.data.ct === 5) {
+      } else if (data.data.ct === 5) { //文件
         return (
           <div className={classnames(styles.chatItem, styles.itemRight)} key={data.time}>
             <Avatar image={`/api/fileservice/read?fileid=${userInfo.usericon}`} width={30} />
-            <div className={classnames(styles.message, styles.picture)}>文件</div>
+            <div className={classnames(styles.message, styles.fileMessage)}>
+              <div className={classnames(styles.file)}></div>
+              <div className={styles.fileInfo}>
+                <div>文件名</div>
+                <div>126.7kb</div>
+              </div>
+              <div className={styles.download}>
+                <Icon type="arrow-down" />
+              </div>
+            </div>
           </div>
         );
       }

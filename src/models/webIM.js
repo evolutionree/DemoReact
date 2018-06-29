@@ -1,7 +1,8 @@
+import { message } from 'antd';
 import {
   connectWebIMSocket
 } from '../services/authentication';
-import { queryUserInfo } from '../services/structure';
+import { queryUserInfo, getrecentchat } from '../services/structure';
 
 export default {
   namespace: 'webIM',
@@ -12,7 +13,9 @@ export default {
     showChildrenPanel: '',
     childrenPanelInfo: '',
     messagelist: null,
-    contextMenuInfo: {} //上下文菜单
+    contextMenuInfo: {}, //上下文菜单
+
+    recentChatList: []
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -25,6 +28,7 @@ export default {
   effects: {
     *init({ payload }, { select, put }) {
       yield put({ type: 'connectSocket__' });
+      yield put({ type: 'queryRecentList' });
     },
     *connectSocket__(action, { select, call, put, take }) { //链接webStocket
       const result = yield call(queryUserInfo);
@@ -36,6 +40,13 @@ export default {
         type: 'putState',
         payload: { webIMSocket: webIMSocket }
       });
+    },
+    *queryRecentList(action, { select, call, put, take }) {
+      try {
+        yield call(getrecentchat);
+      } catch (e) {
+        message.error(e.message || '查询最近聊天列表失败');
+      }
     }
   },
   reducers: {

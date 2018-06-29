@@ -50,11 +50,31 @@
         border-radius: 6px 6px 0 6px;
       }
 
-      .picture{
+      .pictureMessage{
         padding: 0;
         background: transparent;
         >img{ //图片等比例缩放
           width: 100%;
+        }
+      }
+
+      .fileMessage{
+        .clearFix;
+        padding-left: 0;
+        .file{
+          float: left;
+          width: 60px;
+          height: 60px;
+          background: url("../../webIMIcon/fileIcon/file.png") no-repeat center center;
+          background-size: 100%;
+        }
+
+        .fileInfo{
+          float: left;
+          >div{
+            height: 30px;
+            line-height: 30px;
+          }
         }
       }
     }

@@ -3,7 +3,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Dropdown, Menu, Modal, Icon } from 'antd';
+import { Dropdown, Menu, Modal, Icon, message } from 'antd';
 import List from '../../Component/List';
 import IMPanel from '../../OtherPanel/IMPanel';
 import classnames from 'classnames';
@@ -16,6 +16,10 @@ class ReactPanel extends Component {
       IMPanelVisible: false
     };
   }
+  componentDidMount() {
+
+  }
+
   componentWillReceiveProps(nextProps) {
 
   }
@@ -48,7 +52,8 @@ class ReactPanel extends Component {
   }
 }
 
-export default connect(state => {
+export default connect(
+  state => {
     return {
       ...state.webIM
     };

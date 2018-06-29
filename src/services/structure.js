@@ -372,3 +372,15 @@ export async function getlistsub(DeptId) {
     body: JSON.stringify({ DeptId })
   });
 }
+
+/**
+ * 查询最近聊天
+ * @returns {Promise.<Object>}
+ */
+export async function getrecentchat() {
+  return request('api/chat/recentchat', {
+    method: 'post',
+    body: JSON.stringify({})
+  });
+}
+

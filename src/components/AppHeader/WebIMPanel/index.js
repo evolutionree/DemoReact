@@ -100,6 +100,11 @@ class WebIMPanel extends Component {
       }
       return item;
     })
+
+    if (tabName === 'recent') {
+      this.props.dispatch({ type: 'webIM/queryRecentList' });
+    }
+
     this.setState({
       tabModel: newTabModel,
       showTabPage: tabName === 'add' ? this.state.showTabPage : tabName
