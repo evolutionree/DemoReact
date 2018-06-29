@@ -72,14 +72,14 @@ class EntryFormModal extends Component {
       if (err) return;
 
       let {
-        checktype,
+        dealtype,
         uscriptparam,
         dealremark,
         ...dealparam
       } = values;
       const submitData = {
         recid: editingRecord.recid,
-        checktype: checktype,
+        dealtype: dealtype,
         dealremark,
         dealparam: {
           ...dealparam,
