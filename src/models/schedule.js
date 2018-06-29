@@ -6,6 +6,7 @@ import { listDirs, listObjects, saveobjectforbase, getobjectsql, saveobjectsql }
 
 const tabModules = [
   { name: 'customer', title: '待跟进的客户' },
+  { name: 'task', title: '任务提醒' },
   { name: 'sale', title: '销售记录' },
   { name: 'notice', title: '公告通知' },
   { name: 'audit', title: '审批通知' }

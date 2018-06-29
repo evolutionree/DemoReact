@@ -1,9 +1,12 @@
+/**
+ * Created by 0291 on 2018/6/29.
+ */
 import React, { PropTypes, Component } from 'react';
 import { message } from 'antd';
 import { connect } from 'dva';
 import { getvertionmsglist } from '../../../../services/schedule';
 
-class SaleRecords extends Component {
+class Task extends Component {
   static propTypes = {};
   static defaultProps = {};
 
@@ -32,7 +35,7 @@ class SaleRecords extends Component {
   queryList(pageIndex) {
     const params = {
       Direction: 0, //以版本号为基线，向前或者向后取值，-1为取小于RecVersion的数据，0为全量，1为取大于RecVersion的数据
-      MsgGroupIds: [1001],
+      MsgGroupIds: [1004],
       PageSize: 20,
       RecVersion: 0
     }
@@ -56,7 +59,7 @@ export default connect(
   state => {
     const { activeModule } = state.schedule;
     return {
-      visible: activeModule === 'sale'
+      visible: activeModule === 'task'
     };
   }
-)(SaleRecords);
+)(Task);

@@ -14,6 +14,7 @@ import ScheduleCalendarTable from './ScheduleCalendarTable';
 import EmptyShow from './componnet/EmptyShow';
 import FormModal from './FormModal';
 import RelateCustomers from './modules/RelateCustomers';
+import Task from './modules/Task';
 import SaleRecords from './modules/SaleRecords';
 import NoticeMessage from './modules/NoticeMessage';
 import AuditMessage from './modules/AuditMessage';
@@ -68,6 +69,7 @@ class Schedule extends Component {
     const { modules, activeModule } = this.props;
     const ModuleComponents = {
       customer: RelateCustomers,
+      task: Task,
       sale: EmptyShow,
       notice: EmptyShow,
       audit: AuditMessage
