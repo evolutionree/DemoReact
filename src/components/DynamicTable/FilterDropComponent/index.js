@@ -173,7 +173,7 @@ class FilterDrop extends Component {
         <div className={Styles.header}>
           <span><Icon type="filter" /><label>筛选-{field.displayname}</label></span>
           {
-            this.props.value ? <span onClick={this.clearFilter}>清楚筛选</span> : null
+            this.props.value ? <span onClick={this.clearFilter}>清除筛选</span> : null
           }
         </div>
         <div className={Styles.body}>
