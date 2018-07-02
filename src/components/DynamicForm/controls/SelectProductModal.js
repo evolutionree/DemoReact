@@ -174,6 +174,12 @@ class SelectProductModal extends Component {
     });
   }
 
+  tableRowDoubleClick = (record) => {
+    if (!this.props.multiple) { //单选支持 双击点击单行 确定选择
+      this.props.onOk([record]);
+    }
+  }
+
   removeCurentItems = (record) => { //移除 已选列表中  的数据
     const currentSelected = this.state.currentSelected.filter(item => item.productid !== record.productid);
     this.setState({
@@ -232,6 +238,7 @@ class SelectProductModal extends Component {
             <Spin spinning={this.state.loading}>
               <Table columns={this.state.columns}
                      dataSource={list}
+                     onRowDoubleClick={this.tableRowDoubleClick}
                      pagination={{
                        total: this.state.total,
                        pageSize: 10,
