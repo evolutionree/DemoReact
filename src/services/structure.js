@@ -384,3 +384,15 @@ export async function getrecentchat() {
   });
 }
 
+
+/**
+ * 查询个人/群组 聊天记录
+ * {groupid: '00000000-0000-0000-0000-000000000000',friendid: '', ishistory: 0, recversion: 0}
+ * @returns {Promise.<Object>}
+ */
+export async function getchatlist(params) {
+  return request('api/chat/list', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}

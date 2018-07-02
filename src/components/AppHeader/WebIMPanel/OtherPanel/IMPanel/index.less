@@ -1,164 +1,228 @@
 @import "../common.less";
-.IMPanelWrap{
-  overflow: hidden;
+@BottomHeight: 240px;
+.IMPanelContent{
+  .clearFix;
   height: 100%;
-  .header{
-    h3{
-      &:hover{
-        text-decoration: underline;
-        cursor: pointer;
-      }
+  .IMPanelWrap{
+    width: 100%;
+  }
+  &.GroupIMPanel{
+    .IMPanelWrap{
+      width: 70%;
     }
   }
-  .body{
-    position: absolute;
-    top: 70px;
-    bottom: 240px;
-    width: 100%;
-    padding: 0 28px;
-    overflow: auto;
+}
 
-    .chatItem{
-      .clearFix;
-      width:100%;
-      margin-bottom:20px;
-      position: relative;
+.header{
+  h3{
+    &:hover{
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  }
+}
 
-      &.itemRight img{
-        float: right;
-      }
-      &.itemLeft img{
-        float: left;
-      }
+.IMBody{
+  .clearFix;
+  position: absolute;
+  top: 70px;
+  bottom: 0;
+  width: 100%;
+  border-top: 1px solid #E3E7EC;
 
-      .message{
-        max-width:60%;
-        display:block;
-        padding:10px;
-        line-height: 20px;
-      }
-      &.itemLeft .message{
-        float: left;
-        margin-left:10px;
-        background: #E9EDF2;
-        border-radius: 6px 6px 6px 0;
-      }
-      &.itemRight .message{
-        float: right;
-        margin-right:10px;
-        background: #7EC6F6;
-        border-radius: 6px 6px 0 6px;
-      }
+  .IMPanelWrap{
+    height: 100%;
+    position: relative;
+    float: left;
+    .messageList{
+      position: absolute;
+      top: 0px;
+      bottom:@BottomHeight;
+      width: 100%;
+      padding: 10px 28px;
+      overflow: auto;
 
-      .pictureMessage{
-        padding: 0;
-        background: transparent;
-        >img{ //图片等比例缩放
-          width: 100%;
-        }
-      }
-
-      .fileMessage{
+      .chatItem{
         .clearFix;
-        padding-left: 0;
-        .file{
+        width:100%;
+        margin-bottom:20px;
+        position: relative;
+
+        &.itemRight img{
+          float: right;
+        }
+        &.itemLeft img{
           float: left;
-          width: 60px;
-          height: 60px;
-          background: url("../../webIMIcon/fileIcon/file.png") no-repeat center center;
-          background-size: 100%;
         }
 
-        .fileInfo{
+        .message{
+          max-width:60%;
+          display:block;
+          padding:10px;
+          line-height: 20px;
+        }
+        &.itemLeft .message{
           float: left;
-          >div{
-            height: 30px;
-            line-height: 30px;
+          margin-left:10px;
+          background: #E9EDF2;
+          border-radius: 6px 6px 6px 0;
+        }
+        &.itemRight .message{
+          float: right;
+          margin-right:10px;
+          background: #7EC6F6;
+          border-radius: 6px 6px 0 6px;
+        }
+
+        .pictureMessage{
+          padding: 0;
+          background: transparent;
+          >img{ //图片等比例缩放
+            width: 100%;
+          }
+        }
+
+        .fileMessage{
+          .clearFix;
+          padding-left: 0;
+          .file{
+            float: left;
+            width: 60px;
+            height: 60px;
+            background: url("../../webIMIcon/fileIcon/file.png") no-repeat center center;
+            background-size: 100%;
+          }
+
+          .fileInfo{
+            float: left;
+            >div{
+              height: 30px;
+              line-height: 30px;
+            }
           }
         }
       }
     }
-  }
 
 
-  .footer{
-    width: 100%;
-    height: 240px;
-    position: absolute;
-    bottom: 0;
+    .IMInputWrap{
+      width: 100%;
+      height: @BottomHeight;
+      position: absolute;
+      bottom: 0;
 
-    border-top: 1px solid #E3E7EC;
-    .toolbar{
-      height: 60px;
-      line-height: 60px;
-      background: #fafafe;
+      border-top: 1px solid #E3E7EC;
+      .toolbar{
+        height: 60px;
+        line-height: 60px;
+        background: #fafafe;
 
-      i{
-        font-size: 22px;
-        margin-left: 30px;
-        cursor: pointer;
-      }
-    }
-
-
-    .inputWrap{
-      height: 110px;
-      position: relative;
-
-      textarea{
-        position: absolute;
-        left: 0px;
-        top: 0px;
-        width: 100%;
-        height: 100%;
-        line-height: 22px;
-        border: none;
-        outline: none;
-        resize: none;
-        padding: 4px 10px;
-      }
-    }
-
-    .submitWrap{
-      padding: 10px 28px 0 0;
-      .buttonWrap{
-        .clearFix;
-        width: 74px;
-        height: 40px;
-        line-height: 40px;
-        border: 1px solid #979797;
-        border-radius: 5px;
-        color: #979797;
-        float: right;
-
-
-        div:first-of-type{
-          width: 54px;
-          text-align: center;
-          float: left;
+        i{
+          font-size: 22px;
+          margin-left: 30px;
           cursor: pointer;
         }
+      }
 
-        div:last-of-type{
-          width: 18px;
-          text-align: center;
+
+      .inputWrap{
+        height: 110px;
+        position: relative;
+
+        textarea{
+          position: absolute;
+          left: 0px;
+          top: 0px;
+          width: 100%;
+          height: 100%;
+          line-height: 22px;
+          border: none;
+          outline: none;
+          resize: none;
+          padding: 4px 10px;
+        }
+      }
+
+      .submitWrap{
+        padding: 10px 28px 0 0;
+        .buttonWrap{
+          .clearFix;
+          width: 74px;
+          height: 40px;
+          line-height: 40px;
+          border: 1px solid #979797;
+          border-radius: 5px;
+          color: #979797;
           float: right;
 
-          >i{
-            position: relative;
-            top: 11px;
-            margin-top: -4px;
-            width: 0px;
-            height: 0px;
-            border-top: 4px solid lightgrey;
-            border-right: 4px solid transparent;
-            border-bottom: 4px solid transparent;
-            border-left: 4px solid transparent;
+
+          div:first-of-type{
+            width: 54px;
+            text-align: center;
+            float: left;
+            cursor: pointer;
+          }
+
+          div:last-of-type{
+            width: 18px;
+            text-align: center;
+            float: right;
+
+            >i{
+              position: relative;
+              top: 11px;
+              margin-top: -4px;
+              width: 0px;
+              height: 0px;
+              border-top: 4px solid lightgrey;
+              border-right: 4px solid transparent;
+              border-bottom: 4px solid transparent;
+              border-left: 4px solid transparent;
+            }
           }
         }
       }
+
+
+    }
+  }
+
+
+  .contactList{
+    width: 30%;
+    height: 100%;
+    border-left: 1px solid #E3E7EC;
+    float: left;
+
+    >h3{
+      color: #333333;
+      font-size: 16px;
+      height: 40px;
+      line-height: 40px;
+      padding: 0 15px;
     }
 
+    >ul {
+      >li{
+        width: 100%;
+        height: 50px;
+        line-height: 50px;
+        padding-left: 65px;
+        cursor: pointer;
 
+        position: relative;
+        >img{
+          position: absolute;
+          left: 15px;
+          top: 50%;
+          transform: translateY(-50%);
+          border-radius: 50%;
+        }
+
+        &:hover{
+          background: #F3F6F9;
+        }
+      }
+    }
   }
 }

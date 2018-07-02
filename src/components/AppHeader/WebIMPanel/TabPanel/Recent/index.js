@@ -29,7 +29,7 @@ class ReactPanel extends Component {
     if ($(event.target).closest('#IMPanel').length) {
       return;
     }
-    this.closeIMPanel();
+    //this.closeIMPanel();
   };
 
   componentWillReceiveProps(nextProps) {
@@ -37,22 +37,17 @@ class ReactPanel extends Component {
   }
 
   listClickHandler = (data) => {
-    // this.props.dispatch({
-    //   type: 'webIM/showPanel',
-    //   payload: {
-    //     showPanel: 'IMPanel',
-    //     panelInfo: data
-    //   }
-    // });
-    this.setState({
-      IMPanelVisible: true
+    this.props.dispatch({
+      type: 'webIM/showPanel',
+      payload: {
+        showPanel: this.props.showPanel === 'IMPanel' ? 'IMPanel' : 'miniIMPanel',
+        panelInfo: data
+      }
     });
   }
 
   closeIMPanel = () => {
-    this.setState({
-      IMPanelVisible: false
-    });
+    this.props.dispatch({ type: 'webIM/closeOtherPanel', payload: '' });
   }
 
   onContextMenu = (left, top, data) => {
@@ -72,8 +67,8 @@ class ReactPanel extends Component {
         <div className={styles.listWrap}>
           <List onClick={this.listClickHandler} onContextMenu={this.onContextMenu} dataSource={this.props.recentChatList} />
         </div>
-        <div className={classnames(styles.Recent_IMPanelWrap, { [styles.visible]: this.state.IMPanelVisible })} id="IMPanel">
-          <IMPanel panelInfo={{ username: 'test' }} close={this.closeIMPanel} />
+        <div className={classnames(styles.Recent_IMPanelWrap, { [styles.visible]: this.props.showPanel === 'miniIMPanel' })} id="IMPanel">
+          <IMPanel />
         </div>
       </div>
     );

@@ -8,6 +8,8 @@ import { connect } from 'dva';
 import Avatar from '../../../../Avatar';
 import FileUpload from '../../Component/FileUpload';
 import _ from 'lodash';
+import { uuid } from '../../../../../utils/index';
+import { getchatlist } from '../../../../../services/structure';
 import styles from './index.less';
 
 class IMPanel extends Component {
@@ -23,8 +25,28 @@ class IMPanel extends Component {
       sendMessage: ''
     };
   }
-  componentWillReceiveProps(nextProps) {
 
+  componentDidMount() {
+    this.getChatList();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.getChatList();
+  }
+
+  getChatList = () => {
+    const params = {
+      groupid: '00000000-0000-0000-0000-000000000000',
+      friendid: this.props.panelInfo.userid,
+      ishistory: 0,
+      recversion: 0
+    };
+
+    getchatlist(params).then(result => {
+
+    }, err => {
+
+    });
   }
 
   closePanel = () => {
@@ -46,6 +68,7 @@ class IMPanel extends Component {
     const sendData = {
       Cmd: 3,
       data: {
+        mid: uuid(),
         ctype: 0, // chattype      0为私聊，1为群聊
         gid: '00000000-0000-0000-0000-000000000000', //群组id 非群组消息默认 传00000000-0000-0000-0000-000000000000
         ct: 1, //聊天内容类型 ： 1文字  2图片  3录音 4位置 5文件
@@ -64,6 +87,7 @@ class IMPanel extends Component {
     const sendData = {
       Cmd: 3,
       data: {
+        mid: uuid(),
         ctype: 0, // chattype      0为私聊，1为群聊
         gid: '00000000-0000-0000-0000-000000000000', //群组id 非群组消息默认 传00000000-0000-0000-0000-000000000000
         ct: 2, //聊天内容类型 ： 1文字  2图片  3录音 4位置 5文件
@@ -79,6 +103,7 @@ class IMPanel extends Component {
     const sendData = {
       Cmd: 3,
       data: {
+        mid: uuid(),
         ctype: 0, // chattype      0为私聊，1为群聊
         gid: '00000000-0000-0000-0000-000000000000', //群组id 非群组消息默认 传00000000-0000-0000-0000-000000000000
         ct: 5, //聊天内容类型 ： 1文字  2图片  3录音 4位置 5文件
@@ -170,6 +195,7 @@ class IMPanel extends Component {
 
   render() {
     const { panelInfo, messagelist, userInfo } = this.props;
+    console.log(panelInfo)
     const currentUserIMData = messagelist instanceof Array && messagelist.filter(item => { //当前聊天窗口的 所有消息
       if (item.type === 'sendMessage') {
         return item.data.rec === panelInfo.userid;
@@ -180,34 +206,58 @@ class IMPanel extends Component {
     const currentUserIMData_sortBy = _.sortBy(currentUserIMData, item => item.time);
 
     return (
-      <div className={styles.IMPanelWrap}>
+      <div className={classnames(styles.IMPanelContent, { [styles.GroupIMPanel]: panelInfo.chattype === 1 })}>
         <div className={styles.header}>
           <h3 onClick={this.usernameClickHandler}>{panelInfo.username}</h3>
           <Icon type="close" onClick={this.closePanel} />
         </div>
-        <div className={styles.body}>
-          {
-            currentUserIMData_sortBy && currentUserIMData_sortBy instanceof Array && currentUserIMData_sortBy.map(item => {
-              return this.renderMessage(item);
-            })
-          }
-        </div>
-        <div className={styles.footer}>
-          <div className={styles.toolbar}>
-            <FileUpload onUpload={this.imgUpload} startUpload={this.imgStartUpload} type="img"><Icon type="picture" /></FileUpload>
-            <FileUpload onUpload={this.fileUpload} startUpload={this.imgStartUpload}><Icon type="folder-open" /></FileUpload>
-            <Icon type="smile-o" />
-          </div>
-          <div className={styles.inputWrap}>
-            <textarea onChange={this.sendMessageChangeHandler} value={this.state.sendMessage} />
-          </div>
-          <div className={styles.submitWrap}>
-            <div className={styles.buttonWrap}>
-              <div onClick={this.sendMessage}>发送</div>
-              <div>
-                <i></i>
+        <div className={styles.IMBody}>
+          <div className={styles.IMPanelWrap}>
+            <div className={styles.messageList}>
+              {
+                currentUserIMData_sortBy && currentUserIMData_sortBy instanceof Array && currentUserIMData_sortBy.map(item => {
+                  return this.renderMessage(item);
+                })
+              }
+            </div>
+            <div className={styles.IMInputWrap}>
+              <div className={styles.toolbar}>
+                <FileUpload onUpload={this.imgUpload} startUpload={this.imgStartUpload} type="img"><Icon type="picture" /></FileUpload>
+                <FileUpload onUpload={this.fileUpload} startUpload={this.imgStartUpload}><Icon type="folder-open" /></FileUpload>
+                <Icon type="smile-o" />
+              </div>
+              <div className={styles.inputWrap}>
+                <textarea onChange={this.sendMessageChangeHandler} value={this.state.sendMessage} />
+              </div>
+              <div className={styles.submitWrap}>
+                <div className={styles.buttonWrap}>
+                  <div onClick={this.sendMessage}>发送</div>
+                  <div>
+                    <i></i>
+                  </div>
+                </div>
               </div>
             </div>
+          </div>
+
+          <div className={styles.contactList}>
+            <h3>
+              群聊成员(10/10)
+            </h3>
+            <ul>
+              <li>
+                <img src="./img_demo_avatar.png" />
+                <span>余萍</span>
+              </li>
+              <li>
+                <img src="./img_demo_avatar.png" />
+                <span>余萍</span>
+              </li>
+              <li>
+                <img src="./img_demo_avatar.png" />
+                <span>余萍</span>
+              </li>
+            </ul>
           </div>
         </div>
       </div>

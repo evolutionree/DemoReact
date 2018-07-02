@@ -44,9 +44,16 @@ export default {
     *queryRecentList(action, { select, call, put, take }) {
       try {
         const { data } = yield call(getrecentchat);
+        const transformData = data instanceof Array && data.map(item => {
+          return {
+            ...item,
+            userid: item.chatid,
+            username: item.chatname
+          };
+        })
         yield put({
           type: 'putState',
-          payload: { recentChatList: data }
+          payload: { recentChatList: transformData }
         });
       } catch (e) {
         message.error(e.message || '查询最近聊天列表失败');
