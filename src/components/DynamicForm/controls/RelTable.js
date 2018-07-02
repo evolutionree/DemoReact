@@ -78,10 +78,19 @@ class RelTable extends Component {
       OperateType,  // 0新增 1编辑 2查看
       typeId: this.props.entityTypeId // 主表单typeid
     };
+    this.setState({
+      loading: true
+    })
     getGeneralProtocolForGrid(params).then(result => {
       this.setState({
         fields: result.data,
-        selectedRows: []
+        selectedRows: [],
+        loading: false
+      });
+    }).catch(e => {
+      console.error(e.message);
+      this.setState({
+        loading: false
       });
     });
   };
@@ -192,70 +201,100 @@ class RelTable extends Component {
   };
 
   setRowFieldVisible = (fieldName, isVisible) => {
-    const newFields = [...this.state.fields];
-    const fieldIndex = _.findIndex(newFields, ['fieldname', fieldName]);
-    if (fieldIndex !== -1) {
-      const field = this.state.fields[fieldIndex];
-      // const newField = {
-      //   ...field,
-      //   fieldconfig: {
-      //     ...field.fieldconfig,
-      //     isVisibleJS: isVisible ? 1 : 0
-      //   }
-      // };
-      field.fieldconfig = {
-        ...field.fieldconfig,
-        isVisibleJS: isVisible ? 1 : 0
-      };
-
-      if (!isVisible) {
-        const value = this.parseValue();
-        if (value.length) {
-          const newVal = value.map(item => {
-            return {
-              TypeId: this.props.entityId,
-              FieldData: {
-                ...(item.FieldData || {}),
-                [fieldName]: ''
-              }
+    doWhileGet();
+    const _this = this;
+    function doWhileGet() {
+      setTimeout(() => {
+        if (!_this.state.loading) {
+          const newFields = [..._this.state.fields];
+          const fieldIndex = _.findIndex(newFields, ['fieldname', fieldName]);
+          if (fieldIndex !== -1) {
+            const field = _this.state.fields[fieldIndex];
+            // const newField = {
+            //   ...field,
+            //   fieldconfig: {
+            //     ...field.fieldconfig,
+            //     isVisibleJS: isVisible ? 1 : 0
+            //   }
+            // };
+            field.fieldconfig = {
+              ...field.fieldconfig,
+              isVisibleJS: isVisible ? 1 : 0
             };
-          });
-          this.props.onChange(newVal);
-        }
-        // this.arrFormInstance.forEach(form => {
-        //   if (!form) return;
-        //   form.formInst && form.formInst.setFieldsValue({ [fieldName]: '' });
-        // });
-      }
 
-      // newFields[fieldIndex] = newField;
-      this.setState({ fields: newFields });
+            if (!isVisible) {
+              const value = _this.parseValue();
+              if (value.length) {
+                const newVal = value.map(item => {
+                  return {
+                    TypeId: _this.props.entityId,
+                    FieldData: {
+                      ...(item.FieldData || {}),
+                      [fieldName]: ''
+                    }
+                  };
+                });
+                _this.props.onChange(newVal);
+              }
+              // this.arrFormInstance.forEach(form => {
+              //   if (!form) return;
+              //   form.formInst && form.formInst.setFieldsValue({ [fieldName]: '' });
+              // });
+            }
+
+            // newFields[fieldIndex] = newField;
+            _this.setState({ fields: newFields });
+          }
+        } else {
+          doWhileGet();
+        }
+      }, 100);
     }
   };
 
   setRowFieldReadOnly = (fieldName, isReadonly) => {
-    const newFields = [...this.state.fields];
-    const fieldIndex = _.findIndex(newFields, ['fieldname', fieldName]);
-    if (fieldIndex !== -1) {
-      const field = this.state.fields[fieldIndex];
-      field.fieldconfig = {
-        ...field.fieldconfig,
-        isReadOnlyJS: isReadonly ? 1 : 0
-      };
-      this.setState({ fields: newFields });
+    doWhileGet(); //因为全局js设置的时候,可能异步请求的表格协议还没获取到，设置会出问题，所以需要保证 表格协议已经获取到再设置 config
+    const _this = this;
+    function doWhileGet() {
+      setTimeout(() => {
+        if (!_this.state.loading) {
+          const newFields = [..._this.state.fields];
+          const fieldIndex = _.findIndex(newFields, ['fieldname', fieldName]);
+          if (fieldIndex !== -1) {
+            const field = _this.state.fields[fieldIndex];
+            field.fieldconfig = {
+              ...field.fieldconfig,
+              isReadOnlyJS: isReadonly ? 1 : 0
+            };
+            _this.setState({ fields: newFields });
+          }
+        } else {
+          doWhileGet();
+        }
+      }, 10);
     }
   };
 
   setRowFieldRequired = (fieldName, isRequired) => {
-    const newFields = [...this.state.fields];
-    const fieldIndex = _.findIndex(newFields, ['fieldname', fieldName]);
-    if (fieldIndex !== -1) {
-      const field = this.state.fields[fieldIndex];
-      field.fieldconfig = {
-        ...field.fieldconfig,
-        isRequiredJS: isRequired ? 1 : 0
-      };
-      this.setState({ fields: newFields });
+    const _this = this;
+    doWhileGet();
+    function doWhileGet() {
+      setTimeout(() => {
+        if (!_this.state.loading) {
+          const newFields = [..._this.state.fields];
+          const fieldIndex = _.findIndex(newFields, ['fieldname', fieldName]);
+          if (fieldIndex !== -1) {
+            const field = _this.state.fields[fieldIndex];
+            field.fieldconfig = {
+              ...field.fieldconfig,
+              isRequiredJS: isRequired ? 1 : 0
+            };
+            _this.setState({ fields: newFields });
+          }
+        } else {
+          doWhileGet();
+        }
+      }, 100);
     }
   };
 
@@ -265,14 +304,24 @@ class RelTable extends Component {
   };
 
   setFieldConfig = (fieldName, config) => {
-    const field = this.getFieldByName(fieldName);
-    if (field) {
-      field.fieldconfig = {
-        ...field.fieldconfig,
-        ...config
-      };
+    const _this = this;
+    doWhileGet();
+    function doWhileGet() {
+      setTimeout(() => {
+        if (!_this.state.loading) {
+          const field = _this.getFieldByName(fieldName);
+          if (field) {
+            field.fieldconfig = {
+              ...field.fieldconfig,
+              ...config
+            };
+          }
+          _this.setState({ fields: [..._this.state.fields] });
+        } else {
+          doWhileGet();
+        }
+      }, 100);
     }
-    this.setState({ fields: [...this.state.fields] });
   };
 
   getFieldByName = (fieldName) => {
