@@ -12,7 +12,7 @@ export default {
     panelInfo: {},
     showChildrenPanel: '',
     childrenPanelInfo: '',
-    messagelist: null,
+    messagelist: [],
     contextMenuInfo: {}, //上下文菜单
 
     recentChatList: []
@@ -21,7 +21,7 @@ export default {
     setup({ dispatch, history }) {
       dispatch({ type: 'init' });
       return history.listen(location => {
-        dispatch({ type: 'closePanel' });  //切换到其他路由页面时  所有有关WebIM的面板隐藏
+        //dispatch({ type: 'closePanel' });  //切换到其他路由页面时  所有有关WebIM的面板隐藏
       });
     }
   },
@@ -87,9 +87,11 @@ export default {
       };
     },
     receivemessage(state, { payload: message }) {
+      console.log(state.messagelist)
+      console.log([...state.messagelist, message])
       return {
         ...state,
-        messagelist: state.messagelist ? [...state.messagelist, message] : [message]
+        messagelist: [...state.messagelist, message]
       };
     },
     setContextMenu(state, { payload: contextMenuInfo }) {
