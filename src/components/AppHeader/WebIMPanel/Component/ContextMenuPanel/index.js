@@ -28,13 +28,13 @@ class ContextMenuPanel extends Component {
   }
 
   openPersonalDetail = () => {
-    // this.props.dispatch({
-    //   type: 'webIM/showPanel',
-    //   payload: {
-    //     showPanel: 'PersonalDetail',
-    //     panelInfo: data
-    //   }
-    // });
+    this.props.dispatch({
+      type: 'webIM/showPanel',
+      payload: {
+        showPanel: 'PersonalDetail',
+        panelInfo: this.props.data
+      }
+    });
   }
 
   render() {

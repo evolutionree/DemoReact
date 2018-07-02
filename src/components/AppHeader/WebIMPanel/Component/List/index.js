@@ -27,7 +27,7 @@ class List extends Component {
 
   }
 
-  contextMenuHandler = (event) => {
+  contextMenuHandler = (data, event) => {
     event.preventDefault();
     let pageX = event.pageX ? event.pageX : (event.clientX + (document.body.scrollLeft || document.documentElement.scrollLeft));
     let pageY = event.pageY ? event.pageY : (event.clientY + (document.body.scrollTop || document.documentElement.scrollTop));
@@ -36,11 +36,11 @@ class List extends Component {
       pageX = document.documentElement.clientWidth - 180;
     }
 
-    this.props.onContextMenu && this.props.onContextMenu(pageX, pageY, );
+    this.props.onContextMenu && this.props.onContextMenu(pageX, pageY, data);
   }
 
-  listClickHandler = () => {
-    this.props.onClick && this.props.onClick();
+  listClickHandler = (data) => {
+    this.props.onClick && this.props.onClick(data);
   }
 
   render() {
@@ -49,9 +49,9 @@ class List extends Component {
       <div>
         <ul className={styles.listWrap}>
           {
-            dataSource instanceof Array && dataSource.map(item => {
+            dataSource instanceof Array && dataSource.map((item, index) => {
               return (
-                <li onContextMenu={this.contextMenuHandler} onClick={this.listClickHandler}>
+                <li onContextMenu={this.contextMenuHandler.bind(this, item)} onClick={this.listClickHandler.bind(this, item)} key={index}>
                   <div className={styles.contactAvatar}>
                     <Avatar image={`/api/fileservice/read?fileid=${item.chaticon}`} width={30} />
                   </div>
@@ -61,8 +61,8 @@ class List extends Component {
                   </div>
                   <div className={styles.fr}>
                     {
-                      item.msglist instanceof Array && item.msglist.map(mesItem => {
-                        return <div>陈晓明：明天有时间吗？我准备和你去拜访一</div>;
+                      item.msglist instanceof Array && item.msglist.map((mesItem, mesIndex) => {
+                        return <div key={mesIndex}>陈晓明：明天有时间吗？我准备和你去拜访一</div>;
                       })
                     }
                   </div>

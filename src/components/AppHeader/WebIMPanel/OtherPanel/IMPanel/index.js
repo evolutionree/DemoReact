@@ -28,6 +28,7 @@ class IMPanel extends Component {
   }
 
   closePanel = () => {
+    this.props.close && this.props.close();
     this.props.dispatch({ type: 'webIM/closeOtherPanel', payload: '' });
   }
 
@@ -176,7 +177,6 @@ class IMPanel extends Component {
         return item.CustomContent.s = panelInfo.userid;
       }
     });
-
     const currentUserIMData_sortBy = _.sortBy(currentUserIMData, item => item.time);
 
     return (
