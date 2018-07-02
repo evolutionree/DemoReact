@@ -121,6 +121,13 @@ class DataSourceSelectModal extends Component {
     this.setState({ currentSelected: [item] });
   };
 
+  doubleSelectSingle = item => {
+    const selected = [item].map(
+      item => ({ id: item.id, name: item.name })
+    );
+    this.props.onOk(selected);
+  }
+
   remove = item => {
     this.setState({
       currentSelected: this.state.currentSelected.filter(i => i !== item)
@@ -237,7 +244,7 @@ class DataSourceSelectModal extends Component {
                 {this.state.list.map(item => {
                   const cls = (currentSelected.length && currentSelected[0].id === item.id) ? styles.highlight : '';
                   return (
-                    <li key={item.id} onClick={this.selectSingle.bind(this, item)} className={cls}>
+                    <li key={item.id} onClick={this.selectSingle.bind(this, item)} onDoubleClick={this.doubleSelectSingle.bind(this, item)} className={cls}>
                       {this.renderItem(item)}
                     </li>
                   );
