@@ -87,8 +87,6 @@ export default {
       };
     },
     receivemessage(state, { payload: message }) {
-      console.log(state.messagelist)
-      console.log([...state.messagelist, message])
       return {
         ...state,
         messagelist: [...state.messagelist, message]

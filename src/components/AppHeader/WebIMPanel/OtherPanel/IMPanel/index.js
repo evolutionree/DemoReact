@@ -55,11 +55,15 @@ class IMPanel extends Component {
               gid: item.groupid, //群组id 非群组消息默认 传00000000-0000-0000-0000-000000000000
               ct: item.contype, //聊天内容类型 ： 1文字  2图片  3录音 4位置 5文件
               fid: item.chatcon, //发送的文件fileid
-              cont: item.chatcon, //发送的文本内容
-              rec: item.receivers //收消息用户id
+              cont: item.chatcon //发送的文本内容
+            },
+            ud: {
+              userid: item.ud.userid,
+              username: item.ud.username,
+              usericon: item.ud.usericon
             },
             time: new Date(item.reccreated).getTime(),
-            type: item.chattype === 0 ? 'sendMessage' : 'receiveMessage'
+            type: item.receivers === this.props.userInfo.userid ? 'receiveMessage' : 'sendMessage'
           };
         })
       });
@@ -135,13 +139,18 @@ class IMPanel extends Component {
   }
 
   sendWebSocker = (sendData) => {
-    const { webIMSocket } = this.props;
+    const { webIMSocket, userInfo } = this.props;
     webIMSocket.send(JSON.stringify(sendData));
     const nowTime = new Date().getTime();
     this.props.dispatch({
       type: 'webIM/receivemessage',
       payload: {
         ...sendData,
+        ud: {
+          userid: userInfo.userid,
+          username: userInfo.username,
+          usericon: userInfo.usericon
+        },
         time: nowTime,
         type: 'sendMessage'
       }
@@ -172,7 +181,7 @@ class IMPanel extends Component {
 
     let itemLayout = 'itemLeft';
     if (data.type === 'sendMessage') {
-      itemLayout = 'itemLayout';
+      itemLayout = 'itemRight';
     }
 
     if (data.data.ct === 1) { //文字
@@ -216,12 +225,11 @@ class IMPanel extends Component {
       allChatList = [...messagelist, ...this.state.chatList];
     }
     const currentUserIMData = allChatList.filter(item => { //当前聊天窗口的 所有消息
-        return item.data.rec === panelInfo.userid;
-      // if (item.type === 'sendMessage') {
-      //   return item.data.rec === panelInfo.userid;
-      // } else if (item.type === 'receiveMessage') {
-      //   return item.CustomContent.s = panelInfo.userid;
-      // }
+      if (item.type === 'sendMessage') {
+        return item.ud.userid === panelInfo.userid;
+      } else if (item.type === 'receiveMessage') {
+        return item.ud.userid = panelInfo.userid;
+      }
     });
     const currentUserIMData_sortBy = _.sortBy(currentUserIMData, item => item.time);
     const chartData = _.uniqBy(currentUserIMData_sortBy, 'data.mid'); //去重

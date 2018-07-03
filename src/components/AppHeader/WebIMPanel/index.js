@@ -69,11 +69,26 @@ class WebIMPanel extends Component {
         console.log('Client received a message', event);
         const message = JSON.parse(event.data);
         if (message.ResultCode === undefined) {
-          message.type = 'receiveMessage';
-          message.time = new Date(message.CustomContent.t).getTime();
+          const CustomContent = message.CustomContent;
           dispatch({
             type: 'webIM/receivemessage',
-            payload: message
+            payload: {
+              data: {
+                mid: CustomContent.mid,
+                ctype: parseInt(CustomContent.ctype), // chattype      0为私聊，1为群聊
+                gid: CustomContent.gid, //群组id 非群组消息默认 传00000000-0000-0000-0000-000000000000
+                ct: CustomContent.ct, //聊天内容类型 ： 1文字  2图片  3录音 4位置 5文件
+                fid: CustomContent.fid, //发送的文件fileid
+                cont: message.Message //发送的文本内容
+              },
+              ud: {
+                userid: CustomContent.ud.UserId,
+                username: CustomContent.ud.UserName,
+                usericon: CustomContent.ud.UserIcon
+              },
+              time: new Date(CustomContent.t).getTime(),
+              type: 'receiveMessage'
+            }
           });
         }
       };
