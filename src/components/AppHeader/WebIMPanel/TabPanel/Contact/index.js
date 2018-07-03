@@ -40,7 +40,7 @@ const ContactItem = ({ dispatch, data, onStar, showStar = false }) => {
   return (
     <li className={styles.contactItem} onDoubleClick={openIMPanel}>
       <div className={styles.contactAvatar}>
-        <Avatar image={`/api/fileservice/read?fileid=${data.usericon}`} width={30} />
+        <Avatar image={`/api/fileservice/read?fileid=${data.usericon}`} name={data.username} width={30} />
       </div>
       <div>
         <span onClick={openPersonalDetail} className={styles.userName}>{data.username}</span>

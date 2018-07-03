@@ -3,7 +3,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Dropdown, Menu, Modal, Icon } from 'antd';
+import { Dropdown, Menu, Modal, Icon, Badge } from 'antd';
 import classnames from 'classnames';
 import Avatar from '../../../../Avatar';
 import styles from './index.less';
@@ -12,10 +12,11 @@ import styles from './index.less';
 class List extends Component {
   static propTypes = {
     onClick: PropTypes.func,
-    dataSource: PropTypes.array
+    dataSource: PropTypes.array,
+    spotMsg: PropTypes.array
   };
   static defaultProps = {
-
+    spotMsg: []
   };
   constructor(props) {
     super(props);
@@ -44,16 +45,21 @@ class List extends Component {
   }
 
   render() {
-    const { dataSource } = this.props;
+    const { dataSource, spotMsg } = this.props;
     return (
       <div>
         <ul className={styles.listWrap}>
           {
             dataSource instanceof Array && dataSource.map((item, index) => {
+              const spotMsgCount = spotMsg.filter(spotMsgItem => {
+                return spotMsgItem.IMPanelKey == item.chatid;
+              }).length;
               return (
                 <li onContextMenu={this.contextMenuHandler.bind(this, item)} onClick={this.listClickHandler.bind(this, item)} key={index}>
                   <div className={styles.contactAvatar}>
-                    <Avatar image={`/api/fileservice/read?fileid=${item.chaticon}`} width={30} />
+                    <Badge count={spotMsgCount}>
+                      <Avatar image={`/api/fileservice/read?fileid=${item.chaticon}`} width={30} />
+                    </Badge>
                   </div>
                   <div className={styles.fl}>
                     <div>{item.chatname}</div>

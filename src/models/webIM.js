@@ -86,7 +86,7 @@ export default {
         childrenPanelInfo: ''
       };
     },
-    receivemessage(state, { payload: message }) {
+    putReceiveOrSendMessage(state, { payload: message }) {
       return {
         ...state,
         messagelist: [...state.messagelist, message]

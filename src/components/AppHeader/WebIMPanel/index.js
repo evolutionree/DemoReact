@@ -71,7 +71,7 @@ class WebIMPanel extends Component {
         if (message.ResultCode === undefined) {
           const CustomContent = message.CustomContent;
           dispatch({
-            type: 'webIM/receivemessage',
+            type: 'webIM/putReceiveOrSendMessage',
             payload: {
               data: {
                 mid: CustomContent.mid,
@@ -86,6 +86,7 @@ class WebIMPanel extends Component {
                 username: CustomContent.ud.UserName,
                 usericon: CustomContent.ud.UserIcon
               },
+              IMPanelKey: CustomContent.s, //发送者 userid  IMPanelKey用于定义 聊天面板的key，用于筛选出当前面板的对话聊天数据
               time: new Date(CustomContent.t).getTime(),
               type: 'receiveMessage'
             }

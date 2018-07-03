@@ -2,7 +2,7 @@
  * Created by 0291 on 2018/6/13.
  */
 import React, { PropTypes, Component } from 'react';
-import { Dropdown, Menu, Input, Icon } from 'antd';
+import { Dropdown, Menu, Input, Icon, message } from 'antd';
 import classnames from 'classnames';
 import { connect } from 'dva';
 import Avatar from '../../../../Avatar';
@@ -23,7 +23,9 @@ class IMPanel extends Component {
     super(props);
     this.state = {
       sendMessage: '',
-      chatList: []
+      chatList: [],
+      recVersion: 0,
+      isPessionLoadMore: false //是否加载更多
     };
   }
 
@@ -37,38 +39,51 @@ class IMPanel extends Component {
     }
   }
 
-  getChatList = (userid) => {
+  componentDidUpdate() {
+    const OMessageList = document.getElementById('messagelist');
+    console.log(OMessageList.scrollHeight);
+    OMessageList.scrollTop = 1320;
+  }
+
+  getChatList = (userid, recversion = 0) => {
     const params = {
       groupid: '00000000-0000-0000-0000-000000000000',
       friendid: userid,
-      ishistory: 0,
-      recversion: 0
+      ishistory: recversion === 0 ? 0 : 1,
+      recversion: recversion  //通过 recversion进行分页查询
     };
 
     getchatlist(params).then(result => {
+      const data = result.data;
+      const transformData = data instanceof Array && data.map(item => {
+        return {
+          data: {
+            mid: item.chatmsgid,
+            ctype: item.msgtype, // chattype      0为私聊，1为群聊
+            gid: item.groupid, //群组id 非群组消息默认 传00000000-0000-0000-0000-000000000000
+            ct: item.contype, //聊天内容类型 ： 1文字  2图片  3录音 4位置 5文件
+            fid: item.chatcon, //发送的文件fileid
+            cont: item.chatcon //发送的文本内容
+          },
+          ud: {
+            userid: item.ud.userid,
+            username: item.ud.username,
+            usericon: item.ud.usericon
+          },
+          IMPanelKey: userid,
+          time: new Date(item.reccreated).getTime(),
+          type: item.receivers === this.props.userInfo.userid ? 'receiveMessage' : 'sendMessage'
+        };
+      });
+
       this.setState({
-        chatList: result.data instanceof Array && result.data.map(item => {
-          return {
-            data: {
-              mid: item.chatmsgid,
-              ctype: item.msgtype, // chattype      0为私聊，1为群聊
-              gid: item.groupid, //群组id 非群组消息默认 传00000000-0000-0000-0000-000000000000
-              ct: item.contype, //聊天内容类型 ： 1文字  2图片  3录音 4位置 5文件
-              fid: item.chatcon, //发送的文件fileid
-              cont: item.chatcon //发送的文本内容
-            },
-            ud: {
-              userid: item.ud.userid,
-              username: item.ud.username,
-              usericon: item.ud.usericon
-            },
-            time: new Date(item.reccreated).getTime(),
-            type: item.receivers === this.props.userInfo.userid ? 'receiveMessage' : 'sendMessage'
-          };
-        })
+        chatList: this.state.chatList.length === 0 ? transformData : [...this.state.chatList, ...transformData],
+        recVersion: data.length > 0 && data[0].recversion, //第一条数据的version作为下一次请求的version
+        isPessionLoadMore: !(data.length < 50)  //每次请求最多50条数据
       });
     }, err => {
-
+      console.error(err.message)
+      message.error(err.message);
     });
   }
 
@@ -100,13 +115,14 @@ class IMPanel extends Component {
         rec: this.props.panelInfo.userid //收消息用户id
       }
     };
+    console.log(JSON.stringify(sendData))
     this.sendWebSocker(sendData);
     this.setState({
       sendMessage: ''
     });
   }
 
-  imgUpload = (fileId) => {
+  imgUpload = (fileObj) => {
     const sendData = {
       Cmd: 3,
       data: {
@@ -114,7 +130,7 @@ class IMPanel extends Component {
         ctype: 0, // chattype      0为私聊，1为群聊
         gid: '00000000-0000-0000-0000-000000000000', //群组id 非群组消息默认 传00000000-0000-0000-0000-000000000000
         ct: 2, //聊天内容类型 ： 1文字  2图片  3录音 4位置 5文件
-        fid: fileId, //发送的文件fileid
+        fid: fileObj.fileId, //发送的文件fileid
         cont: '', //发送的文本内容
         rec: this.props.panelInfo.userid //收消息用户id
       }
@@ -122,7 +138,7 @@ class IMPanel extends Component {
     this.sendWebSocker(sendData);
   }
 
-  fileUpload = (fileId) => {
+  fileUpload = (fileObj) => {
     const sendData = {
       Cmd: 3,
       data: {
@@ -130,7 +146,7 @@ class IMPanel extends Component {
         ctype: 0, // chattype      0为私聊，1为群聊
         gid: '00000000-0000-0000-0000-000000000000', //群组id 非群组消息默认 传00000000-0000-0000-0000-000000000000
         ct: 5, //聊天内容类型 ： 1文字  2图片  3录音 4位置 5文件
-        fid: fileId, //发送的文件fileid
+        fid: fileObj.fileId, //发送的文件fileid
         cont: '', //发送的文本内容
         rec: this.props.panelInfo.userid //收消息用户id
       }
@@ -143,7 +159,7 @@ class IMPanel extends Component {
     webIMSocket.send(JSON.stringify(sendData));
     const nowTime = new Date().getTime();
     this.props.dispatch({
-      type: 'webIM/receivemessage',
+      type: 'webIM/putReceiveOrSendMessage',
       payload: {
         ...sendData,
         ud: {
@@ -151,6 +167,8 @@ class IMPanel extends Component {
           username: userInfo.username,
           usericon: userInfo.usericon
         },
+        IMPanelKey: this.props.panelInfo.userid,
+        date: new Date(),
         time: nowTime,
         type: 'sendMessage'
       }
@@ -176,9 +194,18 @@ class IMPanel extends Component {
     };
   }
 
-  renderMessage = (data) => {
-    const { userInfo } = this.props;
+  loadMore = () => {
+    console.log(this.state.recVersion)
+    this.getChatList(this.props.panelInfo.userid, this.state.recVersion);
+  }
 
+  messagelistScroll = (e) => {
+    if (e.target.scrollTop < 10) {
+      //this.loadMore();
+    }
+  }
+
+  renderMessage = (data) => {
     let itemLayout = 'itemLeft';
     if (data.type === 'sendMessage') {
       itemLayout = 'itemRight';
@@ -186,23 +213,23 @@ class IMPanel extends Component {
 
     if (data.data.ct === 1) { //文字
       return (
-        <div className={classnames(styles.chatItem, styles[itemLayout])} key={data.time}>
-          <Avatar image={`/api/fileservice/read?fileid=${userInfo.usericon}`} width={30} />
+        <div className={classnames(styles.chatItem, styles[itemLayout])} key={data.data.mid}>
+          <Avatar image={`/api/fileservice/read?fileid=${data.ud.usericon}`} name={data.ud.username} width={30} />
           <div className={styles.message}>{data.data.cont}</div>
         </div>
       );
     } else if (data.data.ct === 2) { //图片
       const imgSrc = data.data.loading ? data.data.fid : `/api/fileservice/read?fileid=${data.data.fid}`;
       return (
-        <div className={classnames(styles.chatItem, styles[itemLayout])} key={data.time}>
-          <Avatar image={`/api/fileservice/read?fileid=${userInfo.usericon}`} width={30} />
+        <div className={classnames(styles.chatItem, styles[itemLayout])} key={data.data.mid}>
+          <Avatar image={`/api/fileservice/read?fileid=${data.ud.usericon}`} name={data.ud.username} width={30} />
           <div className={classnames(styles.message, styles.pictureMessage)}><img src={imgSrc} key={data.time} /></div>
         </div>
       );
     } else if (data.data.ct === 5) { //文件
       return (
-        <div className={classnames(styles.chatItem, styles[itemLayout])} key={data.time}>
-          <Avatar image={`/api/fileservice/read?fileid=${userInfo.usericon}`} width={30} />
+        <div className={classnames(styles.chatItem, styles[itemLayout])} key={data.data.mid}>
+          <Avatar image={`/api/fileservice/read?fileid=${data.ud.usericon}`} name={data.ud.username} width={30} />
           <div className={classnames(styles.message, styles.fileMessage)}>
             <div className={classnames(styles.file)}></div>
             <div className={styles.fileInfo}>
@@ -210,7 +237,7 @@ class IMPanel extends Component {
               <div>126.7kb</div>
             </div>
             <div className={styles.download}>
-              <Icon type="arrow-down" />
+              <Icon type="download" />
             </div>
           </div>
         </div>
@@ -225,14 +252,13 @@ class IMPanel extends Component {
       allChatList = [...messagelist, ...this.state.chatList];
     }
     const currentUserIMData = allChatList.filter(item => { //当前聊天窗口的 所有消息
-      if (item.type === 'sendMessage') {
-        return item.ud.userid === panelInfo.userid;
-      } else if (item.type === 'receiveMessage') {
-        return item.ud.userid = panelInfo.userid;
-      }
+      return item.IMPanelKey === panelInfo.userid;
     });
     const currentUserIMData_sortBy = _.sortBy(currentUserIMData, item => item.time);
     const chartData = _.uniqBy(currentUserIMData_sortBy, 'data.mid'); //去重
+
+    const date_group_ChartData = _.groupBy(chartData, item => item.type);
+    console.log(JSON.stringify(date_group_ChartData))
     return (
       <div className={classnames(styles.IMPanelContent, { [styles.GroupIMPanel]: panelInfo.chattype === 1 })}>
         <div className={styles.header}>
@@ -241,7 +267,10 @@ class IMPanel extends Component {
         </div>
         <div className={styles.IMBody}>
           <div className={styles.IMPanelWrap}>
-            <div className={styles.messageList}>
+            <div className={styles.messageList} id="messagelist" onScroll={this.messagelistScroll}>
+              {
+                this.state.isPessionLoadMore ? <div onClick={this.loadMore}>查看更多消息</div> : null
+              }
               {
                 chartData && chartData instanceof Array && chartData.map(item => {
                   return this.renderMessage(item);

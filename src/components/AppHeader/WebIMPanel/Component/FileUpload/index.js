@@ -64,8 +64,8 @@ class ImageUploaderInForm extends React.Component {
         isUpload = false;
       }
     } else {
-      if (file.size / 1024 / 1024 > 100) {
-        message.error('文件大小不可超过100M!');
+      if (file.size / 1024 / 1024 > 10) {
+        message.error('文件大小不可超过10M!');
         isUpload = false;
       }
       return true;

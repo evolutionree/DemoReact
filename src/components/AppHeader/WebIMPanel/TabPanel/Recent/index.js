@@ -61,11 +61,12 @@ class ReactPanel extends Component {
   }
 
   render() {
+    const { messagelist } = this.props;
     return (
       <div className={styles.recent_tabPanel}>
         <div className={styles.title}>最近聊天</div>
         <div className={styles.listWrap}>
-          <List onClick={this.listClickHandler} onContextMenu={this.onContextMenu} dataSource={this.props.recentChatList} />
+          <List onClick={this.listClickHandler} onContextMenu={this.onContextMenu} dataSource={this.props.recentChatList} spotMsg={messagelist} />
         </div>
         <div className={classnames(styles.Recent_IMPanelWrap, { [styles.visible]: this.props.showPanel === 'miniIMPanel' })} id="IMPanel">
           <IMPanel />
