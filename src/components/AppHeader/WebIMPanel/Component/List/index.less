@@ -16,6 +16,7 @@
     height: 90px;
     padding-left: 30px;
     padding-right: 40px;
+    position: relative;
 
     .contactAvatar{
       width: 30px;
@@ -40,7 +41,6 @@
     }
 
     div.fr{
-      float: right;
       color: #9BA1AD;
       font-size: 14px;
       >div{
@@ -53,6 +53,12 @@
     }
     &:nth-child(even){
       background-color: transparent;
+    }
+
+    .badgeWrap{
+      position: absolute;
+      top: 46%;
+      right: 30px;
     }
   }
 }

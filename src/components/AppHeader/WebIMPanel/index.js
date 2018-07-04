@@ -3,13 +3,14 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Dropdown, Menu, Modal, Icon } from 'antd';
+import { Dropdown, Menu, Modal, Icon, Badge } from 'antd';
 import classnames from 'classnames';
 import Search from './Component/Search';
 import Tabs from './Component/Tabs';
 import { ContactPanel, GroupPanel, RecentPanel } from './TabPanel';
 import { OtherPanelRender } from './OtherPanelRender';
 import ContextMenuPanel from './Component/ContextMenuPanel';
+import _ from 'lodash';
 import styles from './index.less';
 
 class WebIMPanel extends Component {
@@ -63,7 +64,7 @@ class WebIMPanel extends Component {
   };
 
   componentDidUpdate() {
-    const { webIMSocket, dispatch } = this.props;
+    const { webIMSocket, dispatch, spotNewMsgList, showPanel, panelInfo } = this.props;
     if (webIMSocket) {
       webIMSocket.onmessage = (event) => {
         console.log('Client received a message', event);
@@ -86,11 +87,26 @@ class WebIMPanel extends Component {
                 username: CustomContent.ud.UserName,
                 usericon: CustomContent.ud.UserIcon
               },
-              IMPanelKey: CustomContent.s, //发送者 userid  IMPanelKey用于定义 聊天面板的key，用于筛选出当前面板的对话聊天数据
-              time: new Date(CustomContent.t).getTime(),
+              IMPanelCtype: parseInt(CustomContent.ctype),
+              IMPanelKey: parseInt(CustomContent.ctype) === 0 ? CustomContent.s : CustomContent.gid, //发送者 userid  IMPanelKey用于定义 聊天面板的key，用于筛选出当前面板的对话聊天数据
+              time: CustomContent.t,
               type: 'receiveMessage'
             }
           });
+
+          if ((showPanel === 'IMPanel' || showPanel === 'miniIMPanel') && panelInfo.userid === CustomContent.s) {
+            //当前正在窗口聊天中  不显示 徽标数
+          } else {
+            let newSpotNewMsgList = _.cloneDeep(spotNewMsgList);
+            if (newSpotNewMsgList) {
+              newSpotNewMsgList[CustomContent.s] = newSpotNewMsgList[CustomContent.s] ? newSpotNewMsgList[CustomContent.s] + 1 : 1;
+            } else {
+              newSpotNewMsgList = { [CustomContent.s]: 1 };
+            }
+            dispatch({ type: 'webIM/setSpotNewMsgList', payload: newSpotNewMsgList });
+          }
+
+          dispatch({ type: 'webIM/queryRecentList__' });
         }
       };
     }
@@ -118,7 +134,7 @@ class WebIMPanel extends Component {
     })
 
     if (tabName === 'recent') {
-      this.props.dispatch({ type: 'webIM/queryRecentList' });
+      this.props.dispatch({ type: 'webIM/queryRecentList__' });
     }
 
     this.setState({
@@ -128,18 +144,28 @@ class WebIMPanel extends Component {
   }
 
   render() {
-    const { showPanel, showChildrenPanel, contextMenuInfo } = this.props;
+    const { showPanel, showChildrenPanel, contextMenuInfo, spotNewMsgList } = this.props;
     const tabModel = this.state.tabModel;
     let OtherPanelComponent = OtherPanelRender[showPanel];
     let OtherPanelChildrenComponent = OtherPanelRender[showChildrenPanel];
+
+    let total_spotMsgCount = 0;
+    if (spotNewMsgList) {
+      for (let key in spotNewMsgList) {
+        total_spotMsgCount += spotNewMsgList[key];
+      }
+    }
+
     return (
       <div id="webIM">
-        <Icon
-          type="contacts"
-          title="通讯录"
-          style={{ fontSize: 24, cursor: 'pointer', marginRight: '10px', verticalAlign: 'middle' }}
-          onClick={this.togglePanelVisible}
-        />
+        <Badge count={total_spotMsgCount}>
+          <Icon
+            type="contacts"
+            title="通讯录"
+            style={{ fontSize: 24, cursor: 'pointer', marginRight: '10px', verticalAlign: 'middle' }}
+            onClick={this.togglePanelVisible}
+          />
+        </Badge>
         <div className={classnames(styles.panelWrap, { [styles.panelVisible]: this.state.panelVisible })}>
           <ul className={styles.header}>
             <li>

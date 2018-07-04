@@ -13,7 +13,8 @@ class List extends Component {
   static propTypes = {
     onClick: PropTypes.func,
     dataSource: PropTypes.array,
-    spotMsg: PropTypes.array
+    spotMsg: PropTypes.array,
+    spotLayout: PropTypes.string
   };
   static defaultProps = {
     spotMsg: []
@@ -45,21 +46,22 @@ class List extends Component {
   }
 
   render() {
-    const { dataSource, spotMsg } = this.props;
+    const { dataSource, spotLayout, spotNewMsgList } = this.props;
+    console.log(dataSource)
     return (
       <div>
         <ul className={styles.listWrap}>
           {
             dataSource instanceof Array && dataSource.map((item, index) => {
-              const spotMsgCount = spotMsg.filter(spotMsgItem => {
-                return spotMsgItem.IMPanelKey == item.chatid;
-              }).length;
+              const spotMsgCount = spotNewMsgList && spotNewMsgList[item.chatid]
               return (
                 <li onContextMenu={this.contextMenuHandler.bind(this, item)} onClick={this.listClickHandler.bind(this, item)} key={index}>
                   <div className={styles.contactAvatar}>
-                    <Badge count={spotMsgCount}>
-                      <Avatar image={`/api/fileservice/read?fileid=${item.chaticon}`} width={30} />
-                    </Badge>
+                    {
+                      spotLayout === 'start' ? <Badge count={spotMsgCount}>
+                        <Avatar image={`/api/fileservice/read?fileid=${item.chaticon}`} width={30} />
+                      </Badge> : <Avatar image={`/api/fileservice/read?fileid=${item.chaticon}`} width={30} />
+                    }
                   </div>
                   <div className={styles.fl}>
                     <div>{item.chatname}</div>
@@ -68,9 +70,12 @@ class List extends Component {
                   <div className={styles.fr}>
                     {
                       item.msglist instanceof Array && item.msglist.map((mesItem, mesIndex) => {
-                        return <div key={mesIndex}>陈晓明：明天有时间吗？我准备和你去拜访一</div>;
+                        return <div key={mesIndex}>{mesItem.reccreator_name}：{mesItem.chatcon}</div>;
                       })
                     }
+                  </div>
+                  <div className={styles.badgeWrap} style={{ display: spotLayout === 'end' ? 'block' : 'none' }}>
+                    <Badge count={spotMsgCount} />
                   </div>
                 </li>
               );

@@ -396,3 +396,16 @@ export async function getchatlist(params) {
     body: JSON.stringify(params)
   });
 }
+
+/**
+ * 查询群组 成员
+ * {groupid: ''}
+ * @returns {Promise.<Object>}
+ */
+export async function getmembers(groupid) {
+  return request('api/chat/getmembers', {
+    method: 'post',
+    body: JSON.stringify({ groupid })
+  });
+}
+

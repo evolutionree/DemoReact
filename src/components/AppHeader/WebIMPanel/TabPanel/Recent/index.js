@@ -3,7 +3,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Dropdown, Menu, Modal, Icon, message } from 'antd';
+import { Dropdown, Menu, Modal, Icon, message, Spin } from 'antd';
 import List from '../../Component/List';
 import IMPanel from '../../OtherPanel/IMPanel';
 import classnames from 'classnames';
@@ -61,12 +61,15 @@ class ReactPanel extends Component {
   }
 
   render() {
-    const { messagelist } = this.props;
+    const { recent_list_loading, recentChatList, spotNewMsgList } = this.props;
+    const spotLayout = this.props.showPanel === 'miniIMPanel' ? 'start' : 'end';
     return (
       <div className={styles.recent_tabPanel}>
         <div className={styles.title}>最近聊天</div>
         <div className={styles.listWrap}>
-          <List onClick={this.listClickHandler} onContextMenu={this.onContextMenu} dataSource={this.props.recentChatList} spotMsg={messagelist} />
+          <Spin spinning={recent_list_loading}>
+            <List onClick={this.listClickHandler} onContextMenu={this.onContextMenu} dataSource={recentChatList} spotLayout={spotLayout} spotNewMsgList={spotNewMsgList} />
+          </Spin>
         </div>
         <div className={classnames(styles.Recent_IMPanelWrap, { [styles.visible]: this.props.showPanel === 'miniIMPanel' })} id="IMPanel">
           <IMPanel />

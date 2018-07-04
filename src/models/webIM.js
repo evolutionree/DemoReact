@@ -15,7 +15,11 @@ export default {
     messagelist: [],
     contextMenuInfo: {}, //上下文菜单
 
-    recentChatList: []
+    recentChatList: [],
+    recent_list_loading: false,
+
+
+    spotNewMsgList: JSON.parse(localStorage.getItem('spotNewMsgList'))
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -28,7 +32,7 @@ export default {
   effects: {
     *init({ payload }, { select, put }) {
       yield put({ type: 'connectSocket__' });
-      yield put({ type: 'queryRecentList' });
+      yield put({ type: 'queryRecentList__' });
     },
     *connectSocket__(action, { select, call, put, take }) { //链接webStocket
       const result = yield call(queryUserInfo);
@@ -41,7 +45,11 @@ export default {
         payload: { webIMSocket: webIMSocket }
       });
     },
-    *queryRecentList(action, { select, call, put, take }) {
+    *queryRecentList__(action, { select, call, put, take }) {
+      yield put({
+        type: 'putState',
+        payload: { recent_list_loading: true }
+      });
       try {
         const { data } = yield call(getrecentchat);
         const transformData = data instanceof Array && data.map(item => {
@@ -53,10 +61,14 @@ export default {
         })
         yield put({
           type: 'putState',
-          payload: { recentChatList: transformData }
+          payload: { recentChatList: transformData, recent_list_loading: false }
         });
       } catch (e) {
         message.error(e.message || '查询最近聊天列表失败');
+        yield put({
+          type: 'putState',
+          payload: { recent_list_loading: false }
+        });
       }
     }
   },
@@ -68,13 +80,19 @@ export default {
       };
     },
     showPanel(state, { payload }) {
+      let spotNewMsgList = JSON.parse(localStorage.getItem('spotNewMsgList'));
+      if (payload.showPanel === 'IMPanel' || payload.showPanel === 'miniIMPanel') { //打开了对话窗口
+        delete spotNewMsgList[payload.panelInfo.userid];
+        localStorage.setItem('spotNewMsgList', JSON.stringify(spotNewMsgList));
+      }
       return {
         ...state,
         showPanel: '',
         panelInfo: {},
         showChildrenPanel: '',
         childrenPanelInfo: '',
-        ...payload
+        ...payload,
+        spotNewMsgList
       };
     },
     closeOtherPanel(state) { //关闭webIM 左侧的面板（所有层关闭）
@@ -96,6 +114,13 @@ export default {
       return {
         ...state,
         contextMenuInfo
+      };
+    },
+    setSpotNewMsgList(state, { payload: newSpotNewMsgList }) {
+      localStorage.setItem('spotNewMsgList', JSON.stringify(newSpotNewMsgList));
+      return {
+        ...state,
+        spotNewMsgList: newSpotNewMsgList
       };
     },
     closePanel() {

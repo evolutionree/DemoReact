@@ -22,7 +22,11 @@ const ContactItem = ({ dispatch, data, onStar, showStar = false }) => {
       type: 'webIM/showPanel',
       payload: {
         showPanel: 'IMPanel',
-        panelInfo: data
+        panelInfo: {
+          ...data,
+          chatid: data.userid,
+          chattype: 0
+        }
       }
     });
   }
