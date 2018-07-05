@@ -65,12 +65,16 @@ class List extends Component {
                   </div>
                   <div className={styles.fl}>
                     <div>{item.chatname}</div>
-                    <div>{item.recentlydate}</div>
+                    <div>{item.date}</div>
                   </div>
                   <div className={styles.fr}>
                     {
                       item.msglist instanceof Array && item.msglist.map((mesItem, mesIndex) => {
-                        return <div key={mesIndex}>{mesItem.reccreator_name}：{mesItem.chatcon}</div>;
+                        return <div key={mesIndex}><span>{mesItem.reccreator_name}：</span><span>
+                          { ////聊天内容类型 ： 1文字  2图片  3录音 4位置 5文件
+                            mesItem.contype === 1 ? mesItem.chatcon : ['发送一张图片发送一张图片发送一张图片发送一张图片发送一张图片发送一张图片发送一张图片发送一张图片发送一张图片发送一张图片发送一张图片发送一张图片', '发送一条录音', '发送了一个位置', '发送了一个文件'][mesItem.contype - 2]
+                          }
+                        </span></div>;
                       })
                     }
                   </div>

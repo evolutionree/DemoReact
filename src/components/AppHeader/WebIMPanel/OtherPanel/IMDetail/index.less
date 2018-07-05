@@ -1,5 +1,5 @@
 @import "../common.less";
-.PersonalDetailWrap {
+.IMDetailWrap {
   overflow: hidden;
   height: 100%;
 
@@ -54,6 +54,64 @@
 
       ul:last-of-type{
         margin-top: 20px;
+      }
+    }
+
+
+
+    .groupDetailfl{
+      width: 180px;
+      float: left;
+      text-align: center;
+      img{
+        width: 100px;
+        height: 100px;
+        margin-bottom: 12px;
+      }
+
+      .titleWrap{
+        font-size: 18px;
+        color: #333333;
+        height: 60px;
+        line-height: 60px;
+
+        >span{
+          display: inline-block;
+          max-width: 150px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          float: left;
+          margin-right: 10px;
+        }
+
+        i{
+          cursor: pointer;
+          &:hover{
+            corlor: #469FDA
+          }
+        }
+      }
+
+      .memberNumber{
+        font-size: 14px;
+        color: #333333;
+        height: 30px;
+        line-height: 30px;
+      }
+
+      .addMember{
+        font-size: 14px;
+        color: #469FDA;
+      }
+    }
+
+    .groupDetailfr{
+      padding-left: 240px;
+
+      ul{
+        height: 600px;
+        overflow: auto;
       }
     }
   }

@@ -16,7 +16,14 @@ import styles from './index.less';
 
 class IMPanel extends Component {
   static propTypes = {
-    panelInfo: PropTypes.object
+    /*
+     {
+     chattype: 0 or 1  1表示是群聊天
+     chatid:
+     }
+     */
+    panelInfo: PropTypes.object,
+    showPanel: PropTypes.string
   };
   static defaultProps = {
 
@@ -114,8 +121,18 @@ class IMPanel extends Component {
     this.props.dispatch({ type: 'webIM/closeOtherPanel', payload: '' });
   }
 
-  usernameClickHandler = () => {
-    this.props.dispatch({ type: 'webIM/putState', payload: { showChildrenPanel: 'PersonalDetail', childrenPanelInfo: this.props.panelInfo } });
+  chatNameClickHandler = () => {
+    this.props.dispatch({ type: 'webIM/putState', payload: { showChildrenPanel: 'IMDetail', childrenPanelInfo: this.props.panelInfo } });
+  }
+
+  zoomIMPanel = (type) => {
+    this.props.dispatch({
+      type: 'webIM/showPanel',
+      payload: {
+        showPanel: type,
+        panelInfo: this.props.panelInfo
+      }
+    });
   }
 
   sendMessageChangeHandler = (e) => {
@@ -133,7 +150,6 @@ class IMPanel extends Component {
     sendData.data.ct = 1; //聊天内容类型 ： 1文字  2图片  3录音 4位置 5文件
     sendData.data.fid = ''; //发送的文件fileid
     sendData.data.cont = this.state.sendMessage; //发送的文本内容
-    console.log(sendData)
     this.sendWebSocker(sendData);
 
     this.setState({
@@ -293,7 +309,7 @@ class IMPanel extends Component {
   }
 
   render() {
-    const { panelInfo, messagelist, userInfo, showPanel } = this.props;
+    const { panelInfo, messagelist, showPanel } = this.props;
 
     let allChatList = [];
     if (messagelist instanceof Array) {
@@ -310,7 +326,10 @@ class IMPanel extends Component {
     return (
       <div className={classnames(styles.IMPanelContent, { [styles.GroupIMPanel]: panelInfo.chattype === 1, [styles.MiniIMPanel]: showPanel === 'miniIMPanel' })}>
         <div className={styles.header}>
-          <h3><span onClick={this.usernameClickHandler}>{panelInfo.username}</span></h3>
+          <h3 title={panelInfo.chatname}><span onClick={this.chatNameClickHandler}>{panelInfo.chatname}</span></h3>
+          {
+            showPanel === 'miniIMPanel' ? <Icon type="arrows-alt" onClick={this.zoomIMPanel.bind(this, 'IMPanel')} /> : <Icon type="shrink" onClick={this.zoomIMPanel.bind(this, 'miniIMPanel')} />
+          }
           <Icon type="close" onClick={this.closePanel} />
         </div>
         <div className={styles.IMBody}>
@@ -344,9 +363,11 @@ class IMPanel extends Component {
             </div>
           </div>
 
-          {
-            panelInfo.chattype === 1 && showPanel === 'IMPanel' ? <MemberList groupId={panelInfo.chatid} /> : null
-          }
+          <div className={styles.memberListWrap}>
+            {
+              panelInfo.chattype === 1 && showPanel === 'IMPanel' ? <MemberList groupId={panelInfo.chatid} /> : null
+            }
+          </div>
         </div>
       </div>
     );

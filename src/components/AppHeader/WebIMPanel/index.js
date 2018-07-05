@@ -135,6 +135,8 @@ class WebIMPanel extends Component {
 
     if (tabName === 'recent') {
       this.props.dispatch({ type: 'webIM/queryRecentList__' });
+    } else if (tabName === 'group') {
+      this.props.dispatch({ type: 'webIM/queryGroupList__' });
     }
 
     this.setState({
@@ -146,6 +148,8 @@ class WebIMPanel extends Component {
   render() {
     const { showPanel, showChildrenPanel, contextMenuInfo, spotNewMsgList } = this.props;
     const tabModel = this.state.tabModel;
+
+    //左侧打开哪个面板
     let OtherPanelComponent = OtherPanelRender[showPanel];
     let OtherPanelChildrenComponent = OtherPanelRender[showChildrenPanel];
 
@@ -157,53 +161,56 @@ class WebIMPanel extends Component {
     }
 
     return (
-      <div id="webIM">
-        <Badge count={total_spotMsgCount}>
-          <Icon
-            type="contacts"
-            title="通讯录"
-            style={{ fontSize: 24, cursor: 'pointer', marginRight: '10px', verticalAlign: 'middle' }}
-            onClick={this.togglePanelVisible}
-          />
-        </Badge>
-        <div className={classnames(styles.panelWrap, { [styles.panelVisible]: this.state.panelVisible })}>
-          <ul className={styles.header}>
-            <li>
-              <Search style={{ top: '50%', transform: 'translateY(-50%)' }} />
-            </li>
-            <li>
-              <Tabs onClick={this.tabClickHandler} model={tabModel} />
-            </li>
-          </ul>
-          <div className={styles.body}>
-            {
-              tabModel.map((item, index) => {
-                return (
-                  <div style={{ display: item.name === this.state.showTabPage ? 'block' : 'none' }} className={styles.bodyWrap} key={index}>
-                    {
-                      item.content
-                    }
-                  </div>
-                );
-              })
-            }
+      <div>
+        <div id="webIM">
+          <Badge count={total_spotMsgCount}>
+            <Icon
+              type="contacts"
+              title="通讯录"
+              style={{ fontSize: 24, cursor: 'pointer', marginRight: '10px', verticalAlign: 'middle' }}
+              onClick={this.togglePanelVisible}
+            />
+          </Badge>
+          <div className={classnames(styles.panelWrap, { [styles.panelVisible]: this.state.panelVisible })}>
+            <ul className={styles.header}>
+              <li>
+                <Search style={{ top: '50%', transform: 'translateY(-50%)' }} />
+              </li>
+              <li>
+                <Tabs onClick={this.tabClickHandler} model={tabModel} />
+              </li>
+            </ul>
+            <div className={styles.body}>
+              {
+                tabModel.map((item, index) => {
+                  return (
+                    <div style={{ display: item.name === this.state.showTabPage ? 'block' : 'none' }} className={styles.bodyWrap} key={index}>
+                      {
+                        item.content
+                      }
+                    </div>
+                  );
+                })
+              }
+            </div>
           </div>
+          {
+            this.state.panelVisible && OtherPanelComponent ? <div className={styles.otherPanelWrap}>
+              {
+                React.createElement(OtherPanelComponent, { panelInfo: this.props.panelInfo })
+              }
+            </div> : null
+          }
+          {
+            this.state.panelVisible && OtherPanelChildrenComponent ? <div className={styles.otherPanelWrap}>
+              {
+                React.createElement(OtherPanelChildrenComponent, { panelInfo: this.props.childrenPanelInfo, showGoBack: true })
+              }
+            </div> : null
+          }
+          <ContextMenuPanel />
         </div>
-        {
-          this.state.panelVisible && OtherPanelComponent ? <div className={styles.otherPanelWrap}>
-            {
-              React.createElement(OtherPanelComponent, { panelInfo: this.props.panelInfo })
-            }
-          </div> : null
-        }
-        {
-          this.state.panelVisible && OtherPanelChildrenComponent ? <div className={styles.otherPanelWrap}>
-            {
-              React.createElement(OtherPanelChildrenComponent, { panelInfo: this.props.childrenPanelInfo, showGoBack: true })
-            }
-          </div> : null
-        }
-        <ContextMenuPanel />
+        <div className={classnames(styles.IMMaskModal, { [styles.IMMaskModalVisible]: this.state.panelVisible })}></div>
       </div>
     );
   }

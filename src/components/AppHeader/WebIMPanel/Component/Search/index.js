@@ -18,7 +18,8 @@ class Search extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      focus: false
+      focus: false,
+      value: ''
     };
   }
   componentWillReceiveProps(nextProps) {
@@ -26,7 +27,15 @@ class Search extends Component {
   }
 
   inputChangeHandler = (e) => {
+    this.setState({
+      value: e.target.value
+    });
     this.props.onChange && this.props.onChange(e.target.value);
+  }
+
+  clear = () => {
+    this.inputRef.blur();
+    this.props.onChange && this.props.onChange('');
   }
 
   inputFocusHandler = (e) => {
@@ -44,13 +53,13 @@ class Search extends Component {
   render() {
     return (
       <div className={styles.searchWrap} style={{ ...this.props.style }}>
-        <Icon type="search" style={{ display: this.state.focus ? 'none' : 'block' }} />
-        <input placeholder="搜索"
+        <Icon type="search" style={{ left: this.state.focus ? '-20px' : '20px' }} />
+        <input ref={ref => this.inputRef = ref} placeholder="搜索"
                onChange={this.inputChangeHandler}
                onFocus={this.inputFocusHandler}
                onBlur={this.inputBlurHandler}
                style={{ paddingLeft: this.state.focus ? '12px' : '40px' }} />
-        <Icon type="close-circle" style={{ display: this.state.focus ? 'block' : 'none' }} />
+        <Icon type="close-circle" style={{ opacity: this.state.focus ? 1 : 0 }} onClick={this.clear} />
       </div>
     );
   }

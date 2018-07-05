@@ -25,6 +25,7 @@ const ContactItem = ({ dispatch, data, onStar, showStar = false }) => {
         panelInfo: {
           ...data,
           chatid: data.userid,
+          chatname: data.username,
           chattype: 0
         }
       }

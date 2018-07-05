@@ -140,3 +140,26 @@
     }
   }
 }
+
+.group_tabPanel{
+  position: relative;
+
+  .listWrap{
+    height: calc(~"100% - 70px");
+    overflow: auto;
+  }
+
+  .Group_IMPanelWrap{
+    position: absolute;
+    left: 700px;
+    top: 0px;
+    bottom: 0px;
+    width: 460px;
+    background: #ffffff;
+    transition: all ease 0.5s;
+    &.visible {
+      left: 180px;
+      box-shadow: -8px 2px 15px 0 rgba(0,0,0,0.03);
+    }
+  }
+}

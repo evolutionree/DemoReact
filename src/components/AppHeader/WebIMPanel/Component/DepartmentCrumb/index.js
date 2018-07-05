@@ -12,10 +12,14 @@ import styles from './index.less';
 
 class DepartmentCrumb extends Component {
   static propTypes = {
-    childrenDept: PropTypes.array
+    showRoot: PropTypes.bool,
+    childrenDept: PropTypes.array,
+    deepDrillType: PropTypes.string
   };
   static defaultProps = {
-    childrenDept: []
+    showRoot: false,
+    childrenDept: [],
+    deepDrillType: 'onClick'
   };
   constructor(props) {
     super(props);
@@ -27,11 +31,18 @@ class DepartmentCrumb extends Component {
 
   }
 
-  selectDept = (item) => {
-    this.setState({
-      crumb: [...this.state.crumb, item]
-    });
-    this.props.onSelect && this.props.onSelect(item.deptid);
+  selectDept = (item, eventType) => {
+    if (this.props.deepDrillType === eventType) {
+      this.setState({
+        crumb: [...this.state.crumb, item]
+      });
+    }
+
+    if (eventType === 'onClick') {
+      this.props.onSelect && this.props.onSelect(item.deptid, item);
+    } else {
+      this.props.onChange && this.props.onChange(item.deptid, item);
+    }
   }
 
   onChangeCrumb = (item) => {
@@ -43,14 +54,23 @@ class DepartmentCrumb extends Component {
     this.setState({
       crumb: newCrumb
     })
-    this.props.onSelect && this.props.onSelect(item.deptid);
+
+    if (this.props.deepDrillType === 'onClick') {
+      this.props.onSelect && this.props.onSelect(item.deptid, item);
+    } else {
+      this.props.onChange && this.props.onChange(item.deptid, item);
+    }
   }
 
   selectRootCrumb = (item) => {
     this.setState({
       crumb: []
     });
-    this.props.onSelect && this.props.onSelect(item.deptid);
+    if (this.props.deepDrillType === 'onClick') {
+      this.props.onSelect && this.props.onSelect(item.deptid, item);
+    } else {
+      this.props.onChange && this.props.onChange(item.deptid, item);
+    }
   }
 
   render() {
@@ -74,10 +94,13 @@ class DepartmentCrumb extends Component {
             })
           }
         </ul>
+        <div onClick={this.selectDept.bind(this, rootDept, 'onClick')} className={styles.rootDept} style={{ display: this.props.showRoot ? 'inline-block' : 'none' }}>
+          {rootDept && rootDept.deptname}
+        </div>
         <ul className={styles.deptWrap}>
           {
             childrenDept instanceof Array && childrenDept.map(item => {
-              return <li key={item.deptid} onClick={this.selectDept.bind(this, item)}>{item.deptname}</li>;
+              return <li key={item.deptid} onClick={this.selectDept.bind(this, item, 'onClick')} onDoubleClick={this.selectDept.bind(this, item, 'onDoubleClick')}>{item.deptname}</li>;
             })
           }
         </ul>

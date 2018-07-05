@@ -374,6 +374,19 @@ export async function getlistsub(DeptId) {
 }
 
 /**
+ * 查询所有用户
+ * @param params
+ * searchkey
+ * @returns {Promise.<Object>}
+ */
+export async function getuserlist(searchkey) {
+  return request('/api/chat/userlist', {
+    method: 'post',
+    body: JSON.stringify({ searchkey })
+  });
+}
+
+/**
  * 查询最近聊天
  * @returns {Promise.<Object>}
  */
@@ -406,6 +419,41 @@ export async function getmembers(groupid) {
   return request('api/chat/getmembers', {
     method: 'post',
     body: JSON.stringify({ groupid })
+  });
+}
+
+/**
+ * 查询所有群组列表
+ * @returns {Promise.<Object>}
+ */
+export async function getgrouplist() {
+  return request('api/chat/grouplist', {
+    method: 'post',
+    body: JSON.stringify({ GroupType: 1 })
+  });
+}
+
+/**
+ * 新增群组
+ * {GroupName:"xxx",GroupType:1,GroupIcon:"",MemberIds:[1,2,3],DeptIds:["xxxxx","yyyyy"]}
+ * @returns {Promise.<Object>}
+ */
+export async function addgroup(params) {
+  return request('api/chat/addgroup', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
+ * 更新群组
+ * {GroupId:"xx",MemberIds:[1,2,3,4],DeptIds:["xxxx","yyyy"]}
+ * @returns {Promise.<Object>}
+ */
+export async function updategroup(params) {
+  return request('api/chat/updatemembers', {
+    method: 'post',
+    body: JSON.stringify(params)
   });
 }
 

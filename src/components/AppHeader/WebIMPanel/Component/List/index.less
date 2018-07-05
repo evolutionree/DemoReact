@@ -37,14 +37,35 @@
       font-size: 14px;
       >div{
         line-height: 22px;
+
+        &:first-of-type{
+          max-width: 170px;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
       }
     }
 
     div.fr{
+      float: left;
       color: #9BA1AD;
       font-size: 14px;
       >div{
+        .clearFix;
         line-height: 22px;
+
+        >span{
+          float: left;
+
+          &:last-of-type{
+            display: inline-block;
+            max-width: 240px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+        }
       }
     }
 

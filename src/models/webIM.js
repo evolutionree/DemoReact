@@ -2,22 +2,33 @@ import { message } from 'antd';
 import {
   connectWebIMSocket
 } from '../services/authentication';
-import { queryUserInfo, getrecentchat } from '../services/structure';
+import { queryUserInfo, getrecentchat, getgrouplist } from '../services/structure';
 
 export default {
   namespace: 'webIM',
   state: {
+    //socket对象
     webIMSocket: null,
+
+    //打开那个面板 及窗口信息
     showPanel: '',
     panelInfo: {},
     showChildrenPanel: '',
     childrenPanelInfo: '',
-    messagelist: [],
-    contextMenuInfo: {}, //上下文菜单
 
+    //本地记录的收发即时通讯消息，刷新浏览器则清空
+    messagelist: [],
+
+    //上下文菜单
+    contextMenuInfo: {},
+
+    //最近聊天
     recentChatList: [],
     recent_list_loading: false,
 
+    //群组
+    groupChatList: [],
+    group_list_loading: false,
 
     spotNewMsgList: JSON.parse(localStorage.getItem('spotNewMsgList'))
   },
@@ -33,6 +44,7 @@ export default {
     *init({ payload }, { select, put }) {
       yield put({ type: 'connectSocket__' });
       yield put({ type: 'queryRecentList__' });
+      yield put({ type: 'queryGroupList__' });
     },
     *connectSocket__(action, { select, call, put, take }) { //链接webStocket
       const result = yield call(queryUserInfo);
@@ -55,8 +67,7 @@ export default {
         const transformData = data instanceof Array && data.map(item => {
           return {
             ...item,
-            userid: item.chatid,
-            username: item.chatname
+            date: item.recentlydate
           };
         })
         yield put({
@@ -68,6 +79,33 @@ export default {
         yield put({
           type: 'putState',
           payload: { recent_list_loading: false }
+        });
+      }
+    },
+    *queryGroupList__(action, { select, call, put, take }) {
+      yield put({
+        type: 'putState',
+        payload: { group_list_loading: true }
+      });
+      try {
+        const { data } = yield call(getgrouplist);
+        const transformData = data instanceof Array && data.map(item => {
+            return {
+              ...item,
+              chatid: item.chatgroupid,
+              chatname: item.chatgroupname,
+              date: item.recupdated
+            };
+        })
+        yield put({
+          type: 'putState',
+          payload: { groupList: transformData, group_list_loading: false }
+        });
+      } catch (e) {
+        message.error(e.message || '查询群组列表失败');
+        yield put({
+          type: 'putState',
+          payload: { group_list_loading: false }
         });
       }
     }
