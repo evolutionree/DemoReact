@@ -265,11 +265,3 @@ export default connect(
     };
   }
 )(ContactPanel);
-
-
-{/*<DepartmentSelect*/}
-  {/*showSearch*/}
-  {/*value={this.state.searchDept}*/}
-  {/*onChange={this.onDepartmentChange}*/}
-  {/*style={{ width: '100%' }}*/}
-{/*/>*/}

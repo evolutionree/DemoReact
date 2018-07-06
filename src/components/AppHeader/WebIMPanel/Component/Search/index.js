@@ -35,6 +35,9 @@ class Search extends Component {
 
   clear = () => {
     this.inputRef.blur();
+    this.setState({
+      value: ''
+    });
     this.props.onChange && this.props.onChange('');
   }
 
@@ -58,6 +61,7 @@ class Search extends Component {
                onChange={this.inputChangeHandler}
                onFocus={this.inputFocusHandler}
                onBlur={this.inputBlurHandler}
+               value={this.state.value}
                style={{ paddingLeft: this.state.focus ? '12px' : '40px' }} />
         <Icon type="close-circle" style={{ opacity: this.state.focus ? 1 : 0 }} onClick={this.clear} />
       </div>

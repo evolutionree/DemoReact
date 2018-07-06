@@ -3,7 +3,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Dropdown, Menu, Modal, Icon, message, Spin } from 'antd';
+import { Spin } from 'antd';
 import List from '../../Component/List';
 import IMPanel from '../../OtherPanel/IMPanel';
 import classnames from 'classnames';

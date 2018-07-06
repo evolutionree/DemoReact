@@ -3,7 +3,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Dropdown, Menu, Modal, Icon, Badge } from 'antd';
+import { Icon, Badge } from 'antd';
 import classnames from 'classnames';
 import Search from './Component/Search';
 import Tabs from './Component/Tabs';
@@ -60,14 +60,16 @@ class WebIMPanel extends Component {
     if ($(event.target).closest('#webIM').length) {
       return;
     }
-    this.hidePanel();
+    this.setState({
+      panelVisible: false
+    });
   };
 
   componentDidUpdate() {
     const { webIMSocket, dispatch, spotNewMsgList, showPanel, panelInfo } = this.props;
     if (webIMSocket) {
       webIMSocket.onmessage = (event) => {
-        console.log('Client received a message', event);
+        //console.log('Client received a message', event);
         const message = JSON.parse(event.data);
         if (message.ResultCode === undefined) {
           const CustomContent = message.CustomContent;
@@ -93,6 +95,7 @@ class WebIMPanel extends Component {
               type: 'receiveMessage'
             }
           });
+          dispatch({ type: 'webIM/queryRecentList__' });
 
           if ((showPanel === 'IMPanel' || showPanel === 'miniIMPanel') && panelInfo.userid === CustomContent.s) {
             //当前正在窗口聊天中  不显示 徽标数
@@ -105,18 +108,11 @@ class WebIMPanel extends Component {
             }
             dispatch({ type: 'webIM/setSpotNewMsgList', payload: newSpotNewMsgList });
           }
-
-          dispatch({ type: 'webIM/queryRecentList__' });
         }
       };
     }
   }
 
-  hidePanel = () => {
-    this.setState({
-      panelVisible: false
-    });
-  }
 
   togglePanelVisible = () => {
     this.setState({

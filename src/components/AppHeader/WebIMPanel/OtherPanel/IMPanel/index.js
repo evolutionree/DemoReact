@@ -35,7 +35,10 @@ class IMPanel extends Component {
       chatList: [],
       chatListLoading: false,
       recVersion: 0,
-      isPessionLoadMore: false //是否加载更多
+      isPessionLoadMore: false, //是否加载更多
+
+      IMPanelAutoScroll: true,
+      IMPanelScrollHeight: 0
     };
   }
 
@@ -51,10 +54,10 @@ class IMPanel extends Component {
     }
   }
 
-  componentDidUpdate() {
-    // const OMessageList = document.getElementById('messagelist');
-    // console.log(OMessageList.scrollHeight);
-    // OMessageList.scrollTop = 1320;
+  componentDidUpdate(prevProps, prevState) {
+    if (this.messagelistRef && this.state.IMPanelAutoScroll) { //让聊天窗口滚动条滚动到底部
+      this.messagelistRef.scrollTop = this.messagelistRef.scrollHeight - this.state.IMPanelScrollHeight;
+    }
   }
 
   getChatList = (chattype, chatid, recversion = 0) => {
@@ -105,7 +108,8 @@ class IMPanel extends Component {
         chatList: this.state.chatList.length === 0 ? transformData : [...this.state.chatList, ...transformData],
         recVersion: data.length > 0 && data[0].recversion, //第一条数据的version作为下一次请求的version
         isPessionLoadMore: !(data.length < 50),  //每次请求最多50条数据
-        chatListLoading: false
+        chatListLoading: false,
+        IMPanelAutoScroll: true
       });
     }, err => {
       console.error(err.message)
@@ -206,6 +210,11 @@ class IMPanel extends Component {
       }
     });
     this.props.dispatch({ type: 'webIM/queryRecentList__' });
+
+    this.setState({
+      IMPanelAutoScroll: true,
+      IMPanelScrollHeight: 0
+    });
   }
 
   imgStartUpload = (file) => { //开始上传图片 就拿到文件数据 loading显示正在发送
@@ -237,9 +246,10 @@ class IMPanel extends Component {
   }
 
   messagelistScroll = (e) => {
-    if (e.target.scrollTop < 10) {
-      //this.loadMore();
-    }
+    this.setState({
+      IMPanelScrollHeight: e.target.scrollHeight - e.target.scrollTop,
+      IMPanelAutoScroll: false
+    });
   }
 
   renderMessage = (data) => {
@@ -335,7 +345,7 @@ class IMPanel extends Component {
         <div className={styles.IMBody}>
           <div className={styles.IMPanelWrap}>
             <Spin spinning={this.state.chatListLoading}></Spin>
-            <div className={styles.messageList} id="messagelist" onScroll={this.messagelistScroll}>
+            <div className={styles.messageList} ref={ref => this.messagelistRef = ref} onScroll={this.messagelistScroll}>
               {
                 this.state.isPessionLoadMore ? <div className={styles.loadMoreWrap}><span onClick={this.loadMore}>查看更多消息</span></div> : null
               }

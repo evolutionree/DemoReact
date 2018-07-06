@@ -2,12 +2,9 @@
  * Created by 0291 on 2018/6/1.
  */
 import React, { PropTypes, Component } from 'react';
-import { connect } from 'dva';
-import { Dropdown, Menu, Modal, Icon, Badge } from 'antd';
-import classnames from 'classnames';
+import { Badge } from 'antd';
 import Avatar from '../../../../Avatar';
 import styles from './index.less';
-
 
 class List extends Component {
   static propTypes = {
@@ -47,7 +44,6 @@ class List extends Component {
 
   render() {
     const { dataSource, spotLayout, spotNewMsgList } = this.props;
-    console.log(dataSource)
     return (
       <div>
         <ul className={styles.listWrap}>

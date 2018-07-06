@@ -159,9 +159,14 @@ class OriginGroup extends Component {
   }
 
   nextStep = () => {
+    if (this.state.selectUsers.length === 0 && this.state.selectDepts.length === 0) {
+      message.error('请选择成员后再添加群聊！');
+      return;
+    }
+
     const { panelInfo } = this.props;
 
-    const groupName = this.state.selectUsers.slice(0, 5).map(item => item.username).join(',');
+    const groupName = this.state.selectUsers.length > 0 ? this.state.selectUsers.slice(0, 5).map(item => item.username).join(',') : this.state.selectDepts.slice(0, 5).map(item => item.deptname).join(',');
     const groupMemberIds = this.state.selectUsers.map(item => item.userid);
     const groupDeptIds = this.state.selectDepts.map(item => item.deptid);
 
@@ -310,7 +315,7 @@ class OriginGroup extends Component {
               <ul style={{ minHeight: '200px' }}>
                 {
                   this.state.selectUsers.map(item => {
-                    return <li key={item.userid}>{item.username}<Icon type="close-circle" onClick={this.delUser.bind(this, item)} /></li>;
+                    return <li key={item.userid}><span>{item.username}</span><Icon type="close-circle" onClick={this.delUser.bind(this, item)} /></li>;
                   })
                 }
               </ul>
@@ -318,7 +323,7 @@ class OriginGroup extends Component {
               <ul>
                 {
                   this.state.selectDepts.map(item => {
-                    return <li key={item.deptid}>{item.deptname}<Icon type="close-circle" onClick={this.delDept.bind(this, item)} /></li>;
+                    return <li key={item.deptid}><span>{item.deptname}</span><Icon type="close-circle" onClick={this.delDept.bind(this, item)} /></li>;
                   })
                 }
               </ul>

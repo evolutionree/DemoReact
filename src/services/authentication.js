@@ -333,6 +333,7 @@ export async function checkPagePermission(params) {
 export async function connectWebIMSocket(userid) {
   const { token } = getLocalAuthentication();
   return new Promise(function(resolve, reject) {
+    const host = window.location.host;
     let socket = new WebSocket('ws://10.187.134.10:732/ws/wechat');
     socket.onopen = connectHandler;
     // socket.onmessage = (event) => {
