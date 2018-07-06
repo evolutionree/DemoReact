@@ -423,7 +423,7 @@ class ReportForm extends React.Component {
       let returnParams = {};
       cloneDatasources[index].parameters.map((item) => {
         _.forIn(item, function(value, key) {
-          returnParams[key] = (params[value] !== '') ? params[value] ? params[value] : '' : searchValue[value] ? serchValue[value] : '';
+          returnParams[key] = params[value] ? params[value] || '' : searchValue[value] || '';
         });
       })
 
