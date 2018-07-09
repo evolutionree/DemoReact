@@ -55,7 +55,8 @@ class IPermissionRangeSelect extends Component {
     const dataValNameMap = {
       '{currentUser}': '本人',
       '{currentDepartment}': '本团队',
-      '{subDepartment}': '本团队及下级团队'
+      '{subDepartment}': '本团队及下级团队',
+      '{noLeaderDepartment}': '无领导的团队'
     };
 
     const {

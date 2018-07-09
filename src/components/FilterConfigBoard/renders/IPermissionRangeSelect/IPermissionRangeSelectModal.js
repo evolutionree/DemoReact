@@ -93,6 +93,7 @@ class IPermissionRangeSelectModal extends Component {
           <Checkbox checked={dataVal === '{currentUser}'} onChange={this.handleDatavalChange.bind(this, '{currentUser}')}>本人</Checkbox>
           <Checkbox checked={dataVal === '{currentDepartment}'} onChange={this.handleDatavalChange.bind(this, '{currentDepartment}')}>本团队</Checkbox>
           <Checkbox checked={dataVal === '{subDepartment}'} onChange={this.handleDatavalChange.bind(this, '{subDepartment}')}>本团队及下级团队</Checkbox>
+          <Checkbox checked={dataVal === '{noLeaderDepartment}'} onChange={this.handleDatavalChange.bind(this, '{noLeaderDepartment}')}>无领导的团队</Checkbox>
         </div>
         <div style={{ margin: '10px 0' }}>
           <Checkbox
