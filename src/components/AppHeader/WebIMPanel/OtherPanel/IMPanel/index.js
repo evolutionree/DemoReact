@@ -2,7 +2,7 @@
  * Created by 0291 on 2018/6/13.
  */
 import React, { PropTypes, Component } from 'react';
-import { Dropdown, Menu, Input, Icon, message, Spin } from 'antd';
+import { Icon, message, Spin } from 'antd';
 import classnames from 'classnames';
 import { connect } from 'dva';
 import moment from 'moment';
@@ -155,7 +155,6 @@ class IMPanel extends Component {
     sendData.data.fid = ''; //发送的文件fileid
     sendData.data.cont = this.state.sendMessage; //发送的文本内容
     this.sendWebSocker(sendData);
-
     this.setState({
       sendMessage: ''
     });

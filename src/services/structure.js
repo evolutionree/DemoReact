@@ -411,6 +411,18 @@ export async function getchatlist(params) {
 }
 
 /**
+ * 获取用户信息
+ * {UserId:111}
+ * @returns {Promise.<Object>}
+ */
+export async function getuserinfo(UserId) {
+  return request('api/account/getuserinfo', {
+    method: 'post',
+    body: JSON.stringify({ UserId })
+  });
+}
+
+/**
  * 查询群组 成员
  * {groupid: ''}
  * @returns {Promise.<Object>}
@@ -447,7 +459,7 @@ export async function addgroup(params) {
 
 /**
  * 更新群组
- * {GroupId:"xx",MemberIds:[1,2,3,4],DeptIds:["xxxx","yyyy"]}
+ * {GroupId:"xx",MemberIds:[1,2,3,4],DeptIds:["xxxx","yyyy"]， GroupName： }
  * @returns {Promise.<Object>}
  */
 export async function updategroup(params) {
@@ -457,3 +469,14 @@ export async function updategroup(params) {
   });
 }
 
+/**
+ * 更新群组名称
+ * {GroupId:"xxxx",GroupName:"xxxx"}
+ * @returns {Promise.<Object>}
+ */
+export async function updategroupName(params) {
+  return request('api/chat/updategroup', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}

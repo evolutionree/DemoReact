@@ -2,7 +2,7 @@
  * Created by 0291 on 2018/6/26.
  */
 import React from 'react';
-import { Upload, Icon, message } from 'antd';
+import { Upload, message } from 'antd';
 import { connect } from 'dva';
 import styles from './index.less';
 import { getDeviceHeaders } from '../../../../../utils/request';
@@ -10,18 +10,11 @@ import { getDeviceHeaders } from '../../../../../utils/request';
 class ImageUploaderInForm extends React.Component {
   static propTypes = {
     type: React.PropTypes.string,
-    value: React.PropTypes.string,
     onChange: React.PropTypes.func,
-    token: React.PropTypes.string,
-    tips: React.PropTypes.arrayOf(React.PropTypes.node)
+    token: React.PropTypes.string
   };
   static defaultProps = {
-    type: 'file',
-    tips: [
-      '图片格式jpg，png，jpeg',
-      '文件大小不超过200k',
-      '长宽比约为4:3'
-    ]
+    type: 'file'
   };
 
   constructor(props) {
@@ -77,10 +70,6 @@ class ImageUploaderInForm extends React.Component {
   };
 
   render() {
-    // let imgUrl = '';
-    // if (this.props.value) {
-    //   imgUrl = `/api/fileservice/read?fileid=${this.props.value}&filetype=1`;
-    // }
     return (
       <Upload
         className={styles.uploader}

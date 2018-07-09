@@ -36,8 +36,12 @@ const ContactItem = ({ dispatch, data, onStar, showStar = false }) => {
     dispatch({
       type: 'webIM/showPanel',
       payload: {
-        showPanel: 'PersonalDetail',
-        panelInfo: data
+        showPanel: 'IMDetail',
+        panelInfo: {
+          ...data,
+          chattype: 0,
+          chatid: data.userid
+        }
       }
     });
   }

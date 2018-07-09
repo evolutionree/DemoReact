@@ -2,7 +2,7 @@ import { message } from 'antd';
 import {
   connectWebIMSocket
 } from '../services/authentication';
-import { queryUserInfo, getrecentchat, getgrouplist } from '../services/structure';
+import { queryUserInfo, getrecentchat, getgrouplist, updategroupName } from '../services/structure';
 
 export default {
   namespace: 'webIM',
@@ -104,11 +104,27 @@ export default {
           payload: { groupList: transformData, group_list_loading: false }
         });
       } catch (e) {
+        console.error(e.message);
         message.error(e.message || '查询群组列表失败');
         yield put({
           type: 'putState',
           payload: { group_list_loading: false }
         });
+      }
+    },
+    *updateGroupInfo({ payload: groupName }, { select, call, put, take }) {
+      let { panelInfo } = yield select(state => state.webIM);
+      try {
+        yield call(updategroupName, { groupId: panelInfo.chatid, groupName });
+        yield put({ type: 'queryRecentList__' });
+        yield put({ type: 'queryGroupList__' });
+        yield put({
+          type: 'putState',
+          payload: { panelInfo: { ...panelInfo, chatname: groupName } }
+        });
+      } catch (e) {
+        console.error(e.message);
+        message.error(e.message);
       }
     }
   },
@@ -122,7 +138,7 @@ export default {
     showPanel(state, { payload }) {
       let spotNewMsgList = JSON.parse(localStorage.getItem('spotNewMsgList'));
       if (payload.showPanel === 'IMPanel' || payload.showPanel === 'miniIMPanel') { //打开了对话窗口
-        delete spotNewMsgList[payload.panelInfo.userid];
+        delete spotNewMsgList[payload.panelInfo.chatid];
         localStorage.setItem('spotNewMsgList', JSON.stringify(spotNewMsgList));
       }
       return {
@@ -131,6 +147,8 @@ export default {
         panelInfo: {},
         showChildrenPanel: '',
         childrenPanelInfo: '',
+        showGrandsonPanel: '',
+        grandsonPanelInfo: '',
         ...payload,
         spotNewMsgList
       };

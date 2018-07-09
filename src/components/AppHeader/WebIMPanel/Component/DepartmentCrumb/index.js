@@ -2,9 +2,6 @@
  * Created by 0291 on 2018/6/1.
  */
 import React, { PropTypes, Component } from 'react';
-import { connect } from 'dva';
-import { Dropdown, Menu, Modal, Icon } from 'antd';
-import classnames from 'classnames';
 import connectBasicData from '../../../../../models/connectBasicData';
 import _ from 'lodash';
 import styles from './index.less';

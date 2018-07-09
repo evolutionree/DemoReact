@@ -18,8 +18,7 @@ const AppHeader = () => {
       <Header.Right>
         <ImportTask />
         <ProgressModal />
-
-        <ContactsPanel />
+        <WebIMPanel />
         <MessageList />
         <UserDropdown />
       </Header.Right>
@@ -28,4 +27,4 @@ const AppHeader = () => {
 };
 
 export default AppHeader;
-//  <WebIMPanel />
+//  <WebIMPanel /> <ContactsPanel />

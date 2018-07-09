@@ -3,12 +3,17 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Dropdown, Menu, Modal, Icon, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import classnames from 'classnames';
-import _ from 'lodash';
 import styles from './index.less';
 
 class Tabs extends Component {
+  static propTypes = {
+    model: PropTypes.array
+  };
+  static defaultProps = {
+    model: []
+  };
   constructor(props) {
     super(props);
     this.state = {
@@ -33,7 +38,7 @@ class Tabs extends Component {
     }
   }
 
-  hideAddOperateList = (name) => {
+  hideAddOperateList = () => {
     this.Timer = setTimeout(() => {
       this.setState({
         addOperateListVisible: false
@@ -55,7 +60,7 @@ class Tabs extends Component {
   }
 
   render() {
-    const addTab = _.find(this.props.model, item => item.name === 'add');
+    // <li onClick={this.batchSend}>群发通知</li>
     return (
       <div className={styles.wrap}>
         <ul className={styles.tabsWrap}>
@@ -74,7 +79,6 @@ class Tabs extends Component {
         </ul>
         <ul className={classnames(styles.addWrap, { [styles.visible]: this.state.addOperateListVisible })} onMouseOver={this.showAddOperateList.bind(this, 'add')} onMouseOut={this.hideAddOperateList} >
           <li onClick={this.originGroup}>发起群聊</li>
-          <li onClick={this.batchSend}>群发通知</li>
         </ul>
       </div>
     );

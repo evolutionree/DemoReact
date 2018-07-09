@@ -2,7 +2,7 @@
  * Created by 0291 on 2018/6/13.
  */
 import React, { PropTypes, Component } from 'react';
-import { Dropdown, Menu, Modal, Icon, Button, message, Spin } from 'antd';
+import { Icon, Button, message, Spin } from 'antd';
 import { connect } from 'dva';
 import ButtonGroup from '../../Component/ButtonGroup';
 import Avatar from '../../../../Avatar';
@@ -51,6 +51,10 @@ class OriginGroup extends Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+
+  }
+
   getGroupMembers = (groupid) => {
     getmembers(groupid).then(result => {
       this.setState({
@@ -63,8 +67,8 @@ class OriginGroup extends Component {
 
   backHandler = () => {
     this.props.dispatch({ type: 'webIM/putState', payload: {
-      showChildrenPanel: '',
-      childrenPanelInfo: ''
+      showGrandsonPanel: '',
+      grandsonPanelInfo: ''
     } });
   }
 
@@ -271,6 +275,7 @@ class OriginGroup extends Component {
 
   render() {
     const { panelInfo } = this.props;
+    console.log(panelInfo)
     const textAlignStyle = { position: 'relative', left: '50%', transform: 'translateX(-50%)' };
     const activeBtnObj = _.find(this.state.buttonModel, item => item.active);
     return (

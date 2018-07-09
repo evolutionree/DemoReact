@@ -74,6 +74,7 @@ class WebIMPanel extends Component {
         const message = JSON.parse(event.data);
         if (message.ResultCode === undefined) {
           const CustomContent = message.CustomContent;
+          const chatid = parseInt(CustomContent.ctype) === 0 ? CustomContent.s : CustomContent.gid;
           dispatch({
             type: 'webIM/putReceiveOrSendMessage',
             payload: {
@@ -91,21 +92,21 @@ class WebIMPanel extends Component {
                 usericon: CustomContent.ud.UserIcon
               },
               IMPanelCtype: parseInt(CustomContent.ctype),
-              IMPanelKey: parseInt(CustomContent.ctype) === 0 ? CustomContent.s : CustomContent.gid, //发送者 userid  IMPanelKey用于定义 聊天面板的key，用于筛选出当前面板的对话聊天数据
+              IMPanelKey: chatid, //发送者 userid  IMPanelKey用于定义 聊天面板的key，用于筛选出当前面板的对话聊天数据
               time: CustomContent.t,
               type: 'receiveMessage'
             }
           });
           dispatch({ type: 'webIM/queryRecentList__' });
 
-          if ((showPanel === 'IMPanel' || showPanel === 'miniIMPanel') && panelInfo.userid === CustomContent.s) {
+          if ((showPanel === 'IMPanel' || showPanel === 'miniIMPanel') && panelInfo.chatid === chatid) {
             //当前正在窗口聊天中  不显示 徽标数
           } else {
             let newSpotNewMsgList = _.cloneDeep(spotNewMsgList);
             if (newSpotNewMsgList) {
-              newSpotNewMsgList[CustomContent.s] = newSpotNewMsgList[CustomContent.s] ? newSpotNewMsgList[CustomContent.s] + 1 : 1;
+              newSpotNewMsgList[chatid] = newSpotNewMsgList[chatid] ? newSpotNewMsgList[chatid] + 1 : 1;
             } else {
-              newSpotNewMsgList = { [CustomContent.s]: 1 };
+              newSpotNewMsgList = { [chatid]: 1 };
             }
             dispatch({ type: 'webIM/setSpotNewMsgList', payload: newSpotNewMsgList });
           }
@@ -147,12 +148,13 @@ class WebIMPanel extends Component {
   }
 
   render() {
-    const { showPanel, showChildrenPanel, contextMenuInfo, spotNewMsgList } = this.props;
+    const { showPanel, showChildrenPanel, showGrandsonPanel, contextMenuInfo, spotNewMsgList } = this.props;
     const tabModel = this.state.tabModel;
 
     //左侧打开哪个面板
     let OtherPanelComponent = OtherPanelRender[showPanel];
     let OtherPanelChildrenComponent = OtherPanelRender[showChildrenPanel];
+    let OtherPanelGrandsonComponent = OtherPanelRender[showGrandsonPanel];
 
     let total_spotMsgCount = 0;
     if (spotNewMsgList) {
@@ -175,7 +177,7 @@ class WebIMPanel extends Component {
           <div className={classnames(styles.panelWrap, { [styles.panelVisible]: this.state.panelVisible })}>
             <ul className={styles.header}>
               <li>
-                <Search style={{ top: '50%', transform: 'translateY(-50%)' }} />
+                <Search style={{ top: '50%', transform: 'translateY(-50%)' }} disabled={true} />
               </li>
               <li>
                 <Tabs onClick={this.tabClickHandler} model={tabModel} />
@@ -205,11 +207,18 @@ class WebIMPanel extends Component {
           {
             this.state.panelVisible && OtherPanelChildrenComponent ? <div className={styles.otherPanelWrap}>
               {
-                React.createElement(OtherPanelChildrenComponent, { panelInfo: this.props.childrenPanelInfo, showGoBack: true })
+                React.createElement(OtherPanelChildrenComponent, { panelInfo: this.props.childrenPanelInfo, showGoBack: this.props.showPanel === 'IMPanel' })
               }
             </div> : null
           }
-          <ContextMenuPanel />
+          {
+            this.state.panelVisible && OtherPanelGrandsonComponent ? <div className={styles.otherPanelWrap}>
+              {
+                React.createElement(OtherPanelGrandsonComponent, { panelInfo: this.props.grandsonPanelInfo, showGoBack: !!this.props.showChildrenPanel })
+              }
+            </div> : null
+          }
+          {/*<ContextMenuPanel />*/}
           <ViewPicture visible={this.props.showPicture} onClose={this.closeViewPicture} imgInfo={this.props.imgInfo} />
         </div>
         <div className={classnames(styles.IMMaskModal, { [styles.IMMaskModalVisible]: this.state.panelVisible })}></div>

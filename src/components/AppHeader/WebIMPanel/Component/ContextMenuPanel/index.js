@@ -42,8 +42,10 @@ class ContextMenuPanel extends Component {
       <ul className={classnames(styles.contextMenuWrap, { [styles.showMenuList]: this.props.visible })}
           style={{ position: 'fixed', left: this.props.left + 'px', top: this.props.top + 'px' }}>
         <li>设为星标同事</li>
+        <li>取消星标同事</li>
         <li onClick={this.openPersonalDetail}>查看资料</li>
         <li>打开聊天窗口</li>
+        <li>退出群聊</li>
       </ul>
     );
   }

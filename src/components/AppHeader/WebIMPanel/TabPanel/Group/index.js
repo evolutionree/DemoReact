@@ -2,7 +2,7 @@
  * Created by 0291 on 2018/6/1.
  */
 import React, { PropTypes, Component } from 'react';
-import { Dropdown, Menu, Modal, Icon, Spin } from 'antd';
+import { Spin } from 'antd';
 import { connect } from 'dva';
 import List from '../../Component/List';
 import IMPanel from '../../OtherPanel/IMPanel';
