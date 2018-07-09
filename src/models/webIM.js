@@ -30,7 +30,9 @@ export default {
     groupChatList: [],
     group_list_loading: false,
 
-    spotNewMsgList: JSON.parse(localStorage.getItem('spotNewMsgList'))
+    spotNewMsgList: JSON.parse(localStorage.getItem('spotNewMsgList')),
+
+    showPicture: false
   },
   subscriptions: {
     setup({ dispatch, history }) {

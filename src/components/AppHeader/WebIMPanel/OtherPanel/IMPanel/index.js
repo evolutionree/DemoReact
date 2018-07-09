@@ -252,6 +252,10 @@ class IMPanel extends Component {
     });
   }
 
+  zoomViewImg = (data) => {
+    this.props.dispatch({ type: 'webIM/putState', payload: { showPicture: true, imgInfo: { src: `/api/fileservice/read?fileid=${data.data.fid}`, title: 'test' } } });
+  }
+
   renderMessage = (data) => {
     let itemLayout = 'itemLeft';
     if (data.type === 'sendMessage') {
@@ -275,7 +279,7 @@ class IMPanel extends Component {
           <Avatar image={`/api/fileservice/read?fileid=${data.ud.usericon}`} name={data.ud.username} width={30} />
           <div className={styles.messageWrap}>
             <div className={styles.userName}>{data.ud.username}</div>
-            <div className={classnames(styles.message, styles.pictureMessage)}><img src={imgSrc} key={data.time} /></div>
+            <div className={classnames(styles.message, styles.pictureMessage)}><img src={imgSrc} key={data.time} onClick={this.zoomViewImg.bind(this, data)} /></div>
           </div>
         </div>
       );

@@ -10,6 +10,7 @@ import Tabs from './Component/Tabs';
 import { ContactPanel, GroupPanel, RecentPanel } from './TabPanel';
 import { OtherPanelRender } from './OtherPanelRender';
 import ContextMenuPanel from './Component/ContextMenuPanel';
+import ViewPicture from '../../UKComponent/DataDisplay/ViewPicture';
 import _ from 'lodash';
 import styles from './index.less';
 
@@ -141,6 +142,10 @@ class WebIMPanel extends Component {
     });
   }
 
+  closeViewPicture = () => {
+    this.props.dispatch({ type: 'webIM/putState', payload: { showPicture: false } });
+  }
+
   render() {
     const { showPanel, showChildrenPanel, contextMenuInfo, spotNewMsgList } = this.props;
     const tabModel = this.state.tabModel;
@@ -205,6 +210,7 @@ class WebIMPanel extends Component {
             </div> : null
           }
           <ContextMenuPanel />
+          <ViewPicture visible={this.props.showPicture} onClose={this.closeViewPicture} imgInfo={this.props.imgInfo} />
         </div>
         <div className={classnames(styles.IMMaskModal, { [styles.IMMaskModalVisible]: this.state.panelVisible })}></div>
       </div>

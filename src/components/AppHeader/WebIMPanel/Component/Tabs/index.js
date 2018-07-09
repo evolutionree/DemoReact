@@ -50,6 +50,10 @@ class Tabs extends Component {
     });
   }
 
+  batchSend = () => {
+
+  }
+
   render() {
     const addTab = _.find(this.props.model, item => item.name === 'add');
     return (
@@ -70,7 +74,7 @@ class Tabs extends Component {
         </ul>
         <ul className={classnames(styles.addWrap, { [styles.visible]: this.state.addOperateListVisible })} onMouseOver={this.showAddOperateList.bind(this, 'add')} onMouseOut={this.hideAddOperateList} >
           <li onClick={this.originGroup}>发起群聊</li>
-          <li>群发通知</li>
+          <li onClick={this.batchSend}>群发通知</li>
         </ul>
       </div>
     );
