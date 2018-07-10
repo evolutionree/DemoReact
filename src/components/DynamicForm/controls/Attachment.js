@@ -156,22 +156,36 @@ class Attachment_ extends Component {
 
 const Attachment = connect(state => ({ token: state.app.token }))(Attachment_);
 
-Attachment.View = ({ value }) => {
+Attachment.View = ({ value, dispatch }) => {
   const files = parseValue(value);
+  const pictureFiles = files.filter(item => {
+    return /jpeg|jpg|png|gif|bmp/.test(item.filename);
+  });
+
   return (
     <div className={styles.wrap}>
       {files.length ? <ul>
         {files.map(file => (
           <li key={file.fileid}>
-            <a href={`/api/fileservice/download?fileid=${file.fileid}`}>
-              <Icon type="download" className={styles.icon} />
-              {file.filename}
-            </a>
+              <a href={`/api/fileservice/download?fileid=${file.fileid}`}>
+                <Icon type="download" className={styles.icon} />
+              </a>
+              <span onClick={() => {
+                if (/jpeg|jpg|png|gif|bmp/.test(file.filename)) {
+                  const currentImgSrc = `/api/fileservice/read?fileid=${file.fileid}`;
+                  dispatch({ type: 'app/viewImages', payload: pictureFiles.map(pictureItem => {
+                    const src = `/api/fileservice/read?fileid=${pictureItem.fileid}`;
+                    return { src, active: src === currentImgSrc };
+                  }) });
+                }
+              }} title={/jpeg|jpg|png|gif|bmp/.test(file.filename) ? '点击可预览图片' : null}><a>{file.filename}</a></span>
           </li>
         ))}
       </ul> : <span style={{ color: '#999999' }}>(空)</span> }
     </div>
   );
 };
+
+Attachment.View = connect()(Attachment.View);
 
 export default Attachment;

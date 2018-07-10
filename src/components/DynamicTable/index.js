@@ -555,7 +555,17 @@ class DynamicTable extends Component {
       files = JSON.parse(filesJSON);
     }
     const text = files.map(f => f.filename).join(', ');
-    return this.renderText(text);
+
+    const pictureFiles = files.filter(item => {
+      return /jpeg|jpg|png|gif|bmp/.test(item.filename);
+    });
+    return <span title={text}
+                 onClick={() => {
+                   this.props.dispatch({ type: 'app/viewImages', payload: pictureFiles.map(pictureItem => {
+                     const src = `/api/fileservice/read?fileid=${pictureItem.fileid}`;
+                     return { src };
+                   }) });
+                 }}>{text}</span>;
   };
   render() {
     const { protocol, ignoreRecName, fixedHeader, ...restProps } = this.props;
