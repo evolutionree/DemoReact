@@ -138,7 +138,7 @@ export default {
     showPanel(state, { payload }) {
       let spotNewMsgList = JSON.parse(localStorage.getItem('spotNewMsgList'));
       if (payload.showPanel === 'IMPanel' || payload.showPanel === 'miniIMPanel') { //打开了对话窗口
-        delete spotNewMsgList[payload.panelInfo.chatid];
+        spotNewMsgList && delete spotNewMsgList[payload && payload.panelInfo.chatid];
         localStorage.setItem('spotNewMsgList', JSON.stringify(spotNewMsgList));
       }
       return {

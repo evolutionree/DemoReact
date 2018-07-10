@@ -70,7 +70,7 @@ class WebIMPanel extends Component {
     const { webIMSocket, dispatch, spotNewMsgList, showPanel, panelInfo } = this.props;
     if (webIMSocket) {
       webIMSocket.onmessage = (event) => {
-        //console.log('Client received a message', event);
+        console.log('Client received a message', event);
         const message = JSON.parse(event.data);
         if (message.ResultCode === undefined) {
           const CustomContent = message.CustomContent;
@@ -98,8 +98,7 @@ class WebIMPanel extends Component {
             }
           });
           dispatch({ type: 'webIM/queryRecentList__' });
-
-          if ((showPanel === 'IMPanel' || showPanel === 'miniIMPanel') && panelInfo.chatid === chatid) {
+          if ((showPanel === 'IMPanel' || showPanel === 'miniIMPanel') && panelInfo.chatid == chatid) {
             //当前正在窗口聊天中  不显示 徽标数
           } else {
             let newSpotNewMsgList = _.cloneDeep(spotNewMsgList);
@@ -170,7 +169,7 @@ class WebIMPanel extends Component {
             <Icon
               type="contacts"
               title="通讯录"
-              style={{ fontSize: 24, cursor: 'pointer', marginRight: '10px', verticalAlign: 'middle' }}
+              style={{ fontSize: 24, cursor: 'pointer', verticalAlign: 'middle' }}
               onClick={this.togglePanelVisible}
             />
           </Badge>

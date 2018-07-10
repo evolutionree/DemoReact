@@ -335,8 +335,12 @@ export async function connectWebIMSocket(userid) {
   return new Promise(function(resolve, reject) {
     const protocol = window.location.protocol;
     const host = window.location.host;
-    //let socket = new WebSocket('ws://10.187.134.10:732/ws/wechat');
-    let socket = protocol === 'http:' ? new WebSocket('ws://' + host + '/ws/wechat') : new WebSocket('wss://' + host + '/ws/wechat');
+    let socket;
+    if (host === 'localhost:8000') { //本地调试
+      socket = new WebSocket('ws://10.187.134.10:732/ws/wechat');
+    } else {
+      socket = protocol === 'http:' ? new WebSocket('ws://' + host + '/ws/wechat') : new WebSocket('wss://' + host + '/ws/wechat');
+    }
     socket.onopen = connectHandler;
     // socket.onmessage = (event) => {
     //   console.log('Client received a message', event);

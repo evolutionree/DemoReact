@@ -85,11 +85,23 @@ class IMDetail extends Component {
 
   addMembers = () => {
     const { dispatch, panelInfo } = this.props;
+    // dispatch({
+    //   type: 'webIM/putState',
+    //   payload: {
+    //     showGrandsonPanel: 'OriginGroup',
+    //     grandsonPanelInfo: {
+    //       type: 'edit',
+    //       groupid: panelInfo.chatid,
+    //       chatname: panelInfo.chatname
+    //     }
+    //   }
+    // });
+
     dispatch({
-      type: 'webIM/putState',
+      type: 'webIM/showPanel',
       payload: {
-        showGrandsonPanel: 'OriginGroup',
-        grandsonPanelInfo: {
+        showPanel: 'OriginGroup',
+        panelInfo: {
           type: 'edit',
           groupid: panelInfo.chatid,
           chatname: panelInfo.chatname

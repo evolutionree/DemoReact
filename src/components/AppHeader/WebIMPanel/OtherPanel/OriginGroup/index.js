@@ -275,7 +275,6 @@ class OriginGroup extends Component {
 
   render() {
     const { panelInfo } = this.props;
-    console.log(panelInfo)
     const textAlignStyle = { position: 'relative', left: '50%', transform: 'translateX(-50%)' };
     const activeBtnObj = _.find(this.state.buttonModel, item => item.active);
     return (
