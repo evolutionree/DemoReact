@@ -63,7 +63,7 @@ class SelectComponent extends Component {
       <Select value={this.props.value} style={{ width: 120 }} onChange={this.selectHandler.bind(this)}>
         {
           this.state.dataSource.map((item) => {
-            return <Option value={item.dkey} key={item.dkey}>{item.dvalue}</Option>;
+            return <Option key={item.dkey}>{item.dvalue}</Option>;
           })
         }
       </Select>
