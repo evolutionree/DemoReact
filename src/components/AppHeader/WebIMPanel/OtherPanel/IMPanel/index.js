@@ -191,7 +191,7 @@ class IMPanel extends Component {
   }
 
   sendWebSocker = (sendData) => {
-    const { webIMSocket, userInfo } = this.props;
+    const { webIMSocket, userInfo, timeDiff } = this.props;
     webIMSocket.send(JSON.stringify(sendData));
     this.props.dispatch({
       type: 'webIM/putReceiveOrSendMessage',
@@ -204,7 +204,7 @@ class IMPanel extends Component {
         },
         IMPanelCtype: parseInt(sendData.data.ctype),
         IMPanelKey: parseInt(sendData.data.ctype) === 0 ? sendData.data.rec : sendData.data.gid,
-        time: moment().format('YYYY-MM-DD HH:mm:ss'),
+        time: moment(new Date().getTime() + timeDiff).format('YYYY-MM-DD HH:mm:ss'),
         type: 'sendMessage'
       }
     });

@@ -12,6 +12,7 @@ import { OtherPanelRender } from './OtherPanelRender';
 import ContextMenuPanel from './Component/ContextMenuPanel';
 import ViewPicture from '../../UKComponent/DataDisplay/ViewPicture';
 import _ from 'lodash';
+import moment from 'moment';
 import styles from './index.less';
 
 class WebIMPanel extends Component {
@@ -72,7 +73,7 @@ class WebIMPanel extends Component {
       webIMSocket.onmessage = (event) => {
         console.log('Client received a message', event);
         const message = JSON.parse(event.data);
-        if (message.ResultCode === undefined) {
+        if (message.ResultCode === undefined) { //及时通信聊天消息
           const CustomContent = message.CustomContent;
           const chatid = parseInt(CustomContent.ctype) === 0 ? CustomContent.s : CustomContent.gid;
           dispatch({
@@ -109,6 +110,9 @@ class WebIMPanel extends Component {
             }
             dispatch({ type: 'webIM/setSpotNewMsgList', payload: newSpotNewMsgList });
           }
+        } else if (message.ResultCode === 0) { //登录成功的socket消息
+          const timeDiff = (new Date(message.Data).getTime() - new Date().getTime()) || 0;
+          dispatch({ type: 'webIM/putState', payload: { timeDiff } });
         }
       };
     }

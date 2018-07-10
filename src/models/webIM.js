@@ -32,7 +32,9 @@ export default {
 
     spotNewMsgList: JSON.parse(localStorage.getItem('spotNewMsgList')),
 
-    showPicture: false
+    showPicture: false,
+
+    timeDiff: 0
   },
   subscriptions: {
     setup({ dispatch, history }) {
