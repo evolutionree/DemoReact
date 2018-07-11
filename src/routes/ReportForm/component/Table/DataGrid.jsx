@@ -147,7 +147,7 @@ class DataGrid extends  React.Component {
     }).then((result) => {
       let dataSource = result.data.data;
       if (!this.props.rowKey) {
-        dataSource = result.data.data.map((item, index) => {
+        dataSource = result.data.data instanceof Array && result.data.data.map((item, index) => {
           item[rowKey] = index;
           return item;
         });
