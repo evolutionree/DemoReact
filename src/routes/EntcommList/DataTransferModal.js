@@ -42,6 +42,7 @@ class DataTransferModal extends React.Component {
 
   handleOk = () => {
     this.props.form.validateFields({ force: true }, (err, values) => {
+      console.log(err)
       if (err) {
         return message.error('请检查表单');
       }
@@ -99,10 +100,7 @@ class DataTransferModal extends React.Component {
             label="选择要转移的客户字段"
           >
             {getFieldDecorator('fieldid', {
-              initialValue: schemelist.length > 0 ? 0 : '',
-              rules: [{
-                required: true, message: '请选择要转移的客户字段'
-              }]
+              initialValue: schemelist.length > 0 ? 0 : ''
             })(
               <RadioGroup>
                 {
