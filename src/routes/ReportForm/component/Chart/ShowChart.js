@@ -48,7 +48,7 @@ function ShowChart({
     });
 
     xAsix = dedupe(xAsix);
-   xAsix = xAsix.sort();
+    xAsix = xAsix.sort();
 
     return  xAsix;
   }
@@ -57,11 +57,11 @@ function ShowChart({
     let returnAxisLable = axisLable;
     const keys = returnAxisLable && returnAxisLable.match(/#.*?#/g, '');
     if (axisDataSource && axisDataSource instanceof Array && axisDataSource.length > 0) {
-     if (keys && keys instanceof Array) {
-       for (let i = 0; i < keys.length; i++) {
-         returnAxisLable = returnAxisLable.replace(keys[i], axisDataSource[0][keys[i].replace(/#/g, '')]);
-       }
-     }
+      if (keys && keys instanceof Array) {
+        for (let i = 0; i < keys.length; i++) {
+          returnAxisLable = returnAxisLable.replace(keys[i], axisDataSource[0][keys[i].replace(/#/g, '')]);
+        }
+      }
     }
 
     return returnAxisLable;
@@ -264,77 +264,78 @@ function ShowChart({
     yAxis: {},
     series: []
   };
-
   if (component.commonextinfo.charttype === 3) { //仪表盘
     option = {
-        tooltip: {
-          formatter: "{a} <br/>{b} : {c}%"
-        },
+      tooltip: {
+        formatter: "{a} <br/>{b} : {c}%"
+      },
 
-        series: [
-          {
-            center : ['50%', '74%'],
-            name: '业务指标',
-            type: 'gauge',
-            startAngle: 180,
-            endAngle: 0,
-            radius : '140%',
-            min: component.commonextinfo.gaugeinfo.minvalue,
-            max: component.commonextinfo.gaugeinfo.maxvalue,
-            axisLine: {
-              lineStyle: {
-                color: component && component.commonextinfo.gaugeinfo && component.commonextinfo.gaugeinfo.areainfo.map((item) => {
-                  return [item.arearate, item.areacolor];
-                }),
-                width: '40%',
-                opacity: 1
-              }
-            },
-            splitLine: {
-              length: 6,
-              lineStyle: {
-                color: '#ffffff'
-              }
-            },
-            axisLabel: {
-              textStyle: {
-                color: '#ffffff',
-                lineHeight: 20
-              }
-            },
-            axisTick: {
-              length: 4,
-              lineStyle: {
-                color: '#ffffff'
-              }
-            },
-            pointer: {
-              length: '85%',
-              width: 3
-            },
-            itemStyle: {
-              normal: {
-                color: '#ffffff',
-                shadowColor: 'rgba(0, 0, 0, 0.5)',
-                shadowBlur: 10,
-                width: 4
-              }
-            },
-            detail: {
-              show: true,
-              formatter: component.titleinfo.title + ':{value}%',
-              offsetCenter: [0, 22],
-              textStyle: {
-                fontSize: 16,
-                color: '#9b9b9b'
-              }
-            },
-            data: [{ value: dataSource instanceof Array && dataSource[0] && dataSource[0][component.commonextinfo.gaugeinfo.valuefieldname], name: '' }]
-          }
-        ]
-      };
+      series: [
+        {
+          center : ['50%', '74%'],
+          name: '业务指标',
+          type: 'gauge',
+          startAngle: 180,
+          endAngle: 0,
+          radius : '140%',
+          min: component.commonextinfo.gaugeinfo.minvalue,
+          max: component.commonextinfo.gaugeinfo.maxvalue,
+          axisLine: {
+            lineStyle: {
+              color: component && component.commonextinfo.gaugeinfo && component.commonextinfo.gaugeinfo.areainfo.map((item) => {
+                return [item.arearate, item.areacolor];
+              }),
+              width: '40%',
+              opacity: 1
+            }
+          },
+          splitLine: {
+            length: 6,
+            lineStyle: {
+              color: '#ffffff'
+            }
+          },
+          axisLabel: {
+            textStyle: {
+              color: '#ffffff',
+              lineHeight: 20
+            }
+          },
+          axisTick: {
+            length: 4,
+            lineStyle: {
+              color: '#ffffff'
+            }
+          },
+          pointer: {
+            length: '85%',
+            width: 3
+          },
+          itemStyle: {
+            normal: {
+              color: '#ffffff',
+              shadowColor: 'rgba(0, 0, 0, 0.5)',
+              shadowBlur: 10,
+              width: 4
+            }
+          },
+          detail: {
+            show: true,
+            formatter: component.titleinfo.title + ':{value}%',
+            offsetCenter: [0, 22],
+            textStyle: {
+              fontSize: 16,
+              color: '#9b9b9b'
+            }
+          },
+          data: [{ value: dataSource instanceof Array && dataSource[0] && dataSource[0][component.commonextinfo.gaugeinfo.valuefieldname], name: '' }]
+        }
+      ]
+    };
   }
   else if (component.commonextinfo.charttype === 4) { //饼图
+    //饼图数据为0时  过滤掉 不展示 饼图【series】定义正常情况下只会有一个
+    const newDataSource = component.commonextinfo.series instanceof Array && component.commonextinfo.series[0] && dataSource && dataSource instanceof Array && dataSource.filter(dataItem => dataItem[component.commonextinfo.series[0].fieldname]) || [];
     option = {
       backgroundColor: '#3a3c4f',
       color: colors,
@@ -347,11 +348,29 @@ function ShowChart({
       grid: optionSet.grid,
       //提示框组件
       tooltip: {
-        ...optionSet.tooltip,
-        trigger: 'item'
+        trigger: 'item', //触发类型。 axis: 坐标轴触发  item:数据项图形触发
+        axisPointer: {
+          type: 'cross'
+        },
+        confine: true, //是否将 tooltip 框限制在图表的区域内。
+        textStyle: {
+          fontSize: 14
+        },
+        formatter: component.commonextinfo.detailformat ? function (obj) {
+          let formatstr = component.commonextinfo.detailformat;
+          const keys = formatstr && formatstr.match(/#.*?#/g, '');
+          if (newDataSource && newDataSource instanceof Array && newDataSource.length > 0) {
+            if (keys && keys instanceof Array) {
+              for (let i = 0; i < keys.length; i++) {
+                formatstr = formatstr.replace(keys[i], newDataSource[obj instanceof Array ? obj[0].dataIndex : obj.dataIndex][keys[i].replace(/#/g, '')]);
+              }
+            }
+          }
+          return formatstr;
+        } : null
       },
       //原生图形元素组件
-      graphic: [
+      graphic: newDataSource.length > 0 ? null : [
         {
           type: 'image',
           id: 'logo',
@@ -362,8 +381,8 @@ function ShowChart({
           origin: [75, 75],
           style: {
             image: '/img_site_logo.png',
-            width: 160,
-            height: 50,
+            width: 60,
+            height: 20,
             opacity: 0.5
           }
         }
@@ -386,28 +405,29 @@ function ShowChart({
         },
         // formatter: '{name} : ',
         // align: 'right',
-        data: dataSource && dataSource instanceof Array && dataSource.map((dataItem) => {
+        data: newDataSource.map((dataItem) => {
           return { name: dataItem[component.commonextinfo.xfieldname], icon: 'roundRect' };
         }),
         selected: legend
       },
       //系列列表。每个系列通过 type 决定自己的图表类型
       series: component.commonextinfo.series.map((item, index) => {
+        const filterDataSource = dataSource && dataSource instanceof Array && dataSource.filter(dataItem => dataItem[item.fieldname]) || []; //过滤掉为0的数据
         return {
           name: item.seriesname,
           type: item.chartype,
           radius: '70%',
-          center: ['50%', '55%'],
+          center: ['40%', '55%'],
           //图形上的文本标签，可用于说明图形的一些数据信息
           label: {
             normal: {
               formatter: item.labelformat ? function (obj) {
                 let formatstr = item.labelformat;
                 const keys = formatstr && formatstr.match(/#.*?#/g, '');
-                if (dataSource && dataSource instanceof Array && dataSource.length > 0) {
+                if (filterDataSource instanceof Array && filterDataSource.length > 0) {
                   if (keys && keys instanceof Array) {
                     for (let i = 0; i < keys.length; i++) {
-                      formatstr = formatstr.replace(keys[i], dataSource[obj instanceof Array ? obj[0].dataIndex : obj.dataIndex][keys[i].replace(/#/g, '')]);
+                      formatstr = formatstr.replace(keys[i], filterDataSource[obj instanceof Array ? obj[0].dataIndex : obj.dataIndex][keys[i].replace(/#/g, '')]);
                     }
                   }
                 }
@@ -416,7 +436,7 @@ function ShowChart({
               show: true
             }
           },
-          data: dataSource && dataSource instanceof Array && dataSource.map((dataItem) => {
+          data: filterDataSource && filterDataSource instanceof Array && filterDataSource.map((dataItem) => {
             return { value: dataItem[item.fieldname], name: dataItem[component.commonextinfo.xfieldname] };
           }).filter(item => item.value)
         };
@@ -459,7 +479,7 @@ function ShowChart({
         ...optionSet.asisLineAndasisLabel,
         data: (component.commonextinfo && component.commonextinfo.landscape === 1) ? null : dataSource && dataSource instanceof Array && dataSource.map((item) => {
             return item[component.commonextinfo.xfieldname];
-        })
+          })
       },
       //Y轴坐标
       yAxis: component.commonextinfo.yfieldlist ? component.commonextinfo.yfieldlist.map((item) => { //多个Y轴
@@ -480,8 +500,8 @@ function ShowChart({
           },
           ...optionSet.yAxisStyle,
           data: (component.commonextinfo && component.commonextinfo.landscape === 1) ? dataSource && dataSource instanceof Array && dataSource.map((item) => {
-            return item[component.commonextinfo.xfieldname];
-          }) : null
+              return item[component.commonextinfo.xfieldname];
+            }) : null
         };
       }) : {
         //坐标轴名称的文字样式
@@ -676,30 +696,30 @@ function ShowChart({
         }
       },
       series: dataSource ? dataSource instanceof Array && dataSource.map((item, index) => {
-        return {
-          name: item.seriename,
-          data: transformData(item),
-          type: 'scatter',
-          symbolSize: function (data) {
-            return data[2] < 1 ? 8 : Math.log(data[2]) * 5 < 8 ? 8 : Math.log(data[2]) * 5;
-          },
-          label: {
-            emphasis: {
-              show: false,
-              position: 'top',
-              color: 'auto'
+          return {
+            name: item.seriename,
+            data: transformData(item),
+            type: 'scatter',
+            symbolSize: function (data) {
+              return data[2] < 1 ? 8 : Math.log(data[2]) * 5 < 8 ? 8 : Math.log(data[2]) * 5;
+            },
+            label: {
+              emphasis: {
+                show: false,
+                position: 'top',
+                color: 'auto'
+              }
+            },
+            itemStyle: {
+              normal: {
+                color: item.seriecolor ? item.seriecolor : colors[index % 3],
+                borderColor: '#FFFFFF',
+                borderWidth: 2,
+                opacity: 1
+              }
             }
-          },
-          itemStyle: {
-            normal: {
-              color: item.seriecolor ? item.seriecolor : colors[index % 3],
-              borderColor: '#FFFFFF',
-              borderWidth: 2,
-              opacity: 1
-            }
-          }
-        };
-      }) : []
+          };
+        }) : []
     };
   }
   return (
