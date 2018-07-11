@@ -40,6 +40,10 @@ function EntcommRel({
                       currentUser,
                       relCountData
 }) {
+  function onMenuChange(payload) {
+    dispatch({ type: 'entcommRel/selectMenu', payload });
+  }
+
   function merageCustom() {
     dispatch({ type: 'entcommRel/showModals', payload: 'merage' });
   }
@@ -214,6 +218,11 @@ function EntcommRel({
           ...ajaxToolbarActions
         ]}
       >
+        <Select style={{ minWidth: '120px' }} value={menuId} onChange={onMenuChange}>
+          {menus.map(menu => (
+            <Option key={menu.menuId}>{menu.menuName}</Option>
+          ))}
+        </Select>
         {checkFunc('EntityDataAdd') && <Button onClick={addRelEntity}>{`新增${tabInfo.entityname || ''}`}</Button>}
         {checkFunc('EntityDataMerge') && <Button onClick={merageCustom}>客户合并</Button>}
         {/*{shouldShowImport() && <Button onClick={importData}>导入</Button>}*/}
