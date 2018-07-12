@@ -414,22 +414,31 @@ function getNodeFullPath(node, parentFullPath, pathKey) {
 export function addSeparator(val) {
   if (!val) return val;
 
-  let arr = (val + '').split('.');
-  let intStr = arr[0].replace(/^0+/g, '');
-  intStr = intStr || '0';
-  let intArr = intStr.split('').reverse();
-  let intFormatted = '';
-  intArr.forEach(function(n, index) {
-      if (index % 3 === 0 && index !== 0) {
-          intFormatted = ', ' + intFormatted;
-      }
-      intFormatted = n + intFormatted;
-  });
+  let flag = 1;
+  if (val < 0) {
+    flag = 0;
+    val = -val;
+  }
+  let str = val.toString();
 
-  if (arr[1]) {
-      return intFormatted + '.' + arr[1];
+  //n为小数部分
+  let n = str.slice(str.lastIndexOf('.'))
+  if (n.indexOf('.') === -1) {
+    n = '';
+  }
+
+  //str为整数部分
+  let interStr = parseInt(val).toString();
+  let list = interStr.split('').reverse();
+  for (let i = 0; i < list.length; i++) {
+    if (i % 4 === 3) {
+      list.splice(i, 0, ',');
+    }
+  }
+  if (flag === 1) {
+    return list.reverse().join('') + n;
   } else {
-      return intFormatted;
+    return '-' + list.reverse().join('') + n;
   }
 }
 
