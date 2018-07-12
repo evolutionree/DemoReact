@@ -78,6 +78,7 @@ export default class ReactEcharts extends React.Component {
   renderEchartDom = () => {
     // init the echart object
     const echartObj = this.getEchartsInstance();
+
     // set the echart option
     echartObj.setOption(this.props.option, this.props.notMerge || false, this.props.lazyUpdate || false);
     // set loading mask

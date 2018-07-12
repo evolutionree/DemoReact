@@ -479,7 +479,7 @@ function ShowChart({
         ...optionSet.asisLineAndasisLabel,
         data: (component.commonextinfo && component.commonextinfo.landscape === 1) ? null : dataSource && dataSource instanceof Array && dataSource.map((item) => {
             return item[component.commonextinfo.xfieldname];
-          })
+        })
       },
       //Y轴坐标
       yAxis: component.commonextinfo.yfieldlist ? component.commonextinfo.yfieldlist.map((item) => { //多个Y轴
@@ -500,8 +500,8 @@ function ShowChart({
           },
           ...optionSet.yAxisStyle,
           data: (component.commonextinfo && component.commonextinfo.landscape === 1) ? dataSource && dataSource instanceof Array && dataSource.map((item) => {
-              return item[component.commonextinfo.xfieldname];
-            }) : null
+            return item[component.commonextinfo.xfieldname];
+          }) : null
         };
       }) : {
         //坐标轴名称的文字样式
@@ -535,7 +535,10 @@ function ShowChart({
         selected: legend
       },
       //系列列表。每个系列通过 type 决定自己的图表类型
-      series: component.commonextinfo.series.map((item, index) => {
+      series: component.commonextinfo.series instanceof Array && component.commonextinfo.series.map((item, index) => {
+        const yAxisIndex = component.commonextinfo.yfieldlist && component.commonextinfo.yfieldlist instanceof Array ? { //是否有多个Y轴坐标系
+          yAxisIndex: item.ylabel > component.commonextinfo.yfieldlist.length - 1 ? component.commonextinfo.yfieldlist.length - 1 : item.ylabel //对应的Y轴
+        } : {};
         return {
           name: item.seriesname,
           type: item.chartype,
@@ -556,7 +559,7 @@ function ShowChart({
               shadowOffsetY: 10
             }
           },
-          yAxisIndex: item.ylabel, //对应的Y轴
+          ...yAxisIndex,
           //图形上的文本标签，可用于说明图形的一些数据信息
           label: {
             normal: {
@@ -722,6 +725,7 @@ function ShowChart({
         }) : []
     };
   }
+
   return (
     <EchartsReact
       echarts={echarts}

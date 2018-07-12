@@ -91,7 +91,7 @@ class ReportForm extends React.Component {
             DataSourceId: item.datasourcedefineid,
             InstId: item.instid,
             Parameters: defaultParams
-          });
+          }, components);
         }
       });
     });
@@ -326,7 +326,7 @@ class ReportForm extends React.Component {
     }
   }
 
-  queryData(item, params) {
+  queryData(item, params, components = this.state.components) {
     let _params = params;
     if (this.props.injectedParams) {
       _params = {
@@ -340,6 +340,17 @@ class ReportForm extends React.Component {
     request('/api/ReportEngine/queryData', {
       method: 'post', body: JSON.stringify(_params)
     }).then((getData) => {
+      if (getData.data.series) { //可能echarts报表series定义会动态变化
+        const newComponents = components instanceof Array && components.map(componentsItem => {
+          if (componentsItem.datasourcename === item.instid) {
+            componentsItem.commonextinfo.series = getData.data.series;
+          }
+          return componentsItem;
+        });
+        this.setState({
+          components: newComponents
+        });
+      }
       this.setState({
         [item.instid]: getData.data.data,
         [item.instid + 'columns']: getData.data.columns,
