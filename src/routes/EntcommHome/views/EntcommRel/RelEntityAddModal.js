@@ -19,8 +19,7 @@ class RelEntityAddModal extends Component {
       addModalVisible: false,
       itemList: [],
       selectedItems: [],
-      listModalPending: false,
-      initFormData: {}
+      listModalPending: false
     };
   }
 
@@ -32,7 +31,6 @@ class RelEntityAddModal extends Component {
         this.setState({ listModalVisible: true });
         this.fetchItemList();
       } else {
-        this.fetchVariableFormItem();
         this.setState({ addModalVisible: true });
       }
     } else if (isClosing) {
@@ -48,7 +46,7 @@ class RelEntityAddModal extends Component {
 
   processProtocol = fields => {
     let fields_ = fields;
-    const readOnlyFieldKeys = Object.keys(this.state.initFormData);
+    const readOnlyFieldKeys = Object.keys(this.props.relEntityFromInitData);
     if (readOnlyFieldKeys.length) {
       fields_ = fields.map(field => {
         if (_.includes(readOnlyFieldKeys, field.fieldname)) {
@@ -77,21 +75,6 @@ class RelEntityAddModal extends Component {
       message.error(err.message || '获取列表数据失败');
     });
   };
-
-  fetchVariableFormItem = () => {
-    const params = {
-      EntityId: this.props.entityId,
-      RecId: this.props.recordId,
-      FieldId: this.props.fieldId
-    };
-    queryvaluefornewdata(params).then(result => { //动态获取 关联字段的值
-      this.setState({
-        initFormData: { [this.props.fieldname]: result.data }
-      });
-    }).catch(err => {
-      message.error(err.message || '获取动态字段数据失败');
-    });
-  }
 
   handleAddFromList = () => {
     if (!this.state.selectedItems.length) {
@@ -213,7 +196,7 @@ class RelEntityAddModal extends Component {
           entityId={this.props.relEntityId}
           entityName={this.props.entityName}
           refEntity={undefined && this.props.entityId}
-          initFormData={this.state.initFormData}
+          initFormData={this.props.relEntityFromInitData}
           entityTypes={this.props.entityTypes}
           cancel={this.handleAddNewCancel}
           done={this.props.onAddDone}
@@ -226,7 +209,7 @@ class RelEntityAddModal extends Component {
 
 export default connect(
   state => {
-    const { entityId, recordId, relId, relEntityId, showModals, entityTypes } = state.entcommRel;
+    const { entityId, recordId, relId, relEntityId, showModals, entityTypes, relEntityFromInitData } = state.entcommRel;
     const { relTabs, recordDetail } = state.entcommHome;
 
     let tabInfo = {};
@@ -243,8 +226,7 @@ export default connect(
       visible: /add/.test(showModals),
       shouldShowList: !!(tabInfo && tabInfo.ismanytomany),
       showListTitle: tabInfo && tabInfo.srctitle,
-      fieldId: tabInfo && tabInfo.fieldid,
-      fieldname: tabInfo && tabInfo.fieldname
+      relEntityFromInitData
     };
   },
   dispatch => {

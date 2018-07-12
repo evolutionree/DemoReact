@@ -301,7 +301,8 @@ export default connect(
         dispatch({ type: 'entcommRel/putState', payload: { currItem: item.recid } });
       },
       addRelEntity() {
-        dispatch({ type: 'entcommRel/putState', payload: { showModals: 'add' } });
+        //dispatch({ type: 'entcommRel/putState', payload: { showModals: 'add' } });
+        dispatch({ type: 'entcommRel/addRelEntity' });
       },
       call(mobilephone) {
         dispatch({ type: 'entcommRel/call', payload: mobilephone });

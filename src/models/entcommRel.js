@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import * as _ from 'lodash';
 import { routerRedux } from 'dva/router';
-import { queryTabsList, delEntcomm, delRelItem, getGeneralListProtocol, getListData, getFunctionbutton, extraToolbarClickSendData, transferEntcomm, queryreldatasource } from '../services/entcomm';
+import { queryTabsList, delEntcomm, delRelItem, getGeneralListProtocol, getListData, getFunctionbutton, extraToolbarClickSendData, transferEntcomm, queryreldatasource, queryvaluefornewdata } from '../services/entcomm';
 import { queryMobFieldVisible, queryEntityDetail, queryTypes, DJCloudCall, queryListFilter, queryMenus } from '../services/entity';
 import { parseConfigData } from '../components/ListStylePicker';
 
@@ -48,7 +48,8 @@ export default {
     extraToolbarData: [], //页面toolbar 动态按钮数据源
     dynamicModalData: {},
     sortFieldAndOrder: null, //当前排序的字段及排序顺序
-    relCountData: null
+    relCountData: null,
+    relEntityFromInitData: null //实体页签下  添加表单的初始化数据
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -342,6 +343,31 @@ export default {
       } catch (e) {
         message.error(e.message);
       }
+    },
+    *addRelEntity({ payload }, { select, call, put }) {
+      const { entityId, recordId, relId, relEntityId } = yield select(modelSelector);
+      const { relTabs } = yield select(state => state.entcommHome);
+      let tabInfo = {};
+      if (relTabs.length && relId && relEntityId) {
+        tabInfo = _.find(relTabs, item => {
+          return item.relid === relId && item.relentityid === relEntityId;
+        });
+      }
+      const params = {
+        EntityId: entityId,
+        RecId: recordId,
+        FieldId: tabInfo && tabInfo.fieldid
+      };
+      try {
+        const { data } = yield call(queryvaluefornewdata, params);
+        if (data) {
+          yield put({ type: 'putState', payload: { relEntityFromInitData: { [tabInfo && tabInfo.fieldname]: data }, showModals: 'add' } });
+        } else {
+          message.error('您没有权限或者数据不能进行当前操作');
+        }
+      } catch (e) {
+        message.error(e.message || '获取动态字段数据失败');
+      }
     }
   },
   reducers: {
@@ -401,7 +427,8 @@ export default {
         extraToolbarData: [], //页面toolbar 动态按钮数据源
         dynamicModalData: {},
         sortFieldAndOrder: null, //当前排序的字段及排序顺序
-        relCountData: null
+        relCountData: null,
+        relEntityFromInitData: null //实体页签下  添加表单的初始化数据
       };
     }
   }
