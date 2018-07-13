@@ -4,14 +4,12 @@
  */
 import React, { Component } from 'react';
 import { LocaleProvider } from 'antd';
-import enUS from '../locales/en-US';
-import zhCN from '../locales/zh-CN';
 import antdEn from 'antd/lib/locale-provider/en_US';
-import { addLocaleData, IntlProvider, FormattedMessage } from 'react-intl';
 import intl from 'react-intl-universal';
+
 const locales = {
-  "en-US": require('../locales/en.json'),
-  "zh-CN": require('../locales/zh.json')
+  'en-US': require('../locales/en.json'),
+  'zh-CN': require('../locales/zh.json')
 };
 
 const IntlWrap = WrappedComponent => {
@@ -25,20 +23,10 @@ const IntlWrap = WrappedComponent => {
     }
 
     initLocale(currentLocale) {
-      console.log(currentLocale)
       intl.init({
         currentLocale, // TODO: determine locale here
         locales
       });
-    }
-    getCurrentAppLocale() {
-      const language = this.props.currentLocale;
-      switch (language) {
-        case 'zh-CN':
-          return zhCN;
-        default:
-          return enUS;
-      }
     }
 
     getAntdLocale() {
@@ -54,16 +42,9 @@ const IntlWrap = WrappedComponent => {
     }
 
     render() {
-      this.appLocale = this.getCurrentAppLocale();
-      addLocaleData(this.appLocale.data);
       return (
         <LocaleProvider locale={this.getAntdLocale()}>
-          <IntlProvider
-            locale={this.appLocale.locale}
-            messages={this.appLocale.messages}
-          >
-            <WrappedComponent {...this.props} />
-          </IntlProvider>
+          <WrappedComponent {...this.props} />
         </LocaleProvider>
       );
     }

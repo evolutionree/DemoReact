@@ -76,7 +76,7 @@ export default {
   effects: {
     *initCurrentLocale({ payload }, { select, put }) {
       let { currentLocale } = yield select(state => state.app);
-      currentLocale = window.localStorage.getItem('currentLocale');
+      currentLocale = window.localStorage.getItem('currentLocale') || currentLocale;
       yield put({ type: 'putState', payload: { currentLocale } });
     },
     *changeCurrentLocale({ payload: newLocale }, { select, call, put }) { //切换语言

@@ -507,4 +507,3 @@ export function uuid() { //生成uuid
   let uuid = s.join('');
   return uuid;
 }
-

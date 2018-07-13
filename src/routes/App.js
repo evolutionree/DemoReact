@@ -16,8 +16,7 @@ import MapModal from '../components/MapModal';
 import JsonEditModal from '../components/JsonEditModal';
 import IntlWrap from './IntlWrap'; //国际版(多语言)容器
 
-const App = ({ children, location, siderFold, loading, dispatch, user, noMinWidth, currentLocale }) => {
-  console.log('app:'+ currentLocale)
+const App = ({ children, location, siderFold, loading, dispatch, user, noMinWidth }) => {
   const cls = classnames({ [styles.app]: true, [styles.fold]: siderFold, [styles.noMinWidth]: noMinWidth });
   return (
     <div className={cls}>
@@ -41,4 +40,4 @@ const App = ({ children, location, siderFold, loading, dispatch, user, noMinWidt
   );
 };
 
-export default connect(state => ({ ...state.app, loading: state.loading > 0, currentLocale: 'zh-CN' }))(IntlWrap(App));
+export default connect(state => ({ ...state.app, loading: state.loading > 0 }))(IntlWrap(App));

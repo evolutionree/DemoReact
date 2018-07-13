@@ -101,4 +101,4 @@ const App = ({ children, location, siderFold, loading, permissionLevel, dispatch
   );
 };
 
-export default connect(state => ({ ...state.app, loading: state.loading > 0, currentLocale: 'zh-CN' }))(IntlWrap(App));
+export default connect(state => ({ ...state.app, loading: state.loading > 0 }))(IntlWrap(App));
