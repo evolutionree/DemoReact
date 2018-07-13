@@ -28,7 +28,9 @@ export default {
     permissionLevel: 3,
     imageGallery: {},
     mapModal: {},
-    noMinWidth: false
+    noMinWidth: false,
+
+    currentLocale: 'zh-CN' //系统设置默认语言【简体中文】
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -45,6 +47,8 @@ export default {
         dispatch({ type: 'fetchUserInfo' });
         dispatch({ type: 'fetchYearWeekData' });
         dispatch({ type: 'initRsaPublicKey' });
+
+        dispatch({ type: 'initCurrentLocale' });
       }
     },
     // session过期，退出登录
@@ -70,6 +74,16 @@ export default {
     }
   },
   effects: {
+    *initCurrentLocale({ payload }, { select, put }) {
+      let { currentLocale } = yield select(state => state.app);
+      currentLocale = window.localStorage.getItem('currentLocale');
+      yield put({ type: 'putState', payload: { currentLocale } });
+    },
+    *changeCurrentLocale({ payload: newLocale }, { select, call, put }) { //切换语言
+      window.localStorage.setItem('currentLocale', newLocale);
+      location.reload();
+    },
+
     *toggleSider({ payload }, { select, put }) {
       const { siderFold } = yield select(state => state.app);
       const bool = payload !== undefined ? payload : !siderFold;

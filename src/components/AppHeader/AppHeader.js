@@ -8,6 +8,7 @@ import ImportTask from './ImportTask';
 import ProgressModal from './ProgressModal/ProgressModal';
 import ContactsPanel from './ContactsPanel';
 import WebIMPanel from './WebIMPanel';
+import LocaleSelect from './LocaleSelect';
 
 
 const AppHeader = () => {
@@ -21,6 +22,7 @@ const AppHeader = () => {
         <WebIMPanel />
         <MessageList />
         <UserDropdown />
+        <LocaleSelect />
       </Header.Right>
     </Header>
   );
