@@ -13,7 +13,7 @@
     "deploy": "node ./scripts/publish.js -s -d -t",
     "deploy:dev": "node ./scripts/publish.js -s -d",
     "deploy:test": "node ./scripts/publish.js -s -t",
-    "i18n-pick": "node ./node_modules/i18n-pick/bin/i18n-pick.js",
+    "i18n-pick": "node ./node_modules/uke-i18n-pick/bin/i18n-pick.js",
     "atool": "node ./node_modules/atool-l10n/bin/cli.js"
   },
   "engines": {
@@ -31,7 +31,6 @@
     "echarts": "^3.7.0",
     "element-resize-event": "^2.0.9",
     "html-to-draftjs": "0.1.0-beta7",
-    "i18n-pick": "^1.5.0",
     "js-base64": "^2.1.9",
     "js-cookie": "^2.1.4",
     "jsencrypt": "^2.3.1",
@@ -49,6 +48,7 @@
     "react-intl-universal": "^1.11.4",
     "react-sortable-hoc": "^0.5.0",
     "ua-parser-js": "^0.7.12",
+    "uke-i18n-pick": "^1.0.0",
     "uuid": "^3.1.0"
   },
   "devDependencies": {
