@@ -425,7 +425,15 @@ export async function queryPlugins({ entityid, recid }) {
               icon: item.icon,
               entity: item
             })
-          }else{
+          } else if (item.buttoncode === 'EntityDataOpenH5') {
+            plugins.push({
+              type: 'EntityDataOpenH5',
+              name: item.title,
+              icon: item.icon,
+              routepath:item.routepath,
+              entity:item
+            });
+          } else{
           if(item.extradata)
           {
             if(item.extradata.type=='transform'){

@@ -162,6 +162,21 @@ export default {
             message.error(e.message || '提交失败');
           }
           break;
+        case 'EntityDataOpenH5': //跳转
+          try {
+            const { entityId, recordId } = yield select(state => state.entcommActivities);
+            let params = {};
+            params = {
+              Recids: [recordId],
+              EntityId: entityId,
+              ...plugins[pluginIndex].extradata
+            };
+            const { data } = yield call(extraToolbarClickSendData, plugins[pluginIndex].routepath, params);
+            window.open(data.htmlurl);
+          } catch (e) {
+            message.error(e.message || '提交失败');
+          }
+          break;
         case 'upatebutton': //更新事件按钮
           const confirmed = yield cps(
             confirmModal,
@@ -281,11 +296,15 @@ export default {
       }
     },
     pluginAdd(state, { payload: pluginIndex }) {
-      return {
-        ...state,
-        currPlugin: state.plugins[pluginIndex],
-        showModals: 'pluginAdd'
-      };
+      if (state.plugins[pluginIndex].type === 'EntityDataOpenH5') {
+        return state;
+      } else {
+        return {
+          ...state,
+          currPlugin: state.plugins[pluginIndex],
+          showModals: 'pluginAdd'
+        };
+      }
     },
     pluginAddCancel(state) {
       return {
