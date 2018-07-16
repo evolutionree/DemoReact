@@ -1,0 +1,13 @@
+阶段名称#text#src/routes/Dic/index.js#15#2#0
+确定删除该数据吗?#text#src/routes/Dic/index.js#62#6#1
+序号#text#src/routes/Dic/index.js#99#6#2
+字典值#text#src/routes/Dic/index.js#104#6#3
+操作#text#src/routes/Dic/index.js#138#4#4
+保存#jsx#src/routes/Dic/index.js#145#96#5
+编辑#jsx#src/routes/Dic/index.js#147#106#6
+删除#jsx#src/routes/Dic/index.js#150#47#7
+字典参数#jsx#src/routes/Dic/index.js#158#10#8
+字典值不能为空#text#src/routes/Dic/index.js#178#42#9
+请输入10个以内的字符#text#src/routes/Dic/index.js#179#54#10
+请输入字典值#jsx#src/routes/Dic/index.js#181#23#11
+添加#jsx#src/routes/Dic/index.js#185#55#12

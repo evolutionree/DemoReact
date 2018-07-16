@@ -1,0 +1,132 @@
+[
+	{
+		"id": "阶段名称",
+		"defaultMessage": "阶段名称",
+		"source": [
+			{
+				"type": "text",
+				"location": "src/routes/Dic/index.js#15#2"
+			}
+		]
+	},
+	{
+		"id": "确定删除该数据吗?",
+		"defaultMessage": "确定删除该数据吗?",
+		"source": [
+			{
+				"type": "text",
+				"location": "src/routes/Dic/index.js#62#6"
+			}
+		]
+	},
+	{
+		"id": "序号",
+		"defaultMessage": "序号",
+		"source": [
+			{
+				"type": "text",
+				"location": "src/routes/Dic/index.js#99#6"
+			}
+		]
+	},
+	{
+		"id": "字典值",
+		"defaultMessage": "字典值",
+		"source": [
+			{
+				"type": "text",
+				"location": "src/routes/Dic/index.js#104#6"
+			}
+		]
+	},
+	{
+		"id": "操作",
+		"defaultMessage": "操作",
+		"source": [
+			{
+				"type": "text",
+				"location": "src/routes/Dic/index.js#138#4"
+			}
+		]
+	},
+	{
+		"id": "保存",
+		"defaultMessage": "保存",
+		"source": [
+			{
+				"type": "jsx",
+				"location": "src/routes/Dic/index.js#145#96"
+			}
+		]
+	},
+	{
+		"id": "编辑",
+		"defaultMessage": "编辑",
+		"source": [
+			{
+				"type": "jsx",
+				"location": "src/routes/Dic/index.js#147#106"
+			}
+		]
+	},
+	{
+		"id": "删除",
+		"defaultMessage": "删除",
+		"source": [
+			{
+				"type": "jsx",
+				"location": "src/routes/Dic/index.js#150#47"
+			}
+		]
+	},
+	{
+		"id": "字典参数",
+		"defaultMessage": "字典参数",
+		"source": [
+			{
+				"type": "jsx",
+				"location": "src/routes/Dic/index.js#158#10"
+			}
+		]
+	},
+	{
+		"id": "字典值不能为空",
+		"defaultMessage": "字典值不能为空",
+		"source": [
+			{
+				"type": "text",
+				"location": "src/routes/Dic/index.js#178#42"
+			}
+		]
+	},
+	{
+		"id": "请输入10个以内的字符",
+		"defaultMessage": "请输入10个以内的字符",
+		"source": [
+			{
+				"type": "text",
+				"location": "src/routes/Dic/index.js#179#54"
+			}
+		]
+	},
+	{
+		"id": "请输入字典值",
+		"defaultMessage": "请输入字典值",
+		"source": [
+			{
+				"type": "jsx",
+				"location": "src/routes/Dic/index.js#181#23"
+			}
+		]
+	},
+	{
+		"id": "添加",
+		"defaultMessage": "添加",
+		"source": [
+			{
+				"type": "jsx",
+				"location": "src/routes/Dic/index.js#185#55"
+			}
+		]
+	}
+]
