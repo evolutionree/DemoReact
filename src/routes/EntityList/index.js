@@ -147,8 +147,8 @@ function EntityList({
           dataIndex="entityname"
           render={(text, record) => {
             return checkFunc('EntityDetail')
-              ? <Link to={`/entity-config/${record.entityid}/${record.modeltype}`}><IntlText value={text} /></Link>
-              : <IntlText value={text} />;
+              ? <Link to={`/entity-config/${record.entityid}/${record.modeltype}`}><IntlText value={text} value_lang={record['entityname_lang']} /></Link>
+              : <IntlText value={text} value_lang={record['entityname_lang']} />;
           }}
         />
         <Column title="实体类型" key="modeltype" dataIndex="modeltype" render={getTypeName} />

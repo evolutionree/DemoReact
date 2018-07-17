@@ -19,6 +19,10 @@
     text-overflow: ellipsis;
   }
 
+  :global(.ant-input-group-addon) {
+    padding: 0;
+  }
+
   .inputAddoAfter{
     :global{
       .anticon-down{
@@ -31,6 +35,9 @@
         transition: transform 0.2s ease, -webkit-transform 0.2s ease;
       }
     }
+
+    padding: 4px 10px;
+    cursor: pointer;
   }
 
   position: relative;
@@ -60,19 +67,35 @@
         padding: 0px 8px;
         font-weight: normal;
         color: rgba(0, 0, 0, 0.65);
-        white-space: nowrap;
-        cursor: pointer;
-        overflow: hidden;
-        text-overflow: ellipsis;
         transition: background 0.3s ease;
+        height: 35px;
         line-height: 35px;
+        border-bottom: 1px solid #f3f3f3;
+        cursor: pointer;
+
+        .valueWrap{
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          width: calc(~"100% - 45px");
+          display: inline-block;
+        }
 
         .localName{
+          width: 40px;
           float: right;
+          text-align: right;
+
+          &.active{
+            font-weight: 600;
+          }
         }
 
         &:hover{
           background-color: #eff7fc;
+        }
+        &:last-of-type{
+          border-bottom: none;
         }
       }
     }

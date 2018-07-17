@@ -78,6 +78,7 @@ export default {
     *querylangs({ payload }, { select, call, put }) {
       try {
         const { data } = yield call(querylanglist);
+        window.localStorage.setItem('langlist', JSON.stringify(data));
         yield put({ type: 'initCurrentLocale', payload: data });
       } catch (e) {
         message.error(e.message);

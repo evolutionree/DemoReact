@@ -107,6 +107,16 @@ class EntityFormModal extends Component {
     });
   }
 
+  entitynameRequireValidator = (rule, value, callback) => {
+    let langlist = JSON.parse(window.localStorage.getItem('langlist'));
+    langlist instanceof Array && langlist.map(item => {
+      if (!(value && value[item.key])) {
+        callback(item.dispaly + '必填');
+      }
+    });
+    callback();
+  }
+
   render() {
     const {
       showModals,
@@ -131,10 +141,12 @@ class EntityFormModal extends Component {
              onCancel={onCancel}>
         <Form horizontal>
           <FormItem label="实体名称">
-            {getFieldDecorator('entityname', {//<Input placeholder="实体名称" maxLength={50} />
-              rules: [{ required: true, message: '请输入实体名称' }]
+            {getFieldDecorator('entityname_lang', {//<Input placeholder="实体名称" maxLength={50} />   rules: [{ required: true, message: '请输入实体名称' }],
+              rules: [{
+                validator: this.entitynameRequireValidator
+              }]
             })(
-              <IntlInput />
+              <IntlInput maxLength={50} />
             )}
           </FormItem>
           <FormItem label="实体表名">
