@@ -9,6 +9,7 @@ import Search from '../../components/Search';
 import EntityFormModal from './EntityFormModal';
 import SetEntryModal from './SetEntryModal';
 import ImportModal from './ImportModal';
+import IntlText from '../../components/UKComponent/Form/IntlText';
 
 const Option = Select.Option;
 const Column = Table.Column;
@@ -146,8 +147,8 @@ function EntityList({
           dataIndex="entityname"
           render={(text, record) => {
             return checkFunc('EntityDetail')
-              ? <Link to={`/entity-config/${record.entityid}/${record.modeltype}`}>{text}</Link>
-              : <span>{text}</span>;
+              ? <Link to={`/entity-config/${record.entityid}/${record.modeltype}`}><IntlText value={text} /></Link>
+              : <IntlText value={text} />;
           }}
         />
         <Column title="实体类型" key="modeltype" dataIndex="modeltype" render={getTypeName} />

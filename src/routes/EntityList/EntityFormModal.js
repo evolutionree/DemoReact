@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import connectBizParam from '../../components/connectBizParam';
 import SelectAppIcon from '../../components/SelectAppIcon';
 import AjaxSelect from './AjaxRelObjSelect';
+import IntlInput from "../../components/UKComponent/Form/IntlInput";
 
 const Option = Select.Option;
 const FormItem = Form.Item;
@@ -130,10 +131,10 @@ class EntityFormModal extends Component {
              onCancel={onCancel}>
         <Form horizontal>
           <FormItem label="实体名称">
-            {getFieldDecorator('entityname', {
+            {getFieldDecorator('entityname', {//<Input placeholder="实体名称" maxLength={50} />
               rules: [{ required: true, message: '请输入实体名称' }]
             })(
-              <Input placeholder="实体名称" maxLength={50} />
+              <IntlInput />
             )}
           </FormItem>
           <FormItem label="实体表名">
