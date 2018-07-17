@@ -4,29 +4,22 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Dropdown, Button, Menu } from "antd";
-import { routerRedux } from 'dva/router';
 import _ from 'lodash';
-
-const SUPPOER_LOCALES = [
-  {
-    name: '简体中文',
-    value: 'zh-CN'
-  },
-  {
-    name: 'English',
-    value: 'en-US'
-  },
-  {
-    name: '日本の',
-    value: 'ja-JP'
-  }
-];
 
 class LocaleSelect extends Component {
   static propTypes = {
-
+    langlist: PropTypes.array
   };
-  static defaultProps = {};
+  static defaultProps = {
+    /*
+     [{
+     "key":"CN",
+     "dispaly":"中文",
+     "gmt":"GMT+8"}
+     ]
+     */
+    langlist: []
+  };
 
   constructor(props) {
     super(props);
@@ -44,14 +37,16 @@ class LocaleSelect extends Component {
   }
 
   render() {
-    const currentLocaleObj = _.find(SUPPOER_LOCALES, item => item.value === this.props.currentLocale);
+    const SUPPOER_LOCALES = this.props.langlist;
+    console.log(this.props.currentLocale)
+    const currentLocaleObj = _.find(SUPPOER_LOCALES, item => item.key === this.props.currentLocale);
     const menu = (
       <Menu onClick={this.selectLocaleHandler}>
         {
           SUPPOER_LOCALES.map(item => {
             return (
-              <Menu.Item key={item.value}>
-                <span>{item.name}</span>
+              <Menu.Item key={item.key}>
+                <span>{item.dispaly}</span>
               </Menu.Item>
             );
           })
@@ -61,7 +56,7 @@ class LocaleSelect extends Component {
     return (
       <Dropdown overlay={menu} placement="bottomCenter">
         <div style={{ paddingRight: '10px' }}>
-          <Button type="default">{currentLocaleObj && currentLocaleObj.name}</Button>
+          <Button type="default">{currentLocaleObj && currentLocaleObj.dispaly}</Button>
         </div>
       </Dropdown>
     );
@@ -71,7 +66,8 @@ class LocaleSelect extends Component {
 export default connect(
   state => {
     return {
-      currentLocale: state.app.currentLocale
+      currentLocale: state.app.currentLocale,
+      langlist: state.app.langlist
     };
   },
   dispatch => {

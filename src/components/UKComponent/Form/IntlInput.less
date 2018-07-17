@@ -1,0 +1,81 @@
+.wrap {
+  &.disabled {
+    & > :global(.ant-input) {
+      cursor: not-allowed;
+      background-color: rgb(247, 247, 247);
+      color: rgba(0, 0, 0, 0.5);
+    }
+  }
+  &.empty {
+    & > :global(.ant-input) {
+      color: #cccccc;
+    }
+  }
+
+  & > :global(.ant-input) {
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .inputAddoAfter{
+    :global{
+      .anticon-down{
+        font-size: 13px;
+        color: #ababab;
+        -webkit-transform: scale(0.75) rotate(0deg);
+        transform: scale(0.75) rotate(0deg);
+        transition: -webkit-transform 0.2s ease;
+        transition: transform 0.2s ease;
+        transition: transform 0.2s ease, -webkit-transform 0.2s ease;
+      }
+    }
+  }
+
+  position: relative;
+
+  .dropdownPanel{
+    background-color: #fff;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    box-sizing: border-box;
+    z-index: 1050;
+    left: -0px;
+    top: 34px;
+    position: absolute;
+    outline: none;
+    overflow: hidden;
+    font-size: 14px;
+    width: 100%;
+    display: none;
+
+    &.visible{
+      display: block;
+    }
+
+    >ul{
+      >li{
+        display: block;
+        padding: 0px 8px;
+        font-weight: normal;
+        color: rgba(0, 0, 0, 0.65);
+        white-space: nowrap;
+        cursor: pointer;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: background 0.3s ease;
+        line-height: 35px;
+
+        .localName{
+          float: right;
+        }
+
+        &:hover{
+          background-color: #eff7fc;
+        }
+      }
+    }
+  }
+
+}

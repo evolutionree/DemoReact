@@ -2,7 +2,7 @@ import { message } from 'antd';
 import { routerRedux, hashHistory } from 'dva/router';
 import storage from '../utils/storage';
 import { subscribe as subscribeRequest } from '../utils/request';
-import { queryUserInfo } from '../services/structure';
+import { queryUserInfo, querylanglist } from '../services/structure';
 
 import {
   modifyPassword,
@@ -30,7 +30,8 @@ export default {
     mapModal: {},
     noMinWidth: false,
 
-    currentLocale: 'zh-CN' //系统设置默认语言【简体中文】
+    langlist: [],
+    currentLocale: '' //系统设置默认语言【简体中文】
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -48,7 +49,7 @@ export default {
         dispatch({ type: 'fetchYearWeekData' });
         dispatch({ type: 'initRsaPublicKey' });
 
-        dispatch({ type: 'initCurrentLocale' });
+        dispatch({ type: 'querylangs' })
       }
     },
     // session过期，退出登录
@@ -74,10 +75,20 @@ export default {
     }
   },
   effects: {
-    *initCurrentLocale({ payload }, { select, put }) {
-      let { currentLocale } = yield select(state => state.app);
-      currentLocale = window.localStorage.getItem('currentLocale') || currentLocale;
-      yield put({ type: 'putState', payload: { currentLocale } });
+    *querylangs({ payload }, { select, call, put }) {
+      try {
+        const { data } = yield call(querylanglist);
+        yield put({ type: 'initCurrentLocale', payload: data });
+      } catch (e) {
+        message.error(e.message);
+      }
+    },
+    *initCurrentLocale({ payload: langlist }, { select, put }) {
+      let currentLocale = window.localStorage.getItem('currentLocale') || '';
+      if (!currentLocale && langlist instanceof Array && langlist.length > 0) {
+        currentLocale = langlist[0].key;
+      }
+      yield put({ type: 'putState', payload: { currentLocale, langlist } });
     },
     *changeCurrentLocale({ payload: newLocale }, { select, call, put }) { //切换语言
       window.localStorage.setItem('currentLocale', newLocale);

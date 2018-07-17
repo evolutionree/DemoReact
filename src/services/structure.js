@@ -31,6 +31,17 @@ export async function queryUsers(params) {
 }
 
 /**
+ * 查询系统支持的语言环境
+ * @returns {Promise.<Array>}
+ */
+export async function querylanglist() {
+  return request('/api/MoreLanguage/morelanglist', {
+    method: 'post',
+    body: JSON.stringify({})
+  });
+}
+
+/**
  * 重置密码
  * @param userid
  * @returns {Promise.<Object>}

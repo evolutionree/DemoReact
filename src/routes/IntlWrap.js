@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import { LocaleProvider } from 'antd';
 import antdEn from 'antd/lib/locale-provider/en_US';
+import antdTW from 'antd/lib/locale-provider/zh_TW';
 import intl from 'react-intl-universal';
 
 const locales = {
@@ -23,19 +24,23 @@ const IntlWrap = WrappedComponent => {
     }
 
     initLocale(currentLocale) {
-      intl.init({
-        currentLocale, // TODO: determine locale here
-        locales
-      });
+      if (currentLocale) {
+        intl.init({
+          currentLocale, // TODO: determine locale here
+          locales
+        });
+      }
     }
 
     getAntdLocale() {
       const language = this.props.currentLocale;
       switch (language) {
-        case 'zh-CN':
+        case 'CN':
           return null;
-        case 'en-US':
+        case 'EN':
           return antdEn;
+        case 'TW':
+          return antdTW;
         default:
           return null;
       }
