@@ -598,10 +598,12 @@ class ReportForm extends React.Component {
         );
       //查询组件
       case 3:
-        return <SearchBar model={item.filterextinfo.ctrls}
-                          onSearch={this.reportSearch.bind(this)}
-                          onChange={(serchValue) => { this.setState({ serchValue: serchValue, reload: false }); }}
-                          value={this.state.serchValue} />;
+        return item.visible === false ? null : <div className={styles.searchbarWrap}>
+          <SearchBar model={item.filterextinfo.ctrls}
+                     onSearch={this.reportSearch.bind(this)}
+                     onChange={(serchValue) => { this.setState({ serchValue: serchValue, reload: false }); }}
+                     value={this.state.serchValue} />
+        </div>
       //漏斗图
       case 4:
         let chartData = this.state[item.datasourcename] || [];
