@@ -1,5 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import { Modal, Form, Input, Select } from 'antd';
+import IntlInput from '../../components/UKComponent/Form/IntlInput';
 import _ from 'lodash';
 
 const FormItem = Form.Item;
@@ -70,7 +71,7 @@ class VocationFormModal extends Component {
               initialValue: '',
               rules: [{ required: true, message: '请输入职能名称' }]
             })(
-              <Input placeholder="请输入职能名称" maxLength={50} />
+              <IntlInput placeholder="请输入职能名称" maxLength={50} />
             )}
           </FormItem>
 

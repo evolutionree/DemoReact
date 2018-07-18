@@ -1,5 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import { Form, Modal, Input, message } from 'antd';
+import IntlInput from '../../components/UKComponent/Form/IntlInput';
 import { connect } from 'dva';
 import _ from 'lodash';
 
@@ -69,7 +70,7 @@ class SeriesFormModal extends Component {
               initialValue: '',
               rules: [{ required: true, message: '请输入名称' }]
             })(
-              <Input placeholder="请输入名称" />
+              <IntlInput placeholder="请输入名称" />
             )}
           </FormItem>
           <FormItem label="编码">

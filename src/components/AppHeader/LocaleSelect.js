@@ -38,10 +38,9 @@ class LocaleSelect extends Component {
 
   render() {
     const SUPPOER_LOCALES = this.props.langlist;
-    console.log(this.props.currentLocale)
     const currentLocaleObj = _.find(SUPPOER_LOCALES, item => item.key === this.props.currentLocale);
     const menu = (
-      <Menu onClick={this.selectLocaleHandler}>
+      <Menu onClick={this.selectLocaleHandler} style={{ minWidth: '100px', textAlign: 'center' }}>
         {
           SUPPOER_LOCALES.map(item => {
             return (
@@ -56,7 +55,7 @@ class LocaleSelect extends Component {
     return (
       <Dropdown overlay={menu} placement="bottomCenter">
         <div style={{ paddingRight: '10px' }}>
-          <Button type="default">{currentLocaleObj && currentLocaleObj.dispaly}</Button>
+          <span style={{ padding: '2px', border: '1px solid #4A4A4A', borderRadius: '5px', position: 'relative', top: '3px' }}>{currentLocaleObj && currentLocaleObj.key}</span>
         </div>
       </Dropdown>
     );

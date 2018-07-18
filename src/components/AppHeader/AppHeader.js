@@ -19,10 +19,10 @@ const AppHeader = () => {
       <Header.Right>
         <ImportTask />
         <ProgressModal />
+        <LocaleSelect />
         <WebIMPanel />
         <MessageList />
         <UserDropdown />
-        <LocaleSelect />
       </Header.Right>
     </Header>
   );

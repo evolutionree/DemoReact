@@ -1,5 +1,6 @@
 import React from 'react';
 import { Form, Input, Button, message } from 'antd';
+import IntlInput from '../../components/UKComponent/Form/IntlInput';
 
 const FormItem = Form.Item;
 
@@ -42,7 +43,7 @@ function NewParamForm({
             validateTrigger: 'onChange',
             rules: [{ required: true, message: `${field.name}不能为空` }]
           })(
-            <Input placeholder={`请输入${field.name}`} maxLength={field.maxLength} />
+            <IntlInput placeholder={`请输入${field.name}`} maxLength={field.maxLength} />
           )}
           {/*<Input*/}
             {/*placeholder={`请输入${field.name}`}*/}

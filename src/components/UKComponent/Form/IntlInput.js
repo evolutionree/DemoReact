@@ -12,7 +12,9 @@ class IntlInput extends Component {
     maxLength: React.PropTypes.oneOfType([
       React.PropTypes.string,
       React.PropTypes.number
-    ])
+    ]),
+    placeholder: React.PropTypes.string,
+    disabled: React.PropTypes.bool
   };
   static defaultProps = {
     value: {}
@@ -22,8 +24,8 @@ class IntlInput extends Component {
     this.state = {
       panelVisible: false,
       currentLocale: props.langlist[0].key,
-      value: this.props.value,
-      inputValue: this.props.value[props.langlist[0].key] || ''
+      value: this.transformValue(this.props.value),
+      inputValue: this.transformValue(this.props.value)[props.langlist[0].key] || ''
     };
   }
 
@@ -45,13 +47,17 @@ class IntlInput extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    const inputValue = nextProps.value;
-    if (JSON.stringify(this.props.value) !== JSON.stringify(inputValue)) {
+    const inputValue = this.transformValue(nextProps.value);
+    if (JSON.stringify(this.transformValue(this.props.value)) !== JSON.stringify(inputValue)) {
       this.setState({
         value: inputValue,
         inputValue: inputValue[this.state.currentLocale] || ''
       });
     }
+  }
+
+  transformValue = (value) => { //兼容 国际化开发前的 数据
+    return typeof value === 'string' ? { CN: value } : value;
   }
 
   openPanel = () => {
@@ -85,6 +91,7 @@ class IntlInput extends Component {
       ...this.state.value,
       [this.state.currentLocale]: e.target.value
     };
+
     this.props.onChange && this.props.onChange(val);
   }
 
@@ -96,6 +103,8 @@ class IntlInput extends Component {
                ref={ref => this.inputRef = ref}
                value={this.state.inputValue}
                maxLength={this.props.maxLength}
+               placeholder={this.props.placeholder}
+               disabled={this.props.disabled}
                addonAfter={
                  <div onClick={this.openPanel} className={styles.inputAddoAfter}>
                    {this.state.currentLocale}

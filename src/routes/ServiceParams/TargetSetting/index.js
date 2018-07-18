@@ -30,7 +30,7 @@ function TargetSet({
   return (
     <Page title="销售指标设置">
       <div className={styles.board}>
-        {checkFunc('IndexSettingAdd') && <Toolbar>
+        {checkFunc('IndexSettingAdd') && <Toolbar style={{ overflow: 'visible' }}>
           <NewParamForm onSubmit={onCreate} fields={fields} />
         </Toolbar>}
         <ParamsList

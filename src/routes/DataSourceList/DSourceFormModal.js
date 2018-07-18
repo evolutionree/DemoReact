@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, Form, Input, Select, message, Radio } from 'antd';
 import SelectNumber from '../../components/SelectNumber';
+import IntlInput from '../../components/UKComponent/Form/IntlInput';
 import { query as queryEntityList } from '../../services/entity';
 
 const _ = require('lodash');
@@ -84,7 +85,7 @@ function DSourceFormModal({
             initialValue: '',
             rules: [{ required: true, message: '请输入数据源名称' }]
           })(
-            <Input placeholder="请输入数据源名称" />
+            <IntlInput placeholder="请输入数据源名称" />
           )}
         </FormItem>
         <FormItem label="状态">

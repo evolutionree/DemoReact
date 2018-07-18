@@ -3,6 +3,7 @@ import { Form, Checkbox, Select, Input } from 'antd';
 import _ from 'lodash';
 import FormItemFactory from './FormItemFactory';
 import AjaxSelect from '../../../EntityList/AjaxRelObjSelect';
+import IntlInput from '../../../../components/UKComponent/Form/IntlInput';
 import { fieldModels } from '../../controlTypes';
 import { getRandomLetters } from '../../../../utils';
 
@@ -58,8 +59,8 @@ function FieldForm({ form, isEdit, entityFields, entityId }) {
         })(<Input placeholder="字段名称" maxLength={20} />)}
       </FormItem>
       <FormItem label="显示名称" key="displayName">
-        {getFieldDecorator('displayName', {
-        })(<Input placeholder="显示名称" maxLength={20} />)}
+        {getFieldDecorator('displayName_lang', {
+        })(<IntlInput placeholder="显示名称" maxLength={20} />)}
       </FormItem>
       {
         controlType * 1 === 30 ? getFieldDecorator('relentityid', {

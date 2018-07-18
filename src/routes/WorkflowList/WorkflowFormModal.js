@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Modal, Form, Input, Select, Radio, Checkbox, InputNumber, message } from 'antd';
+import IntlInput from '../../components/UKComponent/Form/IntlInput';
 import { query as queryEntities } from '../../services/entity';
 
 const FormItem = Form.Item;
@@ -25,9 +26,10 @@ class WorkflowFormModal extends Component {
   componentWillReceiveProps(nextProps) {
     const isOpening = !this.props.visible && nextProps.visible;
     if (isOpening) {
+      const { form, editingRecord } = nextProps;
+      form.resetFields();
       this.fetchRelEntities();
 
-      const { form, editingRecord } = nextProps;
       if (editingRecord) {
         form.setFieldsValue({
           ...editingRecord,
@@ -108,11 +110,11 @@ class WorkflowFormModal extends Component {
       >
         <Form>
           <FormItem label="流程名称">
-            {getFieldDecorator('flowname', {
+            {getFieldDecorator('flowname_lang', {
               initialValue: '',
               rules: [{ required: true, message: '请输入流程名称' }]
             })(
-              <Input disabled={isEdit} placeholder="请输入流程名称" maxLength={10} />
+              <IntlInput disabled={isEdit} placeholder="请输入页签名称" maxLength={10} />
             )}
           </FormItem>
           <FormItem label="流程类型">

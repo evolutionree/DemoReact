@@ -276,9 +276,9 @@ class MessageList extends React.Component {
     );
 
     return (
-      <div>
+      <div style={{ marginRight: '10px' }}>
         <Badge count={this.state.unReadCount}>
-          <Icon type='bell' title="系统通知" style={{ fontSize: 24, cursor: "pointer", marginLeft: '10px'  }} onClick={this.toggleList.bind(this)} />
+          <Icon type='bell' title="系统通知" style={{ fontSize: 24, cursor: 'pointer' }} onClick={this.toggleList.bind(this)} />
         </Badge>
         <div id="message-panel" className={styles.listContent}
              style={{ right: this.state.visible ? 0 : "-440px", height: this.state.clientHeight - 60 }}

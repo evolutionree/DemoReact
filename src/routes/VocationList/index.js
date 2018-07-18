@@ -9,6 +9,8 @@ import Search from '../../components/Search';
 import VocationFormModal from './VocationFormModal';
 import CopyVocationFormModal from './CopyVocationFormModal';
 
+import IntlText from '../../components/UKComponent/Form/IntlText';
+
 const Option = Select.Option;
 const Column = Table.Column;
 
@@ -104,9 +106,10 @@ function VocationList(props) {
           key="vocationname"
           dataIndex="vocationname"
           render={(text, record) => {
+            const intlText = <IntlText value={text} value_lang={record.rolename_lang} />;
             return checkFunc('VocationAuthDetail')
-              ? <Link to={`/vocation/${record.vocationid}/${text}`}>{text}</Link>
-              : <span>{text}</span>;
+              ? <Link to={`/vocation/${record.vocationid}/${text}`}>{intlText}</Link>
+              : <span>{intlText}</span>;
           }}
         />
         <Column title="职能描述" key="description" dataIndex="description" />

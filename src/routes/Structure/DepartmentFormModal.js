@@ -3,6 +3,7 @@ import { connect } from 'dva';
 import { Modal, Form, Input, Select } from 'antd';
 import _ from 'lodash';
 import DepartmentSelect from '../../components/DepartmentSelect';
+import IntlInput from '../../components/UKComponent/Form/IntlInput';
 import ensureOpenNewModal from './ensureOpenNewModal';
 
 const FormItem = Form.Item;
@@ -51,7 +52,7 @@ function DepartmentFormModal({
           initialValue: '',
           rules: [{ required: true, message: '请输入部门名称' }]
         })(
-          <Input placeholder="部门名称" maxLength={50} />
+          <IntlInput placeholder="部门名称" maxLength={50} />
         )}
       </FormItem>
       <FormItem label="上级部门">

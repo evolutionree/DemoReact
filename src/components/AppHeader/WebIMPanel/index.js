@@ -167,7 +167,7 @@ class WebIMPanel extends Component {
     }
 
     return (
-      <div>
+      <div style={{ marginRight: '10px' }}>
         <div id="webIM">
           <Badge count={total_spotMsgCount}>
             <Icon
