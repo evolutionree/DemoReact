@@ -23,9 +23,9 @@ class IntlInput extends Component {
     super(props);
     this.state = {
       panelVisible: false,
-      currentLocale: props.langlist[0].key,
+      currentLocale: props.langlist[0] && props.langlist[0].key,
       value: this.transformValue(this.props.value),
-      inputValue: this.transformValue(this.props.value)[props.langlist[0].key] || ''
+      inputValue: this.transformValue(this.props.value)[props.langlist[0] && props.langlist[0].key] || ''
     };
   }
 
