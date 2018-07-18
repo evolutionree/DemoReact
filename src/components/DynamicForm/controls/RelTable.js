@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import * as _ from 'lodash';
 import { getGeneralProtocolForGrid } from '../../../services/entcomm';
 import RelTableRow from './RelTableRow';
+import RelTableView from './RelTableView';
 import styles from './RelTable.less';
 import generateDefaultFormData from '../generateDefaultFormData';
 import RelTableImportModal from '../RelTableImportModal';
@@ -434,7 +435,7 @@ class RelTable extends Component {
 
 RelTable.View = ({ value, entityId, entityTypeId }) => {
   return (
-    <RelTable mode="DETAIL" value={value} entityId={entityId} entityTypeId={entityTypeId} />
+    <RelTableView mode="DETAIL" value={value} entityId={entityId} entityTypeId={entityTypeId} />
   );
 };
 
