@@ -1,6 +1,7 @@
 import React from 'react';
 import { Form, Input, Button, message } from 'antd';
 import IntlInput from '../../components/UKComponent/Form/IntlInput';
+import { IntlInputRequireValidator } from '../../utils/validator';
 
 const FormItem = Form.Item;
 
@@ -36,25 +37,35 @@ function NewParamForm({
       {toolbarNode ? <FormItem>
         {toolbarNode}
       </FormItem> : null}
-      {showAdd && fields.map(field => (
-        <FormItem key={field.key}>
+      {showAdd && fields.map(field => {
+        return field.intl ? <FormItem key={field.key}>
+          {getFieldDecorator(field.key, {
+            initialValue: '',
+            validateTrigger: 'onChange',
+            rules: [{
+              validator: IntlInputRequireValidator
+            }]
+          })(
+            <IntlInput placeholder={`请输入${field.name}`} maxLength={field.maxLength} />
+          )}
+        </FormItem> : <FormItem key={field.key}>
           {getFieldDecorator(field.key, {
             initialValue: '',
             validateTrigger: 'onChange',
             rules: [{ required: true, message: `${field.name}不能为空` }]
           })(
-            <IntlInput placeholder={`请输入${field.name}`} maxLength={field.maxLength} />
+            <Input placeholder={`请输入${field.name}`} maxLength={field.maxLength} />
           )}
           {/*<Input*/}
-            {/*placeholder={`请输入${field.name}`}*/}
-            {/*{...getFieldProps(field.key, {*/}
-              {/*initialValue: '',*/}
-              {/*validateTrigger: 'onChange',*/}
-              {/*rules: [{ required: true, message: `${field.name}不能为空` }]*/}
-            {/*})}*/}
+          {/*placeholder={`请输入${field.name}`}*/}
+          {/*{...getFieldProps(field.key, {*/}
+          {/*initialValue: '',*/}
+          {/*validateTrigger: 'onChange',*/}
+          {/*rules: [{ required: true, message: `${field.name}不能为空` }]*/}
+          {/*})}*/}
           {/*/>*/}
-        </FormItem>
-      ))}
+        </FormItem>;
+      })}
       {showAdd && <FormItem>
         <Button type="primary" htmlType="submit" loading={btnLoading}>添加</Button>
       </FormItem>}

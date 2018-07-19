@@ -117,7 +117,7 @@ export default {
         message.error(e.message || '获取列表协议失败');
       }
     },
-    *saveSeries({ payload: { seriesName, seriesCode } }, { select, put, call }) {
+    *saveSeries({ payload: { seriesName_lang, seriesCode } }, { select, put, call }) {
       yield put({ type: 'modalPending', payload: true });
       try {
         const {
@@ -126,11 +126,11 @@ export default {
         } = yield select(state => state.productManager);
         const isEdit = /editSeries/.test(showModals);
         const params = isEdit ? {
-          seriesName,
+          seriesName_lang,
           seriesCode,
           ProductsetId: productSeriesId
         } : {
-          seriesName,
+          seriesName_lang,
           seriesCode,
           TopSeriesId: productSeriesId
         };

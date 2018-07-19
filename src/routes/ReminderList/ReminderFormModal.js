@@ -4,6 +4,8 @@ import { Modal, Form, Input, Radio, message } from 'antd';
 import _ from 'lodash';
 import EntitySelect from '../../components/EntitySelect';
 import ReminderRepeatSetting from './ReminderRepeatSetting';
+import IntlInput from '../../components/UKComponent/Form/IntlInput';
+import { IntlInputRequireValidator } from '../../utils/validator';
 
 const FormItem = Form.Item;
 
@@ -23,7 +25,7 @@ class ReminderFormModal extends Component {
     if (isOpening) {
       if (nextProps.isEdit) {
         const record = nextProps.editingRecord;
-        const fieldsValue = _.pick(record, ['remindername', 'entityid', 'recstatus', 'remark']);
+        const fieldsValue = _.pick(record, ['remindername_lang', 'entityid', 'recstatus', 'remark']);
         const repeatsetting = _.pick(record, ['isrepeat', 'repeattype', 'cronstring']);
         nextProps.form.setFieldsValue({
           ...fieldsValue,
@@ -52,7 +54,7 @@ class ReminderFormModal extends Component {
         return message.error('请检查表单');
       }
       const params = {
-        remindername: values.remindername,
+        remindername_lang: values.remindername_lang,
         entityid: values.entityid,
         isrepeat: values.repeatsetting.isrepeat,
         repeattype: values.repeatsetting.repeattype,
@@ -79,13 +81,12 @@ class ReminderFormModal extends Component {
       >
         <Form>
           <FormItem label="提醒名称">
-            {form.getFieldDecorator('remindername', {
-              rules: [
-                { required: true, message: '请输入提醒名称' },
-                { max: 20, message: '最大长度为20个字符' }
-              ]
+            {form.getFieldDecorator('remindername_lang', {
+              rules: [{
+                validator: IntlInputRequireValidator
+              }]
             })(
-              <Input placeholder="请输入提醒名称" maxLength={20} />
+              <IntlInput placeholder="请输入提醒名称" maxLength={20} />
             )}
           </FormItem>
           <FormItem label="关联实体">

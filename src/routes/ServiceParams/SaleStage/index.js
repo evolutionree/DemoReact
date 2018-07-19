@@ -9,6 +9,8 @@ import ParamsList from './component/ParamsList';
 import styles from './index.less';
 import classnames from 'classnames';
 import { hashHistory } from 'react-router';
+import IntlInput from '../../../components/UKComponent/Form/IntlInput';
+import { IntlInputRequireValidator } from '../../../utils/validator';
 
 
 const FormItem = Form.Item;
@@ -106,13 +108,14 @@ function SaleStage({
         <div>
           <Form layout="inline" style={{ display: checkFunc('SalesstageSettingAdd') ? 'inline-block' : 'none' }} onSubmit={addParams}>
             <FormItem>
-              {getFieldDecorator('stageName', {
+              {getFieldDecorator('stageName_lang', {
                 initialValue: '',
                 validateTrigger: 'onChange',
-                rules: [{ required: true, message: '销售阶段名称不能为空' },
-                  { pattern: new RegExp(/^.{1,10}$/), message: '请输入10个以内的字符' }]
+                rules: [{
+                  validator: IntlInputRequireValidator
+                }]
               })(
-                <Input placeholder='请输入销售阶段名称' />
+                <IntlInput placeholder='请输入销售阶段名称' />
               )}
             </FormItem>
             <FormItem>

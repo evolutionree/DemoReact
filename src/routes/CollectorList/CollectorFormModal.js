@@ -4,6 +4,8 @@ import { Modal, Form, Input, Radio, message } from 'antd';
 import _ from 'lodash';
 import EntitySelect from '../../components/EntitySelect';
 import CollectorRepeatSetting from './CollectorRepeatSetting';
+import IntlInput from '../../components/UKComponent/Form/IntlInput';
+import { IntlInputRequireValidator } from '../../utils/validator';
 
 const FormItem = Form.Item;
 
@@ -21,7 +23,7 @@ class CollectorFormModal extends Component {
     if (isOpening) {
       if (nextProps.isEdit) {
         const record = nextProps.editingRecord;
-        const fieldsValue = _.pick(record, ['remindername', 'entityid', 'recstatus', 'remark']);
+        const fieldsValue = _.pick(record, ['remindername_lang', 'entityid', 'recstatus', 'remark']);
         const repeatsetting = _.pick(record, ['repeattype', 'cronstring']);
         if (repeatsetting.repeattype === undefined || repeatsetting.repeattype === null) {
           repeatsetting.repeattype = 0;
@@ -53,7 +55,7 @@ class CollectorFormModal extends Component {
         return message.error('请检查表单');
       }
       const params = {
-        remindername: values.remindername,
+        remindername_lang: values.remindername_lang,
         entityid: values.entityid,
         isrepeat: true,
         repeattype: values.repeatsetting.repeattype,
@@ -80,13 +82,12 @@ class CollectorFormModal extends Component {
       >
         <Form>
           <FormItem label="回收规则名称">
-            {form.getFieldDecorator('remindername', {
-              rules: [
-                { required: true, message: '请输入回收规则名称' },
-                { max: 20, message: '最大长度为20个字符' }
-              ]
+            {form.getFieldDecorator('remindername_lang', {
+              rules: [{
+                validator: IntlInputRequireValidator
+              }]
             })(
-              <Input placeholder="请输入回收规则名称" maxLength={20} />
+              <IntlInput placeholder="请输入回收规则名称" maxLength={20} />
             )}
           </FormItem>
           <FormItem label="关联实体">

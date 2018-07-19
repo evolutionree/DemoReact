@@ -15,7 +15,7 @@ function EntityTypes({
       type: 'entityTypes/create',
       payload: {
         entityId,
-        CategoryName: data.categoryname
+        categoryname_lang: data.categoryname
       }
     });
   }
@@ -69,7 +69,8 @@ function EntityTypes({
 
   const fields = [{
     key: 'categoryname',
-    name: '类型名称'
+    name: '类型名称',
+    intl: true
   }];
   return (
     <div>

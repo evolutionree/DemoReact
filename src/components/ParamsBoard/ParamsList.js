@@ -113,6 +113,7 @@ class ParamsList extends React.Component {
             maxLength={field.maxLength}
             link={field.link}
             onClick={this.paramsClickHandler.bind(this, item)}
+            isIntl={field.intl}
           />
         ))}
 

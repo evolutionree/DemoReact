@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { Modal, Form, Input, Select } from 'antd';
 import IntlInput from '../../components/UKComponent/Form/IntlInput';
+import { IntlInputRequireValidator } from '../../utils/validator';
 import _ from 'lodash';
 
 const FormItem = Form.Item;
@@ -74,9 +75,11 @@ class RoleFormModal extends Component {
              confirmLoading={savePending}>
         <Form>
           <FormItem label="角色名称">
-            {decorate('rolename', {
+            {decorate('rolename_lang', {
               initialValue: '',
-              rules: [{ required: true, message: '请输入角色名称' }]
+              rules: [{
+                validator: IntlInputRequireValidator
+              }]
             })(
               <IntlInput placeholder="请输入角色名称" maxLength={50} />
             )}

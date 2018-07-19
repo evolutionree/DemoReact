@@ -81,7 +81,7 @@ function DSourceFormModal({
            confirmLoading={savePending}>
       <Form>
         <FormItem label="数据源名称">
-          {decorate('datasourcename', {
+          {decorate('datasourcename_lang', {
             initialValue: '',
             rules: [{ required: true, message: '请输入数据源名称' }]
           })(

@@ -5,6 +5,7 @@ import _ from 'lodash';
 import DepartmentSelect from '../../components/DepartmentSelect';
 import IntlInput from '../../components/UKComponent/Form/IntlInput';
 import ensureOpenNewModal from './ensureOpenNewModal';
+import { IntlInputRequireValidator } from '../../utils/validator';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -48,9 +49,11 @@ function DepartmentFormModal({
       onOk={handleOk}
     >
       <FormItem label="部门名称">
-        {getFieldDecorator('deptname', {
+        {getFieldDecorator('deptname_lang', {
           initialValue: '',
-          rules: [{ required: true, message: '请输入部门名称' }]
+          rules: [{
+            validator: IntlInputRequireValidator
+          }]
         })(
           <IntlInput placeholder="部门名称" maxLength={50} />
         )}
@@ -121,12 +124,12 @@ export default connect(
     const isEdit = /editDept/.test(showModals);
     if (isEdit) {
       fields = {
-        deptname: currentDept.deptname,
+        deptname_lang: currentDept.deptname_lang,
         pdeptid: currentDept.ancestor
       };
     } else {
       fields = {
-        deptname: '',
+        deptname_lang: '',
         pdeptid: currentDept.deptid
       };
     }
