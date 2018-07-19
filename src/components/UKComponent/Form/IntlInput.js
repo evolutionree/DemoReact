@@ -7,6 +7,8 @@ import { connect } from 'dva';
 import classnames from 'classnames';
 import styles from './IntlInput.less';
 
+let langlist = JSON.parse(window.localStorage.getItem('langlist'));
+
 class IntlInput extends Component {
   static propTypes = {
     maxLength: React.PropTypes.oneOfType([
@@ -23,9 +25,9 @@ class IntlInput extends Component {
     super(props);
     this.state = {
       panelVisible: false,
-      currentLocale: props.langlist[0] && props.langlist[0].key,
+      currentLocale: langlist[0] && langlist[0].key,
       value: this.transformValue(this.props.value),
-      inputValue: this.transformValue(this.props.value)[props.langlist[0] && props.langlist[0].key] || ''
+      inputValue: this.transformValue(this.props.value)[langlist[0] && langlist[0].key] || ''
     };
   }
 
@@ -58,6 +60,10 @@ class IntlInput extends Component {
 
   transformValue = (value) => { //兼容 国际化开发前的 数据
     return typeof value === 'string' ? { CN: value } : value;
+  }
+
+  focus = () => {
+    this.inputRef.focus();
   }
 
   openPanel = () => {
@@ -114,7 +120,7 @@ class IntlInput extends Component {
         <div className={classnames(styles.dropdownPanel, { [styles.visible]: this.state.panelVisible })}>
           <ul>
             {
-              this.props.langlist instanceof Array && this.props.langlist.map((item, index) => {
+              langlist instanceof Array && langlist.map((item, index) => {
                 return (
                   <li onClick={this.onSelectLocale.bind(this, item)} key={index}>
                     <span className={styles.valueWrap}>{this.state.value[item.key]}</span>
@@ -130,10 +136,4 @@ class IntlInput extends Component {
   }
 }
 
-export default connect(
-  state => {
-    return {
-      langlist: state.app.langlist
-    };
-  }
-)(IntlInput);
+export default IntlInput;

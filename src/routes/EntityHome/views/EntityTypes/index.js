@@ -24,7 +24,7 @@ function EntityTypes({
       type: 'entityTypes/update',
       payload: {
         CategoryId: data.categoryid,
-        CategoryName: data.categoryname
+        categoryname_lang: data.categoryname
       }
     });
   }

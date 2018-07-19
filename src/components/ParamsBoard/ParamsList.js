@@ -107,6 +107,7 @@ class ParamsList extends React.Component {
             ref="ParamEditable"
             key={field.key}
             value={isEditing ? this.state.currFieldsValues[field.key] : item[field.key]}
+            value_lang={isEditing ? this.state.currFieldsValues[field.key + '_lang'] : item[field.key + '_lang']}
             editing={isEditing}
             onChange={(val) => this.handleFieldsChange(field.key, val)}
             onBlur={this.handleBlur}

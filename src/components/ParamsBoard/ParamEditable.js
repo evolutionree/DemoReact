@@ -33,15 +33,14 @@ class ParamEditable extends React.Component {
   }
 
   render() {
-    const { value, editing, onChange, onBlur, maxLength, link, isIntl } = this.props; //intl  是否需要国际化输入
+    const { value, editing, onChange, onBlur, maxLength, link, isIntl, value_lang } = this.props; //intl  是否需要国际化输入
     return (
       <div className={classnames(styles.text, { [styles.textEidt]: editing })}>
         {editing
           ? (isIntl ? <IntlInput
-                value={value}
-                value_lang={value}
+                value={value_lang}
                 ref={input => { this.input = input; }}
-                onChange={(e) => onChange(e.target.value)}
+                onChange={(data) => onChange(data)}
                 onBlur={onBlur}
                 maxLength={maxLength}
               /> : <Input
