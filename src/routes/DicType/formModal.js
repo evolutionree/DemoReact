@@ -5,6 +5,7 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Modal, Form, Input, Select, Checkbox } from 'antd';
 import DataTable from './DataTable';
+import IntlInput from '../../components/UKComponent/Form/IntlInput';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -78,7 +79,7 @@ class FormModal extends Component {
               initialValue: '',
               rules: [{ required: true, message: '请输入字典类型名称' }]
             })(
-              <Input placeholder="请输入字典名称" maxLength="10" />
+              <IntlInput placeholder="请输入字典名称" maxLength="10" />
             )}
           </FormItem>
           <FormItem label="关联字典类型">

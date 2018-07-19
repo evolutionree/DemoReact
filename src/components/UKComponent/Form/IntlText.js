@@ -14,7 +14,7 @@ function IntlText({ value, value_lang, currentLocale }) {
   } else {
     text += '';
   }
-  return <div style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}>{text}</div>;
+  return <span style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}>{text}</span>;
 }
 
 export default connect(

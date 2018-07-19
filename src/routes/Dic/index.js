@@ -1,9 +1,9 @@
-import intl from 'react-intl-universal';
 import React from 'react';
 import { connect } from 'dva';
 import { Form, Button, Input, Checkbox, message, Select, Row, Col, Modal } from 'antd';
 import Page from '../../components/Page';
 import DragList from '../../components/UKComponent/Data/DragList';
+import IntlInput from '../../components/UKComponent/Form/IntlInput';
 import styles from './index.less';
 import classnames from 'classnames';
 
@@ -13,7 +13,7 @@ const Option = Select.Option;
 
 let fields = [{
   key: 'stagename',
-  name: intl.get('阶段名称'),
+  name: '阶段名称',
   link: true,
   maxLength: 10
 },{
@@ -60,7 +60,7 @@ function DicPage({
 
   function del(rowData) {
     Modal.confirm({
-      title: intl.get('确定删除该数据吗?'),
+      title: '确定删除该数据吗?',
       content: '',
       onOk: () => {
         dispatch({ type: 'dic/del', payload: rowData.dicid });
@@ -97,12 +97,12 @@ function DicPage({
   const column = [
     {
       key: 'recorder',
-      name: intl.get('序号'),
+      name: '序号',
       span: span
     },
     {
       key: 'dataval',
-      name: intl.get('字典值'),
+      name: '字典值',
       span: span,
       render: (text, rowData, rowIndex) => {
         if (currentEditRowIndex === rowIndex) {
@@ -136,19 +136,19 @@ function DicPage({
 
   column.push({
     key: 'operate',
-    name: intl.get('操作'),
+    name: '操作',
     span: span,
     render: (text, rowData, rowIndex) => {
       return (
         <div>
           {
             currentEditRowIndex === rowIndex ? (
-              <a style={{ marginRight: '10px' }} onClick={update.bind(this, rowData, rowIndex)}>{intl.get('保存')}</a>
+              <a style={{ marginRight: '10px' }} onClick={update.bind(this, rowData, rowIndex)}>保存</a>
             ) : (
-              <a style={{ marginRight: '10px' }} onClick={changeCurrentEditRowIndex.bind(this, rowIndex)}>{intl.get('编辑')}</a>
+              <a style={{ marginRight: '10px' }} onClick={changeCurrentEditRowIndex.bind(this, rowIndex)}>编辑</a>
             )
           }
-          <a onClick={del.bind(this, rowData)}>{intl.get('删除')}</a>
+          <a onClick={del.bind(this, rowData)}>删除</a>
         </div>
       );
     }
@@ -156,7 +156,7 @@ function DicPage({
 
 
   return (
-    <Page title={intl.get('字典参数')} >
+    <Page title='字典参数' >
       <div className={styles.Header}>
         <Select
           showSearch
@@ -176,14 +176,14 @@ function DicPage({
               {getFieldDecorator('dataval', {
                 initialValue: '',
                 validateTrigger: 'onChange',
-                rules: [{ required: true, message: intl.get('字典值不能为空') },
-                  { pattern: new RegExp(/^.{1,10}$/), message: intl.get('请输入10个以内的字符') }]
+                rules: [{ required: true, message: '字典值不能为空' },
+                  { pattern: new RegExp(/^.{1,10}$/), message: '请输入10个以内的字符' }]
               })(
-                <Input placeholder={intl.get('请输入字典值')} />
+                <IntlInput placeholder='请输入字典值' />
               )}
             </FormItem>
             <FormItem>
-              <Button type="primary" htmlType="submit">{intl.get('添加')}</Button>
+              <Button type="primary" htmlType="submit">添加</Button>
             </FormItem>
           </Form>
         </div>
