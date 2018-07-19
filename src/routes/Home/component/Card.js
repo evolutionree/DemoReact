@@ -27,15 +27,14 @@ function getValue(param) {
   return returnValue;
 }
 
-  const columnNum = component.styletype && component.styletype.split('normal')[1]
-
+  const columnNum = component.styletype && component.styletype.split('normal')[1];
   function getRenderColumn() {
     let html = [];
-    for (let i = 1; i < columnNum; i++) {
+    for (let i = 1; i <= columnNum; i++) {
       html.push(
         <li key={i} style={{ width: 100 / columnNum + '%' }}>
           <div>{getValue(component[`item${i}valuescheme`])}</div>
-          <div>{getValue(component[`item${i}valuescheme`])}</div>
+          <div>{getValue(component[`item${i}labelscheme`])}</div>
           {
             i === columnNum ? null : <span></span>
           }
