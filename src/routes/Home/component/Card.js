@@ -49,6 +49,32 @@ function getValue(param) {
           </ul>
         </div>
       );
+    case 'normal4':
+      return (
+        <div className={Styles.Card}>
+          <ul>
+            <li>
+              <div>{getValue(component.item1valuescheme)}</div>
+              <div>{getValue(component.item1labelscheme)}</div>
+              <span></span>
+            </li>
+            <li>
+              <div>{getValue(component.item2valuescheme)}</div>
+              <div>{getValue(component.item2labelscheme)}</div>
+              <span></span>
+            </li>
+            <li>
+              <div>{getValue(component.item3valuescheme)}</div>
+              <div>{getValue(component.item3labelscheme)}</div>
+              <span></span>
+            </li>
+            <li>
+              <div>{getValue(component.item4valuescheme)}</div>
+              <div>{getValue(component.item4labelscheme)}</div>
+            </li>
+          </ul>
+        </div>
+      );
     default:
       return null;
   }
