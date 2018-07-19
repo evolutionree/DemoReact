@@ -5,6 +5,7 @@ import IntlInput from '../../../../components/UKComponent/Form/IntlInput';
 import * as _ from 'lodash';
 import { getrelentityfields } from '../../../../services/entity';
 import SelectAppIcon from '../../../../components/SelectAppIcon';
+import { IntlInputRequireValidator } from '../../../../utils/validator';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -105,7 +106,10 @@ class EntityTabFormModal extends Component {
         <Form>
           <FormItem label="页签名称">
             {form.getFieldDecorator('relname_lang', {
-              rules: [{ required: true, message: '请输入页签名称' }]
+              rules: [
+                { required: true, message: '请输入页签名称' },
+                { validator: IntlInputRequireValidator }
+              ]
             })(
               <IntlInput placeholder="请输入页签名称" />
             )}

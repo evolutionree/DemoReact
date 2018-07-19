@@ -3,6 +3,7 @@ import { connect } from 'dva';
 import { Modal, Form, Input, Select, Radio, Checkbox, InputNumber, message } from 'antd';
 import IntlInput from '../../components/UKComponent/Form/IntlInput';
 import { query as queryEntities } from '../../services/entity';
+import { IntlInputRequireValidator } from '../../utils/validator';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -112,7 +113,10 @@ class WorkflowFormModal extends Component {
           <FormItem label="流程名称">
             {getFieldDecorator('flowname_lang', {
               initialValue: '',
-              rules: [{ required: true, message: '请输入流程名称' }]
+              rules: [
+                { required: true, message: '请输入流程名称' },
+                { validator: IntlInputRequireValidator }
+              ]
             })(
               <IntlInput disabled={isEdit} placeholder="请输入页签名称" maxLength={10} />
             )}

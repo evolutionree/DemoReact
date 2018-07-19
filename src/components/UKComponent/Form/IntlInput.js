@@ -102,6 +102,7 @@ class IntlInput extends Component {
   }
 
   render() {
+    console.log(this.props.value)
     return (
       <div className={styles.wrap} id="dropdownPanel">
         <Input onChange={this.inputChange}

@@ -3,9 +3,7 @@ import { connect } from 'dva';
 import { Modal, Form, Input, Select } from 'antd';
 import _ from 'lodash';
 import DepartmentSelect from '../../components/DepartmentSelect';
-import IntlInput from '../../components/UKComponent/Form/IntlInput';
 import ensureOpenNewModal from './ensureOpenNewModal';
-import { IntlInputRequireValidator } from '../../utils/validator';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -49,13 +47,11 @@ function DepartmentFormModal({
       onOk={handleOk}
     >
       <FormItem label="部门名称">
-        {getFieldDecorator('deptname_lang', {
+        {getFieldDecorator('deptname', {
           initialValue: '',
-          rules: [{
-            validator: IntlInputRequireValidator
-          }]
+          rules: [{ required: true, message: '请输入部门名称' }]
         })(
-          <IntlInput placeholder="部门名称" maxLength={50} />
+          <Input placeholder="部门名称" maxLength={50} />
         )}
       </FormItem>
       <FormItem label="上级部门">
