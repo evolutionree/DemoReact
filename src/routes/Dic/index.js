@@ -4,6 +4,7 @@ import { Form, Button, Input, Checkbox, message, Select, Row, Col, Modal } from 
 import Page from '../../components/Page';
 import DragList from '../../components/UKComponent/Data/DragList';
 import IntlInput from '../../components/UKComponent/Form/IntlInput';
+import { IntlInputRequireValidator } from '../../utils/validator';
 import styles from './index.less';
 import classnames from 'classnames';
 
@@ -107,7 +108,7 @@ function DicPage({
       render: (text, rowData, rowIndex) => {
         if (currentEditRowIndex === rowIndex) {
           return (
-            <Input defaultValue={text} ref={ref => window[rowData.dicid + 'InputRef'] = ref} />
+            <IntlInput defaultValue={text} ref={ref => window[rowData.dicid + 'InputRef'] = ref} />
           );
         } else {
           return text;
@@ -173,13 +174,15 @@ function DicPage({
         <div className={styles.formWrap}>
           <Form layout="inline" onSubmit={addParams}>
             <FormItem>
-              {getFieldDecorator('dataval', {
+              {getFieldDecorator('dataval_lang', {
                 initialValue: '',
                 validateTrigger: 'onChange',
-                rules: [{ required: true, message: '字典值不能为空' },
-                  { pattern: new RegExp(/^.{1,10}$/), message: '请输入10个以内的字符' }]
+                rules: [
+                  { required: true, message: '字典值不能为空' },
+                  { validator: IntlInputRequireValidator }
+                ]
               })(
-                <IntlInput placeholder='请输入字典值' />
+                <IntlInput placeholder='请输入字典值' maxLength={10} />
               )}
             </FormItem>
             <FormItem>

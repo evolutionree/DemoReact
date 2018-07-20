@@ -20,7 +20,8 @@ let fields = [{
   key: 'stagename',
   name: '阶段名称',
   link: true,
-  maxLength: 10
+  maxLength: 10,
+  intl: true
 },{
   key: 'winrate',
   name: 'winrate'

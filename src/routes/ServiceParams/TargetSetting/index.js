@@ -24,7 +24,8 @@ function TargetSet({
     key: 'normtypename',
     name: '指标名称',
     link: checkFunc('IndexSettingEdit'),
-    maxLength: 10
+    maxLength: 10,
+    intl: true
   }];
 
   return (

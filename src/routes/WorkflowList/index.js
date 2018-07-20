@@ -84,7 +84,7 @@ function WorkflowList({
           key="flowname"
           dataIndex="flowname"
           render={(text, record) => {
-            const intlText = <IntlText value={text} value_lang={record.displayname_lang} />;
+            const intlText = <IntlText value={text} value_lang={record.flowname_lang} />;
             return record.flowtype === 0 ? <span>{intlText}</span> : <Link to={`/workflow/${record.flowid}`}>{intlText}</Link>;
           }}
         />

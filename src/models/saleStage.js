@@ -101,7 +101,7 @@ export default {
       try {
         const params = {
           salesstageid,
-          stagename,
+          stagename_lang: stagename,
           winrate: winrate / 100,
           SalesstageTypeId: businessTypeActiveId
         };

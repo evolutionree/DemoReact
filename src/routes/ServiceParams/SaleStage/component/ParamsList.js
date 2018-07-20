@@ -107,12 +107,14 @@ class ParamsList extends React.Component {
             key={field.key}
             name={field.key}
             value={isEditing ? this.state.currFieldsValues[field.key] : item[field.key]}
+            value_lang={isEditing ? this.state.currFieldsValues[field.key + '_lang'] : item[field.key + '_lang']}
             editing={isEditing}
             onChange={(val) => this.handleFieldsChange(field.key, val)}
             onBlur={this.handleBlur}
             maxLength={field.maxLength}
             link={(item[field.key] === '赢单' || item[field.key] === '输单') ? false : field.link}
             onClick={this.paramsClickHandler.bind(this, item)}
+            isIntl={field.intl}
           />
         ))}
 

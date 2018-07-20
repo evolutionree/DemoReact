@@ -7,7 +7,7 @@ import { connect } from 'dva';
 import classnames from 'classnames';
 import styles from './IntlInput.less';
 
-let langlist = JSON.parse(window.localStorage.getItem('langlist'));
+let langlist = JSON.parse(window.localStorage.getItem('langlist')) || [];
 
 class IntlInput extends Component {
   static propTypes = {
@@ -102,7 +102,6 @@ class IntlInput extends Component {
   }
 
   render() {
-    console.log(this.props.value)
     return (
       <div className={styles.wrap} id="dropdownPanel">
         <Input onChange={this.inputChange}
@@ -114,7 +113,7 @@ class IntlInput extends Component {
                disabled={this.props.disabled}
                addonAfter={
                  <div onClick={this.openPanel} className={styles.inputAddoAfter}>
-                   {this.state.currentLocale}
+                   {this.state.currentLocale.toUpperCase()}
                    <Icon type="down" style={{ transform: this.state.panelVisible ? 'scale(0.75) rotate(180deg)' : 'scale(0.75) rotate(0deg)' }} />
                  </div>
                } />

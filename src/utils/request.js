@@ -20,9 +20,11 @@ function checkErrorCode(response) {
 }
 
 export function getDeviceHeaders() {
+  let currentLocale = window.localStorage.getItem('currentLocale') || '';
   return {
     Device: 'WEB',
     Vernum: '1.0.0',
+    Language: currentLocale,
     Sysmark: `${os.name} ${os.version}, ${browser.name} ${browser.version}`
   };
 }

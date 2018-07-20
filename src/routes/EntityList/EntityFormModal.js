@@ -143,9 +143,10 @@ class EntityFormModal extends Component {
         <Form horizontal>
           <FormItem label="实体名称">
             {getFieldDecorator('entityname_lang', {//<Input placeholder="实体名称" maxLength={50} />   rules: [{ required: true, message: '请输入实体名称' }],
-              rules: [{
-                validator: this.entitynameRequireValidator
-              }]
+              rules: [
+                { required: true, message: '请输入实体名称' },
+                { validator: this.entitynameRequireValidator }
+              ]
             })(
               <IntlInput maxLength={50} />
             )}

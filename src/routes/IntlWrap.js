@@ -34,7 +34,7 @@ const IntlWrap = WrappedComponent => {
 
     getAntdLocale() {
       const language = this.props.currentLocale;
-      switch (language) {
+      switch (language.toUpperCase()) {
         case 'CN':
           return null;
         case 'EN':
