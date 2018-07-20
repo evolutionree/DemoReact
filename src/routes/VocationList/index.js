@@ -106,7 +106,7 @@ function VocationList(props) {
           key="vocationname"
           dataIndex="vocationname"
           render={(text, record) => {
-            const intlText = <IntlText value={text} value_lang={record.rolename_lang} />;
+            const intlText = <IntlText value={text} value_lang={record.vocationname_lang} />;
             return checkFunc('VocationAuthDetail')
               ? <Link to={`/vocation/${record.vocationid}/${text}`}>{intlText}</Link>
               : <span>{intlText}</span>;

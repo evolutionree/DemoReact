@@ -4,6 +4,7 @@ import { Link } from 'dva/router';
 import { Menu, Icon } from 'antd';
 import * as _ from 'lodash';
 import Sider from './Sider';
+import IntlText from '../UKComponent/Form/IntlText';
 
 const { SubMenu, Item } = Menu;
 
@@ -20,9 +21,9 @@ function renderMenus(menus) {
     }
   });
 }
-function renderLink({ name, icon, path }) {
+function renderLink({ name, name_lang, icon, path }) {
   const iconEl = icon ? <Icon type={icon} /> : '';
-  const textEl = <span>{name}</span>;
+  const textEl = <IntlText value={name} value_lang={name_lang} />;
   return !path ? <span>{iconEl} {textEl}</span>
                 : <Link to={path}>{iconEl} {textEl}</Link>;
 }
@@ -80,7 +81,6 @@ const AppMenu = ({ location, menus, siderFold, permissionLevel }) => {
       </Menu>
     );
   }
-
   return (
     <Sider fold={siderFold} fixBottom={bottomMenu}>
       <Menu mode={siderFold ? 'vertical' : 'inline'}

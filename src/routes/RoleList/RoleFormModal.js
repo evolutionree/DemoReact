@@ -27,7 +27,7 @@ class RoleFormModal extends Component {
 
       } else {
         const record = currentRecords[0];
-        const tmp = _.pick(record, ['rolename', 'rolegroupid', 'roleremark']);
+        const tmp = _.pick(record, ['rolename_lang', 'rolegroupid', 'roleremark']);
         form.setFieldsValue(tmp);
       }
     }
