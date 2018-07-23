@@ -422,6 +422,7 @@ class RelTable extends Component {
         </div>
         <RelTableImportModal visible={this.state.importVisible}
                              entityId={this.props.entityId}
+                             entityTypeId={this.props.entityTypeId}
                              mainEntityId={this.props.mainEntityId}
                              cancel={() => { this.setState({ importVisible: false }) }}
                              onOk={this.addImportData}

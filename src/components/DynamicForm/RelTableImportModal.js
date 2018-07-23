@@ -50,6 +50,11 @@ class RelTableImportModal extends Component {
     return this.props.importUrl || '/api/excel/detailimport';
   };
 
+  getImportTemplateUrl = () => {
+    const { entityTypeId, entityId } = this.props; //entityId 嵌套实体id  mainEntityId 简单实体或者 独立实体id
+    return `api/excel/detailexporttemplate?MainTypeId=${entityTypeId}&DetailEntityId=${entityId}`;
+  };
+
   handleChange = (value) => {
     this.setState({
       operateType: value,
@@ -153,6 +158,15 @@ class RelTableImportModal extends Component {
           <div className={styles.importMain}>
             <Row className={styles.row}>
               <Col span={2} className={styles.col_icon}>1</Col>
+              <Col span={16} className={styles.col_context}>请按照Excel数据模版格式准备数据</Col>
+              <Col span={6}>
+                <a href={this.getImportTemplateUrl()}>
+                  <Button className={styles.col_downButton}>下载模版</Button>
+                </a>
+              </Col>
+            </Row>
+            <Row className={styles.row}>
+              <Col span={2} className={styles.col_icon}>2</Col>
               <Col span={16} className={styles.col_context}>当数据重复时的操作方式：</Col>
               <Col span={6}>
                 <Select defaultValue="1" className={styles.col_selectButton} onChange={this.handleChange}>
@@ -176,10 +190,13 @@ class RelTableImportModal extends Component {
                   Authorization: 'Bearer ' + this.props.token
                 }}
               >
-                <Col span={2} className={styles.col_icon}>2</Col>
+                <Col span={2} className={styles.col_icon}>3</Col>
                 <Col span={16} className={styles.col_context}>选择已填写好的Excel文件</Col>
                 <Button className={styles.col_fileButton}>选择文件</Button>
               </Upload>
+            </Row>
+            <Row className={styles.row} key={'explain' + index}>
+              <Col></Col>
             </Row>
           </div>
         </Modal>
