@@ -7,7 +7,6 @@ import moment from 'moment';
 import { getGeneralProtocolForGrid } from '../../../services/entcomm';
 import DynamicFieldView from '../DynamicFieldView';
 
-
 class RelTableView extends Component {
   static propTypes = {
     entityTypeId: PropTypes.string.isRequired,
@@ -93,25 +92,27 @@ class RelTableView extends Component {
   }
 
   render() {
-    let columns = this.getShowFields().map((item, index) => {
+    const showFields = this.getShowFields();
+    let columns = showFields.map((item, index) => {
       return { title: item.displayname, width: 200, dataIndex: item.fieldname, key: item.fieldname, render: (text, record, rowIndex) => {
         // 先取 _name
         const text_name = record[item.fieldname + '_name'];
-        let cellText = text_name !== undefined ? text_name : text instanceof Object ? text.name : text;
-        // 格式化日期
-        if ((item.controltype === 8 || item.controltype === 9) && item.formatstr) {
-          cellText = this.formatDate(text, item.formatstr);
-        }
+        // let cellText = text_name !== undefined ? text_name : text instanceof Object ? text.name : text;
+        // // 格式化日期
+        // if ((item.controltype === 8 || item.controltype === 9) && item.formatstr) {
+        //   cellText = this.formatDate(text, item.formatstr);
+        // }
         return (
           <span>
-            <DynamicFieldView value={cellText} value_name={cellText} controlType={item.controltype} />
+            <DynamicFieldView value={text} value_name={text_name} controlType={item.controltype} />
           </span>
         );
-      }, fixed: index < 2 ? 'left' : null };
+      }, fixed: showFields.length >= 6 ? (index < 2 ? 'left' : null) : null };
     })
 
+    const scroll = showFields.length >= 6 ? { x: showFields.length * 200, y: 400 } : { x: '100%' }
     return (
-      <Table rowKey="key" columns={columns} dataSource={this.parseValue()} pagination={false} scroll={{ x: this.getShowFields().length * 200, y: 400 }} />
+      <Table rowKey="key" columns={columns} dataSource={this.parseValue()} pagination={false} scroll={{ ...scroll }} />
     );
   }
 }
