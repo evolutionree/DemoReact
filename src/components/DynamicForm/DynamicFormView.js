@@ -19,7 +19,7 @@ class DynamicFormView extends React.Component {
     value: PropTypes.object.isRequired
   };
   renderFields = fields => {
-    const { value, entityTypeId } = this.props;
+    const { value, entityId, entityTypeId } = this.props;
     return fields.filter(field => field.controltype !== 30).map(field => {
       const { fieldname, displayname, controltype, fieldconfig } = field;
       return (
@@ -31,6 +31,7 @@ class DynamicFormView extends React.Component {
         >
           <DynamicFieldView
             isCommonForm
+            entityId={entityId}
             entityTypeId={entityTypeId}
             value={value[fieldname]}
             controlType={controltype}

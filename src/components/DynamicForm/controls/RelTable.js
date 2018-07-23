@@ -6,6 +6,7 @@ import { getGeneralProtocolForGrid } from '../../../services/entcomm';
 import RelTableRow from './RelTableRow';
 import styles from './RelTable.less';
 import generateDefaultFormData from '../generateDefaultFormData';
+import RelTableImportModal from '../RelTableImportModal';
 
 
 class RelTable extends Component {
@@ -33,7 +34,8 @@ class RelTable extends Component {
     this.state = {
       fields: [],
       selectedRows: [],
-      allSelected: false
+      allSelected: false,
+      importVisible: false
     };
   }
 
@@ -125,6 +127,20 @@ class RelTable extends Component {
     };
     onChange([...this.parseValue(), newRow]);
   };
+
+  addImportData = (data, operateType) => { //operateType== 1  追加导入 覆盖导入
+    const { onChange } = this.props;
+    this.setState({
+      importVisible: false
+    });
+    operateType === 1 ? onChange([...this.parseValue(), ...data]) : onChange(data);
+  }
+
+  importData = () => {
+    this.setState({
+      importVisible: true
+    });
+  }
 
   delRow = () => {
     const { onChange } = this.props;
@@ -385,20 +401,31 @@ class RelTable extends Component {
 
   render() {
     return (
-      <div className={styles.relTable}>
-        {this.props.mode !== 'DETAIL' && <div style={{ marginBottom: '12px' }}>
-          <Button onClick={this.addRow} style={{ marginRight: '15px' }}>新增</Button>
-          <Button onClick={this.delRow} type="danger">删除</Button>
-        </div>}
-        <div className={styles.tableWrap}>
-          <div className={styles.table}>
-            {this.renderTableHeader()}
-            {this.renderTableBody()}
+      <div>
+        <div className={styles.relTable}>
+          {this.props.mode !== 'DETAIL' && <div style={{ marginBottom: '12px' }}>
+            <Button onClick={this.addRow} style={{ marginRight: '15px' }}>新增</Button>
+            {
+              this.props.import ? <Button onClick={this.importData} style={{ marginRight: '15px' }}>导入</Button> : null
+            }
+            <Button onClick={this.delRow} type="danger">删除</Button>
+          </div>}
+          <div className={styles.tableWrap}>
+            <div className={styles.table}>
+              {this.renderTableHeader()}
+              {this.renderTableBody()}
+            </div>
           </div>
-        </div>
-        {/*{this.props.value && <div>*/}
+          {/*{this.props.value && <div>*/}
           {/*{JSON.stringify(this.props.value)}*/}
-        {/*</div>}*/}
+          {/*</div>}*/}
+        </div>
+        <RelTableImportModal visible={this.state.importVisible}
+                             entityId={this.props.entityId}
+                             mainEntityId={this.props.mainEntityId}
+                             cancel={() => { this.setState({ importVisible: false }) }}
+                             onOk={this.addImportData}
+        />
       </div>
     );
   }

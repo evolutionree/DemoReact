@@ -995,6 +995,21 @@ export default class FormItemFactory {
     );
   }
 
+  createImport() {
+    return (
+      <FormItem label="是否支持导入" key="import">
+        {this.getFieldDecorator('import', {
+          initialValue: 0
+        })(
+          <RadioGroup>
+            <Radio value={0}>不支持</Radio>
+            <Radio value={1}>支持</Radio>
+          </RadioGroup>
+        )}
+      </FormItem>
+    );
+  }
+
   createDataRange() {
     return (
       <FormItem label="数据范围" key="dataRange">
