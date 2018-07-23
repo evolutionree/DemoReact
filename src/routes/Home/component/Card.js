@@ -36,7 +36,7 @@ function getValue(param) {
           <div>{getValue(component[`item${i}valuescheme`])}</div>
           <div>{getValue(component[`item${i}labelscheme`])}</div>
           {
-            i === columnNum ? null : <span></span>
+            i === parseInt(columnNum) ? null : <span></span>
           }
         </li>
       );
