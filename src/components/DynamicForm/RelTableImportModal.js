@@ -195,9 +195,6 @@ class RelTableImportModal extends Component {
                 <Button className={styles.col_fileButton}>选择文件</Button>
               </Upload>
             </Row>
-            <Row className={styles.row} key={'explain' + index}>
-              <Col></Col>
-            </Row>
           </div>
         </Modal>
       </div>
