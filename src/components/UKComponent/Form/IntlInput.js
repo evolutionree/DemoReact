@@ -59,7 +59,7 @@ class IntlInput extends Component {
   }
 
   transformValue = (value) => { //兼容 国际化开发前的 数据
-    return typeof value === 'string' ? { cn: value } : value;
+    return typeof value === 'string' ? { cn: value } : value ? value : {};
   }
 
   focus = () => {

@@ -76,7 +76,7 @@ class MenuConfigModal extends React.Component {
     return queryMenuRule(menuId).then(result => {
       const data = result.data[0];
       this.setState({
-        menuName: data.menuname,
+        menuName: data.menuname_lang || data.menuname,
         ruleList: this.itemsToRuleList(data.ruleitems),
         ruleSet: data.ruleset.ruleset,
         rawRuleInfo: _.cloneDeep(data)
