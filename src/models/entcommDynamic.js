@@ -3,8 +3,8 @@
  */
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
-import { getDynamicListProtocol, getListData } from '../services/entcomm';
-import { queryEntityDetail, queryTypes, queryListFilter } from '../services/entity';
+import { getDynamicListProtocol, getListData, likeEntcommActivity, commentEntcommActivity, getActivityDetail } from '../services/entcomm';
+import { queryEntityDetail, queryTypes, queryListFilter, getDynamicDetail } from '../services/entity';
 
 export default {
   namespace: 'entcommDynamic',
@@ -20,7 +20,9 @@ export default {
     modalPending: false,
     simpleSearchKey: 'recname',
     sortFieldAndOrder: null, //当前排序的字段及排序顺序
-    ColumnFilter: null //字段查询
+    ColumnFilter: null, //字段查询
+    detailData: null,
+    showDetailModals: ''
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -134,6 +136,51 @@ export default {
       } catch (e) {
         message.error(e.message || '获取列表数据失败');
       }
+    },
+    *getDetail({ payload: recid }, { select, call, put }) {
+      const { entityId } = yield select(({ entcommDynamic }) => entcommDynamic);
+      const { data } = yield call(getDynamicDetail, {
+        entityId,
+        recid
+      });
+      yield put({ type: 'putState', payload: { showModals: 'detail', detailData: data } });
+    },
+    *like({ payload: id }, { put, call }) {
+      try {
+        yield call(likeEntcommActivity, id);
+        yield put({ type: 'updateActivity', payload: id });
+      } catch (e) {
+        message.error(e.message || '点赞失败');
+      }
+    },
+    *comment({ payload: { id, content } }, { put, call }) {
+      try {
+        const params = {
+          dynamicid: id,
+          comments: content
+        };
+        yield call(commentEntcommActivity, params);
+        yield put({ type: 'updateActivity', payload: id });
+        // message.success('评论成功');
+      } catch (e) {
+        message.error(e.message || '评论失败');
+      }
+    },
+    *updateActivity({ payload: id }, { select, put, call }) {
+      try {
+        const { data } = yield call(getActivityDetail, id);
+        yield put({ type: 'putState', payload: { detailData: data } });
+      } catch (e) {
+        message.error(e.message || '更新数据失败');
+      }
+    },
+    *showDynamicDetail({ payload: item }, { select, put, call }) {
+      yield put({
+        type: 'putState',
+        payload: {
+          showDetailModals: `recordDetail?${item.entityid}:${item.businessid}`
+        }
+      });
     }
   },
   reducers: {
@@ -194,7 +241,9 @@ export default {
         modalPending: false,
         simpleSearchKey: 'recname',
         sortFieldAndOrder: null, //当前排序的字段及排序顺序
-        ColumnFilter: null //字段查询
+        ColumnFilter: null, //字段查询
+        detailData: [],
+        showDetailModals: ''
       };
     }
   }
