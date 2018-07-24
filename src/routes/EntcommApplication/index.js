@@ -6,7 +6,7 @@ import Page from '../../components/Page';
 import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import DynamicTable from '../../components/DynamicTable/index';
-import EntcommAddModal from './EntcommAddModal';
+import EntcommAddModal from '../../components/EntcommAddModal';
 import RecordDetailModal from './RecordDetailModal';
 import RecordEditModal from './RecordEditModal';
 import TransferModal from './TransferModal';
@@ -34,7 +34,11 @@ function EntcommList({
     extraToolbarData,
     showModals,
     sortFieldAndOrder,  //当前排序的字段及排序顺序
-    ColumnFilter
+    ColumnFilter,
+    entityTypes,
+    selectedFlowObj,
+                       onAddModalCanel,
+                       onAddModalDone
   }) {
   function selectItems(items) {
     dispatch({ type: 'entcommApplication/currItems', payload: items });
@@ -178,7 +182,7 @@ function EntcommList({
     whiteSpace: 'nowrap'
   };
 
-  const defaultToolbarActions = [
+  const defaultToolbarActions = selectedFlowObj ? [] : [ //有审批流的简单实体  不允许修改数据
     { label: '删除', handler: del, show: checkFunc('EntityDataDelete') },
     { label: '编辑', handler: showEdit, single: true, show: checkFunc('EntityDataEdit') },
     { label: '转移', handler: openTransfer, show: shouldShowTransfer }
@@ -265,7 +269,15 @@ function EntcommList({
           <a href="javascript:;" style={titleStyle} title={text} onClick={() => { showDetail(record); }}>{text}</a>
         )}
       />
-      <EntcommAddModal />
+      <EntcommAddModal
+        visible={/add/.test(showModals)}
+        entityId={entityId}
+        entityName={entityName}
+        entityTypes={entityTypes}
+        flow={selectedFlowObj}
+        cancel={onAddModalCanel}
+        done={onAddModalDone}
+      />
       <TransferModal />
       <RecordDetailModal />
       <RecordEditModal />
@@ -279,5 +291,15 @@ function EntcommList({
 export default connect(
   state => {
     return { ...state.entcommApplication, currentUser: state.app.user.userid };
+  },
+  dispatch => {
+    return {
+      onAddModalCanel() {
+        dispatch({ type: 'entcommApplication/showModals', payload: '' });
+      },
+      onAddModalDone() {
+        dispatch({ type: 'entcommApplication/addDone' });
+      }
+    };
   }
 )(connectPermission(props => props.entityId, EntcommList));

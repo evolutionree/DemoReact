@@ -198,6 +198,7 @@ class RelEntityAddModal extends Component {
           refEntity={undefined && this.props.entityId}
           initFormData={this.props.relEntityFromInitData}
           entityTypes={this.props.entityTypes}
+          flow={this.props.selectedFlowObj}
           cancel={this.handleAddNewCancel}
           done={this.props.onAddDone}
           processProtocol={this.processProtocol}
@@ -209,7 +210,7 @@ class RelEntityAddModal extends Component {
 
 export default connect(
   state => {
-    const { entityId, recordId, relId, relEntityId, showModals, entityTypes, relEntityFromInitData } = state.entcommRel;
+    const { entityId, recordId, relId, relEntityId, showModals, entityTypes, relEntityFromInitData, selectedFlowObj } = state.entcommRel;
     const { relTabs, recordDetail } = state.entcommHome;
 
     let tabInfo = {};
@@ -226,7 +227,8 @@ export default connect(
       visible: /add/.test(showModals),
       shouldShowList: !!(tabInfo && tabInfo.ismanytomany),
       showListTitle: tabInfo && tabInfo.srctitle,
-      relEntityFromInitData
+      relEntityFromInitData,
+      selectedFlowObj
     };
   },
   dispatch => {

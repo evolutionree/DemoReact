@@ -860,3 +860,19 @@ export async function queryvaluefornewdata(params) {
     body: JSON.stringify(params)
   });
 }
+
+
+/**
+ * 获取实体审批流
+ * @param params
+ * {
+ * "EntityId":"f9db9d79-e94b-4678-a5cc-aa6e281c1246"
+ * }
+ * @returns {Promise.<Object>}
+ */
+export async function queryWorkflow(EntityId) {
+  return request('/api/workflow/workflowidbyentityid', {
+    method: 'post',
+    body: JSON.stringify({ EntityId })
+  });
+}
