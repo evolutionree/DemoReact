@@ -4,6 +4,7 @@ import { Form, Button, Input, Checkbox, message, Select, Row, Col, Modal } from 
 import Page from '../../components/Page';
 import DragList from '../../components/UKComponent/Data/DragList';
 import IntlInput from '../../components/UKComponent/Form/IntlInput';
+import IntlText from '../../components/UKComponent/Form/IntlText';
 import { IntlInputRequireValidator } from '../../utils/validator';
 import styles from './index.less';
 import classnames from 'classnames';
@@ -111,7 +112,7 @@ function DicPage({
             <IntlInput defaultValue={text} ref={ref => window[rowData.dicid + 'InputRef'] = ref} />
           );
         } else {
-          return text;
+          return <IntlText value={text} value_lang={rowData.dataval_lang} />;
         }
       }
     }
