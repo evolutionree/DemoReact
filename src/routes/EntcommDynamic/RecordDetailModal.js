@@ -1,12 +1,15 @@
+/**
+ * Created by 0291 on 2018/7/24.
+ */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 import EntcommDetailModal from '../../components/EntcommDetailModal';
 
-const RecordDetailModal = connect(
+const DetailModal = connect(
   state => {
-    const { showModals, entityName } = state.entcommDynamic;
-    const match = showModals && showModals.match(/recordDetail\?([^:]+):(.+)$/);
+    const { showDetailModals, entityName } = state.entcommDynamic;
+    const match = showDetailModals && showDetailModals.match(/recordDetail\?([^:]+):(.+)$/);
     return {
       visible: !!match,
       entityId: match && match[1],
@@ -16,7 +19,7 @@ const RecordDetailModal = connect(
   },
   dispatch => {
     const hideModal = () => {
-      dispatch({ type: 'entcommDynamic/showModals', payload: '' });
+      dispatch({ type: 'entcommDynamic/putState', payload: { showDetailModals: '' } });
     };
     return {
       footer: [
@@ -34,4 +37,4 @@ const RecordDetailModal = connect(
   }
 )(EntcommDetailModal);
 
-export default RecordDetailModal;
+export default DetailModal;

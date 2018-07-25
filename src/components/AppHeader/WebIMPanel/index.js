@@ -57,8 +57,7 @@ class WebIMPanel extends Component {
   }
 
   clickOutsideClose = (event) => {
-    this.props.dispatch({ type: 'webIM/setContextMenu', payload: { visible: false } });  //隐藏 上下文菜单列表
-
+    //this.props.dispatch({ type: 'webIM/setContextMenu', payload: { visible: false } });  //隐藏 上下文菜单列表  不能再这个事件里  改变redux状态  否则 会造成整个系统渲染  引发各种问题
     if ($(event.target).closest('#webIM').length) {
       return;
     }

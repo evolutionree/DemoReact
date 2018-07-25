@@ -425,7 +425,15 @@ export async function queryPlugins({ entityid, recid }) {
               icon: item.icon,
               entity: item
             })
-          }else{
+          } else if (item.buttoncode === 'EntityDataOpenH5') {
+            plugins.push({
+              type: 'EntityDataOpenH5',
+              name: item.title,
+              icon: item.icon,
+              routepath:item.routepath,
+              entity:item
+            });
+          } else{
           if(item.extradata)
           {
             if(item.extradata.type=='transform'){
@@ -850,5 +858,21 @@ export async function queryvaluefornewdata(params) {
   return request('/api/dynamicentity/queryvaluefornewdata', {
     method: 'post',
     body: JSON.stringify(params)
+  });
+}
+
+
+/**
+ * 获取实体审批流
+ * @param params
+ * {
+ * "EntityId":"f9db9d79-e94b-4678-a5cc-aa6e281c1246"
+ * }
+ * @returns {Promise.<Object>}
+ */
+export async function queryWorkflow(EntityId) {
+  return request('/api/workflow/workflowidbyentityid', {
+    method: 'post',
+    body: JSON.stringify({ EntityId })
   });
 }

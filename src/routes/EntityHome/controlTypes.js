@@ -34,7 +34,7 @@ export const fieldModels = [
   // { name: '树形控件', value: 21, disabled: true },
   { name: '图片控件', value: 22, requires: ['pictureType', 'limit'] },
   { name: '附件控件', value: 23, requires: ['limit'] },
-  { name: '表格控件', value: 24, requires: ['entityId', 'titleField'] },
+  { name: '表格控件', value: 24, requires: ['entityId', 'titleField', 'import'] },
   { name: '选人控件', value: 25, requires: ['dataRange', 'multiple'] },
   // { name: '树形控件多选', value: 27 },
   { name: '产品', value: 28, requires: ['multiple'] },

@@ -27,7 +27,8 @@ class DSourceDetail extends PureComponent {
       data: {}, // 表单数据
       visible: this.props.visible,
       pemissonLink: false,
-      loading: false
+      loading: false,
+      errData: [] //部分客户查询报错  存这部分数据
     };
   }
 
@@ -41,13 +42,23 @@ class DSourceDetail extends PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { entityId, recordId } = nextProps;
-    if (entityId && recordId) { //&& (this.props.recordId !== recordId) || this.props.entityId !== entityId  考虑到可能关联对象已经被删除了，查无数据就需要关闭窗口，所有，用户重新点击同一个数据源，需要继续请求
+    if (entityId && recordId && (entityId !== this.props.entityId || recordId !== this.props.recordId)) { //&& (this.props.recordId !== recordId) || this.props.entityId !== entityId  考虑到可能关联对象已经被删除了，查无数据就需要关闭窗口，所有，用户重新点击同一个数据源，需要继续请求
       this.fetchDetailAndProtocol(entityId, recordId);
       this.fetchEntityDetail(entityId);
     }
-    this.setState({
-      visible: nextProps.visible
-    });
+
+    if (this.state.errData.indexOf(entityId + 'and' + recordId) > -1) {
+      message.error('数据已删除，无法查看详情');
+      this.setState({
+        visible: false,
+        data: {}
+      });
+    } else {
+      this.setState({
+        visible: nextProps.visible,
+        data: {}
+      });
+    }
   }
 
   fetchEntityDetail = (entityId) => {
@@ -77,12 +88,19 @@ class DSourceDetail extends PureComponent {
         typeId: detail.rectype || entityId,
         OperateType: 2
       });
+    }, (e) => {
+      console.error(e.message);
+      message.error('数据已删除，无法查看详情');
+      this.setState({
+        errData: [...this.state.errData, entityId + 'and' + recordId],
+        visible: false
+      });
     }).then(result => {
       this.setState({
         protocol: result.data,
         loading: false
       });
-    }).catch((e) => {
+    }, (e) => {
       console.error(e.message);
       message.error(e.message);
       this.setState({

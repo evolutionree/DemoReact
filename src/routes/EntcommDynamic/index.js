@@ -8,7 +8,7 @@ import Page from '../../components/Page';
 import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import DynamicTable from '../../components/DynamicTable/index';
-import RecordDetailModal from './RecordDetailModal';
+import DynamicDetailModal from './DynamicDetailModal';
 import connectPermission from '../../models/connectPermission';
 import AdvanceSearchModal from './AdvanceSearchModal';
 import ExportModal from './ExportModal';
@@ -73,10 +73,7 @@ function EntcommList({
   const keyword = (!isAdvanceQuery && searchData && searchData[simpleSearchKey]) || '';
 
   function showDetail(record) {
-    dispatch({
-      type: 'entcommDynamic/showModals',
-      payload: `recordDetail?${entityId}:${record.recid}`
-    });
+    dispatch({ type: 'entcommDynamic/getDetail', payload: record.recid });
   }
 
   const titleStyle = {
@@ -127,7 +124,7 @@ function EntcommList({
         )}
       />
       <AdvanceSearchModal />
-      <RecordDetailModal />
+      <DynamicDetailModal />
       <ExportModal currentUser={currentUser} />
     </Page>
   );

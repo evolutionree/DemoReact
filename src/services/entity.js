@@ -1152,3 +1152,14 @@ export async function getlistschemebyentity(entityid) {
     body: JSON.stringify({ entityid })
   });
 }
+
+
+/*
+ 获取动态实体详情
+ */
+export async function getDynamicDetail(params) {
+  return request('api/dynamic/dynamicdetailbybizid', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}

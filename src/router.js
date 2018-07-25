@@ -42,6 +42,8 @@ import AffairDetail from './routes/AffairDetail';
 
 import ReportForm from './routes/ReportForm/index';
 
+import DynamicChart from './routes/ReportForm/dynaimcChart';
+
 import Weekly from './routes/office/weekly/index';
 import MyWeekly from './routes/office/weekly/myWeekly';
 import ReceiveWeekly from './routes/office/weekly/receiveWeekly';
@@ -102,6 +104,7 @@ const appRoutes = [
   { path: 'affair-list', comp: AffairList, entid: '00000000-0000-0000-0000-000000000001', model: require('./models/affairList') },
   { path: 'affair/:id', comp: AffairDetail, model: require('./models/affairDetail') },
   { path: 'reportform/:id', comp: ReportForm, model: require('./models/reportForm') },
+  { path: 'dynamicchart/:reportId', comp: DynamicChart },
   { path: 'weekly', comp: Weekly, entid: '0b81d536-3817-4cbc-b882-bc3e935db845', model: require('./models/weekly'),
     routes: [
       { path: 'myweekly', comp: MyWeekly, model: require('./models/weekly') },

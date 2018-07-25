@@ -40,6 +40,7 @@ class DynamicField extends React.Component {
     const props = {
       isCommonForm: this.props.isCommonForm,
       entityId: this.props.entityId,
+      mainEntityId: this.props.entityId, //嵌套表格的实体定义属性名 跟 独立实体 简单实体 重名了，重新加一个  （嵌套实体 导入用到）
       entityTypeId: this.props.entityTypeId,
       isTable: this.props.isTable,
       mode: ['ADD', 'EDIT'][this.props.usage],

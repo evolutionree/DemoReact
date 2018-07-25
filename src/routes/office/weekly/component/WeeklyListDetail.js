@@ -113,7 +113,10 @@ class WeeklyListDetail extends Component {
             }
           </div>
           <div>
-            <DynamicTemplateView fields={this.props.detailFields && this.props.detailFields.filter(field => field.fieldname !== 'viewusers' && field.fieldname !== 'copyusers' && field.fieldname !== 'reportdate')} value={this.props.detailValue} />
+            <DynamicTemplateView
+              fields={this.props.detailFields && this.props.detailFields.filter(field => field.fieldname !== 'viewusers' && field.fieldname !== 'copyusers' && field.fieldname !== 'reportdate')}
+              value={this.props.detailValue}
+              entityId="0b81d536-3817-4cbc-b882-bc3e935db845" />
             <div className={Styles.users_name}>批阅人：{data.viewusers_name}</div>
             <div className={Styles.users_name}>抄送人：{data.copyusers_name}</div>
           </div>

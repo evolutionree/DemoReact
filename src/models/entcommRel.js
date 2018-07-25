@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import * as _ from 'lodash';
 import { routerRedux } from 'dva/router';
-import { queryTabsList, delEntcomm, delRelItem, getGeneralListProtocol, getListData, getFunctionbutton, extraToolbarClickSendData, transferEntcomm, queryreldatasource, queryvaluefornewdata } from '../services/entcomm';
+import { queryTabsList, delEntcomm, delRelItem, getGeneralListProtocol, getListData, getFunctionbutton, extraToolbarClickSendData, transferEntcomm, queryreldatasource, queryvaluefornewdata, queryWorkflow } from '../services/entcomm';
 import { queryMobFieldVisible, queryEntityDetail, queryTypes, DJCloudCall, queryListFilter, queryMenus } from '../services/entity';
 import { parseConfigData } from '../components/ListStylePicker';
 
@@ -49,7 +49,8 @@ export default {
     dynamicModalData: {},
     sortFieldAndOrder: null, //当前排序的字段及排序顺序
     relCountData: null,
-    relEntityFromInitData: null //实体页签下  添加表单的初始化数据
+    relEntityFromInitData: null, //实体页签下  添加表单的初始化数据
+    selectedFlowObj: null  //审批流
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -73,13 +74,19 @@ export default {
   effects: {
     *init(action, { select, put, call, take }) {
       yield put({ type: 'putState', payload: { list: [], iconField: null, listFields: [] } });
-      // yield put({ type: 'queryEntityDetail' });
       const { relId, relEntityId } = yield select(modelSelector);
       const entityId = relEntityId;
       try {
         // 获取实体类型
         const { data: { entitytypepros: entityTypes } } = yield call(queryTypes, { entityId });
         yield put({ type: 'putState', payload: { entityTypes } });
+
+        const { data: { entityproinfo } } = yield call(queryEntityDetail, relEntityId);
+        if (entityproinfo instanceof Array && entityproinfo.length > 0 && entityproinfo[0].modeltype === 2) { //只有存在审批流的简单实体  新增时 才走审批流
+          //获取审批信息
+          const { data: selectedFlowObj } = yield call(queryWorkflow, entityId);
+          yield put({ type: 'putState', payload: { selectedFlowObj } });
+        }
 
         // 获取协议
         const { data: protocol } = yield call(getGeneralListProtocol, { typeId: entityId });
@@ -157,14 +164,6 @@ export default {
           isAdvanceQuery: 0
         }
       });
-    },
-    *queryEntityDetail(action, { select, call, put }) {
-      // const { relEntityId } = yield select(modelSelector);
-      // const { data: { entityproinfo } } = yield call(queryEntityDetail, relEntityId);
-      // yield put({
-      //   type: 'putState',
-      //   payload: { relEntityName: entityproinfo[0].entityname }
-      // });
     },
     *queryreldatasource(action, { select, call, put }) {
       const { recordId, relId } = yield select(modelSelector);
@@ -428,7 +427,8 @@ export default {
         dynamicModalData: {},
         sortFieldAndOrder: null, //当前排序的字段及排序顺序
         relCountData: null,
-        relEntityFromInitData: null //实体页签下  添加表单的初始化数据
+        relEntityFromInitData: null, //实体页签下  添加表单的初始化数据
+        selectedFlowObj: null  //审批流
       };
     }
   }

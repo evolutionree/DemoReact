@@ -27,31 +27,32 @@ function getValue(param) {
   return returnValue;
 }
 
-  switch (component.styletype) {
-    case 'normal3':
-      return (
-        <div className={Styles.Card}>
-          <ul>
-            <li>
-              <div>{getValue(component.item1valuescheme)}</div>
-              <div>{getValue(component.item1labelscheme)}</div>
-              <span></span>
-            </li>
-            <li>
-              <div>{getValue(component.item2valuescheme)}</div>
-              <div>{getValue(component.item2labelscheme)}</div>
-              <span></span>
-            </li>
-            <li>
-              <div>{getValue(component.item3valuescheme)}</div>
-              <div>{getValue(component.item3labelscheme)}</div>
-            </li>
-          </ul>
-        </div>
+  const columnNum = component.styletype && component.styletype.split('normal')[1];
+  function getRenderColumn() {
+    let html = [];
+    for (let i = 1; i <= columnNum; i++) {
+      html.push(
+        <li key={i} style={{ width: 100 / columnNum + '%' }}>
+          <div>{getValue(component[`item${i}valuescheme`])}</div>
+          <div>{getValue(component[`item${i}labelscheme`])}</div>
+          {
+            i === parseInt(columnNum) ? null : <span></span>
+          }
+        </li>
       );
-    default:
-      return null;
+    }
+    return html;
   }
+
+  return (
+    <div className={Styles.Card}>
+      <ul>
+        {
+          getRenderColumn()
+        }
+      </ul>
+    </div>
+  );
 }
 
 export default Card;

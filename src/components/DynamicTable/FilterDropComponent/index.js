@@ -148,7 +148,7 @@ class FilterDrop extends Component {
     const field = this.props.field;
     if (filterShowComponent.date.indexOf(field.controltype) > -1) { //日期查询
       const dateFormat = 'YYYY-MM-DD';
-      return <RangePicker allowClear={false} onChange={this.onDateChange} value={this.state.value ? this.state.value : null} format={dateFormat} style={{ width: 240 }} />;
+      return <RangePicker getCalendarContainer={ele => this.filterBody} allowClear={false} onChange={this.onDateChange} value={this.state.value ? this.state.value : null} format={dateFormat} style={{ width: 240 }} />;
     } else if (filterShowComponent.multiple.indexOf(field.controltype) > -1) { //字典
       return <SelectList onChange={this.onSelectChange} dataSource={field.fieldconfig.dataSource} value={this.state.value || []} />;
     } else if (filterShowComponent.number.indexOf(field.controltype) > -1) { //数字筛选
@@ -176,7 +176,7 @@ class FilterDrop extends Component {
             this.props.value ? <span onClick={this.clearFilter}>清除筛选</span> : null
           }
         </div>
-        <div className={Styles.body}>
+        <div className={Styles.body} ref={ref => this.filterBody = ref}>
           {
             this.renderHtml()
           }
