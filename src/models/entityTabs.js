@@ -7,7 +7,8 @@ import {
   editreltab,
   disabledreltab,
   saverelconfig,
-  getrelconfigentity
+  getrelconfigentity,
+  queryFields
 } from '../services/entity';
 
 export default {
@@ -20,7 +21,8 @@ export default {
     entityList: [],
     configentityList: [],
     currentItem: null,
-    modalPending: false
+    modalPending: false,
+    entityFieldData: [] //页签统计配置 设置统计过滤条件  所有可选字段
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -35,6 +37,11 @@ export default {
           });
           dispatch({
             type: 'query'
+          });
+
+          dispatch({
+            type: 'queryentityProfield',
+            payload: entityId
           });
         } else {
           dispatch({ type: 'resetState' });
@@ -57,6 +64,28 @@ export default {
         });
       } catch (e) {
         message.error(e.message || '查询失败');
+      }
+    },
+    *queryentityProfield({ payload: entityId }, { put, call }) {
+      try {
+        const { data } = yield call(queryFields, entityId);
+        const entityFieldData = data.entityfieldpros;
+        yield put({
+          type: 'putState',
+          payload: {
+            entityFieldData: entityFieldData.map(item => ({
+              controlType: item.controltype,
+              fieldId: item.fieldid,
+              fieldLabel: item.fieldlabel,
+              fieldConfig: item.fieldconfig,
+              recStatus: item.recstatus,
+              fieldName: item.fieldname,
+              displayName: item.displayname
+            }))
+          }
+        });
+      } catch (e) {
+        message.error(e.message || '查询数据失败');
       }
     },
     *up({ payload: index }, { call, put, select }) {
@@ -217,7 +246,8 @@ export default {
         entityList: [],
         configentityList: [],
         currentItem: null,
-        modalPending: false
+        modalPending: false,
+        entityFieldData: [] //页签统计配置 设置统计过滤条件  所有可选字段
       };
     }
   }
