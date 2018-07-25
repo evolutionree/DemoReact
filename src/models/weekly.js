@@ -123,7 +123,7 @@ export default {
 
           for (let i = 0; i < pagedata.length; i++) {
             for (let j = 0; j < yearWeekData.length; j++) {
-              if (pagedata[i].reportdate.indexOf(yearWeekData[j].value) > -1) {
+              if (pagedata[i].reportdate.indexOf(yearWeekData[j].value) > -1 || pagedata[i].reportdate.indexOf(yearWeekData[j].weekEnd.split(' ')[0]) > -1) {
                 pagedata[i].weekNum = yearWeekData[j].weekNum;
                 pagedata[i].weekLabel = yearWeekData[j].label;
                 break;
@@ -144,7 +144,7 @@ export default {
           }
           for (let i = 0; i < listData.length; i++) {
             for (let j = 0; j < yearWeekData.length; j++) {
-              if (listData[i].reportdate.indexOf(yearWeekData[j].value) > -1) {
+              if (listData[i].reportdate.indexOf(yearWeekData[j].value) > -1 || listData[i].reportdate.indexOf(yearWeekData[j].weekEnd.split(' ')[0]) > -1) {
                 listData[i].weekNum = yearWeekData[j].weekNum;
                 listData[i].weekLabel = yearWeekData[j].label;
                 break;
@@ -232,13 +232,13 @@ export default {
     },
 
     *queryReceiveWeeklyDetailProtocol(action, { put, call }) {
-      const { data: receiveWeeklyDetailWeeklyProtocal } = yield call(selectdynamicabstract, {
-        EntityId: '0b81d536-3817-4cbc-b882-bc3e935db845',
-        typeid: '0b81d536-3817-4cbc-b882-bc3e935db845'
+      const { data: receiveWeeklyDetailWeeklyProtocal } = yield call(getGeneralProtocol, {
+        typeid: '0b81d536-3817-4cbc-b882-bc3e935db845',
+        operatetype: 2
       });
-      const { data: receiveWeeklyDetailSummaryProtocal } = yield call(selectdynamicabstract, {
-        EntityId: 'fcc648ae-8817-48b7-b1d7-49ed4c24316b',
-        typeid: 'fcc648ae-8817-48b7-b1d7-49ed4c24316b'
+      const { data: receiveWeeklyDetailSummaryProtocal } = yield call(getGeneralProtocol, {
+        typeid: 'fcc648ae-8817-48b7-b1d7-49ed4c24316b',
+        operatetype: 2
       });
       yield put({ type: 'putState', payload: { receiveWeeklyDetailWeeklyProtocal, receiveWeeklyDetailSummaryProtocal } });
     },
