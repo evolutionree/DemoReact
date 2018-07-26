@@ -52,8 +52,8 @@ class FilterConfigModal extends Component {
         ruleid: recid
       },
       ruleitems: ruleListToItems(ruleList, entityFieldData, entityId),
-      ruleSet: {
-        ruleSet,
+      ruleset: {
+        ruleset: ruleSet,
         ruleformat: '',
         userid: 0
       }

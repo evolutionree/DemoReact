@@ -17,7 +17,7 @@ export const parseRuleDetail = ruleDetail => {
     const rule = {
       fieldId: item.fieldid,
       operator: item.operate,
-      ruleData: item.ruledata,
+      ruleData: typeof item.ruledata === 'string' ? JSON.parse(item.ruledata) : item.ruledata,
       ruleType: item.ruletype,
       entityId: item.entityid
     };
