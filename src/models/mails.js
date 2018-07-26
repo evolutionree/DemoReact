@@ -1,5 +1,6 @@
 import { message } from 'antd';
 import * as _ from 'lodash';
+import { routerRedux } from 'dva/router';
 import {
   syncMails,
   queryMailCatalog,
@@ -25,9 +26,11 @@ import {
   distributeMails,
   transferMailCatalog,
   recoverMails,
-  validMailPwd
+  validMailPwd,
+  initMailCol
 } from '../services/mails';
 import { treeForEach } from '../utils';
+import TabModel from '../routes/Mails/model/TabModel';
 
 function getDefaultCatalog(catalogData) {
   return catalogData[0];
@@ -44,6 +47,8 @@ export default {
     myCatalogData: null,
     deptCatalogData: null,
     userCatalogData: [],
+    currentBoxId: '',
+    syncMailsLoading: false,
 
     /* 邮件列表 */
     mailPageIndex: 1,
@@ -54,6 +59,7 @@ export default {
     mailSelected: [],
     mailCurrent: null,
     mailDetailData: null,
+    selectDept_userMailAddr: '', //当前选择下属员工对应的邮箱， 查询邮件列表
 
     /* 写邮件 */
     mailContacts: [],
@@ -61,21 +67,23 @@ export default {
     recentContact: [],
     customerContact: [],
     innerContact: [],
-    editEmailFormData: null,
     focusTargetName: '',
     showingModals: '',
     showingPanel: '',
     modalMailsData: [],
     modalPending: false,
-    editEmailPageFormModel: null,
-    editEmailPageBtn: null,
-    currentMailId: ''
+    mailTabs: [new TabModel(1, '邮件', true)]
   },
   subscriptions: {
     setup({ dispatch, history }) {
       return history.listen(location => {
         if (location.pathname === '/mails') {
-          dispatch({ type: 'init' });
+          if (location.query.mailid) {
+            dispatch({ type: 'init' });
+            dispatch({ type: 'initWithPanel' });
+          } else {
+            dispatch({ type: 'init' });
+          }
           dispatch({ type: 'app/putState', payload: { noMinWidth: true } });
         } else {
           dispatch({ type: 'resetState' });
@@ -88,24 +96,46 @@ export default {
     *init(action, { put, call }) {
       yield put({ type: 'app/toggleSider', payload: true });
       yield put({ type: 'syncMails__' });
-      yield put({ type: 'queryMyCatalogTree', payload: true });
       yield put({ type: 'fetchMailContacts' });
-      yield put({ type: 'fetchMailboxlist' });
+      yield put({ type: 'fetchMailboxlist' }); //取第一个邮箱获取queryMyCatalogTree
       yield put({ type: 'fetchRecentcontact' }); //获取最近联系人
       yield put({ type: 'fetchCustomerContact' });
       yield put({ type: 'fetchInnerContact' }); //获取企业内部通讯录
       yield put({ type: 'fetchSignature' }); //获取签名
     },
-    *syncMails__(action, { call }) {
+    *initWithPanel(action, { select, put, call }) {
+      const { query } = yield select(state => state.routing.locationBeforeTransitions);
+      const mail = {
+        mailid: query.mailid,
+        ctype: +query.ctype, // 4001 客户邮件跳转进来
+        catalogtype: query.catalogtype, // my/dept
+        isread: +query.isread,
+        title: query.title
+      };
+
+      yield put({ type: 'mailPreview__', payload: mail });
+      yield put({ type: 'showMailDetail', payload: mail });
+    },
+    *syncMails__(action, { call, put }) {
       try {
         yield call(validMailPwd);
-        try {
-          yield call(syncMails);
-        } catch (e) {
-          console.error('syncmails failed..');
-        }
+        yield put({ type: 'reloadSyncMails__' });
       } catch (e) {
         message.error(e.message);
+      }
+    },
+    *reloadSyncMails__(action, { select, call, put }) {
+      const { syncMailsLoading } = yield select(state => state.mails);
+      if (syncMailsLoading) {
+        return;
+      }
+      try {
+        yield put({ type: 'putState', payload: { syncMailsLoading: true }});
+        yield call(syncMails);
+        yield put({ type: 'putState', payload: { syncMailsLoading: false }});
+      } catch (e) {
+        yield put({ type: 'putState', payload: { syncMailsLoading: false }});
+        console.error('syncmails failed..');
       }
     },
     *fetchMailContacts(action, { call, put }) {
@@ -122,6 +152,12 @@ export default {
     *fetchMailboxlist(action, { call, put }) {
       try {
         const { data: { datalist: mailBoxList } } = yield call(queryMailBoxList);
+        if (mailBoxList instanceof Array && mailBoxList.length > 0) {
+          yield put({ type: 'putState', payload: { currentBoxId: mailBoxList[0].recid } });
+          yield put({ type: 'queryMyCatalogTree', payload: true });
+        } else {
+          message.info('当前用户没有查询到可用邮箱');
+        }
         yield put({
           type: 'putState',
           payload: { mailBoxList }
@@ -176,9 +212,10 @@ export default {
     },
     *queryMyCatalogTree({ payload: isInit }, { select, call, put }) {
       try {
-        const { catSearchKey, selectedCatalogNode } = yield select(state => state.mails);
+        const { catSearchKey, selectedCatalogNode, currentBoxId } = yield select(state => state.mails);
         const params = {
-          catalogname: catSearchKey.my || ''
+          catalogname: catSearchKey.my || '',
+          BoxId: currentBoxId
         };
         if (catSearchKey.my) {
           params.catalogtype = 1001;
@@ -224,7 +261,8 @@ export default {
     },
     *updateMyCatalogData(action, { select, call, put }) {
       try {
-        const { data } = yield call(queryMailCatalog, { catalogname: '' });
+        const { currentBoxId } = yield select(state => state.mails);
+        const { data } = yield call(queryMailCatalog, { catalogname: '', BoxId: currentBoxId });
         yield put({ type: 'putState', payload: { myCatalogDataAll: data } });
       } catch (e) {
         console.error('更新我的邮件目录失败', e);
@@ -251,14 +289,21 @@ export default {
         message.error(e.message || '获取邮件目录数据失败');
       }
     },
-    *reloadCatalogTree({ payload: resetSelected }, { select, put }) {
+    *reloadCatalogTree({ payload: resetSelected }, { select, call, put }) {
       const { openedCatalog } = yield select(state => state.mails);
+
       yield put({
         type: openedCatalog === 'my'
           ? 'queryMyCatalogTree'
           : openedCatalog === 'dept' ? 'queryDeptCatalogTree' : 'queryUserCatalog',
         payload: resetSelected
       });
+    },
+    *changeBoxId({ payload: newBoxId }, { select, put }) { //切换用户邮箱
+      yield put({ type: 'putState', payload: { currentBoxId: newBoxId } });
+      yield put({ type: 'updateMailTabs', payload: { mailTabs: [new TabModel(1, '邮件', true)] } }); //初始化Tab页签
+      yield put({ type: 'queryMyCatalogTree', payload: true });
+      yield put({ type: 'queryMailList' });
     },
     // *catalogTreeUpdated({ payload: catType }, { select, put }) {
     //   const {
@@ -303,7 +348,18 @@ export default {
     },
     *queryMailList(action, { select, call, put }) {
       try {
-        const { mailPageIndex, mailPageSize, mailSearchKey, mailDetailData, selectedCatalogNode } = yield select(state => state.mails);
+        const { mailPageIndex, mailPageSize, mailSearchKey, mailDetailData, selectedCatalogNode, showingPanel, mailBoxList, currentBoxId, selectDept_userMailAddr } = yield select(state => state.mails);
+        let mailAddress = '';
+        if (selectDept_userMailAddr) { //下属员工的邮箱id
+          mailAddress = selectDept_userMailAddr;
+        } else {
+          for (let i = 0; i < mailBoxList.length; i++) {
+            if (mailBoxList[i].recid === currentBoxId) {
+              mailAddress = mailBoxList[i].accountid; break;
+            }
+          }
+        }
+
         let result;
         if (selectedCatalogNode.recid) {
           // 收件箱邮件
@@ -312,7 +368,9 @@ export default {
             pageSize: mailPageSize,
             searchKey: mailSearchKey,
             catalog: selectedCatalogNode.recid,
-            fetchuserid: selectedCatalogNode.viewuserid
+            fetchuserid: selectedCatalogNode.viewuserid,
+            Ctype: selectedCatalogNode.ctype,
+            mailAddress: mailAddress
           };
           result = yield call(queryMailList, params);
         } else {
@@ -338,7 +396,7 @@ export default {
             mailSelected: []
           }
         });
-        if (mailList.every(item => (mailDetailData && mailDetailData.mailId) !== item.mailid)) {
+        if (mailList.every(item => (mailDetailData && mailDetailData.mailId) !== item.mailid) && !showingPanel) {
           yield put({
             type: 'putState',
             payload: {
@@ -365,6 +423,7 @@ export default {
       }
     },
     *selectCatalog({ payload: { catalogNode, catalogType } }, { select, put }) {
+      console.log(catalogNode)
       if (!catalogNode) return;
       if (catalogType === 'dept' && !catalogNode.recid) return;
       catalogNode.catalogtype = catalogType;
@@ -375,13 +434,21 @@ export default {
           mailPageIndex: 1
         }
       });
-      yield put({ type: 'queryMailList' });
+      if (catalogType === 'dept') {
+        yield put({ type: 'putState', payload: { selectDept_userMailAddr: catalogNode.mailaddr } });
+        yield put({ type: 'queryMailList' });
+      } else {
+        yield put({ type: 'putState', payload: { selectDept_userMailAddr: '' } });
+        yield put({ type: 'queryMailList' });
+      }
       if (catalogType === 'my') {
         // yield put({ type: 'updateMyCatalogData' });
         yield put({ type: 'reloadCatalogTree' });
       }
+      yield put({ type: 'toogleMailTab' });
     },
-    *saveCatalog({ payload: data }, { call, put }) {
+    *saveCatalog({ payload: data }, { call, put, select }) {
+      const { currentBoxId } = yield select(state => state.mails);
       const isEdit = !!data.recid;
       try {
         let fn;
@@ -390,9 +457,11 @@ export default {
           fn = updateMailCatalog;
           params = _.pick(data, ['recid', 'recname']);
           params.newpid = data.pid;
+          params.boxid = currentBoxId;
         } else {
           fn = saveMailCatalog;
           params = _.pick(data, ['pid', 'recname']);
+          params.boxid = currentBoxId;
         }
         yield put({ type: 'modalPending', payload: true });
         yield call(fn, params);
@@ -437,6 +506,10 @@ export default {
         message.success('删除成功');
         yield put({ type: 'queryMailList' });
         yield put({ type: 'reloadCatalogTree' });
+        yield put({
+          type: 'closeTab',
+          payload: null
+        });
       } catch (e) {
         message.error(e.message || '删除失败');
       }
@@ -605,20 +678,55 @@ export default {
         });
       }
     },
-    *showMailDetail({ payload: mail }, { select, call, put }) {
-      yield put({
-        type: 'putState',
-        payload: {
-          showingPanel: 'mailDetail'
+    *reloadMailDetail(action, { select, call, put }) {
+      const { mailDetailData } = yield select(state => state.mails);
+      debugger
+      if (mailDetailData && mailDetailData.status === 'loaded') {
+        const { mailInfo: mail } = mailDetailData;
+        try {
+          const { data } = yield call(queryMailDetail, mail.mailid);
+          const { mailDetailData: { mailId } } = yield select(state => state.mails);
+          if (mailId !== mail.mailid) return;
+          data.maildetail.catalogtype = mail.catalogtype;
+          data.maildetail.ctype = mail.ctype;
+          yield put({
+            type: 'putState',
+            payload: {
+              mailDetailData: {
+                status: 'loaded',
+                mailId: mail.mailid,
+                mailInfo: mail,
+                ...data
+              }
+            }
+          });
+        } catch (e) {
+          const { mailDetailData: { mailId } } = yield select(state => state.mails);
+          if (mailId !== mail.mailid) return;
+          yield put({
+            type: 'putState',
+            payload: {
+              mailDetailData: {
+                status: 'error',
+                mailId: mail.mailid,
+                mailInfo: mail,
+                error: e.message
+              }
+            }
+          });
         }
-      });
+      }
+    },
+    *showMailDetail({ payload: mail }, { select, call, put }) {
+      yield put({ type: 'openNewTab', payload: { showingPanel: 'mailDetail', tabType: 3, mailId: mail.mailid, mailInfo: mail } });
     },
     *sendemail({ payload: submitData }, { call, put }) {
       try {
         yield call(sendemail, submitData);
+        message.success('发送成功');
         yield put({
-          type: 'putState',
-          payload: { showingPanel: 'sendMailSuccess', editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null }
+          type: 'closeTab',
+          payload: 1
         });
       } catch (e) {
         message.error(e.message || '发送邮件失败');
@@ -674,6 +782,85 @@ export default {
       } catch (e) {
         message.error(e.message || '恢复失败');
       }
+    },
+    *initMailCol(action, { call, put }) {
+      try {
+        yield call(initMailCol);
+        yield put({ type: 'reloadCatalogTree' });
+        yield put({ type: 'queryMailList' });
+      } catch (e) {
+        message.error(e.message);
+      }
+    },
+    *closeTab({ payload: reloadType }, { select, call, put }) { //关闭当前Tab
+      const { mailTabs } = yield select(state => state.mails);
+      let newMailTabs = mailTabs.filter((item) => {
+        return !item.active;
+      })
+      yield put({ type: 'toogleMailTab' });
+      if (/mailid/.test(location.href)) {
+        yield put(routerRedux.replace({
+          pathname: 'mails'
+        }));
+      } else if (reloadType === 1) {
+        yield put({ type: 'reloadCatalogTree' });
+        yield put({ type: 'queryMailList' });
+      }
+      yield put({ type: 'updateMailTabs', payload: { showingPanel: '', mailTabs: newMailTabs } });
+    },
+    *openNewTab({ payload: { tabType, showingPanel: editMailType, mailId, mailInfo, modalMailsData } }, { select, call, put }) {
+      const { mailTabs } = yield select(state => state.mails);
+      let title = mailInfo ? mailInfo.title : '';
+      if (tabType === 2 && mailId && modalMailsData instanceof Array && modalMailsData.length > 0) { // 1：邮件主页 2：写邮件页 3：邮件详情页
+        title = modalMailsData[0].title ? modalMailsData[0].title : '无主题';
+      } else if (tabType === 2) {
+        title = '写邮件';
+      }
+
+      if (editMailType === 'replay' || editMailType === 'replay-attach' || editMailType === 'reply-all' || editMailType === 'replay-all-attach') {
+        title = 'Re：' + title;
+      } else if (editMailType === 'send' || editMailType === 'send-attach') {
+        title = 'Fw：' + title;
+      }
+
+      const newMailTabs = mailTabs.map(item => {
+        item.active = false;
+        return item;
+      });
+
+      let toggleTabUUID = '';
+      for (let i = 0; i < newMailTabs.length; i++) {
+        if (newMailTabs[i].tabType === tabType && mailId && newMailTabs[i].mailId === mailId && newMailTabs[i].editMailType === editMailType) {
+          // 不打开新的Tab 将当前将要打开的Tab切换为Active状态
+          toggleTabUUID = newMailTabs[i].uuid;
+          break;
+        }
+      }
+
+      if (!toggleTabUUID) {
+        const newTabs = [
+          ...newMailTabs,
+          new TabModel(tabType, title, true, mailId, editMailType, mailInfo)
+        ];
+        yield put({ type: 'updateMailTabs', payload: { mailTabs: newTabs } });
+      } else {
+        const mailTabs = newMailTabs.map(item => {
+          item.uuid === toggleTabUUID ? item.active = true : item
+          return item;
+        });
+        yield put({ type: 'updateMailTabs', payload: { mailTabs } });
+      }
+    },
+    *toogleMailTab({ payload: reloadType }, { select, call, put }) { //切换到 邮件Tab
+      const { mailTabs } = yield select(state => state.mails);
+      const newMailTabs = mailTabs.map(item => {
+        item.active = false;
+        if (item.tabType === 1) {
+          item.active = true;
+        }
+        return item;
+      });
+      yield put({ type: 'updateMailTabs', payload: { mailTabs: newMailTabs } });
     }
   },
   reducers: {
@@ -693,7 +880,22 @@ export default {
         modalPending: false
       };
     },
+    updateMailTabs(state, { payload }) {
+      // const { mailTabs } = payload;
+      // if (mailTabs instanceof Array && mailTabs.length > 0) {
+      //   const activeTab = mailTabs.filter(item => {
+      //     return item.active; //实时记录当前选中的Tab，用户刷新页面时，需要渲染出来
+      //   })
+      //   if(activeTab.length > 0 && activeTab[0].tabType === 1) { //当前Tab active 在邮件，则不记录
+      //     sessionStorage.removeItem('mailActiveTabInfo');
+      //   } else {
+      //     sessionStorage.setItem('mailActiveTabInfo', JSON.stringify(activeTab[0]));
+      //   }
+      // }
+      return { ...state, ...payload };
+    },
     resetState() {
+      //sessionStorage.removeItem('mailActiveTabInfo');
       return {
         /* 邮件目录 */
         openedCatalog: 'my', // my/dept/user
@@ -702,6 +904,7 @@ export default {
         myCatalogData: [],
         deptCatalogData: [],
         userCatalogData: [],
+        currentBoxId: '',
 
         /* 邮件列表 */
         mailPageIndex: 1,
@@ -712,6 +915,7 @@ export default {
         mailSelected: [],
         mailCurrent: null,
         mailDetailData: null,
+        selectDept_userMailAddr: '', //当前选择下属员工对应的邮箱， 查询邮件列表
 
         /* 写邮件 */
         mailContacts: [],
@@ -719,15 +923,12 @@ export default {
         recentContact: [],
         customerContact: [],
         innerContact: [],
-        editEmailFormData: null,
         focusTargetName: '',
         showingModals: '',
         showingPanel: '',
         modalPending: false,
         modalMailsData: [],
-        editEmailPageFormModel: null,
-        editEmailPageBtn: null,
-        currentMailId: ''
+        mailTabs: [new TabModel(1, '邮件', true)]
       };
     }
   }

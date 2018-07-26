@@ -163,7 +163,7 @@ class MailContent extends Component {
           </div>
         </div>}
         {/*<div className={styles.body} dangerouslySetInnerHTML={{ __html: mailbody || summary }} />*/}
-        <div className={styles.iframewrap}>
+        <div className={styles.iframewrap} style={{ height: this.state.iframeHeight }}>
           <iframe
             className={styles.iframe}
             frameBorder={0}
@@ -188,7 +188,9 @@ export default connect(
       },
       openEditMail(showModalsName, mails, currentMailId) {
         dispatch({ type: 'mails/putState',
-          payload: { showingPanel: showModalsName, currentMailId: currentMailId, modalMailsData: mails, editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null } });
+          payload: { showingPanel: showModalsName, modalMailsData: mails } });
+        dispatch({ type: 'mails/openNewTab',
+          payload: { tabType: 2, showingPanel: showModalsName, mailId: currentMailId, modalMailsData: mails } });
       }
     };
   }

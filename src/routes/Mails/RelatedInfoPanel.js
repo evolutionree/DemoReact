@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import { Tabs, Table, Dropdown, Menu, message, Spin } from 'antd';
+import { Tabs, Table, Dropdown, Menu, message, Spin, Icon } from 'antd'
 import { connect } from 'dva';
 import * as _ from 'lodash';
 import classnames from 'classnames';
@@ -16,6 +16,9 @@ import {
 } from '../../services/mails';
 import { DynamicFormViewLight } from '../../components/DynamicForm';
 import { formatFileSize, formatTime } from '../../utils';
+import MailContent from './MailContent';
+import EntcommEditModal from '../../components/EntcommEditModal';
+import EntcommAddModal from '../../components/EntcommAddModal';
 
 const Column = Table.Column;
 
@@ -73,7 +76,7 @@ class RelatedInfoPanel extends Component {
     super(props);
     const { mailTypes, attachTypes } = this.getLastSettings();
     this.state = {
-      currentTab: '1',
+      currentTab: '0',
       loading: false,
       sender: null,
       custInfo: null,
@@ -140,7 +143,7 @@ class RelatedInfoPanel extends Component {
 
   resetData = callback => {
     this.setState({
-      currentTab: '1',
+      currentTab: '0',
       sender: null,
       custInfo: null,
       contacts: null,
@@ -290,6 +293,10 @@ class RelatedInfoPanel extends Component {
     });
   };
 
+  addRelContact = () => {
+    this.props.addCustomerContact();
+  };
+
   renderRelatedInfo = () => {
     const { sender, custInfo, contacts } = this.state;
     if (!(sender && sender.length) && !(custInfo && custInfo.length)) {
@@ -312,13 +319,60 @@ class RelatedInfoPanel extends Component {
           />
         </div>}
         {contacts && contacts.length > 0 && <div className={styles.infobox}>
-          <div className={styles.infotitle}>客户联系人信息</div>
+          <div className={styles.infotitle}>客户联系人信息 <Icon style={{ cursor: 'pointer', color: '#2b80bf' }} type="plus" onClick={this.addRelContact} /></div>
           {contacts.map(contact => <div key={contact.recname} style={{ marginBottom: '5px' }}>
-            <div className={styles.infometa}><span>姓名：</span><MetaValue>{contact.recname}</MetaValue></div>
-            <div className={styles.infometa}><span>电话：</span><MetaValue>{contact.mobilephone}</MetaValue></div>
+            <div className={styles.infometa}><span>姓名：</span><MetaValue>{contact.recname} <Icon className={styles.editIcon} type="edit" onClick={() => this.props.editCustomerContact(contact)} /></MetaValue></div>
+            <div className={styles.infometa}><span>电话：</span><MetaValue>{contact.phone}</MetaValue></div>
             <div className={styles.infometa}><span>邮箱：</span><MetaValue>{contact.email}</MetaValue></div>
           </div>)}
         </div>}
+      </div>
+    );
+  };
+
+  renderRelatedContactModals = () => {
+    const { showingModals } = this.props;
+    const match = showingModals && showingModals.match(/contactEdit\?(.+)$/);
+    return (
+      <div>
+        <EntcommEditModal
+          visible={!!match}
+          entityId="e450bfd7-ff17-4b29-a2db-7ddaf1e79342"
+          recordId={match && match[1]}
+          entityName="联系人"
+          cancel={this.props.hideModal}
+          done={() => {
+            this.fetchRelInfo();
+            this.props.hideModal();
+          }}
+        />
+        {this.state.custInfo && this.state.custInfo.length > 0 &&  <EntcommAddModal
+          visible={/contactAdd/.test(showingModals)}
+          entityId="e450bfd7-ff17-4b29-a2db-7ddaf1e79342"
+          entityName="联系人"
+          cancel={this.props.hideModal}
+          done={() => {
+            this.fetchRelInfo();
+            this.props.hideModal();
+          }}
+          initFormData={{
+            belcust: { id: this.state.custInfo[0].recid, name: this.state.custInfo[0].recname }
+          }}
+        />}
+      </div>
+    );
+  };
+
+  renderMailDetail = () => {
+    const { status, maildetail, mailInfo } = this.props.mailDetailData || {};
+    const mailData = status === 'loaded' ? maildetail : mailInfo;
+    return (
+      <div>
+        <MailContent
+          isPreview
+          data={mailData}
+          onShowDetail={this.props.showMailDetail}
+        />
       </div>
     );
   };
@@ -336,6 +390,14 @@ class RelatedInfoPanel extends Component {
             onChange={this.onTabChange}
             tabBarStyle={{ background: '#f1f1f1' }}
           >
+            <Tabs.TabPane tab="邮件详情" key="0">
+              <div className={styles.header}>
+                <span>邮件详情</span>
+              </div>
+              <div className={styles.content}>
+                {this.renderMailDetail()}
+              </div>
+            </Tabs.TabPane>
             <Tabs.TabPane tab="联系人" key="1">
               <div className={styles.header}>
                 <span>邮件联系人信息</span>
@@ -493,6 +555,7 @@ class RelatedInfoPanel extends Component {
             </Tabs.TabPane>
           </Tabs>
         </Spin>
+        {this.renderRelatedContactModals()}
       </div>
     );
   }
@@ -507,6 +570,21 @@ export default connect(
       },
       showMailDetail(mail) {
         dispatch({ type: 'mails/showMailDetail', payload: mail });
+      },
+      editCustomerContact(contact) {
+        dispatch({
+          type: 'mails/showModals',
+          payload: 'contactEdit?' + contact.recid
+        });
+      },
+      addCustomerContact() {
+        dispatch({
+          type: 'mails/showModals',
+          payload: 'contactAdd'
+        });
+      },
+      hideModal() {
+        dispatch({ type: 'mails/showModals', payload: '' });
       }
     };
   }

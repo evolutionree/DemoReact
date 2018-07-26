@@ -1,4 +1,6 @@
 import React, { PropTypes, Component } from 'react';
+import MailActionBar from '../Mails/MailActionBar';
+import { connect } from 'dva';
 import { queryMailLayout, saveMailLayout } from '../../services/mails';
 import styles from './styles.less';
 import ImgIcon from '../../components/ImgIcon';
@@ -11,9 +13,9 @@ class MainLayout extends Component {
     right: PropTypes.node
   };
   static defaultProps = {};
-  static MIN_LEFT = 50;
+  static MIN_LEFT = 0;
   static MIN_RIGHT = 50;
-  static MIN_BOTTOM = 50;
+  static MIN_BOTTOM = 0;
   container = null;
   resizingType = '';
 
@@ -24,8 +26,8 @@ class MainLayout extends Component {
       pright: 0.25,
       pbottom: 0.50,
       showBottom: true,
-      showRight: true,
-      showLeft: true
+      showRight: false,
+      showLeft: false
     };
   }
 
@@ -39,11 +41,11 @@ class MainLayout extends Component {
       const { bottomprecent, leftprecent, rightprecent, showbottom, showright, showleft } = result.data;
       this.setState({
         pleft: leftprecent,
-        pright: rightprecent,
+        pright: 0.5 || rightprecent,
         pbottom: bottomprecent,
         showBottom: showbottom,
-        showRight: showright,
-        showLeft: true || showleft
+        showRight: false,
+        showLeft: true
       });
     });
   };
@@ -132,18 +134,23 @@ class MainLayout extends Component {
   };
 
   render() {
+    const { mailSelected } = this.props;
     const { pleft, pright, pbottom, showLeft, showRight, showBottom } = this.state;
     const wleft = showLeft ? (pleft * 100 + '%') : '30px';
     const wright = showRight ? (pright * 100 + '%') : '30px';
     const htop = showBottom ? ((1 - pbottom) * 100 + '%') : 'calc(100% - 30px)';
     const hbottom = showBottom ? (pbottom * 100 + '%') : '30px';
+
+    const actionBarStyle = {
+      paddingBottom: '10px',
+      borderBottom: '1px solid #f0f0f0',
+      minWidth: '920px',
+      overflow: 'auto'
+    }
+
     return (
       <div className={styles.container} ref={el => this.container = el}>
-        <div className={styles.left} style={{ width: wleft }}>
-          {showLeft ? this.props.left : (
-            <div style={{ height: '100%', background: '#f1f1f1' }} />
-          )}
-        </div>
+        <MailActionBar mails={mailSelected} style={actionBarStyle} />
         <div className={styles.right} style={{ width: wright }}>
           {showRight ? this.props.right : (
             <div style={{ height: '100%', background: '#f1f1f1' }} />
@@ -156,39 +163,19 @@ class MainLayout extends Component {
             onClick={this.toggleRight}
           />
         </div>
-        <div className={styles.mid} style={{ left: wleft, right: wright }}>
-          <ImgIcon
-            name="arrow-up-bordered"
-            size="small"
-            className={styles.panelToggle}
-            style={{ top: '15px', left: '-20px', transform: 'rotate(-90deg)' }}
-            onClick={this.toggleLeft}
-          />
-          <div className={styles.midtop} style={{ height: htop }}>
+        <div className={styles.mid} style={{ left: 0, right: wright }}>
+          <div className={styles.midtop}>
             {this.props.midtop}
           </div>
-          <div className={styles.midbottom} style={{ height: hbottom }}>
-            {showBottom ? this.props.midbottom : (
-              <div style={{ height: '100%', background: '#f1f1f1' }} />
-            )}
-            {!showBottom && <ImgIcon
-              name="arrow-up-bordered"
-              size="small"
-              style={{ position: 'absolute', top: '10px', right: '10px' }}
-              onClick={this.toggleBottom}
-            />}
-          </div>
-          <div className={styles.split} style={{ right: '100%', cursor: 'e-resize' }}
-               onMouseDown={this.activeResize.bind(this, 'left')} />
           <div className={styles.split} style={{ left: '100%', cursor: 'e-resize' }}
                onMouseDown={this.activeResize.bind(this, 'right')} />
-          <div className={styles.split} style={{ bottom: hbottom, top: htop, cursor: 'n-resize' }}
-               onMouseDown={this.activeResize.bind(this, 'mid')} />
         </div>
       </div>
     );
   }
 }
 
-export default MainLayout;
+export default connect(
+  state => state.mails
+)(MainLayout);
 

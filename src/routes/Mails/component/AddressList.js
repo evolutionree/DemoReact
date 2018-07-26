@@ -31,14 +31,14 @@ class AddressList extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      innerContact: nextProps.innerContact
-    });
-    if (nextProps.showingPanel && nextProps.showingPanel !== this.props.showingPanel) {
-      this.setState({
-        foldAddress: true
-      });
-    }
+    // this.setState({
+    //   innerContact: nextProps.innerContact
+    // });
+    // if (nextProps.showingPanel && nextProps.showingPanel !== this.props.showingPanel) {
+    //   this.setState({
+    //     foldAddress: true
+    //   });
+    // }
   }
 
   componentDidMount() {
@@ -97,7 +97,7 @@ class AddressList extends Component {
   selectContact(item) {
     this.props.onSelect && this.props.onSelect(item);
     if (this.props.focusTargetName) {
-      const editEmailFormData = this.props.editEmailFormData || {};
+      const editEmailFormData = this.props.data || {};
       const oldData = editEmailFormData[this.props.focusTargetName] || [];
       const newEditEmailFormData = {
         ...editEmailFormData,
@@ -109,14 +109,13 @@ class AddressList extends Component {
           }
         ], 'email')
       };
-
-      this.props.dispatch({ type: 'mails/putState', payload: { editEmailFormData: newEditEmailFormData } });
+      this.props.setFormData && this.props.setFormData(newEditEmailFormData);
     }
   }
 
   treeSelectHandler(selectKeys) {
     if (this.props.focusTargetName) {
-      const editEmailFormData = this.props.editEmailFormData || {};
+      const editEmailFormData = this.props.data || {};
       const oldData = editEmailFormData[this.props.focusTargetName] || [];
       const pushData = selectKeys && selectKeys instanceof Array && selectKeys.length > 0 && JSON.parse(selectKeys[0]);
       if (pushData) {
@@ -130,8 +129,7 @@ class AddressList extends Component {
             }
           ], 'email')
         };
-
-        this.props.dispatch({ type: 'mails/putState', payload: { editEmailFormData: newEditEmailFormData } });
+        this.props.setFormData && this.props.setFormData(newEditEmailFormData);
       }
     } else {
       message.info('请先选择需要填充的焦点行');

@@ -22,18 +22,19 @@
   }
   .right {
     position: absolute;
-    top: 0;
+    top: 48px;
     bottom: 0;
     right: 0;
     overflow: auto;
   }
   .mid {
     position: absolute;
-    top: 0;
+    top: 48px;
     bottom: 0;
     //border-left: 1px solid #ddd;
     //border-right: 1px solid #ddd;
     .midtop {
+      padding-top: 10px;
       position: relative;
       overflow: auto;
     }
@@ -57,6 +58,9 @@
   }
 
   :global {
+    .ant-table-small{
+      border: none;
+    }
     // 表格和分页
     .ant-table-thead > tr > th {
       padding: 10px 10px;
@@ -122,6 +126,7 @@
 }
 
 .mailList {
+  overflow: auto;
   :global {
     .ant-table {
       .ant-checkbox-inner {

@@ -12,7 +12,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Button, Modal, Icon, Upload, message, Checkbox, Select } from 'antd';
+import { Button, Modal, Icon, Upload, message, Checkbox, Select, Spin } from 'antd';
 import request, { getDeviceHeaders } from '../../../utils/request';
 import Toolbar from '../../../components/Toolbar';
 import UMEditor from '../../../components/UMEditor';
@@ -97,27 +97,22 @@ class EditMailPanel extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      formModel: this.props.editEmailPageFormModel === null ? formModel : this.props.editEmailPageFormModel,
-      dynamicOperateBtn: this.props.editEmailPageBtn === null ? dynamicOperateBtn : this.props.editEmailPageBtn,
+      type: this.props.type, // 打开邮箱是为写邮件/回复邮件/转发邮件/草稿箱
+      formModel: formModel,
+      dynamicOperateBtn: dynamicOperateBtn,
       fileList: [], //附件数据
       uploadingFiles: [], //上传中的附件数据
       fileUploadLimit: false, //当总文件大小超20M 则限制上传
       fileTypeUploadLimit: false, //当文件类型为.exe 则限制上传
       UMEditorContent: '', //富文本 内容
-      fromAddress: this.getDefaultFromAddress(this.props.mailBoxList), //发件邮箱 发新邮件默认取列表第一个  回复、转发取收到邮件的邮箱
-      height: document.body.clientHeight - 60 - 10,
-      isSign: false, //是否 设置签名
+      fromAddress: this.props.currentBoxId, //发件邮箱 发新邮件默认取当前用户选择的邮箱  回复、转发取收到邮件的邮箱
+      height: document.body.clientHeight - 60 - 10 - 42,
+      isSign: true, //是否 设置签名
+      queryLoading: false, //请求详情数据的状态
       sendLoading: false, //发邮件状态  防止邮件发送重复提交
-      saveDraftLoading: false //保存草稿的按钮状态  防止重复提交
+      saveDraftLoading: false, //保存草稿的按钮状态  防止重复提交
+      currentDraftMailId: '' //当前草稿箱的mailid
     };
-  }
-
-  getDefaultFromAddress(mailBoxList) {
-    let fromAddress = '';
-    if (mailBoxList && mailBoxList instanceof Array && mailBoxList.length > 0) {
-      fromAddress = mailBoxList[0].recid;
-    }
-    return fromAddress;
   }
 
   componentDidMount() {
@@ -128,13 +123,13 @@ class EditMailPanel extends Component {
         const observer = new MutationObserver(() => { //当页面发件人、密送人、抄送人输入框, 附件列表 DOM发生变化时  触发
           const listenDomHeight = this.refs.domListenRef.offsetHeight;
           if (listenDomHeight > 0) { //不清楚为什么最开始 会等于0
-            this.umEditor.setHeight(document.body.clientHeight - 60 - 10 - listenDomHeight - 180);
+            this.umEditor.setHeight(document.body.clientHeight - 60 - 10 - 42 - listenDomHeight - 198);
           }
           setTimeout(() => { //不清楚为什么 当附件存在列表时 计算附件列表的高度存在误差（取不到附件列表高度）， 所以开个计时器处理
             const newListenDomHeight = this.refs.domListenRef.offsetHeight;
             if (newListenDomHeight !== listenDomHeight) {
               if (newListenDomHeight > 0) {
-                this.umEditor.setHeight(document.body.clientHeight - 60 - 10 - newListenDomHeight - 180);
+                this.umEditor.setHeight(document.body.clientHeight - 60 - 10 - 42 - newListenDomHeight - 198);
               }
             }
           }, 500);
@@ -149,59 +144,56 @@ class EditMailPanel extends Component {
     window.removeEventListener('resize', this.onWindowResize);
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState({
-      formModel: nextProps.editEmailPageFormModel === null ? formModel : nextProps.editEmailPageFormModel,
-      dynamicOperateBtn: nextProps.editEmailPageBtn === null ? dynamicOperateBtn : nextProps.editEmailPageBtn
-    });
-
-    if (nextProps.type && nextProps.type !== this.props.type) { // 打开页面
-      this.queryMailDetail(nextProps.mailId, nextProps.mailBoxList, nextProps.type); //查询邮件数据 mailid 新邮件为‘’,  回复转发有Mailid
-      this.setState({
-        uploadingFiles: [],
-        fileUploadLimit: false,
-        fileTypeUploadLimit: false,
-        isSign: false,
-        sendLoading: false,
-        saveDraftLoading: false
-      });
-    }
-  }
-
   onWindowResize(e) {
     this.setState({
-      height: document.body.clientHeight - 60 - 10
+      height: document.body.clientHeight - 60 - 10 - 42
     });
     const formModel = this.state.formModel && this.state.formModel instanceof Array && this.state.formModel.filter((item) => item.show);
     try {
       const uploadListHeight = this.refs.uploadList.offsetHeight; //附件列表的高度
-      this.umEditor.setHeight(document.body.clientHeight - 60 - 10 - formModel.length * 44 - uploadListHeight - 180);
+      this.umEditor.setHeight(document.body.clientHeight - 60 - 10 - 42 - formModel.length * 44 - uploadListHeight - 198);
     } catch (e) { }
   }
 
+  componentWillMount() {
+    this.queryMailDetail(this.props.mailId, this.props.mailBoxList, this.state.type, this.props); //查询邮件数据 mailid 新邮件为‘’,  回复转发有Mailid
+  }
 
-  queryMailDetail(mailid, mailBoxList, editMailType) {
+  componentWillReceiveProps(nextProps) {
+    if (JSON.stringify(this.props.mailBoxList) !== JSON.stringify(nextProps.mailBoxList)) {
+      this.queryMailDetail(nextProps.mailId, nextProps.mailBoxList, nextProps.type, nextProps); //查询邮件数据 mailid 新邮件为‘’,  回复转发有Mailid
+    }
+  }
+
+  queryMailDetail(mailid, mailBoxList, editMailType, props) {
     if (mailid) {
       try {
+        this.setState({
+          queryLoading: true
+        })
         request('/api/mail/maildetail', {
           method: 'post', body: JSON.stringify({ mailid: mailid })
         }).then((result) => {
           const { data: { maildetail } } = result;
+          let setUmeditorContent = '';
           if (editMailType === 'draft') { //草稿箱
             this.setFormAddress(maildetail, mailBoxList);
-            this.umEditor.setContent(maildetail.mailbody || ''); //设置初始富文本内容
+            setUmeditorContent = maildetail.mailbody || ''
             if (signReg.test(maildetail.mailbody)) {
               this.setState({
                 isSign: true
               });
             }
+            this.setState({
+              currentDraftMailId: mailid
+            })
             this.setDraftFormData(maildetail, mailBoxList);
           } else {
-            this.umEditor.setContent(this.getInitMailContent(maildetail)); //设置初始富文本内容
+            setUmeditorContent = this.getInitMailContent(maildetail);
             this.setFormData(maildetail, mailBoxList, editMailType);  //设置表单初始数据
           }
 
-
+          this.setInitUmeditorContent(setUmeditorContent, this.state.fromAddress);//设置初始富文本内容
           if (editMailType === 'draft' || editMailType === 'replay-attach' || editMailType === 'replay-all-attach' || editMailType === 'send-attach') { //显示附件初始数据
             const fileList = maildetail.attachinfo && maildetail.attachinfo instanceof Array && maildetail.attachinfo.map((item) => {
                 return {
@@ -218,78 +210,88 @@ class EditMailPanel extends Component {
               fileList: []
             });
           }
+
+          this.setState({
+            queryLoading: false
+          });
         });
       } catch (e) {
+        this.setState({
+          queryLoading: false
+        })
         console.error(e);
         message.error(e);
       }
     } else {
-      this.umEditor.setContent(''); //设置初始富文本内容
       this.setState({
+        UMEditorContent: '',
         fileList: [],
-        fromAddress: this.getDefaultFromAddress(mailBoxList)
+        fromAddress: props.currentBoxId
       });
+      setTimeout(() => {
+        this.umEditor && this.umEditor.setContent(''); //清空邮件内容
+        this.umEditor && this.umEditor.execCommand('inserthtml', '<br/><br/><br/><br/><h5 id="sign">----------------<br />' + this.getSign(props.currentBoxId) + '</h5><br/>'); //设置初始富文本内容 默认有签名
+      }, 300);
     }
   }
 
   setDraftFormData(maildetail, mailBoxList) {
-    this.props.dispatch({ type: 'mails/putState',
-      payload: {
-        editEmailFormData: {
-          [formDataField.ToAddress]: this.transformFornEndData(maildetail.receivers),
-          [formDataField.CCAddress]: this.transformFornEndData(maildetail.ccers),
-          [formDataField.BCCAddress]: this.transformFornEndData(maildetail.bccers),
-          [formDataField.subject]: maildetail.title ? maildetail.title : ''
+    this.setState({
+      editEmailFormData: {
+        [formDataField.ToAddress]: this.transformFornEndData(maildetail.receivers),
+        [formDataField.CCAddress]: this.transformFornEndData(maildetail.ccers),
+        [formDataField.BCCAddress]: this.transformFornEndData(maildetail.bccers),
+        [formDataField.subject]: maildetail.title ? maildetail.title : ''
+      },
+      dynamicOperateBtn: [
+        {
+          label: '添加抄送',
+          name: 'addCS',
+          show: this.transformFornEndData(maildetail.ccers) ? false : true
         },
-        editEmailPageBtn: [
-          {
-            label: '添加抄送',
-            name: 'addCS',
-            show: this.transformFornEndData(maildetail.ccers) ? false : true
-          },
-          {
-            label: '删除抄送',
-            name: 'delCS',
-            show: this.transformFornEndData(maildetail.ccers) ? true : false
-          },
-          {
-            label: '添加密送',
-            name: 'addMS',
-            show: this.transformFornEndData(maildetail.bccers) ? false : true
-          },
-          {
-            label: '删除密送',
-            name: 'delMS',
-            show: this.transformFornEndData(maildetail.bccers) ? true : false
-          }
-        ],
-        editEmailPageFormModel: [
-          {
-            label: '收件人',
-            name: formDataField.ToAddress,
-            type: 'multipleInput',
-            show: true
-          },
-          {
-            label: '抄送',
-            name: formDataField.CCAddress,
-            type: 'multipleInput',
-            show: this.transformFornEndData(maildetail.ccers) ? true : false
-          },
-          {
-            label: '密送',
-            name: formDataField.BCCAddress,
-            type: 'multipleInput',
-            show: this.transformFornEndData(maildetail.bccers) ? true : false
-          },
-          {
-            label: '主题',
-            name: formDataField.subject,
-            type: 'normalInput',
-            show: true
-          }
-        ]
-      } });
+        {
+          label: '删除抄送',
+          name: 'delCS',
+          show: this.transformFornEndData(maildetail.ccers) ? true : false
+        },
+        {
+          label: '添加密送',
+          name: 'addMS',
+          show: this.transformFornEndData(maildetail.bccers) ? false : true
+        },
+        {
+          label: '删除密送',
+          name: 'delMS',
+          show: this.transformFornEndData(maildetail.bccers) ? true : false
+        }
+      ],
+      formModel: [
+        {
+          label: '收件人',
+          name: formDataField.ToAddress,
+          type: 'multipleInput',
+          show: true
+        },
+        {
+          label: '抄送',
+          name: formDataField.CCAddress,
+          type: 'multipleInput',
+          show: this.transformFornEndData(maildetail.ccers) ? true : false
+        },
+        {
+          label: '密送',
+          name: formDataField.BCCAddress,
+          type: 'multipleInput',
+          show: this.transformFornEndData(maildetail.bccers) ? true : false
+        },
+        {
+          label: '主题',
+          name: formDataField.subject,
+          type: 'normalInput',
+          show: true
+        }
+      ]
+    });
   }
 
   getInitMailContent(mailDetailData) {
@@ -336,159 +338,153 @@ class EditMailPanel extends Component {
     if (filteData && filteData instanceof Array && filteData.length > 0) { //发件箱 数据
       this.setFormAddress(maildetail, mailBoxList);
       if (editMailType === 'replay' || editMailType === 'replay-attach') {
-        this.props.dispatch({ type: 'mails/putState',
-          payload: {
-            editEmailFormData: { //发件人 抄送人 密送人 主题 form的数据
-              [formDataField.subject]: 'Re：' + (maildetail.title ? maildetail.title : '')
-            },
-            editEmailPageBtn: null,
-            editEmailPageFormModel: null
-          } });
+        this.setState({
+          editEmailFormData: { //发件人 抄送人 密送人 主题 form的数据
+            [formDataField.subject]: 'Re：' + (maildetail.title ? maildetail.title : '')
+          },
+          dynamicOperateBtn: dynamicOperateBtn,
+          formModel: formModel
+        });
       } else if (editMailType === 'reply-all' || editMailType === 'replay-all-attach') {
-        this.props.dispatch({ type: 'mails/putState',
-          payload: {
-            editEmailFormData: {
-              [formDataField.ToAddress]: this.transformFornEndData(maildetail.receivers),
-              [formDataField.CCAddress]: this.transformFornEndData(maildetail.ccers),
-              [formDataField.subject]: 'Re：' + (maildetail.title ? maildetail.title : '')
+        this.setState({
+          editEmailFormData: {
+            [formDataField.ToAddress]: this.transformFornEndData(maildetail.receivers),
+            [formDataField.CCAddress]: this.transformFornEndData(maildetail.ccers),
+            [formDataField.subject]: 'Re：' + (maildetail.title ? maildetail.title : '')
+          },
+          dynamicOperateBtn: [
+            {
+              label: '添加抄送',
+              name: 'addCS',
+              show: this.transformFornEndData(maildetail.ccers) ? false : true
             },
-            editEmailPageBtn: [
-              {
-                label: '添加抄送',
-                name: 'addCS',
-                show: this.transformFornEndData(maildetail.ccers) ? false : true
-              },
-              {
-                label: '删除抄送',
-                name: 'delCS',
-                show: this.transformFornEndData(maildetail.ccers) ? true : false
-              },
-              {
-                label: '添加密送',
-                name: 'addMS',
-                show: true
-              },
-              {
-                label: '删除密送',
-                name: 'delMS',
-                show: false
-              }
-            ],
-            editEmailPageFormModel: [
-              {
-                label: '收件人',
-                name: formDataField.ToAddress,
-                type: 'multipleInput',
-                show: true
-              },
-              {
-                label: '抄送',
-                name: formDataField.CCAddress,
-                type: 'multipleInput',
-                show: this.transformFornEndData(maildetail.ccers) ? true : false
-              },
-              {
-                label: '密送',
-                name: formDataField.BCCAddress,
-                type: 'multipleInput',
-                show: false
-              },
-              {
-                label: '主题',
-                name: formDataField.subject,
-                type: 'normalInput',
-                show: true
-              }
-            ]
-          } });
+            {
+              label: '删除抄送',
+              name: 'delCS',
+              show: this.transformFornEndData(maildetail.ccers) ? true : false
+            },
+            {
+              label: '添加密送',
+              name: 'addMS',
+              show: true
+            },
+            {
+              label: '删除密送',
+              name: 'delMS',
+              show: false
+            }
+          ],
+          formModel: [
+            {
+              label: '收件人',
+              name: formDataField.ToAddress,
+              type: 'multipleInput',
+              show: true
+            },
+            {
+              label: '抄送',
+              name: formDataField.CCAddress,
+              type: 'multipleInput',
+              show: this.transformFornEndData(maildetail.ccers) ? true : false
+            },
+            {
+              label: '密送',
+              name: formDataField.BCCAddress,
+              type: 'multipleInput',
+              show: false
+            },
+            {
+              label: '主题',
+              name: formDataField.subject,
+              type: 'normalInput',
+              show: true
+            }
+          ]
+        });
       } else if (editMailType === 'send' || editMailType === 'send-attach') {
-        this.props.dispatch({ type: 'mails/putState',
-          payload: {
-            editEmailFormData: {
-              [formDataField.subject]: 'Fw：' + (maildetail.title ? maildetail.title : '')
-            },
-            editEmailPageBtn: null,
-            editEmailPageFormModel: null
-          } });
+        this.setState({
+          editEmailFormData: {
+            [formDataField.subject]: 'Fw：' + (maildetail.title ? maildetail.title : '')
+          },
+          dynamicOperateBtn: dynamicOperateBtn,
+          formModel: formModel
+        });
       }
     } else { //收件箱 数据
       this.getMail(maildetail, mailBoxList); //设置默认发件箱
       if (editMailType === 'replay' || editMailType === 'replay-attach') {
-        this.props.dispatch({ type: 'mails/putState',
-          payload: {
-            editEmailFormData: {
-              [formDataField.ToAddress]: this.transformFornEndData([maildetail.sender]),
-              [formDataField.subject]: 'Re：' + (maildetail.title ? maildetail.title : '')
-            },
-            editEmailPageBtn: null,
-            editEmailPageFormModel: null
-          } });
+        this.setState({
+          editEmailFormData: {
+            [formDataField.ToAddress]: this.transformFornEndData([maildetail.sender]),
+            [formDataField.subject]: 'Re：' + (maildetail.title ? maildetail.title : '')
+          },
+          dynamicOperateBtn: dynamicOperateBtn,
+          formModel: formModel
+        });
       } else if (editMailType === 'reply-all' || editMailType === 'replay-all-attach') {
-        this.props.dispatch({ type: 'mails/putState',
-          payload: {
-            editEmailFormData: {
-              [formDataField.ToAddress]: this.getMail(maildetail, mailBoxList, 'getReceivers'),
-              [formDataField.CCAddress]: this.getMail(maildetail, mailBoxList, 'getCcers'),
-              [formDataField.subject]: 'Re：' + (maildetail.title ? maildetail.title : '')
+        this.setState({
+          editEmailFormData: {
+            [formDataField.ToAddress]: this.getMail(maildetail, mailBoxList, 'getReceivers'),
+            [formDataField.CCAddress]: this.getMail(maildetail, mailBoxList, 'getCcers'),
+            [formDataField.subject]: 'Re：' + (maildetail.title ? maildetail.title : '')
+          },
+          dynamicOperateBtn: [
+            {
+              label: '添加抄送',
+              name: 'addCS',
+              show: this.transformFornEndData(maildetail.ccers) ? false : true
             },
-            editEmailPageBtn: [
-              {
-                label: '添加抄送',
-                name: 'addCS',
-                show: this.transformFornEndData(maildetail.ccers) ? false : true
-              },
-              {
-                label: '删除抄送',
-                name: 'delCS',
-                show: this.transformFornEndData(maildetail.ccers) ? true : false
-              },
-              {
-                label: '添加密送',
-                name: 'addMS',
-                show: true
-              },
-              {
-                label: '删除密送',
-                name: 'delMS',
-                show: false
-              }
-            ],
-            editEmailPageFormModel: [
-              {
-                label: '收件人',
-                name: formDataField.ToAddress,
-                type: 'multipleInput',
-                show: true
-              },
-              {
-                label: '抄送',
-                name: formDataField.CCAddress,
-                type: 'multipleInput',
-                show: this.transformFornEndData(maildetail.ccers) ? true : false
-              },
-              {
-                label: '密送',
-                name: formDataField.BCCAddress,
-                type: 'multipleInput',
-                show: false
-              },
-              {
-                label: '主题',
-                name: formDataField.subject,
-                type: 'normalInput',
-                show: true
-              }
-            ]
-          } });
+            {
+              label: '删除抄送',
+              name: 'delCS',
+              show: this.transformFornEndData(maildetail.ccers) ? true : false
+            },
+            {
+              label: '添加密送',
+              name: 'addMS',
+              show: true
+            },
+            {
+              label: '删除密送',
+              name: 'delMS',
+              show: false
+            }
+          ],
+          formModel: [
+            {
+              label: '收件人',
+              name: formDataField.ToAddress,
+              type: 'multipleInput',
+              show: true
+            },
+            {
+              label: '抄送',
+              name: formDataField.CCAddress,
+              type: 'multipleInput',
+              show: this.transformFornEndData(maildetail.ccers) ? true : false
+            },
+            {
+              label: '密送',
+              name: formDataField.BCCAddress,
+              type: 'multipleInput',
+              show: false
+            },
+            {
+              label: '主题',
+              name: formDataField.subject,
+              type: 'normalInput',
+              show: true
+            }
+          ]
+        });
       } else if (editMailType === 'send' || editMailType === 'send-attach') {
-        this.props.dispatch({ type: 'mails/putState',
-          payload: {
-            editEmailFormData: {
-              [formDataField.subject]: 'Fw：' + (maildetail.title ? maildetail.title : '')
-            },
-            editEmailPageBtn: null,
-            editEmailPageFormModel: null
-          } });
+        this.setState({
+          editEmailFormData: {
+            [formDataField.subject]: 'Fw：' + (maildetail.title ? maildetail.title : '')
+          },
+          dynamicOperateBtn: dynamicOperateBtn,
+           formModel: formModel
+        });
       }
     }
   }
@@ -590,24 +586,20 @@ class EditMailPanel extends Component {
         title: '还有附件未上传完成',
         content: '您确定关闭？',
         onOk: () => {
-          this.umEditor.setContent('');
+          this.umEditor.setContent(''); //清空邮件内容
           this.setState({
             fileList: [],
             uploadingFiles: []
           })
-          this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: '' } });
-          this.props.dispatch({ type: 'mails/reloadCatalogTree' });
-          this.props.dispatch({ type: 'mails/queryMailList' });
+          this.props.dispatch({ type: 'mails/closeTab', payload: 1 });
         },
         onCancel() {
 
         }
       });
     } else {
-      this.umEditor.setContent('');
-      this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: '' } });
-      this.props.dispatch({ type: 'mails/reloadCatalogTree' });
-      this.props.dispatch({ type: 'mails/queryMailList' });
+      this.umEditor.setContent(''); //清空邮件内容
+      this.props.dispatch({ type: 'mails/closeTab', payload: 1 });
     }
   }
 
@@ -637,16 +629,15 @@ class EditMailPanel extends Component {
         break;
     }
 
-
-    this.props.dispatch({ type: 'mails/putState', payload: {
-      editEmailPageFormModel: formModel,
-      editEmailPageBtn: dynamicOperateBtn
-    } });
+    this.setState({
+      formModel: formModel,
+      dynamicOperateBtn: dynamicOperateBtn
+    });
   }
 
   sendMail() {
     const mailBoxList = this.props.mailBoxList; //发件人列表数据
-    const formData = this.props.editEmailFormData;
+    const formData = this.state.editEmailFormData;
     let formModel = this.state.formModel && this.state.formModel instanceof Array && this.state.formModel.filter((item) => item.show);
 
     let submitData = {};
@@ -699,10 +690,10 @@ class EditMailPanel extends Component {
     }); //附件数据
 
     submitData.AttachmentFile = submitData.AttachmentFile || [];
-    submitData.bodycontent = this.state.UMEditorContent; //富文本框数据
+    submitData.bodycontent = this.state.UMEditorContent.replace(/<h5\sid="sign">/, '<h5 id="notSign">'); //富文本框数据  sign替换成notSign 是因为发送后下次编辑该邮件 不再作为一个签名去操作了
 
-    if (this.props.type === 'draft' && this.props.currentMailId) { //发送的是草稿箱中的邮件,发送成功后，后端需要删除草稿箱中的邮件
-      submitData.mailId = this.props.currentMailId;
+    if (this.state.type === 'draft' && this.state.currentDraftMailId) { //发送的是草稿箱中的邮件,发送成功后，后端需要删除草稿箱中的邮件
+      submitData.mailId = this.state.currentDraftMailId;
     }
 
     if (!submitData.subject && submitData.subject !== 0) {
@@ -766,7 +757,8 @@ class EditMailPanel extends Component {
           }
         });
       } else if (data.flag === 1) { //校验通过  邮件发送成功
-        this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: 'sendMailSuccess', editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null } });
+        message.success('发送成功');
+        this.props.dispatch({ type: 'mails/closeTab', payload: 1 });
       }
     }).catch((reson) => {
       message.error(reson.message);
@@ -778,8 +770,8 @@ class EditMailPanel extends Component {
 
   saveDraft() {
     const submitData = this.getSubmitData();
-    if (this.props.currentMailId) {
-      submitData.mailId = this.props.currentMailId;
+    if (this.state.currentDraftMailId) {
+      submitData.mailId = this.state.currentDraftMailId;
     }
     this.setState({
       saveDraftLoading: true
@@ -787,9 +779,10 @@ class EditMailPanel extends Component {
     savedraft(submitData).then((result) => { //保存草稿箱
       message.success('草稿保存成功');
       const { data } = result;
-      this.props.dispatch({ type: 'mails/putState', payload: { showingPanel: 'draft', currentMailId: data } }); //保存草稿箱后要更新当前邮件Id  下次保存草稿就是更新数据
-      this.setState({
-        saveDraftLoading: false
+      this.setState({ //保存草稿箱后要更新当前邮件Id  下次保存草稿就是更新数据
+        saveDraftLoading: false,
+        currentDraftMailId: data,
+        type: 'draft'
       });
     }).catch((reson) => {
       message.error(reson.message);
@@ -801,7 +794,7 @@ class EditMailPanel extends Component {
 
   getSubmitData() { //发送邮件不用此函数（有很多验证逻辑）
     const mailBoxList = this.props.mailBoxList; //发件人列表数据
-    const formData = this.props.editEmailFormData;
+    const formData = this.state.editEmailFormData;
     let formModel = this.state.formModel && this.state.formModel instanceof Array && this.state.formModel.filter((item) => item.show);
 
     let submitData = {};
@@ -940,7 +933,7 @@ class EditMailPanel extends Component {
     });
   }
 
-  setSign(fromAddress) {
+  getSign(fromAddress) {
     let signString = '';
     const mailBoxList = this.props.mailBoxList;
     if (mailBoxList && mailBoxList instanceof Array) {
@@ -950,8 +943,21 @@ class EditMailPanel extends Component {
         }
       }
     }
-
     signString = signString ? signString : '';
+    return signString;
+  }
+
+  setInitUmeditorContent(content, fromAddress) {
+    let signString = this.getSign(fromAddress);
+    if (signReg.test(content)) {
+      this.umEditor.setContent(content); //设置初始内容
+    } else {
+      this.umEditor.setContent('<br/><br/><br/><br/><h5 id="sign">----------------<br />' + signString + '</h5><br/>' + content); //设置签名 + 内容
+    }
+  }
+
+  setSign(fromAddress) {
+    let signString = this.getSign(fromAddress);
     if (signReg.test(this.state.UMEditorContent)) {
       this.umEditor.setContent(this.state.UMEditorContent.replace(signReg, '$1 ----------------<br />' + signString + ' $2')); //设置签名
     } else {
@@ -988,6 +994,12 @@ class EditMailPanel extends Component {
     this.onUMEditorReady && this.onUMEditorReady();
   }
 
+  formDataChange = (data) => {
+    this.setState({
+      editEmailFormData: data
+    });
+  }
+
   render() {
     const props = {
       name: 'data',
@@ -1003,66 +1015,59 @@ class EditMailPanel extends Component {
     };
 
     const formModel = this.state.formModel && this.state.formModel instanceof Array && this.state.formModel.filter((item) => item.show);
-    const editMailType = this.props.type;
-    let visible = false;
-    if (editMailType === 'editMail' || editMailType === 'draft' || editMailType === 'replay' || editMailType === 'replay-attach' || editMailType === 'reply-all' || editMailType === 'replay-all-attach' || editMailType === 'send' || editMailType === 'send-attach') {
-      visible = true;
-    }
-
 
     return (
-      <div className={Styles.editMailWrap} style={{ width: 'calc(100% - 10px)', height: this.state.height, display: visible ? 'block' : 'none' }}>
-        <div className={Styles.head}>
-          新邮件
-        </div>
-        <div style={{ width: 'calc(100% - 220px)', float: 'left' }}>
-          <div>
-            <Toolbar style={{ paddingTop: '10px', paddingLeft: '10px' }}>
-              <Button onClick={this.sendMail.bind(this)} loading={this.state.sendLoading}>发送</Button>
-              <Button onClick={this.saveDraft.bind(this)} loading={this.state.saveDraftLoading}>存草稿</Button>
-              <Button className="grayBtn" onClick={this.closePanel.bind(this)}>关闭</Button>
-              {
-                this.state.dynamicOperateBtn && this.state.dynamicOperateBtn instanceof Array && this.state.dynamicOperateBtn.map((item, index) => {
-                  if (item.show) {
-                    return <Button key={index} ghost onClick={this.changeFormModal.bind(this, item.name)}>{item.label}</Button>;
-                  }
-                })
-              }
-            </Toolbar>
-          </div>
-          <div ref='domListenRef'>
-            <Form model={formModel} ref={ref => this.FormRef = ref} isOpenPage={visible} />
-            <div ref='uploadList'>
-              <Upload {...props}>
-                <div className={Styles.attachmentWrap}>
-                  <Icon type="link" /><span>添加附件</span>
-                </div>
-              </Upload>
-            </div>
-          </div>
-          <div className={Styles.UMEditorWrap}>
-            <UMEditor style={{ width: '100%', height: this.state.height - formModel.length * 44 - 215 }} useImageBase64 ref={this.umEditorRef} loading={false} onChange={this.UMEditorContentChangeHandler.bind(this)} />
-          </div>
-          <div>
-            <div className={Styles.footer}>
-              <Select style={{ width: 250 }} value={this.state.fromAddress} onSelect={this.fromAddressSelectHandler.bind(this)}>
+      <div className={Styles.editMailWrap} style={{ width: '100%', height: this.state.height }}>
+        <Spin spinning={this.state.queryLoading}>
+          <div style={{ width: 'calc(100% - 220px)', float: 'left' }}>
+            <div>
+              <Toolbar style={{ paddingTop: '10px', paddingLeft: '10px' }}>
+                <Button onClick={this.sendMail.bind(this)} loading={this.state.sendLoading}>发送</Button>
+                <Button onClick={this.saveDraft.bind(this)} loading={this.state.saveDraftLoading}>存草稿</Button>
+                <Button className="grayBtn" onClick={this.closePanel.bind(this)}>关闭</Button>
                 {
-                  this.props.mailBoxList && this.props.mailBoxList instanceof Array && this.props.mailBoxList.map((item, index) => {
-                    return (
-                      <Select.Option key={item.recid}>{`${item.recname} <${item.accountid}>`}</Select.Option>
-                    );
+                  this.state.dynamicOperateBtn && this.state.dynamicOperateBtn instanceof Array && this.state.dynamicOperateBtn.map((item, index) => {
+                    if (item.show) {
+                      return <Button key={index} ghost onClick={this.changeFormModal.bind(this, item.name)}>{item.label}</Button>;
+                    }
                   })
                 }
-              </Select>
-              <span>
+              </Toolbar>
+            </div>
+            <div ref='domListenRef'>
+              <Form model={formModel} ref={ref => this.FormRef = ref} data={this.state.editEmailFormData || null} onChange={this.formDataChange} />
+              <div ref='uploadList'>
+                <Upload {...props}>
+                  <div className={Styles.attachmentWrap}>
+                    <Icon type="link" /><span>添加附件</span>
+                  </div>
+                </Upload>
+              </div>
+            </div>
+            <div className={Styles.UMEditorWrap}>
+              <UMEditor style={{ width: '100%', height: this.state.height - formModel.length * 44 - 275 }} useImageBase64 ref={this.umEditorRef} loading={false} onChange={this.UMEditorContentChangeHandler.bind(this)} />
+            </div>
+            <div>
+              <div className={Styles.footer}>
+                <Select style={{ width: 250 }} value={this.state.fromAddress} onSelect={this.fromAddressSelectHandler.bind(this)}>
+                  {
+                    this.props.mailBoxList && this.props.mailBoxList instanceof Array && this.props.mailBoxList.map((item, index) => {
+                      return (
+                        <Select.Option key={item.recid}>{`${item.recname} <${item.accountid}>`}</Select.Option>
+                      );
+                    })
+                  }
+                </Select>
+                <span>
                 <Checkbox onChange={this.changeSign.bind(this)} checked={this.state.isSign}>带签名</Checkbox>
               </span>
+              </div>
             </div>
           </div>
-        </div>
-        <div style={{ width: 220, float: 'left', height: 'calc(100% - 42px)' }}>
-          <AddressList model={formModel} />
-        </div>
+          <div style={{ width: 220, float: 'left', height: '100%' }}>
+            <AddressList data={this.state.editEmailFormData} setFormData={this.formDataChange} />
+          </div>
+        </Spin>
       </div>
     );
   }
