@@ -8,6 +8,7 @@ import RelTableView from './RelTableView';
 import styles from './RelTable.less';
 import generateDefaultFormData from '../generateDefaultFormData';
 import RelTableImportModal from '../RelTableImportModal';
+import IntlText from '../../UKComponent/Form/IntlText';
 
 
 class RelTable extends Component {
@@ -370,7 +371,7 @@ class RelTable extends Component {
               <div className={classnames([styles.th, {
                 [styles.required]: !!required
               }])} key={field.fieldname}>
-                <span>{field.displayname}</span>
+                <IntlText name="displayname" value={field} />
               </div>
             );
           })}

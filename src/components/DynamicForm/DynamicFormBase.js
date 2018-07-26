@@ -3,6 +3,7 @@ import { Form } from 'antd';
 import classnames from 'classnames';
 import FoldableGroup from './FoldableGroup';
 import DynamicField from './DynamicField';
+import IntlText from '../UKComponent/Form/IntlText';
 import { getEntcommDetail } from '../../services/entcomm';
 
 const FormItem = Form.Item;
@@ -307,7 +308,7 @@ class DynamicFormBase extends Component {
     return children => (
       <WrapFormItem
         key={field.fieldname}
-        label={field.displayname}
+        label={<IntlText name="displayname" value={field} />}
         colon={false}
         required={field.isrequire || fieldConfig.isRequiredJS}
         className={cls}

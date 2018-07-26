@@ -8,6 +8,7 @@ import styles from './styles.less';
 import { getGeneralProtocol, queryEntityStage, queryStageInfo, saveStageData, pushStage, backStage, restartSaleStage } from '../../services/entcomm';
 import StageFlowModal from './StageFlowModal';
 import StageBarUpload from "./StageBarUpload";
+import IntlText from '../../components/UKComponent/Form/IntlText';
 import { formatFileSize } from '../../utils';
 
 class StageBar extends Component {
@@ -590,7 +591,6 @@ class StageBar extends Component {
     let i = 0;
     const { flowEntity } = this.state;
     const relEntityId = this.props.entityId;
-    console.log(this.state);
     const relRecId = this.props.recordDetail.recid;
     const stageList = [];
     for (i = 0; i < this.state.stageList.length; i += 1) {
@@ -634,7 +634,7 @@ class StageBar extends Component {
           return (
             <li className={liCls} key={item.salesstageid}
                 onClick={() => { this.toggleStageDetail(item); }}>
-              <div className={styles.stagetext}>{item.stagename}</div>
+              <div className={styles.stagetext}><IntlText name="stagename" value={item} /></div>
               <div className={styles.stageicon}>
                 <Icon type="down" />
               </div>

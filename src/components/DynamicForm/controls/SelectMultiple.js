@@ -2,6 +2,7 @@ import React, { PropTypes, Component } from 'react';
 import { Select } from 'antd';
 import _ from 'lodash';
 import connectBasicData from '../../../models/connectBasicData';
+import IntlText from '../../UKComponent/Form/IntlText';
 import { blurByHelper } from './helpers';
 
 const Option = Select.Option;
@@ -68,6 +69,7 @@ class SelectMultiple extends Component {
       return dictionaryData[sourceId].map(dic => ({
         value: dic.dataid,
         label: dic.dataval,
+        label_lang: dic.dataval_lang,
         disabled: dic.recstatus === 0
       }));
     }
@@ -161,7 +163,7 @@ class SelectMultiple extends Component {
         style={{ width: '100%' }}
       >
         {options.map(opt => (
-          <Option key={opt.value} style={opt.disabled ? { display: 'none'} : null}>{opt.label}</Option>
+          <Option key={opt.value} style={opt.disabled ? { display: 'none'} : null}><IntlText name="label" value={opt} /></Option>
         ))}
       </Select>
     );

@@ -7,6 +7,7 @@ import moment from 'moment';
 import { getGeneralProtocol, getEntcommDetail, getCustomHeaders, saveCustomHeaders } from '../../services/entcomm';
 import Avatar from '../../components/Avatar';
 import CustomHeaderModal from '../../components/CustomHeaderModal';
+import IntlText from '../UKComponent/Form/IntlText';
 import DSourceDetail from './DSourceDetail';
 import FilterDrop from './FilterDropComponent/index';
 import classnames from 'classnames';
@@ -221,7 +222,7 @@ class DynamicTable extends Component {
       return {
         key: field.fieldname,
         dataIndex: field.fieldname,
-        title: field.displayname,
+        title: <IntlText name="displayname" value={field} />,
         sorter: this.props.sorter,
         sortOrder: (this.props.sorter && sortFieldAndOrder) ? sortFieldAndOrder.split(' ')[0] === field.fieldname && (sortFieldAndOrder.split(' ')[1] + 'end') : false,
         width: this.props.fixedHeader ? setWidth + 22 : 0, //22：padding + border

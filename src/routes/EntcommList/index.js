@@ -196,7 +196,7 @@ function EntcommList({
         single = false;
         multiple = true;
       }
-      return { label: item.title, handler: extraToolbarClickHandler.bind(this, item), single: single, multiple: multiple, show: true };
+      return { label: <IntlText name="title" value={item} />, handler: extraToolbarClickHandler.bind(this, item), single: single, multiple: multiple, show: true };
   });
   ajaxToolbarActions = ajaxToolbarActions || [];
   return (
@@ -219,7 +219,7 @@ function EntcommList({
         {shouldShowExport() && <Button onClick={exportData}>导出</Button>}
         {
           extraButtonData && extraButtonData instanceof Array && extraButtonData.map((item, index) => {
-            return <Button onClick={extraButtonClickHandler.bind(this, item)} key={index}>{item.title}</Button>;
+            return <Button onClick={extraButtonClickHandler.bind(this, item)} key={index}><IntlText name="title" value={item} /></Button>;
           })
         }
         <Toolbar.Right>
