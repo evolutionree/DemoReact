@@ -3,6 +3,7 @@ import { connect } from 'dva';
 import { Modal, Select, message, Radio } from 'antd';
 import { DynamicFormAdd, generateDefaultFormData } from '../../components/DynamicForm';
 import { getGeneralProtocol, addEntcomm } from '../../services/entcomm';
+import IntlText from '../../components/UKComponent/Form/IntlText';
 
 const Option = Select.Option;
 
@@ -184,7 +185,7 @@ class EntcommAddModal extends Component {
             onChange={event => this.setState({ selectedEntityType: event.target.value })}
           >
             {entityTypes.map(type => (
-              <Radio key={type.categoryid} value={type.categoryid}>{type.categoryname}</Radio>
+              <Radio key={type.categoryid} value={type.categoryid}><IntlText name="categoryname" value={type} /></Radio>
             ))}
           </Radio.Group>
           {/*<Select*/}

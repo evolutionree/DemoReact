@@ -16,6 +16,7 @@ import connectPermission from '../../models/connectPermission';
 import DynamicModal from './DynamicModal';
 import ExportModal from './ExportModal';
 import DataTransferModal from './DataTransferModal';
+import IntlText from '../../components/UKComponent/Form/IntlText';
 
 
 const Option = Select.Option;
@@ -209,7 +210,7 @@ function EntcommList({
       >
         <Select style={{ minWidth: '120px' }} value={menuId} onChange={onMenuChange}>
           {menus.map(menu => (
-            <Option key={menu.menuId}>{menu.menuName}</Option>
+            <Option key={menu.menuId}><IntlText name="menuName" value={menu} /></Option>
           ))}
         </Select>
         {checkFunc('EntityDataAdd') && <Button onClick={openAdd}>新增</Button>}

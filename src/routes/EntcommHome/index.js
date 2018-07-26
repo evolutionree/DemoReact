@@ -6,6 +6,7 @@ import { HomePageMainFieldsView } from '../../components/DynamicForm';
 import StageBar from './StageBar2';
 import connectPermission from '../../models/connectPermission';
 import { Icon } from "antd";
+import IntlText from '../../components/UKComponent/Form/IntlText';
 
 function EntcommHome({
   checkFunc,
@@ -29,8 +30,8 @@ function EntcommHome({
       {'f9db9d79-e94b-4678-a5cc-aa6e281c1246' === entityId && <LinkTab to={`/entcomm/${entityId}/${recordId}/relationtree`}>客户关系</LinkTab>}*/}
       {[...relTabs.map(t => (
         t.entitytaburl ?
-        <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/${t.entitytaburl}`}>{t.relname}</LinkTab> :
-        <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/rel/${t.relid}/${t.relentityid}`}>{t.relname}</LinkTab>
+        <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/${t.entitytaburl}`}><IntlText name="relname" value={t} /></LinkTab> :
+        <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/rel/${t.relid}/${t.relentityid}`}><IntlText name="relname" value={t} /></LinkTab>
       ))]}
     </LinkTab.Group>
   );

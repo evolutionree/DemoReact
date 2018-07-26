@@ -4,6 +4,7 @@ import { Icon } from 'antd';
 import ActivityBoard from '../../../../components/ActivityBoard';
 import FoldBox from '../../../../components/FoldBox';
 import ImgCard from '../../../../components/ImgCard';
+import IntlText from '../../../../components/UKComponent/Form/IntlText';
 import PluginAddModal from './PluginAddModal';
 import DynamicDetailModal from './DynamicDetailModal';
 import styles from './styles.less';
@@ -34,7 +35,7 @@ function EntcommActivities({
               key={plugin.name}
               img={`/api/fileservice/read?fileid=${plugin.icon}`}
               onClick={pluginAdd.bind(null, index)}
-              label={plugin.name}
+              label={<IntlText name="name" value={plugin} />}
             />
           );
         })}

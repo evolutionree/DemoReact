@@ -4,6 +4,7 @@ import { Select, Tooltip, Icon } from 'antd';
 import _ from 'lodash';
 import connectBasicData from '../../../models/connectBasicData';
 import { queryYearWeekData } from '../../../services/basicdata';
+import IntlText from '../../UKComponent/Form/IntlText';
 import { blurByHelper } from './helpers';
 
 const Option = Select.Option;
@@ -90,6 +91,7 @@ class SelectSingle extends Component {
       const options = dictionaryData[sourceId].map(dic => ({
         value: dic.dataid,
         label: dic.dataval,
+        label_lang: dic.dataval_lang,
         disabled: dic.recstatus === 0
       }));
       this.setState({ options }, this.setDataReady);
@@ -193,7 +195,7 @@ class SelectSingle extends Component {
         >
           <Option value="">- 请选择 -</Option>
           {options.map(opt => (
-            <Option key={opt.value + ''} disabled={opt.disabled}>{opt.label}</Option>
+            <Option key={opt.value + ''} disabled={opt.disabled}><IntlText name="label" value={opt} /></Option>
           ))}
         </Select>
         {
