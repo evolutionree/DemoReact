@@ -97,6 +97,12 @@ class ReportIndex extends Component {
           Parameters: this.getDefaultParameters(item, result.data.components)
         });
       });
+    }).catch(e => {
+      console.error(e.message);
+      message.error(e.message);
+      this.setState({
+        loading: false
+      });
     });
   }
 
@@ -364,19 +370,23 @@ class ReportIndex extends Component {
       //div块
       case 7:
         return (
-          <Card style={{ borderRadius: borderRadius, margin: margin }} html={item.divctrlextinfo.textlabelscheme} data={this.state[item.datasourcename]} params={item.divctrlextinfo.params} />
+          <div className={Styles.CardWrap}>
+            <Card style={{ borderRadius: borderRadius, margin: margin }} html={item.divctrlextinfo.textlabelscheme} data={this.state[item.datasourcename]} params={item.divctrlextinfo.params} />
+            <Spin tip="数据加载中..." spinning={this.state[item.datasourcename + 'loading']}></Spin>
+          </div>
         );
 
       //表格(Mobile device)
       case 8:
         const tableInfo = this.getMobileColumns(item, item.datasourcename);
         return (
-          <div>
+          <div className={Styles.ListWrap}>
             {
               this.state[item.datasourcename] && this.state[item.datasourcename].map((dataItem, dataIndex) => {
                 return <List key={dataIndex} data={dataItem} tableInfo={tableInfo} style={{ margin: margin }} />;
               })
             }
+            <Spin tip="数据加载中..." spinning={this.state[item.datasourcename + 'loading']}></Spin>
           </div>
         );
 
@@ -422,7 +432,7 @@ class ReportIndex extends Component {
         }
 
         return (
-          <div>
+          <div className={Styles.CarouselWrap}>
             {
               lineChartData.length === 0 ? null : <div style={{ borderRadius: borderRadius, margin: margin, overflow: 'hidden' }}>
                 <Carousel autoplay>
@@ -432,6 +442,7 @@ class ReportIndex extends Component {
                 </Carousel>
               </div>
             }
+            <Spin tip="数据加载中..." spinning={this.state[item.datasourcename + 'loading']}></Spin>
           </div>
         );
 
@@ -442,7 +453,7 @@ class ReportIndex extends Component {
 
   render() {
     return (
-      <Spin tip="加载数据中..." spinning={this.state.loading}>
+      <Spin spinning={this.state.loading}>
         <Page>
           {
             this.state.components.map((item, index) => {
