@@ -116,12 +116,12 @@ class DepartmentTree extends React.Component {
     return data.map(item => {
       if (item.children && item.children.length) {
         return (
-          <TreeNode key={item.deptid} title={item.deptname}>
+          <TreeNode className={item.recstatus === 0 ? styles.hiddenNode : ''} key={item.deptid} title={item.deptname}>
             {this.renderTreeNodes(item.children)}
           </TreeNode>
         );
       } else {
-        return <TreeNode key={item.deptid} title={item.deptname} isLeaf />;
+        return <TreeNode className={item.recstatus === 0 ? styles.hiddenNode : ''} key={item.deptid} title={item.deptname} isLeaf />;
       }
     });
   }
