@@ -172,6 +172,13 @@ export default {
       let Configs = params.configs.map(item => {
         item.entityId = entityId;
         item.RelId = RelId;
+        item.entityrule = item.entityrule ? {
+          ...item.entityrule,
+          ruleitems: item.entityrule.ruleitems instanceof Array && item.entityrule.ruleitems.map(ruleItem => {
+            ruleItem.ruledata = typeof ruleItem.ruledata !== 'string' ? JSON.stringify(ruleItem.ruledata) : ruleItem.ruledata;
+            return ruleItem;
+          })
+        } : null;
         return item;
       });
 
