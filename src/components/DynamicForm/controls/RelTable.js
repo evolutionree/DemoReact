@@ -382,14 +382,14 @@ class RelTable extends Component {
   // 渲染表格数据
   renderTableBody = () => {
     return this.parseValue().map((item, index) => {
-      //const value = this.props.mode === 'ADD' ? generateDefaultFormData(this.state.fields, item && item.FieldData || item) : item && item.FieldData || item;
+      const value = this.props.mode === 'ADD' ? generateDefaultFormData(this.state.fields, item && item.FieldData || item) : item && item.FieldData || item;
       return (
         <RelTableRow
           key={index}
           mode={this.props.mode}
           selected={_.includes(this.state.selectedRows, index)}
           fields={this.state.fields}
-          value={item && item.FieldData || item}
+          value={value}
           onChange={this.onRowValueChange.bind(this, index)}
           onSelect={this.onRowSelect.bind(this, index)}
           ref={formInst => this.arrFormInstance[index] = formInst}
