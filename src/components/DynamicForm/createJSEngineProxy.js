@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { Modal } from 'antd';
 import { getAuthedHeaders } from '../../utils/request';
 import { queryEntityDetail } from '../../services/entity';
+import { getLocalAuthentication } from '../../services/authentication';
 
 function debugMsg(msg) {
   Modal.info({
@@ -182,6 +183,16 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
         formValue[field.fieldname] = val;
       });
       return formValue;
+    };
+
+    getCurrentUserID = () => {
+      const { user } = getLocalAuthentication();
+      try {
+        const userId = JSON.parse(user).userNumber;
+        return userId + '';
+      } catch (e) {
+        return '';
+      }
     };
 
     getValue = fieldName => {
