@@ -5,6 +5,7 @@ import React, { PropTypes, Component } from 'react';
 import { Input, Icon } from 'antd';
 import { connect } from 'dva';
 import classnames from 'classnames';
+import MD5 from 'md5';
 import styles from './IntlInput.less';
 
 let langlist = JSON.parse(window.localStorage.getItem('langlist')) || [];
@@ -93,6 +94,32 @@ class IntlInput extends Component {
   }
 
   inputBlur = (e) => {
+//     var appid = '20180725000188783';
+//     var key = 'K98S91OHBmtYhCP5aF9F';
+//     var salt = (new Date()).getTime();
+//     var query = 'apple';
+// // 多个query可以用\n连接  如 query='apple\norange\nbanana\npear'
+//     var from = 'en';
+//     var to = 'zh';
+//     var str1 = appid + query + salt + key;
+//     var sign = MD5(str1);
+//     $.ajax({
+//       url: 'http://api.fanyi.baidu.com/api/trans/vip/translate',
+//       type: 'get',
+//       dataType: 'jsonp',
+//       data: {
+//         q: query,
+//         appid: appid,
+//         salt: salt,
+//         from: from,
+//         to: to,
+//         sign: sign
+//       },
+//       success: function (data) {
+//         console.log(data);
+//       }
+//     });
+
     let val = {
       ...this.state.value,
       [this.state.currentLocale]: e.target.value

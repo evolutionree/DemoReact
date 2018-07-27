@@ -38,8 +38,8 @@ function NewParamForm({
         {toolbarNode}
       </FormItem> : null}
       {showAdd && fields.map(field => {
-        return field.intl ? <FormItem key={field.key}>
-          {getFieldDecorator(field.key, {
+        return field.intl ? <FormItem key={field.key + '_lang'}>
+          {getFieldDecorator(field.key + '_lang', {
             initialValue: '',
             validateTrigger: 'onChange',
             rules: [{

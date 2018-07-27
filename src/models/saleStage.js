@@ -96,12 +96,12 @@ export default {
       }
     },
     *updateSalesStage({ payload: queries }, { select, put, call }) {
-      const { salesstageid, stagename, winrate } = queries;
+      const { salesstageid, stagename_lang, winrate } = queries;
       const { businessTypeActiveId } = yield select(state => state.saleStage);
       try {
         const params = {
           salesstageid,
-          stagename_lang: stagename,
+          stagename_lang: stagename_lang,
           winrate: winrate / 100,
           SalesstageTypeId: businessTypeActiveId
         };

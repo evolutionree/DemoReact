@@ -15,7 +15,7 @@ function EntityTypes({
       type: 'entityTypes/create',
       payload: {
         entityId,
-        categoryname_lang: data.categoryname
+        categoryname_lang: data.categoryname_lang
       }
     });
   }
@@ -24,7 +24,7 @@ function EntityTypes({
       type: 'entityTypes/update',
       payload: {
         CategoryId: data.categoryid,
-        categoryname_lang: data.categoryname
+        categoryname_lang: data.categoryname_lang
       }
     });
   }
