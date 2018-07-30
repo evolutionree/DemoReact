@@ -1,15 +1,3 @@
 {
-  "编辑": "The editor",
-  "添加": "add",
-  "序号": "The serial number",
-  "字典值": "A dictionary value",
-  "操作": "operation",
-  "保存": "save",
-  "字典值不能为空": "A dictionary value cannot be empty",
-  "删除": "delete",
-  "字典参数": "Parameters of the dictionary",
-  "确定删除该数据吗?": "Sure to delete the data?",
-  "请输入10个以内的字符": "Please enter the characters within 10",
-  "请输入字典值": "Please enter the dictionary",
-  "阶段名称": "The name of the stage"
+  "请输入评论内容": "Please enter a comment"
 }
