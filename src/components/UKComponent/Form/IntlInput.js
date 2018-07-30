@@ -6,6 +6,7 @@ import { Input, Icon } from 'antd';
 import { connect } from 'dva';
 import classnames from 'classnames';
 import MD5 from 'md5';
+import { translateMap } from '../util/BaiduTranslate';
 import styles from './IntlInput.less';
 
 let langlist = JSON.parse(window.localStorage.getItem('langlist')) || [];
@@ -93,38 +94,61 @@ class IntlInput extends Component {
     });
   }
 
+  translateCNToOtherLang = (text, translate_lang, fromLang, toLang) => {
+    if (!text) {
+      return;
+    }
+    const appid = '20180727000189469';
+    const key = 'lTvPvTz1SzUqP1Lmjeoo';
+    const salt = (new Date()).getTime();
+    const query = text;
+    // 多个query可以用\n连接  如 query='apple\norange\nbanana\npear'
+    const from = fromLang;
+    const to = toLang;
+    const str1 = appid + query + salt + key;
+    const sign = MD5(str1);
+    $.ajax({ //axios不支持JSONP  so 用jquery 也可以安装jsonp
+      url: 'http://api.fanyi.baidu.com/api/trans/vip/translate',
+      type: 'get',
+      dataType: 'jsonp',
+      data: {
+        q: query,
+        appid: appid,
+        salt: salt,
+        from: from,
+        to: to,
+        sign: sign
+      },
+      success: (result) => { //[{src: "中国", dst: "China"}]
+        const data = result.trans_result;
+        if (data) {
+          let val = {
+            ...this.state.value,
+            [translate_lang]: data instanceof Array && data[0].dst
+          };
+          this.props.onChange && this.props.onChange(val);
+        } else {
+          console.error('翻译出错，错误码：' + result.error_code + '|' + result.error_msg);
+        }
+      },
+      error: (e) => {
+        console.error(e);
+      }
+    });
+  }
+
   inputBlur = (e) => {
-//     var appid = '20180725000188783';
-//     var key = 'K98S91OHBmtYhCP5aF9F';
-//     var salt = (new Date()).getTime();
-//     var query = 'apple';
-// // 多个query可以用\n连接  如 query='apple\norange\nbanana\npear'
-//     var from = 'en';
-//     var to = 'zh';
-//     var str1 = appid + query + salt + key;
-//     var sign = MD5(str1);
-//     $.ajax({
-//       url: 'http://api.fanyi.baidu.com/api/trans/vip/translate',
-//       type: 'get',
-//       dataType: 'jsonp',
-//       data: {
-//         q: query,
-//         appid: appid,
-//         salt: salt,
-//         from: from,
-//         to: to,
-//         sign: sign
-//       },
-//       success: function (data) {
-//         console.log(data);
-//       }
-//     });
+    for (let i = 0; i < langlist.length; i++) { //翻译其他 语言
+      const translate_lang = langlist[i].key;
+      if (translateMap[translate_lang.toLocaleUpperCase()] && !this.state.value[translate_lang]) { //要翻译的语言版本 值还为空的时候 允许自动翻译
+        this.translateCNToOtherLang(e.target.value, translate_lang, translateMap[this.state.currentLocale.toUpperCase()], translateMap[translate_lang.toLocaleUpperCase()]);
+      }
+    }
 
     let val = {
       ...this.state.value,
       [this.state.currentLocale]: e.target.value
     };
-
     this.props.onChange && this.props.onChange(val);
   }
 
