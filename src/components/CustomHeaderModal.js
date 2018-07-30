@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import { Modal, Button, Row, Col, InputNumber, Switch, Checkbox, Icon } from 'antd';
 import _ from 'lodash';
 import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-hoc';
+import IntlText from './UKComponent/Form/IntlText';
 import storage from '../utils/storage';
 import Styles from './CustomHeaderModal.less';
 
@@ -33,7 +34,7 @@ const SortableItem = SortableElement(({ item, isDisplayChange, widthChange, prev
           <div className={Styles.customTableColumn}>{item.columnConfig.seq}</div>
         </Col>
         <Col span={8} onMouseOver={cellMouseOver}>
-          <div className={Styles.customTableColumn}>{item.displayname}</div>
+          <div className={Styles.customTableColumn}><IntlText name="displayname" value={item} /></div>
         </Col>
         <Col span={6} onMouseOver={cellMouseOver}>
           <div className={Styles.customTableColumn}>

@@ -5,12 +5,14 @@ import _ from 'lodash';
 import Page from '../../components/Page';
 import styles from './styles.less';
 import MobileViewStyleSelect from './MobileViewStyleSelect';
+import { getIntlText } from '../../components/UKComponent/Form/IntlText';
 
 const FormItem = Form.Item;
 
 const DataSourceHome = ({
   dispatch,
   dataSourceName,
+  rawDetailData,
   sqlContent,
   mobViewConfig,
   colNames
@@ -32,7 +34,7 @@ const DataSourceHome = ({
     dispatch({ type: 'dSourceHome/save' });
   }
   return (
-    <Page title={`数据源设置 - ${dataSourceName}`} showGoBack goBackPath="/data-source">
+    <Page title={`数据源设置 - ${getIntlText('datasrcname', rawDetailData)}`} showGoBack goBackPath="/data-source">
       <div style={{ width: '900px', margin: '0 auto' }}>
         <div>
           <div className={styles.subtitle} style={{ marginTop: 10 }}>

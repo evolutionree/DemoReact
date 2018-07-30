@@ -2,15 +2,17 @@ import React from 'react';
 import { connect } from 'dva';
 import LinkTab from '../../components/LinkTab';
 import Page from '../../components/Page';
+import { getIntlText } from '../../components/UKComponent/Form/IntlText';
 
 function WorkflowHome({
     flowName,
+    flowInfo,
     params: { id: flowId },
     children
   }) {
   return (
     <Page
-      title={`流程名称-${flowName}`}
+      title={`流程名称-${getIntlText('flowname', flowInfo)}`}
       goBackPath="/workflow"
       showGoBack
       fixedTop={(

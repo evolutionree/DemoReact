@@ -10,6 +10,7 @@ import styles from './index.less';
 import classnames from 'classnames';
 import { hashHistory } from 'react-router';
 import IntlInput from '../../../components/UKComponent/Form/IntlInput';
+import { getIntlText } from '../../../components/UKComponent/Form/IntlText';
 import { IntlInputRequireValidator } from '../../../utils/validator';
 
 
@@ -100,7 +101,7 @@ function SaleStage({
               const cls = classnames({
                 [styles.businessLiActive]: businessTypeActiveId === item.categoryid  //当前商机
               });
-              return <li key={item.categoryid} className={cls} onClick={changeTypeHandler.bind(this, item.categoryid)}>{item.categoryname}</li>
+              return <li key={item.categoryid} className={cls} onClick={changeTypeHandler.bind(this, item.categoryid)}>{getIntlText('categoryname', item)}</li>
             })
           }
         </ul>

@@ -2,6 +2,7 @@ import React from 'react';
 import { Modal, Icon } from 'antd';
 import { SortableContainer, SortableElement, arrayMove } from 'react-sortable-hoc';
 import _ from 'lodash';
+import { getIntlText } from './../../../../components/UKComponent/Form/IntlText';
 
 const styles = {
   sortli: {
@@ -17,7 +18,7 @@ const styles = {
 const SortableItem = SortableElement(props => (
   <li style={styles.sortli}>
     <Icon type="bars" style={{ cursor: 'move', marginRight: '5px' }} />
-    <span>{props.name}</span>
+    <span>{getIntlText('name', props.data)}</span>
   </li>
 ));
 const SortableList = SortableContainer(props => {
@@ -25,7 +26,7 @@ const SortableList = SortableContainer(props => {
   return (
     <ul style={{ height: '420px', paddingTop: '1px', overflow: 'auto', width: '300px' }}>
       {items.map((item, index) => (
-        <SortableItem key={item.id} index={index} name={item.name} />
+        <SortableItem key={item.id} index={index} data={item} />
       ))}
     </ul>
   );
@@ -64,7 +65,8 @@ class FieldSortModal extends React.Component {
   resetSortFields = () => {
     return _.cloneDeep(this.props.fields).map(field => {
       return {
-        name: field.fieldlabel,
+        name: field.displayname,
+        name_lang: field.displayname_lang,
         id: field.fieldid
       };
     });

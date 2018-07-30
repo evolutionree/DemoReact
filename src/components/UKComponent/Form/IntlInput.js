@@ -11,6 +11,8 @@ import styles from './IntlInput.less';
 
 let langlist = JSON.parse(window.localStorage.getItem('langlist')) || [];
 
+const CN = 'CN';
+
 class IntlInput extends Component {
   static propTypes = {
     maxLength: React.PropTypes.oneOfType([
@@ -159,7 +161,7 @@ class IntlInput extends Component {
                onBlur={this.inputBlur}
                ref={ref => this.inputRef = ref}
                value={this.state.inputValue}
-               maxLength={this.props.maxLength}
+               maxLength={this.state.currentLocale.toUpperCase() === CN ? this.props.maxLength : null}
                placeholder={this.props.placeholder}
                disabled={this.props.disabled}
                addonAfter={

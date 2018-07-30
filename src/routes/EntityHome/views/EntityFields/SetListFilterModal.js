@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import { Modal, Checkbox, Select, Row, Col, Icon, Button, message } from 'antd';
 import _ from 'lodash';
 import styles from './SetListFilterModal.less';
+import { getIntlText } from '../../../../components/UKComponent/Form/IntlText';
 import { saveListFilter, queryListFilter } from '../../../../services/entity';
 
 const Option = Select.Option;
@@ -151,7 +152,7 @@ class SetListFilterModal extends Component {
               return [2, 20, 15, 22, 23, 24, 6, 7, 8, 9].indexOf(field.controltype) === -1
                 && [1001, 1004, 1005, 1007, 1008, 1009, 1011].indexOf(field.controltype) === -1;
             }).map(field => (
-              <Option key={field.fieldid} value={field.fieldid}>{field.displayname}</Option>
+              <Option key={field.fieldid} value={field.fieldid}>{getIntlText('displayname', field)}</Option>
             ))}
           </Select>
         </div>
@@ -168,7 +169,7 @@ class SetListFilterModal extends Component {
                     onClick={() => { this.setState({ currField: field }); }}
                     title={field.displayname}
                   >
-                    {field.displayname}
+                    {getIntlText('displayname', field)}
                   </li>
                 ))}
               </ul>
@@ -196,7 +197,7 @@ class SetListFilterModal extends Component {
                     key={field.fieldid}
                     onClick={() => { this.setState({ currField: field }); }}
                   >
-                    <span title={field.displayname}>{field.displayname}</span>
+                    <span title={field.displayname}>{getIntlText('displayname', field)}</span>
                     <span>
                       <Checkbox
                         checked={field.islike === 1}

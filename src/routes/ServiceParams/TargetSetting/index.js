@@ -6,6 +6,7 @@ import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import { Spin, message, Select } from 'antd';
 import Page from '../../../components/Page';
+import { getIntlText } from '../../../components/UKComponent/Form/IntlText';
 // import { hashHistory } from 'react-router';
 import styles from '../../../components/ParamsBoard/styles.less';
 import Toolbar from '../../../components/Toolbar';
@@ -58,7 +59,7 @@ export default connect(
         dispatch(routerRedux.push({
           pathname: '/targetsetting/' + item.normtypeid,
           query: {
-            normtypename: item.normtypename
+            normtypename: getIntlText('normtypename', item)
           }
         }));
       },

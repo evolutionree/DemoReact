@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { Modal, Form, Input, Select } from 'antd';
 import IntlInput from '../../components/UKComponent/Form/IntlInput';
+import IntlText from '../../components/UKComponent/Form/IntlText';
 import { IntlInputRequireValidator } from '../../utils/validator';
 import _ from 'lodash';
 
@@ -64,9 +65,10 @@ class RoleFormModal extends Component {
     const roleTypesOption = roleGroups.slice(1).filter(role => {
       return role.grouptype !== 0; //过滤掉系统默认角色
     }).map(item => (
-      <Option key={item.rolegroupid} value={item.rolegroupid}>{item.rolegroupname}</Option>
+      <Option key={item.rolegroupid} value={item.rolegroupid}>
+        <IntlText name="rolegroupname" value={item} />
+      </Option>
     ));
-
     return (
       <Modal title={isEdit ? '编辑角色' : '新建角色'}
              visible={/edit|add/.test(showModals)}

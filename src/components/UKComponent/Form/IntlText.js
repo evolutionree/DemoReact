@@ -19,6 +19,9 @@ function IntlText2({ value, value_lang, currentLocale }) {
 
 
 function IntlText1({ name, value, currentLocale }) {
+  if (value === null || value === undefined) {
+    return '';
+  }
   const emptyText = <span style={{ color: '#999999' }}>(空)</span>;
   const value_lang = value && value[name + '_lang'];
 
@@ -33,7 +36,7 @@ function IntlText1({ name, value, currentLocale }) {
   return <span style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}>{text}</span>;
 }
 
-function IntlText(props) { //提供两种方式写法
+function IntlText(props) { //JSX提供两种方式写法
   if (props.name) { //<IntlText name="menuName" value={menu} />
     return IntlText1(props);
   } else { //<IntlText value={menu.menuName} value_lang={menu.menuName_lang} />
@@ -41,11 +44,25 @@ function IntlText(props) { //提供两种方式写法
   }
 }
 
+export function getIntlText(name, value) { //js写法
+  if (value === null || value === undefined) {
+    return '';
+  }
+  const currentLocale = window.localStorage.getItem('currentLocale') || '';
+  const value_lang = value && value[name + '_lang'];
+  let text = value_lang ? value_lang : value[name];
+  if (text === null || text === undefined) {
+    text = '';
+  } else if (text instanceof Object) { //当前存在国际化数据
+    text = text[currentLocale] || value[name]; //可能国际化的某种版本语言不存在  则取默认的的值显示
+  }
+  return text;
+}
+
 export default connect(
   state => {
     return {
-      currentLocale: state.app.currentLocale,
-      langlist: state.app.langlist
+      currentLocale: state.app.currentLocale
     };
   }
 )(IntlText);

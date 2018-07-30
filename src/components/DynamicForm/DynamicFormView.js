@@ -3,6 +3,7 @@ import { Form } from 'antd';
 import createJSEngineProxy from './createJSEngineProxy';
 import FoldableGroup from './FoldableGroup';
 import DynamicFieldView from './DynamicFieldView';
+import IntlText from '../UKComponent/Form/IntlText';
 import styles from './styles.less';
 
 const FormItem = Form.Item;
@@ -26,7 +27,7 @@ class DynamicFormView extends React.Component {
         <FormItem
           key={fieldname}
           colon={false}
-          label={displayname}
+          label={<IntlText name="displayname" value={field} />}
           style={(fieldconfig.isVisible !== 1 || field.fieldconfig.isVisibleJS === 0) ? { display: 'none' } : {}}
         >
           <DynamicFieldView

@@ -1,34 +1,9 @@
 import React from 'react';
 import { connect } from 'dva';
 import { Modal, Row, Col, Button, Icon, message } from 'antd';
-import _ from 'lodash';
-import { SortableContainer, SortableElement, SortableHandle, arrayMove } from 'react-sortable-hoc';
+import { getIntlText } from './../../../../components/UKComponent/Form/IntlText';
 import { queryWebFieldVisible } from '../../../../services/entity';
 import styles from './WebListConfigModal.less';
-
-const DragHandle = SortableHandle(props => {
-  return props.children;
-});
-const SortableLi = SortableElement(props => {
-  const { children, className, useDragHandle, key, index, ...rest } = props;
-  return (
-    <li
-      style={{ zIndex: 10000 }}
-      className={className}
-      {...rest}
-    >
-      {children}
-    </li>
-  );
-});
-const SortableUl = SortableContainer(props => {
-  const { className, children, ...rest } = props;
-  return (
-    <ul className={className} {...rest}>
-      {children}
-    </ul>
-  );
-});
 
 class WebListConfigModal extends React.Component {
   static propTypes = {};
@@ -140,7 +115,7 @@ class WebListConfigModal extends React.Component {
               <ul className={styles.list}>
                 {this.getRestFields().map(field => (
                   <li className={styles.item} key={field.fieldid}>
-                    <span title={field.displayname}>{field.displayname}</span>
+                    <span title={field.displayname}>{getIntlText('displayname', field)}</span>
                     <Icon type="plus" onClick={() => { this.pickField(field); }} />
                   </li>
                 ))}
@@ -164,7 +139,7 @@ class WebListConfigModal extends React.Component {
                     {/*<DragHandle>*/}
                       {/*<Icon type="bars" style={{ cursor: 'move', marginRight: '5px' }} />*/}
                     {/*</DragHandle>*/}
-                    <span>{field.displayname}</span>
+                    <span>{getIntlText('displayname', field)}</span>
                     <Icon type="minus" onClick={() => { this.removeField(field); }} />
                   </li>
                 ))}

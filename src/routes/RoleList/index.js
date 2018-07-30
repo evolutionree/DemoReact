@@ -9,7 +9,7 @@ import Search from '../../components/Search';
 import RoleFormModal from './RoleFormModal';
 import CopyRoleFormModal from './CopyRoleFormModal';
 
-import IntlText from '../../components/UKComponent/Form/IntlText';
+import IntlText, { getIntlText } from '../../components/UKComponent/Form/IntlText';
 
 const Option = Select.Option;
 const Column = Table.Column;
@@ -113,10 +113,10 @@ function RoleList(props) {
           key="rolename"
           dataIndex="rolename"
           render={(text, record) => {
-            const intlText = <IntlText value={text} value_lang={record.rolename_lang} />;
+            const intlText = getIntlText('rolename', record);
             return checkFunc('RoleAuthDetail')
-              ? <Link to={`/role/${record.roleid}/${record.roletype}/${text}`}>{intlText}</Link>
-              : <span>{intlText}</span>
+              ? <Link to={`/role/${record.roleid}/${record.roletype}/${intlText}`}>{intlText}</Link>
+              : <span>{intlText}</span>;
           }}
         />
         <Column title="角色分类" key="rolegroupname" dataIndex="rolegroupname" />

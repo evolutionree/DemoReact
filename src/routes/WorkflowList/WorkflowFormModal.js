@@ -2,6 +2,7 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Modal, Form, Input, Select, Radio, Checkbox, InputNumber, message } from 'antd';
 import IntlInput from '../../components/UKComponent/Form/IntlInput';
+import { getIntlText } from '../../components/UKComponent/Form/IntlText';
 import { query as queryEntities } from '../../services/entity';
 import { IntlInputRequireValidator } from '../../utils/validator';
 
@@ -160,7 +161,7 @@ class WorkflowFormModal extends Component {
             })(
               <Select placeholder="请选择关联实体" disabled={isEdit}>
                 {this.state.entities.map(entity => (
-                  <Option key={entity.entityid}>{entity.entityname}</Option>
+                  <Option key={entity.entityid}>{getIntlText('entityname', entity)}</Option>
                 ))}
               </Select>
             )}

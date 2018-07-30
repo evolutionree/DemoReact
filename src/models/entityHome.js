@@ -31,6 +31,7 @@ export default {
     *queryEntityDetail(action, { select, put, call }) {
       const { entityId } = yield select(state => state.entityHome);
       const { data: { entityproinfo } } = yield call(queryEntityDetail, entityId);
+      yield put({ type: 'putState', payload: { entityInfo: entityproinfo[0] } });
       yield put({ type: 'entityName', payload: entityproinfo[0].entityname });
     }
   },
