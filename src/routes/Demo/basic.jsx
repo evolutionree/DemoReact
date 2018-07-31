@@ -60,4 +60,11 @@ class BasicLayout extends React.PureComponent {
     );
   }
 }
-export default BasicLayout;
+
+module.exports = BasicLayout;
+
+if (require.main === module) {
+  console.log(11111111111)
+  require("./test-hook.jsx")(module.exports);
+}
+//export default BasicLayout;
