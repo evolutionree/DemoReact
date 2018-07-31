@@ -73,7 +73,6 @@ import AttendanceGroupSet from './routes/AttendanceGroupSet';
 import AttendanceGroupDetail from './routes/AttendanceGroupSet/Detail';
 
 const appRoutes = [
-  { path: 'NoFoundPage', comp: NoFoundPage }, //进入系统会做菜单权限判断 Router的原因 首次让其先进入一个无任何Ajax的页面
   { path: 'home', comp: Home },
   { path: 'attendance', comp: AttendanceList, entid: '969d32b6-d81c-43a3-bc0d-124ffc26855c' },
   { path: 'notice-list', comp: NoticeList, entid: '00000000-0000-0000-0000-000000000002' },
