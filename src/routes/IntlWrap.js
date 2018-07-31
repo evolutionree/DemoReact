@@ -25,8 +25,16 @@ const IntlWrap = WrappedComponent => {
 
     initLocale(currentLocale) {
       if (currentLocale) {
+        let IntlUniversalLang = 'zh-CN';
+        if (currentLocale.toUpperCase() === 'CN') {
+          IntlUniversalLang = 'zh-CN';
+        } else if (currentLocale.toUpperCase() === 'EN') {
+          IntlUniversalLang = 'en-US';
+        } else if (currentLocale.toUpperCase() === 'TW') {
+          IntlUniversalLang = 'zh-TW';
+        }
         intl.init({
-          currentLocale, // TODO: determine locale here
+          currentLocale: IntlUniversalLang, // TODO: determine locale here
           locales
         });
       }
