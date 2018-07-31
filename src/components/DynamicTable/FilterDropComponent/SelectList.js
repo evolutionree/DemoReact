@@ -4,6 +4,7 @@
 import React, { PropTypes, Component } from 'react';
 import { Checkbox } from 'antd';
 import connectBasicData from '../../../models/connectBasicData';
+import { getIntlText } from '../../UKComponent/Form/IntlText';
 import Styles from './SelectList.less';
 
 const CheckboxGroup = Checkbox.Group;
@@ -45,7 +46,7 @@ class SelectList extends Component {
     if (dictionaryData[sourceId]) {
       const options = dictionaryData[sourceId].map(dic => ({
         value: dic.dataid,
-        label: dic.dataval
+        label: getIntlText('dataval', dic)
       }));
       this.setState({ options: [
         ...options,
