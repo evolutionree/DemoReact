@@ -1,5688 +1,2664 @@
 [
-	{
-		"id": "请输入评论内容",
-		"defaultMessage": "请输入评论内容",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/ActivityBoard/index.js#51#39"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/office/daily/component/DailyListDetail.js#29#39"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/office/weekly/component/CommentItem.js#34#39"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/office/weekly/component/WeeklyListDetail.js#29#39"
-			}
-		]
-	},
-	{
-		"id": "查看全部",
-		"defaultMessage": "查看全部",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ActivityBoard/index.js#88#87"
-			}
-		]
-	},
-	{
-		"id": "赞",
-		"defaultMessage": "赞",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ActivityBoard/index.js#108#22"
-			}
-		]
-	},
-	{
-		"id": "评论",
-		"defaultMessage": "评论",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ActivityBoard/index.js#112#22"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/ActivityBoard/index.js#149#13"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/office/weekly/component/CommentItem.js#48#197"
-			}
-		]
-	},
-	{
-		"id": "我也说一句",
-		"defaultMessage": "我也说一句",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ActivityBoard/index.js#141#14"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/office/daily/component/DailyListDetail.js#127#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/office/weekly/component/WeeklyListDetail.js#137#12"
-			}
-		]
-	},
-	{
-		"id": "未填写",
-		"defaultMessage": "未填写",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ContactsPanel.js#48#43"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/IMDetail/index.js#14#43"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/TabPanel/Contact/index.js#81#43"
-			}
-		]
-	},
-	{
-		"id": "最近联系",
-		"defaultMessage": "最近联系",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/ContactsPanel.js#216#18"
-			}
-		]
-	},
-	{
-		"id": "星标同事",
-		"defaultMessage": "星标同事",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/ContactsPanel.js#217#18"
-			},
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/WebIMPanel/TabPanel/Contact/index.js#206#18"
-			}
-		]
-	},
-	{
-		"id": "我的部门",
-		"defaultMessage": "我的部门",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/ContactsPanel.js#218#18"
-			},
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/WebIMPanel/TabPanel/Contact/index.js#207#18"
-			}
-		]
-	},
-	{
-		"id": "团队组织",
-		"defaultMessage": "团队组织",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/ContactsPanel.js#219#18"
-			},
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/WebIMPanel/TabPanel/Contact/index.js#208#18"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/ComplexForm/DeptSelectModal.js#64#17"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/IPermissionRangeSelect/DeptSelectModal.js#57#17"
-			},
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#181#2"
-			},
-			{
-				"type": "text",
-				"location": "src/config/menus.js#47#4"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/controlTypes.js#31#4"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/NoticeList/NoticeSendModal/DeptSelectModal.js#88#17"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Structure/index.js#20#10"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Structure/UserFormModal.js#101#18"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Structure/UserList.js#108#16"
-			}
-		]
-	},
-	{
-		"id": "通讯录",
-		"defaultMessage": "通讯录",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ContactsPanel.js#251#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ContactsPanel.js#259#18"
-			},
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/WebIMPanel/index.js#30#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/index.js#174#14"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/TabPanel/Contact/index.js#219#38"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Mails/component/AddressList.js#202#13"
-			}
-		]
-	},
-	{
-		"id": "按姓名搜索",
-		"defaultMessage": "按姓名搜索",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ContactsPanel.js#278#20"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/TabPanel/Contact/index.js#233#20"
-			}
-		]
-	},
-	{
-		"id": "姓名：",
-		"defaultMessage": "姓名：",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ContactsPanel.js#315#22"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Mails/RelatedInfoPanel.js#303#49"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Mails/RelatedInfoPanel.js#317#51"
-			}
-		]
-	},
-	{
-		"id": "部门：",
-		"defaultMessage": "部门：",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ContactsPanel.js#319#22"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/IMDetail/index.js#162#24"
-			}
-		]
-	},
-	{
-		"id": "性别：",
-		"defaultMessage": "性别：",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ContactsPanel.js#327#22"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/IMDetail/index.js#163#24"
-			}
-		]
-	},
-	{
-		"id": "男",
-		"defaultMessage": "男",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/ContactsPanel.js#328#29"
-			},
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/IMDetail/index.js#163#40"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Structure/UserFormModal.js#96#32"
-			}
-		]
-	},
-	{
-		"id": "女",
-		"defaultMessage": "女",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/ContactsPanel.js#328#34"
-			},
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/IMDetail/index.js#163#45"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Structure/UserFormModal.js#97#32"
-			}
-		]
-	},
-	{
-		"id": "职位：",
-		"defaultMessage": "职位：",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ContactsPanel.js#331#22"
-			}
-		]
-	},
-	{
-		"id": "电话：",
-		"defaultMessage": "电话：",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ContactsPanel.js#344#22"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/IMDetail/index.js#167#24"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Mails/RelatedInfoPanel.js#304#49"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Mails/RelatedInfoPanel.js#318#51"
-			}
-		]
-	},
-	{
-		"id": "手机号码：",
-		"defaultMessage": "手机号码：",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ContactsPanel.js#348#22"
-			}
-		]
-	},
-	{
-		"id": "邮箱：",
-		"defaultMessage": "邮箱：",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ContactsPanel.js#352#22"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/IMDetail/index.js#168#24"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Mails/RelatedInfoPanel.js#305#49"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Mails/RelatedInfoPanel.js#319#51"
-			}
-		]
-	},
-	{
-		"id": "导入",
-		"defaultMessage": "导入",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ImpProgress.js#11#36"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/RelTable.js#411#100"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/RelTableImportModal.js#149#15"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommApplication/index.js#224#60"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommList/index.js#218#60"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityRules/RuleTable.js#83#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityRules/RuleTable.js#120#6"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityList/index.js#117#37"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ImportModal/ImportModal.js#163#15"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ProductManager/ProductList.js#85#68"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ProductManager/SeriesManager.js#32#74"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/SalesTarget/index.js#87#103"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Structure/UserList.js#76#65"
-			}
-		]
-	},
-	{
-		"id": "完成",
-		"defaultMessage": "完成",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ImpProgress.js#11#49"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ProgressModal/ProgressModal.js#99#32"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ProgressModal/ProgressModal.js#96#22"
-			}
-		]
-	},
-	{
-		"id": "正在导入",
-		"defaultMessage": "正在导入",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ImpProgress.js#13#31"
-			}
-		]
-	},
-	{
-		"id": "共导入数据",
-		"defaultMessage": "共导入数据",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ImpProgress.js#20#64"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ProgressModal/ProgressModal.js#106#39"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ProgressModal/ProgressModal.js#103#29"
-			}
-		]
-	},
-	{
-		"id": "条,导入成功",
-		"defaultMessage": "条,导入成功",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ImpProgress.js#20#92"
-			}
-		]
-	},
-	{
-		"id": "条,\n                导入失败",
-		"defaultMessage": "条,\n                导入失败",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ImpProgress.js#20#142"
-			}
-		]
-	},
-	{
-		"id": "条",
-		"defaultMessage": "条",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ImpProgress.js#21#43"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ProgressModal/ProgressModal.js#108#44"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ProgressModal/ProgressModal.js#105#34"
-			}
-		]
-	},
-	{
-		"id": "导入结果提醒",
-		"defaultMessage": "导入结果提醒",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/MessageList.js#24#49"
-			}
-		]
-	},
-	{
-		"id": "智能提醒",
-		"defaultMessage": "智能提醒",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/MessageList.js#24#89"
-			},
-			{
-				"type": "text",
-				"location": "src/config/menus.js#141#8"
-			}
-		]
-	},
-	{
-		"id": "您没有权限查看该数据",
-		"defaultMessage": "您没有权限查看该数据",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/MessageList.js#185#10"
-			},
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/controls/SelectDataSource.js#147#8"
-			}
-		]
-	},
-	{
-		"id": "该数据已删除，无法查看",
-		"defaultMessage": "该数据已删除，无法查看",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/MessageList.js#187#10"
-			},
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/controls/SelectDataSource.js#149#8"
-			}
-		]
-	},
-	{
-		"id": "获取超时，请检查网络!",
-		"defaultMessage": "获取超时，请检查网络!",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/MessageList.js#194#8"
-			},
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/controls/SelectDataSource.js#154#6"
-			}
-		]
-	},
-	{
-		"id": "设置成功",
-		"defaultMessage": "设置成功",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/MessageList.js#244#6"
-			},
-			{
-				"type": "text",
-				"location": "src/models/structure.js#277#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/structure.js#322#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/structure.js#340#8"
-			}
-		]
-	},
-	{
-		"id": "系统通知",
-		"defaultMessage": "系统通知",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/MessageList.js#281#28"
-			}
-		]
-	},
-	{
-		"id": "导入结果：",
-		"defaultMessage": "导入结果：",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/MessageList.js#320#121"
-			}
-		]
-	},
-	{
-		"id": "下载",
-		"defaultMessage": "下载",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/MessageList.js#329#125"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntcommHome/views/EntcommDocs/index.js#33#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Knowledge/FileList.js#79#129"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Knowledge/FileList.js#80#22"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Mails/RelatedInfoPanel.js#452#177"
-			}
-		]
-	},
-	{
-		"id": "提醒设置",
-		"defaultMessage": "提醒设置",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/MessageList.js#331#107"
-			},
-			{
-				"type": "text",
-				"location": "src/config/menus.js#133#4"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ReminderList/index.js#26#10"
-			}
-		]
-	},
-	{
-		"id": "加载更多...",
-		"defaultMessage": "加载更多...",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/MessageList.js#338#100"
-			}
-		]
-	},
-	{
-		"id": "亲,没有更多数据加载了哦",
-		"defaultMessage": "亲,没有更多数据加载了哦",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/MessageList.js#339#65"
-			}
-		]
-	},
-	{
-		"id": "提醒",
-		"defaultMessage": "提醒",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/MessageList.js#350#75"
-			}
-		]
-	},
-	{
-		"id": "不提醒",
-		"defaultMessage": "不提醒",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/MessageList.js#352#74"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Schedule/FormModal/ScheduleForm.js#66#20"
-			}
-		]
-	},
-	{
-		"id": "设置是否提醒",
-		"defaultMessage": "设置是否提醒",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/MessageList.js#357#20"
-			}
-		]
-	},
-	{
-		"id": "第",
-		"defaultMessage": "第",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ProgressModal/ProgressModal.js#79#34"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ProgressModal/ProgressModal.js#76#30"
-			}
-		]
-	},
-	{
-		"id": "步",
-		"defaultMessage": "步",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ProgressModal/ProgressModal.js#79#44"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ProgressModal/ProgressModal.js#76#42"
-			}
-		]
-	},
-	{
-		"id": "导入进度",
-		"defaultMessage": "导入进度",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ProgressModal/ProgressModal.js#85#23"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ProgressModal/ProgressModal.js#82#15"
-			}
-		]
-	},
-	{
-		"id": "最小化",
-		"defaultMessage": "最小化",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ProgressModal/ProgressModal.js#89#108"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ProgressModal/ProgressModal.js#86#103"
-			}
-		]
-	},
-	{
-		"id": "上传文档",
-		"defaultMessage": "上传文档",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ProgressModal/ProgressModal.js#97#32"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommHome/views/EntcommDocs/index.js#42#74"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Knowledge/FileList.js#37#70"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ProgressModal/ProgressModal.js#94#22"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ServiceParams/SaleStage/component/DetailParamEditable.js#69#121"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ServiceParams/SaleStage/detailSet.js#150#24"
-			}
-		]
-	},
-	{
-		"id": "导入数据",
-		"defaultMessage": "导入数据",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ProgressModal/ProgressModal.js#98#32"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ProgressModal/ProgressModal.js#95#22"
-			}
-		]
-	},
-	{
-		"id": "条,\n                        导入成功",
-		"defaultMessage": "条,\n                        导入成功",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ProgressModal/ProgressModal.js#106#60"
-			}
-		]
-	},
-	{
-		"id": "条,\n                        导入失败",
-		"defaultMessage": "条,\n                        导入失败",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/ProgressModal/ProgressModal.js#107#58"
-			}
-		]
-	},
-	{
-		"id": "确定退出当前帐号？",
-		"defaultMessage": "确定退出当前帐号？",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/UserDropdown.js#24#10"
-			}
-		]
-	},
-	{
-		"id": "用户反馈",
-		"defaultMessage": "用户反馈",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/UserDropdown.js#36#53"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/modals/UserFeedBackModal.js#29#6"
-			}
-		]
-	},
-	{
-		"id": "修改头像",
-		"defaultMessage": "修改头像",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/UserDropdown.js#37#53"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ModifyAvatarModal.js#78#8"
-			}
-		]
-	},
-	{
-		"id": "修改密码",
-		"defaultMessage": "修改密码",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/UserDropdown.js#38#53"
-			},
-			{
-				"type": "text",
-				"location": "src/login.js#66#6"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Login/ModifyPwdForm.js#90#61"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ModifyPwdModal.js#53#6"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Structure/ResetPasswordModal.js#62#6"
-			}
-		]
-	},
-	{
-		"id": "清除缓存",
-		"defaultMessage": "清除缓存",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/UserDropdown.js#39#53"
-			}
-		]
-	},
-	{
-		"id": "退出登录",
-		"defaultMessage": "退出登录",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/UserDropdown.js#40#53"
-			}
-		]
-	},
-	{
-		"id": "设为星标同事",
-		"defaultMessage": "设为星标同事",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/Component/ContextMenuPanel/index.js#44#12"
-			}
-		]
-	},
-	{
-		"id": "取消星标同事",
-		"defaultMessage": "取消星标同事",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/Component/ContextMenuPanel/index.js#45#12"
-			}
-		]
-	},
-	{
-		"id": "查看资料",
-		"defaultMessage": "查看资料",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/Component/ContextMenuPanel/index.js#46#46"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/IMDetail/index.js#141#14"
-			}
-		]
-	},
-	{
-		"id": "打开聊天窗口",
-		"defaultMessage": "打开聊天窗口",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/Component/ContextMenuPanel/index.js#47#12"
-			}
-		]
-	},
-	{
-		"id": "退出群聊",
-		"defaultMessage": "退出群聊",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/Component/ContextMenuPanel/index.js#48#12"
-			}
-		]
-	},
-	{
-		"id": "图片格式有误，请重新选择!",
-		"defaultMessage": "图片格式有误，请重新选择!",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/WebIMPanel/Component/FileUpload/index.js#53#8"
-			},
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/controls/Avatar.js#41#6"
-			},
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/controls/Picture.js#71#6"
-			},
-			{
-				"type": "text",
-				"location": "src/components/ImageUploaderInForm.js#46#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/modals/ModifyAvatarModal.js#10#4"
-			}
-		]
-	},
-	{
-		"id": "文件大于200k",
-		"defaultMessage": "文件大于200k",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/WebIMPanel/Component/FileUpload/index.js#56#8"
-			},
-			{
-				"type": "text",
-				"location": "src/components/ImageUploaderInForm.js#49#6"
-			}
-		]
-	},
-	{
-		"id": "文件大小不可超过10M!",
-		"defaultMessage": "文件大小不可超过10M!",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/WebIMPanel/Component/FileUpload/index.js#61#8"
-			}
-		]
-	},
-	{
-		"id": "发送一张图片",
-		"defaultMessage": "发送一张图片",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/WebIMPanel/Component/List/index.js#71#71"
-			}
-		]
-	},
-	{
-		"id": "发送一条录音",
-		"defaultMessage": "发送一条录音",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/WebIMPanel/Component/List/index.js#71#81"
-			}
-		]
-	},
-	{
-		"id": "发送了一个位置",
-		"defaultMessage": "发送了一个位置",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/WebIMPanel/Component/List/index.js#71#91"
-			}
-		]
-	},
-	{
-		"id": "发送了一个文件",
-		"defaultMessage": "发送了一个文件",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/WebIMPanel/Component/List/index.js#71#102"
-			}
-		]
-	},
-	{
-		"id": "搜索",
-		"defaultMessage": "搜索",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/Component/Search/index.js#62#48"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/DataSourceSelectModal.js#203#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/SelectProductModal.js#232#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/UserSelectModal.js#218#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/IPermissionRangeSelect/UserSelectModal.js#155#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/ISingleUserSelect/SingleUserSelectModal.js#114#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/WorkflowCaseModal/UserSelectModal.js#160#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/AffairList/index.js#128#46"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/AttendanceClassSet/index.js#108#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/AttendanceGroupSet/Detail.js#103#13"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/AttendanceGroupSet/index.js#101#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/CollectorList/index.js#44#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Configure/QRCodeEntrance/index.js#101#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Configure/transferScheme/index.js#88#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/DataSourceList/index.js#77#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/DicType/index.js#91#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommApplication/index.js#236#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommApplication/TransferModal.js#102#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommDynamic/index.js#96#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommHome/views/EntcommAffair/index.js#119#46"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommHome/views/EntcommRel/index.js#240#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommHome/views/EntcommRel/MerageModal.js#218#13"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommHome/views/EntcommRel/TransferModal.js#102#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommList/index.js#230#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommList/MerageModal.js#220#13"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommList/TransferModal.js#102#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/MailRecovery/index.js#121#71"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/MailRecovery/UserSelectModal.js#122#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/NoticeList/NoticeSendModal/UserSelectModal.js#154#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/office/daily/allDaily.js#36#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/office/weekly/allWeekly.js#42#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ReminderList/index.js#44#11"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ReportForm/component/SearchBar/SearchBar.js#102#51"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/RoleList/index.js#87#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/SalesTarget/index.js#90#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/VocationList/index.js#80#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/WorkflowList/index.js#62#11"
-			}
-		]
-	},
-	{
-		"id": "发起群聊",
-		"defaultMessage": "发起群聊",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/Component/Tabs/index.js#81#41"
-			}
-		]
-	},
-	{
-		"id": "最近聊天",
-		"defaultMessage": "最近聊天",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/WebIMPanel/index.js#25#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/TabPanel/Recent/index.js#68#38"
-			}
-		]
-	},
-	{
-		"id": "群聊",
-		"defaultMessage": "群聊",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/WebIMPanel/index.js#35#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/TabPanel/Group/index.js#40#38"
-			}
-		]
-	},
-	{
-		"id": "职务：",
-		"defaultMessage": "职务：",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/IMDetail/index.js#164#24"
-			}
-		]
-	},
-	{
-		"id": "添加成员",
-		"defaultMessage": "添加成员",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/IMDetail/index.js#185#49"
-			}
-		]
-	},
-	{
-		"id": "【表情功能】攻城狮正在加速开发中,尽请期待...",
-		"defaultMessage": "【表情功能】攻城狮正在加速开发中,尽请期待...",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/IMPanel/index.js#244#4"
-			}
-		]
-	},
-	{
-		"id": "文件名",
-		"defaultMessage": "文件名",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/IMPanel/index.js#294#21"
-			}
-		]
-	},
-	{
-		"id": "查看更多消息",
-		"defaultMessage": "查看更多消息",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/IMPanel/index.js#353#114"
-			}
-		]
-	},
-	{
-		"id": "发送",
-		"defaultMessage": "发送",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/IMPanel/index.js#370#50"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/NoticeList/index.js#199#16"
-			}
-		]
-	},
-	{
-		"id": "群聊成员",
-		"defaultMessage": "群聊成员",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/IMPanel/MemberList.js#52#12"
-			}
-		]
-	},
-	{
-		"id": "已选中了该部门",
-		"defaultMessage": "已选中了该部门",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/OriginGroup/index.js#106#6"
-			}
-		]
-	},
-	{
-		"id": "已选中了该用户",
-		"defaultMessage": "已选中了该用户",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/OriginGroup/index.js#116#6"
-			}
-		]
-	},
-	{
-		"id": "请选择成员后再添加群聊！",
-		"defaultMessage": "请选择成员后再添加群聊！",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/OriginGroup/index.js#167#6"
-			}
-		]
-	},
-	{
-		"id": "联系人",
-		"defaultMessage": "联系人",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/OriginGroup/index.js#27#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Mails/RelatedInfoPanel.js#339#26"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Schedule/FormModal/ScheduleForm.js#59#20"
-			}
-		]
-	},
-	{
-		"id": "部门",
-		"defaultMessage": "部门",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/OriginGroup/index.js#31#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/OperateLog/index.js#139#18"
-			}
-		]
-	},
-	{
-		"id": "已选择",
-		"defaultMessage": "已选择",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/OriginGroup/index.js#312#18"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Structure/AssignRoleModal.js#212#42"
-			}
-		]
-	},
-	{
-		"id": "清空",
-		"defaultMessage": "清空",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/OriginGroup/index.js#314#120"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityScripts/index.js#66#69"
-			}
-		]
-	},
-	{
-		"id": "联系人（",
-		"defaultMessage": "联系人（",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/OriginGroup/index.js#318#18"
-			}
-		]
-	},
-	{
-		"id": "部门（",
-		"defaultMessage": "部门（",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/OriginGroup/index.js#326#18"
-			}
-		]
-	},
-	{
-		"id": "取消",
-		"defaultMessage": "取消",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/OriginGroup/index.js#339#33"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/CustomHeaderModal.js#210#78"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/WorkflowCaseModal/index.bac.js#160#57"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/WorkflowCaseModal/index.js#199#57"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/WorkflowCaseModal/WorkflowCaseForAddModal.js#128#57"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/AffairDetail/index.js#260#35"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Configure/QRCodeEntrance/EntryFormModal.js#110#46"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Configure/QRCodeEntrance/ParamsFormModal.js#110#46"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommHome/views/EntcommInfo/index.js#47#54"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommHome/views/EntcommRel/DetailModal.js#196#35"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityScripts/index.js#67#70"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ServiceParams/TargetSetting/detailSet.js#147#75"
-			}
-		]
-	},
-	{
-		"id": "下一步",
-		"defaultMessage": "下一步",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/AppHeader/WebIMPanel/OtherPanel/OriginGroup/index.js#340#78"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/AffairDetail/index.js#247#56"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/AffairList/NewAffairModal.js#131#59"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommHome/StageFlowModal.js#151#60"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommHome/views/EntcommActivities/PluginAddModal.js#221#60"
-			}
-		]
-	},
-	{
-		"id": "设置",
-		"defaultMessage": "设置",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/AppMenu/AppMenu.js#71#31"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/App2.js#51#31"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ReportForm/component/SearchBar/SetSeriesModal.js#48#68"
-			}
-		]
-	},
-	{
-		"id": "头像",
-		"defaultMessage": "头像",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/Avatar.js#38#2"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/Avatar.js#69#14"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/controlTypes.js#29#4"
-			}
-		]
-	},
-	{
-		"id": "未识别到可用组件",
-		"defaultMessage": "未识别到可用组件",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ComplexForm/DataModalSelect.js#76#20"
-			}
-		]
-	},
-	{
-		"id": "选择团队",
-		"defaultMessage": "选择团队",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/ComplexForm/DataModalSelect.js#82#6"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/ComplexForm/DeptSelect.js#73#41"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/ComplexForm/DeptSelectModal.js#57#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/IPermissionRangeSelect/DeptSelect.js#55#41"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/IPermissionRangeSelect/DeptSelectModal.js#50#8"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/AttendanceGroupSet/component/SelectDept.js#114#33"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/AttendanceGroupSet/Detail.js#126#35"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntcommApplication/SetWhiteListModal.js#47#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Knowledge/DeptSelect.js#78#41"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Knowledge/DeptSelectModal.js#44#8"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Mails/component/DistributeMailsModal.js#57#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/NoticeList/NoticeSendModal/DeptSelect.js#70#41"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/NoticeList/NoticeSendModal/DeptSelectModal.js#81#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/NoticeList/NoticeSendModal/index.js#81#20"
-			}
-		]
-	},
-	{
-		"id": "选择人员",
-		"defaultMessage": "选择人员",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/ComplexForm/DataModalSelect.js#83#6"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/ComplexForm/UserSelect.js#59#41"
-			},
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/controls/UserSelectModal.js#28#4"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/IPermissionRangeSelect/UserSelect.js#55#41"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/IPermissionRangeSelect/UserSelectModal.js#142#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/ISingleUserSelect/SingleUserSelectModal.js#102#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/WorkflowCaseModal/UserSelectModal.js#147#8"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/AttendanceGroupSet/component/SelectDept.js#114#100"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/AttendanceGroupSet/Detail.js#126#102"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntcommApplication/SetWhiteListModal.js#48#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommApplication/TransferModal.js#89#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommHome/views/EntcommRel/TransferModal.js#89#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommList/TransferModal.js#89#8"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/MailRecovery/UserSelectModal.js#29#4"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Mails/component/DistributeMailsModal.js#58#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/NoticeList/NoticeSendModal/index.js#88#20"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/NoticeList/NoticeSendModal/UserSelect.js#55#41"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/NoticeList/NoticeSendModal/UserSelectModal.js#141#8"
-			}
-		]
-	},
-	{
-		"id": "请选择发送部门",
-		"defaultMessage": "请选择发送部门",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/ComplexForm/DeptSelectModal.js#47#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/NoticeList/NoticeSendModal/DeptSelectModal.js#68#6"
-			}
-		]
-	},
-	{
-		"id": "请选择接收人员",
-		"defaultMessage": "请选择接收人员",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/ComplexForm/index.js#26#6"
-			}
-		]
-	},
-	{
-		"id": "请选择接收团队",
-		"defaultMessage": "请选择接收团队",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/ComplexForm/index.js#27#6"
-			}
-		]
-	},
-	{
-		"id": "未识别到组件",
-		"defaultMessage": "未识别到组件",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ComplexForm/index.js#33#18"
-			}
-		]
-	},
-	{
-		"id": "shouldOpen 必须是一个方法",
-		"defaultMessage": "shouldOpen 必须是一个方法",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/createModal/index.js#23#10"
-			}
-		]
-	},
-	{
-		"id": "willOpen 必须是一个方法",
-		"defaultMessage": "willOpen 必须是一个方法",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/createModal/index.js#26#10"
-			}
-		]
-	},
-	{
-		"id": "设置显示字段",
-		"defaultMessage": "设置显示字段",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/CustomHeaderModal.js#200#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/MobileListConfigModal2/MobileFieldsSelect.js#45#16"
-			}
-		]
-	},
-	{
-		"id": "固定列数：",
-		"defaultMessage": "固定列数：",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/CustomHeaderModal.js#205#17"
-			}
-		]
-	},
-	{
-		"id": "还原默认设置",
-		"defaultMessage": "还原默认设置",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/CustomHeaderModal.js#207#54"
-			}
-		]
-	},
-	{
-		"id": "确定",
-		"defaultMessage": "确定",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/CustomHeaderModal.js#211#110"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicTable/FilterDropComponent/index.js#190#57"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/WorkflowCaseModal/index.bac.js#161#43"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/WorkflowCaseModal/index.js#200#43"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/WorkflowCaseModal/WorkflowCaseForAddModal.js#129#43"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Schedule/ScheduleTab.js#91#39"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ServiceParams/TargetSetting/detailSet.js#148#94"
-			}
-		]
-	},
-	{
-		"id": "序号",
-		"defaultMessage": "序号",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/CustomHeaderModal.js#218#70"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Configure/QRCodeEntrance/index.js#72#6"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Configure/QRCodeEntrance/index.js#116#16"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Dic/index.js#75#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityFields/index.js#131#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityRules/RuleTable.js#55#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityRules/RuleTable.js#96#6"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityTabs/index.js#27#18"
-			}
-		]
-	},
-	{
-		"id": "列名",
-		"defaultMessage": "列名",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/CustomHeaderModal.js#219#70"
-			}
-		]
-	},
-	{
-		"id": "列宽",
-		"defaultMessage": "列宽",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/CustomHeaderModal.js#220#70"
-			}
-		]
-	},
-	{
-		"id": "显示",
-		"defaultMessage": "显示",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/CustomHeaderModal.js#221#70"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/TinyPager.js#23#28"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/MobileListConfigModal2/MobileFieldsSelectModal.js#144#63"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/PickFieldButton.js#99#65"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityRules/RuleTable.js#63#10"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityRules/RuleTable.js#71#10"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityRules/RuleTable.js#79#10"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityRules/RuleTable.js#85#10"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityRules/RuleTable.js#92#10"
-			}
-		]
-	},
-	{
-		"id": "拖拽行可以调整排列顺序哦，试试吧！",
-		"defaultMessage": "拖拽行可以调整排列顺序哦，试试吧！",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/CustomHeaderModal.js#231#106"
-			}
-		]
-	},
-	{
-		"id": "输入团队名称搜索",
-		"defaultMessage": "输入团队名称搜索",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DepartmentSelect.js#162#8"
-			}
-		]
-	},
-	{
-		"id": "请选择部门",
-		"defaultMessage": "请选择部门",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/DepartmentSelect.js#24#4"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Structure/ChangeDeptModal.js#35#6"
-			}
-		]
-	},
-	{
-		"id": "文件大小不可超过100M",
-		"defaultMessage": "文件大小不可超过100M",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/controls/Attachment.js#98#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/PrintTemplate/PrintTemplateForm.js#82#6"
-			}
-		]
-	},
-	{
-		"id": "上传文件",
-		"defaultMessage": "上传文件",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/Attachment.js#149#34"
-			}
-		]
-	},
-	{
-		"id": "(空)",
-		"defaultMessage": "(空)",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/Attachment.js#184#49"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/InputAddress.js#241#74"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/InputTextarea.js#67#55"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/Location.js#14#74"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/RelBusiness.js#110#44"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/SelectDataSource.js#133#57"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/SelectUser.js#223#59"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/DynamicFieldView.js#6#55"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/UKComponent/Form/IntlText.js#8#55"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/UKComponent/Form/IntlText.js#25#55"
-			}
-		]
-	},
-	{
-		"id": "上传头像",
-		"defaultMessage": "上传头像",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/Avatar.js#94#82"
-			}
-		]
-	},
-	{
-		"id": "头像上传要求",
-		"defaultMessage": "头像上传要求",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/Avatar.js#98#45"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ModifyAvatarModal.js#100#39"
-			}
-		]
-	},
-	{
-		"id": "1. 建议使用正方形的图片",
-		"defaultMessage": "1. 建议使用正方形的图片",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/Avatar.js#100#47"
-			}
-		]
-	},
-	{
-		"id": "2. 支持格式：jpg、png、jpeg",
-		"defaultMessage": "2. 支持格式：jpg、png、jpeg",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/Avatar.js#101#16"
-			}
-		]
-	},
-	{
-		"id": "请选择",
-		"defaultMessage": "请选择",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/DataSourceSelectModal.js#191#8"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/AttendanceClassSet/AddForm.js#45#10"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/AttendanceClassSet/AddForm.js#52#10"
-			}
-		]
-	},
-	{
-		"id": "请输入关键字",
-		"defaultMessage": "请输入关键字",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/DataSourceSelectModal.js#202#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/AttendanceClassSet/index.js#105#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/AttendanceGroupSet/index.js#98#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/CollectorList/index.js#41#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Configure/transferScheme/index.js#85#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommApplication/index.js#233#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommDynamic/index.js#93#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommHome/views/EntcommRel/index.js#237#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommList/index.js#227#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ReminderList/index.js#41#12"
-			}
-		]
-	},
-	{
-		"id": "选择地址",
-		"defaultMessage": "选择地址",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/InputAddress.js#221#10"
-			}
-		]
-	},
-	{
-		"id": "输入地名搜索",
-		"defaultMessage": "输入地名搜索",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/InputAddress.js#226#74"
-			}
-		]
-	},
-	{
-		"id": "注：鼠标右键标注地址",
-		"defaultMessage": "注：鼠标右键标注地址",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/InputAddress.js#227#61"
-			}
-		]
-	},
-	{
-		"id": "无法定位当前地址",
-		"defaultMessage": "无法定位当前地址",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/controls/InputAddress.js#82#19"
-			},
-			{
-				"type": "text",
-				"location": "src/components/MapModal.js#65#6"
-			}
-		]
-	},
-	{
-		"id": "找不到相关地址",
-		"defaultMessage": "找不到相关地址",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/controls/InputAddress.js#125#10"
-			}
-		]
-	},
-	{
-		"id": "微软雅黑",
-		"defaultMessage": "微软雅黑",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/controls/InputAddress.js#171#6"
-			},
-			{
-				"type": "text",
-				"location": "src/components/MapModal.js#103#6"
-			}
-		]
-	},
-	{
-		"id": "请选择地址",
-		"defaultMessage": "请选择地址",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/controls/InputAddress.js#187#34"
-			}
-		]
-	},
-	{
-		"id": "客户",
-		"defaultMessage": "客户",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/controls/InputCustomerRecName.js#9#4"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Schedule/FormModal/ScheduleForm.js#58#20"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Schedule/modules/RelateCustomers/index.js#15#6"
-			}
-		]
-	},
-	{
-		"id": "销售线索",
-		"defaultMessage": "销售线索",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/controls/InputCustomerRecName.js#14#4"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Schedule/FormModal/ScheduleForm.js#61#20"
-			}
-		]
-	},
-	{
-		"id": "系统已有相似",
-		"defaultMessage": "系统已有相似",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/InputCustomerRecName.js#100#57"
-			}
-		]
-	},
-	{
-		"id": "引用",
-		"defaultMessage": "引用",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/InputCustomerRecName.js#107#136"
-			}
-		]
-	},
-	{
-		"id": "最小值",
-		"defaultMessage": "最小值",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/InputNumberRange.js#55#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/INumberRange.js#55#10"
-			}
-		]
-	},
-	{
-		"id": "最大值",
-		"defaultMessage": "最大值",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/InputNumberRange.js#64#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/INumberRange.js#62#10"
-			}
-		]
-	},
-	{
-		"id": "二维码",
-		"defaultMessage": "二维码",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/InputText.js#18#10"
-			}
-		]
-	},
-	{
-		"id": "此控件只可在手机端显示",
-		"defaultMessage": "此控件只可在手机端显示",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/Location.js#7#9"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/Picture.js#97#13"
-			}
-		]
-	},
-	{
-		"id": "- 请选择 -",
-		"defaultMessage": "- 请选择 -",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/RelBusiness.js#76#36"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/SelectEntityType.js#35#25"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/SelectSingle.js#196#27"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/ISelectEntityType.js#40#25"
-			}
-		]
-	},
-	{
-		"id": "请选择数据源",
-		"defaultMessage": "请选择数据源",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/RelBusiness.js#86#11"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityFields/FormItemFactory.js#700#40"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityFields/FormItemFactory.js#708#40"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityFields/FormItemFactory.js#719#36"
-			}
-		]
-	},
-	{
-		"id": "新增",
-		"defaultMessage": "新增",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/RelTable.js#409#74"
-			},
-			{
-				"type": "text",
-				"location": "src/components/EntcommTransferModal.js#266#6"
-			},
-			{
-				"type": "text",
-				"location": "src/components/EntcommTransferModal.js#41#6"
-			},
-			{
-				"type": "text",
-				"location": "src/components/EntcommTransferModal.js#20#4"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/AffairList/index.js#116#34"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/AttendanceClassSet/index.js#102#34"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/AttendanceGroupSet/index.js#95#34"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/CollectorList/index.js#38#30"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Configure/QRCodeEntrance/index.js#94#30"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Configure/transferScheme/index.js#82#36"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/DataSourceList/index.js#74#67"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommApplication/index.js#223#65"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommHome/views/EntcommRel/RelEntityAddModal.js#174#48"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommList/index.js#216#65"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFunc/index.js#179#63"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityMenus/index.js#56#30"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityRules/RuleTable.js#61#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityRules/RuleTable.js#100#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/ExtendConfig/index.js#145#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityList/index.js#116#71"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Knowledge/FolderManage.js#26#78"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Mails/CatalogManager/index.js#73#94"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/NoticeList/index.js#212#83"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/PrintTemplate/index.js#92#40"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ProductManager/ProductList.js#84#79"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ProductManager/SeriesManager.js#30#100"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ReminderList/index.js#38#30"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Structure/DepartmentManager.js#32#100"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Structure/UserList.js#75#74"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/UkqrtzManager/index.js#39#30"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/WorkflowList/index.js#56#30"
-			}
-		]
-	},
-	{
-		"id": "删除",
-		"defaultMessage": "删除",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/RelTable.js#413#56"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/SelectProductModal.js#202#72"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/AttendanceClassSet/index.js#91#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/AttendanceGroupSet/index.js#84#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/ContractHome/ReceivePay/index.js#56#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/DataSourceList/DSourceListTable.js#51#29"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/DataSourceList/index.js#67#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Dic/index.js#110#47"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/DicType/index.js#71#46"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntcommApplication/index.js#187#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntcommHome/views/EntcommDocs/index.js#34#12"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntcommHome/views/EntcommRel/index.js#166#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntcommList/index.js#178#6"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/index.js#180#58"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFunc/index.js#180#81"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/ExtendConfig/index.js#149#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/ExtendConfig/index.js#231#67"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/ExtendConfig/index.js#263#60"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityList/index.js#97#25"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Knowledge/FileList.js#34#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Knowledge/FolderManage.js#28#117"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Mails/CatalogManager/index.js#76#97"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Mails/MailActionBar.js#157#78"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/NoticeList/index.js#200#16"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/PrintTemplate/index.js#80#22"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/RoleHome/views/RoleUsers/index.js#47#12"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/RoleList/index.js#74#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/RoleList/RoleListTable.js#47#29"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/VocationHome/views/VocationUsers/index.js#47#12"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/VocationList/index.js#72#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/WorkflowHome/views/WorkflowDesign/FlowNode.js#68#27"
-			}
-		]
-	},
-	{
-		"id": "请检查格式",
-		"defaultMessage": "请检查格式",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/controls/RelTableRow.back.js#66#10"
-			},
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/DynamicFormBase.js#113#8"
-			},
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/DynamicFormBase2.js#112#8"
-			},
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/generateFieldsDecorators.js#24#6"
-			},
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/generateValidateRules.js#15#6"
-			}
-		]
-	},
-	{
-		"id": "请输入11位的手机号码",
-		"defaultMessage": "请输入11位的手机号码",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/controls/RelTableRow.back.js#105#21"
-			},
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/DynamicFormBase.js#153#19"
-			},
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/DynamicFormBase2.js#152#19"
-			},
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/generateFieldsDecorators.js#63#17"
-			},
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/generateValidateRules.js#54#17"
-			}
-		]
-	},
-	{
-		"id": "操作",
-		"defaultMessage": "操作",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/controls/SelectProductModal.js#200#8"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/DataSourceList/DSourceListTable.js#43#4"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/DbManager/DBSQLObjectList.js#39#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Dic/index.js#103#4"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/DicType/index.js#63#4"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityFields/index.js#172#6"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityMenus/index.js#61#16"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityTabs/index.js#32#12"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/ExtendConfig/index.js#225#8"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/ExtendConfig/index.js#260#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Knowledge/FileList.js#75#10"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Mails/RelatedInfoPanel.js#451#37"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/OperateLog/index.js#137#18"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/RoleList/RoleListTable.js#39#4"
-			}
-		]
-	},
-	{
-		"id": "选择产品",
-		"defaultMessage": "选择产品",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/SelectProductModal.js#209#8"
-			}
-		]
-	},
-	{
-		"id": "请输入产品名称",
-		"defaultMessage": "请输入产品名称",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/SelectProductModal.js#231#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ProductManager/ProductList.js#92#12"
-			}
-		]
-	},
-	{
-		"id": "可选",
-		"defaultMessage": "可选",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/SelectProductModal.js#237#19"
-			}
-		]
-	},
-	{
-		"id": "已选",
-		"defaultMessage": "已选",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/SelectProductModal.js#257#19"
-			}
-		]
-	},
-	{
-		"id": "选择产品系列",
-		"defaultMessage": "选择产品系列",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/SelectProductSerialModal.js#111#8"
-			}
-		]
-	},
-	{
-		"id": "请选择人员",
-		"defaultMessage": "请选择人员",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/controls/UserSelectModal.js#97#13"
-			},
-			{
-				"type": "text",
-				"location": "src/models/workflowDesign.js#524#14"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntcommApplication/TransferModal.js#62#13"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntcommHome/views/EntcommRel/TransferModal.js#62#13"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntcommList/TransferModal.js#62#13"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Mails/component/TransferCatalogModal.js#23#34"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ReportForm/component/SearchBar/ModalSelect.js#56#81"
-			}
-		]
-	},
-	{
-		"id": "请输入人员姓名",
-		"defaultMessage": "请输入人员姓名",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/controls/UserSelectModal.js#217#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/IPermissionRangeSelect/UserSelectModal.js#154#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/ISingleUserSelect/SingleUserSelectModal.js#113#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/WorkflowCaseModal/UserSelectModal.js#159#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommApplication/TransferModal.js#101#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommHome/views/EntcommRel/TransferModal.js#101#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommList/TransferModal.js#101#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/MailRecovery/UserSelectModal.js#121#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/NoticeList/NoticeSendModal/UserSelectModal.js#153#12"
-			}
-		]
-	},
-	{
-		"id": "找不到可用字段数据",
-		"defaultMessage": "找不到可用字段数据",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/DynamicFieldUpdater.js#82#6"
-			}
-		]
-	},
-	{
-		"id": "添加修改项",
-		"defaultMessage": "添加修改项",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/DynamicFieldUpdater.js#121#41"
-			}
-		]
-	},
-	{
-		"id": "请检查表格字段",
-		"defaultMessage": "请检查表格字段",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/DynamicFormBase.js#143#28"
-			},
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/DynamicFormBase2.js#142#28"
-			}
-		]
-	},
-	{
-		"id": "文件大小不可超过3M!",
-		"defaultMessage": "文件大小不可超过3M!",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/DynamicForm/RelTableImportModal.js#99#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/modals/ImportModal/ImportModal.js#112#6"
-			}
-		]
-	},
-	{
-		"id": "关    闭",
-		"defaultMessage": "关    闭",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/RelTableImportModal.js#154#68"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityList/ImportModal.js#132#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ImportModal/ImportModal.js#168#15"
-			}
-		]
-	},
-	{
-		"id": "开始导入",
-		"defaultMessage": "开始导入",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/RelTableImportModal.js#155#108"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityList/ImportModal.js#133#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ImportModal/ImportModal.js#169#15"
-			}
-		]
-	},
-	{
-		"id": "请按照Excel数据模版格式准备数据",
-		"defaultMessage": "请按照Excel数据模版格式准备数据",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/RelTableImportModal.js#161#60"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/TaskPrepareModal/index.js#40#20"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ImportModal/ImportModal.js#174#60"
-			}
-		]
-	},
-	{
-		"id": "下载模版",
-		"defaultMessage": "下载模版",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/RelTableImportModal.js#164#60"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ImportModal/ImportModal.js#177#60"
-			}
-		]
-	},
-	{
-		"id": "当数据重复时的操作方式：",
-		"defaultMessage": "当数据重复时的操作方式：",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/RelTableImportModal.js#170#60"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ImportModal/ImportModal.js#183#60"
-			}
-		]
-	},
-	{
-		"id": "追加导入",
-		"defaultMessage": "追加导入",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/RelTableImportModal.js#173#41"
-			}
-		]
-	},
-	{
-		"id": "覆盖导入",
-		"defaultMessage": "覆盖导入",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/RelTableImportModal.js#174#41"
-			},
-			{
-				"type": "text",
-				"location": "src/components/TaskPrepareModal/index.js#18#6"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ImportModal/ImportModal.js#187#43"
-			}
-		]
-	},
-	{
-		"id": "选择已填写好的Excel文件",
-		"defaultMessage": "选择已填写好的Excel文件",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/RelTableImportModal.js#194#62"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/TaskPrepareModal/index.js#56#20"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ImportModal/ImportModal.js#207#62"
-			}
-		]
-	},
-	{
-		"id": "选择文件",
-		"defaultMessage": "选择文件",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicForm/RelTableImportModal.js#195#58"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/TaskPrepareModal/index.js#57#22"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityList/ImportModal.js#143#18"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ImportModal/ImportModal.js#208#58"
-			}
-		]
-	},
-	{
-		"id": "数据已删除，无法查看详情",
-		"defaultMessage": "数据已删除，无法查看详情",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/DynamicTable/DSourceDetail/index.js#93#6"
-			},
-			{
-				"type": "text",
-				"location": "src/components/DynamicTable/DSourceDetail/index.js#51#6"
-			}
-		]
-	},
-	{
-		"id": "进入主页",
-		"defaultMessage": "进入主页",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicTable/DSourceDetail/index.js#128#59"
-			}
-		]
-	},
-	{
-		"id": "输入关键字",
-		"defaultMessage": "输入关键字",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicTable/FilterDropComponent/index.js#160#10"
-			}
-		]
-	},
-	{
-		"id": "筛选-",
-		"defaultMessage": "筛选-",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicTable/FilterDropComponent/index.js#174#45"
-			}
-		]
-	},
-	{
-		"id": "清除筛选",
-		"defaultMessage": "清除筛选",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicTable/FilterDropComponent/index.js#176#64"
-			}
-		]
-	},
-	{
-		"id": "空(未填写)",
-		"defaultMessage": "空(未填写)",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicTable/FilterDropComponent/index.js#185#166"
-			},
-			{
-				"type": "text",
-				"location": "src/components/DynamicTable/FilterDropComponent/SelectList.js#54#10"
-			}
-		]
-	},
-	{
-		"id": "从",
-		"defaultMessage": "从",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicTable/FilterDropComponent/RangeNumber.js#51#13"
-			}
-		]
-	},
-	{
-		"id": "到",
-		"defaultMessage": "到",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicTable/FilterDropComponent/RangeNumber.js#53#13"
-			}
-		]
-	},
-	{
-		"id": "查看明细",
-		"defaultMessage": "查看明细",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/DynamicTable/index.js#260#6"
-			},
-			{
-				"type": "text",
-				"location": "src/components/DynamicTable/index.js#44#6"
-			}
-		]
-	},
-	{
-		"id": "保存成功",
-		"defaultMessage": "保存成功",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/DynamicTable/index.js#287#6"
-			},
-			{
-				"type": "text",
-				"location": "src/models/affairDetail.js#275#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/collectorDetail.js#66#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/collectorList.js#83#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/dictype.js#46#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/dSourceHome.js#66#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/dSourceList.js#66#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/entcommInfo.js#145#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/entityButtons.js#140#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/entityDynamicVisible.js#113#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/entityFields.js#72#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/entityFields.js#120#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/entityFields.js#137#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/entityFields.js#161#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/entityFields.js#175#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/entityList.js#174#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/entityMenus.js#63#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/entityRules.js#98#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/entityScripts.js#88#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/knowledge.js#120#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/passwordstrategy.js#35#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/printTemplate.js#98#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/productManager.js#139#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/productManager.js#161#10"
-			},
-			{
-				"type": "text",
-				"location": "src/models/productManager.js#170#10"
-			},
-			{
-				"type": "text",
-				"location": "src/models/reminderDetail.js#66#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/reminderList.js#83#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/roleRule.js#118#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/salesTarget.js#171#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/structure.js#137#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/structure.js#154#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/systemNotifications.js#47#13"
-			},
-			{
-				"type": "text",
-				"location": "src/models/targetSettingDetailSet.js#162#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/transferscheme.js#114#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/ukqrtzmanager.js#66#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/ukqrtzmanager.js#82#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/vocationRule.js#67#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/workflowDesign.js#599#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/workflowList.js#68#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/workflowList.js#114#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/workflowList.js#126#8"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityFields/MobileListConfigModal2/index.js#129#8"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityFields/MobileListConfigModal2/index.js#147#8"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityFields/SetCustomMailConfigModal.js#56#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityFields/SetDynamicFieldsModal.js#77#8"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityFields/SetListFilterModal.js#122#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityFields/SetMainFieldModal.js#72#8"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/PrintTemplate/TemplateRuleModal.js#113#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/VocationHome/views/VocationRule/FunctionRuleModal.js#137#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/WorkflowHome/views/WorkflowDesign/FlowBranchConditionModal.js#134#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/WorkflowList/WorkflowRuleModal.js#128#6"
-			}
-		]
-	},
-	{
-		"id": "关闭",
-		"defaultMessage": "关闭",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/DynamicTable/index.js#605#77"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/MapModal.js#132#63"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/AffairList/NewAffairModal.js#130#76"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommApplication/RecordDetailModal.js#23#63"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommDynamic/RecordDetailModal.js#26#63"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommHome/StageFlowModal.js#150#76"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommHome/views/EntcommActivities/DynamicDetailModal.js#22#63"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommHome/views/EntcommActivities/PluginAddModal.js#220#76"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/FormItemFactory.js#782#34"
-			}
-		]
-	},
-	{
-		"id": "请检查表单",
-		"defaultMessage": "请检查表单",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/EntcommAddModal.js#120#15"
-			},
-			{
-				"type": "text",
-				"location": "src/components/EntcommAddModal.js#147#15"
-			},
-			{
-				"type": "text",
-				"location": "src/components/EntcommCopyModal.js#61#15"
-			},
-			{
-				"type": "text",
-				"location": "src/components/EntcommEditModal.js#94#15"
-			},
-			{
-				"type": "text",
-				"location": "src/components/EntcommTransferModal.js#201#15"
-			},
-			{
-				"type": "text",
-				"location": "src/models/affairDetail.js#263#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/entcommInfo.js#133#8"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/AffairDetail/index.js#108#8"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/AttendanceClassSet/AddClassModal.js#70#15"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/AttendanceGroupSet/AddGroupModal.js#78#15"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/CollectorList/CollectorFormModal.js#55#15"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/DbManager/SQLObjectFormModal.js#25#15"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntcommApplication/EntcommAddModal.js#85#15"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntcommHome/StageBar2.js#244#8"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntcommHome/views/EntcommRel/DetailModal.js#145#15"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntcommList/DataTransferModal.js#47#15"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntcommList/EntcommAddModal.js#86#15"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntcommList/EntcommCopyModal.js#60#15"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityButtons/EntityButtonForm.js#24#15"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityPages/EntityPageForm.js#20#15"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityTabs/EntityTabFormModal.js#72#15"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Knowledge/FolderFormModal.js#53#22"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Mails/CatalogManager/CatalogModal.js#47#22"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/ProductManager/ProductFormModal.js#94#22"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/ProductManager/SeriesFormModal.js#50#22"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/ReminderList/ReminderFormModal.js#54#15"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Schedule/FormModal/ScheduleAddForm.js#48#15"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/UkqrtzManager/QrtzFormModal.js#37#15"
-			}
-		]
-	},
-	{
-		"id": "新增成功",
-		"defaultMessage": "新增成功",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/EntcommAddModal.js#134#8"
-			},
-			{
-				"type": "text",
-				"location": "src/components/EntcommCopyModal.js#73#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/attendanceClassSet.js#128#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/attendanceGroupSet.js#154#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/dic.js#89#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/qrcodeentrance.js#45#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/targetSetting.js#44#8"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntcommApplication/EntcommAddModal.js#95#8"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntcommList/EntcommAddModal.js#98#8"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntcommList/EntcommCopyModal.js#72#8"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/NoticeList/NoticeFormModal.js#90#6"
-			}
-		]
-	},
-	{
-		"id": "请选择类型",
-		"defaultMessage": "请选择类型",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/EntcommAddModal.js#240#10"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntcommApplication/EntcommAddModal.js#156#10"
-			}
-		]
-	},
-	{
-		"id": "提交数据成功",
-		"defaultMessage": "提交数据成功",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/EntcommEditModal.js#106#8"
-			},
-			{
-				"type": "text",
-				"location": "src/components/EntcommTransferModal.js#146#4"
-			},
-			{
-				"type": "text",
-				"location": "src/models/structure.js#203#8"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntcommHome/views/EntcommRel/DetailModal.js#157#8"
-			}
-		]
-	},
-	{
-		"id": "获取协议或数据失败",
-		"defaultMessage": "获取协议或数据失败",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/EntcommTransferModal.js#122#6"
-			}
-		]
-	},
-	{
-		"id": "没有规则可转换",
-		"defaultMessage": "没有规则可转换",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/EntcommTransferModal.js#194#10"
-			}
-		]
-	},
-	{
-		"id": "请选择转换类型",
-		"defaultMessage": "请选择转换类型",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/EntcommTransferModal.js#319#10"
-			}
-		]
-	},
-	{
-		"id": "请输入提醒消息标题",
-		"defaultMessage": "请输入提醒消息标题",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/EntityMessageTemplate/index.js#9#4"
-			}
-		]
-	},
-	{
-		"id": "请编写提醒消息模板。如：{商机名称}即将于{商机有效期}到期，请留意。",
-		"defaultMessage": "请编写提醒消息模板。如：{商机名称}即将于{商机有效期}到期，请留意。",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/EntityMessageTemplate/index.js#74#12"
-			}
-		]
-	},
-	{
-		"id": "指定人",
-		"defaultMessage": "指定人",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/EntityReceiverPicker/index.js#84#78"
-			}
-		]
-	},
-	{
-		"id": "指定部门",
-		"defaultMessage": "指定部门",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/EntityReceiverPicker/index.js#93#78"
-			}
-		]
-	},
-	{
-		"id": "固定人",
-		"defaultMessage": "固定人",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/EntityReceiverPicker/ReceiverPickerSingle.js#82#18"
-			}
-		]
-	},
-	{
-		"id": "表单中人员",
-		"defaultMessage": "表单中人员",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/EntityReceiverPicker/ReceiverPickerSingle.js#82#25"
-			}
-		]
-	},
-	{
-		"id": "固定部门",
-		"defaultMessage": "固定部门",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/EntityReceiverPicker/ReceiverPickerSingle.js#82#34"
-			}
-		]
-	},
-	{
-		"id": "表单中人员的部门",
-		"defaultMessage": "表单中人员的部门",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/EntityReceiverPicker/ReceiverPickerSingle.js#82#42"
-			}
-		]
-	},
-	{
-		"id": "部门领导",
-		"defaultMessage": "部门领导",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/EntityReceiverPicker/ReceiverPickerSingle.js#157#32"
-			}
-		]
-	},
-	{
-		"id": "全部人",
-		"defaultMessage": "全部人",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/EntityReceiverPicker/ReceiverPickerSingle.js#158#32"
-			}
-		]
-	},
-	{
-		"id": "获取实体失败",
-		"defaultMessage": "获取实体失败",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/EntitySelect.js#27#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/DataSourceList/DSourceFormModal.js#34#6"
-			}
-		]
-	},
-	{
-		"id": "导出配置",
-		"defaultMessage": "导出配置",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ExportModal.js#92#8"
-			}
-		]
-	},
-	{
-		"id": "数据正在处理中...",
-		"defaultMessage": "数据正在处理中...",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ExportModal.js#98#14"
-			}
-		]
-	},
-	{
-		"id": "导出字段",
-		"defaultMessage": "导出字段",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ExportModal.js#102#14"
-			}
-		]
-	},
-	{
-		"id": "请选择导出字段",
-		"defaultMessage": "请选择导出字段",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/ExportModal.js#106#34"
-			}
-		]
-	},
-	{
-		"id": "按web列表设置字段",
-		"defaultMessage": "按web列表设置字段",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ExportModal.js#110#36"
-			}
-		]
-	},
-	{
-		"id": "按个人显示设置字段",
-		"defaultMessage": "按个人显示设置字段",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ExportModal.js#111#36"
-			}
-		]
-	},
-	{
-		"id": "全部字段导出",
-		"defaultMessage": "全部字段导出",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ExportModal.js#112#36"
-			}
-		]
-	},
-	{
-		"id": "需导出的分录",
-		"defaultMessage": "需导出的分录",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ExportModal.js#119#16"
-			}
-		]
-	},
-	{
-		"id": "Excel数据处理方式",
-		"defaultMessage": "Excel数据处理方式",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ExportModal.js#129#16"
-			}
-		]
-	},
-	{
-		"id": "请选择Excel数据处理方式",
-		"defaultMessage": "请选择Excel数据处理方式",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/ExportModal.js#133#36"
-			}
-		]
-	},
-	{
-		"id": "数据冗余显示",
-		"defaultMessage": "数据冗余显示",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ExportModal.js#137#38"
-			}
-		]
-	},
-	{
-		"id": "去除重复拆分显示",
-		"defaultMessage": "去除重复拆分显示",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ExportModal.js#138#38"
-			}
-		]
-	},
-	{
-		"id": "去除重复合并显示",
-		"defaultMessage": "去除重复合并显示",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ExportModal.js#139#38"
-			}
-		]
-	},
-	{
-		"id": "规则值不能为空",
-		"defaultMessage": "规则值不能为空",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/FilterConfigBoard.js#47#15"
-			}
-		]
-	},
-	{
-		"id": "定义规则",
-		"defaultMessage": "定义规则",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/FilterConfigBoard.js#27#4"
-			}
-		]
-	},
-	{
-		"id": "定义集合规则",
-		"defaultMessage": "定义集合规则",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/FilterConfigBoard.js#28#4"
-			}
-		]
-	},
-	{
-		"id": "请选择时间",
-		"defaultMessage": "请选择时间",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/IDataPicker.js#35#8"
-			}
-		]
-	},
-	{
-		"id": "请输入数值",
-		"defaultMessage": "请输入数值",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/INumber.js#27#8"
-			}
-		]
-	},
-	{
-		"id": "本人",
-		"defaultMessage": "本人",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/renders/IPermissionRangeSelect/index.js#56#6"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/IPermissionRangeSelect/IPermissionRangeSelectModal.js#93#122"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/ISingleUserSelect/index.js#55#40"
-			}
-		]
-	},
-	{
-		"id": "本团队",
-		"defaultMessage": "本团队",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/renders/IPermissionRangeSelect/index.js#57#6"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/IPermissionRangeSelect/IPermissionRangeSelectModal.js#94#134"
-			}
-		]
-	},
-	{
-		"id": "本团队及下级团队",
-		"defaultMessage": "本团队及下级团队",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/renders/IPermissionRangeSelect/index.js#58#6"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/IPermissionRangeSelect/IPermissionRangeSelectModal.js#95#126"
-			}
-		]
-	},
-	{
-		"id": "无领导的团队",
-		"defaultMessage": "无领导的团队",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/renders/IPermissionRangeSelect/index.js#59#6"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/IPermissionRangeSelect/IPermissionRangeSelectModal.js#96#136"
-			}
-		]
-	},
-	{
-		"id": "数据权限范围",
-		"defaultMessage": "数据权限范围",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/IPermissionRangeSelect/IPermissionRangeSelectModal.js#82#8"
-			}
-		]
-	},
-	{
-		"id": "特定人（多选）",
-		"defaultMessage": "特定人（多选）",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/IPermissionRangeSelect/IPermissionRangeSelectModal.js#103#11"
-			}
-		]
-	},
-	{
-		"id": "特定团队（多选）",
-		"defaultMessage": "特定团队（多选）",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/IPermissionRangeSelect/IPermissionRangeSelectModal.js#113#11"
-			}
-		]
-	},
-	{
-		"id": "是",
-		"defaultMessage": "是",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/ISelectBool.js#25#31"
-			},
-			{
-				"type": "text",
-				"location": "src/models/entityList.js#26#4"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/CollectorDetail/index.js#158#34"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/DataSourceList/DSourceFormModal.js#117#31"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityButtons/EntityButtonForm.js#108#31"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/FormItemFactory.js#1119#29"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityList/EntityFormModal.js#201#33"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ReminderList/ReminderRepeatSetting.js#192#30"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/WorkflowList/WorkflowFormModal.js#142#33"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/WorkflowList/WorkflowFormModal.js#153#33"
-			}
-		]
-	},
-	{
-		"id": "否",
-		"defaultMessage": "否",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/ISelectBool.js#26#31"
-			},
-			{
-				"type": "text",
-				"location": "src/models/entityList.js#27#4"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/CollectorDetail/index.js#159#35"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/DataSourceList/DSourceFormModal.js#118#31"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityButtons/EntityButtonForm.js#109#31"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/FormItemFactory.js#1118#29"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityList/EntityFormModal.js#202#33"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ReminderList/ReminderRepeatSetting.js#193#31"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/WorkflowList/WorkflowFormModal.js#143#33"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/WorkflowList/WorkflowFormModal.js#154#33"
-			}
-		]
-	},
-	{
-		"id": "启用",
-		"defaultMessage": "启用",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/ISelectRecordStatus.js#26#24"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/CollectorList/CollectorFormModal.js#116#33"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/CollectorList/index.js#35#28"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/CollectorList/index.js#75#87"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Configure/QRCodeEntrance/index.js#122#88"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Configure/transferScheme/index.js#74#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Configure/transferScheme/index.js#79#26"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/DataSourceList/DSourceFormModal.js#98#32"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/DataSourceList/index.js#71#28"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/DataSourceList/index.js#112#85"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/FieldForm.js#91#30"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/FormItemFactory.js#655#30"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityFields/index.js#157#29"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityList/index.js#101#29"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityList/index.js#107#28"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityList/index.js#157#88"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/PrintTemplate/index.js#83#22"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/PrintTemplate/index.js#89#38"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/PrintTemplate/index.js#107#102"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/ProductManager/ProductList.js#76#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ProductManager/ProductList.js#81#26"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ProductManager/SeriesManager.js#34#141"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ReminderList/index.js#35#28"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/ReminderList/index.js#76#87"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ReminderList/ReminderFormModal.js#112#33"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ReportForm/component/SearchBar/SetSeriesModal.js#70#37"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Structure/DepartmentManager.js#35#112"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Structure/UserFormModal.js#179#32"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Structure/UserList.js#55#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Structure/UserList.js#72#28"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Structure/UserList.js#118#40"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/UkqrtzManager/index.js#35#12"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/UkqrtzManager/index.js#62#87"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/WorkflowList/index.js#43#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/WorkflowList/index.js#53#26"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/WorkflowList/index.js#93#85"
-			}
-		]
-	},
-	{
-		"id": "停用",
-		"defaultMessage": "停用",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/ISelectRecordStatus.js#27#24"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/CollectorList/index.js#36#28"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/CollectorList/index.js#75#81"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Configure/QRCodeEntrance/index.js#122#82"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Configure/transferScheme/index.js#72#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Configure/transferScheme/index.js#80#26"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/DataSourceList/DSourceFormModal.js#99#32"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/DataSourceList/index.js#72#28"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/DataSourceList/index.js#112#79"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityList/index.js#99#29"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityList/index.js#108#28"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityList/index.js#157#82"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/PrintTemplate/index.js#81#22"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/PrintTemplate/index.js#90#38"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/PrintTemplate/index.js#107#96"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/ProductManager/ProductList.js#77#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ProductManager/ProductList.js#82#26"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ProductManager/SeriesManager.js#35#157"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ReminderList/index.js#36#28"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/ReminderList/index.js#76#81"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Structure/DepartmentManager.js#34#112"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Structure/UserFormModal.js#180#32"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Structure/UserList.js#53#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Structure/UserList.js#73#28"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/Structure/UserList.js#118#34"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/UkqrtzManager/index.js#34#12"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/UkqrtzManager/index.js#62#82"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/WorkflowList/index.js#41#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/WorkflowList/index.js#54#26"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/WorkflowList/index.js#93#79"
-			}
-		]
-	},
-	{
-		"id": "特定人（单选）",
-		"defaultMessage": "特定人（单选）",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/ISingleUserSelect/index.js#58#40"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/ISingleUserSelect/index.js#59#34"
-			}
-		]
-	},
-	{
-		"id": "请选择用户",
-		"defaultMessage": "请选择用户",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/renders/ISingleUserSelect/SingleUserSelectModal.js#69#6"
-			}
-		]
-	},
-	{
-		"id": "请输入文本",
-		"defaultMessage": "请输入文本",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/renders/IText.js#28#8"
-			}
-		]
-	},
-	{
-		"id": "文本类",
-		"defaultMessage": "文本类",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#36#2"
-			}
-		]
-	},
-	{
-		"id": "数字类",
-		"defaultMessage": "数字类",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#48#2"
-			}
-		]
-	},
-	{
-		"id": "日期类",
-		"defaultMessage": "日期类",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#77#2"
-			}
-		]
-	},
-	{
-		"id": "到现在≥",
-		"defaultMessage": "到现在≥",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#86#6"
-			},
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#117#6"
-			}
-		]
-	},
-	{
-		"id": "到现在≤",
-		"defaultMessage": "到现在≤",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#87#6"
-			},
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#118#6"
-			}
-		]
-	},
-	{
-		"id": "输入天数",
-		"defaultMessage": "输入天数",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#96#85"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#136#85"
-			}
-		]
-	},
-	{
-		"id": "日期时间类",
-		"defaultMessage": "日期时间类",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#108#2"
-			}
-		]
-	},
-	{
-		"id": "选人类",
-		"defaultMessage": "选人类",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#139#2"
-			}
-		]
-	},
-	{
-		"id": "单选多选",
-		"defaultMessage": "单选多选",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#157#2"
-			}
-		]
-	},
-	{
-		"id": "数据源",
-		"defaultMessage": "数据源",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#169#2"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/controlTypes.js#32#4"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/FormItemFactory.js#698#20"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/FormItemFactory.js#706#20"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/FormItemFactory.js#717#16"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityFields/RelBusDataSource.js#140#6"
-			}
-		]
-	},
-	{
-		"id": "产品",
-		"defaultMessage": "产品",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#193#2"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/controlTypes.js#40#4"
-			}
-		]
-	},
-	{
-		"id": "产品系列",
-		"defaultMessage": "产品系列",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#205#2"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/controlTypes.js#41#4"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ProductManager/SeriesManager.js#26#39"
-			}
-		]
-	},
-	{
-		"id": "记录状态",
-		"defaultMessage": "记录状态",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#217#2"
-			}
-		]
-	},
-	{
-		"id": "实体类型",
-		"defaultMessage": "实体类型",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#228#2"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityList/EntityFormModal.js#165#20"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityList/index.js#155#16"
-			}
-		]
-	},
-	{
-		"id": "图片附件类",
-		"defaultMessage": "图片附件类",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#239#2"
-			}
-		]
-	},
-	{
-		"id": "发起人角色",
-		"defaultMessage": "发起人角色",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#250#2"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/WorkflowHome/views/WorkflowDesign/FlowBranchConditionModal.js#38#4"
-			}
-		]
-	},
-	{
-		"id": "布尔选择",
-		"defaultMessage": "布尔选择",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#262#2"
-			}
-		]
-	},
-	{
-		"id": "渲染ruledata控件出错",
-		"defaultMessage": "渲染ruledata控件出错",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#296#19"
-			},
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/ruleConfigs.js#301#21"
-			}
-		]
-	},
-	{
-		"id": "解析规则出错",
-		"defaultMessage": "解析规则出错",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/RuleItemField.js#54#6"
-			}
-		]
-	},
-	{
-		"id": "请输入SQL",
-		"defaultMessage": "请输入SQL",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/RuleItemSql.js#26#8"
-			}
-		]
-	},
-	{
-		"id": "没有可供筛选的字段",
-		"defaultMessage": "没有可供筛选的字段",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/RuleList.js#93#6"
-			},
-			{
-				"type": "text",
-				"location": "src/components/FilterConfigBoard/RuleList.js#129#6"
-			}
-		]
-	},
-	{
-		"id": "系统字段筛选",
-		"defaultMessage": "系统字段筛选",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/RuleList.js#151#27"
-			}
-		]
-	},
-	{
-		"id": "其他字段筛选",
-		"defaultMessage": "其他字段筛选",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/RuleList.js#152#27"
-			}
-		]
-	},
-	{
-		"id": "SQL设置",
-		"defaultMessage": "SQL设置",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/RuleList.js#153#27"
-			}
-		]
-	},
-	{
-		"id": "实体变量",
-		"defaultMessage": "实体变量",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/RuleList.js#159#30"
-			}
-		]
-	},
-	{
-		"id": "流程变量",
-		"defaultMessage": "流程变量",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/RuleList.js#160#30"
-			}
-		]
-	},
-	{
-		"id": "添加规则",
-		"defaultMessage": "添加规则",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/RuleList.js#166#16"
-			}
-		]
-	},
-	{
-		"id": "例如：( $1 AND $2 ) OR $3",
-		"defaultMessage": "例如：( $1 AND $2 ) OR $3",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/FilterConfigBoard/RuleSetInput.js#33#10"
-			}
-		]
-	},
-	{
-		"id": "暂无内容",
-		"defaultMessage": "暂无内容",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/FoldBox.js#13#4"
-			}
-		]
-	},
-	{
-		"id": "查看图片",
-		"defaultMessage": "查看图片",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ImageGallery.js#27#6"
-			}
-		]
-	},
-	{
-		"id": "上传要求",
-		"defaultMessage": "上传要求",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ImageUploaderInForm.js#83#13"
-			}
-		]
-	},
-	{
-		"id": "图片格式jpg，png，jpeg",
-		"defaultMessage": "图片格式jpg，png，jpeg",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/ImageUploaderInForm.js#16#6"
-			}
-		]
-	},
-	{
-		"id": "文件大小不超过200k",
-		"defaultMessage": "文件大小不超过200k",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/ImageUploaderInForm.js#17#6"
-			}
-		]
-	},
-	{
-		"id": "长宽比约为4:3",
-		"defaultMessage": "长宽比约为4:3",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/ImageUploaderInForm.js#18#6"
-			}
-		]
-	},
-	{
-		"id": "图片",
-		"defaultMessage": "图片",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ImgCard.js#10#21"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/ImgCardList.js#88#21"
-			}
-		]
-	},
-	{
-		"id": "字段",
-		"defaultMessage": "字段",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ListStylePicker/FieldViewer.js#93#20"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Configure/transferScheme/RelTable.js#107#24"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/index.js#28#76"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/ExtendConfig/index.js#178#12"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/ExtendConfig/index.js#205#12"
-			}
-		]
-	},
-	{
-		"id": "请选择字段",
-		"defaultMessage": "请选择字段",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/ListStylePicker/FieldViewer.js#95#40"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ServiceParams/TargetSetting/detailSet.js#89#10"
-			}
-		]
-	},
-	{
-		"id": "字号",
-		"defaultMessage": "字号",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ListStylePicker/FieldViewer.js#102#33"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/DataSourceHome/MobFieldViewer/FieldHolder.js#61#20"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/MobFieldViewer/FieldHolder.js#61#20"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/MobileListConfigModal2/MobFieldViewer/FieldHolder.js#61#20"
-			}
-		]
-	},
-	{
-		"id": "请输入字号",
-		"defaultMessage": "请输入字号",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/ListStylePicker/FieldViewer.js#104#40"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/DataSourceHome/MobFieldViewer/FieldHolder.js#63#40"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityFields/MobFieldViewer/FieldHolder.js#63#40"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityFields/MobileListConfigModal2/MobFieldViewer/FieldHolder.js#63#40"
-			}
-		]
-	},
-	{
-		"id": "颜色",
-		"defaultMessage": "颜色",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ListStylePicker/FieldViewer.js#109#33"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/DataSourceHome/MobFieldViewer/FieldHolder.js#68#20"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/MobFieldViewer/FieldHolder.js#68#20"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/MobileListConfigModal2/MobFieldViewer/FieldHolder.js#68#20"
-			}
-		]
-	},
-	{
-		"id": "请选择颜色",
-		"defaultMessage": "请选择颜色",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/ListStylePicker/FieldViewer.js#111#40"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/DataSourceHome/MobFieldViewer/FieldHolder.js#70#40"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityFields/MobFieldViewer/FieldHolder.js#70#40"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntityHome/views/EntityFields/MobileListConfigModal2/MobFieldViewer/FieldHolder.js#70#40"
-			}
-		]
-	},
-	{
-		"id": "设置样式",
-		"defaultMessage": "设置样式",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ListStylePicker/FieldViewer.js#135#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/DataSourceHome/MobFieldViewer/FieldHolder.js#102#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/MobFieldViewer/FieldHolder.js#101#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/MobileListConfigModal2/MobFieldViewer/FieldHolder.js#102#8"
-			}
-		]
-	},
-	{
-		"id": "选择样式",
-		"defaultMessage": "选择样式",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ListStylePicker/ListStylePicker.js#40#44"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/ListStylePicker/ListStylePicker.js#58#10"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/ListStylePicker/ListStylePicker.js#61#9"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/DataSourceHome/MobileViewStyleSelect.js#67#48"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/DataSourceHome/MobileViewStyleSelectModal.js#26#13"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/MobileListConfigModal2/MobileViewStyleSelect.js#67#48"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/MobileListConfigModal2/MobileViewStyleSelectModal.js#26#13"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/PickStyleButton.js#42#42"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/PickStyleButton.js#44#10"
-			}
-		]
-	},
-	{
-		"id": "查看地址",
-		"defaultMessage": "查看地址",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/MapModal.js#128#8"
-			}
-		]
-	},
-	{
-		"id": "添加",
-		"defaultMessage": "添加",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/ParamsBoard/NewParamForm.js#70#70"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Configure/transferScheme/RelTable.js#134#67"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Dic/index.js#147#55"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityFields/PickFieldButton.js#70#42"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityTabs/component/FieldSet.js#78#47"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityHome/views/EntityTypes/NewFieldTypeForm.js#31#70"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/RoleGroupList/NewRoleGroupForm.js#31#70"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ServiceParams/SaleStage/index.js#134#76"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Structure/TransferDataModal/FormList.js#57#40"
-			}
-		]
-	},
-	{
-		"id": "确认删除吗？",
-		"defaultMessage": "确认删除吗？",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/ParamsBoard/ParamsList.js#23#4"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/RoleList/index.js#29#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/ServiceParams/SaleStage/component/DetailParamsList.js#69#6"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/VocationList/index.js#29#6"
-			}
-		]
-	},
-	{
-		"id": "编辑json",
-		"defaultMessage": "编辑json",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/PowerTextArea/index.js#32#63"
-			}
-		]
-	},
-	{
-		"id": "请选择产品系列",
-		"defaultMessage": "请选择产品系列",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/ProductSerialSelect.js#41#4"
-			}
-		]
-	},
-	{
-		"id": "找不到匹配的图标",
-		"defaultMessage": "找不到匹配的图标",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/SelectAppIcon.js#129#18"
-			}
-		]
-	},
-	{
-		"id": "选择图标",
-		"defaultMessage": "选择图标",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/SelectAppIcon.js#156#10"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/SelectAppIcon.js#161#18"
-			}
-		]
-	},
-	{
-		"id": "下载模板",
-		"defaultMessage": "下载模板",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/TaskPrepareModal/index.js#41#22"
-			}
-		]
-	},
-	{
-		"id": "当数据重复时的操作方式",
-		"defaultMessage": "当数据重复时的操作方式",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/TaskPrepareModal/index.js#46#20"
-			}
-		]
-	},
-	{
-		"id": "注意事项：",
-		"defaultMessage": "注意事项：",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/TaskPrepareModal/index.js#62#42"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ImportModal/ImportModal.js#214#19"
-			}
-		]
-	},
-	{
-		"id": "1. 模版中的表头名称不可更改，表头行不能删除",
-		"defaultMessage": "1. 模版中的表头名称不可更改，表头行不能删除",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/TaskPrepareModal/index.js#63#44"
-			}
-		]
-	},
-	{
-		"id": "2.导入文件大小请勿超过 2 MB",
-		"defaultMessage": "2.导入文件大小请勿超过 2 MB",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/TaskPrepareModal/index.js#64#42"
-			}
-		]
-	},
-	{
-		"id": "3.红色列表头为必填字段",
-		"defaultMessage": "3.红色列表头为必填字段",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/TaskPrepareModal/index.js#65#36"
-			}
-		]
-	},
-	{
-		"id": "4.其他选填字段，如填写了，数据也要正确，否则导入会失败",
-		"defaultMessage": "4.其他选填字段，如填写了，数据也要正确，否则导入会失败",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/TaskPrepareModal/index.js#66#31"
-			}
-		]
-	},
-	{
-		"id": "5.行政区域，输入省、市或者省市区，都可以",
-		"defaultMessage": "5.行政区域，输入省、市或者省市区，都可以",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/TaskPrepareModal/index.js#67#47"
-			}
-		]
-	},
-	{
-		"id": "6.所属行业、客户规模，必须为系统在库的数据，可在“系统管理》业务参数设置”中查看",
-		"defaultMessage": "6.所属行业、客户规模，必须为系统在库的数据，可在“系统管理》业务参数设置”中查看",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/TaskPrepareModal/index.js#68#40"
-			}
-		]
-	},
-	{
-		"id": "7.日期格式为 YYYY/MM/DD,如 2015/8/8",
-		"defaultMessage": "7.日期格式为 YYYY/MM/DD,如 2015/8/8",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/TaskPrepareModal/index.js#69#60"
-			}
-		]
-	},
-	{
-		"id": "8.字段格式为多选框的，多个值之间用“ ；”隔开",
-		"defaultMessage": "8.字段格式为多选框的，多个值之间用“ ；”隔开",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/TaskPrepareModal/index.js#70#48"
-			}
-		]
-	},
-	{
-		"id": "放弃导入",
-		"defaultMessage": "放弃导入",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/TaskPrepareModal/index.js#17#6"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/modals/ImportModal/ImportModal.js#186#43"
-			}
-		]
-	},
-	{
-		"id": "条记录",
-		"defaultMessage": "条记录",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/TinyPager.js#29#28"
-			}
-		]
-	},
-	{
-		"id": "已选中",
-		"defaultMessage": "已选中",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/Toolbar.js#25#41"
-			}
-		]
-	},
-	{
-		"id": "项",
-		"defaultMessage": "项",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/Toolbar.js#25#59"
-			}
-		]
-	},
-	{
-		"id": "放大",
-		"defaultMessage": "放大",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/UKComponent/DataDisplay/ViewPicture.js#114#80"
-			}
-		]
-	},
-	{
-		"id": "缩小",
-		"defaultMessage": "缩小",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/UKComponent/DataDisplay/ViewPicture.js#115#82"
-			}
-		]
-	},
-	{
-		"id": "重置",
-		"defaultMessage": "重置",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/UKComponent/DataDisplay/ViewPicture.js#116#44"
-			}
-		]
-	},
-	{
-		"id": "提交成功",
-		"defaultMessage": "提交成功",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/WorkflowCaseModal/index.bac.js#101#8"
-			},
-			{
-				"type": "text",
-				"location": "src/components/WorkflowCaseModal/index.bac.js#128#6"
-			},
-			{
-				"type": "text",
-				"location": "src/components/WorkflowCaseModal/index.js#143#8"
-			},
-			{
-				"type": "text",
-				"location": "src/components/WorkflowCaseModal/index.js#170#6"
-			},
-			{
-				"type": "text",
-				"location": "src/components/WorkflowCaseModal/index.js#188#6"
-			},
-			{
-				"type": "text",
-				"location": "src/components/WorkflowCaseModal/index.js#96#10"
-			},
-			{
-				"type": "text",
-				"location": "src/components/WorkflowCaseModal/WorkflowCaseForAddModal.js#116#8"
-			},
-			{
-				"type": "text",
-				"location": "src/components/WorkflowCaseModal/WorkflowCaseForAddModal.js#67#10"
-			},
-			{
-				"type": "text",
-				"location": "src/models/affairDetail.js#404#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/entcommActivities.js#160#12"
-			},
-			{
-				"type": "text",
-				"location": "src/models/entcommActivities.js#194#14"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/EntcommHome/StageBar2.js#278#6"
-			}
-		]
-	},
-	{
-		"id": "关闭流程",
-		"defaultMessage": "关闭流程",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/WorkflowCaseModal/index.bac.js#164#66"
-			},
-			{
-				"type": "jsx",
-				"location": "src/components/WorkflowCaseModal/index.js#203#66"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/AffairDetail/index.js#245#57"
-			}
-		]
-	},
-	{
-		"id": "请选择审批人",
-		"defaultMessage": "请选择审批人",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/components/WorkflowCaseModal/WorkflowCaseForm.js#52#6"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/WorkflowHome/views/WorkflowDesign/FlowStepModal/SelectFlowUser.js#150#12"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/WorkflowHome/views/WorkflowDesign/FlowStepModal/SelectFlowUserMultiple.js#17#8"
-			}
-		]
-	},
-	{
-		"id": "审批人",
-		"defaultMessage": "审批人",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/WorkflowCaseModal/WorkflowCaseForm.js#92#21"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/AffairDetail/index.js#321#20"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/WorkflowHome/views/WorkflowDesign/index.js#240#8"
-			}
-		]
-	},
-	{
-		"id": "抄送人",
-		"defaultMessage": "抄送人",
-		"source": [
-			{
-				"type": "jsx",
-				"location": "src/components/WorkflowCaseModal/WorkflowCaseForm.js#106#21"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/AffairDetail/index.js#291#18"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Mails/MailContent.js#125#18"
-			}
-		]
-	},
-	{
-		"id": "办公",
-		"defaultMessage": "办公",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/config/menus.js#14#4"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityList/SetEntryModal.js#256#42"
-			}
-		]
-	},
-	{
-		"id": "公告通知",
-		"defaultMessage": "公告通知",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/config/menus.js#18#8"
-			},
-			{
-				"type": "text",
-				"location": "src/models/schedule.js#11#20"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/NoticeList/index.js#193#14"
-			}
-		]
-	},
-	{
-		"id": "知识库",
-		"defaultMessage": "知识库",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/config/menus.js#29#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/Knowledge/index.js#18#10"
-			}
-		]
-	},
-	{
-		"id": "考勤",
-		"defaultMessage": "考勤",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/config/menus.js#33#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/AttendanceGroupSet/AddForm.js#85#10"
-			}
-		]
-	},
-	{
-		"id": "审批",
-		"defaultMessage": "审批",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/config/menus.js#37#8"
-			}
-		]
-	},
-	{
-		"id": "销售目标",
-		"defaultMessage": "销售目标",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/config/menus.js#41#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/SalesTarget/index.js#71#10"
-			}
-		]
-	},
-	{
-		"id": "实体配置",
-		"defaultMessage": "实体配置",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/config/menus.js#52#4"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/EntityList/index.js#92#10"
-			}
-		]
-	},
-	{
-		"id": "数据源配置",
-		"defaultMessage": "数据源配置",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/config/menus.js#57#4"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/DataSourceList/index.js#62#10"
-			}
-		]
-	},
-	{
-		"id": "数据权限设置",
-		"defaultMessage": "数据权限设置",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/config/menus.js#62#4"
-			}
-		]
-	},
-	{
-		"id": "角色分类",
-		"defaultMessage": "角色分类",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/config/menus.js#66#8"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/RoleGroupList/index.js#31#10"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/RoleList/CopyRoleFormModal.js#81#20"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/RoleList/index.js#122#16"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/RoleList/RoleFormModal.js#89#20"
-			},
-			{
-				"type": "text",
-				"location": "src/routes/RoleList/RoleListTable.js#31#4"
-			}
-		]
-	},
-	{
-		"id": "角色权限",
-		"defaultMessage": "角色权限",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/config/menus.js#70#8"
-			}
-		]
-	},
-	{
-		"id": "职能权限",
-		"defaultMessage": "职能权限",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/config/menus.js#74#8"
-			}
-		]
-	},
-	{
-		"id": "产品管理",
-		"defaultMessage": "产品管理",
-		"source": [
-			{
-				"type": "text",
-				"location": "src/config/menus.js#80#4"
-			},
-			{
-				"type": "jsx",
-				"location": "src/routes/ProductManager/index.js#19#10"
-			}
-		]
-	}
+  {
+    "id": "数据库函数",
+    "defaultMessage": "数据库函数",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/Configure/QRCodeEntrance/EntryFormModal.js#102#47"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/Configure/QRCodeEntrance/ParamsFormModal.js#102#47"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntityHome/views/ExtendConfig/component/RadioGroupWrap.js#25#42"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/PrintTemplate/PrintTemplateForm.js#186#34"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/UkqrtzManager/QrtzFormModal.js#90#33"
+      }
+    ]
+  },
+  {
+    "id": "内部服务",
+    "defaultMessage": "内部服务",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/Configure/QRCodeEntrance/EntryFormModal.js#103#18"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/Configure/QRCodeEntrance/ParamsFormModal.js#103#18"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/UkqrtzManager/QrtzFormModal.js#89#33"
+      }
+    ]
+  },
+  {
+    "id": "测试",
+    "defaultMessage": "测试",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/EntryFormModal.js#111#57"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/ParamsFormModal.js#111#57"
+      }
+    ]
+  },
+  {
+    "id": "匹配规则类型",
+    "defaultMessage": "匹配规则类型",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/EntryFormModal.js#116#20"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/ParamsFormModal.js#116#20"
+      }
+    ]
+  },
+  {
+    "id": "请选择匹配规则类型",
+    "defaultMessage": "请选择匹配规则类型",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/Configure/QRCodeEntrance/EntryFormModal.js#119#40"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/Configure/QRCodeEntrance/ParamsFormModal.js#119#40"
+      }
+    ]
+  },
+  {
+    "id": "规则说明",
+    "defaultMessage": "规则说明",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/EntryFormModal.js#130#20"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/ParamsFormModal.js#130#20"
+      }
+    ]
+  },
+  {
+    "id": "U脚本",
+    "defaultMessage": "U脚本",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/EntryFormModal.js#136#18"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/ParamsFormModal.js#136#18"
+      }
+    ]
+  },
+  {
+    "id": "UScript引擎会传入\\\"UScriptService\\\"对象，根据这个对象可以访问数据库（详见UScript服务端API）。同时传入“ScanResult”对象，对象中包含ScanCode,和ScanCodeType两个字段（注意区分大小写）。",
+    "defaultMessage": "UScript引擎会传入\\\"UScriptService\\\"对象，根据这个对象可以访问数据库（详见UScript服务端API）。同时传入“ScanResult”对象，对象中包含ScanCode,和ScanCodeType两个字段（注意区分大小写）。",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/EntryFormModal.js#139#19"
+      }
+    ]
+  },
+  {
+    "id": "其他注意事项：",
+    "defaultMessage": "其他注意事项：",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/EntryFormModal.js#140#19"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/ParamsFormModal.js#140#19"
+      }
+    ]
+  },
+  {
+    "id": "1、UScript中所有整数类型将被转换为double型，使用时建议采用string（字符串)",
+    "defaultMessage": "1、UScript中所有整数类型将被转换为double型，使用时建议采用string（字符串)",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/EntryFormModal.js#142#22"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/ParamsFormModal.js#142#22"
+      }
+    ]
+  },
+  {
+    "id": "2、必须有return语句，且必须为json对象（类型参照智能二维码入口返回结构）",
+    "defaultMessage": "2、必须有return语句，且必须为json对象（类型参照智能二维码入口返回结构）",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/EntryFormModal.js#143#22"
+      }
+    ]
+  },
+  {
+    "id": "执行失败返回",
+    "defaultMessage": "执行失败返回",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/EntryFormModal.js#154#20"
+      }
+    ]
+  },
+  {
+    "id": "没有后续操作",
+    "defaultMessage": "没有后续操作",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/EntryFormModal.js#159#34"
+      }
+    ]
+  },
+  {
+    "id": "错误提示",
+    "defaultMessage": "错误提示",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/EntryFormModal.js#160#34"
+      }
+    ]
+  },
+  {
+    "id": "测试字符串：",
+    "defaultMessage": "测试字符串：",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/EntryFormModal.js#171#18"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/ParamsFormModal.js#161#18"
+      }
+    ]
+  },
+  {
+    "id": "提交测试",
+    "defaultMessage": "提交测试",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/EntryFormModal.js#175#46"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/ParamsFormModal.js#165#46"
+      }
+    ]
+  },
+  {
+    "id": "测试字符串\n            测试结果匹配/不匹配/执行异常\n            失败日志XXXXXX不成功\n            执行耗时300毫秒",
+    "defaultMessage": "测试字符串\n            测试结果匹配/不匹配/执行异常\n            失败日志XXXXXX不成功\n            执行耗时300毫秒",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/EntryFormModal.js#177#75"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/ParamsFormModal.js#167#75"
+      }
+    ]
+  },
+  {
+    "id": "更新智能入口",
+    "defaultMessage": "更新智能入口",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/Configure/QRCodeEntrance/EntryFormModal.js#107#8"
+      }
+    ]
+  },
+  {
+    "id": "规则名称",
+    "defaultMessage": "规则名称",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/FormModal.js#69#20"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/Configure/QRCodeEntrance/index.js#77#6"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/index.js#117#16"
+      }
+    ]
+  },
+  {
+    "id": "请输入规则名称",
+    "defaultMessage": "请输入规则名称",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/Configure/QRCodeEntrance/FormModal.js#72#40"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/index.js#98#12"
+      }
+    ]
+  },
+  {
+    "id": "请输入流程名称",
+    "defaultMessage": "请输入流程名称",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/FormModal.js#74#21"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/transferScheme/SchemeFormModal.js#75#21"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/WorkflowList/index.js#61#12"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/WorkflowList/WorkflowFormModal.js#118#34"
+      }
+    ]
+  },
+  {
+    "id": "规则描述",
+    "defaultMessage": "规则描述",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/FormModal.js#77#20"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/index.js#123#16"
+      }
+    ]
+  },
+  {
+    "id": "二维码入口列表定义",
+    "defaultMessage": "二维码入口列表定义",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/index.js#83#10"
+      }
+    ]
+  },
+  {
+    "id": "编辑匹配参数",
+    "defaultMessage": "编辑匹配参数",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/Configure/QRCodeEntrance/index.js#90#32"
+      }
+    ]
+  },
+  {
+    "id": "编辑智能入口",
+    "defaultMessage": "编辑智能入口",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/Configure/QRCodeEntrance/index.js#91#31"
+      }
+    ]
+  },
+  {
+    "id": "排序",
+    "defaultMessage": "排序",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/index.js#95#43"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntityHome/views/EntityFields/FieldSortModal.js#84#8"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntityHome/views/EntityFields/index.js#199#56"
+      }
+    ]
+  },
+  {
+    "id": "匹配方法",
+    "defaultMessage": "匹配方法",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/index.js#118#16"
+      }
+    ]
+  },
+  {
+    "id": "匹配说明",
+    "defaultMessage": "匹配说明",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/index.js#119#16"
+      }
+    ]
+  },
+  {
+    "id": "结果计算方式",
+    "defaultMessage": "结果计算方式",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/index.js#120#16"
+      }
+    ]
+  },
+  {
+    "id": "结果计算说明",
+    "defaultMessage": "结果计算说明",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/index.js#121#16"
+      }
+    ]
+  },
+  {
+    "id": "列表排序",
+    "defaultMessage": "列表排序",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/index.js#127#8"
+      }
+    ]
+  },
+  {
+    "id": "UScript引擎会传入\\\"ukservice\\\"对象，根据这个对象可以访问数据库（详见UScript服务端API）。同时传入“JsParam”对象，对象中包含ScanCode,和ScanCodeType两个字段（注意区分大小写）。",
+    "defaultMessage": "UScript引擎会传入\\\"ukservice\\\"对象，根据这个对象可以访问数据库（详见UScript服务端API）。同时传入“JsParam”对象，对象中包含ScanCode,和ScanCodeType两个字段（注意区分大小写）。",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/ParamsFormModal.js#139#19"
+      }
+    ]
+  },
+  {
+    "id": "2、必须有return语句，且必须为布尔类型(true/false)",
+    "defaultMessage": "2、必须有return语句，且必须为布尔类型(true/false)",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/QRCodeEntrance/ParamsFormModal.js#143#22"
+      }
+    ]
+  },
+  {
+    "id": "更新匹配参数",
+    "defaultMessage": "更新匹配参数",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/Configure/QRCodeEntrance/ParamsFormModal.js#107#8"
+      }
+    ]
+  },
+  {
+    "id": "转移方案名",
+    "defaultMessage": "转移方案名",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/Configure/transferScheme/index.js#18#2"
+      }
+    ]
+  },
+  {
+    "id": "目标转移对象",
+    "defaultMessage": "目标转移对象",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/Configure/transferScheme/index.js#21#2"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/transferScheme/SchemeFormModal.js#78#20"
+      }
+    ]
+  },
+  {
+    "id": "设置业务对象转移方案",
+    "defaultMessage": "设置业务对象转移方案",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/transferScheme/index.js#67#10"
+      }
+    ]
+  },
+  {
+    "id": "选择对象",
+    "defaultMessage": "选择对象",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/transferScheme/RelTable.js#106#24"
+      }
+    ]
+  },
+  {
+    "id": "级联",
+    "defaultMessage": "级联",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/transferScheme/RelTable.js#108#24"
+      }
+    ]
+  },
+  {
+    "id": "相同数据",
+    "defaultMessage": "相同数据",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/transferScheme/RelTable.js#111#24"
+      }
+    ]
+  },
+  {
+    "id": "仅转移同目标对象负责人相同的数据",
+    "defaultMessage": "仅转移同目标对象负责人相同的数据",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/transferScheme/RelTable.js#113#37"
+      }
+    ]
+  },
+  {
+    "id": "转移方案名称",
+    "defaultMessage": "转移方案名称",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/transferScheme/SchemeFormModal.js#70#20"
+      }
+    ]
+  },
+  {
+    "id": "请输入转移方案名称",
+    "defaultMessage": "请输入转移方案名称",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/Configure/transferScheme/SchemeFormModal.js#73#40"
+      }
+    ]
+  },
+  {
+    "id": "请选择目标转移对象",
+    "defaultMessage": "请选择目标转移对象",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/Configure/transferScheme/SchemeFormModal.js#80#40"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/transferScheme/SchemeFormModal.js#82#22"
+      }
+    ]
+  },
+  {
+    "id": "目标转移对象字段",
+    "defaultMessage": "目标转移对象字段",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/transferScheme/SchemeFormModal.js#89#20"
+      }
+    ]
+  },
+  {
+    "id": "请选择目标转移对象字段",
+    "defaultMessage": "请选择目标转移对象字段",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/Configure/transferScheme/SchemeFormModal.js#91#40"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/transferScheme/SchemeFormModal.js#93#22"
+      }
+    ]
+  },
+  {
+    "id": "关联转移对象",
+    "defaultMessage": "关联转移对象",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/transferScheme/SchemeFormModal.js#100#20"
+      }
+    ]
+  },
+  {
+    "id": "请输入备注",
+    "defaultMessage": "请输入备注",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Configure/transferScheme/SchemeFormModal.js#109#37"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Structure/UserFormModal.js#171#19"
+      }
+    ]
+  },
+  {
+    "id": "回款类型",
+    "defaultMessage": "回款类型",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/ContractHome/ReceivePay/index.js#30#4"
+      }
+    ]
+  },
+  {
+    "id": "计划",
+    "defaultMessage": "计划",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/ContractHome/ReceivePay/index.js#32#61"
+      }
+    ]
+  },
+  {
+    "id": "回款",
+    "defaultMessage": "回款",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/ContractHome/ReceivePay/index.js#32#77"
+      }
+    ]
+  },
+  {
+    "id": "计划回款日期",
+    "defaultMessage": "计划回款日期",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/ContractHome/ReceivePay/index.js#34#4"
+      }
+    ]
+  },
+  {
+    "id": "金额（元）",
+    "defaultMessage": "金额（元）",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/ContractHome/ReceivePay/index.js#37#4"
+      }
+    ]
+  },
+  {
+    "id": "汇款人/回款状态",
+    "defaultMessage": "汇款人/回款状态",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/ContractHome/ReceivePay/index.js#40#4"
+      }
+    ]
+  },
+  {
+    "id": "汇款人：",
+    "defaultMessage": "汇款人：",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/ContractHome/ReceivePay/index.js#41#93"
+      }
+    ]
+  },
+  {
+    "id": "总额(元)：",
+    "defaultMessage": "总额(元)：",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/ContractHome/ReceivePay/index.js#50#14"
+      }
+    ]
+  },
+  {
+    "id": "未收款(元)：",
+    "defaultMessage": "未收款(元)：",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/ContractHome/ReceivePay/index.js#51#14"
+      }
+    ]
+  },
+  {
+    "id": "新增回款计划",
+    "defaultMessage": "新增回款计划",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/ContractHome/ReceivePay/index.js#60#48"
+      }
+    ]
+  },
+  {
+    "id": "新增回款记录",
+    "defaultMessage": "新增回款记录",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/ContractHome/ReceivePay/index.js#61#50"
+      }
+    ]
+  },
+  {
+    "id": "type值传入有误",
+    "defaultMessage": "type值传入有误",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/ContractHome/ReceivePay/index.js#114#12"
+      }
+    ]
+  },
+  {
+    "id": "rectype值判断有误",
+    "defaultMessage": "rectype值判断有误",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/ContractHome/ReceivePay/index.js#127#14"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/ContractHome/ReceivePay/index.js#144#18"
+      }
+    ]
+  },
+  {
+    "id": "确定要删除选定的数据吗？",
+    "defaultMessage": "确定要删除选定的数据吗？",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/ContractHome/ReceivePay/index.js#133#10"
+      }
+    ]
+  },
+  {
+    "id": "暂无数据",
+    "defaultMessage": "暂无数据",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/CustomerHome/RelationTree/index.js#23#39"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Mails/RelatedInfoPanel.js#296#66"
+      }
+    ]
+  },
+  {
+    "id": "第一步",
+    "defaultMessage": "第一步",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DataSourceHome/index.js#41#42"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntityHome/views/EntityFields/MobileListConfigModal2/MobileFieldsSelect.js#44#40"
+      }
+    ]
+  },
+  {
+    "id": "设置数据源内容",
+    "defaultMessage": "设置数据源内容",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DataSourceHome/index.js#42#18"
+      }
+    ]
+  },
+  {
+    "id": "第三步",
+    "defaultMessage": "第三步",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DataSourceHome/index.js#54#42"
+      }
+    ]
+  },
+  {
+    "id": "定义显示列名",
+    "defaultMessage": "定义显示列名",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DataSourceHome/index.js#55#18"
+      }
+    ]
+  },
+  {
+    "id": "列名1",
+    "defaultMessage": "列名1",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DataSourceHome/index.js#59#24"
+      }
+    ]
+  },
+  {
+    "id": "列名2",
+    "defaultMessage": "列名2",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DataSourceHome/index.js#62#24"
+      }
+    ]
+  },
+  {
+    "id": "列名3",
+    "defaultMessage": "列名3",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DataSourceHome/index.js#65#24"
+      }
+    ]
+  },
+  {
+    "id": "列名4",
+    "defaultMessage": "列名4",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DataSourceHome/index.js#68#24"
+      }
+    ]
+  },
+  {
+    "id": "请先选择字段",
+    "defaultMessage": "请先选择字段",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/DataSourceHome/MobileViewStyleSelect.js#43#13"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/views/EntityFields/MobileListConfigModal2/MobileViewStyleSelect.js#43#13"
+      }
+    ]
+  },
+  {
+    "id": "第二步",
+    "defaultMessage": "第二步",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DataSourceHome/MobileViewStyleSelect.js#55#40"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntityHome/views/EntityFields/MobileListConfigModal2/MobileViewStyleSelect.js#55#40"
+      }
+    ]
+  },
+  {
+    "id": "设置显示样式",
+    "defaultMessage": "设置显示样式",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DataSourceHome/MobileViewStyleSelect.js#56#16"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntityHome/views/EntityFields/MobileListConfigModal2/MobileViewStyleSelect.js#56#16"
+      }
+    ]
+  },
+  {
+    "id": "重新选择",
+    "defaultMessage": "重新选择",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DataSourceHome/MobileViewStyleSelect.js#57#68"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntityHome/views/EntityFields/MobileListConfigModal2/MobileFieldsSelect.js#46#55"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntityHome/views/EntityFields/MobileListConfigModal2/MobileViewStyleSelect.js#57#68"
+      }
+    ]
+  },
+  {
+    "id": "请选择列表显示样式，最多可选择1种",
+    "defaultMessage": "请选择列表显示样式，最多可选择1种",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DataSourceHome/MobileViewStyleSelectModal.js#27#11"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntityHome/views/EntityFields/MobileListConfigModal2/MobileViewStyleSelectModal.js#27#11"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntityHome/views/EntityFields/PickStyleButton.js#49#13"
+      }
+    ]
+  },
+  {
+    "id": "数据源名称",
+    "defaultMessage": "数据源名称",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DataSourceList/DSourceFormModal.js#84#18"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/DataSourceList/DSourceListTable.js#24#4"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/DataSourceList/index.js#103#10"
+      }
+    ]
+  },
+  {
+    "id": "请输入数据源名称",
+    "defaultMessage": "请输入数据源名称",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/DataSourceList/DSourceFormModal.js#87#38"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/DataSourceList/DSourceFormModal.js#89#23"
+      }
+    ]
+  },
+  {
+    "id": "请选择状态",
+    "defaultMessage": "请选择状态",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/DataSourceList/DSourceFormModal.js#95#38"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/views/EntityFields/FieldForm.js#88#36"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/views/EntityFields/FormItemFactory.js#652#36"
+      }
+    ]
+  },
+  {
+    "id": "是否接入数据权限控制",
+    "defaultMessage": "是否接入数据权限控制",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DataSourceList/DSourceFormModal.js#111#18"
+      }
+    ]
+  },
+  {
+    "id": "请选择是否接入数据权限控制",
+    "defaultMessage": "请选择是否接入数据权限控制",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/DataSourceList/DSourceFormModal.js#114#38"
+      }
+    ]
+  },
+  {
+    "id": "脚本类型",
+    "defaultMessage": "脚本类型",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DataSourceList/DSourceFormModal.js#122#18"
+      }
+    ]
+  },
+  {
+    "id": "请选择脚本类型",
+    "defaultMessage": "请选择脚本类型",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/DataSourceList/DSourceFormModal.js#125#38"
+      }
+    ]
+  },
+  {
+    "id": "函数",
+    "defaultMessage": "函数",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DataSourceList/DSourceFormModal.js#128#31"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/DbManager/DBSQLObjectList.js#69#26"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/DbManager/SQLObjectFormModal.js#48#33"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntityHome/views/EntityTabs/component/FieldSet.js#55#27"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntityHome/views/EntityTabs/component/SelectCombine.js#126#28"
+      }
+    ]
+  },
+  {
+    "id": "sql语句",
+    "defaultMessage": "sql语句",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DataSourceList/DSourceFormModal.js#129#31"
+      }
+    ]
+  },
+  {
+    "id": "描述",
+    "defaultMessage": "描述",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DataSourceList/DSourceFormModal.js#133#18"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/DataSourceList/DSourceListTable.js#39#4"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/DataSourceList/index.js#113#50"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntityList/index.js#159#16"
+      }
+    ]
+  },
+  {
+    "id": "您确定删除该记录吗？",
+    "defaultMessage": "您确定删除该记录吗？",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/DataSourceList/DSourceListTable.js#13#8"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/views/EntityFields/index.js#76#8"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/RoleList/RoleListTable.js#13#8"
+      }
+    ]
+  },
+  {
+    "id": "确定要删除选定的数据源吗？",
+    "defaultMessage": "确定要删除选定的数据源吗？",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/DataSourceList/index.js#30#6"
+      }
+    ]
+  },
+  {
+    "id": "输入数据源名称搜索",
+    "defaultMessage": "输入数据源名称搜索",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DataSourceList/index.js#79#12"
+      }
+    ]
+  },
+  {
+    "id": "对象名称",
+    "defaultMessage": "对象名称",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/DbManager/DBSQLObjectList.js#24#6"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/DbManager/SQLObjectFormModal.js#53#20"
+      }
+    ]
+  },
+  {
+    "id": "参数",
+    "defaultMessage": "参数",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/DbManager/DBSQLObjectList.js#27#6"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/DbManager/SQLObjectFormModal.js#58#20"
+      }
+    ]
+  },
+  {
+    "id": "显示名称",
+    "defaultMessage": "显示名称",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/DbManager/DBSQLObjectList.js#30#6"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/DbManager/SQLObjectFormModal.js#70#20"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/DicType/DataTable.js#43#25"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntityHome/views/EntityFields/FieldForm.js#65#16"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntityHome/views/EntityFields/FieldForm.js#68#22"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntityHome/views/EntityFields/FormItemFactory.js#639#16"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntityHome/views/EntityFields/FormItemFactory.js#642#18"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/views/EntityFields/index.js#139#6"
+      }
+    ]
+  },
+  {
+    "id": "对象类型",
+    "defaultMessage": "对象类型",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/DbManager/DBSQLObjectList.js#33#6"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/DbManager/SQLObjectFormModal.js#44#20"
+      }
+    ]
+  },
+  {
+    "id": "需要初始化",
+    "defaultMessage": "需要初始化",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/DbManager/DBSQLObjectList.js#36#6"
+      }
+    ]
+  },
+  {
+    "id": "编辑初始化数据脚本",
+    "defaultMessage": "编辑初始化数据脚本",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DbManager/DBSQLObjectList.js#49#24"
+      }
+    ]
+  },
+  {
+    "id": "查看初始化结构脚本",
+    "defaultMessage": "查看初始化结构脚本",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DbManager/DBSQLObjectList.js#52#24"
+      }
+    ]
+  },
+  {
+    "id": "表格",
+    "defaultMessage": "表格",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DbManager/DBSQLObjectList.js#68#26"
+      }
+    ]
+  },
+  {
+    "id": "全部生成",
+    "defaultMessage": "全部生成",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DbManager/DBSQLObjectList.js#72#17"
+      }
+    ]
+  },
+  {
+    "id": "请输入对象名称",
+    "defaultMessage": "请输入对象名称",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DbManager/DBSQLObjectList.js#78#12"
+      }
+    ]
+  },
+  {
+    "id": "数据库初始脚本管理",
+    "defaultMessage": "数据库初始脚本管理",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DbManager/index.js#29#10"
+      }
+    ]
+  },
+  {
+    "id": "SQL对象编辑",
+    "defaultMessage": "SQL对象编辑",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DbManager/SQLObjectFormModal.js#36#8"
+      }
+    ]
+  },
+  {
+    "id": "表",
+    "defaultMessage": "表",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DbManager/SQLObjectFormModal.js#47#33"
+      }
+    ]
+  },
+  {
+    "id": "序列",
+    "defaultMessage": "序列",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DbManager/SQLObjectFormModal.js#49#33"
+      }
+    ]
+  },
+  {
+    "id": "分组",
+    "defaultMessage": "分组",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DbManager/SQLObjectFormModal.js#63#20"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/controlTypes.js#33#4"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntityList/SetEntryModal.js#140#6"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntityList/SetEntryModal.js#155#6"
+      }
+    ]
+  },
+  {
+    "id": "请输入分组名称",
+    "defaultMessage": "请输入分组名称",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DbManager/SQLObjectFormModal.js#67#33"
+      }
+    ]
+  },
+  {
+    "id": "请输入显示名称",
+    "defaultMessage": "请输入显示名称",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DbManager/SQLObjectFormModal.js#74#33"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/DicType/DataTable.js#50#107"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/views/EntityFields/FormItemFactory.js#641#36"
+      }
+    ]
+  },
+  {
+    "id": "是否初始化",
+    "defaultMessage": "是否初始化",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DbManager/SQLObjectFormModal.js#77#20"
+      }
+    ]
+  },
+  {
+    "id": "初始化",
+    "defaultMessage": "初始化",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DbManager/SQLObjectFormModal.js#82#33"
+      }
+    ]
+  },
+  {
+    "id": "不初始化",
+    "defaultMessage": "不初始化",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DbManager/SQLObjectFormModal.js#83#33"
+      }
+    ]
+  },
+  {
+    "id": "编辑字典参数",
+    "defaultMessage": "编辑字典参数",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Dic/FormModal.js#80#8"
+      }
+    ]
+  },
+  {
+    "id": "请输入字典参数",
+    "defaultMessage": "请输入字典参数",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/Dic/FormModal.js#89#34"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Dic/FormModal.js#93#25"
+      }
+    ]
+  },
+  {
+    "id": "字典值",
+    "defaultMessage": "字典值",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/Dic/index.js#80#6"
+      }
+    ]
+  },
+  {
+    "id": "字典值不能为空",
+    "defaultMessage": "字典值不能为空",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/Dic/index.js#139#36"
+      }
+    ]
+  },
+  {
+    "id": "请输入字典值",
+    "defaultMessage": "请输入字典值",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/Dic/index.js#143#27"
+      }
+    ]
+  },
+  {
+    "id": "存储名称",
+    "defaultMessage": "存储名称",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DicType/DataTable.js#42#25"
+      }
+    ]
+  },
+  {
+    "id": "字典类型名称",
+    "defaultMessage": "字典类型名称",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DicType/formModal.js#78#20"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/DicType/index.js#51#4"
+      }
+    ]
+  },
+  {
+    "id": "请输入字典类型名称",
+    "defaultMessage": "请输入字典类型名称",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/DicType/formModal.js#82#34"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/DicType/index.js#88#12"
+      }
+    ]
+  },
+  {
+    "id": "请输入字典名称",
+    "defaultMessage": "请输入字典名称",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DicType/formModal.js#86#25"
+      }
+    ]
+  },
+  {
+    "id": "关联字典类型",
+    "defaultMessage": "关联字典类型",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DicType/formModal.js#89#20"
+      }
+    ]
+  },
+  {
+    "id": "请选择关联字典类型",
+    "defaultMessage": "请选择关联字典类型",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DicType/formModal.js#93#22"
+      }
+    ]
+  },
+  {
+    "id": "- 无 -",
+    "defaultMessage": "- 无 -",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DicType/formModal.js#94#33"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntityHome/views/EntityFields/FormItemFactory.js#171#25"
+      }
+    ]
+  },
+  {
+    "id": "使用全局扩展配置",
+    "defaultMessage": "使用全局扩展配置",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DicType/formModal.js#106#24"
+      }
+    ]
+  },
+  {
+    "id": "扩展字典配置",
+    "defaultMessage": "扩展字典配置",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DicType/formModal.js#110#45"
+      }
+    ]
+  },
+  {
+    "id": "字典类型ID",
+    "defaultMessage": "字典类型ID",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/DicType/index.js#46#4"
+      }
+    ]
+  },
+  {
+    "id": "关联字典名称",
+    "defaultMessage": "关联字典名称",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/DicType/index.js#59#4"
+      }
+    ]
+  },
+  {
+    "id": "新增字典类型",
+    "defaultMessage": "新增字典类型",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DicType/index.js#84#30"
+      }
+    ]
+  },
+  {
+    "id": "全局扩展字典配置",
+    "defaultMessage": "全局扩展字典配置",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DicType/index.js#85#42"
+      }
+    ]
+  },
+  {
+    "id": "全局配置",
+    "defaultMessage": "全局配置",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/DicType/setGlobalConfig.js#44#6"
+      }
+    ]
+  },
+  {
+    "id": "全局扩展配置",
+    "defaultMessage": "全局扩展配置",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/DicType/setGlobalConfig.js#61#8"
+      }
+    ]
+  },
+  {
+    "id": "获取搜索协议失败",
+    "defaultMessage": "获取搜索协议失败",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommApplication/AdvanceSearchModal.js#54#6"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntcommDynamic/AdvanceSearchModal.js#54#6"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntcommList/AdvanceSearchModal.js#54#6"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/office/daily/component/AdvanceSearchModal.js#62#6"
+      }
+    ]
+  },
+  {
+    "id": "高级搜索",
+    "defaultMessage": "高级搜索",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommApplication/AdvanceSearchModal.js#72#8"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommApplication/index.js#239#89"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommDynamic/AdvanceSearchModal.js#72#8"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommDynamic/index.js#99#89"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/AdvanceSearchModal.js#72#8"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/index.js#233#89"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/office/daily/allDaily.js#39#89"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/office/daily/component/AdvanceSearchModal.js#80#8"
+      }
+    ]
+  },
+  {
+    "id": "清空查询条件",
+    "defaultMessage": "清空查询条件",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommApplication/AdvanceSearchModal.js#78#91"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommDynamic/AdvanceSearchModal.js#78#91"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/AdvanceSearchModal.js#78#91"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/MailRecovery/index.js#123#67"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/office/daily/component/AdvanceSearchModal.js#86#91"
+      }
+    ]
+  },
+  {
+    "id": "转移",
+    "defaultMessage": "转移",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommApplication/index.js#189#6"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Mails/CatalogManager/index.js#75#107"
+      }
+    ]
+  },
+  {
+    "id": "添加发件白名单人员",
+    "defaultMessage": "添加发件白名单人员",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommApplication/SetWhiteListModal.js#53#10"
+      }
+    ]
+  },
+  {
+    "id": "当前为输单状态，请重新启动阶段推进",
+    "defaultMessage": "当前为输单状态，请重新启动阶段推进",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/StageBar2.js#174#6"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/StageBar2.js#320#6"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/StageBar2.js#366#6"
+      }
+    ]
+  },
+  {
+    "id": "商机已赢单!",
+    "defaultMessage": "商机已赢单!",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/StageBar2.js#178#6"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/StageBar2.js#370#6"
+      }
+    ]
+  },
+  {
+    "id": "商机不处于输单状态！",
+    "defaultMessage": "商机不处于输单状态！",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/StageBar2.js#263#6"
+      }
+    ]
+  },
+  {
+    "id": "重启成功",
+    "defaultMessage": "重启成功",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/StageBar2.js#269#6"
+      }
+    ]
+  },
+  {
+    "id": "高级模式下不能跨阶段推进",
+    "defaultMessage": "高级模式下不能跨阶段推进",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/StageBar2.js#328#17"
+      }
+    ]
+  },
+  {
+    "id": "阶段推进流程正在审批中，不能保存",
+    "defaultMessage": "阶段推进流程正在审批中，不能保存",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/StageBar2.js#527#10"
+      }
+    ]
+  },
+  {
+    "id": "重新启动",
+    "defaultMessage": "重新启动",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/StageBar2.js#651#11"
+      }
+    ]
+  },
+  {
+    "id": "阶段任务",
+    "defaultMessage": "阶段任务",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/StageBar2.js#677#40"
+      }
+    ]
+  },
+  {
+    "id": "上传附件",
+    "defaultMessage": "上传附件",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/StageBar2.js#694#24"
+      }
+    ]
+  },
+  {
+    "id": "关键信息",
+    "defaultMessage": "关键信息",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/StageBar2.js#742#40"
+      }
+    ]
+  },
+  {
+    "id": "补充信息",
+    "defaultMessage": "补充信息",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/StageBar2.js#758#40"
+      }
+    ]
+  },
+  {
+    "id": "回退到此阶段",
+    "defaultMessage": "回退到此阶段",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/StageBar2.js#787#77"
+      }
+    ]
+  },
+  {
+    "id": "推进到此阶段",
+    "defaultMessage": "推进到此阶段",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/StageBar2.js#789#77"
+      }
+    ]
+  },
+  {
+    "id": "文件大小不可超过100M!",
+    "defaultMessage": "文件大小不可超过100M!",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/StageBarUpload.js#45#6"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/views/EntcommDocs/UploadButton.js#54#6"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/Knowledge/UploadButton.js#54#6"
+      }
+    ]
+  },
+  {
+    "id": "提交审批",
+    "defaultMessage": "提交审批",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/StageFlowModal.js#153#10"
+      }
+    ]
+  },
+  {
+    "id": "没有更多数据加载了哦",
+    "defaultMessage": "没有更多数据加载了哦",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommActivities/index.js#107#47"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/office/daily/myDaily.js#48#83"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/office/daily/receiveDaily.js#48#93"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/office/weekly/myWeekly.js#54#81"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/office/weekly/receiveWeekly.js#67#91"
+      }
+    ]
+  },
+  {
+    "id": "点击加载更多...",
+    "defaultMessage": "点击加载更多...",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommActivities/index.js#108#73"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/office/daily/myDaily.js#48#192"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/office/daily/receiveDaily.js#48#207"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/office/weekly/myWeekly.js#54#189"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/office/weekly/receiveWeekly.js#67#204"
+      }
+    ]
+  },
+  {
+    "id": "客户资料审批",
+    "defaultMessage": "客户资料审批",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/views/EntcommActivities/PluginAddModal.js#192#6"
+      }
+    ]
+  },
+  {
+    "id": "全选",
+    "defaultMessage": "全选",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommDocs/index.js#53#10"
+      }
+    ]
+  },
+  {
+    "id": "上传人：",
+    "defaultMessage": "上传人：",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommDocs/index.js#62#49"
+      }
+    ]
+  },
+  {
+    "id": "上传时间：",
+    "defaultMessage": "上传时间：",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommDocs/index.js#63#49"
+      }
+    ]
+  },
+  {
+    "id": "文件大小：",
+    "defaultMessage": "文件大小：",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommDocs/index.js#64#49"
+      }
+    ]
+  },
+  {
+    "id": "下载次数：",
+    "defaultMessage": "下载次数：",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommDocs/index.js#65#49"
+      }
+    ]
+  },
+  {
+    "id": "确定删除选中的文档吗？",
+    "defaultMessage": "确定删除选中的文档吗？",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/views/EntcommDocs/index.js#97#10"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/Knowledge/FileList.js#112#8"
+      }
+    ]
+  },
+  {
+    "id": "其他文件正在上传中..",
+    "defaultMessage": "其他文件正在上传中..",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/views/EntcommDocs/UploadButton.js#50#6"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/Knowledge/UploadButton.js#50#6"
+      }
+    ]
+  },
+  {
+    "id": "上传文件较大，请耐心等候",
+    "defaultMessage": "上传文件较大，请耐心等候",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/views/EntcommDocs/UploadButton.js#58#29"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/Knowledge/UploadButton.js#58#29"
+      }
+    ]
+  },
+  {
+    "id": "您没有足够的权限查看当前数据",
+    "defaultMessage": "您没有足够的权限查看当前数据",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommInfo/index.js#24#40"
+      }
+    ]
+  },
+  {
+    "id": "确认删除该记录",
+    "defaultMessage": "确认删除该记录",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/views/EntcommRel/DetailModal.js#178#6"
+      }
+    ]
+  },
+  {
+    "id": "详细信息",
+    "defaultMessage": "详细信息",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommRel/DetailModal.js#189#14"
+      }
+    ]
+  },
+  {
+    "id": "分配线索",
+    "defaultMessage": "分配线索",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/views/EntcommRel/index.js#168#6"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntcommList/index.js#179#6"
+      }
+    ]
+  },
+  {
+    "id": "客户合并",
+    "defaultMessage": "客户合并",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommRel/index.js#227#72"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommRel/MerageModal.js#268#10"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/index.js#217#72"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/MerageModal.js#270#10"
+      }
+    ]
+  },
+  {
+    "id": "请至少选择两个客户！",
+    "defaultMessage": "请至少选择两个客户！",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/views/EntcommRel/MerageModal.js#84#13"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntcommList/MerageModal.js#86#13"
+      }
+    ]
+  },
+  {
+    "id": "客户批量合并最多选择20个客户！",
+    "defaultMessage": "客户批量合并最多选择20个客户！",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/views/EntcommRel/MerageModal.js#86#13"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntcommList/MerageModal.js#88#13"
+      }
+    ]
+  },
+  {
+    "id": "确定合并所选客户吗?",
+    "defaultMessage": "确定合并所选客户吗?",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/views/EntcommRel/MerageModal.js#106#8"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntcommList/MerageModal.js#108#8"
+      }
+    ]
+  },
+  {
+    "id": "合并成功",
+    "defaultMessage": "合并成功",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/views/EntcommRel/MerageModal.js#119#12"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntcommList/MerageModal.js#121#12"
+      }
+    ]
+  },
+  {
+    "id": "请选择一个客户作为主记录",
+    "defaultMessage": "请选择一个客户作为主记录",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/views/EntcommRel/MerageModal.js#136#6"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntcommList/MerageModal.js#138#6"
+      }
+    ]
+  },
+  {
+    "id": "选择客户",
+    "defaultMessage": "选择客户",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommRel/MerageModal.js#205#10"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/MerageModal.js#207#10"
+      }
+    ]
+  },
+  {
+    "id": "请输入客户名称、负责人",
+    "defaultMessage": "请输入客户名称、负责人",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommRel/MerageModal.js#217#14"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/MerageModal.js#219#14"
+      }
+    ]
+  },
+  {
+    "id": "客户名称",
+    "defaultMessage": "客户名称",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommRel/MerageModal.js#226#24"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommRel/MerageModal.js#251#24"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/MerageModal.js#228#24"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/MerageModal.js#253#24"
+      }
+    ]
+  },
+  {
+    "id": "负责人",
+    "defaultMessage": "负责人",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommRel/MerageModal.js#227#24"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommRel/MerageModal.js#252#24"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/MerageModal.js#229#24"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/MerageModal.js#254#24"
+      }
+    ]
+  },
+  {
+    "id": "注意",
+    "defaultMessage": "注意",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommRel/MerageModal.js#274#15"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/MerageModal.js#276#15"
+      }
+    ]
+  },
+  {
+    "id": "执行客户合并操作后，原客户下的基础信息会进行合并，系统中若存在其他与原客户关联的数据，其对应的所属客户也会变更为合并后的客户名称。",
+    "defaultMessage": "执行客户合并操作后，原客户下的基础信息会进行合并，系统中若存在其他与原客户关联的数据，其对应的所属客户也会变更为合并后的客户名称。",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommRel/MerageModal.js#275#15"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/MerageModal.js#277#15"
+      }
+    ]
+  },
+  {
+    "id": "请选择主记录",
+    "defaultMessage": "请选择主记录",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommRel/MerageModal.js#276#18"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/MerageModal.js#278#18"
+      }
+    ]
+  },
+  {
+    "id": "客户名称:",
+    "defaultMessage": "客户名称:",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommRel/MerageModal.js#287#24"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/MerageModal.js#289#24"
+      }
+    ]
+  },
+  {
+    "id": "客户负责人:",
+    "defaultMessage": "客户负责人:",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommRel/MerageModal.js#288#24"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/MerageModal.js#290#24"
+      }
+    ]
+  },
+  {
+    "id": "客户状态:",
+    "defaultMessage": "客户状态:",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommRel/MerageModal.js#289#24"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/MerageModal.js#291#24"
+      }
+    ]
+  },
+  {
+    "id": "未选择数据",
+    "defaultMessage": "未选择数据",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/views/EntcommRel/RelEntityAddModal.js#81#13"
+      }
+    ]
+  },
+  {
+    "id": "提交数据中，请稍候",
+    "defaultMessage": "提交数据中，请稍候",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommHome/views/EntcommRel/RelEntityAddModal.js#111#13"
+      }
+    ]
+  },
+  {
+    "id": "没有数据可选，请新建",
+    "defaultMessage": "没有数据可选，请新建",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommHome/views/EntcommRel/RelEntityAddModal.js#191#42"
+      }
+    ]
+  },
+  {
+    "id": "转移数据的范围",
+    "defaultMessage": "转移数据的范围",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/DataTransferModal.js#88#12"
+      }
+    ]
+  },
+  {
+    "id": "已选中的数据",
+    "defaultMessage": "已选中的数据",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/DataTransferModal.js#94#33"
+      }
+    ]
+  },
+  {
+    "id": "列表全部数据",
+    "defaultMessage": "列表全部数据",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/DataTransferModal.js#95#33"
+      }
+    ]
+  },
+  {
+    "id": "选择要转移的客户字段",
+    "defaultMessage": "选择要转移的客户字段",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/DataTransferModal.js#100#12"
+      }
+    ]
+  },
+  {
+    "id": "选择旧的用户",
+    "defaultMessage": "选择旧的用户",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/DataTransferModal.js#117#14"
+      }
+    ]
+  },
+  {
+    "id": "请选择旧的用户",
+    "defaultMessage": "请选择旧的用户",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommList/DataTransferModal.js#122#34"
+      }
+    ]
+  },
+  {
+    "id": "选择新的用户",
+    "defaultMessage": "选择新的用户",
+    "source": [
+      {
+        "type": "jsx",
+        "location": "src/routes/EntcommList/DataTransferModal.js#130#12"
+      }
+    ]
+  },
+  {
+    "id": "请选择新的用户",
+    "defaultMessage": "请选择新的用户",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommList/DataTransferModal.js#135#32"
+      }
+    ]
+  },
+  {
+    "id": "分配",
+    "defaultMessage": "分配",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntcommList/index.js#182#33"
+      }
+    ]
+  },
+  {
+    "id": "文本",
+    "defaultMessage": "文本",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/controlTypes.js#15#4"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/views/EntityFields/index.js#33#4"
+      }
+    ]
+  },
+  {
+    "id": "提示文本",
+    "defaultMessage": "提示文本",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/controlTypes.js#16#4"
+      }
+    ]
+  },
+  {
+    "id": "单选",
+    "defaultMessage": "单选",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/controlTypes.js#17#4"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntityHome/views/EntityButtons/EntityButtonForm.js#65#32"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntityHome/views/EntityFields/FormItemFactory.js#942#29"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/views/EntityFields/index.js#29#4"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/views/EntityFields/index.js#30#4"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/views/EntityFields/index.js#31#4"
+      }
+    ]
+  },
+  {
+    "id": "多选",
+    "defaultMessage": "多选",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/controlTypes.js#18#4"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntityHome/views/EntityButtons/EntityButtonForm.js#66#32"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/EntityHome/views/EntityFields/FormItemFactory.js#943#29"
+      }
+    ]
+  },
+  {
+    "id": "大文本",
+    "defaultMessage": "大文本",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/controlTypes.js#19#4"
+      }
+    ]
+  },
+  {
+    "id": "整数文本",
+    "defaultMessage": "整数文本",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/controlTypes.js#20#4"
+      }
+    ]
+  },
+  {
+    "id": "小数文本",
+    "defaultMessage": "小数文本",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/controlTypes.js#21#4"
+      }
+    ]
+  },
+  {
+    "id": "日期",
+    "defaultMessage": "日期",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/controlTypes.js#22#4"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Mails/RelatedInfoPanel.js#393#26"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Mails/RelatedInfoPanel.js#447#38"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Mails/RelatedInfoPanel.js#481#26"
+      }
+    ]
+  },
+  {
+    "id": "日期时间",
+    "defaultMessage": "日期时间",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/controlTypes.js#23#4"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/views/EntityFields/index.js#26#4"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/views/EntityFields/index.js#27#4"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/views/EntityFields/index.js#32#4"
+      }
+    ]
+  },
+  {
+    "id": "手机号",
+    "defaultMessage": "手机号",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/controlTypes.js#24#4"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Structure/UserList.js#105#16"
+      }
+    ]
+  },
+  {
+    "id": "邮箱",
+    "defaultMessage": "邮箱",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/controlTypes.js#25#4"
+      },
+      {
+        "type": "jsx",
+        "location": "src/routes/Structure/UserFormModal.js#142#18"
+      }
+    ]
+  },
+  {
+    "id": "电话",
+    "defaultMessage": "电话",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/controlTypes.js#26#4"
+      }
+    ]
+  },
+  {
+    "id": "地址",
+    "defaultMessage": "地址",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/controlTypes.js#27#4"
+      },
+      {
+        "type": "text",
+        "location": "src/routes/Schedule/modules/RelateCustomers/index.js#27#6"
+      }
+    ]
+  },
+  {
+    "id": "行政区域",
+    "defaultMessage": "行政区域",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/controlTypes.js#30#4"
+      }
+    ]
+  },
+  {
+    "id": "图片控件",
+    "defaultMessage": "图片控件",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/controlTypes.js#35#4"
+      }
+    ]
+  },
+  {
+    "id": "附件控件",
+    "defaultMessage": "附件控件",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/controlTypes.js#36#4"
+      }
+    ]
+  },
+  {
+    "id": "表格控件",
+    "defaultMessage": "表格控件",
+    "source": [
+      {
+        "type": "text",
+        "location": "src/routes/EntityHome/controlTypes.js#37#4"
+      }
+    ]
+  }
 ]
