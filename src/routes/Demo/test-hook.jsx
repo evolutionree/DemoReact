@@ -1,9 +1,9 @@
-import React from "react";
+import React, { Component } from 'react';
 import ReactDOM from "react-dom";
 typeof window !== "undefined" && (window.React = React); // for devtools
 
-module.exports = function(Layout) {
-  class ExampleLayout extends React.Component {
+const simpleHoc = WrappedComponent => {
+  return class ExampleLayout extends Component {
     state = { layout: [] };
 
     onLayoutChange = layout => {
@@ -27,15 +27,18 @@ module.exports = function(Layout) {
             Displayed as <code>[x, y, w, h]</code>:
             <div className="columns">{this.stringifyLayout()}</div>
           </div>
-          <Layout onLayoutChange={this.onLayoutChange} />
+          <WrappedComponent onLayoutChange={this.onLayoutChange} {...this.props} />
         </div>
       );
     }
   }
 
-  document.addEventListener("DOMContentLoaded", function() {
-    const contentDiv = document.getElementById("content");
+  document.addEventListener('DOMContentLoaded', function() {
+    const contentDiv = document.getElementById('content');
     const gridProps = window.gridProps || {};
-    ReactDOM.render(React.createElement(ExampleLayout, gridProps), contentDiv);
+    console.log('DOMContentLoaded');
   });
-};
+}
+
+
+export default simpleHoc;

@@ -4,6 +4,7 @@
 import React from "react";
 import _ from "lodash";
 import { Responsive, WidthProvider } from "react-grid-layout";
+import simpleHoc from './test-hook.jsx';
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
 class ShowcaseLayout extends React.Component {
@@ -124,4 +125,4 @@ function generateLayout() {
   });
 }
 
-export default ShowcaseLayout;
+export default simpleHoc(ShowcaseLayout);

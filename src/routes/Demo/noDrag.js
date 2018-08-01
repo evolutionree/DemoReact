@@ -1,16 +1,22 @@
+/**
+ * Created by 0291 on 2018/7/31.
+ */
 import React from "react";
 import _ from "lodash";
 import RGL, { WidthProvider } from "react-grid-layout";
+import simpleHoc from './test-hook.jsx';
 
 const ReactGridLayout = WidthProvider(RGL);
 
-class BasicLayout extends React.PureComponent {
+class NoDraggingLayout extends React.PureComponent {
   static defaultProps = {
     className: "layout",
-    items: 20,
+    isDraggable: false,
+    isResizable: false,
+    items: 50,
+    cols: 12,
     rowHeight: 30,
-    onLayoutChange: function() {},
-    cols: 12
+    onLayoutChange: function() {}
   };
 
   constructor(props) {
@@ -33,7 +39,7 @@ class BasicLayout extends React.PureComponent {
   generateLayout() {
     const p = this.props;
     return _.map(new Array(p.items), function(item, i) {
-      const y = _.result(p, "y") || Math.ceil(Math.random() * 4) + 1;
+      var y = _.result(p, "y") || Math.ceil(Math.random() * 4) + 1;
       return {
         x: (i * 2) % 12,
         y: Math.floor(i / 6) * y,
@@ -61,10 +67,4 @@ class BasicLayout extends React.PureComponent {
   }
 }
 
-module.exports = BasicLayout;
-
-if (require.main === module) {
-  console.log(11111111111)
-  require("./test-hook.jsx")(module.exports);
-}
-//export default BasicLayout;
+export default simpleHoc(NoDraggingLayout);
