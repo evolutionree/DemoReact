@@ -49,12 +49,48 @@ class BasicLayout extends React.PureComponent {
   }
 
   onDragStart = (layout, oldItem, newItem, placeholder, e, element) => { //layout, oldItem, newItem, placeholder, e, element
-    console.log(layout)
+    console.log(e);
+  }
+
+  onDrag = (layout, oldItem, newItem, placeholder, e, element) => {
+    //console.log(e);
+    if (e.clientX > 1184) {
+      console.log('chaochu ');
+      element.style.left = `${1184 - element.offsetWidth}px`;
+      return false;
+    }
+
+    // const grid = document.getElementsByClassName('react-grid-layout')[0];
+    // const translateXMaxValue = grid.offsetWidth - element.offsetWidth;
+    // const translateYMaxValue = grid.offsetHeight - element.offsetHeight;
+    //
+    // const translateValues = window.getComputedStyle(element).transform.split(',');
+    // let translateX = parseInt(translateValues[translateValues.length - 2]);
+    // let translateY = parseInt(translateValues[translateValues.length - 1].slice(0, -1));
+    //
+    // if (translateX > translateXMaxValue) {
+    //   translateX = translateXMaxValue;
+    // }
+    // if (translateX < 0) {
+    //   translateX = 0;
+    // }
+    // if (translateY > translateYMaxValue) {
+    //   translateY = translateYMaxValue;
+    // }
+    // if (translateY < 0) {
+    //   translateY = 0;
+    // }
+    //
+    // element.style.transform = `translate(${translateX}px, ${translateY}px)`;
+  }
+
+  onDragStop = (layout, oldItem, newItem, placeholder, e, element) => {
+    console.log(layout);
     console.log(oldItem);
     console.log(newItem);
-    console.log(placeholder);
-    console.log(e);
-    console.log(element)
+    this.setState({
+      layout: test
+    })
   }
 
   render() {
@@ -62,7 +98,10 @@ class BasicLayout extends React.PureComponent {
       <ReactGridLayout
         layout={this.state.layout}
         onDragStart={this.onDragStart}
+        onDrag={this.onDrag}
+        onDragStop={this.onDragStop}
         onLayoutChange={this.onLayoutChange}
+        useCSSTransforms={false}
         {...this.props}
       >
         {this.generateDOM()}
