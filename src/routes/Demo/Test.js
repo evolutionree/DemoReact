@@ -19,22 +19,21 @@ const test = [
 class BasicLayout extends React.PureComponent {
   static defaultProps = {
     className: 'layout',
-    items: 5,
     rowHeight: 60,
     onLayoutChange: function() {},
-    cols: 3,
+    cols: 3
 
   };
 
   constructor(props) {
     super(props);
 
-    const layout = test; //this.generateLayout();
+    const layout = test;
     this.state = { layout };
   }
 
   generateDOM() {
-    return _.map(_.range(this.props.items), function(i) {
+    return _.map(_.range(test.length), function(i) {
       return (
         <div key={i}>
           <span className="text">{i}</span>
@@ -43,29 +42,26 @@ class BasicLayout extends React.PureComponent {
     });
   }
 
-  generateLayout() {
-    const p = this.props;
-    return _.map(new Array(p.items), function(item, i) {
-      const y = _.result(p, "y") || Math.ceil(Math.random() * 4) + 1;
-      return {
-        x: (i * 2) % 12,
-        y: Math.floor(i / 6) * y,
-        w: 2,
-        h: y,
-        i: i.toString()
-      };
-    });
-  }
-
-  onLayoutChange(layout) {
+  onLayoutChange(layout, layouts) {
+    console.log(layout);
+    console.log(layouts)
     this.props.onLayoutChange(layout);
   }
 
+  onDragStart = (layout, oldItem, newItem, placeholder, e, element) => { //layout, oldItem, newItem, placeholder, e, element
+    console.log(layout)
+    console.log(oldItem);
+    console.log(newItem);
+    console.log(placeholder);
+    console.log(e);
+    console.log(element)
+  }
+
   render() {
-    console.log(JSON.stringify(this.state.layout))
     return (
       <ReactGridLayout
         layout={this.state.layout}
+        onDragStart={this.onDragStart}
         onLayoutChange={this.onLayoutChange}
         {...this.props}
       >
