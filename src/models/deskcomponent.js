@@ -3,6 +3,7 @@
  */
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
+import { getdeskcomponentlist, deskcomponentsave } from '../services/deskConfig';
 
 const columns = [{
   title: '组件名称',
@@ -73,45 +74,32 @@ export default {
       yield put({ type: 'queryList' });
     },
     *queryList(action, { put, call, select }) {
-      // const { query } = yield select(({ routing }) => routing.locationBeforeTransitions);
-      // const queries = {
-      //   pageIndex: 1,
-      //   pageSize: 10,
-      //   keyword: '',
-      //   ...query
-      // };
-      // queries.pageIndex = parseInt(queries.pageIndex);
-      // queries.pageSize = parseInt(queries.pageSize);
-      //
-      // yield put({ type: 'putState', payload: { queries } });
-      // try {
-      //   const { data } = yield call(transferschemelist, queries);
-      //   yield put({
-      //     type: 'putState',
-      //     payload: {
-      //       list: data,
-      //       currItems: []
-      //     }
-      //   });
-      // } catch (e) {
-      //   message.error(e.message || '获取列表数据失败');
-      // }
+      try {
+        const { data } = yield call(getdeskcomponentlist);
+        yield put({
+          type: 'putState',
+          payload: {
+            list: data,
+            currItems: []
+          }
+        });
+      } catch (e) {
+        message.error(e.message || '获取列表数据失败');
+      }
     },
     *search({ payload }, { select, call, put }) {
-      const location = yield select(({ routing }) => routing.locationBeforeTransitions);
-      const { pathname, query } = location;
-      yield put(routerRedux.push({
-        pathname,
-        query: {
-          ...query,
-          pageIndex: 1,
-          ...payload
-        }
-      }));
+
     },
     *searchKeyword({ payload: keyword }, { select, call, put }) {
-      const searchData = JSON.stringify({ recname: keyword || undefined });
-      yield put({ type: 'search', payload: { searchData, isAdvanceQuery: 0 } });
+
+    },
+    *save({ payload: submitData }, { select, call, put }) {
+      console.log(submitData)
+      try {
+        yield call(deskcomponentsave, submitData);
+      } catch (e) {
+
+      }
     }
   },
   reducers: {

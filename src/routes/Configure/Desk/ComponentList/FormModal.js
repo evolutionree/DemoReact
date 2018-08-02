@@ -3,7 +3,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Modal, Form, Input, Select, Radio, Checkbox, InputNumber, message } from 'antd';
+import { Modal, Form, Input, Select } from 'antd';
 
 const { TextArea } = Input;
 
@@ -22,7 +22,7 @@ class FormModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      entities: []
+
     };
   }
 
@@ -46,12 +46,9 @@ class FormModal extends Component {
     form.validateFields((err, values) => {
       if (err) return;
 
-      // this.props.confirm({
-      //   resetflag: 1,
-      //   ...values,
-      //   expireflag: undefined,
-      //   flowid: editingRecord ? editingRecord.flowid : undefined
-      // });
+      this.props.confirm({
+        ...values
+      });
     });
   };
 
@@ -68,25 +65,29 @@ class FormModal extends Component {
       >
         <Form>
           <FormItem label="名称">
-            {getFieldDecorator('name', {
+            {getFieldDecorator('comname', {
               initialValue: '',
               rules: [{ required: true, message: '请输入组件名称' }]
             })(
               <Input placeholder="请输入组件名称" maxLength="10" />
             )}
           </FormItem>
-          <FormItem label="分类">
-            {getFieldDecorator('type', {
-              rules: [{ required: true, message: '请选择分类' }]
+          {/*<FormItem label="分类">*/}
+            {/*{getFieldDecorator('comtype', {*/}
+              {/*rules: [{ required: true, message: '请输入分类' }]*/}
+            {/*})(*/}
+              {/*<Input placeholder="请输入组件名称" maxLength="10" />*/}
+            {/*)}*/}
+          {/*</FormItem>*/}
+          <FormItem label="渲染组件">
+            {getFieldDecorator('comurl', {
+              rules: [{ required: true, message: '请输入前端渲染的组件名' }]
             })(
-              <Select placeholder="请选择分类">
-                <Option key={1}>1</Option>
-                <Option key={2}>2</Option>
-              </Select>
+              <Input placeholder="请输入前端渲染的组件名" />
             )}
           </FormItem>
           <FormItem label="宽度">
-            {getFieldDecorator('width', {
+            {getFieldDecorator('comwidth', {
               rules: [{ required: true, message: '请选择宽度' }]
             })(
               <Select placeholder="请选择宽度">
@@ -95,25 +96,24 @@ class FormModal extends Component {
               </Select>
             )}
           </FormItem>
-          <FormItem label="渲染组件">
-            {getFieldDecorator('component', {
-              rules: [{ required: true, message: '请选择宽度' }]
-            })(
-              <Input placeholder="请输入渲染组件" />
+          <FormItem label="最小高度">
+            {getFieldDecorator('mincomheight')(
+              <Input placeholder="请输入最小高度" />
+            )}
+          </FormItem>
+          <FormItem label="最大高度">
+            {getFieldDecorator('maxcomheight')(
+              <Input placeholder="请输入最大高度" />
             )}
           </FormItem>
           <FormItem label="参数">
-            {getFieldDecorator('params', {
-              rules: [{ required: true, message: '请输入参数' }]
-            })(
+            {getFieldDecorator('comargs')(
               <Input placeholder="请输入参数" />
             )}
           </FormItem>
-          <FormItem label="备注">
-            {getFieldDecorator('remark', {
-              rules: [{ required: true, message: '请输入备注' }]
-            })(
-              <TextArea placeholder="请输入备注" />
+          <FormItem label="说明">
+            {getFieldDecorator('comdesciption')(
+              <TextArea placeholder="请输入说明" />
             )}
           </FormItem>
         </Form>
@@ -125,15 +125,6 @@ class FormModal extends Component {
 export default connect(
   state => {
     const { showModals, currItems, modalPending } = state.deskcomponent;
-    // const data = [{
-    //   entityid: '72d518b4-12f1-4ed7-a4ee-e9be658aa567',
-    //   jilian: true,
-    //   same: true
-    // }, {
-    //   entityid: '1',
-    //   jilian: true,
-    //   same: true
-    // }];
     return {
       visible: /add|edit/.test(showModals),
       editingRecord: /edit/.test(showModals) ? currItems[0] : undefined,

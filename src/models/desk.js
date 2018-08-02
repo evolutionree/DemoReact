@@ -100,6 +100,9 @@ export default {
     *searchKeyword({ payload: keyword }, { select, call, put }) {
       const searchData = JSON.stringify({ recname: keyword || undefined });
       yield put({ type: 'search', payload: { searchData, isAdvanceQuery: 0 } });
+    },
+    *save({ payload: submitData }, { select, call, put }) {
+
     }
   },
   reducers: {
