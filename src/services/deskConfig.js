@@ -25,3 +25,15 @@ export async function deskcomponentsave(params) {
     body: JSON.stringify(params)
   });
 }
+
+
+/**
+ * 获取工作台首页定义
+ * @returns {Promise.<Object>}
+ */
+export async function getdesktop() {
+  return request('/api/desktop/getdesktop', {
+    method: 'post',
+    body: JSON.stringify({})
+  });
+}

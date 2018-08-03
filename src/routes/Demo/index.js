@@ -5,7 +5,7 @@ import React from 'react';
 import _ from "lodash";
 import styles from './styles.less';
 import examplecss from './example-styles.less';
-import Basic from './Test.js';
+import Basic from './Test2.js';
 
 class Demo extends React.PureComponent {
   static defaultProps = {

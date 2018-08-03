@@ -1,142 +1,58 @@
 /**
- * Created by 0291 on 2018/5/21.
+ * Created by 0291 on 2018/8/3.
  */
 import { message } from 'antd';
-import { routerRedux } from 'dva/router';
-
-const columns = [{
-  title: '工作台名称',
-  dataIndex: 'name'
-}, {
-  title: '工作台说明',
-  dataIndex: 'explain'
-}, {
-  title: '状态',
-  dataIndex: 'status'
-}, {
-  title: '已绑定对象',
-  dataIndex: 'object'
-}, {
-  title: '版本后',
-  dataIndex: 'version'
-}, {
-  title: '最后修改时间',
-  dataIndex: 'modifytime'
-}];
-
-const data = [];
-for (let i = 0; i < 46; i++) {
-  data.push({
-    recid: i,
-    name: `Edward King ${i}`,
-    age: 32,
-    address: `London, Park Lane no. ${i}`
-  });
-}
+import { getdesktop } from '../services/deskConfig.js';
+import _ from 'lodash';
 
 export default {
   namespace: 'desk',
   state: {
-    menus: [],
-    protocol: columns,
-    queries: {},
-    list: data,
-    total: 46,
-    currItems: [],
-    showModals: ''
+    leftComponent: [],
+    rightComponent: []
   },
   subscriptions: {
     setup({ dispatch, history }) {
       return history.listen(location => {
-        if (location.pathname === '/config-desk') {
+        if (location.pathname === '/desk') {
           dispatch({ type: 'init' });
-        } else {
-          dispatch({ type: 'resetState' });
         }
       });
     }
   },
   effects: {
-    *init(action, { put, call, select }) {
-      yield put({ type: 'queryList' });
+    *init({ payload: action }, { select, put, call }) {
+      yield put({ type: 'fetchdesk' });
     },
-    *queryList(action, { put, call, select }) {
-      // const { query } = yield select(({ routing }) => routing.locationBeforeTransitions);
-      // const queries = {
-      //   pageIndex: 1,
-      //   pageSize: 10,
-      //   keyword: '',
-      //   ...query
-      // };
-      // queries.pageIndex = parseInt(queries.pageIndex);
-      // queries.pageSize = parseInt(queries.pageSize);
-      //
-      // yield put({ type: 'putState', payload: { queries } });
-      // try {
-      //   const { data } = yield call(transferschemelist, queries);
-      //   yield put({
-      //     type: 'putState',
-      //     payload: {
-      //       list: data,
-      //       currItems: []
-      //     }
-      //   });
-      // } catch (e) {
-      //   message.error(e.message || '获取列表数据失败');
-      // }
-    },
-    *search({ payload }, { select, call, put }) {
-      const location = yield select(({ routing }) => routing.locationBeforeTransitions);
-      const { pathname, query } = location;
-      yield put(routerRedux.push({
-        pathname,
-        query: {
-          ...query,
-          pageIndex: 1,
-          ...payload
-        }
-      }));
-    },
-    *searchKeyword({ payload: keyword }, { select, call, put }) {
-      const searchData = JSON.stringify({ recname: keyword || undefined });
-      yield put({ type: 'search', payload: { searchData, isAdvanceQuery: 0 } });
-    },
-    *save({ payload: submitData }, { select, call, put }) {
-
+    *fetchdesk(action, { put, call, select }) {
+      try {
+        const { data } = yield call(getdesktop);
+        yield put({ type: 'putState', payload: {
+          leftComponent: data.leftdesktopcomponents,
+          rightComponent: data.rightdesktopcomponents
+        } });
+      } catch (e) {
+        console.error(e);
+      }
     }
   },
   reducers: {
-    putState(state, { payload: assignment }) {
+    putState(state, { payload: payload }) {
       return {
         ...state,
-        ...assignment
+        ...payload
       };
     },
-    queries(state, { payload: queries }) {
-      return { ...state, queries };
-    },
-    currItems(state, { payload: currItems }) {
+    showModals(state, { payload: type }) {
       return {
         ...state,
-        currItems
-      };
-    },
-    showModals(state, { payload: showModals }) {
-      return {
-        ...state,
-        showModals,
-        modalPending: false
+        showModals: type
       };
     },
     resetState() {
       return {
-        menus: [],
-        protocol: [],
-        queries: {},
-        list: [],
-        total: 0,
-        currItems: [],
-        showModals: ''
+        leftComponent: [],
+        rightComponent: []
       };
     }
   }
