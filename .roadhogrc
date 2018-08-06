@@ -4,7 +4,8 @@
     "src/admin-index.js",
     "src/login.js",
     "src/mobile-apps/mobile-report/mobile-app-report.js",
-    "src/mobile-apps/mobile-report/reportIndex.js"
+    "src/mobile-apps/mobile-report/reportIndex.js",
+    "src/mobile_crm/mobilecrm.js"
   ],
   "env": {
     "development": {
