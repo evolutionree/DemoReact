@@ -184,6 +184,7 @@ class SelectSingle extends Component {
     return (
       <div>
         <Select
+          showSearch
           value={value === null || value === undefined ? '' : (value + '')}
           disabled={isReadOnly === 1}
           onChange={this.onChange}
