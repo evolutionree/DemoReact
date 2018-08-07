@@ -6,13 +6,15 @@ import connectPermission from './models/connectPermission';
 import createRouterGuard from '../router-guard';
 
 import App from './routes/App';
-import Home from './routes/demo/Home';
-import Test from './routes/demo/Test';
+import Home from './routes/page/Home';
+import entcommList from './routes/page/entcommList';
+import entcommDetail from './routes/page/entcommDetail';
 import NoFoundPage from './routes/NoFoundPage';
 
 const appRoutes = [
   { path: 'home', comp: Home },
-  { path: 'test', comp: Test },
+  { path: 'entcomm-list/:id', comp: entcommList, model: require('./models/entcommList') },
+  { path: 'entcomm/:entityId/:recordId/detail', comp: entcommDetail, model: require('./models/entcommDetail') },
   { path: '*', comp: NoFoundPage }
 ];
 

@@ -11,30 +11,66 @@
 <body>
 <div id="root" style="width: 100%;height: 100%"></div>
 <script>
-  if(!window.localStorage.getItem("userId")){
-    if(dd){
+  if(dd){
+    var http = new XMLHttpRequest();
+    http.open("post", "api/Dingding/dingding", false);
+    http.setRequestHeader('Content-Type', 'application/json');
+    http.onreadystatechange = function () {
+      if(http.readyState==4){
+        if(http.status==200){
+          var configParams = JSON.parse(http.responseText).data;
+          dd.config({
+            agentId:186570804,
+            corpId: 'dingc464c1bcba24669335c2f4657eb6378f',
+            timeStamp: configParams.timestamp,
+            nonceStr: configParams.nonstr,
+            signature: configParams.signature,
+            jsApiList: [
+              'runtime.info',
+              'device.notification.prompt',
+              'biz.chat.pickConversation',
+              'device.notification.confirm',
+              'device.notification.alert',
+              'device.notification.prompt',
+              'biz.chat.open',
+              'biz.util.open',
+              'biz.user.get',
+              'biz.contact.choose',
+              'biz.telephone.call',
+              'biz.util.uploadImage',
+              'device.launcher.launchApp',
+              'biz.ding.post']
+          });
+          runDingReady();
+        }else{
+          alert("load fail:"+http.status);
+        }
+      }
+    };
+    http.send(JSON.stringify({
+      url: 'http://code.renqiankeji.com:11666/mobilecrm.html'
+    }));
+
+
+
+    function runDingReady() {
       dd.ready(function () {
         dd.runtime.permission.requestAuthCode({
           corpId: 'dingc464c1bcba24669335c2f4657eb6378f',
           onSuccess: function (info) {
-              alert(info.code);
             var xmlHttp = new XMLHttpRequest();
             xmlHttp.open("post", "api/dingding/loginwithdingtalk", false);
             xmlHttp.setRequestHeader('Content-Type', 'application/json');
             xmlHttp.onreadystatechange = function () {
-                alert('onreadystatechange:' + xmlHttp.readyState)
               if(xmlHttp.readyState==4){
                 if(xmlHttp.status==200){
-                    alert(1)
-                  alert(xmlHttp.responseText)
-                  //loadJs();
-
+                  window.localStorage.setItem('access_token', JSON.parse(xmlHttp.responseText).data.access_token);
+                  loadJs();
                 }else{
                   alert("load fail:"+xmlHttp.status);
                 }
               }
             };
-
             xmlHttp.send(JSON.stringify({ code: info.code }));
           },
           onFail: function (err) {
@@ -42,8 +78,8 @@
           }
         });
       });
-    }else{
-      loadJs();
+
+      //loadJs();
     }
   }else{
     loadJs();
@@ -52,18 +88,11 @@
 
 
   function loadJs(){
-//    var commScript = document.createElement("script");
-//
-//    commScript.onload = function(){
-//      var pageScript = document.createElement("script");
-//      pageScript.src = "js/app.js?rad="+Math.random();
-//      document.body.appendChild(pageScript);
-//    }
-//
-//    commScript.src = "js/common.js?rad="+Math.random();
-//    document.body.appendChild(commScript);
+    var commScript = document.createElement("script");
+    commScript.src = "mobilecrm.js?rad="+Math.random();
+    document.body.appendChild(commScript);
   }
 </script>
-<script src="mobilecrm.js"></script>
+<!--<script src="mobilecrm.js"></script>-->
 </body>
 </html>

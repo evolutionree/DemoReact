@@ -1,4 +1,3 @@
-
 import dva from 'dva';
 import { routerRedux } from 'dva/router';
 import { adapt } from '../mobile-apps/lib/unit';

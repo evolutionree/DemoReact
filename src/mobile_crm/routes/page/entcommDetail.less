@@ -1,0 +1,29 @@
+.detailPage{
+  :global{
+    .ant-collapse-content{
+      padding: 0;
+    }
+    .ant-collapse-content > .ant-collapse-content-box{
+      padding: 0px 0 0 .2rem;
+    }
+    .ant-collapse > .ant-collapse-item > .ant-collapse-header{
+      color: #d0d0d0;
+    }
+  }
+
+  .ulWrap{
+    >li{
+      padding: 0.1rem 0;
+      border-bottom: 1px solid #f3f3f3;
+      &:last-of-type{
+        border-bottom: none;
+      }
+      >div:first-of-type{
+        color: #d0d0d0;
+      }
+      >div:last-of-type{
+        color: #000000;
+      }
+    }
+  }
+}

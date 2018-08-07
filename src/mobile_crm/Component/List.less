@@ -18,11 +18,15 @@
 
   >li{
     .clearFix;
-    padding: 0.2rem 0.1rem;
+    padding: 0.2rem 0.2rem;
     border-top: 1px solid #f9f7f7;
 
     &:first-of-type{
       border-top: none;
+    }
+    >a{
+      width: 100%;
+      height: 100%;
     }
     img{
       float: left;
@@ -30,19 +34,31 @@
       height: 1rem;
     }
 
-    .left{
-      float: left;
-      padding-left: 0.2rem;
-      width: ~'calc(100% - 3rem)';
-      >div{
-        .ellipsis;
-      }
-    }
+    //.left{
+    //  float: left;
+    //  padding-left: 0.2rem;
+    //  width: ~'calc(100% - 3rem)';
+    //  >div{
+    //    .ellipsis;
+    //  }
+    //}
+    //
+    //.right{
+    //  float: right;
+    //  width: 2rem;
+    //  text-align: right;
+    //}
 
-    .right{
-      float: right;
-      width: 2rem;
-      text-align: right;
+
+    .float{
+      float: left;
+      width: 50%;
+      color: #a9a9a9;
     }
   }
+}
+
+.noDataInfo{
+  margin: 2rem 0;
+  text-align: center;
 }

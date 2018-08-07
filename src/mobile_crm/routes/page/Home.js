@@ -1,12 +1,11 @@
 import React from 'react';
 import { connect } from 'dva';
+import Menu from '../../Component/Menu';
 
 function Home({ dispatch }) {
   return (
     <div >
-      <ul>
-        <li>Test</li>
-      </ul>
+      <Menu />
     </div>
   );
 }

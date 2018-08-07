@@ -1,3 +1,6 @@
+/**
+ * Created by 0291 on 2018/8/6.
+ */
 import React from 'react';
 import { connect } from 'dva';
 import List from '../../Component/List';
