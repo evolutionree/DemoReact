@@ -94,6 +94,10 @@ class DataSourceSelectModal extends Component {
     const selected = this.state.currentSelected.map(
       item => ({ id: item.id, name: item.name })
     );
+    if (selected.length === 0) {
+      message.error('请先选择数据');
+      return false;
+    }
     this.props.onOk(selected);
   };
 
