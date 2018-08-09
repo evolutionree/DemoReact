@@ -26,7 +26,9 @@ export default {
     dynamicModalData: {},
     sortFieldAndOrder: null, //当前排序的字段及排序顺序
     ColumnFilter: null, //字段查询
-    selectedFlowObj: null //审批流
+    selectedFlowObj: null, //审批流
+
+    funBtnInfo: null //当前点击的functionButton 的信息
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -193,8 +195,18 @@ export default {
         functionbutton = functionbutton.filter(item => _.indexOf(item.displayposition, 0) > -1);
 
         const extraButtonData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'ShowModals');
-        const buttoncode = ['CallService', 'CallService_showModal', 'PrintEntity', 'EntityDataOpenH5'];
+        const buttoncode = ['CallService', 'CallService_showModal', 'PrintEntity', 'EntityDataOpenH5', 'Transform'];
         const extraToolbarData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => buttoncode.indexOf(item.buttoncode) > -1);
+
+        functionbutton instanceof Array && functionbutton.map(item => {
+          //转化表单是通过functionButton对象里extradata.type==='transform'匹配显示在页面的   对，这里的规则确实恶心 我也没办法啊啊啊啊啊啊啊啊啊啊啊啊啊  搞不懂  0_0
+          if (item.extradata.type === 'transform') {
+            item.funccode = item.buttoncode;
+            item.buttoncode = item.extradata.type;
+            extraToolbarData.push(item);
+          }
+        });
+
         yield put({ type: 'functionbutton', payload: { extraButtonData, extraToolbarData } });
       } catch (e) {
         message.error(e.message);
@@ -390,7 +402,8 @@ export default {
         dynamicModalData: {},
         sortFieldAndOrder: null, //当前排序的字段及排序顺序
         ColumnFilter: null, //字段查询
-        selectedFlowObj: null  //审批流
+        selectedFlowObj: null,  //审批流
+        funBtnInfo: null //当前点击的functionButton 的信息
       };
     }
   }

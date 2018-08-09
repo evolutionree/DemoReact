@@ -14,6 +14,7 @@ import connectPermission from '../../models/connectPermission';
 import AdvanceSearchModal from './AdvanceSearchModal';
 import DynamicModal from './DynamicModal';
 import ExportModal from './ExportModal';
+import EntcommTransferModal from '../../components/EntcommTransferModal';
 
 const Option = Select.Option;
 
@@ -38,7 +39,8 @@ function EntcommList({
     entityTypes,
     selectedFlowObj,
                        onAddModalCanel,
-                       onAddModalDone
+                       onAddModalDone,
+                       funBtnInfo
   }) {
   function selectItems(items) {
     dispatch({ type: 'entcommApplication/currItems', payload: items });
@@ -80,6 +82,11 @@ function EntcommList({
           entityId: entityId,
           recordId: currItems && currItems[0] && currItems[0].recid
         }
+      });
+    } else if (item.buttoncode === 'transform') {
+      dispatch({
+        type: 'entcommApplication/putState',
+        payload: { showModals: 'changeForm', funBtnInfo: item }
       });
     }
   }
@@ -204,7 +211,6 @@ function EntcommList({
     return { label: item.title, handler: extraToolbarClickHandler.bind(this, item), single: single, multiple: multiple, show: true };
   });
   ajaxToolbarActions = ajaxToolbarActions || [];
-
   return (
     <Page title={entityName}>
       <Toolbar
@@ -284,6 +290,15 @@ function EntcommList({
       <AdvanceSearchModal />
       <DynamicModal />
       <ExportModal currentUser={currentUser} />
+      <EntcommTransferModal
+        visible={/changeForm/.test(showModals)}
+        dstEntityId={funBtnInfo && funBtnInfo.extradata.dstentityid}
+        routePath={funBtnInfo && funBtnInfo.routepath}
+        buttoncode={funBtnInfo && funBtnInfo.funccode}
+        entityId={entityId}
+        recordId={currItems.length > 0 && currItems[0].recid}
+        onCancel={onAddModalDone}
+      />
     </Page>
   );
 }

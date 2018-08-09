@@ -78,6 +78,9 @@ class EntcommTransferModal extends Component {
           entityRules: ruleArr,
           title: ruleArr[0].dstentityname
         });
+      } else {
+        this.props.onCancel();
+        message.error('没有获取到实体类型,无法操作');
       }
     })
   };
@@ -312,7 +315,6 @@ class EntcommTransferModal extends Component {
 
     const DynamicFormComponent =isAdd? DynamicFormAdd:DynamicFormEdit;
     const nextTitle=isAdd?'新增'+title:'编辑'+title;
-
     return (
       <div key={this.state.key}>
         {entityRules && <Modal
