@@ -5,7 +5,8 @@ import classnames from 'classnames';
 import DataSourceSelectModal from './DataSourceSelectModal';
 import styles from './SelectUser.less';
 import { checkHasPermission } from '../../../services/entcomm';
-import { queryDataSourceData } from '../../../services/datasource';
+import { queryDataSourceData, queryDatasourceInfo } from '../../../services/datasource';
+import { queryPermission } from '../../../services/functions';
 import _ from 'lodash';
 
 const Option = Select.Option;
@@ -33,8 +34,37 @@ class SelectDataSource extends React.Component {
     super(props);
     this.state = {
       modalVisible: false,
-      options: []
+      options: [],
+      allowadd: false,
+      refEntity: '',
+      refEntityName: ''
     };
+  }
+
+  componentDidMount() {
+    this.queryDatasourceEntityAndPession();
+  }
+
+  queryDatasourceEntityAndPession = () => {
+    const sourceId = this.props.dataSource && this.props.dataSource.sourceId;
+    if (sourceId) {
+      queryDatasourceInfo(sourceId).then(result => { //获取数据源关联实体
+        const entityId = result.data.entityid;
+        const entityname = result.data.entityname;
+        if (entityId) {
+          queryPermission(entityId).then(perssionResult => {
+            const hasAddPermission = _.find(perssionResult.data, item => item.funccode === 'EntityDataAdd');
+            if (hasAddPermission) { //先查看 用户是否有 新增该数据源数据的权限 再判断该数据源表单字段是否支持 快速新增 数据源数据的功能
+              this.setState({
+                allowadd: this.props.allowadd,
+                refEntity: entityId,
+                refEntityName: entityname
+              });
+            }
+          });
+        }
+      });
+    }
   }
 
   setValue = val => {
@@ -175,6 +205,9 @@ class SelectDataSource extends React.Component {
           visible={this.state.modalVisible}
           designateDataSource={this.props.designateDataSource}
           selected={array}
+          allowadd={this.state.allowadd}
+          refEntity={this.state.refEntity}
+          refEntityName={this.state.refEntityName}
           sourceId={this.props.dataSource && this.props.dataSource.sourceId}
           onOk={this.handleOk}
           onCancel={this.hideModal}

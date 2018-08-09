@@ -1,14 +1,16 @@
 import React, { PropTypes, Component } from 'react';
 import * as _ from 'lodash';
-import { Modal, Col, Row, Icon, message, Spin, Pagination } from 'antd';
+import { Modal, Col, Row, Icon, message, Spin, Pagination, Button } from 'antd';
 import classnames from 'classnames';
 import Search from '../../../components/Search';
 import Toolbar from '../../../components/Toolbar';
 import DepartmentSelect from '../../../components/DepartmentSelect';
 import { parseConfigData } from '../../../components/ListStylePicker';
 import { queryDataSourceData } from '../../../services/datasource';
+import EntcommAddModal from '../../../components/EntcommAddModal';
 import styles from './SelectData.less';
 import Avatar from "../../Avatar";
+import { queryTypes } from '../../../services/entity';
 
 class DataSourceSelectModal extends Component {
   static propTypes = {
@@ -37,11 +39,20 @@ class DataSourceSelectModal extends Component {
       list: [],
       pageIndex: 1,
       total: 0,
-      config: {}
+      config: {},
+      addModalVisible: false,
+      entityTypes: []
     };
   }
 
+  componentDidMount() {
+    this.queryEntityTypes(this.props);
+  }
+
   componentWillReceiveProps(nextProps) {
+    if (nextProps.refEntity !== this.props.refEntity) {
+      this.queryEntityTypes(nextProps);
+    }
     if (!this.props.visible && nextProps.visible) {
       this.setState({
         keyword: '',
@@ -50,6 +61,19 @@ class DataSourceSelectModal extends Component {
         pageIndex: 1,
         total: 0
       }, this.fetchList);
+    }
+  }
+
+  queryEntityTypes = (props) => {
+    if (props.allowadd && props.refEntity) { //支持快速新增的情况下  查询 实体类型
+      queryTypes({ entityId: props.refEntity }).then(result => {
+        const entityTypes = result.data.entitytypepros;
+        this.setState({
+          entityTypes
+        });
+      }, err => {
+
+      });
     }
   }
 
@@ -142,6 +166,24 @@ class DataSourceSelectModal extends Component {
     this.setState({ currentSelected: [] });
   };
 
+  addDataSource = () => {
+    this.setState({
+      addModalVisible: true
+    });
+  }
+
+  onAddModalCanel = () => {
+    this.setState({
+      addModalVisible: false
+    });
+  }
+
+  onAddModalDone = () => {
+    this.setState({
+      addModalVisible: false
+    }, this.fetchList);
+  }
+
   renderItem = (item) => {
     const { iconField, listFields } = parseConfigData(this.state.config);
     // const { fieldkeys } = this.state.config;
@@ -176,9 +218,8 @@ class DataSourceSelectModal extends Component {
       </div>
     );
   };
-
   render() {
-    const { visible, onCancel, multiple } = this.props;
+    const { visible, onCancel, multiple, allowadd } = this.props;
     const { currentSelected } = this.state;
     const pagination = (
       <Pagination
@@ -207,6 +248,9 @@ class DataSourceSelectModal extends Component {
           >
             搜索
           </Search>
+          {
+            allowadd && <Button onClick={this.addDataSource}>新增</Button>
+          }
         </Toolbar>
         <Spin spinning={this.state.loading}>
           {multiple ? (
@@ -258,6 +302,14 @@ class DataSourceSelectModal extends Component {
             </div>
           )}
         </Spin>
+        <EntcommAddModal
+          visible={this.state.addModalVisible}
+          entityId={this.props.refEntity}
+          entityName={this.props.refEntityName}
+          entityTypes={this.state.entityTypes}
+          cancel={this.onAddModalCanel}
+          done={this.onAddModalDone}
+        />
       </Modal>
     );
   }

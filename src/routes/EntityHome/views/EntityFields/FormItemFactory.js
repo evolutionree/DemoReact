@@ -945,6 +945,21 @@ export default class FormItemFactory {
     );
   }
 
+  createAllowAdd() {
+    return (
+      <FormItem label="是否允许快速新增" key="allowAdd">
+        {this.getFieldDecorator('allowadd', {
+          initialValue: 0
+        })(
+          <Radio.Group>
+            <Radio value={1}>是</Radio>
+            <Radio value={0}>否</Radio>
+          </Radio.Group>
+        )}
+      </FormItem>
+    );
+  }
+
   createRelateRule() {
     return (
       <FormItem label="联动规则" key="relateRule">
