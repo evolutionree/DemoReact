@@ -195,7 +195,7 @@ export default {
         functionbutton = functionbutton.filter(item => _.indexOf(item.displayposition, 0) > -1);
 
         const extraButtonData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'ShowModals');
-        const buttoncode = ['CallService', 'CallService_showModal', 'PrintEntity', 'EntityDataOpenH5', 'Transform'];
+        const buttoncode = ['CallService', 'CallService_showModal', 'PrintEntity', 'EntityDataOpenH5'];
         const extraToolbarData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => buttoncode.indexOf(item.buttoncode) > -1);
 
         functionbutton instanceof Array && functionbutton.map(item => {
