@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import _ from 'lodash';
 import { routerRedux } from 'dva/router';
-import { getGeneralListProtocol, getListData, delEntcomm, transferEntcomm, getFunctionbutton, extraToolbarClickSendData, savemailowner, queryWorkflow } from '../services/entcomm';
+import { getGeneralListProtocol, getListData, delEntcomm, transferEntcomm, getFunctionbutton, extraToolbarClickSendData, savemailowner, queryWorkflow, getEntcommDetail } from '../services/entcomm';
 import { queryMenus, queryEntityDetail, queryTypes, queryListFilter, DJCloudCall } from '../services/entity';
 
 export default {
@@ -28,7 +28,8 @@ export default {
     ColumnFilter: null, //字段查询
     selectedFlowObj: null, //审批流
 
-    funBtnInfo: null //当前点击的functionButton 的信息
+    funBtnInfo: null, //当前点击的functionButton 的信息
+    copyData: null
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -200,7 +201,8 @@ export default {
 
         functionbutton instanceof Array && functionbutton.map(item => {
           //转化表单是通过functionButton对象里extradata.type==='transform'匹配显示在页面的   对，这里的规则确实恶心 我也没办法啊啊啊啊啊啊啊啊啊啊啊啊啊  搞不懂  0_0
-          if (item.extradata.type === 'transform') {
+          const extradataType = ['transform', 'copybutton'];
+          if (extradataType.indexOf(item.extradata.type) > -1) {
             item.funccode = item.buttoncode;
             item.buttoncode = item.extradata.type;
             extraToolbarData.push(item);
@@ -312,6 +314,13 @@ export default {
       } catch (e) {
         message.error(e.message);
       }
+    },
+    *queryCopyData({ payload: submitData }, { select, call, put }) {
+      const { entityId, currItems } = yield select(state => state.entcommApplication);
+      const params = { entityId, recId: currItems[0].recid, needPower: 0 }
+      const { data: { detail } } = yield call(getEntcommDetail, params);
+      detail.rectype = entityId; //简单实体 只有一个 默认实体类型
+      yield put({ type: 'putState', payload: { showModals: 'showCopy', copyData: detail } });
     }
   },
   reducers: {
@@ -403,7 +412,8 @@ export default {
         sortFieldAndOrder: null, //当前排序的字段及排序顺序
         ColumnFilter: null, //字段查询
         selectedFlowObj: null,  //审批流
-        funBtnInfo: null //当前点击的functionButton 的信息
+        funBtnInfo: null, //当前点击的functionButton 的信息
+        copyData: null
       };
     }
   }

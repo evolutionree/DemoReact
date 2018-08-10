@@ -15,6 +15,7 @@ import AdvanceSearchModal from './AdvanceSearchModal';
 import DynamicModal from './DynamicModal';
 import ExportModal from './ExportModal';
 import EntcommTransferModal from '../../components/EntcommTransferModal';
+import EntcommCopyModal from '../../components/EntcommCopyModal';
 
 const Option = Select.Option;
 
@@ -40,7 +41,8 @@ function EntcommList({
     selectedFlowObj,
                        onAddModalCanel,
                        onAddModalDone,
-                       funBtnInfo
+                       funBtnInfo,
+                       copyData
   }) {
   function selectItems(items) {
     dispatch({ type: 'entcommApplication/currItems', payload: items });
@@ -87,6 +89,10 @@ function EntcommList({
       dispatch({
         type: 'entcommApplication/putState',
         payload: { showModals: 'changeForm', funBtnInfo: item }
+      });
+    } else if (item.buttoncode === 'copybutton') {
+      dispatch({
+        type: 'entcommApplication/queryCopyData'
       });
     }
   }
@@ -298,6 +304,15 @@ function EntcommList({
         entityId={entityId}
         recordId={currItems.length > 0 && currItems[0].recid}
         onCancel={onAddModalDone}
+      />
+      <EntcommCopyModal
+        visible={/showCopy/.test(showModals)}
+        entityId={entityId}
+        entityTypes={entityTypes}
+        copyData={copyData}
+        currentUser={currentUser}
+        onCancel={onAddModalCanel}
+        onDone={onAddModalDone}
       />
     </Page>
   );
