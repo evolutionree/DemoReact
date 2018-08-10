@@ -5,9 +5,9 @@ import { getAuthedHeaders } from '../../utils/request';
 import { queryEntityDetail } from '../../services/entity';
 import { getLocalAuthentication } from '../../services/authentication';
 
-function debugMsg(msg) {
+function debugMsg(type, msg) {
   Modal.info({
-    title: 'Debug',
+    title: type,
     content: msg,
     okText: 'OK'
   });
@@ -165,9 +165,9 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
 
     alert = (type, content) => {
       if (typeof content === 'object') {
-        debugMsg(JSON.stringify(content));
+        debugMsg(type, JSON.stringify(content));
       } else {
-        debugMsg(content);
+        debugMsg(type, content);
       }
     };
 
