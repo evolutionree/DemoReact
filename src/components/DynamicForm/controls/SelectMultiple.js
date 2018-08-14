@@ -158,7 +158,7 @@ class SelectMultiple extends Component {
         onFocus={onFocus}
         optionFilterProp="children"
         mode="multiple"
-        style={{ width: '100%' }}
+        style={{ width: '100%', height: '32px' }}
       >
         {options.map(opt => (
           <Option key={opt.value} style={opt.disabled ? { display: 'none'} : null}>{opt.label}</Option>

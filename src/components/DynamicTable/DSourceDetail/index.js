@@ -134,6 +134,7 @@ class DSourceDetail extends PureComponent {
               entityTypeId={data.rectype || entityId}
               fields={protocol}
               value={data}
+              gridLayout={false}
             />
           </div>
         </Spin>

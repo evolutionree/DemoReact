@@ -202,7 +202,7 @@ class EntcommAddModal extends Component {
           onCancel={this.onFormModalCancel}
           onOk={this.onFormModalConfirm}
           confirmLoading={confirmLoading}
-          width={hasTable ? 900 : 550}
+          width={document.body.clientWidth > 1400 ? 1200 : 800}
         >
           {showFormModal && <DynamicFormAdd
             entityId={entityId}

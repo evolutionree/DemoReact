@@ -30,11 +30,14 @@ class RelObject extends React.Component {
   render() {
     const { value_name } = this.props; //编辑页 数据源不允许修改  直接取value_name值
     return (
-      <div className="ant-input" style={{
-        cursor: 'not-allowed',
-        backgroundColor: 'rgb(247, 247, 247)',
-        color: 'rgba(0, 0, 0, 0.5)'
-      }}>{value_name || this.state.title}</div>
+      <div style={{ height: 32 }}>
+        <div className="ant-input" style={{
+          cursor: 'not-allowed',
+          backgroundColor: 'rgb(247, 247, 247)',
+          color: 'rgba(0, 0, 0, 0.5)',
+          height: '32px'
+        }}>{value_name || this.state.title}</div>
+      </div>
     );
   }
 }

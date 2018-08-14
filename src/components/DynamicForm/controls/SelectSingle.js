@@ -182,7 +182,7 @@ class SelectSingle extends Component {
     const { value, isReadOnly, onFocus } = this.props;
     const options = this.getOptions();
     return (
-      <div>
+      <div style={{ height: '32px' }}>
         <Select
           showSearch
           value={value === null || value === undefined ? '' : (value + '')}

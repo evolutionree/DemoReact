@@ -1,5 +1,14 @@
+.clearFix{
+  zoom:1;
+  &:after{
+    content: '';
+    display: block;
+    clear: both;
+  }
+}
 .wrap {
-
+  float: left;
+  width: 100%;
 }
 .wrap.static {
   &.default .title {
@@ -34,6 +43,7 @@
     }
   }
   .content {
+    .clearFix;
     padding: 15px;
     background-color: #f9f9f9;
     border: 1px solid #ebeff4;
@@ -42,7 +52,7 @@
     border-bottom-right-radius: 2px;
 
     & > :global(.ant-form-item) {
-      margin-bottom: 14px;
+      margin-bottom: 0px;
     }
   }
   &.folded {
@@ -50,4 +60,9 @@
       display: none;
     }
   }
+}
+
+
+.content {
+  .clearFix;
 }

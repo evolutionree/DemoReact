@@ -338,7 +338,7 @@ class EntcommTransferModal extends Component {
         onCancel={this.props.onCancel}
         onOk={this.handleSubmit}
         confirmLoading={confirmLoading}
-        width={hasTable ? 900 : 550}
+        width={document.body.clientWidth > 1400 ? 1200 : 800}
       >
         <DynamicFormComponent
           key={ selectedEntityType|| dstEntityId}

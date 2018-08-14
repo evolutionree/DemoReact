@@ -2,9 +2,6 @@
 
 .dyformview {
   :global {
-    .ant-form-item {
-      margin-bottom: 18px;
-    }
     .ant-form-item-label {
       line-height: 32px;
     }
@@ -41,10 +38,14 @@
   padding-bottom: 12px;
 
   .field {
+    .clearfix();
     float: left;
     margin-right: 2.5em;
+    height: 22px;
+    line-height: 22px;
 
     .label {
+      float: left;
       display: inline-block;
       color: #9b9b9b;
       margin-right: .75em;
@@ -54,6 +55,7 @@
       white-space: nowrap;
     }
     .value {
+      float: left;
       display: inline-block;
       color: #333;
       max-width: 340px;

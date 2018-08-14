@@ -26,8 +26,22 @@ body {
 }
 
 :global {
-
   .uke {
+    .ant-form-item { //保持表单 在有校验不通过的时候  表单能对齐
+      margin-bottom: 18px;
+    }
+
+    .ant-form-item-with-help{ //保持表单 在有校验不通过的时候  表单能对齐
+      margin-bottom: 0px;
+    }
+
+    .ant-form-item-label label {
+      font-size: 12px;
+    }
+    .ant-form-explain{
+      font-size: 12px;
+    }
+
     .ant-input,
     .ant-input-number {
       line-height: 1.5;

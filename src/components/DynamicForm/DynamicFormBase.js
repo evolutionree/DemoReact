@@ -1,11 +1,12 @@
 import React, { PropTypes, Component } from 'react';
-import { Form } from 'antd';
+import { Form, Row, Col } from 'antd';
 import classnames from 'classnames';
 import FoldableGroup from './FoldableGroup';
 import DynamicField from './DynamicField';
 import { getEntcommDetail } from '../../services/entcomm';
 
 const FormItem = Form.Item;
+const onlylineField = [2, 15, 22, 23, 24];
 
 class CustomFormItem extends FormItem {
   renderValidateWrapper(c1, c2, c3) {
@@ -174,7 +175,7 @@ class DynamicFormBase extends Component {
 
   getFormItemLayout = () => {
     return this.getFormLayout() === 'horizontal'
-      ? { labelCol: { span: 4 }, wrapperCol: { span: 20 } }
+      ? { labelCol: { span: 6 }, wrapperCol: { span: 18 } }
       : null;
   };
 
@@ -266,6 +267,9 @@ class DynamicFormBase extends Component {
 
   processFields = fields => {
     return fields.filter(field => {
+      // if (field.fieldid === 'e279d8d8-9f90-4ad4-aa69-cd89c43e8a36' || field.fieldid === '046ed3f6-8c81-41ab-baff-339c339eddf5') {
+      //   return false
+      // }
       if ((field.controltype > 1000 && field.controltype !== 1012 && field.controltype !== 1006)) { //(field.controltype === 31) ||
         return false;
       }
@@ -294,7 +298,13 @@ class DynamicFormBase extends Component {
     }
 
     const fieldControl = this.renderFieldControl(field);
-    return this.renderFieldControlWrapper(field)(fieldControl);
+    return (
+      <Col span={(onlylineField.indexOf(field.controltype) > -1) ? 24 : document.body.clientWidth > 1400 ? 8 : 12}
+           key={field.fieldname}
+           style={{ padding: '0 4px' }}>
+        {this.renderFieldControlWrapper(field)(fieldControl)}
+      </Col>
+    );
   };
 
   renderFieldControlWrapper = field => {
@@ -304,6 +314,8 @@ class DynamicFormBase extends Component {
       'dynamic-form-field',
       'dynamic-form-field-' + field.controltype
     ]);
+
+    const layout = onlylineField.indexOf(field.controltype) > -1 ? {} : this.getFormItemLayout(field.fieldname); //表格字段 永远不考虑横向显示
     return children => (
       <WrapFormItem
         key={field.fieldname}
@@ -311,7 +323,7 @@ class DynamicFormBase extends Component {
         colon={false}
         required={field.isrequire || fieldConfig.isRequiredJS}
         className={cls}
-        {...this.getFormItemLayout(field.fieldname)}
+        {...layout}
       >
         {children}
       </WrapFormItem>
@@ -355,12 +367,14 @@ class DynamicFormBase extends Component {
     const fieldsGroup = this.getFieldsGroup();
     return (
       <Form layout={this.getFormLayout()}>
-        {this.renderFields(fieldsGroup[0].fields)}
-        {fieldsGroup.slice(1).map(group => (
-          <FoldableGroup key={group.title} title={group.title} foldable={group.foldable}>
-            {this.renderFields(group.fields)}
-          </FoldableGroup>
-        ))}
+        <Row gutter={24}>
+          {this.renderFields(fieldsGroup[0].fields)}
+          {fieldsGroup.slice(1).map(group => (
+            <FoldableGroup key={group.title} title={group.title} foldable={group.foldable}>
+              {this.renderFields(group.fields)}
+            </FoldableGroup>
+          ))}
+        </Row>
       </Form>
     );
   }

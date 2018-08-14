@@ -81,7 +81,7 @@ InputTextarea.View = ({ value, value_name, textType }) => {
     }, []);
     text.pop();
   }
-  return <div style={{ wordWrap: 'break-word', whiteSpace: 'normal', lineHeight: 1.5 }}>{text}</div>;
+  return <div style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}>{text}</div>;
 };
 
 export default InputTextarea;
