@@ -36,7 +36,7 @@ class DetailInfo extends React.Component {
           dd.device.launcher.launchApp({
             app: `uk100://?parameter=${launchAppUUid}`, //iOS:应用scheme;Android:应用包名 uk100://?parameter=xxxx net.xtion.crm.uk100.rq
             onSuccess : function(data) {
-              alert(JSON.stringify(data));
+              //alert(JSON.stringify(data));
             },
             onFail : function(err) {
               alert(JSON.stringify(err));
