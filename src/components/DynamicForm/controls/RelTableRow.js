@@ -56,8 +56,13 @@ class RelTableRow extends DynamicFormBase {
     });
   };
   render() {
-    const { fields: allFields, selected, onSelect, mode } = this.props;
-    const fields = allFields.filter(item => item.controltype !== 20);
+    const { fields: allFields, selected, onSelect, mode, fixedColumn } = this.props;
+    let fields = allFields.filter(item => item.controltype !== 20);
+
+    if (fixedColumn) { //左侧固定表格的
+      fields = fields.filter(item => item.fieldid === fixedColumn);
+    }
+
     return (
       <div className={styles.tr}>
         {mode !== 'DETAIL' && <div className={classnames([styles.td, styles.selectionCell])}>

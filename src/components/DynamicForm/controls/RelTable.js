@@ -9,6 +9,7 @@ import styles from './RelTable.less';
 import generateDefaultFormData from '../generateDefaultFormData';
 import RelTableImportModal from '../RelTableImportModal';
 
+const TableMaxHeight = 500;
 
 class RelTable extends Component {
   static propTypes = {
@@ -350,7 +351,7 @@ class RelTable extends Component {
   };
 
   // 渲染表格列头
-  renderTableHeader = () => {
+  renderTableHeader = (fixed) => {
     const value = this.parseValue();
     const isAllSelected = value.length && value.every((item, index) => _.includes(this.state.selectedRows, index));
     const fields = this.getShowFields();
@@ -363,7 +364,8 @@ class RelTable extends Component {
               <Checkbox checked={isAllSelected} onChange={this.onCheckAllChange} />
             </span>
           </div>}
-          {fields.map(field => {
+          {fields.map((field, index) => {
+            if (fixed && index > 0) return; //暂时只 固定第一列
             const fieldConfig = field.fieldconfig || {};
             const required = field.isrequire || fieldConfig.isRequiredJS;
             return (
@@ -380,12 +382,18 @@ class RelTable extends Component {
   };
 
   // 渲染表格数据
-  renderTableBody = () => {
+  renderTableBody = (fixed) => {
+    const fields = this.getShowFields();
+    let fixedColumn;
+    if (fixed && fields.length > 0) {
+      fixedColumn = fields[0].fieldid;
+    }
     return this.parseValue().map((item, index) => {
       const value = this.props.mode === 'ADD' ? generateDefaultFormData(this.state.fields, item && item.FieldData || item) : item && item.FieldData || item;
       return (
         <RelTableRow
           key={index}
+          fixedColumn={fixedColumn}
           mode={this.props.mode}
           selected={_.includes(this.state.selectedRows, index)}
           fields={this.state.fields}
@@ -400,6 +408,86 @@ class RelTable extends Component {
     });
   };
 
+  componentDidUpdate() {
+    //列表的固定表头的列
+    const fixedTopHeader = this.fixTopTableRef.children[0].children[0].children;
+    //列表的原始表头的列
+    const realHeader = this.relTableRef.children[0].children[0].children;
+
+
+    this.fixTopTableRef.style.width = this.relTableRef.getBoundingClientRect().width + 'px';
+
+    //顶部固定表格的列宽 需与真实表格保持一致
+    for (let i = 0; i < realHeader.length; i++) {
+      let realHeader_thWidth = realHeader[i].getBoundingClientRect().width;
+      let fixedTopHeader_thWidth = fixedTopHeader[i].getBoundingClientRect().width;
+      if (realHeader_thWidth !== fixedTopHeader_thWidth) {
+        fixedTopHeader[i].style.width = realHeader_thWidth + 'px';
+        fixedTopHeader[i].style.display = 'inline-block';
+      }
+    }
+
+    //是否存在横 纵向滚动条
+    const vertical = this.hasScrolled(this.relTableWrapRef);
+    const horizontal = this.hasScrolled(this.relTableWrapRef, 'horizontal');
+
+    let scrollWidth = 0;
+    if (vertical) {
+      scrollWidth = this.getScrollWidth();
+    }
+    this.fixTopWrapRef.style.width = `calc(100% - ${scrollWidth}px)`;
+    this.fixTopWrapRef.style.height = this.relTableWrapRef.children[0].children[0].getBoundingClientRect().height + 1 + 'px';
+
+    //列表的左固定的表格
+    let fixedWidth = 0
+    for (let i = 0; i < realHeader.length; i++) {
+      if (i < 2) {
+        fixedWidth += realHeader[i].getBoundingClientRect().width;
+      }
+    }
+    this.fixLeftWrapRef.style.width = fixedWidth + 'px';
+
+    let scrollHeight = 0;
+    if (horizontal) {
+      scrollHeight = this.getScrollWidth();
+    }
+    this.fixLeftWrapRef.style.height = this.relTableWrapRef.getBoundingClientRect().height - scrollHeight + 'px';
+    this.fixLeftWrapRef.style.maxHeight = TableMaxHeight - scrollHeight + 'px';
+  }
+
+  tableScroll = (e) => {
+    if (e.target.scrollLeft === 0) {
+      this.fixLeftWrapRef.style.boxShadow = 'none';
+    } else {
+      this.fixLeftWrapRef.style.boxShadow = '6px 0 6px -4px rgba(0, 0, 0, 0.15)';
+    }
+
+    this.fixLeftTableRef.style.top = -e.target.scrollTop + 'px';
+    this.fixTopTableRef.style.left = -e.target.scrollLeft + 'px';
+  }
+
+  getScrollWidth() {
+    let noScroll = document.createElement('DIV');
+    let scroll = document.createElement('DIV');
+    let oDiv = document.createElement('DIV');
+    oDiv.style.cssText = 'position:absolute; top:-1000px; width:100px; height:100px; overflow:hidden;';
+    noScroll = document.body.appendChild(oDiv).clientWidth;
+    oDiv.style.overflowY = 'scroll';
+    scroll = oDiv.clientWidth;
+    document.body.removeChild(oDiv);
+    return noScroll - scroll;
+  }
+
+  hasScrolled(el, direction = 'vertical') {
+    if (el && el.scrollHeight && el.clientHeight) {
+      if (direction === 'vertical') {
+        return el.scrollHeight > el.clientHeight;
+      } else if (direction === 'horizontal') {
+        return el.scrollWidth > el.clientWidth;
+      }
+    }
+  }
+
   render() {
     return (
       <div>
@@ -411,10 +499,26 @@ class RelTable extends Component {
             }
             <Button onClick={this.delRow} type="danger">删除</Button>
           </div>}
-          <div className={styles.tableWrap}>
-            <div className={styles.table}>
-              {this.renderTableHeader()}
-              {this.renderTableBody()}
+          <div className={styles.tableContent}>
+            <div className={styles.fixTopWrap} ref={ref => this.fixTopWrapRef = ref}>
+              <div className={classnames([styles.table, styles.fixTopTable])} ref={ref => this.fixTopTableRef = ref}>
+                {this.renderTableHeader()}
+              </div>
+            </div>
+            <div className={styles.tableWrap} style={{ maxHeight: TableMaxHeight }} onScroll={this.tableScroll} ref={ref => this.relTableWrapRef = ref}>
+              <div className={styles.table} ref={ref => this.relTableRef = ref}>
+                {this.renderTableHeader()}
+                {this.renderTableBody()}
+              </div>
+            </div>
+            <div className={styles.fixLeftWrap} ref={ref => this.fixLeftWrapRef = ref}>
+              <div className={classnames([styles.table, styles.fixLeftTopTable])}>
+                {this.renderTableHeader('fixed')}
+              </div>
+              <div className={classnames([styles.table, styles.fixLeftTable])} ref={ref => this.fixLeftTableRef = ref}>
+                {this.renderTableHeader('fixed')}
+                {this.renderTableBody('fixed')}
+              </div>
             </div>
           </div>
           {/*{this.props.value && <div>*/}
