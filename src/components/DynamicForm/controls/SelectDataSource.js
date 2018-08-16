@@ -128,8 +128,7 @@ class SelectDataSource extends React.Component {
     this.props.onChange();
   };
 
-  selectChange = (value) => {
-    const { options } = this.state;
+  selectChange = (options, value) => {
     const selectData = options instanceof Array && options.filter(item => value && value.indexOf(item.id) > -1);
     const id = selectData.map(obj => obj.id).join(',');
     const name = selectData.map(obj => obj.name).join(',');
@@ -183,7 +182,7 @@ class SelectDataSource extends React.Component {
     return (
       <div className={cls} style={{ ...this.props.style }}>
         <div className={styles.inputSelectWrap}>
-          <Select onChange={this.selectChange}
+          <Select onChange={this.selectChange.bind(this, options)}
                   onSearch={this.queryOptions}
                   placeholder={this.props.placeholder}
                   disabled={isReadOnly}
