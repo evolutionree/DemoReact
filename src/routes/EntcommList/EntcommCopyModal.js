@@ -232,6 +232,7 @@ class EntcommCopyModal extends Component {
           onOk={this.onFormModalConfirm}
           confirmLoading={confirmLoading}
           width={document.body.clientWidth > 1400 ? 1200 : 800}
+          wrapClassName="DynamicFormModal"
         >
           {this.state.fetchDataSucced && <DynamicFormAdd
             entityId={entityId}

@@ -19,12 +19,11 @@ class DynamicFormView extends React.Component {
     })),
     value: PropTypes.object.isRequired,
     horizontal: PropTypes.bool,
-    gridLayout: PropTypes.bool //是否采用栅格布局
+    cols: PropTypes.number //单个表单项所占栅格宽 没有传 则默认走系统计算（超1400宽的客户端三列， 否则两列展示）
   };
 
   static defaultProps = {
-    horizontal: false,
-    gridLayout: true
+    horizontal: false
   };
 
   getFormLayout = () => {
@@ -47,20 +46,24 @@ class DynamicFormView extends React.Component {
   };
 
   renderFields = fields => {
-    const { value, entityId, entityTypeId, gridLayout } = this.props;
+    const { value, entityId, entityTypeId, cols } = this.props;
     return fields.filter(field => field.controltype !== 30).map(field => {
       const { fieldname, displayname, controltype, fieldconfig } = field;
       const layout = onlylineField.indexOf(field.controltype) > -1 ? {} : this.getFormItemLayout(field.fieldname); //表格字段 永远不考虑横向显示
 
       let colNum = 24;
-      if (gridLayout) {
-        colNum = onlylineField.indexOf(field.controltype) > -1 ? 24 : document.body.clientWidth > 1400 ? 8 : 12;
+      if (onlylineField.indexOf(field.controltype) > -1) {
+        colNum = 24;
+      } else if (cols) {
+        colNum = cols;
+      } else {
+        colNum = document.body.clientWidth > 1400 ? 8 : 12;
       }
 
       return (
         <Col span={colNum}
              key={field.fieldname}
-             style={(fieldconfig.isVisible !== 1 || field.fieldconfig.isVisibleJS === 0) ? { display: 'none' } : { padding: '4px' }} >
+             style={(fieldconfig.isVisible !== 1 || field.fieldconfig.isVisibleJS === 0) ? { display: 'none' } : { padding: '0 10px' }} >
           <FormItem
             key={fieldname}
             colon={false}

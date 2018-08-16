@@ -49,7 +49,8 @@ class DynamicFormBase extends Component {
     onFieldControlFocus: PropTypes.func,
     horizontal: PropTypes.bool,
     form: PropTypes.object,
-    jsEngine: PropTypes.object
+    jsEngine: PropTypes.object,
+    cols: PropTypes.number //单个表单项所占栅格宽 没有传 则默认走系统计算（超1400宽的客户端三列， 否则两列展示）
   };
   static defaultProps = {
     horizontal: false,
@@ -297,17 +298,26 @@ class DynamicFormBase extends Component {
       );
     }
 
+    let colNum = 24;
+    if (onlylineField.indexOf(field.controltype) > -1) {
+      colNum = 24;
+    } else if (this.props.cols) {
+      colNum = this.props.cols;
+    } else {
+      colNum = document.body.clientWidth > 1400 ? 8 : 12;
+    }
+
     const fieldControl = this.renderFieldControl(field);
     return (
-      <Col span={(onlylineField.indexOf(field.controltype) > -1) ? 24 : document.body.clientWidth > 1400 ? 8 : 12}
+      <Col span={colNum}
            key={field.fieldname}
-           style={{ padding: '0 4px' }}>
-        {this.renderFieldControlWrapper(field)(fieldControl)}
+           style={{ padding: '0 10px' }}>
+        {this.renderFieldControlWrapper(field, colNum)(fieldControl)}
       </Col>
     );
   };
 
-  renderFieldControlWrapper = field => {
+  renderFieldControlWrapper = (field, colNum) => {
     const WrapFormItem = field.controltype === 24 ? CustomFormItem : FormItem; // 表格控件特殊处理
     const fieldConfig = field.fieldconfig || {};
     const cls = classnames([
@@ -315,7 +325,7 @@ class DynamicFormBase extends Component {
       'dynamic-form-field-' + field.controltype
     ]);
 
-    const layout = onlylineField.indexOf(field.controltype) > -1 ? {} : this.getFormItemLayout(field.fieldname); //表格字段 永远不考虑横向显示
+    const layout = colNum === 24 ? {} : this.getFormItemLayout(field.fieldname); //表格字段 永远不考虑横向显示
     return children => (
       <WrapFormItem
         key={field.fieldname}

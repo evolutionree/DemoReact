@@ -79,6 +79,7 @@ class EntcommDetailModal extends Component {
         onOk={this.props.onOk}
         footer={footer}
         width={document.body.clientWidth > 1400 ? 1200 : 800}
+        wrapClassName="DynamicFormModal"
         key={this.state.key}
       >
         <DynamicFormView

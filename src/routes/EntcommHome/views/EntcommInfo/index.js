@@ -53,6 +53,7 @@ function EntcommInfo({
           value={editData}
           onChange={onEditDataChange}
           ref={editFormRef}
+          cols={12}
         />
       </div>
     );
@@ -67,6 +68,7 @@ function EntcommInfo({
           entityTypeId={detailData && detailData.rectype}
           fields={detailProtocol}
           value={detailData}
+          cols={12}
         />
       </div>
     );

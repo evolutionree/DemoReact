@@ -9,7 +9,7 @@ import styles from './RelTable.less';
 import generateDefaultFormData from '../generateDefaultFormData';
 import RelTableImportModal from '../RelTableImportModal';
 
-const TableMaxHeight = 500;
+const TableMaxHeight = 400;
 
 class RelTable extends Component {
   static propTypes = {
