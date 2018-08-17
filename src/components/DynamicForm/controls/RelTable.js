@@ -409,11 +409,14 @@ class RelTable extends Component {
   };
 
   componentDidUpdate() {
+    this.setAlignTableWidthAndHeight();
+  }
+
+  setAlignTableWidthAndHeight = () => {
     //列表的固定表头的列
     const fixedTopHeader = this.fixTopTableRef.children[0].children[0].children;
     //列表的原始表头的列
     const realHeader = this.relTableRef.children[0].children[0].children;
-
 
     this.fixTopTableRef.style.width = this.relTableRef.getBoundingClientRect().width + 'px';
 

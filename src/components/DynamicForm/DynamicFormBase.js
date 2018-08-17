@@ -268,9 +268,6 @@ class DynamicFormBase extends Component {
 
   processFields = fields => {
     return fields.filter(field => {
-      // if (field.fieldid === 'e279d8d8-9f90-4ad4-aa69-cd89c43e8a36' || field.fieldid === '046ed3f6-8c81-41ab-baff-339c339eddf5') {
-      //   return false
-      // }
       if ((field.controltype > 1000 && field.controltype !== 1012 && field.controltype !== 1006)) { //(field.controltype === 31) ||
         return false;
       }

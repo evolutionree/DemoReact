@@ -7,7 +7,7 @@ import { queryProductData } from '../../../services/basicdata';
 import styles from './SelectProductModal.less';
 import SelectProductSerial from './SelectProductSerial';
 import { queryMobFieldVisible } from '../../../services/entity';
-import { getSeries, getProducts, searchproductformobile } from '../../../services/products';
+import { getSeries, getProducts, searchproductformobile, getProductdetail } from '../../../services/products';
 import ProductSerialSelect from '../../ProductSerialSelect';
 
 const TabPane = Tabs.TabPane;
@@ -16,17 +16,12 @@ class SelectProductModal extends Component {
   static propTypes = {
     visible: PropTypes.bool,
     data: PropTypes.object,
-    selected: PropTypes.arrayOf(PropTypes.shape({
-      productid: PropTypes.string,
-      productname: PropTypes.string
-    })),
     onOk: PropTypes.func,
     onCancel: PropTypes.func,
     multiple: PropTypes.bool
   };
   static defaultProps = {
     visible: false,
-    selected: [],
     multiple: true
   };
 
@@ -37,8 +32,6 @@ class SelectProductModal extends Component {
     this.state = {
       currentSerial: '', //当前选择的系列
       productSerial: [], //所有产品系列的树 数据
-      currentSelected: [...props.selected], //当前选择的数据
-      selectedRows: [...props.selected], //因为antd 表格前的checkbox控件选择时，第二个参数只会记录当前页的选中的值，所有需要记录所有分页的选中的数据
       keyword: '',
       list: [],
       pageIndex: 1,
@@ -46,23 +39,49 @@ class SelectProductModal extends Component {
       loading: false,
       columns: [], //控件列定义
       currentTabsKey: '1',
-      filterKeyWord: ''
+      filterKeyWord: '',
+      currentSelected: [], //当前选择的数据
+      selectedRows: [] //因为antd 表格前的checkbox控件选择时，第二个参数只会记录当前页的选中的值，所有需要记录所有分页的选中的数据
     };
+  }
+
+  componentDidMount() {
+
   }
 
   componentWillReceiveProps(nextProps) {
     if (!this.props.visible && nextProps.visible) {
       this.getColumns();
       this.getProductSerial(nextProps);
+      this.fetchProductsDetail(nextProps.value)
       this.setState({
-        currentSelected: [...nextProps.selected],
-        selectedRows: [...nextProps.selected],
         keyword: '',
         list: [],
         pageIndex: 1,
         total: 0,
         currentTabsKey: '1',
         filterKeyWord: ''
+      });
+    }
+  }
+
+  fetchProductsDetail = (productId) => {
+    if (productId) {
+      getProductdetail({
+        recids: productId
+      }).then(result => {
+        const selectData = result.data.map(item => ({ ...item, productid: item.recid }));
+        this.setState({
+          currentSelected: selectData,
+          selectedRows: selectData
+        });
+      }).catch(e => {
+        console.error(e.message);
+      });
+    } else { //value为空 清空
+      this.setState({
+        currentSelected: [], //当前选择的数据
+        selectedRows: [] //因为antd 表格前的checkbox控件选择时，第二个参数只会记录当前页的选中的值，所有需要记录所有分页的选中的数据
       });
     }
   }

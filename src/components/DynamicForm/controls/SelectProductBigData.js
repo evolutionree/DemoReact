@@ -25,37 +25,32 @@ class SelectProductBigData extends React.Component {
 
   constructor(props) {
     super(props);
-    if (props.value) {
-      this.fetchProductsDetail(this.props.value);
+    let valMap = {};
+    if (props.value_name) {
+      const arrVal = props.value.split(',');
+      const arrName = props.value_name.split(',');
+      arrVal.forEach((val, index) => {
+        valMap[val] = arrName[index];
+      });
     }
     this.state = {
       modalVisible: false,
-      productsDetail: [],
+      valMap: valMap,
       currentSerial: '',
       options: []
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.value !== nextProps.value) {
-      this.fetchProductsDetail(nextProps.value);
-    }
-  }
-
-  fetchProductsDetail = (productId) => {
-    if (productId) {
-      getProductdetail({
-        recids: productId
-      }).then(result => {
-        this.setState({
-          productsDetail: result.data.map(item => ({ ...item, productid: item.recid }))
-        });
-      }).catch(e => {
-        console.error(e.message);
+    if (this.props.value_name !== nextProps.value_name) {
+      const arrVal = nextProps.value.split(',');
+      const arrName = nextProps.value_name.split(',');
+      let valMap = { ...this.state.valMap };
+      arrVal.forEach((val, index) => {
+        valMap[val] = arrName[index];
       });
-    } else { //value为空 清空
       this.setState({
-        productsDetail: []
+        valMap
       });
     }
   }
@@ -92,14 +87,11 @@ class SelectProductBigData extends React.Component {
   };
 
   parseTextValue = () => {
-    const productsDetail = this.state.productsDetail;
-    let text = productsDetail.map(item => item.productname).join(',');
-    let array = productsDetail.map(item => {
-      return {
-        productid: item.recid,
-        productname: item.productname
-      };
-    });
+    const { value } = this.props;
+    const { valMap } = this.state;
+    let arrVal = value ? value.split(',') : [];
+    let array = arrVal.map(val => ({ productid: val, productname: valMap[val] }));
+    let text = array.map(item => item.productname).join(',');
     return { text, array };
   };
 
@@ -117,7 +109,14 @@ class SelectProductBigData extends React.Component {
 
   handleOk = array => {
     this.hideModal();
-    this.props.onChange(array.map(item => item.productid).join(','));
+    let valMap = { ...this.state.valMap };
+    array.forEach(item => {
+      valMap[item.productid] = item.productname;
+    });
+    console.log(array)
+    this.setState({ valMap }, () => {
+      this.props.onChange(array.map(item => item.productid).join(','));
+    });
   };
 
   iconClearHandler = (e) => {
@@ -125,12 +124,17 @@ class SelectProductBigData extends React.Component {
     this.props.onChange();
   };
 
-  selectChange = (value) => {
-    if (value instanceof Array) { //多选
-      this.props.onChange(value.join(','));
-    } else {
-      this.props.onChange(value);
-    }
+  selectChange = (options, value) => {
+    console.log(options);
+    console.log(value)
+    const selectData = options instanceof Array && options.filter(item => value && value.indexOf(item.productid) > -1);
+    let valMap = { ...this.state.valMap };
+    selectData.forEach(item => {
+      valMap[item.productid] = item.productname;
+    });
+    this.setState({ valMap }, () => {
+      this.props.onChange(selectData.map(item => item.productid).join(','));
+    });
   }
 
   queryOptions = (searchKey) => {
@@ -180,16 +184,8 @@ class SelectProductBigData extends React.Component {
     const { designateNodes, designateFilterNodes } = this.props;
     return (
       <div className={cls} style={{ ...this.props.style }}>
-        <div
-          className="ant-input"
-          onClick={this.showModal}
-          title={text}
-        >
-          {text || this.props.placeholder}
-          <Icon type="close-circle" className={iconCls} onClick={this.iconClearHandler} />
-        </div>
         <div className={styles.inputSelectWrap}>
-          <Select onChange={this.selectChange}
+          <Select onChange={this.selectChange.bind(this, options)}
                   onSearch={this.queryOptions}
                   placeholder={this.props.placeholder}
                   disabled={isReadOnly}
@@ -209,7 +205,7 @@ class SelectProductBigData extends React.Component {
         </div>
         <SelectProductModal
           visible={this.state.modalVisible}
-          selected={this.state.productsDetail}
+          value={this.props.value}
           data={this.props.productsRaw}
           onOk={this.handleOk}
           onCancel={this.hideModal}
