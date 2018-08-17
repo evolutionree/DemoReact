@@ -6,11 +6,12 @@ import Search from '../../../components/Search';
 import Toolbar from '../../../components/Toolbar';
 import DepartmentSelect from '../../../components/DepartmentSelect';
 import { parseConfigData } from '../../../components/ListStylePicker';
-import { queryDataSourceData } from '../../../services/datasource';
+import { queryDataSourceData, queryDatasourceInfo } from '../../../services/datasource';
 import EntcommAddModal from '../../../components/EntcommAddModal';
 import styles from './SelectData.less';
 import Avatar from "../../Avatar";
 import { queryTypes } from '../../../services/entity';
+import { queryPermission } from '../../../services/functions';
 
 class DataSourceSelectModal extends Component {
   static propTypes = {
@@ -41,19 +42,16 @@ class DataSourceSelectModal extends Component {
       total: 0,
       config: {},
       addModalVisible: false,
-      entityTypes: []
+      entityTypes: [],
+      refEntity: '',
+      refEntityName: '',
+      allowadd: false
     };
   }
 
-  componentDidMount() {
-    this.queryEntityTypes(this.props);
-  }
-
   componentWillReceiveProps(nextProps) {
-    if (nextProps.refEntity !== this.props.refEntity) {
-      this.queryEntityTypes(nextProps);
-    }
     if (!this.props.visible && nextProps.visible) {
+      this.queryDatasourceEntityAndPession(nextProps);
       this.setState({
         keyword: '',
         currentSelected: [...nextProps.selected],
@@ -64,17 +62,40 @@ class DataSourceSelectModal extends Component {
     }
   }
 
-  queryEntityTypes = (props) => {
-    if (props.allowadd && props.refEntity) { //支持快速新增的情况下  查询 实体类型
-      queryTypes({ entityId: props.refEntity }).then(result => {
-        const entityTypes = result.data.entitytypepros;
-        this.setState({
-          entityTypes
-        });
-      }, err => {
-
+  queryDatasourceEntityAndPession = (props) => {
+    const sourceId = props.sourceId
+    if (sourceId) {
+      queryDatasourceInfo(sourceId).then(result => { //获取数据源关联实体
+        const entityId = result.data.entityid;
+        const entityname = result.data.entityname;
+        if (entityId) {
+          queryPermission(entityId).then(perssionResult => {
+            const hasAddPermission = _.find(perssionResult.data, item => item.funccode === 'EntityDataAdd');
+            if (hasAddPermission) { //先查看 用户是否有 新增该数据源数据的权限 再判断该数据源表单字段是否支持 快速新增 数据源数据的功能
+              if (props.allowadd) {
+                this.queryEntityTypes(entityId);
+              }
+              this.setState({
+                allowadd: props.allowadd,
+                refEntity: entityId,
+                refEntityName: entityname
+              });
+            }
+          });
+        }
       });
     }
+  }
+
+  queryEntityTypes = (entityId) => { //支持快速新增的情况下  查询 实体类型
+    queryTypes({ entityId: entityId }).then(result => {
+      const entityTypes = result.data.entitytypepros;
+      this.setState({
+        entityTypes
+      });
+    }, err => {
+
+    });
   }
 
   fetchList = () => {
@@ -219,8 +240,8 @@ class DataSourceSelectModal extends Component {
     );
   };
   render() {
-    const { visible, onCancel, multiple, allowadd } = this.props;
-    const { currentSelected } = this.state;
+    const { visible, onCancel, multiple } = this.props;
+    const { currentSelected, allowadd } = this.state;
     const pagination = (
       <Pagination
         size="small"
@@ -304,8 +325,8 @@ class DataSourceSelectModal extends Component {
         </Spin>
         <EntcommAddModal
           visible={this.state.addModalVisible}
-          entityId={this.props.refEntity}
-          entityName={this.props.refEntityName}
+          entityId={this.state.refEntity}
+          entityName={this.state.refEntityName}
           entityTypes={this.state.entityTypes}
           cancel={this.onAddModalCanel}
           done={this.onAddModalDone}
