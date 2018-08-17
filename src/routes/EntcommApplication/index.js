@@ -16,6 +16,7 @@ import DynamicModal from './DynamicModal';
 import ExportModal from './ExportModal';
 import EntcommTransferModal from '../../components/EntcommTransferModal';
 import EntcommCopyModal from '../../components/EntcommCopyModal';
+import EntcommRepeatViewModal from '../../components/EntcommRepeatViewModal';
 
 const Option = Select.Option;
 
@@ -63,6 +64,18 @@ function EntcommList({
       payload: 'add'
     });
   }
+
+  function queryRepeat() {
+    dispatch({
+      type: 'entcommList/showModals',
+      payload: 'repeatview'
+    });
+  }
+
+  function modalCancel() {
+    dispatch({ type: 'entcommList/showModals', payload: '' });
+  }
+
   function extraToolbarClickHandler(item) {
     if (item.buttoncode === 'CallService' || item.buttoncode === 'EntityDataOpenH5') {
       dispatch({
@@ -232,6 +245,7 @@ function EntcommList({
           ))}
         </Select>
         {checkFunc('EntityDataAdd') && <Button onClick={openAdd}>新增</Button>}
+        {checkFunc('EntityDataSearch') && <Button onClick={queryRepeat}>查重</Button>}
         {shouldShowImport() && <Button onClick={importData}>导入</Button>}
         {shouldShowExport() && <Button onClick={exportData}>导出</Button>}
         {
@@ -314,6 +328,10 @@ function EntcommList({
         onCancel={onAddModalCanel}
         onDone={onAddModalDone}
       />
+      <EntcommRepeatViewModal visible={/repeatview/.test(showModals)}
+                              entityId={entityId}
+                              simpleSearchKey={simpleSearchKey}
+                              onCancel={modalCancel} />
     </Page>
   );
 }

@@ -16,6 +16,7 @@ import connectPermission from '../../models/connectPermission';
 import DynamicModal from './DynamicModal';
 import ExportModal from './ExportModal';
 import DataTransferModal from './DataTransferModal';
+import EntcommRepeatViewModal from '../../components/EntcommRepeatViewModal';
 
 
 const Option = Select.Option;
@@ -36,7 +37,8 @@ function EntcommList({
     extraButtonData,
     extraToolbarData,
     sortFieldAndOrder,  //当前排序的字段及排序顺序
-    ColumnFilter
+    ColumnFilter,
+                       showModals
   }) {
   function selectItems(items) {
     dispatch({ type: 'entcommList/currItems', payload: items });
@@ -56,6 +58,17 @@ function EntcommList({
       type: 'entcommList/showModals',
       payload: 'add'
     });
+  }
+
+  function queryRepeat() {
+    dispatch({
+      type: 'entcommList/showModals',
+      payload: 'repeatview'
+    });
+  }
+
+  function modalCancel() {
+    dispatch({ type: 'entcommList/showModals', payload: '' });
   }
 
   function importData() {
@@ -214,6 +227,7 @@ function EntcommList({
         </Select>
         {checkFunc('EntityDataAdd') && <Button onClick={openAdd}>新增</Button>}
         {checkFunc('EntityDataMerge') && <Button onClick={merageCustom}>客户合并</Button>}
+        {checkFunc('EntityDataSearch') && <Button onClick={queryRepeat}>查重</Button>}
         {shouldShowImport() && <Button onClick={importData}>导入</Button>}
         {shouldShowExport() && <Button onClick={exportData}>导出</Button>}
         {
@@ -268,6 +282,10 @@ function EntcommList({
       <DynamicModal />
       <ExportModal currentUser={currentUser} />
       <DataTransferModal />
+      <EntcommRepeatViewModal visible={/repeatview/.test(showModals)}
+                              entityId={entityId}
+                              simpleSearchKey={simpleSearchKey}
+                              onCancel={modalCancel} />
     </Page>
   );
 }
