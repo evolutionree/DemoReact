@@ -390,7 +390,7 @@ function ShowChart({
       //工具栏
       toolbox: optionSet.toolbox,
       //图例组件
-      legend: {
+      legend: deviceType === 'mobile' ? null : {
         type: 'scroll',
         orient: 'vertical',
         right: 60,

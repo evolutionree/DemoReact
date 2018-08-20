@@ -316,7 +316,7 @@ class ReportIndex extends Component {
   }
 
   renderComponent(item, index) {
-    let borderRadius = '.06rem';
+    let borderRadius = '12px';
     let margin = '.2rem 0';
     if (item.islinktoup && item.islinktodown) {
       borderRadius = 'none';
@@ -336,7 +336,7 @@ class ReportIndex extends Component {
       //一般图表（柱状图、折线图） && 散点图 && 仪表盘
       case 1:
         return (
-          <div style={{ ...commonStyle, padding: '2px', background: '#FFFFFF' }}>
+          <div style={{ ...commonStyle, padding: '2px' }}>
             <ShowChart deviceType="mobile"
                         loading={this.state[item.datasourcename + 'loading']}
                        component={item}
