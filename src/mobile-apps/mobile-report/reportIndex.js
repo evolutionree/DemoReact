@@ -283,7 +283,7 @@ class ReportIndex extends Component {
     }).then((getData) => {
       this.setState({
         [item.instid]: getData.data.data,
-        [item.instid + 'mobilecolumns']: getData.data.mobilecolumns && getData.data.mobilecolumns instanceof Array && getData.data.mobilecolumns[0],
+        [item.instid + 'mobilecolumns']: getData.data.mobilecolumns && getData.data.mobilecolumns instanceof Array && getData.data.mobilecolumns,
         [item.instid + 'xseries']: getData.data.xseries, //散点图 的X轴坐标
         [item.instid + 'loading']: false
       });
@@ -306,7 +306,10 @@ class ReportIndex extends Component {
   getMobileColumns(item, datasourcename) {
     let mobileColumns = item.mobiletableinfo;
     if (this.state[datasourcename + 'mobilecolumns']) {
-      mobileColumns = this.state[datasourcename + 'mobilecolumns'];
+      mobileColumns = {
+        ...item.mobiletableinfo,
+        detailcolumns: this.state[datasourcename + 'mobilecolumns']
+      };
     };
 
     return mobileColumns;
