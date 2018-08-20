@@ -21,3 +21,10 @@ export async function authLicenseInfo() {
         method: 'post'
     });
 }
+
+export async function ssologinwithdingtalk(params) {
+  return request('api/dingding/ssologinwithdingtalk', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}

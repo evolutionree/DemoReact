@@ -32,6 +32,7 @@ function EntcommHome({
         <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/${t.entitytaburl}`}>{t.relname}</LinkTab> :
         <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/rel/${t.relid}/${t.relentityid}`}>{t.relname}</LinkTab>
       ))]}
+      {'9834d2bc-084a-49de-bbbf-02f35c191b64' === entityId && <LinkTab to={`/entcomm/${entityId}/${recordId}/relationschema`}>关系图</LinkTab>}
     </LinkTab.Group>
   );
 

@@ -3,8 +3,11 @@ import { render } from 'react-dom';
 import { Button, Modal, message } from 'antd';
 import LoginPage from './routes/Login/LoginPage';
 import { getRememberedPwd, login, setLogin, modifyPassword } from './services/authentication';
-import { authCompany } from './services/license';
+import { authCompany, ssologinwithdingtalk } from './services/license';
 import './styles/main.less';
+import { GetArgsFromHref } from '../src/utils/index';
+
+const dingdingUrlCode = GetArgsFromHref('code');
 
 function setDefaultProps(Component, defaultProps) {
   Component.defaultProps = {
@@ -35,6 +38,19 @@ class LoginPageContainer extends Component {
 
   componentDidMount() {
     this.fetchAuthCompany();
+    if (dingdingUrlCode) {
+      ssologinwithdingtalk({ code: dingdingUrlCode }).then(result => { //考虑是否需要走权限
+        const loginInfo = {
+          user: {
+            userNumber: result.data.usernumber
+          },
+          token: result.data.access_token,
+          permissionLevel: 3
+        };
+        location.href = '/';
+        setLogin(loginInfo);
+      });
+    }
   }
 
   fetchAuthCompany = () => {
@@ -115,6 +131,7 @@ class LoginPageContainer extends Component {
       });
     });
   };
+
 
   render() {
     return (

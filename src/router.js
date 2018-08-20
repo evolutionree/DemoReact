@@ -30,10 +30,12 @@ import EntcommInfo from './routes/EntcommHome/views/EntcommInfo';
 import EntcommDocs from './routes/EntcommHome/views/EntcommDocs';
 import EntcommRel from './routes/EntcommHome/views/EntcommRel';
 import EntcommAffair from './routes/EntcommHome/views/EntcommAffair';
+import RelationSchema from './routes/EntcommHome/views/RelationSchema';
 
 import ContractReceivePay from './routes/ContractHome/ReceivePay';
 
 import CustomerRelationTree from './routes/CustomerHome/RelationTree';
+
 
 import ProductManager from './routes/ProductManager';
 
@@ -97,7 +99,8 @@ const appRoutes = [
       { path: 'receivepay', comp: ContractReceivePay, model: require('./models/contractReceivePay') },
       { path: 'relationtree', comp: CustomerRelationTree, model: require('./models/customerRelationTree') },
       { path: 'affairlist', comp: EntcommAffair, model: require('./models/entcommAffair') },
-      { path: 'rel/:relId/:relEntityId', comp: EntcommRel, model: require('./models/entcommRel') }
+      { path: 'rel/:relId/:relEntityId', comp: EntcommRel, model: require('./models/entcommRel') },
+      { path: 'relationschema', comp: RelationSchema, model: require('./models/relationschema') }
     ] },
   { path: 'products', comp: ProductManager, entid: '33240d14-a543-4357-b696-c8cc77f82f7c', model: require('./models/productManager') },
   { path: 'affair-list', comp: AffairList, entid: '00000000-0000-0000-0000-000000000001', model: require('./models/affairList') },

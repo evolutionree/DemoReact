@@ -15,7 +15,9 @@ import MerageModal from './MerageModal';
 import AllocateModal from './AllocateModal';
 import DynamicModal from './DynamicModal';
 import connectPermission from "../../../../models/connectPermission";
+import DeptTree from '../DeptTree';
 
+const deptEntityId = '0741e97c-9f08-44f0-8ae3-de46c80ff31b';
 function EntcommRel({
   list,
   listFields,
@@ -218,11 +220,13 @@ function EntcommRel({
           ...ajaxToolbarActions
         ]}
       >
-        <Select style={{ minWidth: '120px' }} value={menuId} onChange={onMenuChange}>
-          {menus.map(menu => (
-            <Option key={menu.menuId}>{menu.menuName}</Option>
-          ))}
-        </Select>
+        {
+          relEntityId === deptEntityId ? null : <Select style={{ minWidth: '120px' }} value={menuId} onChange={onMenuChange}>
+            {menus.map(menu => (
+              <Option key={menu.menuId}>{menu.menuName}</Option>
+            ))}
+          </Select>
+        }
         {checkFunc('EntityDataAdd') && <Button onClick={addRelEntity}>{`新增${tabInfo.entityname || ''}`}</Button>}
         {checkFunc('EntityDataMerge') && <Button onClick={merageCustom}>客户合并</Button>}
         {/*{shouldShowImport() && <Button onClick={importData}>导入</Button>}*/}
@@ -232,43 +236,47 @@ function EntcommRel({
             return <Button onClick={extraButtonClickHandler.bind(this, item)} key={index}>{item.title}</Button>;
           })
         }
-        <Toolbar.Right>
-          <Search
-            placeholder="请输入关键字"
-            value={keyword}
-            onSearch={val => searchKeyword(val)}
-          >
-            搜索
-          </Search>
-          <Icon type="setting" onClick={openSetHeader} style={{ fontSize: '20px', marginLeft: '10px', cursor: 'pointer', color: '#9ba1ad', position: 'relative', top: '2px' }} />
-        </Toolbar.Right>
+        {
+          relEntityId === deptEntityId ? null : <Toolbar.Right>
+            <Search
+              placeholder="请输入关键字"
+              value={keyword}
+              onSearch={val => searchKeyword(val)}
+            >
+              搜索
+            </Search>
+            <Icon type="setting" onClick={openSetHeader} style={{ fontSize: '20px', marginLeft: '10px', cursor: 'pointer', color: '#9ba1ad', position: 'relative', top: '2px' }} />
+          </Toolbar.Right>
+        }
       </Toolbar>
-      <DynamicTable
-        ref={(ref) => dynamicTableRef = ref }
-        sorter={true}
-        sortFieldAndOrder={sortFieldAndOrder}
-        entityId={tabInfo.relentityid}
-        protocol={protocol}
-        rowKey="recid"
-        dataSource={list}
-        total={total}
-        fixedHeader={true}
-        otherHeight={tabInfo.confitems > 0 ? 190 + 66 + 94 : 190 + 66} //页面表格元素除外的元素的总高度
-        pagination={{
-          total,
-          pageSize,
-          current: pageIndex
-        }}
-        onChange={handleTableChange}
-        rowSelection={{
-          selectedRowKeys: currItems.map(item => item.recid),
-          onChange: (keys, items) => selectItems(items)
-        }}
-        onCall={callHandler}
-        renderLinkField={(text, field, record, props) => (
-          <a href="javascript:;" style={titleStyle} title={text} onClick={() => { showDetail(record) }}>{text}</a>
-        )}
-      />
+      {
+        relEntityId === deptEntityId ? <DeptTree /> : <DynamicTable
+          ref={(ref) => dynamicTableRef = ref }
+          sorter={true}
+          sortFieldAndOrder={sortFieldAndOrder}
+          entityId={tabInfo.relentityid}
+          protocol={protocol}
+          rowKey="recid"
+          dataSource={list}
+          total={total}
+          fixedHeader={true}
+          otherHeight={tabInfo.confitems > 0 ? 190 + 66 + 94 : 190 + 66} //页面表格元素除外的元素的总高度
+          pagination={{
+            total,
+            pageSize,
+            current: pageIndex
+          }}
+          onChange={handleTableChange}
+          rowSelection={{
+            selectedRowKeys: currItems.map(item => item.recid),
+            onChange: (keys, items) => selectItems(items)
+          }}
+          onCall={callHandler}
+          renderLinkField={(text, field, record, props) => (
+            <a href="javascript:;" style={titleStyle} title={text} onClick={() => { showDetail(record) }}>{text}</a>
+          )}
+        />
+      }
       <TransferModal />
       <MerageModal />
       <AllocateModal />

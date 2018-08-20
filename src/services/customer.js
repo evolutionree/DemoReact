@@ -53,3 +53,20 @@ export async function customerMerge(params) {
     body: JSON.stringify(params)
   });
 }
+
+
+/**
+ * 查询联系人关系表
+ * @param params
+ * {
+    "ContactId":"",//联系人id
+    Level:1 层级
+  }
+ * @returns {Promise.<object>}
+ */
+export async function queryContactrelation(params) {
+  return request('/api/dingding/contactrelation', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
