@@ -6,7 +6,7 @@ import { queryMobFieldVisible, queryEntityDetail, queryTypes, DJCloudCall, query
 import { parseConfigData } from '../components/ListStylePicker';
 
 const modelSelector = state => state.entcommRel;
-
+const deptEntityId = '0741e97c-9f08-44f0-8ae3-de46c80ff31b';
 // function parseConfigData(config) {
 //   const keys = config.fieldkeys.split(',');
 //   const fonts = config.fonts.split(',');
@@ -186,7 +186,7 @@ export default {
       const queries = {
         entityId: relEntityId,
         pageIndex: 1,
-        pageSize: 10,
+        pageSize: relEntityId === deptEntityId ? 99999 : 10,
         relinfo: {
           recid: recordId,
           relid: relId
