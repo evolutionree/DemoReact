@@ -10,7 +10,8 @@ export default {
   state: {
     data: [],
     linkData: [],
-    loading: false
+    loading: false,
+    levelValue: 3
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -26,9 +27,10 @@ export default {
   },
   effects: {
     *init({payload: { contactId } }, { select, put }) { //进入页面就查客户关系树的数据
+      const { levelValue } = yield select(state => state.relationschema);
       yield put({ type: 'queryContactrelation', payload: {
         contactId,
-        Level: 2
+        Level: levelValue
       } });
     },
     *queryContactrelation({ payload: queries }, { put, select, call }) {
@@ -53,9 +55,23 @@ export default {
       } catch (e) {
         yield put({ type: 'queryFailure', payload: e.message });
       }
+    },
+    *onSearch({ payload }, { put, select, call }) {
+      const { queries: { contactId }, levelValue } = yield select(state => state.relationschema);
+      yield put({ type: 'queryContactrelation', payload: {
+        contactId,
+        level: levelValue
+      } });
+      yield put({ type: 'putState', payload: { levelValue } });
     }
   },
   reducers: {
+    putState(state, { payload: stateAssignment }) {
+      return {
+        ...state,
+        ...stateAssignment
+      };
+    },
     queryRequest(state, { payload: queries }) {
       return { ...state, queries, loading: true };
     },
