@@ -8,10 +8,8 @@ import styles from './css/page.less';
 function Page(props) {
   //设置id 是滚动的时候监听
   return (
-    <div>
-      <div className={styles.page} id="page">
-        {props.children}
-      </div>
+    <div className={styles.page} id="page">
+      {props.children}
     </div>
   );
 }
