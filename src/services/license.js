@@ -28,3 +28,18 @@ export async function ssologinwithdingtalk(params) {
     body: JSON.stringify(params)
   });
 }
+
+
+/**
+ * 钉钉后台 免登系统
+ * {
+  "code":"3b7d5c2374773d8faec0ea6676413663"
+}
+ * @returns {Promise.<Object>}
+ */
+export async function apploginwithdingtalk(params) {
+  return request('api/dingding/apploginwithdingtalk', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
