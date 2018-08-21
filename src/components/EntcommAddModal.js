@@ -1,8 +1,8 @@
 import React, { PropTypes, Component } from 'react';
-import { Modal, Select, message, Radio } from 'antd';
+import { Modal, Select, message, Radio, Button } from 'antd';
 import * as _ from 'lodash';
 import { DynamicFormAdd, generateDefaultFormData } from './DynamicForm';
-import { getGeneralProtocol, addEntcomm } from '../services/entcomm';
+import { getGeneralProtocol, addEntcomm, temporarysave } from '../services/entcomm';
 import { WorkflowCaseForAddModal } from "./WorkflowCaseModal";
 
 const Option = Select.Option;
@@ -119,6 +119,31 @@ class EntcommAddModal extends Component {
       });
     }
   };
+
+  onFormModalStorage = () => {
+    this.form.validateFields((err, values) => {
+      const params = {
+        typeid: this.state.selectedEntityType,
+        relentityid: this.props.refEntity,
+        relrecid: this.props.refRecord,
+        fielddata: values,
+        extradata: this.props.extraData
+      };
+      if (this.state.commonid) { //客户引用 新增
+        params.extraData = { commonid: this.state.commonid };
+      }
+      this.setState({ confirmLoading: true });
+      temporarysave(params).then(result => {
+        this.setState({ confirmLoading: false });
+        message.success('新增成功');
+        this.props.done(result);
+      }).catch(e => {
+        this.setState({ confirmLoading: false });
+        console.error(e);
+        message.error(e.message || '新增失败');
+      });
+    });
+  }
 
   onFormModalConfirm = () => {
     if (this.props.flow && this.props.flow.flowid) {
@@ -299,6 +324,13 @@ class EntcommAddModal extends Component {
           confirmLoading={confirmLoading}
           width={document.body.clientWidth > 1400 ? 1200 : 800}
           wrapClassName="DynamicFormModal"
+          footer={[
+            <Button key="back" type="default" onClick={this.onFormModalCancel}>取消</Button>,
+            <Button key="storage" loading={confirmLoading} onClick={this.onFormModalStorage}>暂存</Button>,
+            <Button key="submit" loading={confirmLoading} onClick={this.onFormModalConfirm}>
+              提交
+            </Button>
+          ]}
         >
           <DynamicFormAdd
             entityId={entityId}
