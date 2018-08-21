@@ -8,6 +8,7 @@ import ImportTask from './ImportTask';
 import ProgressModal from './ProgressModal/ProgressModal';
 import ContactsPanel from './ContactsPanel';
 import WebIMPanel from './WebIMPanel';
+import TemporaryStorage from './TemporaryStorage';
 
 
 const AppHeader = () => {
@@ -20,6 +21,7 @@ const AppHeader = () => {
         <ProgressModal />
         <WebIMPanel />
         <MessageList />
+        <TemporaryStorage />
         <UserDropdown />
       </Header.Right>
     </Header>

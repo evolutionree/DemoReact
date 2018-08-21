@@ -6,7 +6,7 @@ import Page from '../../components/Page';
 import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import DynamicTable from '../../components/DynamicTable/index';
-import EntcommAddModal from './EntcommAddModal';
+import EntcommAddModal from '../../components/EntcommAddModal';
 import EntcommCopyModal from './EntcommCopyModal';
 import TransferModal from './TransferModal';
 import MerageModal from './MerageModal';
@@ -38,7 +38,10 @@ function EntcommList({
     extraToolbarData,
     sortFieldAndOrder,  //当前排序的字段及排序顺序
     ColumnFilter,
-                       showModals
+                       entityTypes,
+                       showModals,
+                       onAddModalCanel,
+                       onAddModalDone
   }) {
   function selectItems(items) {
     dispatch({ type: 'entcommList/currItems', payload: items });
@@ -273,7 +276,14 @@ function EntcommList({
           onChange: (keys, items) => selectItems(items)
         }}
       />
-      <EntcommAddModal />
+      <EntcommAddModal
+        visible={/add/.test(showModals)}
+        entityId={entityId}
+        entityName={entityName}
+        entityTypes={entityTypes}
+        cancel={onAddModalCanel}
+        done={onAddModalDone}
+      />
       <EntcommCopyModal />
       <TransferModal />
       <MerageModal />
@@ -293,5 +303,15 @@ function EntcommList({
 export default connect(
   state => {
     return { ...state.entcommList, currentUser: state.app.user.userid };
+  },
+  dispatch => {
+    return {
+      onAddModalCanel() {
+        dispatch({ type: 'entcommList/showModals', payload: '' });
+      },
+      onAddModalDone() {
+        dispatch({ type: 'entcommList/addDone' });
+      }
+    };
   }
 )(connectPermission(props => props.entityId, EntcommList));

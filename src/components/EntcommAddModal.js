@@ -23,9 +23,11 @@ class EntcommAddModal extends Component {
     extraData: PropTypes.object, // 提交表单的额外参数
     initFormData: PropTypes.object,
     processProtocol: PropTypes.func,
-    isAddCase: PropTypes.bool
+    isAddCase: PropTypes.bool,
+    entityTypeId: PropTypes.string //暂存表单时  默认选中当前暂存表单的 实体类型
   };
   static defaultProps = {
+    entityTypeId: ''
   };
 
   constructor(props) {
@@ -34,7 +36,7 @@ class EntcommAddModal extends Component {
       showTypeModal: false,
       showFormModal: false,
       showWorkflowCaseModal: false,
-      selectedEntityType: '',
+      selectedEntityType: this.props.entityTypeId,
       protocolFields: [], // 协议字段
       formData: props.initFormData || {}, // 表单数据
       confirmLoading: false,
@@ -55,8 +57,13 @@ class EntcommAddModal extends Component {
         this.setState({ formData: nextProps.initFormData || {} }); //关闭的时候  formdat被清空了  需要重新得到initFormData
       }
       const { entityTypes, entityId } = nextProps;
-      // 实体只有一个类型时，跳过类型选择
-      if (!entityTypes || entityTypes.length === 1) {
+      if (nextProps.entityTypeId) { //暂存 新增表单
+        this.setState({
+          showFormModal: true,
+          selectedEntityType: nextProps.entityTypeId
+        });
+        this.fetchProtocol(nextProps.entityTypeId);
+      } else if (!entityTypes || entityTypes.length === 1) { // 实体只有一个类型时，跳过类型选择
         this.setState({
           showFormModal: true,
           selectedEntityType: entityId

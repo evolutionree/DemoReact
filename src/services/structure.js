@@ -480,3 +480,19 @@ export async function updategroupName(params) {
     body: JSON.stringify(params)
   });
 }
+
+
+
+/**
+ * 查询暂存列表
+ * {
+ "cacheid" : “fsdfasdfasfdsadfsafsa” //不传 cacheid ,则取所有的暂存列表
+}
+ * @returns {Promise.<Object>}
+ */
+export async function gettemporarylist(params) {
+  return request('api/dynamicentity/gettemporarylist', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
