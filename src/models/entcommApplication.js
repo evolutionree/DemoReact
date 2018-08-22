@@ -202,9 +202,9 @@ export default {
         functionbutton instanceof Array && functionbutton.map(item => {
           //转化表单是通过functionButton对象里extradata.type==='transform'匹配显示在页面的   对，这里的规则确实恶心 我也没办法啊啊啊啊啊啊啊啊啊啊啊啊啊  搞不懂  0_0
           const extradataType = ['transform', 'copybutton'];
-          if (extradataType.indexOf(item.extradata.type) > -1) {
+          if (extradataType.indexOf(item.extradata && item.extradata.type) > -1) {
             item.funccode = item.buttoncode;
-            item.buttoncode = item.extradata.type;
+            item.buttoncode = item.extradata && item.extradata.type;
             extraToolbarData.push(item);
           }
         });
