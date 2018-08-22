@@ -25,7 +25,8 @@ class EntcommAddModal extends Component {
     initFormData: PropTypes.object,
     processProtocol: PropTypes.func,
     isAddCase: PropTypes.bool,
-    entityTypeId: PropTypes.string //暂存表单时  默认选中当前暂存表单的 实体类型
+    entityTypeId: PropTypes.string, //暂存表单时  默认选中当前暂存表单的 实体类型
+    cacheId: PropTypes.string //新增 暂存表单数据时  需要带上暂存id
   };
   static defaultProps = {
     entityTypeId: ''
@@ -124,28 +125,50 @@ class EntcommAddModal extends Component {
   onFormModalStorage = () => {
     const formValue = this.form.formInst.getFieldsValue();
 
+    let fieldjson = {};
+    //isRequire: isRequiredJS
+    // isReadOnly:0 isReadOnlyJS
+    // isVisible:1 isVisibleJS
+    console.log(this.form);
+    console.log(formValue)
+    this.form.props.fields.map(item => {
+      const fieldconfig = item.fieldconfig;
+      const isVisible = fieldconfig.isVisible !== 1 ? 0 : fieldconfig.isVisibleJS === 0 ? 0 : 1;
+      let isReadOnly = fieldconfig.isReadOnly === 1 ? 1 : fieldconfig.isReadOnlyJS ? 1 : 0;
+      let isRequired = fieldconfig.isRequired === 1 ? 1 : fieldconfig.isRequiredJS ? 1 : 0;
+
+      fieldjson[item.fieldid] = {
+        isHidden: isVisible === 0 ? 1 : 0,
+        isReadOnly: isReadOnly,
+        isRequired: isRequired,
+        designateDataSource: fieldconfig.designateDataSource,
+        designateDataSourceByName: fieldconfig.designateDataSourceByName,
+        designateFilterDataSource: fieldconfig.designateFilterDataSource,
+        designateFilterDataSourceByName: fieldconfig.designateFilterDataSourceByName,
+        designateNodes: fieldconfig.designateNodes,
+        designateFilterNodes: fieldconfig.designateFilterNodes
+      };
+    });
     const params = {
-      cacheid: uuid.v4(),
-      datajson: {
+      cacheid: this.props.cacheId || uuid.v4(),
+      datajson: JSON.stringify({
         extraData: { commonid: this.state.commonid }, //客户引用 新增 存在extraData
         expandfields: formValue
-      },
-      fieldjson: this.props.fields,
+      }),
+      fieldjson: JSON.stringify(fieldjson),
       typeid: this.state.selectedEntityType,
       title: this.props.entityName,
       entityId: this.props.entityId
     };
-    console.log(uuid.v4());
-    console.log(this.form);
-    // temporarysave(params).then(result => {
-    //   this.setState({ confirmLoading: false });
-    //   message.success('新增成功');
-    //   this.props.done(result);
-    // }).catch(e => {
-    //   this.setState({ confirmLoading: false });
-    //   console.error(e);
-    //   message.error(e.message || '新增失败');
-    // });
+    temporarysave(params).then(result => {
+      this.setState({ confirmLoading: false });
+      message.success('暂存成功');
+      this.props.done(result);
+    }).catch(e => {
+      this.setState({ confirmLoading: false });
+      console.error(e);
+      message.error(e.message || '暂存失败');
+    });
   }
 
   onFormModalConfirm = () => {
@@ -159,6 +182,7 @@ class EntcommAddModal extends Component {
       }
 
       const params = {
+        cacheid: this.props.cacheId,
         typeid: this.state.selectedEntityType,
         // flowid: this.props.flow ? this.props.flow.flowid : undefined,
         relentityid: this.props.refEntity,
@@ -191,6 +215,7 @@ class EntcommAddModal extends Component {
       let dataModel;
       if (this.props.isAddCase) {
         dataModel = {
+          cacheid: this.props.cacheId,
           entityid: this.state.selectedEntityType,
           flowid: this.props.flow.flowid,
           recid: this.props.recId,
@@ -200,6 +225,7 @@ class EntcommAddModal extends Component {
         };
       } else {
         dataModel = {
+          cacheid: this.props.cacheId,
           typeid: this.state.selectedEntityType,
           flowid: this.props.flow.flowid,
           relentityid: this.props.refEntity,

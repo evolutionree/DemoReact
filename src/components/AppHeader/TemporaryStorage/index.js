@@ -102,14 +102,22 @@ class TemporaryStorage extends Component {
     const fieldjson = addModalInfo.fieldjson;
 
     let fields_ = fields;
-
     if (fieldjson) {
-      fields.map(item => {
+      fields_ = fields.map(item => {
         let newItem = item;
         if (fieldjson[item.fieldid]) {
-          newItem = {
+          const fieldconfig = fieldjson[item.fieldid];
+          newItem.fieldconfig = {
             ...item.fieldconfig,
-            ...fieldjson[item.fieldid]
+            isRequiredJS: fieldconfig.isRequired,
+            isReadOnlyJS: fieldconfig.isReadOnly,
+            isVisibleJS: fieldconfig.isHidden === 0 ? 1 : 0,
+            designateDataSource: fieldconfig.designateDataSource,
+            designateDataSourceByName: fieldconfig.designateDataSourceByName,
+            designateFilterDataSource: fieldconfig.designateFilterDataSource,
+            designateFilterDataSourceByName: fieldconfig.designateFilterDataSourceByName,
+            designateNodes: fieldconfig.designateNodes,
+            designateFilterNodes: fieldconfig.designateFilterNodes
           };
         }
         return newItem;
@@ -157,7 +165,9 @@ class TemporaryStorage extends Component {
           entityId={addModalInfo.entityid}
           entityName={addModalInfo.entityname}
           entityTypeId={addModalInfo.typeid}
+          cacheId={addModalInfo.cacheid}
           initFormData={addModalInfo.datajson && addModalInfo.datajson.expandfields}
+          extradata={addModalInfo.datajson && addModalInfo.datajson.extraData}
           processProtocol={this.processProtocol}
           cancel={this.onCancel}
           done={this.onDone}

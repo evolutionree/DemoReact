@@ -280,10 +280,6 @@ class DynamicFormBase extends Component {
     });
   };
 
-  getFields = () => {
-    return this.props.fields;
-  }
-
   renderFields = fields => {
     return this.processFields(fields).map(this.renderField);
   };
