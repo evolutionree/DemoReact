@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { DynamicFormAdd, generateDefaultFormData } from './DynamicForm';
 import { getGeneralProtocol, addEntcomm, temporarysave } from '../services/entcomm';
 import { WorkflowCaseForAddModal } from "./WorkflowCaseModal";
+import uuid from 'uuid';
 
 const Option = Select.Option;
 
@@ -121,28 +122,30 @@ class EntcommAddModal extends Component {
   };
 
   onFormModalStorage = () => {
-    this.form.validateFields((err, values) => {
-      const params = {
-        typeid: this.state.selectedEntityType,
-        relentityid: this.props.refEntity,
-        relrecid: this.props.refRecord,
-        fielddata: values,
-        extradata: this.props.extraData
-      };
-      if (this.state.commonid) { //客户引用 新增
-        params.extraData = { commonid: this.state.commonid };
-      }
-      this.setState({ confirmLoading: true });
-      temporarysave(params).then(result => {
-        this.setState({ confirmLoading: false });
-        message.success('新增成功');
-        this.props.done(result);
-      }).catch(e => {
-        this.setState({ confirmLoading: false });
-        console.error(e);
-        message.error(e.message || '新增失败');
-      });
-    });
+    const formValue = this.form.formInst.getFieldsValue();
+
+    const params = {
+      cacheid: uuid.v4(),
+      datajson: {
+        extraData: { commonid: this.state.commonid }, //客户引用 新增 存在extraData
+        expandfields: formValue
+      },
+      fieldjson: this.props.fields,
+      typeid: this.state.selectedEntityType,
+      title: this.props.entityName,
+      entityId: this.props.entityId
+    };
+    console.log(uuid.v4());
+    console.log(this.form);
+    // temporarysave(params).then(result => {
+    //   this.setState({ confirmLoading: false });
+    //   message.success('新增成功');
+    //   this.props.done(result);
+    // }).catch(e => {
+    //   this.setState({ confirmLoading: false });
+    //   console.error(e);
+    //   message.error(e.message || '新增失败');
+    // });
   }
 
   onFormModalConfirm = () => {
