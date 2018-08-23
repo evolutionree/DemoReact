@@ -314,6 +314,14 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       }
     };
 
+    getTableFields = (fieldName) => {
+      if (this.getFieldControlType(fieldName) !== 24) return [];
+      const instance = this.getFieldComponentInstance(fieldName);
+      if (instance && instance.getFields) {
+        return instance.getFields();
+      }
+    }
+
     designateDataSource = (fieldName, ids) => {
       if (ids === undefined || ids === null) ids = '';
       this.setFieldConfig(fieldName, {
@@ -529,14 +537,21 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     setFieldConfig = (fieldName, config) => {
+      console.log('setFieldConfig');
+      console.log(this.props.fields)
       const field = this.getFieldByName(fieldName);
-      if (field) {
-        field.fieldconfig = {
-          ...field.fieldconfig,
-          ...config
-        };
-      }
-      this.setState({ fields: [...this.state.fields] });
+      const newFields = this.props.fields.map(item => {
+        const newItem = item;
+        if (field && item.fieldid === field.fieldid) {
+          newItem.fieldconfig = {
+            ...item.fieldconfig,
+            ...config
+          };
+        }
+        return newItem;
+      });
+      console.log(newFields)
+      this.setState({ fields: newFields });
     };
 
     getFieldByName = (fieldName) => {

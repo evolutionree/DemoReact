@@ -23,7 +23,7 @@ function EntityTabs({
       <div style={{ marginBottom: '10px' }}><Button onClick={add}>新增页签</Button></div>
       <div>
         <Table rowKey="relid" dataSource={list} pagination={false}>
-          <Column title="序号" key="relid" width={100} render={(text, record, index) => (<span>{index + 1}</span>)} />
+          <Column title="序号" key="relid" width={100} render={(text, record, index) => index + 1} />
           <Column title="页签名称" dataIndex="relname" key="relname" width={200} />
           <Column title="关联实体" dataIndex="entityname" key="entityname" width={200} />
           <Column title="关联字段" dataIndex="fieldlabel" key="fieldlabel" width={250} />

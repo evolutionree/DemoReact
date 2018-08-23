@@ -24,6 +24,12 @@ export default function generateDefaultFormData(fields, initFormData = {}) {
     if (defaultVal !== undefined && defaultVal !== null) {
       formData[field.fieldname] = defaultVal;
     }
+
+    for (let key in initFormData) {
+      if (!formData[key]) {
+        formData[key] = initFormData[key];
+      }
+    }
   });
   return formData;
 }

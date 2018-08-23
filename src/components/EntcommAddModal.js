@@ -134,8 +134,8 @@ class EntcommAddModal extends Component {
     this.form.props.fields.map(item => {
       const fieldconfig = item.fieldconfig;
       const isVisible = fieldconfig.isVisible !== 1 ? 0 : fieldconfig.isVisibleJS === 0 ? 0 : 1;
-      let isReadOnly = fieldconfig.isReadOnly === 1 ? 1 : fieldconfig.isReadOnlyJS ? 1 : 0;
-      let isRequired = fieldconfig.isRequired === 1 ? 1 : fieldconfig.isRequiredJS ? 1 : 0;
+      const isReadOnly = fieldconfig.isReadOnly === 1 ? 1 : fieldconfig.isReadOnlyJS ? 1 : 0;
+      const isRequired = fieldconfig.isRequired === 1 ? 1 : fieldconfig.isRequiredJS ? 1 : 0;
 
       fieldjson[item.fieldid] = {
         isHidden: isVisible === 0 ? 1 : 0,
@@ -148,6 +148,29 @@ class EntcommAddModal extends Component {
         designateNodes: fieldconfig.designateNodes,
         designateFilterNodes: fieldconfig.designateFilterNodes
       };
+
+      if (item.controltype === 24) {
+        const tableFields = this.form.formRef.getTableFields(item.fieldname);
+        console.log(tableFields)
+        fieldjson[item.fieldid].sheetfieldglobal = {};
+        tableFields.map(tableFieldItem => {
+          const tableFieldConfig = tableFieldItem.fieldconfig;
+          const tableFieldIsVisible = tableFieldConfig.isVisible !== 1 ? 0 : tableFieldConfig.isVisibleJS === 0 ? 0 : 1;
+          const tableFieldIsReadOnly = tableFieldConfig.isReadOnly === 1 ? 1 : tableFieldConfig.isReadOnlyJS ? 1 : 0;
+          const tableFieldIsRequired = tableFieldConfig.isRequired === 1 ? 1 : tableFieldConfig.isRequiredJS ? 1 : 0;
+          fieldjson[item.fieldid].sheetfieldglobal[tableFieldItem.fieldid] = {
+            isHidden: tableFieldIsVisible === 0 ? 1 : 0,
+            isReadOnly: tableFieldIsReadOnly,
+            isRequired: tableFieldIsRequired,
+            designateDataSource: tableFieldConfig.designateDataSource,
+            designateDataSourceByName: tableFieldConfig.designateDataSourceByName,
+            designateFilterDataSource: tableFieldConfig.designateFilterDataSource,
+            designateFilterDataSourceByName: tableFieldConfig.designateFilterDataSourceByName,
+            designateNodes: tableFieldConfig.designateNodes,
+            designateFilterNodes: tableFieldConfig.designateFilterNodes
+          };
+        });
+      }
     });
     const params = {
       cacheid: this.props.cacheId || uuid.v4(),

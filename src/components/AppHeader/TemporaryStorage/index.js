@@ -117,7 +117,9 @@ class TemporaryStorage extends Component {
             designateFilterDataSource: fieldconfig.designateFilterDataSource,
             designateFilterDataSourceByName: fieldconfig.designateFilterDataSourceByName,
             designateNodes: fieldconfig.designateNodes,
-            designateFilterNodes: fieldconfig.designateFilterNodes
+            designateFilterNodes: fieldconfig.designateFilterNodes,
+
+            sheetfieldglobal: fieldconfig.sheetfieldglobal
           };
         }
         return newItem;

@@ -21,7 +21,8 @@ class RelTable extends Component {
     })),
     entityId: PropTypes.string,
     onChange: PropTypes.func,
-    onFocus: PropTypes.func
+    onFocus: PropTypes.func,
+    sheetfieldglobal: PropTypes.object //暂存时  保存的全局字段协议
   };
   static defaultProps = {
     mode: 'ADD',
@@ -42,14 +43,51 @@ class RelTable extends Component {
   }
 
   componentDidMount() {
-    this.props.entityId && this.queryFields(this.props.entityId);
+    this.props.entityId && this.queryFields(this.props.entityId, this.props);
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.entityId !== nextProps.entityId) {
-      this.queryFields(nextProps.entityId);
+      this.queryFields(nextProps.entityId, nextProps);
     }
   }
+
+  setInitFieldConfig = (fields, sheetfieldglobal) => {
+    console.log('setInitFieldConfig')
+    const _this = this;
+    doWhileGet();
+    function doWhileGet() {
+      setTimeout(() => {
+        if (!_this.state.loading) {
+          let fields_ = fields;
+          if (sheetfieldglobal) {
+            fields_ = fields.map(item => {
+              let newItem = item;
+              if (sheetfieldglobal[item.fieldid]) {
+                const fieldconfig = sheetfieldglobal[item.fieldid];
+                newItem.fieldconfig = {
+                  ...item.fieldconfig,
+                  isRequiredJS: fieldconfig.isRequired,
+                  isReadOnlyJS: fieldconfig.isReadOnly,
+                  isVisibleJS: fieldconfig.isHidden === 0 ? 1 : 0,
+                  designateDataSource: fieldconfig.designateDataSource,
+                  designateDataSourceByName: fieldconfig.designateDataSourceByName,
+                  designateFilterDataSource: fieldconfig.designateFilterDataSource,
+                  designateFilterDataSourceByName: fieldconfig.designateFilterDataSourceByName,
+                  designateNodes: fieldconfig.designateNodes,
+                  designateFilterNodes: fieldconfig.designateFilterNodes
+                };
+              }
+              return newItem;
+            });
+          }
+          _this.setState({ fields: fields_ });
+        } else {
+          doWhileGet();
+        }
+      }, 100);
+    }
+  };
 
   parseValue = () => {
     let { value } = this.props;
@@ -70,7 +108,8 @@ class RelTable extends Component {
     }
   };
 
-  queryFields = entityId => {
+  queryFields = (entityId, props) => {
+    console.log('queryFields')
     const modeMap = {
       ADD: 0,
       EDIT: 1,
@@ -91,6 +130,9 @@ class RelTable extends Component {
         selectedRows: [],
         loading: false
       });
+      if (props.sheetfieldglobal) { //暂存数据需要做处理
+        this.setInitFieldConfig(result.data, props.sheetfieldglobal);
+      }
     }).catch(e => {
       console.error(e.message);
       this.setState({
@@ -219,6 +261,7 @@ class RelTable extends Component {
   };
 
   setRowFieldVisible = (fieldName, isVisible) => {
+    console.log('setRowFieldVisible')
     doWhileGet();
     const _this = this;
     function doWhileGet() {
@@ -271,6 +314,7 @@ class RelTable extends Component {
   };
 
   setRowFieldReadOnly = (fieldName, isReadonly) => {
+    console.log('setRowFieldReadOnly')
     doWhileGet(); //因为全局js设置的时候,可能异步请求的表格协议还没获取到，设置会出问题，所以需要保证 表格协议已经获取到再设置 config
     const _this = this;
     function doWhileGet() {
@@ -294,6 +338,7 @@ class RelTable extends Component {
   };
 
   setRowFieldRequired = (fieldName, isRequired) => {
+    console.log('setRowFieldRequired')
     const _this = this;
     doWhileGet();
     function doWhileGet() {
@@ -322,6 +367,7 @@ class RelTable extends Component {
   };
 
   setFieldConfig = (fieldName, config) => {
+    console.log('setFieldConfig')
     const _this = this;
     doWhileGet();
     function doWhileGet() {
@@ -349,6 +395,10 @@ class RelTable extends Component {
   onRowFieldFocus = fieldName => {
     this.props.onFocus();
   };
+
+  getFields = () => {
+    return this.state.fields;
+  }
 
   // 渲染表格列头
   renderTableHeader = (fixed) => {
