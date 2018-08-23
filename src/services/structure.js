@@ -496,3 +496,18 @@ export async function gettemporarylist(params) {
     body: JSON.stringify(params)
   });
 }
+
+
+/**
+ * 删除暂存列表
+ * {
+ "cacheid" : “fsdfasdfasfdsadfsafsa”
+}
+ * @returns {Promise.<Object>}
+ */
+export async function deletetemporarylist(CacheIds) {
+  return request('api/dynamicentity/deletetemporarylist', {
+    method: 'post',
+    body: JSON.stringify({ CacheIds })
+  });
+}

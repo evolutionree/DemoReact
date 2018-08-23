@@ -537,8 +537,6 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     setFieldConfig = (fieldName, config) => {
-      console.log('setFieldConfig');
-      console.log(this.props.fields)
       const field = this.getFieldByName(fieldName);
       const newFields = this.props.fields.map(item => {
         const newItem = item;
@@ -550,7 +548,6 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
         }
         return newItem;
       });
-      console.log(newFields)
       this.setState({ fields: newFields });
     };
 

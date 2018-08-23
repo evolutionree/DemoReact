@@ -35,7 +35,7 @@ class RelTable extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      fields: [],
+      tableFields: [],
       selectedRows: [],
       allSelected: false,
       importVisible: false
@@ -52,16 +52,16 @@ class RelTable extends Component {
     }
   }
 
-  setInitFieldConfig = (fields, sheetfieldglobal) => {
+  setInitFieldConfig = (tableFields, sheetfieldglobal) => {
     console.log('setInitFieldConfig')
     const _this = this;
     doWhileGet();
     function doWhileGet() {
       setTimeout(() => {
         if (!_this.state.loading) {
-          let fields_ = fields;
+          let tableFields_ = tableFields;
           if (sheetfieldglobal) {
-            fields_ = fields.map(item => {
+            tableFields_ = tableFields.map(item => {
               let newItem = item;
               if (sheetfieldglobal[item.fieldid]) {
                 const fieldconfig = sheetfieldglobal[item.fieldid];
@@ -81,7 +81,7 @@ class RelTable extends Component {
               return newItem;
             });
           }
-          _this.setState({ fields: fields_ });
+          _this.setState({ tableFields: tableFields_ });
         } else {
           doWhileGet();
         }
@@ -126,7 +126,7 @@ class RelTable extends Component {
     })
     getGeneralProtocolForGrid(params).then(result => {
       this.setState({
-        fields: result.data,
+        tableFields: result.data,
         selectedRows: [],
         loading: false
       });
@@ -167,7 +167,7 @@ class RelTable extends Component {
     const { entityId, onChange } = this.props;
     const newRow = {
       TypeId: entityId,
-      FieldData: generateDefaultFormData(this.state.fields)
+      FieldData: generateDefaultFormData(this.state.tableFields)
     };
     onChange([...this.parseValue(), newRow]);
   };
@@ -229,8 +229,8 @@ class RelTable extends Component {
   };
 
   getShowFields = () => {
-    // return this.state.fields.filter(item => !!(item.fieldconfig && item.fieldconfig.isVisible && (item.fieldconfig.isVisibleJS !== 0)));
-    return this.state.fields.filter(field => {
+    // return this.state.tableFields.filter(item => !!(item.fieldconfig && item.fieldconfig.isVisible && (item.fieldconfig.isVisibleJS !== 0)));
+    return this.state.tableFields.filter(field => {
       if ((field.controltype > 1000 && field.controltype !== 1012 && field.controltype !== 1006)) { //(field.controltype === 31) ||
         return false;
       }
@@ -267,10 +267,10 @@ class RelTable extends Component {
     function doWhileGet() {
       setTimeout(() => {
         if (!_this.state.loading) {
-          const newFields = [..._this.state.fields];
+          const newFields = [..._this.state.tableFields];
           const fieldIndex = _.findIndex(newFields, ['fieldname', fieldName]);
           if (fieldIndex !== -1) {
-            const field = _this.state.fields[fieldIndex];
+            const field = _this.state.tableFields[fieldIndex];
             // const newField = {
             //   ...field,
             //   fieldconfig: {
@@ -304,7 +304,7 @@ class RelTable extends Component {
             }
 
             // newFields[fieldIndex] = newField;
-            _this.setState({ fields: newFields });
+            _this.setState({ tableFields: newFields });
           }
         } else {
           doWhileGet();
@@ -320,15 +320,15 @@ class RelTable extends Component {
     function doWhileGet() {
       setTimeout(() => {
         if (!_this.state.loading) {
-          const newFields = [..._this.state.fields];
+          const newFields = [..._this.state.tableFields];
           const fieldIndex = _.findIndex(newFields, ['fieldname', fieldName]);
           if (fieldIndex !== -1) {
-            const field = _this.state.fields[fieldIndex];
+            const field = _this.state.tableFields[fieldIndex];
             field.fieldconfig = {
               ...field.fieldconfig,
               isReadOnlyJS: isReadonly ? 1 : 0
             };
-            _this.setState({ fields: newFields });
+            _this.setState({ tableFields: newFields });
           }
         } else {
           doWhileGet();
@@ -344,15 +344,15 @@ class RelTable extends Component {
     function doWhileGet() {
       setTimeout(() => {
         if (!_this.state.loading) {
-          const newFields = [..._this.state.fields];
+          const newFields = [..._this.state.tableFields];
           const fieldIndex = _.findIndex(newFields, ['fieldname', fieldName]);
           if (fieldIndex !== -1) {
-            const field = _this.state.fields[fieldIndex];
+            const field = _this.state.tableFields[fieldIndex];
             field.fieldconfig = {
               ...field.fieldconfig,
               isRequiredJS: isRequired ? 1 : 0
             };
-            _this.setState({ fields: newFields });
+            _this.setState({ tableFields: newFields });
           }
         } else {
           doWhileGet();
@@ -380,7 +380,7 @@ class RelTable extends Component {
               ...config
             };
           }
-          _this.setState({ fields: [..._this.state.fields] });
+          _this.setState({ tableFields: [..._this.state.tableFields] });
         } else {
           doWhileGet();
         }
@@ -389,7 +389,7 @@ class RelTable extends Component {
   };
 
   getFieldByName = (fieldName) => {
-    return _.find(this.state.fields, ['fieldname', fieldName]);
+    return _.find(this.state.tableFields, ['fieldname', fieldName]);
   };
 
   onRowFieldFocus = fieldName => {
@@ -397,14 +397,14 @@ class RelTable extends Component {
   };
 
   getFields = () => {
-    return this.state.fields;
+    return this.state.tableFields;
   }
 
   // 渲染表格列头
   renderTableHeader = (fixed) => {
     const value = this.parseValue();
     const isAllSelected = value.length && value.every((item, index) => _.includes(this.state.selectedRows, index));
-    const fields = this.getShowFields();
+    const tableFields = this.getShowFields();
 
     return (
       <div>
@@ -414,7 +414,7 @@ class RelTable extends Component {
               <Checkbox checked={isAllSelected} onChange={this.onCheckAllChange} />
             </span>
           </div>}
-          {fields.map((field, index) => {
+          {tableFields.map((field, index) => {
             if (fixed && index > 0) return; //暂时只 固定第一列
             const fieldConfig = field.fieldconfig || {};
             const required = field.isrequire || fieldConfig.isRequiredJS;
@@ -433,20 +433,21 @@ class RelTable extends Component {
 
   // 渲染表格数据
   renderTableBody = (fixed) => {
-    const fields = this.getShowFields();
+    const tableFields = this.getShowFields();
     let fixedColumn;
-    if (fixed && fields.length > 0) {
-      fixedColumn = fields[0].fieldid;
+    if (fixed && tableFields.length > 0) {
+      fixedColumn = tableFields[0].fieldid;
     }
+    console.log(this.state.tableFields)
     return this.parseValue().map((item, index) => {
-      const value = this.props.mode === 'ADD' ? generateDefaultFormData(this.state.fields, item && item.FieldData || item) : item && item.FieldData || item;
+      const value = this.props.mode === 'ADD' ? generateDefaultFormData(this.state.tableFields, item && item.FieldData || item) : item && item.FieldData || item;
       return (
         <RelTableRow
           key={index}
           fixedColumn={fixedColumn}
           mode={this.props.mode}
           selected={_.includes(this.state.selectedRows, index)}
-          fields={this.state.fields}
+          fields={this.state.tableFields}
           value={value}
           onChange={this.onRowValueChange.bind(this, index)}
           onSelect={this.onRowSelect.bind(this, index)}

@@ -2,13 +2,11 @@
  * Created by 0291 on 2018/8/21.
  */
 import React, { PropTypes, Component } from 'react';
-import { connect } from 'dva';
-import { Icon, message } from 'antd';
+import { Icon, message, Spin } from 'antd';
 import classnames from 'classnames';
-import _ from 'lodash';
 import styles from './index.less';
-import { queryTypes } from '../../../services/entity';
-import { gettemporarylist } from '../../../services/structure';
+import { gettemporarylist, deletetemporarylist } from '../../../services/structure';
+import { queryWorkflow } from '../../../services/entcomm';
 import EntcommAddModal from '../../../components/EntcommAddModal';
 
 class TemporaryStorage extends Component {
@@ -49,16 +47,21 @@ class TemporaryStorage extends Component {
 
 
   getList = () => {
+    this.setState({
+      loading: true
+    });
     if (this.state.panelVisible) {
       gettemporarylist({}).then(result => {
         this.setState({
-          list: result.data
+          list: result.data,
+          loading: false
         });
       }).catch(e => {
         console.error(e.message);
         message.error(e.message);
         this.setState({
-          list: []
+          list: [],
+          loading: false
         });
       });
     }
@@ -76,13 +79,9 @@ class TemporaryStorage extends Component {
   openAddModal = (item) => {
     this.setState({
       showModals: 'add',
-      addModalInfo: item
+      addModalInfo: item,
+      panelVisible: false
     });
-    // queryTypes({ entityId: item.entityid }).then(result => {
-    //   this.setState({
-    //     entityTypes: result.data.entitytypepros
-    //   });
-    // });
   }
 
   onCancel = () => {
@@ -94,6 +93,17 @@ class TemporaryStorage extends Component {
   onDone = () => {
     this.setState({
       showModals: ''
+    });
+  }
+
+  deleteStorage = (cacheid, e) => {
+    e.stopPropagation();
+    deletetemporarylist(cacheid).then(result => {
+      message.success('删除成功');
+      this.getList();
+    }).catch(e => {
+      console.error(e.message);
+      message.error(e.message);
     });
   }
 
@@ -109,17 +119,10 @@ class TemporaryStorage extends Component {
           const fieldconfig = fieldjson[item.fieldid];
           newItem.fieldconfig = {
             ...item.fieldconfig,
+            ...fieldconfig,
             isRequiredJS: fieldconfig.isRequired,
             isReadOnlyJS: fieldconfig.isReadOnly,
-            isVisibleJS: fieldconfig.isHidden === 0 ? 1 : 0,
-            designateDataSource: fieldconfig.designateDataSource,
-            designateDataSourceByName: fieldconfig.designateDataSourceByName,
-            designateFilterDataSource: fieldconfig.designateFilterDataSource,
-            designateFilterDataSourceByName: fieldconfig.designateFilterDataSourceByName,
-            designateNodes: fieldconfig.designateNodes,
-            designateFilterNodes: fieldconfig.designateFilterNodes,
-
-            sheetfieldglobal: fieldconfig.sheetfieldglobal
+            isVisibleJS: fieldconfig.isHidden === 0 ? 1 : 0
           };
         }
         return newItem;
@@ -129,8 +132,7 @@ class TemporaryStorage extends Component {
   };
 
   render() {
-    // flow={selectedFlowObj}
-    const { list, showModals, addModalInfo, entityTypes } = this.state;
+    const { list, showModals, addModalInfo } = this.state;
     return (
       <div>
         <div id="TemporaryStorageWrap">
@@ -143,21 +145,26 @@ class TemporaryStorage extends Component {
           <div className={classnames(styles.panelWrap, { [styles.panelVisible]: this.state.panelVisible })}>
             <div className={styles.header}>暂存列表</div>
             <div className={styles.body}>
-              <ul className={styles.listWrap}>
-                {
-                  list instanceof Array && list.map(item => {
-                    return (
-                      <li key={item.cacheid} onClick={this.openAddModal.bind(this, item)}>
-                        <div>
-                          <span>{item.title}</span>
-                          <span>{item.categoryname}</span>
-                        </div>
-                        <div>{item.createdtime}</div>
-                      </li>
-                    );
-                  })
-                }
-              </ul>
+              <Spin spinning={this.state.loading}>
+                <ul className={styles.listWrap}>
+                  {
+                    list instanceof Array && list.map(item => {
+                      return (
+                        <li key={item.cacheid} onClick={this.openAddModal.bind(this, item)}>
+                          <div>
+                            <span>{item.title}</span>
+                            <span>{item.categoryname}</span>
+                          </div>
+                          <div>
+                            <span>{item.createdtime}</span>
+                            <span onClick={this.deleteStorage.bind(this, item.cacheid)}><a>删除</a></span>
+                          </div>
+                        </li>
+                      );
+                    })
+                  }
+                </ul>
+              </Spin>
             </div>
           </div>
         </div>

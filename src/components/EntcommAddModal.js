@@ -124,13 +124,7 @@ class EntcommAddModal extends Component {
 
   onFormModalStorage = () => {
     const formValue = this.form.formInst.getFieldsValue();
-
     let fieldjson = {};
-    //isRequire: isRequiredJS
-    // isReadOnly:0 isReadOnlyJS
-    // isVisible:1 isVisibleJS
-    console.log(this.form);
-    console.log(formValue)
     this.form.props.fields.map(item => {
       const fieldconfig = item.fieldconfig;
       const isVisible = fieldconfig.isVisible !== 1 ? 0 : fieldconfig.isVisibleJS === 0 ? 0 : 1;
@@ -138,20 +132,14 @@ class EntcommAddModal extends Component {
       const isRequired = fieldconfig.isRequired === 1 ? 1 : fieldconfig.isRequiredJS ? 1 : 0;
 
       fieldjson[item.fieldid] = {
+        ...fieldconfig,
         isHidden: isVisible === 0 ? 1 : 0,
         isReadOnly: isReadOnly,
-        isRequired: isRequired,
-        designateDataSource: fieldconfig.designateDataSource,
-        designateDataSourceByName: fieldconfig.designateDataSourceByName,
-        designateFilterDataSource: fieldconfig.designateFilterDataSource,
-        designateFilterDataSourceByName: fieldconfig.designateFilterDataSourceByName,
-        designateNodes: fieldconfig.designateNodes,
-        designateFilterNodes: fieldconfig.designateFilterNodes
+        isRequired: isRequired
       };
 
       if (item.controltype === 24) {
         const tableFields = this.form.formRef.getTableFields(item.fieldname);
-        console.log(tableFields)
         fieldjson[item.fieldid].sheetfieldglobal = {};
         tableFields.map(tableFieldItem => {
           const tableFieldConfig = tableFieldItem.fieldconfig;
@@ -159,15 +147,10 @@ class EntcommAddModal extends Component {
           const tableFieldIsReadOnly = tableFieldConfig.isReadOnly === 1 ? 1 : tableFieldConfig.isReadOnlyJS ? 1 : 0;
           const tableFieldIsRequired = tableFieldConfig.isRequired === 1 ? 1 : tableFieldConfig.isRequiredJS ? 1 : 0;
           fieldjson[item.fieldid].sheetfieldglobal[tableFieldItem.fieldid] = {
+            ...tableFieldConfig,
             isHidden: tableFieldIsVisible === 0 ? 1 : 0,
             isReadOnly: tableFieldIsReadOnly,
-            isRequired: tableFieldIsRequired,
-            designateDataSource: tableFieldConfig.designateDataSource,
-            designateDataSourceByName: tableFieldConfig.designateDataSourceByName,
-            designateFilterDataSource: tableFieldConfig.designateFilterDataSource,
-            designateFilterDataSourceByName: tableFieldConfig.designateFilterDataSourceByName,
-            designateNodes: tableFieldConfig.designateNodes,
-            designateFilterNodes: tableFieldConfig.designateFilterNodes
+            isRequired: tableFieldIsRequired
           };
         });
       }
