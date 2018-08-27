@@ -28,9 +28,25 @@ body {
 :global {
   .uke {
     .DynamicFormModal{
-      .ant-modal-body{
-        max-height: 600px;
-        overflow: auto;
+      @media screen and (min-height: 800px) {
+        .ant-modal-body{
+          max-height: 450px;
+          overflow: auto;
+        }
+      }
+
+      @media screen and (min-height: 900px) {
+        .ant-modal-body{
+          max-height: 600px;
+          overflow: auto;
+        }
+      }
+
+      @media screen and (min-height: 1200px) {
+        .ant-modal-body{
+          max-height: 700px;
+          overflow: auto;
+        }
       }
     }
 
