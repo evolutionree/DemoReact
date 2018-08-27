@@ -55,6 +55,7 @@ class SelectDataSource extends React.Component {
     const id = arrIdName.map(obj => obj.id).join(',');
     const name = arrIdName.map(obj => obj.name).join(',');
     this.props.onChange(JSON.stringify({ id, name }));
+    this.changeWithName(id, name);
   };
 
   showModal = () => {
@@ -105,6 +106,16 @@ class SelectDataSource extends React.Component {
     const id = selectData.map(obj => obj.id).join(',');
     const name = selectData.map(obj => obj.name).join(',');
     this.props.onChange(JSON.stringify({ id, name }));
+    this.changeWithName(id, name);
+  }
+
+  changeWithName = (id, name) => {
+    if (this.props.onChangeWithName) {
+      this.props.onChangeWithName({
+        value: id,
+        value_name: name
+      });
+    }
   }
 
   queryOptions = (searchKey) => {

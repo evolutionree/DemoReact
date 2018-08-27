@@ -607,6 +607,81 @@ class TitleFieldSelect extends React.Component {
   }
 }
 
+
+// 表格控件，批量新增字段选择
+class BatchFieldSelect extends React.Component {
+  static propTypes = {
+    form: React.PropTypes.object,
+    value: React.PropTypes.string,
+    onChange: React.PropTypes.func
+  };
+  static defaultProps = {};
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      options: [],
+      intervalId: this.watchOriginEntityChange(),
+      originEntity: undefined
+    };
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.state.intervalId);
+  }
+
+  watchOriginEntityChange = () => {
+    let flag = true;
+    const intervalId = setInterval(() => {
+      if (flag) return flag = false; // 跳出第一次执行
+      const originEntity = this.props.form.getFieldValue('entityId');
+      if (!originEntity) {
+        if (this.state.options.length) {
+          this.setState({ options: [] });
+          this.props.onChange('');
+        }
+      } else {
+        if (this.state.originEntity !== originEntity) {
+          this.setState({ originEntity });
+          this.fetchOptions(originEntity);
+        }
+      }
+    }, 50);
+    return intervalId;
+  };
+
+  fetchOptions = (originEntity) => {
+    queryFields(originEntity).then(result => {
+      const options = result.data.entityfieldpros
+      // 单选、数据源、选人、产品可供选择(且都是单选)
+        .filter(item => {
+          if (item.fieldconfig.multiple !== 1 && [3, 18, 25, 28, 1002, 1003, 1006].indexOf(item.controltype) !== -1) {
+            return item;
+          }
+        })
+        .map(item => ({
+          id: item.fieldname + '',
+          label: item.fieldlabel
+        }));
+      this.setState({ options });
+      const flag = options.some(item => item.id === this.props.value);
+      if (options.length && !flag) {
+        this.props.onChange(options[0].id);
+      }
+    });
+  };
+
+  render() {
+    return (
+      <Select value={this.props.value} onChange={this.props.onChange}>
+        {this.state.options.map(item => (
+          <Option value={item.id} key={item.id}>{item.label}</Option>
+        ))}
+      </Select>
+    );
+  }
+}
+
 export default class FormItemFactory {
 
   constructor(form, entityFields, entityId, isEdit) {
@@ -1021,6 +1096,31 @@ export default class FormItemFactory {
             <Radio value={1}>支持</Radio>
           </RadioGroup>
         )}
+      </FormItem>
+    );
+  }
+
+  createBatch() {
+    return (
+      <FormItem label="是否支持批量新增" key="batch">
+        {this.getFieldDecorator('batch', {
+          initialValue: 0
+        })(
+          <RadioGroup>
+            <Radio value={0}>不支持</Radio>
+            <Radio value={1}>支持</Radio>
+          </RadioGroup>
+        )}
+      </FormItem>
+    );
+  }
+
+  createBatchAddField() {
+    return (
+      <FormItem label="批量新增字段" key="batchAddField">
+        {this.getFieldDecorator('batchAddField', {
+          rules: [{ required: true, message: '请选择标题字段' }]
+        })(<BatchFieldSelect form={this.form} />)}
       </FormItem>
     );
   }

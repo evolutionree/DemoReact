@@ -11,6 +11,7 @@ class DynamicField extends React.Component {
     value: PropTypes.any,
     value_name: PropTypes.string, // 给控件显示值用，如用户控件
     onChange: PropTypes.func,
+    onChangeWithName: PropTypes.onChangeWithName,
     onFocus: PropTypes.func,
     quoteHandler: PropTypes.func,
     controlType: PropTypes.number.isRequired,
@@ -48,6 +49,7 @@ class DynamicField extends React.Component {
       value_name: this.props.value_name,
       fieldId: this.props.fieldId,
       onChange: this.props.onChange,
+      onChangeWithName: this.props.onChangeWithName,
       onFocus: this.props.onFocus,
       quoteHandler: this.props.quoteHandler,
       ref: instRef => { this.instRef = instRef; },

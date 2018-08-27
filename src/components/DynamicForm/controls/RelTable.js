@@ -8,6 +8,7 @@ import RelTableView from './RelTableView';
 import styles from './RelTable.less';
 import generateDefaultFormData from '../generateDefaultFormData';
 import RelTableImportModal from '../RelTableImportModal';
+import RelTableBatchModal from '../RelTableBatchModal';
 
 const TableMaxHeight = 400;
 
@@ -31,6 +32,7 @@ class RelTable extends Component {
   };
 
   arrFormInstance = [];
+  arrFixedFormInstance = [];
 
   constructor(props) {
     super(props);
@@ -38,7 +40,8 @@ class RelTable extends Component {
       tableFields: [],
       selectedRows: [],
       allSelected: false,
-      importVisible: false
+      importVisible: false,
+      showModals: ''
     };
   }
 
@@ -142,7 +145,13 @@ class RelTable extends Component {
   };
 
   validate = (callback) => {
-    const restForms = [...this.arrFormInstance];
+    //TODO: why do we need to repeat call function which named validateTableForm, 表格是有多个表格叠加出来的，所有多个表格需要做校验
+    this.validateTableForm(this.arrFormInstance, callback);
+    this.validateTableForm(this.arrFixedFormInstance, callback);
+  };
+
+  validateTableForm = (formInstance, callback) => {
+    const restForms = [...formInstance];
     loopValidateForm();
 
     function loopValidateForm() {
@@ -161,7 +170,7 @@ class RelTable extends Component {
         callback();
       }
     }
-  };
+  }
 
   addRow = () => {
     const { entityId, onChange } = this.props;
@@ -171,6 +180,22 @@ class RelTable extends Component {
     };
     onChange([...this.parseValue(), newRow]);
   };
+
+  batchAdd = (data) => {
+    const addFieldName = this.props.batchAddField;
+    const { entityId, onChange } = this.props;
+    const newAddData = data.map((item, index) => {
+      return {
+        TypeId: entityId,
+        FieldData: generateDefaultFormData(this.state.tableFields, { [addFieldName]: item.value, [`${addFieldName}_name`]: item.value_name }),
+        type: 'add' //TODO：渲染组件的时候 判断是否是通过批量新增，则需要走 配置JS
+      };
+    });
+    this.setState({
+      showModals: false
+    });
+    onChange([...this.parseValue(), ...newAddData]);
+  }
 
   addImportData = (data, operateType) => { //operateType== 1  追加导入 覆盖导入
     const { onChange } = this.props;
@@ -186,11 +211,18 @@ class RelTable extends Component {
     });
   }
 
+  batchAddData = () => {
+    this.setState({
+      showModals: 'batchAdd'
+    });
+  }
+
   delRow = () => {
     const { onChange } = this.props;
     const newValue = this.parseValue().filter((item, index) => !_.includes(this.state.selectedRows, index));
     onChange(newValue);
     this.arrFormInstance = this.arrFormInstance.slice(0, newValue.length);
+    this.arrFixedFormInstance = this.arrFixedFormInstance.slice(0, newValue.length);
     this.setState({ selectedRows: [] });
   };
 
@@ -438,7 +470,6 @@ class RelTable extends Component {
     if (fixed && tableFields.length > 0) {
       fixedColumn = tableFields[0].fieldid;
     }
-    console.log(this.state.tableFields)
     return this.parseValue().map((item, index) => {
       const value = this.props.mode === 'ADD' ? generateDefaultFormData(this.state.tableFields, item && item.FieldData || item) : item && item.FieldData || item;
       return (
@@ -451,9 +482,13 @@ class RelTable extends Component {
           value={value}
           onChange={this.onRowValueChange.bind(this, index)}
           onSelect={this.onRowSelect.bind(this, index)}
-          ref={formInst => this.arrFormInstance[index] = formInst}
+          ref={formInst => fixed ? this.arrFixedFormInstance[index] = formInst : this.arrFormInstance[index] = formInst}
           onFieldControlFocus={this.onRowFieldFocus}
           parentJsEngine={this.props.jsEngine}
+          batchAddInfo={{
+            type: item && item.type,
+            field: _.find(this.state.tableFields, filedItem => filedItem.fieldname === this.props.batchAddField)
+          }}
         />
       );
     });
@@ -461,6 +496,10 @@ class RelTable extends Component {
 
   componentDidUpdate() {
     this.setAlignTableWidthAndHeight();
+  }
+
+  componentWillUnmount() {
+
   }
 
   setAlignTableWidthAndHeight = () => {
@@ -551,18 +590,15 @@ class RelTable extends Component {
             {
               this.props.import ? <Button onClick={this.importData} style={{ marginRight: '15px' }}>导入</Button> : null
             }
+            {
+              this.props.batch ? <Button onClick={this.batchAddData} style={{ marginRight: '15px' }}>批量</Button> : null
+            }
             <Button onClick={this.delRow} type="danger">删除</Button>
           </div>}
           <div className={styles.tableContent}>
             <div className={styles.fixTopWrap} ref={ref => this.fixTopWrapRef = ref}>
               <div className={classnames([styles.table, styles.fixTopTable])} ref={ref => this.fixTopTableRef = ref}>
                 {this.renderTableHeader()}
-              </div>
-            </div>
-            <div className={styles.tableWrap} style={{ maxHeight: TableMaxHeight }} onScroll={this.tableScroll} ref={ref => this.relTableWrapRef = ref}>
-              <div className={styles.table} ref={ref => this.relTableRef = ref}>
-                {this.renderTableHeader()}
-                {this.renderTableBody()}
               </div>
             </div>
             <div className={styles.fixLeftWrap} ref={ref => this.fixLeftWrapRef = ref}>
@@ -574,6 +610,12 @@ class RelTable extends Component {
                 {this.renderTableBody('fixed')}
               </div>
             </div>
+            <div className={styles.tableWrap} style={{ maxHeight: TableMaxHeight }} onScroll={this.tableScroll} ref={ref => this.relTableWrapRef = ref}>
+              <div className={styles.table} ref={ref => this.relTableRef = ref}>
+                {this.renderTableHeader()}
+                {this.renderTableBody()}
+              </div>
+            </div>
           </div>
           {/*{this.props.value && <div>*/}
           {/*{JSON.stringify(this.props.value)}*/}
@@ -583,9 +625,13 @@ class RelTable extends Component {
                              entityId={this.props.entityId}
                              entityTypeId={this.props.entityTypeId}
                              mainEntityId={this.props.mainEntityId}
-                             cancel={() => { this.setState({ importVisible: false }) }}
+                             cancel={() => { this.setState({ importVisible: false }); }}
                              onOk={this.addImportData}
         />
+        <RelTableBatchModal visible={/batchAdd/.test(this.state.showModals)}
+                            protocl={_.find(this.state.tableFields, item => item.fieldname === this.props.batchAddField)}
+                            onCancel={() => { this.setState({ showModals: false }); }}
+                            onConfirm={this.batchAdd} />
       </div>
     );
   }

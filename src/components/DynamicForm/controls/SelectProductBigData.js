@@ -113,10 +113,18 @@ class SelectProductBigData extends React.Component {
     array.forEach(item => {
       valMap[item.productid] = item.productname;
     });
-    console.log(array)
+
+    const value = array.map(item => item.productid).join(',');
+    const value_name = array.map(item => item.productname).join(',');
     this.setState({ valMap }, () => {
-      this.props.onChange(array.map(item => item.productid).join(','));
+      this.props.onChange(value);
     });
+    if (this.props.onChangeWithName) {
+      this.props.onChangeWithName({
+        value: value,
+        value_name: value_name
+      });
+    }
   };
 
   iconClearHandler = (e) => {
@@ -125,16 +133,22 @@ class SelectProductBigData extends React.Component {
   };
 
   selectChange = (options, value) => {
-    console.log(options);
-    console.log(value)
     const selectData = options instanceof Array && options.filter(item => value && value.indexOf(item.productid) > -1);
     let valMap = { ...this.state.valMap };
     selectData.forEach(item => {
       valMap[item.productid] = item.productname;
     });
+    const newValue = selectData.map(item => item.productid).join(',');
+    const newValue_name = selectData.map(item => item.productname).join(',');
     this.setState({ valMap }, () => {
-      this.props.onChange(selectData.map(item => item.productid).join(','));
+      this.props.onChange(newValue);
     });
+    if (this.props.onChangeWithName) {
+      this.props.onChangeWithName({
+        value: newValue,
+        value_name: newValue_name
+      });
+    }
   }
 
   queryOptions = (searchKey) => {
