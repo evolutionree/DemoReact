@@ -80,10 +80,15 @@ class RoleFormModal extends Component {
             {decorate('rolename_lang', {
               initialValue: '',
               rules: [{
-                validator: IntlInputRequireValidator
+                validator: (rule, value, callback) => {
+                  this.intlInputRef.validator(rule, value, err => {
+                    if (err) return callback(err);
+                    callback();
+                  });
+                }
               }]
             })(
-              <IntlInput placeholder="请输入角色名称" maxLength={50} />
+              <IntlInput placeholder="请输入角色名称" maxLength={50} ref={ref => this.intlInputRef = ref} />
             )}
           </FormItem>
           <FormItem label="角色分类">

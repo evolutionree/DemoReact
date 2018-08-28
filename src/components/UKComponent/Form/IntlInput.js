@@ -62,6 +62,16 @@ class IntlInput extends Component {
     }
   }
 
+  validator = (rule, value, callback) => {
+    let langlist = JSON.parse(window.localStorage.getItem('langlist'));
+    langlist instanceof Array && langlist.map(item => {
+      if (!(value && value[item.key])) {
+        callback(item.dispaly + '必填');
+      }
+    });
+    callback();
+  }
+
   transformValue = (value) => { //兼容 国际化开发前的 数据
     return typeof value === 'string' ? { cn: value } : value ? value : {};
   }
