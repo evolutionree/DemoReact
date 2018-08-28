@@ -25,26 +25,26 @@ function DeskList({
                        currItems
                      }) {
   function searchKeyword(val) {
-    dispatch({ type: 'desk/search', payload: { searchName: val } });
+    dispatch({ type: 'deskconfig/search', payload: { searchName: val } });
   }
 
   function selectItems(items) {
-    dispatch({ type: 'desk/currItems', payload: items });
+    dispatch({ type: 'deskconfig/currItems', payload: items });
   }
 
   function handleTableChange(pagination) {
-    dispatch({ type: 'desk/search', payload: {
+    dispatch({ type: 'deskconfig/search', payload: {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize
     } });
   }
 
   function add() {
-    dispatch({ type: 'desk/showModals', payload: 'add' });
+    dispatch({ type: 'deskconfig/showModals', payload: 'add' });
   }
 
   function edit() {
-    dispatch({ type: 'desk/showModals', payload: 'edit' });
+    dispatch({ type: 'deskconfig/showModals', payload: 'edit' });
   }
 
   function del() {
@@ -52,7 +52,7 @@ function DeskList({
   }
 
   function bind() {
-    dispatch({ type: 'desk/showModals', payload: 'bind' });
+    dispatch({ type: 'deskconfig/showModals', payload: 'bind' });
   }
 
   const { pageIndex, pageSize, searchName } = queries;
@@ -101,7 +101,7 @@ function DeskList({
 }
 
 export default connect(
-  state => state.desk,
+  state => state.deskconfig,
   dispatch => {
     return {
       dispatch

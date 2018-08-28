@@ -23,26 +23,26 @@ function ComponentList({
                        currItems
                      }) {
   function searchKeyword(val) {
-    dispatch({ type: 'deskcomponent/search', payload: { searchName: val } });
+    dispatch({ type: 'deskcomponentconfig/search', payload: { searchName: val } });
   }
 
   function selectItems(items) {
-    dispatch({ type: 'deskcomponent/currItems', payload: items });
+    dispatch({ type: 'deskcomponentconfig/currItems', payload: items });
   }
 
   function handleTableChange(pagination) {
-    dispatch({ type: 'deskcomponent/search', payload: {
+    dispatch({ type: 'deskcomponentconfig/search', payload: {
       pageIndex: pagination.current,
       pageSize: pagination.pageSize
     } });
   }
 
   function add() {
-    dispatch({ type: 'deskcomponent/showModals', payload: 'add' });
+    dispatch({ type: 'deskcomponentconfig/showModals', payload: 'add' });
   }
 
   function edit() {
-    dispatch({ type: 'deskcomponent/showModals', payload: 'edit' });
+    dispatch({ type: 'deskcomponentconfig/showModals', payload: 'edit' });
   }
 
   function del() {
@@ -93,7 +93,7 @@ function ComponentList({
 }
 
 export default connect(
-  state => state.deskcomponent,
+  state => state.deskcomponentconfig,
   dispatch => {
     return {
       dispatch

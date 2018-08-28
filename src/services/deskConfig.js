@@ -20,7 +20,7 @@ export async function getdeskcomponentlist() {
  * @returns {Promise.<Object>}
  */
 export async function deskcomponentsave(params) {
-  return request('/api/desktop/componentsave', {
+  return request('/api/desktop/desktopcomponent', {
     method: 'post',
     body: JSON.stringify(params)
   });
@@ -33,6 +33,18 @@ export async function deskcomponentsave(params) {
  */
 export async function getdesktop() {
   return request('/api/desktop/getdesktop', {
+    method: 'post',
+    body: JSON.stringify({})
+  });
+}
+
+
+/**
+ * 获取工作台列表
+ * @returns {Promise.<Object>}
+ */
+export async function getdesklist() {
+  return request('/api/desktop/getdesklist', {
     method: 'post',
     body: JSON.stringify({})
   });

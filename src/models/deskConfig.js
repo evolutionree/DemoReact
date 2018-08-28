@@ -2,7 +2,7 @@
  * Created by 0291 on 2018/5/21.
  */
 import { message } from 'antd';
-import { routerRedux } from 'dva/router';
+import { getdesklist } from '../services/deskConfig';
 
 const columns = [{
   title: '工作台名称',
@@ -35,13 +35,12 @@ for (let i = 0; i < 46; i++) {
 }
 
 export default {
-  namespace: 'desk',
+  namespace: 'deskconfig',
   state: {
-    menus: [],
     protocol: columns,
     queries: {},
     list: data,
-    total: 46,
+    total: 0,
     currItems: [],
     showModals: ''
   },
@@ -61,45 +60,21 @@ export default {
       yield put({ type: 'queryList' });
     },
     *queryList(action, { put, call, select }) {
-      // const { query } = yield select(({ routing }) => routing.locationBeforeTransitions);
-      // const queries = {
-      //   pageIndex: 1,
-      //   pageSize: 10,
-      //   keyword: '',
-      //   ...query
-      // };
-      // queries.pageIndex = parseInt(queries.pageIndex);
-      // queries.pageSize = parseInt(queries.pageSize);
-      //
-      // yield put({ type: 'putState', payload: { queries } });
-      // try {
-      //   const { data } = yield call(transferschemelist, queries);
-      //   yield put({
-      //     type: 'putState',
-      //     payload: {
-      //       list: data,
-      //       currItems: []
-      //     }
-      //   });
-      // } catch (e) {
-      //   message.error(e.message || '获取列表数据失败');
-      // }
-    },
-    *search({ payload }, { select, call, put }) {
-      const location = yield select(({ routing }) => routing.locationBeforeTransitions);
-      const { pathname, query } = location;
-      yield put(routerRedux.push({
-        pathname,
-        query: {
-          ...query,
-          pageIndex: 1,
-          ...payload
-        }
-      }));
+      try {
+        const { data } = yield call(getdesklist);
+        yield put({
+          type: 'putState',
+          payload: {
+            list: data,
+            currItems: []
+          }
+        });
+      } catch (e) {
+        message.error(e.message || '获取列表数据失败');
+      }
     },
     *searchKeyword({ payload: keyword }, { select, call, put }) {
-      const searchData = JSON.stringify({ recname: keyword || undefined });
-      yield put({ type: 'search', payload: { searchData, isAdvanceQuery: 0 } });
+
     },
     *save({ payload: submitData }, { select, call, put }) {
 
@@ -111,9 +86,6 @@ export default {
         ...state,
         ...assignment
       };
-    },
-    queries(state, { payload: queries }) {
-      return { ...state, queries };
     },
     currItems(state, { payload: currItems }) {
       return {
@@ -130,10 +102,9 @@ export default {
     },
     resetState() {
       return {
-        menus: [],
-        protocol: [],
+        protocol: columns,
         queries: {},
-        list: [],
+        list: data,
         total: 0,
         currItems: [],
         showModals: ''

@@ -48,7 +48,7 @@ for (let i = 0; i < 46; i++) {
 }
 
 export default {
-  namespace: 'deskcomponent',
+  namespace: 'deskcomponentconfig',
   state: {
     menus: [],
     protocol: columns,

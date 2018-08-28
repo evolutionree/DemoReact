@@ -80,7 +80,7 @@ class FormModal extends Component {
             {/*)}*/}
           {/*</FormItem>*/}
           <FormItem label="渲染组件">
-            {getFieldDecorator('comurl', {
+            {getFieldDecorator('comtype', {
               rules: [{ required: true, message: '请输入前端渲染的组件名' }]
             })(
               <Input placeholder="请输入前端渲染的组件名" />
@@ -124,7 +124,7 @@ class FormModal extends Component {
 
 export default connect(
   state => {
-    const { showModals, currItems, modalPending } = state.deskcomponent;
+    const { showModals, currItems, modalPending } = state.deskcomponentconfig;
     return {
       visible: /add|edit/.test(showModals),
       editingRecord: /edit/.test(showModals) ? currItems[0] : undefined,
@@ -134,10 +134,10 @@ export default connect(
   dispatch => {
     return {
       cancel() {
-        dispatch({ type: 'deskcomponent/showModals', payload: '' });
+        dispatch({ type: 'deskcomponentconfig/showModals', payload: '' });
       },
       confirm(data) {
-        dispatch({ type: 'deskcomponent/save', payload: data });
+        dispatch({ type: 'deskcomponentconfig/save', payload: data });
       }
     };
   }

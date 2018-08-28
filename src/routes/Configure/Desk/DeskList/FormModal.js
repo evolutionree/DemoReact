@@ -90,7 +90,7 @@ class FormModal extends Component {
 
 export default connect(
   state => {
-    const { showModals, currItems, modalPending } = state.desk;
+    const { showModals, currItems, modalPending } = state.deskconfig;
     // const data = [{
     //   entityid: '72d518b4-12f1-4ed7-a4ee-e9be658aa567',
     //   jilian: true,
@@ -109,10 +109,10 @@ export default connect(
   dispatch => {
     return {
       cancel() {
-        dispatch({ type: 'desk/showModals', payload: '' });
+        dispatch({ type: 'deskconfig/showModals', payload: '' });
       },
       confirm(data) {
-        dispatch({ type: 'desk/save', payload: data });
+        dispatch({ type: 'deskconfig/save', payload: data });
       }
     };
   }

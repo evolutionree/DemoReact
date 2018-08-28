@@ -88,8 +88,8 @@ import TransferScheme from './routes/Configure/transferScheme';
 
 import QRCodeEntrance from './routes/Configure/QRCodeEntrance';
 
-import Desk from './routes/Configure/Desk/DeskList';
-import DeskComponent from './routes/Configure/Desk/ComponentList';
+import DeskConfig from './routes/Configure/Desk/DeskList';
+import DeskComponentConfig from './routes/Configure/Desk/ComponentList';
 
 const appRoutes = [
   { path: 'structure', comp: Structure, entid: '3d77dfd2-60bb-4552-bb69-1c3e73cf4095', model: require('./models/structure') },
@@ -172,8 +172,8 @@ const appRoutes = [
   { path: 'passwordstrategy', comp: PasswordStrategy, model: require('./models/passwordstrategy') },
   { path: 'transferscheme', comp: TransferScheme, model: require('./models/transferscheme') },
   { path: 'qrcodeentrance', comp: QRCodeEntrance, model: require('./models/qrcodeentrance') },
-  { path: 'config-desk', comp: Desk, model: require('./models/config-desk') },
-  { path: 'config-deskcomponent', comp: DeskComponent, model: require('./models/config-deskcomponent') },
+  { path: 'config-desk', comp: DeskConfig, model: require('./models/deskConfig') },
+  { path: 'config-deskcomponent', comp: DeskComponentConfig, model: require('./models/deskComponentConfig') },
   { path: 'nopermission', comp: NoPermission },
   { path: '*', comp: NoFoundPage }
 ];
