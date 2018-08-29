@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { Table, Modal, Button, message, Icon, Input } from 'antd';
+import { Table, Modal, Button, message, Icon, Input, Menu, Dropdown } from 'antd';
 import { Link } from 'dva/router';
 import { connect } from 'dva';
 import _ from 'lodash';
@@ -456,27 +456,75 @@ class DynamicTable extends Component {
   }
 
   renderdSourceDetail = (text, field, record) => {
-    let text_ = text;
-    if (typeof text_ === 'object' && text_ !== null) {
-      text_ = JSON.stringify(text_);
-    }
-
+    const cellData = record[field.fieldname];
     let DataSourceRelEntityId = '';
     if (field.fieldconfig && field.fieldconfig.DataSource) {
       DataSourceRelEntityId = field.fieldconfig.DataSource.EntityId;
     }
-
-    const DataSourceRelRecId = record[field.fieldname] && record[field.fieldname].id;
     const DataSourceDetailModalTitle = field.displayname;
-    return <a title={text_} onClick={(e) => {
-      e.nativeEvent.stopImmediatePropagation();
-      this.setState({
-        dSourceDetailVisible: true,
-        DataSourceRelEntityId,
-        DataSourceRelRecId,
-        DataSourceDetailModalTitle
+
+    if (cellData && cellData instanceof Object) {
+      const relIds = cellData.id.split(',');
+      const relNames = cellData.name.split(',');
+
+      let dataArray = [];
+      relIds.map((item, index) => {
+        dataArray.push({
+          id: item,
+          name: relNames[index]
+        });
       });
-    }}>{text_}</a>;
+
+      const getDataSourceItem = (item, index) => {
+        return (
+          <a key={index} title={item.name} onClick={(e) => {
+            e.nativeEvent.stopImmediatePropagation();
+            this.setState({
+              dSourceDetailVisible: true,
+              DataSourceRelEntityId,
+              DataSourceRelRecId: item.id,
+              DataSourceDetailModalTitle
+            });
+          }}>{item.name}&nbsp;&nbsp;</a>
+        );
+      };
+
+      const dataLengthOverOne = dataArray.length > 1;
+      const menu = dataLengthOverOne ? (
+        <Menu>
+          {
+            dataArray.map((item, index) => {
+              return (
+                <Menu key={item.id}>
+                  <Menu.Item>
+                    {
+                      getDataSourceItem(item, index)
+                    }
+                  </Menu.Item>
+                </Menu>
+              );
+            })
+          }
+        </Menu>
+      ) : null;
+
+      return (
+        <div className={styles.dataSoureceCellWrap} key='dataSoureceCellWrap'>
+          <div key="dataArray" style={{ maxWidth: dataLengthOverOne ? 'calc(100% - 20px)' : '100%' }}>
+            {
+              dataArray.map(getDataSourceItem)
+            }
+          </div>
+          {
+            dataLengthOverOne ? <Dropdown overlay={menu} placement="bottomLeft">
+              <Icon key="down-circle-o" type="down-circle-o" />
+            </Dropdown> : null
+          }
+        </div>
+      );
+    } else {
+      return '';
+    }
   };
 
   renderText = (text) => {
