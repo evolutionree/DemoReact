@@ -462,13 +462,11 @@ class DynamicTable extends Component {
       DataSourceRelEntityId = field.fieldconfig.DataSource.EntityId;
     }
     const DataSourceDetailModalTitle = field.displayname;
-
     if (cellData && cellData instanceof Object) {
-      const relIds = cellData.id.split(',');
-      const relNames = cellData.name.split(',');
-
+      const relIds = cellData.id && cellData.id.split(',');
+      const relNames = cellData.name && cellData.name.split(',');
       let dataArray = [];
-      relIds.map((item, index) => {
+      relIds instanceof Array && relIds.map((item, index) => {
         dataArray.push({
           id: item,
           name: relNames[index]
