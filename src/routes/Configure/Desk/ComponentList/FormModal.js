@@ -4,6 +4,7 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Modal, Form, Input, Select } from 'antd';
+import InputInteger from '../../../../components/DynamicForm/controls/InputInteger';
 
 const { TextArea } = Input;
 
@@ -45,9 +46,9 @@ class FormModal extends Component {
     const { form, editingRecord } = this.props;
     form.validateFields((err, values) => {
       if (err) return;
-
       this.props.confirm({
-        ...values
+        ...values,
+        dscomponetid: editingRecord && editingRecord.dscomponetid
       });
     });
   };
@@ -80,7 +81,7 @@ class FormModal extends Component {
             {/*)}*/}
           {/*</FormItem>*/}
           <FormItem label="渲染组件">
-            {getFieldDecorator('comtype', {
+            {getFieldDecorator('comurl', {
               rules: [{ required: true, message: '请输入前端渲染的组件名' }]
             })(
               <Input placeholder="请输入前端渲染的组件名" />
@@ -97,13 +98,17 @@ class FormModal extends Component {
             )}
           </FormItem>
           <FormItem label="最小高度">
-            {getFieldDecorator('mincomheight')(
-              <Input placeholder="请输入最小高度" />
+            {getFieldDecorator('mincomheight', {
+              rules: [{ required: true, message: '请输入最小高度' }]
+            })(
+              <InputInteger placeholder="请输入最小高度" />
             )}
           </FormItem>
           <FormItem label="最大高度">
-            {getFieldDecorator('maxcomheight')(
-              <Input placeholder="请输入最大高度" />
+            {getFieldDecorator('maxcomheight', {
+              rules: [{ required: true, message: '请输入最大高度' }]
+            })(
+              <InputInteger placeholder="请输入最大高度" />
             )}
           </FormItem>
           <FormItem label="参数">

@@ -2,66 +2,53 @@
  * Created by 0291 on 2018/5/21.
  */
 import { message } from 'antd';
-import { routerRedux } from 'dva/router';
-import { getdeskcomponentlist, deskcomponentsave } from '../services/deskConfig';
+import { getdeskcomponentlist, deskcomponentsave, enabledesktopcomponent } from '../services/deskConfig';
 
 const columns = [{
   title: '组件名称',
-  dataIndex: 'name'
-}, {
-  title: '组件分类',
-  dataIndex: 'type'
+  dataIndex: 'comname'
 }, {
   title: '状态',
-  dataIndex: 'status'
+  dataIndex: 'status',
+  render: (text) => {
+    return ['停用', '启用'][text];
+  }
 }, {
   title: '组件宽度',
-  dataIndex: 'width'
-}, {
-  title: '初始高度',
-  dataIndex: 'initH'
+  dataIndex: 'comwidth'
 }, {
   title: '最小高度',
-  dataIndex: 'minH'
+  dataIndex: 'mincomheight'
 }, {
   title: '最大高度',
-  dataIndex: 'maxH'
+  dataIndex: 'maxcomheight'
 }, {
   title: '处理页面',
-  dataIndex: 'page'
+  dataIndex: 'comurl'
 }, {
   title: '参数',
-  dataIndex: 'params'
+  dataIndex: 'comargs'
 }, {
   title: '说明',
-  dataIndex: 'explain'
+  dataIndex: 'comdesciption'
 }];
-
-const data = [];
-for (let i = 0; i < 46; i++) {
-  data.push({
-    recid: i,
-    name: `Edward King ${i}`,
-    age: 32,
-    address: `London, Park Lane no. ${i}`
-  });
-}
 
 export default {
   namespace: 'deskcomponentconfig',
   state: {
-    menus: [],
     protocol: columns,
-    queries: {},
-    list: data,
-    total: 46,
+    queries: {
+      comname: '',
+      status: 1
+    },
+    list: [],
     currItems: [],
     showModals: ''
   },
   subscriptions: {
     setup({ dispatch, history }) {
       return history.listen(location => {
-        if (location.pathname === '/config-deskcomponent') {
+        if (location.pathname === '/deskcomponentconfig') {
           dispatch({ type: 'init' });
         } else {
           dispatch({ type: 'resetState' });
@@ -74,8 +61,9 @@ export default {
       yield put({ type: 'queryList' });
     },
     *queryList(action, { put, call, select }) {
+      const { queries: { comname, status } } = yield select(state => state.deskcomponentconfig);
       try {
-        const { data } = yield call(getdeskcomponentlist);
+        const { data } = yield call(getdeskcomponentlist, { comname, status: parseInt(status) });
         yield put({
           type: 'putState',
           payload: {
@@ -88,17 +76,37 @@ export default {
       }
     },
     *search({ payload }, { select, call, put }) {
-
+      yield put({ type: 'putState', payload: payload });
+      yield put({ type: 'queryList' });
     },
-    *searchKeyword({ payload: keyword }, { select, call, put }) {
-
+    *setComponentStatus({ payload: { setStatus } }, { select, call, put }) {
+      const { currItems } = yield select(state => state.deskcomponentconfig);
+      try {
+        yield call(enabledesktopcomponent, {
+          dscomponetid: currItems[0].dscomponetid,
+          status: setStatus
+        });
+        message.success(`${['停用', '启用'][setStatus]}成功`);
+        yield put({ type: 'queryList' });
+      } catch (e) {
+        console.error(e.message);
+        message.error(e.message);
+      }
     },
     *save({ payload: submitData }, { select, call, put }) {
-      console.log(submitData)
-      try {
-        yield call(deskcomponentsave, submitData);
-      } catch (e) {
+      const params = {
+        ...submitData,
+        comwidth: parseInt(submitData.comwidth)
+      };
 
+      try {
+        yield call(deskcomponentsave, params);
+        message.success(params.dscomponetid ? '修改成功' : '新增成功');
+        yield put({ type: 'putState', payload: { showModals: '' } });
+        yield put({ type: 'queryList' });
+      } catch (e) {
+        console.error(e.message);
+        message.error(e.message);
       }
     }
   },
@@ -127,11 +135,12 @@ export default {
     },
     resetState() {
       return {
-        menus: [],
-        protocol: [],
-        queries: {},
+        protocol: columns,
+        queries: {
+          comname: '',
+          status: 1
+        },
         list: [],
-        total: 0,
         currItems: [],
         showModals: ''
       };

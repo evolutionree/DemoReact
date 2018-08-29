@@ -172,8 +172,8 @@ const appRoutes = [
   { path: 'passwordstrategy', comp: PasswordStrategy, model: require('./models/passwordstrategy') },
   { path: 'transferscheme', comp: TransferScheme, model: require('./models/transferscheme') },
   { path: 'qrcodeentrance', comp: QRCodeEntrance, model: require('./models/qrcodeentrance') },
-  { path: 'config-desk', comp: DeskConfig, model: require('./models/deskConfig') },
-  { path: 'config-deskcomponent', comp: DeskComponentConfig, model: require('./models/deskComponentConfig') },
+  { path: 'deskconfig', comp: DeskConfig, model: require('./models/deskConfig') },
+  { path: 'deskcomponentconfig', comp: DeskComponentConfig, model: require('./models/deskComponentConfig') },
   { path: 'nopermission', comp: NoPermission },
   { path: '*', comp: NoFoundPage }
 ];

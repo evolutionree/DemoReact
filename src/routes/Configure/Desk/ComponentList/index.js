@@ -3,15 +3,12 @@
  */
 import React from 'react';
 import { connect } from 'dva';
-import { Checkbox, Select, Button, Table } from 'antd';
+import { Select, Button, Table } from 'antd';
 import Toolbar from '../../../../components/Toolbar';
 import Page from '../../../../components/Page';
 import Search from '../../../../components/Search';
 import FormModal from './FormModal';
-import Styles from './index.less';
-import _ from 'lodash';
 
-const CheckboxGroup = Checkbox.Group;
 const Option = Select.Option;
 
 function ComponentList({
@@ -19,22 +16,18 @@ function ComponentList({
                        protocol,
                        queries,
                        list,
-                       total,
                        currItems
                      }) {
   function searchKeyword(val) {
-    dispatch({ type: 'deskcomponentconfig/search', payload: { searchName: val } });
+    dispatch({ type: 'deskcomponentconfig/search', payload: { queries: { ...queries, comname: val } } });
   }
 
   function selectItems(items) {
     dispatch({ type: 'deskcomponentconfig/currItems', payload: items });
   }
 
-  function handleTableChange(pagination) {
-    dispatch({ type: 'deskcomponentconfig/search', payload: {
-      pageIndex: pagination.current,
-      pageSize: pagination.pageSize
-    } });
+  function changeStatus(status) {
+    dispatch({ type: 'deskcomponentconfig/search', payload: { queries: { ...queries, status } } });
   }
 
   function add() {
@@ -45,11 +38,15 @@ function ComponentList({
     dispatch({ type: 'deskcomponentconfig/showModals', payload: 'edit' });
   }
 
-  function del() {
-
+  function enableComponent() {
+    dispatch({ type: 'deskcomponentconfig/setComponentStatus', payload: { setStatus: 1 } });
   }
 
-  const { pageIndex, pageSize, searchName } = queries;
+  function disableComponent() {
+    dispatch({ type: 'deskcomponentconfig/setComponentStatus', payload: { setStatus: 0 } });
+  }
+
+  const { comname, status } = queries;
 
   return (
     <Page title="工作台组件">
@@ -57,34 +54,33 @@ function ComponentList({
         selectedCount={currItems.length}
         actions={[
           { label: '编辑', handler: edit, single: true },
-          { label: '停用', handler: del, single: true,
-            show: () => currItems[0].recstatus === 1 },
-          { label: '启用', handler: del, single: true,
-            show: () => currItems[0].recstatus === 0 }
+          { label: '停用', handler: disableComponent, single: true,
+            show: () => currItems[0].status === 1 },
+          { label: '启用', handler: enableComponent, single: true,
+            show: () => currItems[0].status === 0 }
         ]}
       >
+        <Select value={status + ''} onChange={changeStatus}>
+          <Option value="1">启用</Option>
+          <Option value="0">停用</Option>
+        </Select>
         <Button onClick={add}>新增</Button>
         <Toolbar.Right>
           <Search
             placeholder="请输入关键字"
-            value={searchName}
+            value={comname}
             onSearch={val => searchKeyword(val)}
           >
             搜索
           </Search>
         </Toolbar.Right>
       </Toolbar>
-      <Table rowKey="recid"
+      <Table rowKey="dscomponetid"
              columns={protocol}
              dataSource={list}
-             pagination={{
-               total,
-               pageSize: pageSize,
-               current: pageIndex
-             }}
-             onChange={handleTableChange}
+             pagination={true}
              rowSelection={{
-               selectedRowKeys: currItems.map(item => item.recid),
+               selectedRowKeys: currItems.map(item => item.dscomponetid),
                onChange: (keys, items) => selectItems(items)
              }} />
       <FormModal />

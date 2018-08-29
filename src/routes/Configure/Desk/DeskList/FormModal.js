@@ -3,7 +3,7 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Modal, Form, Input, Select, Radio, Checkbox, InputNumber, message } from 'antd';
+import { Modal, Form, Input, Select } from 'antd';
 
 const { TextArea } = Input;
 
@@ -45,13 +45,10 @@ class FormModal extends Component {
     const { form, editingRecord } = this.props;
     form.validateFields((err, values) => {
       if (err) return;
-
-      // this.props.confirm({
-      //   resetflag: 1,
-      //   ...values,
-      //   expireflag: undefined,
-      //   flowid: editingRecord ? editingRecord.flowid : undefined
-      // });
+      this.props.confirm({
+        ...editingRecord,
+        ...values
+      });
     });
   };
 
@@ -68,7 +65,7 @@ class FormModal extends Component {
       >
         <Form>
           <FormItem label="工作台名称">
-            {getFieldDecorator('name', {
+            {getFieldDecorator('deskptopname ', {
               initialValue: '',
               rules: [{ required: true, message: '请输入工作台名称' }]
             })(
@@ -76,7 +73,7 @@ class FormModal extends Component {
             )}
           </FormItem>
           <FormItem label="说明">
-            {getFieldDecorator('remark', {
+            {getFieldDecorator('description ', {
               rules: [{ required: true, message: '请输入说明' }]
             })(
               <TextArea placeholder="请输入说明" />
@@ -91,15 +88,6 @@ class FormModal extends Component {
 export default connect(
   state => {
     const { showModals, currItems, modalPending } = state.deskconfig;
-    // const data = [{
-    //   entityid: '72d518b4-12f1-4ed7-a4ee-e9be658aa567',
-    //   jilian: true,
-    //   same: true
-    // }, {
-    //   entityid: '1',
-    //   jilian: true,
-    //   same: true
-    // }];
     return {
       visible: /add|edit/.test(showModals),
       editingRecord: /edit/.test(showModals) ? currItems[0] : undefined,

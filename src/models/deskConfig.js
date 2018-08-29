@@ -2,17 +2,20 @@
  * Created by 0291 on 2018/5/21.
  */
 import { message } from 'antd';
-import { getdesklist } from '../services/deskConfig';
+import { getdesktops, enabledesktop, savedesktop } from '../services/deskConfig';
 
 const columns = [{
   title: '工作台名称',
-  dataIndex: 'name'
+  dataIndex: 'desktopname'
 }, {
   title: '工作台说明',
-  dataIndex: 'explain'
+  dataIndex: 'description'
 }, {
   title: '状态',
-  dataIndex: 'status'
+  dataIndex: 'status',
+  render: (text) => {
+    return ['停用', '启用'][text];
+  }
 }, {
   title: '已绑定对象',
   dataIndex: 'object'
@@ -24,30 +27,22 @@ const columns = [{
   dataIndex: 'modifytime'
 }];
 
-const data = [];
-for (let i = 0; i < 46; i++) {
-  data.push({
-    recid: i,
-    name: `Edward King ${i}`,
-    age: 32,
-    address: `London, Park Lane no. ${i}`
-  });
-}
-
 export default {
   namespace: 'deskconfig',
   state: {
     protocol: columns,
-    queries: {},
-    list: data,
-    total: 0,
+    queries: {
+      desktopname: '',
+      status: 1
+    },
+    list: [],
     currItems: [],
     showModals: ''
   },
   subscriptions: {
     setup({ dispatch, history }) {
       return history.listen(location => {
-        if (location.pathname === '/config-desk') {
+        if (location.pathname === '/deskconfig') {
           dispatch({ type: 'init' });
         } else {
           dispatch({ type: 'resetState' });
@@ -60,8 +55,9 @@ export default {
       yield put({ type: 'queryList' });
     },
     *queryList(action, { put, call, select }) {
+      const { queries: { desktopname, status } } = yield select(state => state.deskconfig);
       try {
-        const { data } = yield call(getdesklist);
+        const { data } = yield call(getdesktops, { desktopname, status: parseInt(status) });
         yield put({
           type: 'putState',
           payload: {
@@ -73,11 +69,35 @@ export default {
         message.error(e.message || '获取列表数据失败');
       }
     },
-    *searchKeyword({ payload: keyword }, { select, call, put }) {
-
+    *search({ payload }, { select, call, put }) {
+      yield put({ type: 'putState', payload: payload });
+      yield put({ type: 'queryList' });
+    },
+    *setDeskStatus({ payload: { setStatus } }, { select, call, put }) {
+      const { currItems } = yield select(state => state.deskconfig);
+      try {
+        yield call(enabledesktop, {
+          desktopid: currItems[0].desktopid,
+          status: setStatus
+        });
+        message.success(`${['停用', '启用'][setStatus]}成功`);
+        yield put({ type: 'queryList' });
+      } catch (e) {
+        console.error(e.message);
+        message.error(e.message);
+      }
     },
     *save({ payload: submitData }, { select, call, put }) {
-
+      const params = submitData;
+      try {
+        yield call(savedesktop, params);
+        message.success(params.desktopid ? '修改成功' : '新增成功');
+        yield put({ type: 'putState', payload: { showModals: '' } });
+        yield put({ type: 'queryList' });
+      } catch (e) {
+        console.error(e.message);
+        message.error(e.message);
+      }
     }
   },
   reducers: {
@@ -86,6 +106,9 @@ export default {
         ...state,
         ...assignment
       };
+    },
+    queries(state, { payload: queries }) {
+      return { ...state, queries };
     },
     currItems(state, { payload: currItems }) {
       return {
@@ -103,9 +126,11 @@ export default {
     resetState() {
       return {
         protocol: columns,
-        queries: {},
-        list: data,
-        total: 0,
+        queries: {
+          comname: '',
+          status: 1
+        },
+        list: [],
         currItems: [],
         showModals: ''
       };
