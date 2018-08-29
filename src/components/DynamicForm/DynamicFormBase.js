@@ -6,7 +6,7 @@ import DynamicField from './DynamicField';
 import { getEntcommDetail } from '../../services/entcomm';
 
 const FormItem = Form.Item;
-const onlylineField = [2, 15, 22, 23, 24];
+const onlylineField = [2, 5, 15, 22, 23, 24];
 
 class CustomFormItem extends FormItem {
   renderValidateWrapper(c1, c2, c3) {
@@ -304,7 +304,7 @@ class DynamicFormBase extends Component {
     }
 
     let colNum = 24;
-    if (onlylineField.indexOf(field.controltype) > -1) {
+    if (onlylineField.indexOf(field.controltype) > -1 || (field.controltype === 25 && field.fieldconfig.multiple === 1)) {
       colNum = 24;
     } else if (this.props.cols) {
       colNum = this.props.cols;

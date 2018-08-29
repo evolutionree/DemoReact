@@ -6,7 +6,7 @@ import DynamicFieldView from './DynamicFieldView';
 import styles from './styles.less';
 
 const FormItem = Form.Item;
-const onlylineField = [2, 15, 22, 23, 24];
+const onlylineField = [2, 5, 15, 22, 23, 24];
 
 class DynamicFormView extends React.Component {
   static propTypes = {
@@ -52,7 +52,7 @@ class DynamicFormView extends React.Component {
       const layout = onlylineField.indexOf(field.controltype) > -1 ? {} : this.getFormItemLayout(field.fieldname); //表格字段 永远不考虑横向显示
 
       let colNum = 24;
-      if (onlylineField.indexOf(field.controltype) > -1) {
+      if (onlylineField.indexOf(field.controltype) > -1 || (field.controltype === 25 && field.fieldconfig.multiple === 1)) {
         colNum = 24;
       } else if (cols) {
         colNum = cols;

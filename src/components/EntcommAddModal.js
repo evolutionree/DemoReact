@@ -165,7 +165,7 @@ class EntcommAddModal extends Component {
       }),
       fieldjson: JSON.stringify(fieldjson),
       typeid: this.state.selectedEntityType,
-      title: `新增${this.props.entityName}`,
+      title: `新增${this.props.modalTitle && this.props.modalTitle.replace(/新增/, '') || this.props.entityName}`,
       entityId: this.props.entityId
     };
     this.setState({
