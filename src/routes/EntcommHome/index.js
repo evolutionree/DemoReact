@@ -6,6 +6,7 @@ import { HomePageMainFieldsView } from '../../components/DynamicForm';
 import StageBar from './StageBar2';
 import connectPermission from '../../models/connectPermission';
 import { Icon } from "antd";
+import { hashHistory } from 'react-router';
 
 function EntcommHome({
   checkFunc,
@@ -16,7 +17,9 @@ function EntcommHome({
   children,
   location,
   mainFieldsConfig,
-  toggleFollow
+  toggleFollow,
+                       firstLoad,
+                       stopAutoLink
 }) {
   const entityId = params.entityId;
   const recordId = params.recordId;
@@ -53,6 +56,21 @@ function EntcommHome({
     </span>
   );
 
+    const routhPath = relTabs.map(item => {
+      if (item.entitytaburl) {
+        return `/entcomm/${entityId}/${recordId}/${item.entitytaburl}`;
+      } else {
+        return `/entcomm/${entityId}/${recordId}/rel/${item.relid}/${item.relentityid}`;
+      }
+    });
+
+    if (firstLoad && routhPath.length > 0) {
+      if (location.pathname !== routhPath[0]) {
+        hashHistory.push(routhPath[0]);
+        stopAutoLink();
+      }
+    }
+
   return (
     <Page
       title={title}
@@ -78,6 +96,9 @@ export default connect(
     return {
       toggleFollow() {
         dispatch({ type: 'entcommHome/toggleFollow' });
+      },
+      stopAutoLink() {
+        dispatch({ type: 'entcommHome/putState', payload: { firstLoad: false } });
       }
     };
   }
