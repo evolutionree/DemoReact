@@ -42,6 +42,7 @@ class EntcommAddModal extends Component {
       protocolFields: [], // 协议字段
       formData: props.initFormData || {}, // 表单数据
       confirmLoading: false,
+      storageLoading: false,
       dataModel: undefined,
       key: new Date().getTime(), // 每次打开弹窗时，都重新渲染
       commonid: ''
@@ -91,6 +92,7 @@ class EntcommAddModal extends Component {
       protocolFields: [], // 协议字段
       formData: {}, // 表单数据
       confirmLoading: false,
+      storageLoading: false,
       dataModel: undefined,
       key: new Date().getTime(),
       commonid: ''
@@ -163,15 +165,18 @@ class EntcommAddModal extends Component {
       }),
       fieldjson: JSON.stringify(fieldjson),
       typeid: this.state.selectedEntityType,
-      title: this.props.entityName,
+      title: `新增${this.props.entityName}`,
       entityId: this.props.entityId
     };
+    this.setState({
+      storageLoading: true
+    })
     temporarysave(params).then(result => {
-      this.setState({ confirmLoading: false });
+      this.setState({ storageLoading: false });
       message.success('暂存成功');
       this.props.done(result);
     }).catch(e => {
-      this.setState({ confirmLoading: false });
+      this.setState({ storageLoading: false });
       console.error(e);
       message.error(e.message || '暂存失败');
     });
@@ -231,7 +236,7 @@ class EntcommAddModal extends Component {
         };
       } else {
         dataModel = {
-          cacheid: this.props.cacheId,
+          cacheid: this.props.cacheId, //暂存的表单数据  重新提交 需要传cacheid
           typeid: this.state.selectedEntityType,
           flowid: this.props.flow.flowid,
           relentityid: this.props.refEntity,
@@ -318,7 +323,8 @@ class EntcommAddModal extends Component {
       selectedEntityType,
       protocolFields,
       formData,
-      confirmLoading
+      confirmLoading,
+      storageLoading
     } = this.state;
 
     const hasTable = protocolFields.some(field => {
@@ -356,15 +362,12 @@ class EntcommAddModal extends Component {
           visible={showFormModal}
           onCancel={this.onFormModalCancel}
           onOk={this.onFormModalConfirm}
-          confirmLoading={confirmLoading}
           width={document.body.clientWidth > 1400 ? 1200 : 800}
           wrapClassName="DynamicFormModal"
           footer={[
             <Button key="back" type="default" onClick={this.onFormModalCancel}>取消</Button>,
-            <Button key="storage" loading={confirmLoading} onClick={this.onFormModalStorage}>暂存</Button>,
-            <Button key="submit" loading={confirmLoading} onClick={this.onFormModalConfirm}>
-              提交
-            </Button>
+            <Button key="storage" loading={storageLoading} onClick={this.onFormModalStorage}>暂存</Button>,
+            <Button key="submit" loading={confirmLoading} onClick={this.onFormModalConfirm}>提交</Button>
           ]}
         >
           <DynamicFormAdd

@@ -34,7 +34,7 @@ class SelectDepartment extends Component {
       designateFilterNodes
     } = this.props;
     return (
-      <div style={{ height: 32, overflow: 'hidden' }}>
+      <div>
         <DepartmentSelect
           value={value ? value.split(',') : []}
           onChange={val => {

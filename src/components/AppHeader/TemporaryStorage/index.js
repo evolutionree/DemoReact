@@ -7,6 +7,7 @@ import classnames from 'classnames';
 import styles from './index.less';
 import { gettemporarylist, deletetemporarylist } from '../../../services/structure';
 import { queryWorkflow } from '../../../services/entcomm';
+import { queryEntityDetail } from '../../../services/entity';
 import EntcommAddModal from '../../../components/EntcommAddModal';
 
 class TemporaryStorage extends Component {
@@ -17,7 +18,7 @@ class TemporaryStorage extends Component {
       list: [],
       showModals: '',
       addModalInfo: {},
-      entityTypes: null
+      workFlow: null
     };
   }
   componentWillReceiveProps(nextProps) {
@@ -76,11 +77,28 @@ class TemporaryStorage extends Component {
     });
   }
 
+  queryWorkFlow = (entityid) => {
+    queryEntityDetail(entityid).then(result => {
+      const entityType = result.data.entityproinfo[0].modeltype;
+      if (entityType === 2 || entityType === 3) { //TODO: 只有简单实体和动态实体才需要判断实体是否关联审批流，然后提交完表单后 走审批流
+        queryWorkflow(entityid).then(flowResult => {
+          this.setState({
+            workFlow: flowResult.data
+          });
+        });
+      }
+    }).catch(e => {
+      console.error(e.message);
+    });
+  }
+
   openAddModal = (item) => {
     this.setState({
       showModals: 'add',
       addModalInfo: item,
       panelVisible: false
+    }, () => {
+      this.queryWorkFlow(item.entityid);
     });
   }
 
@@ -132,7 +150,7 @@ class TemporaryStorage extends Component {
   };
 
   render() {
-    const { list, showModals, addModalInfo } = this.state;
+    const { list, showModals, addModalInfo, workFlow } = this.state;
     return (
       <div>
         <div id="TemporaryStorageWrap">
@@ -173,8 +191,9 @@ class TemporaryStorage extends Component {
           visible={/add/.test(showModals)}
           entityId={addModalInfo.entityid}
           entityName={addModalInfo.entityname}
-          entityTypeId={addModalInfo.typeid}
+          entityTypeId={addModalInfo.typeid} //TODO: 暂存数据 已经确定了实体类型
           cacheId={addModalInfo.cacheid}
+          flow={workFlow}
           initFormData={addModalInfo.datajson && addModalInfo.datajson.expandfields}
           extradata={addModalInfo.datajson && addModalInfo.datajson.extraData}
           processProtocol={this.processProtocol}
