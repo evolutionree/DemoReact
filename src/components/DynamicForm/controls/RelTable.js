@@ -496,6 +496,7 @@ class RelTable extends Component {
 
   componentDidUpdate() {
     this.setAlignTableWidthAndHeight();
+    setTimeout(this.setAlignTableWidthAndHeight(), 500);
   }
 
   componentWillUnmount() {
@@ -503,10 +504,10 @@ class RelTable extends Component {
   }
 
   setAlignTableWidthAndHeight = () => {
-    //列表的固定表头的列
-    const fixedTopHeader = this.fixTopTableRef.children[0].children[0].children;
     //列表的原始表头的列
     const realHeader = this.relTableRef.children[0].children[0].children;
+    //列表的固定表头的列
+    const fixedTopHeader = this.fixTopTableRef.children[0].children[0].children;
 
     this.fixTopTableRef.style.width = this.relTableRef.getBoundingClientRect().width + 'px';
 
@@ -539,6 +540,19 @@ class RelTable extends Component {
       }
     }
     this.fixLeftWrapRef.style.width = fixedWidth + 'px';
+
+    //列表的原始表头的行
+    const realBody = this.fixLeftTableRef;
+    //列表的左固定表的行
+    // const fixedLeftBody = this.relTableRef;
+    // for (let i = 0; i < realHeader.length; i++) {
+    //   let realHeader_thWidth = realHeader[i].getBoundingClientRect().width;
+    //   let fixedTopHeader_thWidth = fixedTopHeader[i].getBoundingClientRect().width;
+    //   if (realHeader_thWidth !== fixedTopHeader_thWidth) {
+    //     fixedTopHeader[i].style.width = realHeader_thWidth + 'px';
+    //     fixedTopHeader[i].style.display = 'inline-block';
+    //   }
+    // }
 
     let scrollHeight = 0;
     if (horizontal) {
