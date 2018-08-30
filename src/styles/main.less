@@ -1,5 +1,6 @@
 @import './_variables';
 
+
 body {
   background-color: #e7ecef;
 }
@@ -28,30 +29,9 @@ body {
 :global {
   .uke {
     .DynamicFormModal{
-      //@media screen and (min-height: 800px) {
-      //  .ant-modal-body{
-      //    max-height: 450px;
-      //    overflow: auto;
-      //  }
-      //}
-      //
-      //@media screen and (min-height: 900px) {
-      //  .ant-modal-body{
-      //    max-height: 600px;
-      //    overflow: auto;
-      //  }
-      //}
-      //
-      //@media screen and (min-height: 1200px) {
-      //  .ant-modal-body{
-      //    max-height: 700px;
-      //    overflow: auto;
-      //  }
-      //}
-
         overflow: hidden;
         .ant-modal-body{
-          max-height: 70vh;
+          max-height: @ant-Modal-height;
           overflow: auto;
         }
     }
@@ -177,7 +157,7 @@ body {
     }
 
     .ant-modal {
-      padding-bottom: 160px;
+      top: @ant-Modal-top
     }
     .ant-modal-header {
       padding-left: 22px;

@@ -124,6 +124,16 @@ class EntcommAddModal extends Component {
     }
   };
 
+  getRelObjectConfig = (fields) => { //TODO: 获取到所有引用对象的字段
+    let RelObjectConfig = [];
+    fields.map(item => {
+      if (item.controltype === 31) {  //引用对象
+        RelObjectConfig.push(item);
+      }
+    });
+    return RelObjectConfig;
+  }
+
   onFormModalStorage = () => {
     const formValue = this.form.formInst.getFieldsValue();
     let fieldjson = {};
@@ -157,6 +167,15 @@ class EntcommAddModal extends Component {
         });
       }
     });
+
+    const relObjectFields = this.getRelObjectConfig(this.form.props.fields);
+    relObjectFields.map(item => { //TODO: 引用对象 新增的时候  表单不会传值给后端  但是暂存的时候 需要传
+      const relObjectRef = this.form.formRef.getFieldComponentInstance(item.fieldname);
+      if (relObjectRef && relObjectRef.getValue) {
+        formValue[`${item.fieldname}_name`] = relObjectRef.getValue();
+      }
+    });
+
     const params = {
       cacheid: this.props.cacheId || uuid.v4(),
       datajson: JSON.stringify({

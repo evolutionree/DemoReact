@@ -1,6 +1,4 @@
 import React from 'react';
-import { createNormalInput } from './utils';
-
 
 class RelObject extends React.Component {
   static propTypes = {
@@ -27,10 +25,17 @@ class RelObject extends React.Component {
     });
   }
 
+  getValue = () => {
+    const { value_name } = this.props;
+    const showTitle = value_name || this.state.title;
+    return showTitle;
+  }
+
   render() {
     const { value_name } = this.props; //编辑页 数据源不允许修改  直接取value_name值
+    const showTitle = value_name || this.state.title;
     return (
-      <div className="ant-input" title={value_name || this.state.title} style={{
+      <div className="ant-input" title={showTitle} style={{
         cursor: 'not-allowed',
         backgroundColor: 'rgb(247, 247, 247)',
         color: 'rgba(0, 0, 0, 0.5)',
@@ -38,7 +43,7 @@ class RelObject extends React.Component {
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'ellipsis'
-      }}>{value_name || this.state.title}</div>
+      }}>{showTitle}</div>
     );
   }
 }
