@@ -316,7 +316,7 @@ class DynamicFormBase extends Component {
     return (
       <Col span={colNum}
            key={field.fieldname}
-           style={{ padding: '0 10px' }}>
+           style={{ padding: colNum === 24 ? '0px 10px 0 100px' : '0 10px' }}>
         {this.renderFieldControlWrapper(field, colNum)(fieldControl)}
       </Col>
     );

@@ -28,26 +28,32 @@ body {
 :global {
   .uke {
     .DynamicFormModal{
-      @media screen and (min-height: 800px) {
-        .ant-modal-body{
-          max-height: 450px;
-          overflow: auto;
-        }
-      }
+      //@media screen and (min-height: 800px) {
+      //  .ant-modal-body{
+      //    max-height: 450px;
+      //    overflow: auto;
+      //  }
+      //}
+      //
+      //@media screen and (min-height: 900px) {
+      //  .ant-modal-body{
+      //    max-height: 600px;
+      //    overflow: auto;
+      //  }
+      //}
+      //
+      //@media screen and (min-height: 1200px) {
+      //  .ant-modal-body{
+      //    max-height: 700px;
+      //    overflow: auto;
+      //  }
+      //}
 
-      @media screen and (min-height: 900px) {
+        overflow: hidden;
         .ant-modal-body{
-          max-height: 600px;
+          max-height: 70vh;
           overflow: auto;
         }
-      }
-
-      @media screen and (min-height: 1200px) {
-        .ant-modal-body{
-          max-height: 700px;
-          overflow: auto;
-        }
-      }
     }
 
     .ant-form-item { //保持表单 在有校验不通过的时候  表单能对齐

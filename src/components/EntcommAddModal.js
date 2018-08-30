@@ -166,7 +166,9 @@ class EntcommAddModal extends Component {
       fieldjson: JSON.stringify(fieldjson),
       typeid: this.state.selectedEntityType,
       title: `新增${this.props.modalTitle && this.props.modalTitle.replace(/新增/, '') || this.props.entityName}`,
-      entityId: this.props.entityId
+      entityId: this.props.entityId,
+      recrelateid: this.props.refRecord,
+      relateentityid: this.props.refEntity
     };
     this.setState({
       storageLoading: true
@@ -174,7 +176,7 @@ class EntcommAddModal extends Component {
     temporarysave(params).then(result => {
       this.setState({ storageLoading: false });
       message.success('暂存成功');
-      this.props.done(result);
+      this.props.done(result, 'storage');
     }).catch(e => {
       this.setState({ storageLoading: false });
       console.error(e);
@@ -191,7 +193,6 @@ class EntcommAddModal extends Component {
       if (err) {
         return message.error('请检查表单');
       }
-
       const params = {
         cacheid: this.props.cacheId,
         typeid: this.state.selectedEntityType,

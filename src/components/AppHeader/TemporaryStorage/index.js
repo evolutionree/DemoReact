@@ -108,10 +108,13 @@ class TemporaryStorage extends Component {
     });
   }
 
-  onDone = () => {
+  onDone = (result, type) => {
     this.setState({
       showModals: ''
     });
+    if (type !== 'storage') { //非暂存则  刷新整个页面
+      window.location.reload(true);
+    };
   }
 
   deleteStorage = (cacheid, e) => {
@@ -191,6 +194,8 @@ class TemporaryStorage extends Component {
           visible={/add/.test(showModals)}
           entityId={addModalInfo.entityid}
           entityName={addModalInfo.entityname}
+          refRecord={addModalInfo.recrelateid}
+          refEntity={addModalInfo.relateentityid}
           entityTypeId={addModalInfo.typeid} //TODO: 暂存数据 已经确定了实体类型
           cacheId={addModalInfo.cacheid}
           flow={workFlow}
