@@ -270,7 +270,7 @@ class DataSourceSelectModal extends Component {
             搜索
           </Search>
           {
-            allowadd && <Button onClick={this.addDataSource}>新增</Button>
+            allowadd ? <Button onClick={this.addDataSource}>新增</Button> : null
           }
         </Toolbar>
         <Spin spinning={this.state.loading}>
