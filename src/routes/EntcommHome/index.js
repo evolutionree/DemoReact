@@ -66,7 +66,9 @@ function EntcommHome({
 
     if (firstLoad && routhPath.length > 0) {
       if (location.pathname !== routhPath[0]) {
+        stopAutoLink();
         hashHistory.push(routhPath[0]);
+      } else { //TODO: 第一个页签  跟 路由配置文件对应的首个路由一致  则也需设置 firstLoad： false
         stopAutoLink();
       }
     }
