@@ -495,8 +495,7 @@ class RelTable extends Component {
   };
 
   componentDidUpdate() {
-    this.setAlignTableWidthAndHeight();
-    setTimeout(this.setAlignTableWidthAndHeight(), 500);
+    setTimeout(this.setAlignTableWidthAndHeight(), 300);
   }
 
   componentWillUnmount() {
@@ -504,20 +503,23 @@ class RelTable extends Component {
   }
 
   setAlignTableWidthAndHeight = () => {
+    console.log('setAlignTableWidthAndHeight')
     //列表的原始表头的列
     const realHeader = this.relTableRef.children[0].children[0].children;
     //列表的固定表头的列
     const fixedTopHeader = this.fixTopTableRef.children[0].children[0].children;
 
     this.fixTopTableRef.style.width = this.relTableRef.getBoundingClientRect().width + 'px';
-
     //顶部固定表格的列宽 需与真实表格保持一致
     for (let i = 0; i < realHeader.length; i++) {
       let realHeader_thWidth = realHeader[i].getBoundingClientRect().width;
       let fixedTopHeader_thWidth = fixedTopHeader[i].getBoundingClientRect().width;
-      if (realHeader_thWidth !== fixedTopHeader_thWidth) {
+
+      let realHeader_thHeight = realHeader[i].getBoundingClientRect().height;
+      let fixedTopHeader_thHeight = fixedTopHeader[i].getBoundingClientRect().height;
+      if (realHeader_thWidth !== fixedTopHeader_thWidth || realHeader_thHeight !== fixedTopHeader_thHeight) {
         fixedTopHeader[i].style.width = realHeader_thWidth + 'px';
-        fixedTopHeader[i].style.display = 'inline-block';
+        fixedTopHeader[i].style.height = realHeader_thHeight + 'px';
       }
     }
 
@@ -542,17 +544,16 @@ class RelTable extends Component {
     this.fixLeftWrapRef.style.width = fixedWidth + 'px';
 
     //列表的原始表头的行
-    const realBody = this.fixLeftTableRef;
+    const realBody = this.relTableRef.children;
     //列表的左固定表的行
-    // const fixedLeftBody = this.relTableRef;
-    // for (let i = 0; i < realHeader.length; i++) {
-    //   let realHeader_thWidth = realHeader[i].getBoundingClientRect().width;
-    //   let fixedTopHeader_thWidth = fixedTopHeader[i].getBoundingClientRect().width;
-    //   if (realHeader_thWidth !== fixedTopHeader_thWidth) {
-    //     fixedTopHeader[i].style.width = realHeader_thWidth + 'px';
-    //     fixedTopHeader[i].style.display = 'inline-block';
-    //   }
-    // }
+    const fixedLeftBody = this.fixLeftTableRef.children;
+    for (let i = 0; i < realBody.length; i++) {
+      let realBody_trHeight = realBody[i].getBoundingClientRect().height;
+      let fixedLeftBody_trHeight = fixedLeftBody[i].getBoundingClientRect().height;
+      if (realBody_trHeight !== fixedLeftBody_trHeight) {
+        fixedLeftBody[i].children[0].style.height = realBody_trHeight + 'px';
+      }
+    }
 
     let scrollHeight = 0;
     if (horizontal) {
@@ -610,7 +611,7 @@ class RelTable extends Component {
             <Button onClick={this.delRow} type="danger">删除</Button>
           </div>}
           <div className={styles.tableContent}>
-            <div className={styles.fixTopWrap} ref={ref => this.fixTopWrapRef = ref}>
+            <div className={classnames(styles.fixTopWrap, { [styles.fixTopWrapHidden]: this.parseValue().length === 0 })} ref={ref => this.fixTopWrapRef = ref}>
               <div className={classnames([styles.table, styles.fixTopTable])} ref={ref => this.fixTopTableRef = ref}>
                 {this.renderTableHeader()}
               </div>
