@@ -49,7 +49,7 @@ class DynamicFormView extends React.Component {
     const { value, entityId, entityTypeId, cols } = this.props;
     return fields.filter(field => field.controltype !== 30).map(field => {
       const { fieldname, displayname, controltype, fieldconfig } = field;
-      const layout = onlylineField.indexOf(field.controltype) > -1 ? {} : this.getFormItemLayout(field.fieldname); //表格字段 永远不考虑横向显示
+      const layout = this.getFormItemLayout(field.fieldname);
 
       let colNum = 24;
       if (onlylineField.indexOf(field.controltype) > -1 || (field.controltype === 25 && field.fieldconfig.multiple === 1)) {
@@ -60,9 +60,19 @@ class DynamicFormView extends React.Component {
         colNum = document.body.clientWidth > 1400 ? 8 : 12;
       }
 
+      let className = '';
+      if (this.getFormLayout() === 'horizontal') { //TODO： 如果表单单元项 lable 和 formItem是横向布局， 有的单元项会占一行，导致lable的宽跟其他表单项对不齐  so...
+        if (document.body.clientWidth > 1400) {
+          className = colNum === 24 ? 'threeCol_onlylineFormItem' : '';
+        } else {
+          className = colNum === 24 ? 'twoCol_onlylineFormItem' : '';
+        }
+      }
+
       return (
         <Col span={colNum}
              key={field.fieldname}
+             className={className}
              style={(fieldconfig.isVisible !== 1 || field.fieldconfig.isVisibleJS === 0) ? { display: 'none' } : { padding: '0 10px' }} >
           <FormItem
             key={fieldname}

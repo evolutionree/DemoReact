@@ -313,9 +313,20 @@ class DynamicFormBase extends Component {
     }
 
     const fieldControl = this.renderFieldControl(field);
+
+    let className = '';
+    if (this.getFormLayout() === 'horizontal') { //TODO： 如果表单单元项 lable 和 formItem是横向布局， 有的单元项会占一行，导致lable的宽跟其他表单项对不齐  so...
+      if (document.body.clientWidth > 1400) {
+        className = colNum === 24 ? 'threeCol_onlylineFormItem' : '';
+      } else {
+        className = colNum === 24 ? 'twoCol_onlylineFormItem' : '';
+      }
+    }
+
     return (
       <Col span={colNum}
            key={field.fieldname}
+           className={className}
            style={{ padding: '0 10px' }}>
         {this.renderFieldControlWrapper(field, colNum)(fieldControl)}
       </Col>
@@ -330,7 +341,7 @@ class DynamicFormBase extends Component {
       'dynamic-form-field-' + field.controltype
     ]);
 
-    const layout = colNum === 24 ? {} : this.getFormItemLayout(field.fieldname); //表格字段 永远不考虑横向显示
+    const layout = this.getFormItemLayout(field.fieldname);
     return children => (
       <WrapFormItem
         key={field.fieldname}
