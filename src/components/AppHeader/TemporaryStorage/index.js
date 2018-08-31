@@ -26,14 +26,17 @@ class TemporaryStorage extends Component {
   }
 
   componentDidMount() {
-
+    document.body.addEventListener('click', this.clickOutsideClose, false);
   }
 
   componentWillUnmount() {
-
+    document.body.removeEventListener('click', this.clickOutsideClose);
   }
 
   clickOutsideClose = (event) => {
+    if ($(event.target).closest('#TemporaryStorageWrap').length) {
+      return;
+    }
     this.setState({
       panelVisible: false
     });
