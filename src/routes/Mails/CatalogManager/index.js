@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import { Button, Collapse, Modal, Input, message } from 'antd';
+import { Button, Collapse, Modal, Input, message, Menu, Dropdown, Icon } from 'antd';
 import { connect } from 'dva';
 import classnames from 'classnames';
 import CatalogTree from './CatalogTree';
@@ -50,8 +50,24 @@ class CatalogManager extends Component {
     this.props.searchCatalog(val);
   };
 
+  mailMenuHandler({ key, domEvent }) {
+    this.props.changeBoxId(key);
+  }
+
+  renderMailText = () => {
+    let showName = '';
+    const mailBoxList = this.props.mailBoxList;
+    for (let i = 0; i < mailBoxList.length; i++) {
+      if (mailBoxList[i].recid === this.props.currentBoxId) {
+        showName = mailBoxList[i].accountid;
+        break;
+      }
+    };
+    return showName;
+  }
+
   render() {
-    const { openedCatalog, myCatalogData, deptCatalogData, userCatalogData, selectedCatalogNode, catSearchKey, putState } = this.props;
+    const { openedCatalog, myCatalogData, deptCatalogData, userCatalogData, selectedCatalogNode, catSearchKey, putState, currentBoxId } = this.props;
     const panelHeight = key => (openedCatalog === key ? 'calc(100% - 38px)' : '38px');
     const selected = selectedCatalogNode || {};
     const hasSubCat = selected.subcatalogs && selected.subcatalogs.length;
@@ -67,13 +83,25 @@ class CatalogManager extends Component {
       }
       this.props.transferCatalog();
     };
+    const menu = (
+      <Menu onClick={this.mailMenuHandler.bind(this)}>
+        {
+          this.props.mailBoxList && this.props.mailBoxList instanceof Array && this.props.mailBoxList.map((item, index) => {
+            return (
+              <Menu.Item key={item.recid}>{`${item.recname} <${item.accountid}>`}</Menu.Item>
+            );
+          })
+        }
+      </Menu>
+    );
     return (
-      <div style={{ height: '100%', minWidth: '330px' }}>
+      <div className={styles.CatelogManagerWrap}>
         <div style={{ padding: '10px' }}>
           <Button ghost onClick={this.props.addCatalog} disabled={!isMyCat || !isPersonalCat}>新增</Button>
           <Button ghost onClick={this.props.editCatalog} disabled={!isMyCat || !isPersonalSubCat}>编辑</Button>
           <Button ghost onClick={transCatalog} disabled={!isPersonalSubCat && !isCustSubCat && !isTempCat}>转移</Button>
           <Button ghost onClick={this.props.delCatalog} disabled={!isMyCat || !isPersonalSubCat}>删除</Button>
+          <Button ghost onClick={this.props.initMailCol} disabled={!isMyCat || !isTempCat}>归集</Button>
           <ImgIcon name="refresh" onClick={this.props.refreshCatalog} />
           {isMyCat && (isPersonalSubCat || isCustSubCat) && <ImgIcon name="arrow-down-bordered" onClick={this.onOrderDown} />}
           {isMyCat && (isPersonalSubCat || isCustSubCat) && <ImgIcon name="arrow-up-bordered" onClick={this.onOrderUp} />}
@@ -97,7 +125,11 @@ class CatalogManager extends Component {
           style={{ height: 'calc(100% - 86px)' }}
         >
           <Collapse.Panel
-            header={<div><ImgIcon name="user" /><span>{catTitle.my}</span></div>}
+            header={<div style={{ position: 'relative' }}><ImgIcon name="user" /><span onClick={e => e.stopPropagation()}>{
+                <Dropdown overlay={menu}>
+                  <div className={styles.boxMail}><span>{this.renderMailText()}</span> <Icon type="down" /></div>
+                </Dropdown>
+            }</span></div>}
             key="my"
             style={{ transition: 'all .2s', height: panelHeight('my') }}
           >
@@ -105,6 +137,7 @@ class CatalogManager extends Component {
               data={myCatalogData}
               selected={selected.recid}
               onSelect={(id, node) => this.props.selectCatalog(node, 'my')}
+              BoxId={currentBoxId}
             />
           </Collapse.Panel>
           <Collapse.Panel
@@ -116,7 +149,7 @@ class CatalogManager extends Component {
               isDeptTree
               data={deptCatalogData}
               onDataChange={this.onDeptCatalogDataChange}
-              selected={selected.recid}
+              selected={selected.uuid || selected.recid}  //同一下属不同邮箱下的数据的recid会一致  所以前端生成唯一key值uuid
               onSelect={(id, node) => this.props.selectCatalog(node, 'dept')}
             />
           </Collapse.Panel>
@@ -172,10 +205,14 @@ export default connect(
       orderCatalog(catalog, type) {
         dispatch({ type: 'mails/orderCatalog', payload: { catalog, type } });
       },
+      initMailCol() {
+        dispatch({ type: 'mails/initMailCol' });
+      },
       putState(assignment) {
         dispatch({ type: 'mails/putState', payload: assignment });
       },
       refreshCatalog() {
+        dispatch({ type: 'mails/reloadSyncMails__' });
         dispatch({ type: 'mails/reloadCatalogTree' });
       },
       searchCatalog(searchKey) {
@@ -183,6 +220,9 @@ export default connect(
       },
       transferCatalog() {
         dispatch({ type: 'mails/showModals', payload: 'transferCatalog' });
+      },
+      changeBoxId(boxId) {
+        dispatch({ type: 'mails/changeBoxId', payload: boxId });
       },
       dispatch
     };

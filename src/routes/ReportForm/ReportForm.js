@@ -340,6 +340,7 @@ class ReportForm extends React.Component {
     request('/api/ReportEngine/queryData', {
       method: 'post', body: JSON.stringify(_params)
     }).then((getData) => {
+      const currentComponent = _.find(components, componentsItem => componentsItem.datasourcename === item.instid);
       if (getData.data.series) { //可能echarts报表series定义会动态变化
         const newComponents = components instanceof Array && components.map(componentsItem => {
           if (componentsItem.datasourcename === item.instid) {
@@ -350,9 +351,15 @@ class ReportForm extends React.Component {
         this.setState({
           components: newComponents
         });
+      };
+
+      let chartData = getData.data.data;
+      if (currentComponent && currentComponent.ctrltype === 1 && currentComponent.commonextinfo.charttype === 4) { //饼图  过滤掉为0 的数据
+        const pieChartDefine = currentComponent.commonextinfo.series instanceof Array && currentComponent.commonextinfo.series[0];
+        chartData = pieChartDefine && chartData && chartData instanceof Array && chartData.filter(dataItem => dataItem[pieChartDefine.fieldname]) || [];
       }
       this.setState({
-        [item.instid]: getData.data.data,
+        [item.instid]: chartData,
         [item.instid + 'columns']: getData.data.columns,
         [item.instid + 'xseries']: getData.data.xseries, //散点图 的X轴坐标
         [item.instid + 'loading']: false
@@ -598,10 +605,12 @@ class ReportForm extends React.Component {
         );
       //查询组件
       case 3:
-        return <SearchBar model={item.filterextinfo.ctrls}
-                          onSearch={this.reportSearch.bind(this)}
-                          onChange={(serchValue) => { this.setState({ serchValue: serchValue, reload: false }); }}
-                          value={this.state.serchValue} />;
+        return item.visible === false ? null : <div className={styles.searchbarWrap}>
+          <SearchBar model={item.filterextinfo.ctrls}
+                     onSearch={this.reportSearch.bind(this)}
+                     onChange={(serchValue) => { this.setState({ serchValue: serchValue, reload: false }); }}
+                     value={this.state.serchValue} />
+        </div>
       //漏斗图
       case 4:
         let chartData = this.state[item.datasourcename] || [];

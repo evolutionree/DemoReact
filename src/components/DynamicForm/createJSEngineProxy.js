@@ -3,10 +3,11 @@ import * as _ from 'lodash';
 import { Modal } from 'antd';
 import { getAuthedHeaders } from '../../utils/request';
 import { queryEntityDetail } from '../../services/entity';
+import { getLocalAuthentication } from '../../services/authentication';
 
-function debugMsg(msg) {
+function debugMsg(type, msg) {
   Modal.info({
-    title: 'Debug',
+    title: type,
     content: msg,
     okText: 'OK'
   });
@@ -164,9 +165,9 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
 
     alert = (type, content) => {
       if (typeof content === 'object') {
-        debugMsg(JSON.stringify(content));
+        debugMsg(type, JSON.stringify(content));
       } else {
-        debugMsg(content);
+        debugMsg(type, content);
       }
     };
 
@@ -182,6 +183,16 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
         formValue[field.fieldname] = val;
       });
       return formValue;
+    };
+
+    getCurrentUserID = () => {
+      const { user } = getLocalAuthentication();
+      try {
+        const userId = JSON.parse(user).userNumber;
+        return userId + '';
+      } catch (e) {
+        return '';
+      }
     };
 
     getValue = fieldName => {
@@ -302,6 +313,14 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
         return instance.getTableHeader();
       }
     };
+
+    getTableFields = (fieldName) => {
+      if (this.getFieldControlType(fieldName) !== 24) return [];
+      const instance = this.getFieldComponentInstance(fieldName);
+      if (instance && instance.getFields) {
+        return instance.getFields();
+      }
+    }
 
     designateDataSource = (fieldName, ids) => {
       if (ids === undefined || ids === null) ids = '';
@@ -519,13 +538,17 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
 
     setFieldConfig = (fieldName, config) => {
       const field = this.getFieldByName(fieldName);
-      if (field) {
-        field.fieldconfig = {
-          ...field.fieldconfig,
-          ...config
-        };
-      }
-      this.setState({ fields: [...this.state.fields] });
+      const newFields = this.props.fields.map(item => {
+        const newItem = item;
+        if (field && item.fieldid === field.fieldid) {
+          newItem.fieldconfig = {
+            ...item.fieldconfig,
+            ...config
+          };
+        }
+        return newItem;
+      });
+      this.setState({ fields: newFields });
     };
 
     getFieldByName = (fieldName) => {

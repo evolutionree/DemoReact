@@ -1,10 +1,14 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'dva/router';
-import { Icon, message } from 'antd';
+import { Icon, message, Select } from 'antd';
 import classnames from 'classnames';
 import DataSourceSelectModal from './DataSourceSelectModal';
 import styles from './SelectUser.less';
 import { checkHasPermission } from '../../../services/entcomm';
+import { queryDataSourceData } from '../../../services/datasource';
+import _ from 'lodash';
+
+const Option = Select.Option;
 
 class SelectDataSource extends React.Component {
   static propTypes = {
@@ -28,7 +32,10 @@ class SelectDataSource extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      modalVisible: false
+      modalVisible: false,
+      options: [],
+      refEntity: '',
+      refEntityName: ''
     };
   }
 
@@ -48,6 +55,7 @@ class SelectDataSource extends React.Component {
     const id = arrIdName.map(obj => obj.id).join(',');
     const name = arrIdName.map(obj => obj.name).join(',');
     this.props.onChange(JSON.stringify({ id, name }));
+    this.changeWithName(id, name);
   };
 
   showModal = () => {
@@ -93,11 +101,61 @@ class SelectDataSource extends React.Component {
     this.props.onChange();
   };
 
+  selectChange = (options, value) => {
+    const selectData = options instanceof Array && options.filter(item => value && value.indexOf(item.id) > -1);
+    const id = selectData.map(obj => obj.id).join(',');
+    const name = selectData.map(obj => obj.name).join(',');
+    this.props.onChange(JSON.stringify({ id, name }));
+    this.changeWithName(id, name);
+  }
+
+  changeWithName = (id, name) => {
+    if (this.props.onChangeWithName) {
+      this.props.onChangeWithName({
+        value: id,
+        value_name: name
+      });
+    }
+  }
+
+  queryOptions = (searchKey) => {
+    this.setState({ loading: true });
+    const params = {
+      sourceId: this.props.dataSource && this.props.dataSource.sourceId,
+      keyword: searchKey,
+      pageSize: 10,
+      pageIndex: 1,
+      queryData: []
+    };
+    const { designateDataSource } = this.props;
+    if (designateDataSource && typeof designateDataSource === 'object') {
+      Object.keys(designateDataSource).forEach(key => {
+        params.queryData.push({
+          [key]: designateDataSource[key],
+          islike: 0
+        });
+      });
+    }
+    queryDataSourceData(params).then(result => {
+      let options = result.data.page;
+      const { text, array } = this.parseValue();
+      options = _.uniqBy(_.concat(array, options), 'id');
+      this.setState({ loading: false, options });
+    }, err => {
+      this.setState({ loading: false });
+      console.error(err.message || '加载数据失败');
+    });
+  }
+
   render() {
+    let { options } = this.state;
+    const isReadOnly = this.props.isReadOnly === 1;
     const { text, array } = this.parseValue();
+    options = _.uniqBy(_.concat(array, options), 'id');
+
     const cls = classnames([styles.wrap, {
       [styles.empty]: !text,
-      [styles.disabled]: this.props.isReadOnly === 1
+      [styles.disabled]: isReadOnly
     }]);
 
     const iconCls = classnames([styles.iconClose, {//非禁用状态且有值得时候  支持删除操作
@@ -106,18 +164,30 @@ class SelectDataSource extends React.Component {
 
     return (
       <div className={cls} style={{ ...this.props.style }}>
-        <div
-          className="ant-input"
-          onClick={this.showModal}
-          title={text}
-        >
-          {text || this.props.placeholder}
-          <Icon type="close-circle" className={iconCls} onClick={this.iconClearHandler} />
+        <div className={styles.inputSelectWrap}>
+          <Select onChange={this.selectChange.bind(this, options)}
+                  onSearch={this.queryOptions}
+                  placeholder={this.props.placeholder}
+                  disabled={isReadOnly}
+                  mode={this.props.multiple === 1 ? 'multiple' : null}
+                  value={array.map(item => item.id)}
+                  allowClear
+          >
+            {
+              options instanceof Array && options.map(item => {
+                return <Option key={item.id}>{item.name}</Option>;
+              })
+            }
+          </Select>
+          <div className={classnames(styles.openModal, { [styles.openModalDisabled]: isReadOnly })} onClick={this.showModal}>
+            <Icon type="plus-square" />
+          </div>
         </div>
         <DataSourceSelectModal
           visible={this.state.modalVisible}
           designateDataSource={this.props.designateDataSource}
           selected={array}
+          allowadd={this.props.allowadd}
           sourceId={this.props.dataSource && this.props.dataSource.sourceId}
           onOk={this.handleOk}
           onCancel={this.hideModal}

@@ -146,7 +146,7 @@ class MessageList extends React.Component {
 
   hideList(event) {
     if (this.state.modalVisible) return;
-    if ($(event.target).closest('#message-panel').length) {
+    if ($(event.target).closest('#message-panel').length || $(event.target).closest('.ant-dropdown').length) {
       return;
     }
     this.setState({

@@ -76,6 +76,14 @@ class DynamicFormBase extends Component {
     }
   }
 
+  componentDidMount() { //表格批量新增的时候  需要执行配置JS
+    const { batchAddInfo } = this.props;
+    const batchAddField = batchAddInfo && batchAddInfo.field;
+    if (batchAddInfo && batchAddInfo.type === 'add') {
+      this.onFieldValueChange(batchAddField && batchAddField.fieldname, batchAddField && batchAddField.fieldid);
+    }
+  }
+
   getRelObjectConfig = (fields) => {
     let RelObjectConfig = [];
     this.processFields(fields).map(item => {

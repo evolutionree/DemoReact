@@ -15,9 +15,10 @@ export const parseRuleDetail = ruleDetail => {
     if (item.ruletype !== 2 && (!item.fieldid || !item.operate || !item.ruledata)) return;
     if (item.ruletype === 2 && !item.ruledata) return;
     const rule = {
+      itemid: item.itemid,
       fieldId: item.fieldid,
       operator: item.operate,
-      ruleData: item.ruledata,
+      ruleData: typeof item.ruledata === 'string' ? JSON.parse(item.ruledata) : item.ruledata,
       ruleType: item.ruletype,
       entityId: item.entityid
     };
@@ -38,6 +39,7 @@ export const ruleListToItems = (ruleList, fields, entityId) => {
     const controltype = getControlType(rule.fieldId, fields);
     const ruletype = rule.ruleType === 20 ? controltype : rule.ruleType;
     return {
+      itemid: rule.itemid,
       itemname: `规则${index + 1}`,
       entityid: entityId,
       controltype,
@@ -47,6 +49,7 @@ export const ruleListToItems = (ruleList, fields, entityId) => {
       ruletype,
       usetype: 0,
       relation: {
+        itemid: rule.itemid,
         userid: 0,
         rolesub: 1, // userid为0，则rolesub为1；否则为0
         paramindex: 1

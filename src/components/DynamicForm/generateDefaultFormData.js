@@ -3,7 +3,12 @@ import moment from 'moment';
 export default function generateDefaultFormData(fields, initFormData = {}) {
   const formData = {};
   fields.forEach(field => {
-    let defaultVal = initFormData[field.fieldname] || (field.fieldconfig && field.fieldconfig.defaultValue);
+    let defaultVal;
+    if (initFormData[field.fieldname] === undefined) {
+      defaultVal = field.fieldconfig && field.fieldconfig.defaultValue;
+    } else {
+      defaultVal = initFormData[field.fieldname];
+    }
     // TODO 时间控件 默认值 now 转为当前时间
     if (defaultVal === 'now' && (field.controltype === 8 || field.controltype === 9)) {
       defaultVal = getNowTimeString(field.fieldconfig.format, field.controltype);
@@ -18,6 +23,12 @@ export default function generateDefaultFormData(fields, initFormData = {}) {
     }
     if (defaultVal !== undefined && defaultVal !== null) {
       formData[field.fieldname] = defaultVal;
+    }
+
+    for (let key in initFormData) {
+      if (!formData[key]) {
+        formData[key] = initFormData[key];
+      }
     }
   });
   return formData;

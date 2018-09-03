@@ -17,15 +17,13 @@ class Form extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      model: this.props.model,
-      focusForm: this.props.isOpenPage
+      model: this.props.model
     };
   }
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      model: nextProps.model,
-      focusForm: this.props.isOpenPage !== nextProps.isOpenPage
+      model: nextProps.model
     });
   }
 
@@ -34,9 +32,10 @@ class Form extends Component {
   }
 
   componentDidUpdate() {
-    if (this.state.focusForm) {
+    if (!this.count) {
       if (this.state.model && this.state.model instanceof Array && this.state.model.length > 0) {
         this.refs[this.state.model[0].name].refs.wrappedInstance.inputFocus();
+        this.count = 1;
       }
     }
   }
@@ -50,13 +49,12 @@ class Form extends Component {
   }
 
   changeFormData(name, data) { //更新最新的表单数据到Modal State中
-    const editEmailFormData = this.props.editEmailFormData || {};
+    const editEmailFormData = this.props.data || {};
     const newEditEmailFormData = {
       ...editEmailFormData,
       [name]: data
     };
-
-    this.props.dispatch({ type: 'mails/putState', payload: { editEmailFormData: newEditEmailFormData } });
+    this.props.onChange && this.props.onChange(newEditEmailFormData);
   }
 
   focusHandler(name) { //监听用户最后一次焦点在哪个输入框中
@@ -64,11 +62,11 @@ class Form extends Component {
   }
 
   blurHandler(name) {
-    //this.props.dispatch({ type: 'mails/putState', payload: { focusTargetName: '' } });
+
   }
 
   render() {
-    const editEmailFormData = this.props.editEmailFormData;
+    const editEmailFormData = this.props.data;
 
     return (
       <div>

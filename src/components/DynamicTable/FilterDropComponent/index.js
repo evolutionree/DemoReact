@@ -42,7 +42,7 @@ class FilterDrop extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.visible !== this.props.visible) {
+    if (nextProps.visible !== this.props.visible && this.props.value !== nextProps.value) {
       this.setState({
         value: this.getTransformDateValue(nextProps.value),
         checked: nextProps.value === 'isnull' ? 'isnull' : false
@@ -51,9 +51,14 @@ class FilterDrop extends Component {
   }
 
   getTransformDateValue(toTransformValue) {
-    if (typeof toTransformValue === 'string' && toTransformValue !== '' && toTransformValue !== 'isnull') {
+    if (typeof toTransformValue === 'string' && toTransformValue !== '') {
       const field = this.props.field;
       let newValue = toTransformValue;
+
+      if (filterShowComponent.multiple.indexOf(field.controltype) === -1 && toTransformValue === 'isnull') {
+        return null;
+      }
+
       if (filterShowComponent.date.indexOf(field.controltype) > -1) {
         newValue = newValue.split(',');
         const dateFormat = 'YYYY-MM-DD';
@@ -94,7 +99,8 @@ class FilterDrop extends Component {
 
   onSelectChange = (checkedValues) => {
     this.setState({
-      value: checkedValues
+      value: checkedValues,
+      checked: false
     });
   }
 

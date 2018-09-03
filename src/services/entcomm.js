@@ -161,6 +161,18 @@ export async function getListData(params) {
 }
 
 /**
+ * 暂存新增表单
+ * @param params
+ * @returns {Promise.<Object>}
+ */
+export async function temporarysave(params) {
+  return request('/api/dynamicentity/temporarysave', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
  * 提交新增表单
  * @param params
  * {

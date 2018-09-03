@@ -15,6 +15,9 @@ import connectPermission from '../../models/connectPermission';
 import AdvanceSearchModal from './AdvanceSearchModal';
 import DynamicModal from './DynamicModal';
 import ExportModal from './ExportModal';
+import EntcommTransferModal from '../../components/EntcommTransferModal';
+import EntcommCopyModal from '../../components/EntcommCopyModal';
+import EntcommRepeatViewModal from '../../components/EntcommRepeatViewModal';
 
 const Option = Select.Option;
 
@@ -39,7 +42,9 @@ function EntcommList({
     entityTypes,
     selectedFlowObj,
                        onAddModalCanel,
-                       onAddModalDone
+                       onAddModalDone,
+                       funBtnInfo,
+                       copyData
   }) {
   function selectItems(items) {
     dispatch({ type: 'entcommApplication/currItems', payload: items });
@@ -60,6 +65,18 @@ function EntcommList({
       payload: 'add'
     });
   }
+
+  function queryRepeat() {
+    dispatch({
+      type: 'entcommList/showModals',
+      payload: 'repeatview'
+    });
+  }
+
+  function modalCancel() {
+    dispatch({ type: 'entcommList/showModals', payload: '' });
+  }
+
   function extraToolbarClickHandler(item) {
     if (item.buttoncode === 'CallService' || item.buttoncode === 'EntityDataOpenH5') {
       dispatch({
@@ -81,6 +98,15 @@ function EntcommList({
           entityId: entityId,
           recordId: currItems && currItems[0] && currItems[0].recid
         }
+      });
+    } else if (item.buttoncode === 'transform') {
+      dispatch({
+        type: 'entcommApplication/putState',
+        payload: { showModals: 'changeForm', funBtnInfo: item }
+      });
+    } else if (item.buttoncode === 'copybutton') {
+      dispatch({
+        type: 'entcommApplication/queryCopyData'
       });
     }
   }
@@ -205,7 +231,6 @@ function EntcommList({
     return { label: <IntlText name="title" value={item} />, handler: extraToolbarClickHandler.bind(this, item), single: single, multiple: multiple, show: true };
   });
   ajaxToolbarActions = ajaxToolbarActions || [];
-
   return (
     <Page title={entityName}>
       <Toolbar
@@ -221,6 +246,7 @@ function EntcommList({
           ))}
         </Select>
         {checkFunc('EntityDataAdd') && <Button onClick={openAdd}>新增</Button>}
+        {checkFunc('EntityDataSearch') && <Button onClick={queryRepeat}>查重</Button>}
         {shouldShowImport() && <Button onClick={importData}>导入</Button>}
         {shouldShowExport() && <Button onClick={exportData}>导出</Button>}
         {
@@ -285,6 +311,28 @@ function EntcommList({
       <AdvanceSearchModal />
       <DynamicModal />
       <ExportModal currentUser={currentUser} />
+      <EntcommTransferModal
+        visible={/changeForm/.test(showModals)}
+        dstEntityId={funBtnInfo && funBtnInfo.extradata.dstentityid}
+        routePath={funBtnInfo && funBtnInfo.routepath}
+        buttoncode={funBtnInfo && funBtnInfo.funccode}
+        entityId={entityId}
+        recordId={currItems.length > 0 && currItems[0].recid}
+        onCancel={onAddModalDone}
+      />
+      <EntcommCopyModal
+        visible={/showCopy/.test(showModals)}
+        entityId={entityId}
+        entityTypes={entityTypes}
+        copyData={copyData}
+        currentUser={currentUser}
+        onCancel={onAddModalCanel}
+        onDone={onAddModalDone}
+      />
+      <EntcommRepeatViewModal visible={/repeatview/.test(showModals)}
+                              entityId={entityId}
+                              simpleSearchKey={simpleSearchKey}
+                              onCancel={modalCancel} />
     </Page>
   );
 }

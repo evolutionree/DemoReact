@@ -15,8 +15,37 @@ class MailList extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      width: document.body.clientWidth
+    };
   }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.onWindowResize.bind(this));
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onWindowResize);
+  }
+
+  onWindowResize() {
+    this.setState({
+      width: document.body.clientWidth
+    });
+  }
+
+  getScrollWidth() {
+    let noScroll = document.createElement('DIV');
+    let scroll = document.createElement('DIV');
+    let oDiv = document.createElement('DIV');
+    oDiv.style.cssText = 'position:absolute; top:-1000px; width:100px; height:100px; overflow:hidden;';
+    noScroll = document.body.appendChild(oDiv).clientWidth;
+    oDiv.style.overflowY = 'scroll';
+    scroll = oDiv.clientWidth;
+    document.body.removeChild(oDiv);
+    return noScroll - scroll;
+  }
+
 
   onDoubleClickRow = (mail) => {
     if (mail.ctype === 1005) {
@@ -28,8 +57,12 @@ class MailList extends Component {
 
   render() {
     const { mailList, mailTotal, mailSelected, mailPageIndex, mailPageSize, mailDetailData } = this.props;
+    let height = document.body.clientHeight - 253;
+    if (this.state.width < 1361) {
+      height -= this.getScrollWidth();
+    }
     return (
-      <div className={styles.mailList}>
+      <div className={styles.mailList} style={{ height: height }}>
         <Table
           size="small"
           bordered={false}
@@ -84,6 +117,7 @@ class MailList extends Component {
             dataIndex="sender"
             width={145}
             render={val => {
+              if (!val) return '(没有发件人)';
               const style = { width: '145px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' };
               return <div style={style}>{val.displayname || val.address}</div>;
             }}
@@ -143,7 +177,9 @@ export default connect(
       },
       openEditMail(showModalsName, mails, currentMailId) {
         dispatch({ type: 'mails/putState',
-          payload: { showingPanel: showModalsName, currentMailId: currentMailId, modalMailsData: mails, editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null } });
+          payload: { showingPanel: showModalsName, modalMailsData: mails } });
+        dispatch({ type: 'mails/openNewTab',
+          payload: { tabType: 2, showingPanel: showModalsName, mailId: currentMailId, modalMailsData: mails } });
       }
     };
   }

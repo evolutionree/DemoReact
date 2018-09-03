@@ -5,7 +5,11 @@
     }
   }
 }
+.tableContent{
+  position: relative;
+}
 .tableWrap {
+  position: relative;
   overflow-x: auto;
 }
 .table {
@@ -20,6 +24,7 @@
 .th,
 .td {
   display: table-cell;
+  font-size: 12px;
 }
 .required{
   &:before{
@@ -51,6 +56,12 @@
     .controlWrap {
       min-width: 180px;
       margin-bottom: 0;
+
+      :global{
+        .ant-form-explain{
+          display: none;
+        }
+      }
     }
   }
 
@@ -89,3 +100,48 @@
     color: #f04134;
   }
 }
+
+.fixTopWrap{
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background: #fff;
+  overflow: hidden;
+  z-index: 2;
+  border-bottom: 1px solid rgb(233, 233, 233);
+
+  .fixTopTable{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+  }
+  &.fixTopWrapHidden{
+    display: none;
+  }
+}
+
+.fixLeftWrap{
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background: #fff;
+  overflow: hidden;
+  z-index: 3;
+
+  .fixLeftTable{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+  }
+  .fixLeftTopTable{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 4;
+
+    .th:last-of-type{
+      border-right: none;
+    }
+  }
+}
+

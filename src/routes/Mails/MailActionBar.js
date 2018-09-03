@@ -20,6 +20,10 @@ class MailActionBar extends Component {
   }
 
   onAction = type => {
+    if (type === 'signature') {
+      this.props.showModals('mailSignature');
+      return;
+    }
     const mailSelected = this.props.mails;
     const hasDeptCatalogMail = mailSelected.some(item => item.catalogtype === 'dept');
     const isDistributedMail = mailSelected.some(item => item.ctype === 1009);
@@ -170,6 +174,7 @@ class MailActionBar extends Component {
         </ActionButton>
         <ActionButton icon="folder-move" actions={[]} onAction={this.onAction} renderOverlay={renderOverlay}>移动到</ActionButton>
         <ActionButton icon="recover" actions="recover" onAction={this.onAction}>恢复</ActionButton>
+        <ActionButton icon="recover" actions="signature" onAction={this.onAction}>签名</ActionButton>
       </Toolbar>
     );
   }
@@ -185,7 +190,9 @@ export default connect(
     return {
       openEditMail(showModalsName, mails, currentMailId) {
         dispatch({ type: 'mails/putState',
-          payload: { showingPanel: showModalsName, currentMailId: currentMailId, modalMailsData: mails, editEmailPageFormModel: null, editEmailPageBtn: null, editEmailFormData: null } });
+          payload: { showingPanel: showModalsName, modalMailsData: mails } });
+        dispatch({ type: 'mails/openNewTab',
+          payload: { tabType: 2, showingPanel: showModalsName, mailId: currentMailId, modalMailsData: mails } });
       },
       delMails(mails, completely) {
         dispatch({ type: 'mails/delMails', payload: { mails, completely } });

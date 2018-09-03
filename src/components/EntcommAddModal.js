@@ -1,9 +1,10 @@
 import React, { PropTypes, Component } from 'react';
-import { Modal, Select, message, Radio } from 'antd';
+import { Modal, Select, message, Radio, Button } from 'antd';
 import * as _ from 'lodash';
 import { DynamicFormAdd, generateDefaultFormData } from './DynamicForm';
-import { getGeneralProtocol, addEntcomm } from '../services/entcomm';
+import { getGeneralProtocol, addEntcomm, temporarysave } from '../services/entcomm';
 import { WorkflowCaseForAddModal } from "./WorkflowCaseModal";
+import uuid from 'uuid';
 
 const Option = Select.Option;
 
@@ -23,9 +24,12 @@ class EntcommAddModal extends Component {
     extraData: PropTypes.object, // 提交表单的额外参数
     initFormData: PropTypes.object,
     processProtocol: PropTypes.func,
-    isAddCase: PropTypes.bool
+    isAddCase: PropTypes.bool,
+    entityTypeId: PropTypes.string, //暂存表单时  默认选中当前暂存表单的 实体类型
+    cacheId: PropTypes.string //新增 暂存表单数据时  需要带上暂存id
   };
   static defaultProps = {
+    entityTypeId: ''
   };
 
   constructor(props) {
@@ -34,12 +38,14 @@ class EntcommAddModal extends Component {
       showTypeModal: false,
       showFormModal: false,
       showWorkflowCaseModal: false,
-      selectedEntityType: '',
+      selectedEntityType: this.props.entityTypeId,
       protocolFields: [], // 协议字段
       formData: props.initFormData || {}, // 表单数据
       confirmLoading: false,
+      storageLoading: false,
       dataModel: undefined,
-      key: new Date().getTime() // 每次打开弹窗时，都重新渲染
+      key: new Date().getTime(), // 每次打开弹窗时，都重新渲染
+      commonid: ''
     };
   }
 
@@ -54,8 +60,13 @@ class EntcommAddModal extends Component {
         this.setState({ formData: nextProps.initFormData || {} }); //关闭的时候  formdat被清空了  需要重新得到initFormData
       }
       const { entityTypes, entityId } = nextProps;
-      // 实体只有一个类型时，跳过类型选择
-      if (!entityTypes || entityTypes.length === 1) {
+      if (nextProps.entityTypeId) { //暂存 新增表单
+        this.setState({
+          showFormModal: true,
+          selectedEntityType: nextProps.entityTypeId
+        });
+        this.fetchProtocol(nextProps.entityTypeId);
+      } else if (!entityTypes || entityTypes.length === 1) { // 实体只有一个类型时，跳过类型选择
         this.setState({
           showFormModal: true,
           selectedEntityType: entityId
@@ -81,8 +92,10 @@ class EntcommAddModal extends Component {
       protocolFields: [], // 协议字段
       formData: {}, // 表单数据
       confirmLoading: false,
+      storageLoading: false,
       dataModel: undefined,
-      key: new Date().getTime()
+      key: new Date().getTime(),
+      commonid: ''
     });
   };
 
@@ -92,7 +105,8 @@ class EntcommAddModal extends Component {
 
   onTypeModalConfirm = () => {
     this.setState({
-      showFormModal: true
+      showFormModal: true,
+      commonid: ''
     });
     this.fetchProtocol(this.state.selectedEntityType);
   };
@@ -110,6 +124,85 @@ class EntcommAddModal extends Component {
     }
   };
 
+  getRelObjectConfig = (fields) => { //TODO: 获取到所有引用对象的字段
+    let RelObjectConfig = [];
+    fields.map(item => {
+      if (item.controltype === 31) {  //引用对象
+        RelObjectConfig.push(item);
+      }
+    });
+    return RelObjectConfig;
+  }
+
+  onFormModalStorage = () => {
+    const formValue = this.form.formInst.getFieldsValue();
+    let fieldjson = {};
+    this.form.props.fields.map(item => {
+      const fieldconfig = item.fieldconfig;
+      const isVisible = fieldconfig.isVisible !== 1 ? 0 : fieldconfig.isVisibleJS === 0 ? 0 : 1;
+      const isReadOnly = fieldconfig.isReadOnly === 1 ? 1 : fieldconfig.isReadOnlyJS ? 1 : 0;
+      const isRequired = fieldconfig.isRequired === 1 ? 1 : fieldconfig.isRequiredJS ? 1 : 0;
+
+      fieldjson[item.fieldid] = {
+        ...fieldconfig,
+        isHidden: isVisible === 0 ? 1 : 0,
+        isReadOnly: isReadOnly,
+        isRequired: isRequired
+      };
+
+      if (item.controltype === 24) {
+        const tableFields = this.form.formRef.getTableFields(item.fieldname);
+        fieldjson[item.fieldid].sheetfieldglobal = {};
+        tableFields.map(tableFieldItem => {
+          const tableFieldConfig = tableFieldItem.fieldconfig;
+          const tableFieldIsVisible = tableFieldConfig.isVisible !== 1 ? 0 : tableFieldConfig.isVisibleJS === 0 ? 0 : 1;
+          const tableFieldIsReadOnly = tableFieldConfig.isReadOnly === 1 ? 1 : tableFieldConfig.isReadOnlyJS ? 1 : 0;
+          const tableFieldIsRequired = tableFieldConfig.isRequired === 1 ? 1 : tableFieldConfig.isRequiredJS ? 1 : 0;
+          fieldjson[item.fieldid].sheetfieldglobal[tableFieldItem.fieldid] = {
+            ...tableFieldConfig,
+            isHidden: tableFieldIsVisible === 0 ? 1 : 0,
+            isReadOnly: tableFieldIsReadOnly,
+            isRequired: tableFieldIsRequired
+          };
+        });
+      }
+    });
+
+    const relObjectFields = this.getRelObjectConfig(this.form.props.fields);
+    relObjectFields.map(item => { //TODO: 引用对象 新增的时候  表单不会传值给后端  但是暂存的时候 需要传
+      const relObjectRef = this.form.formRef.getFieldComponentInstance(item.fieldname);
+      if (relObjectRef && relObjectRef.getValue) {
+        formValue[`${item.fieldname}_name`] = relObjectRef.getValue();
+      }
+    });
+
+    const params = {
+      cacheid: this.props.cacheId || uuid.v4(),
+      datajson: JSON.stringify({
+        extraData: { commonid: this.state.commonid }, //客户引用 新增 存在extraData
+        expandfields: formValue
+      }),
+      fieldjson: JSON.stringify(fieldjson),
+      typeid: this.state.selectedEntityType,
+      title: `新增${this.props.modalTitle && this.props.modalTitle.replace(/新增/, '') || this.props.entityName}`,
+      entityId: this.props.entityId,
+      recrelateid: this.props.refRecord,
+      relateentityid: this.props.refEntity
+    };
+    this.setState({
+      storageLoading: true
+    })
+    temporarysave(params).then(result => {
+      this.setState({ storageLoading: false });
+      message.success('暂存成功');
+      this.props.done(result, 'storage');
+    }).catch(e => {
+      this.setState({ storageLoading: false });
+      console.error(e);
+      message.error(e.message || '暂存失败');
+    });
+  }
+
   onFormModalConfirm = () => {
     if (this.props.flow && this.props.flow.flowid) {
       this.onFormModalConfirmAddCase();
@@ -119,8 +212,8 @@ class EntcommAddModal extends Component {
       if (err) {
         return message.error('请检查表单');
       }
-
       const params = {
+        cacheid: this.props.cacheId,
         typeid: this.state.selectedEntityType,
         // flowid: this.props.flow ? this.props.flow.flowid : undefined,
         relentityid: this.props.refEntity,
@@ -128,6 +221,9 @@ class EntcommAddModal extends Component {
         fielddata: values,
         extradata: this.props.extraData
       };
+      if (this.state.commonid) { //客户引用 新增
+        params.extraData = { commonid: this.state.commonid };
+      }
       this.setState({ confirmLoading: true });
       addEntcomm(params).then(result => {
         this.setState({ confirmLoading: false });
@@ -150,6 +246,7 @@ class EntcommAddModal extends Component {
       let dataModel;
       if (this.props.isAddCase) {
         dataModel = {
+          cacheid: this.props.cacheId,
           entityid: this.state.selectedEntityType,
           flowid: this.props.flow.flowid,
           recid: this.props.recId,
@@ -159,6 +256,7 @@ class EntcommAddModal extends Component {
         };
       } else {
         dataModel = {
+          cacheid: this.props.cacheId, //暂存的表单数据  重新提交 需要传cacheid
           typeid: this.state.selectedEntityType,
           flowid: this.props.flow.flowid,
           relentityid: this.props.refEntity,
@@ -218,6 +316,25 @@ class EntcommAddModal extends Component {
     });
   };
 
+  setExtraData= (type, value) => {
+    this.setState({
+      commonid: value
+    });
+  };
+  setFieldsConfig = (formData) => { //客户引用时 需要对部分字段(引用后填充值得字段)做禁用处理
+    let protocolFields = this.state.protocolFields;
+    for (let i = 0; i < protocolFields.length; i++) {
+      for (let key in formData) {
+        if (protocolFields[i].fieldname === key) {
+          protocolFields[i].fieldconfig.isReadOnly = 1;
+        }
+      }
+    }
+    this.setState({
+      protocolFields: protocolFields
+    });
+  }
+
   render() {
     const { entityTypes, footer, refRecord, entityId } = this.props;
     const {
@@ -226,7 +343,8 @@ class EntcommAddModal extends Component {
       selectedEntityType,
       protocolFields,
       formData,
-      confirmLoading
+      confirmLoading,
+      storageLoading
     } = this.state;
 
     const hasTable = protocolFields.some(field => {
@@ -260,12 +378,17 @@ class EntcommAddModal extends Component {
           {/*</Select>*/}
         </Modal>}
         <Modal
-          title={this.props.modalTitle || `新增${this.props.entityName || '表单'}`}
+          title={this.state.commonid ? '客户引用' : (this.props.modalTitle || `新增${this.props.entityName || '表单'}`)}
           visible={showFormModal}
           onCancel={this.onFormModalCancel}
           onOk={this.onFormModalConfirm}
-          confirmLoading={confirmLoading}
-          width={hasTable ? 900 : 550}
+          width={document.body.clientWidth > 1400 ? 1200 : 800}
+          wrapClassName="DynamicFormModal"
+          footer={[
+            <Button key="back" type="default" onClick={this.onFormModalCancel}>取消</Button>,
+            <Button key="storage" loading={storageLoading} onClick={this.onFormModalStorage}>暂存</Button>,
+            <Button key="submit" loading={confirmLoading} onClick={this.onFormModalConfirm}>提交</Button>
+          ]}
         >
           <DynamicFormAdd
             entityId={entityId}
@@ -276,6 +399,8 @@ class EntcommAddModal extends Component {
             refRecord={refRecord}
             onChange={val => { this.setState({ formData: val }); }}
             ref={form => { this.form = form; }}
+            setExtraData={this.setExtraData}
+            setFieldsConfig={this.setFieldsConfig}
           />
           {/*{JSON.stringify(this.state.formData)}*/}
         </Modal>

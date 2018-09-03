@@ -7,6 +7,7 @@ import StageBar from './StageBar2';
 import connectPermission from '../../models/connectPermission';
 import { Icon } from "antd";
 import IntlText from '../../components/UKComponent/Form/IntlText';
+import { hashHistory } from 'react-router';
 
 function EntcommHome({
   checkFunc,
@@ -17,7 +18,9 @@ function EntcommHome({
   children,
   location,
   mainFieldsConfig,
-  toggleFollow
+  toggleFollow,
+                       firstLoad,
+                       stopAutoLink
 }) {
   const entityId = params.entityId;
   const recordId = params.recordId;
@@ -54,6 +57,23 @@ function EntcommHome({
     </span>
   );
 
+    const routhPath = relTabs.map(item => {
+      if (item.entitytaburl) {
+        return `/entcomm/${entityId}/${recordId}/${item.entitytaburl}`;
+      } else {
+        return `/entcomm/${entityId}/${recordId}/rel/${item.relid}/${item.relentityid}`;
+      }
+    });
+
+    if (firstLoad && routhPath.length > 0) {
+      if (location.pathname !== routhPath[0]) {
+        stopAutoLink();
+        hashHistory.push(routhPath[0]);
+      } else { //TODO: 第一个页签  跟 路由配置文件对应的首个路由一致  则也需设置 firstLoad： false
+        stopAutoLink();
+      }
+    }
+
   return (
     <Page
       title={title}
@@ -79,6 +99,9 @@ export default connect(
     return {
       toggleFollow() {
         dispatch({ type: 'entcommHome/toggleFollow' });
+      },
+      stopAutoLink() {
+        dispatch({ type: 'entcommHome/putState', payload: { firstLoad: false } });
       }
     };
   }

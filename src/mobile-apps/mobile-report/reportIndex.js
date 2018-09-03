@@ -51,8 +51,8 @@ class ReportIndex extends Component {
       let scrollHeight = document.querySelector('#page').scrollHeight;
 
       if (clientHeight + scrollTop + 20 >= scrollHeight) {
-        this.setState({
-          loadingMore: true
+        this.setState({ //暂时 没有分页查询
+          loadingMore: false
         });
       } else {
 
@@ -278,14 +278,18 @@ class ReportIndex extends Component {
   }
 
   queryData(item, params) {
+    this.setState({
+      loading: true
+    })
     request('/api/ReportEngine/queryData', {
       method: 'post', body: JSON.stringify(params)
     }).then((getData) => {
       this.setState({
         [item.instid]: getData.data.data,
-        [item.instid + 'mobilecolumns']: getData.data.mobilecolumns && getData.data.mobilecolumns instanceof Array && getData.data.mobilecolumns[0],
+        [item.instid + 'mobilecolumns']: getData.data.mobilecolumns && getData.data.mobilecolumns instanceof Array && getData.data.mobilecolumns,
         [item.instid + 'xseries']: getData.data.xseries, //散点图 的X轴坐标
-        [item.instid + 'loading']: false
+        [item.instid + 'loading']: false,
+        loading: false
       });
     }).catch((e) => {
       message.error(e.message)
@@ -294,7 +298,8 @@ class ReportIndex extends Component {
         [item.instid]: [],
         [item.instid + 'mobilecolumns']: [],
         [item.instid + 'xseries']: [],
-        [item.instid + 'loading']: false
+        [item.instid + 'loading']: false,
+        loading: false
       });
     });
   }
@@ -306,14 +311,17 @@ class ReportIndex extends Component {
   getMobileColumns(item, datasourcename) {
     let mobileColumns = item.mobiletableinfo;
     if (this.state[datasourcename + 'mobilecolumns']) {
-      mobileColumns = this.state[datasourcename + 'mobilecolumns'];
+      mobileColumns = {
+        ...item.mobiletableinfo,
+        detailcolumns: this.state[datasourcename + 'mobilecolumns']
+      };
     };
 
     return mobileColumns;
   }
 
   renderComponent(item, index) {
-    let borderRadius = '.06rem';
+    let borderRadius = '12px';
     let margin = '.2rem 0';
     if (item.islinktoup && item.islinktodown) {
       borderRadius = 'none';
@@ -333,7 +341,7 @@ class ReportIndex extends Component {
       //一般图表（柱状图、折线图） && 散点图 && 仪表盘
       case 1:
         return (
-          <div style={{ ...commonStyle, padding: '2px', background: '#FFFFFF' }}>
+          <div style={{ ...commonStyle, padding: '2px' }}>
             <ShowChart deviceType="mobile"
                         loading={this.state[item.datasourcename + 'loading']}
                        component={item}
@@ -372,7 +380,6 @@ class ReportIndex extends Component {
         return (
           <div className={Styles.CardWrap}>
             <Card style={{ borderRadius: borderRadius, margin: margin }} html={item.divctrlextinfo.textlabelscheme} data={this.state[item.datasourcename]} params={item.divctrlextinfo.params} />
-            <Spin tip="数据加载中..." spinning={this.state[item.datasourcename + 'loading']}></Spin>
           </div>
         );
 
@@ -380,13 +387,12 @@ class ReportIndex extends Component {
       case 8:
         const tableInfo = this.getMobileColumns(item, item.datasourcename);
         return (
-          <div className={Styles.ListWrap}>
+          <div>
             {
               this.state[item.datasourcename] && this.state[item.datasourcename].map((dataItem, dataIndex) => {
                 return <List key={dataIndex} data={dataItem} tableInfo={tableInfo} style={{ margin: margin }} />;
               })
             }
-            <Spin tip="数据加载中..." spinning={this.state[item.datasourcename + 'loading']}></Spin>
           </div>
         );
 
@@ -442,7 +448,6 @@ class ReportIndex extends Component {
                 </Carousel>
               </div>
             }
-            <Spin tip="数据加载中..." spinning={this.state[item.datasourcename + 'loading']}></Spin>
           </div>
         );
 
@@ -453,7 +458,7 @@ class ReportIndex extends Component {
 
   render() {
     return (
-      <Spin spinning={this.state.loading}>
+      <div className={Styles.reportIndexWrap}>
         <Page>
           {
             this.state.components.map((item, index) => {
@@ -470,8 +475,11 @@ class ReportIndex extends Component {
             <Spin size="small" /><span style={{ paddingLeft: '.2rem' }}>正在加载...</span>
           </div>
         </Page>
-      </Spin>
-    )
+        <div style={{ display: this.state.loading ? 'block' : 'none' }} className={Styles.modalMask}>
+          <Spin spinning={true}></Spin>
+        </div>
+      </div>
+    );
   }
 }
 

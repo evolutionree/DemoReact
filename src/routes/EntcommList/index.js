@@ -6,7 +6,7 @@ import Page from '../../components/Page';
 import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import DynamicTable from '../../components/DynamicTable/index';
-import EntcommAddModal from './EntcommAddModal';
+import EntcommAddModal from '../../components/EntcommAddModal';
 import EntcommCopyModal from './EntcommCopyModal';
 import TransferModal from './TransferModal';
 import MerageModal from './MerageModal';
@@ -17,6 +17,7 @@ import DynamicModal from './DynamicModal';
 import ExportModal from './ExportModal';
 import DataTransferModal from './DataTransferModal';
 import IntlText from '../../components/UKComponent/Form/IntlText';
+import EntcommRepeatViewModal from '../../components/EntcommRepeatViewModal';
 
 
 const Option = Select.Option;
@@ -37,7 +38,11 @@ function EntcommList({
     extraButtonData,
     extraToolbarData,
     sortFieldAndOrder,  //当前排序的字段及排序顺序
-    ColumnFilter
+    ColumnFilter,
+                       entityTypes,
+                       showModals,
+                       onAddModalCanel,
+                       onAddModalDone
   }) {
   function selectItems(items) {
     dispatch({ type: 'entcommList/currItems', payload: items });
@@ -57,6 +62,17 @@ function EntcommList({
       type: 'entcommList/showModals',
       payload: 'add'
     });
+  }
+
+  function queryRepeat() {
+    dispatch({
+      type: 'entcommList/showModals',
+      payload: 'repeatview'
+    });
+  }
+
+  function modalCancel() {
+    dispatch({ type: 'entcommList/showModals', payload: '' });
   }
 
   function importData() {
@@ -215,6 +231,7 @@ function EntcommList({
         </Select>
         {checkFunc('EntityDataAdd') && <Button onClick={openAdd}>新增</Button>}
         {checkFunc('EntityDataMerge') && <Button onClick={merageCustom}>客户合并</Button>}
+        {checkFunc('EntityDataSearch') && <Button onClick={queryRepeat}>查重</Button>}
         {shouldShowImport() && <Button onClick={importData}>导入</Button>}
         {shouldShowExport() && <Button onClick={exportData}>导出</Button>}
         {
@@ -260,7 +277,14 @@ function EntcommList({
           onChange: (keys, items) => selectItems(items)
         }}
       />
-      <EntcommAddModal />
+      <EntcommAddModal
+        visible={/add/.test(showModals)}
+        entityId={entityId}
+        entityName={entityName}
+        entityTypes={entityTypes}
+        cancel={onAddModalCanel}
+        done={onAddModalDone}
+      />
       <EntcommCopyModal />
       <TransferModal />
       <MerageModal />
@@ -269,6 +293,10 @@ function EntcommList({
       <DynamicModal />
       <ExportModal currentUser={currentUser} />
       <DataTransferModal />
+      <EntcommRepeatViewModal visible={/repeatview/.test(showModals)}
+                              entityId={entityId}
+                              simpleSearchKey={simpleSearchKey}
+                              onCancel={modalCancel} />
     </Page>
   );
 }
@@ -276,5 +304,15 @@ function EntcommList({
 export default connect(
   state => {
     return { ...state.entcommList, currentUser: state.app.user.userid };
+  },
+  dispatch => {
+    return {
+      onAddModalCanel() {
+        dispatch({ type: 'entcommList/showModals', payload: '' });
+      },
+      onAddModalDone() {
+        dispatch({ type: 'entcommList/addDone' });
+      }
+    };
   }
 )(connectPermission(props => props.entityId, EntcommList));

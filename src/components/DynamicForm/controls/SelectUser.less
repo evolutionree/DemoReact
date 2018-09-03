@@ -1,6 +1,7 @@
 @import "../../../styles/_variables";
 @import "../../../styles/_mixins";
 .wrap {
+  height: 32px;
   &.disabled {
     & > :global(.ant-input) {
       cursor: not-allowed;
@@ -103,4 +104,36 @@
   display: inline-block;
 }
 
+
+.clearFix{
+  zoom:1;
+  &:after{
+    content: '';
+    display: block;
+    clear: both;
+  }
+}
+
+.inputSelectWrap{
+  .clearFix;
+  :global{
+    .ant-select{
+      width: ~"calc(100% - 30px)";
+      float: left;
+    }
+  }
+  .openModal{
+    width: 30px;
+    float: left;
+    text-align: center;
+    font-size: 18px;
+    color: #a7a7a7;
+    cursor: pointer;
+  }
+
+  .openModalDisabled{
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+}
 

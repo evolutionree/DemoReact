@@ -6,6 +6,7 @@ import { Input, Select, message, Icon } from 'antd';
 import { connect } from 'dva';
 import _ from 'lodash';
 import { getrelconfigfields } from '../../../../../services/entity';
+import FilterConfigModal from '../FilterConfigModal';
 
 const Option = Select.Option;
 
@@ -116,6 +117,22 @@ class SelectCombine extends React.Component {
     }
   }
 
+  openFilterConfig = () => {
+    this.setState({
+      filterconfigModalVisible: true
+    });
+  }
+
+  ruleChangeHandler = (rule) => {
+    this.props.onChange && this.props.onChange({
+      ...this.props.value,
+      entityrule: rule
+    });
+    this.setState({
+      filterconfigModalVisible: false
+    });
+  }
+
   render() {
     const configentityList = this.props.configentityList;
     const itemValue = this.props.value;
@@ -136,7 +153,16 @@ class SelectCombine extends React.Component {
         {
           this.getHtml()
         }
+        {
+          (itemValue.type !== 0 || (itemValue.calcutetype !== '' && itemValue.calcutetype !== undefined && itemValue.calcutetype !== 0)) ?
+            <Icon type="setting" style={{ marginLeft: '4px', cursor: 'pointer' }} onClick={this.openFilterConfig} /> : null
+        }
         <Icon type="delete" style={{ marginLeft: '4px', cursor: 'pointer' }} onClick={this.delFieldSet} />
+        <FilterConfigModal visible={this.state.filterconfigModalVisible}
+                           rule={itemValue.entityrule}
+                           recid={itemValue.recid}
+                           ruleChange={this.ruleChangeHandler}
+                           close={() => { this.setState({ filterconfigModalVisible: false }) }} />
       </div>
     );
   }

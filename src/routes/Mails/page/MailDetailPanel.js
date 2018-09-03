@@ -1,22 +1,63 @@
+/**
+ * Created by 0291 on 2018/4/10.
+ */
 import React, { PropTypes, Component } from 'react';
-import { connect } from 'dva';
-import { Button } from 'antd';
+import { Spin } from 'antd';
 import MailContent from '../MailContent';
 import MailActionBar from '../MailActionBar';
 import styles from './MailDetailPanel.less';
+import { queryMailDetail } from '../../../services/mails';
 
-class MailDetailPanel extends Component {
+class MailDetailTab extends Component {
   static propTypes = {};
   static defaultProps = {};
 
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      mailDetailData: {}
+    };
+  }
+
+  componentWillMount() {
+    this.queryMailDetail();
+  }
+
+  queryMailDetail() {
+    const mail = this.props.mailInfo;
+    this.setState({
+      mailDetailData: {
+        status: 'loading',
+        mailId: mail.mailid,
+        mailInfo: mail
+      }
+    })
+    queryMailDetail(this.props.mailInfo.mailid).then(result => {
+      let { data } = result;
+      data.maildetail.catalogtype = mail.catalogtype;
+      data.maildetail.ctype = mail.ctype;
+      this.setState({
+        mailDetailData: {
+          status: 'loaded',
+          mailId: mail.mailid,
+          mailInfo: mail,
+          ...data
+        }
+      });
+    }, e => {
+      this.setState({
+        mailDetailData: {
+          status: 'error',
+          mailId: mail.mailid,
+          mailInfo: mail,
+          error: e.message
+        }
+      });
+    });
   }
 
   render() {
-    if (!this.props.visible) return null;
-    const { status, maildetail, mailInfo } = this.props.mailDetailData || {};
+    const { status, maildetail, mailInfo } = this.state.mailDetailData || {};
     const mailData = status === 'loaded' ? maildetail : mailInfo;
     const actionBarStyle = {
       padding: '0',
@@ -27,34 +68,16 @@ class MailDetailPanel extends Component {
       marginLeft: '10px'
     };
     return (
-      <div className={styles.wrap} style={{ display: this.props.visible ? 'block' : 'none' }}>
-        <div className={styles.head}>
-          <Button type="default" icon="left" onClick={this.props.cancel}>
-            返回
-          </Button>
-          <MailActionBar mails={[mailInfo]} style={actionBarStyle} />
-        </div>
-        <MailContent data={mailData} />
+      <div className={styles.wrap}>
+        <Spin spinning={status === 'loading' ? true : false}>
+          <div className={styles.head}>
+            <MailActionBar mails={[mailInfo]} style={actionBarStyle} />
+          </div>
+          <MailContent data={mailData} />
+        </Spin>
       </div>
     );
   }
 }
 
-export default connect(
-  state => {
-    const { showingPanel, mailDetailData, myCatalogDataAll } = state.mails;
-    return {
-      visible: /mailDetail/.test(showingPanel),
-      mailDetailData,
-      myCatalogDataAll
-    };
-  },
-  dispatch => {
-    return {
-      cancel() {
-        dispatch({ type: 'mails/putState', payload: { showingPanel: '' } });
-      }
-    };
-  }
-)(MailDetailPanel);
-
+export default MailDetailTab;
