@@ -11,6 +11,7 @@ import mainstyles from './main.less';
 import Packery from 'packery';
 import Draggabilly from 'draggabilly';
 import styles from './index.less';
+import Dnd from './Dn/Dnd';
 
 class Desk extends React.PureComponent {
   static defaultProps = {
@@ -33,16 +34,37 @@ class Desk extends React.PureComponent {
       pckry.bindDraggabillyEvents( draggie );
     });
 
+    var pckry2 = new Packery( '#grid2', {
+      itemSelector: '.grid-item',
+      columnWidth: 1,
+      percentPosition: true
+    });
 
+    pckry2.getItemElements().forEach( function( itemElem ) {
+      var draggie = new Draggabilly( itemElem );
+      pckry2.bindDraggabillyEvents( draggie );
+    });
   }
 
 
   render() {
     return (
       <div className={styles.deskWrap}>
-        <div className="grid" id="grid1">
-          <div className="grid-item grid-item--width2"></div>
-          <div className="grid-item grid-sizer"></div>
+        <div className={styles.leftWrap}>
+          <div className="grid" id="grid1">
+            <div className="grid-item grid-item--width2"></div>
+            <div className="grid-item grid-sizer"></div>
+            <div className="grid-item"></div>
+            <div className="grid-item"></div>
+            <div className="grid-item"></div>
+            <div className="grid-item"></div>
+          </div>
+        </div>
+        <div className={styles.rightWrap}>
+          <div className="grid" id="grid2">
+            <div className="grid-item"></div>
+            <div className="grid-item"></div>
+          </div>
         </div>
       </div>
     );
