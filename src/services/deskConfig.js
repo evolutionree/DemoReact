@@ -80,6 +80,33 @@ export async function enabledesktop(params) {
 }
 
 /**
+ * 获取绑定角色
+ * @returns {Promise.<Object>}
+ */
+export async function getroles() {
+  return request('api/desktop/getroles', {
+    method: 'post',
+    body: JSON.stringify({})
+  });
+}
+
+/**
+ * 绑定工作台角色
+ * [{
+"desktopid":"8c189af8-3dca-4982-a28d-90b6dbd7cf45",
+"roleid":"63dd2a9d-7f75-42ff-a696-7cc841e884e7"
+}]
+ * @returns {Promise.<Object>}
+ */
+export async function savedesktoprolerelate(params) {
+  return request('api/desktop/savedesktoprolerelate', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+
+/**
  * 获取工作台首页定义
  * @returns {Promise.<Object>}
  */

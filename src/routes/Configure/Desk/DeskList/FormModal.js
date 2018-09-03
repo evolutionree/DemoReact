@@ -65,7 +65,7 @@ class FormModal extends Component {
       >
         <Form>
           <FormItem label="工作台名称">
-            {getFieldDecorator('deskptopname ', {
+            {getFieldDecorator('desktopname', {
               initialValue: '',
               rules: [{ required: true, message: '请输入工作台名称' }]
             })(
@@ -73,7 +73,7 @@ class FormModal extends Component {
             )}
           </FormItem>
           <FormItem label="说明">
-            {getFieldDecorator('description ', {
+            {getFieldDecorator('description', {
               rules: [{ required: true, message: '请输入说明' }]
             })(
               <TextArea placeholder="请输入说明" />

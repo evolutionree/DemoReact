@@ -2,7 +2,7 @@
  * Created by 0291 on 2018/5/21.
  */
 import { message } from 'antd';
-import { getdesktops, enabledesktop, savedesktop } from '../services/deskConfig';
+import { getdesktops, enabledesktop, savedesktop, getroles, savedesktoprolerelate } from '../services/deskConfig';
 
 const columns = [{
   title: '工作台名称',
@@ -18,7 +18,7 @@ const columns = [{
   }
 }, {
   title: '已绑定对象',
-  dataIndex: 'object'
+  dataIndex: 'rolesname'
 }, {
   title: '版本后',
   dataIndex: 'version'
@@ -37,7 +37,8 @@ export default {
     },
     list: [],
     currItems: [],
-    showModals: ''
+    showModals: '',
+    roles: []
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -53,6 +54,7 @@ export default {
   effects: {
     *init(action, { put, call, select }) {
       yield put({ type: 'queryList' });
+      yield put({ type: 'queryRoles' });
     },
     *queryList(action, { put, call, select }) {
       const { queries: { desktopname, status } } = yield select(state => state.deskconfig);
@@ -67,6 +69,15 @@ export default {
         });
       } catch (e) {
         message.error(e.message || '获取列表数据失败');
+      }
+    },
+    *queryRoles(action, { put, call, select }) {
+      try {
+        const { data } = yield call(getroles);
+        yield put({ type: 'putState', payload: { roles: data } });
+      } catch (e) {
+        console.error(e.message)
+        message.error(e.message);
       }
     },
     *search({ payload }, { select, call, put }) {
@@ -92,6 +103,17 @@ export default {
       try {
         yield call(savedesktop, params);
         message.success(params.desktopid ? '修改成功' : '新增成功');
+        yield put({ type: 'putState', payload: { showModals: '' } });
+        yield put({ type: 'queryList' });
+      } catch (e) {
+        console.error(e.message);
+        message.error(e.message);
+      }
+    },
+    *saveRoles({ payload: submitData }, { select, call, put }) {
+      try {
+        yield call(savedesktoprolerelate, submitData);
+        message.success('操作成功');
         yield put({ type: 'putState', payload: { showModals: '' } });
         yield put({ type: 'queryList' });
       } catch (e) {
@@ -127,12 +149,13 @@ export default {
       return {
         protocol: columns,
         queries: {
-          comname: '',
+          desktopname: '',
           status: 1
         },
         list: [],
         currItems: [],
-        showModals: ''
+        showModals: '',
+        roles: []
       };
     }
   }

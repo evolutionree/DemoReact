@@ -3,12 +3,9 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Modal, Form, Input, Select, Radio, Checkbox, InputNumber, message, Table } from 'antd';
+import { Modal, Form, Table } from 'antd';
+import styles from './index.less';
 
-const { TextArea } = Input;
-
-const FormItem = Form.Item;
-const Option = Select.Option;
 
 class FormModal extends Component {
   static propTypes = {
@@ -23,44 +20,37 @@ class FormModal extends Component {
     super(props);
     this.state = {
       entities: [],
-      currItems: [],
-      dataSource: []
+      currItems: this.props.editingRecord && this.props.editingRecord.rolesid && this.props.editingRecord.rolesid.split(','),
+      dataSource: this.props.roles
     };
   }
 
   componentWillReceiveProps(nextProps) {
     const isOpening = !this.props.visible && nextProps.visible;
     if (isOpening) {
-      const { form, editingRecord } = nextProps;
-      if (editingRecord) {
-        form.setFieldsValue({
-          ...editingRecord
-        });
-      } else {
-        form.resetFields();
-      }
+      this.setState({
+        dataSource: nextProps.roles,
+        currItems: nextProps.editingRecord && nextProps.editingRecord.rolesid && nextProps.editingRecord.rolesid.split(',')
+      });
     }
   }
 
 
   onOk = () => {
-    const { form, editingRecord } = this.props;
-    form.validateFields((err, values) => {
-      if (err) return;
-
-      // this.props.confirm({
-      //   resetflag: 1,
-      //   ...values,
-      //   expireflag: undefined,
-      //   flowid: editingRecord ? editingRecord.flowid : undefined
-      // });
+    const desktopid = this.props.editingRecord.desktopid;
+    const submitData = this.state.currItems.map(item => {
+      return {
+        desktopid,
+        roleid: item
+      };
     });
+    this.props.confirm(submitData);
   };
 
   render() {
     const columns = [{
       title: '对象/角色名称',
-      dataIndex: 'entityname'
+      dataIndex: 'rolename'
     }, {
       title: '角色说明',
       dataIndex: 'datasources',
@@ -72,15 +62,20 @@ class FormModal extends Component {
         visible={this.props.visible}
         onCancel={this.props.cancel}
         onOk={this.onOk}
+        wrapClassName="bindmodal"
       >
-        <Table rowSelection={{
-          onChange: (selectedRowKeys, selectedRows) => {
-            this.setState({
-              currItems: selectedRowKeys
-            });
-          },
-          selectedRowKeys: this.state.currItems
-        }} columns={columns} dataSource={this.state.dataSource} pagination={false} rowKey="entityid" />
+        <Table rowKey="roleid"
+               columns={columns}
+               dataSource={this.state.dataSource}
+               pagination={false}
+               rowSelection={{
+                 selectedRowKeys: this.state.currItems,
+                 onChange: (selectedRowKeys, selectedRows) => {
+                   this.setState({
+                     currItems: selectedRowKeys
+                   });
+                 }
+               }} />
       </Modal>
     );
   }
@@ -88,21 +83,12 @@ class FormModal extends Component {
 
 export default connect(
   state => {
-    const { showModals, currItems, modalPending } = state.deskconfig;
-
-    // const data = [{
-    //   entityid: '72d518b4-12f1-4ed7-a4ee-e9be658aa567',
-    //   jilian: true,
-    //   same: true
-    // }, {
-    //   entityid: '1',
-    //   jilian: true,
-    //   same: true
-    // }];
+    const { showModals, currItems, modalPending, roles } = state.deskconfig;
     return {
       visible: /bind/.test(showModals),
       editingRecord: /bind/.test(showModals) ? currItems[0] : undefined,
-      modalPending
+      modalPending,
+      roles
     };
   },
   dispatch => {
@@ -111,7 +97,7 @@ export default connect(
         dispatch({ type: 'deskconfig/showModals', payload: '' });
       },
       confirm(data) {
-        dispatch({ type: 'deskconfig/save', payload: data });
+        dispatch({ type: 'deskconfig/saveRoles', payload: data });
       }
     };
   }

@@ -4,10 +4,13 @@
 import React from 'react';
 import _ from "lodash";
 import { connect } from 'dva';
+import classnames from 'classnames';
 import RightLayout from './RightLayout.js';
 import LeftLayout from './LeftLayout.js';
 import mainstyles from './main.less';
-import styles from './styles.less';
+import Packery from 'packery';
+import Draggabilly from 'draggabilly';
+import styles from './index.less';
 
 class Desk extends React.PureComponent {
   static defaultProps = {
@@ -18,18 +21,30 @@ class Desk extends React.PureComponent {
     super(props);
   }
 
+  componentDidMount() {
+    var pckry = new Packery( '#grid1', {
+      itemSelector: '.grid-item',
+      columnWidth: '.grid-sizer',
+      percentPosition: true
+    });
+
+    pckry.getItemElements().forEach( function( itemElem ) {
+      var draggie = new Draggabilly( itemElem );
+      pckry.bindDraggabillyEvents( draggie );
+    });
+
+
+  }
+
 
   render() {
-    console.log(this.props.leftComponent)
     return (
-     <div className={styles.deskWrap}>
-       <div className={styles.leftWrap}>
-         <LeftLayout layout={this.props.leftComponent} />
-       </div>
-       <div className={styles.rightWrap}>
-         <RightLayout layout={this.props.leftComponent} />
-       </div>
-     </div>
+      <div className={styles.deskWrap}>
+        <div className="grid" id="grid1">
+          <div className="grid-item grid-item--width2"></div>
+          <div className="grid-item grid-sizer"></div>
+        </div>
+      </div>
     );
   }
 }
