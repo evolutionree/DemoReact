@@ -107,6 +107,16 @@ class StageBar extends Component {
    */
   parseStageInfo = stageInfo => {
     const { eventset, oppinfoset, dynamicentityset, dynamicvalcursor } = stageInfo;
+    if (oppinfoset && oppinfoset.length) {
+      this.setState({
+        entityTypeId: oppinfoset[0].typeid || oppinfoset[0].entityid
+      });
+    } else if (dynamicentityset && dynamicentityset[0] && dynamicentityset[0].typeid) {
+      this.setState({
+        entityTypeId: dynamicentityset[0].typeid
+      });
+    }
+
     const fetchEntityFields = (oppinfoset && oppinfoset.length)
       ? getGeneralProtocol({
         typeid: oppinfoset[0].typeid || oppinfoset[0].entityid,
@@ -201,7 +211,6 @@ class StageBar extends Component {
           relRecId: this.props.recordDetail.recid,
           isweb: 1
         };
-        console.log(params);
         const stageName = this.getStageName(showingStageId);
         if (stageName === '赢单' || stageName === '输单') {
           params.SalesStageFlag = 1;
@@ -590,7 +599,6 @@ class StageBar extends Component {
     let i = 0;
     const { flowEntity } = this.state;
     const relEntityId = this.props.entityId;
-    console.log(this.state);
     const relRecId = this.props.recordDetail.recid;
     const stageList = [];
     for (i = 0; i < this.state.stageList.length; i += 1) {
@@ -745,6 +753,7 @@ class StageBar extends Component {
               horizontal
               ref={form => this.entityForm = form}
               entityId={this.props.entityId}
+              entityTypeId={this.state.entityTypeId}
               fields={entityFields}
               value={entityFieldsData}
               refEntityData={this.props.recordDetail}
@@ -761,6 +770,7 @@ class StageBar extends Component {
               horizontal
               ref={form => this.customForm = form}
               entityId={this.props.entityId}
+              entityTypeId={this.state.entityTypeId}
               fields={customFields}
               value={customFieldsData}
               refEntityData={this.props.recordDetail}
