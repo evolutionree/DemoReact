@@ -9,6 +9,14 @@
 
 .deskWrap{
   .clearfix;
+  .componentsWrap{
+    width: 300px;
+    float: left;
+  }
+  .layoutWrap{
+    width: ~"calc(100% - 300px)";
+    float: left;
+  }
   .leftWrap{
     width: 66.6666666%;
     float: left;
@@ -37,7 +45,7 @@
     /* ---- grid ---- */
 
     .grid {
-      background: #DDD;
+      background: #fff;
       width: 100%;
     }
 
@@ -55,7 +63,7 @@
       float: left;
       width: 200px;
       height: 100px;
-      background: #C09;
+      background: #dcdce3;
       border: 2px solid hsla(0, 0%, 0%, 0.5);
     }
 
@@ -69,7 +77,7 @@
 
     .grid-item.is-dragging,
     .grid-item.is-positioning-post-drag {
-      background: #C90;
+      background: #cae9ee;
       z-index: 2;
     }
 
@@ -80,5 +88,23 @@
       transition: transform 0.2s;
     }
 
+
+
+
+    .stamp, .stamp2{
+      .packery-drop-placeholder;
+      position: absolute;
+      width: 50%;
+      height: 100px;
+    }
+    .dragEle {
+      position: absolute;
+      left: 0;
+      top: 100px;
+      width: 260px;
+      height: 100px;
+      background: #C90;
+      border: 4px dotted hsla(0, 0%, 0%, 0.5);
+    }
   }
 }
