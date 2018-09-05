@@ -315,7 +315,7 @@ class DynamicFormBase extends Component {
     const fieldControl = this.renderFieldControl(field);
 
     let className = '';
-    if (this.getFormLayout() === 'horizontal') { //TODO： 如果表单单元项 lable 和 formItem是横向布局， 有的单元项会占一行，导致lable的宽跟其他表单项对不齐  so...
+    if (this.getFormLayout() === 'horizontal' && !this.props.cols) { //TODO： 如果表单单元项 lable 和 formItem是横向布局， 有的单元项会占一行，导致lable的宽跟其他表单项对不齐  so...
       if (document.body.clientWidth > 1400) {
         className = colNum === 24 ? 'threeCol_onlylineFormItem' : '';
       } else {

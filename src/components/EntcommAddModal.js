@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { Modal, Select, message, Radio, Button } from 'antd';
 import * as _ from 'lodash';
+import { connect } from 'dva';
 import { DynamicFormAdd, generateDefaultFormData } from './DynamicForm';
 import { getGeneralProtocol, addEntcomm, temporarysave } from '../services/entcomm';
 import { WorkflowCaseForAddModal } from "./WorkflowCaseModal";
@@ -309,9 +310,15 @@ class EntcommAddModal extends Component {
     };
     getGeneralProtocol(params).then(result => {
       const protocolFields = result.data;
+      const formData = generateDefaultFormData(protocolFields, this.state.formData);
+      if (protocolFields.some(field => field.fieldname === 'recmanager')) {
+        const { currentUser } = this.props;
+        formData.recmanager = currentUser && currentUser.userid;
+        formData.recmanager_name = currentUser && currentUser.username;
+      }
       this.setState({
         protocolFields: this.props.processProtocol ? this.props.processProtocol(protocolFields) : protocolFields,
-        formData: generateDefaultFormData(protocolFields, this.state.formData)
+        formData: formData
       });
     });
   };
@@ -377,33 +384,35 @@ class EntcommAddModal extends Component {
             {/*))}*/}
           {/*</Select>*/}
         </Modal>}
-        <Modal
-          title={this.state.commonid ? '客户引用' : (this.props.modalTitle || `新增${this.props.entityName || '表单'}`)}
-          visible={showFormModal}
-          onCancel={this.onFormModalCancel}
-          onOk={this.onFormModalConfirm}
-          width={document.body.clientWidth > 1400 ? 1200 : 800}
-          wrapClassName="DynamicFormModal"
-          footer={[
-            <Button key="back" type="default" onClick={this.onFormModalCancel}>取消</Button>,
-            <Button key="storage" loading={storageLoading} onClick={this.onFormModalStorage}>暂存</Button>,
-            <Button key="submit" loading={confirmLoading} onClick={this.onFormModalConfirm}>提交</Button>
-          ]}
-        >
-          <DynamicFormAdd
-            entityId={entityId}
-            entityTypeId={selectedEntityType}
-            fields={protocolFields}
-            value={formData}
-            refEntity={this.props.refEntity}
-            refRecord={refRecord}
-            onChange={val => { this.setState({ formData: val }); }}
-            ref={form => { this.form = form; }}
-            setExtraData={this.setExtraData}
-            setFieldsConfig={this.setFieldsConfig}
-          />
-          {/*{JSON.stringify(this.state.formData)}*/}
-        </Modal>
+        {
+          showFormModal ? <Modal
+            title={this.state.commonid ? '客户引用' : (this.props.modalTitle || `新增${this.props.entityName || '表单'}`)}
+            visible={showFormModal}
+            onCancel={this.onFormModalCancel}
+            onOk={this.onFormModalConfirm}
+            width={document.body.clientWidth > 1400 ? 1200 : 800}
+            wrapClassName="DynamicFormModal"
+            footer={[
+              <Button key="back" type="default" onClick={this.onFormModalCancel}>取消</Button>,
+              <Button key="storage" loading={storageLoading} onClick={this.onFormModalStorage}>暂存</Button>,
+              <Button key="submit" loading={confirmLoading} onClick={this.onFormModalConfirm}>提交</Button>
+            ]}
+          >
+            <DynamicFormAdd
+              entityId={entityId}
+              entityTypeId={selectedEntityType}
+              fields={protocolFields}
+              value={formData}
+              refEntity={this.props.refEntity}
+              refRecord={refRecord}
+              onChange={val => { this.setState({ formData: val }); }}
+              ref={form => { this.form = form; }}
+              setExtraData={this.setExtraData}
+              setFieldsConfig={this.setFieldsConfig}
+            />
+            {/*{JSON.stringify(this.state.formData)}*/}
+          </Modal> : null
+        }
         <WorkflowCaseForAddModal
           visible={this.state.showWorkflowCaseModal}
           isAddCase={this.props.isAddCase}
@@ -416,4 +425,10 @@ class EntcommAddModal extends Component {
   }
 }
 
-export default EntcommAddModal;
+export default connect(
+  state => {
+    return {
+      currentUser: state.app.user
+    };
+  }
+)(EntcommAddModal);

@@ -202,7 +202,7 @@ SelectDataSource.View = ({ value, value_name, entityId }) => {
   if (!entityId) { // 没有entityid，以普通文本显示
     const emptyText = <span style={{ color: '#999999' }}>(空)</span>;
     const text = value_name !== undefined ? value_name : value;
-    return <div>{text ? (text + '') : emptyText}</div>;
+    return <div className={styles.dataSourceViewWrap}>{text ? (text + '') : emptyText}</div>;
   }
 
   if (!value || !value_name) return null;
@@ -226,7 +226,7 @@ SelectDataSource.View = ({ value, value_name, entityId }) => {
   }
 
   return (
-    <div>
+    <div className={styles.dataSourceViewWrap}>
       <a href="javascript:;" onClick={redirect}>{value_name}</a>
       {/*<Link to={linkUrl} target="_blank">{value_name}</Link>*/}
     </div>

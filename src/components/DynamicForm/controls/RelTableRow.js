@@ -59,9 +59,9 @@ class RelTableRow extends DynamicFormBase {
     const { fields: allFields, selected, onSelect, mode, fixedColumn } = this.props;
     let fields = allFields.filter(item => item.controltype !== 20);
 
-    if (fixedColumn) { //左侧固定表格的
-      fields = fields.filter(item => item.fieldid === fixedColumn);
-    }
+    // if (fixedColumn) { //左侧固定表格的
+    //   fields = fields.filter(item => item.fieldid === fixedColumn);
+    // }
 
     return (
       <div className={styles.tr}>

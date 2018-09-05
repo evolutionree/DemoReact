@@ -78,7 +78,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       }
 
       this.setState({ fields: nextProps.fields }, () => {
-        if (this.globalJS && !this.globalJSExecuted && this.props.fields.length) {
+        if (this.globalJS && !this.globalJSExecuted && nextProps.fields.length) {
           setTimeout(() => {
             this.excuteJS(this.globalJS, 'global');
           }, 0);
