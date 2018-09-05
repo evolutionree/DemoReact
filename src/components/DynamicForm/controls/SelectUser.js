@@ -4,8 +4,10 @@ import _ from 'lodash';
 import UserSelectModal from './UserSelectModal';
 import styles from './SelectUser.less';
 import { queryUsers } from '../../../services/structure';
-import {Icon} from "antd";
+import { Icon, Select } from "antd";
 import ImgCardList from '../../ImgCardList';
+
+const Option = Select.Option;
 
 class UserSelect extends React.Component {
   static propTypes = {
@@ -29,7 +31,8 @@ class UserSelect extends React.Component {
     this.state = {
       modalVisible: false,
       userNameMap: {},
-      allUsers: []
+      allUsers: [],
+      options: []
     };
     if (props.value) {
       const users = this.toUserArray(props.value, props.value_name);
@@ -214,7 +217,77 @@ class UserSelect extends React.Component {
     };
   };
 
+  selectChange = (options, value) => {
+    const selectData = options instanceof Array && options.filter(item => value && value.indexOf(item.userid) > -1);
+    this.props.onChange(value);
+    if (this.props.onChangeWithName) {
+      this.props.onChangeWithName({
+        value: selectData.id,
+        value_name: selectData.name
+      });
+    }
+  }
+
+  queryOptions = (userName) => {
+    const params = {
+      userName: userName,
+      deptId: '7f74192d-b937-403f-ac2a-8be34714278b',
+      userPhone: '',
+      pageSize: 10,
+      pageIndex: 1,
+      recStatus: 2
+    };
+    queryUsers(params).then(result => {
+      let options = result.data.pagedata;
+      options = options.map(item => {
+        return {
+          ...item,
+          id: item.userid,
+          name: item.username
+        };
+      })
+      const { text, users } = this.parseValue();
+      options = _.uniqBy(_.concat(users, options), 'id');
+      this.setState({
+        options: options.filter(opt => {
+          return this.filterOption(opt);
+        })
+      });
+    });
+  }
+
+  filterOption = (option) => {
+    const value = option.userid;
+    const {
+      designateDataSource,
+      designateDataSourceByName,
+      designateFilterDataSource,
+      designateFilterDataSourceByName
+    } = this.props;
+    let flag = true;
+    let tempArray = [];
+    if (designateDataSource) {
+      tempArray = designateDataSource.split(',');
+      flag = _.includes(tempArray, value + '');
+    } else if (designateDataSourceByName) {
+      tempArray = designateDataSourceByName.split(',');
+      flag = _.includes(tempArray, option.accountname);
+    }
+    if (designateFilterDataSource) {
+      tempArray = designateFilterDataSource.split(',');
+      flag = flag && !_.includes(tempArray, value + '');
+    }
+    if (designateFilterDataSourceByName) {
+      tempArray = designateFilterDataSourceByName.split(',');
+      flag = flag && !_.includes(tempArray, option.accountname);
+    }
+    return flag;
+  };
+
   render() {
+    let { options } = this.state;
+    const { text, users } = this.parseValue();
+    options = _.uniqBy(_.concat(users, options), 'id');
     if (this.props.view && this.props.multiple && this.props.isCommonForm) { //查看页
       return <ImgCardList.View
                   dataSouce={this.state.allUsers}
@@ -225,7 +298,6 @@ class UserSelect extends React.Component {
       return <div style={{ display: 'inline-block' }}>{text ? (text + '') : emptyText}</div>;
     }
 
-    const { text, users } = this.parseValue();
     const cls = classnames([styles.wrap, {
       [styles.empty]: !text,
       [styles.disabled]: this.props.isReadOnly === 1
@@ -243,11 +315,23 @@ class UserSelect extends React.Component {
                                                                           isReadOnly={this.props.isReadOnly === 1}
                                                                           addClick={this.showModal}
                                                                           delUser={this.handleOk} /> :
-            <div className="ant-input" onClick={this.showModal} title={text}>
-              {
-                text || this.props.placeholder
-              }
-              <Icon type="close-circle" className={iconCls} onClick={this.iconClearHandler} />
+            <div className={styles.inputSelectWrap}>
+              <Select onChange={this.selectChange.bind(this, options)}
+                      onSearch={this.queryOptions}
+                      placeholder={this.props.placeholder}
+                      disabled={this.props.isReadOnly === 1}
+                      value={users.map(item => item.id + '')}
+                      allowClear
+              >
+                {
+                  options instanceof Array && options.map(item => {
+                    return <Option key={item.id}>{item.name}</Option>;
+                  })
+                }
+              </Select>
+              <div className={classnames(styles.openModal, { [styles.openModalDisabled]: this.props.isReadOnly === 1 })} onClick={this.showModal}>
+                <Icon type="plus-square" />
+              </div>
             </div>
         }
         <UserSelectModal
