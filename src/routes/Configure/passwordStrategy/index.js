@@ -63,9 +63,11 @@ class PasswordStrategy extends React.Component {
           [hasInputOption[i]]: ''
         });
       } else {
-        this.setState({
-          [hasInputOption[i]]: hasInputOption[i] === 'setpwdlength' ? 3 : 1
-        });
+        if (!this.state[hasInputOption[i]]) { //选中 设置 默认初始值，存在了值的项 不改变
+          this.setState({
+            [hasInputOption[i]]: hasInputOption[i] === 'setpwdlength' ? 3 : 1
+          });
+        }
       }
     }
     this.setState({
