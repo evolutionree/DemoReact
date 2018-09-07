@@ -2,11 +2,27 @@
  * Created by 0291 on 2018/5/21.
  */
 import { message } from 'antd';
-import { getdesktops, enabledesktop, savedesktop, getroles, savedesktoprolerelate } from '../services/deskConfig';
+import { Link } from 'dva/router';
+import { getdesktops, enabledesktop, savedesktop } from '../services/deskConfig';
+import { queryVocations } from '../services/functions';
+import React from "react";
 
 const columns = [{
   title: '工作台名称',
-  dataIndex: 'desktopname'
+  dataIndex: 'desktopname',
+  render: (text, record) => {
+    const linkUrl = `/desk/${record.desktopid}`;
+    return <Link to={linkUrl}>{text}</Link>;
+  }
+}, {
+  title: '类型',
+  dataIndex: 'desktoptype',
+  render: (text) => {
+    return ['通用型', '岗位型'][text];
+  }
+}, {
+  title: '职能',
+  dataIndex: 'vocationsid'
 }, {
   title: '工作台说明',
   dataIndex: 'description'
@@ -16,9 +32,6 @@ const columns = [{
   render: (text) => {
     return ['停用', '启用'][text];
   }
-}, {
-  title: '已绑定对象',
-  dataIndex: 'rolesname'
 }, {
   title: '版本后',
   dataIndex: 'version'
@@ -38,7 +51,7 @@ export default {
     list: [],
     currItems: [],
     showModals: '',
-    roles: []
+    vocations: []
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -54,7 +67,7 @@ export default {
   effects: {
     *init(action, { put, call, select }) {
       yield put({ type: 'queryList' });
-      yield put({ type: 'queryRoles' });
+      yield put({ type: 'queryVoca' });
     },
     *queryList(action, { put, call, select }) {
       const { queries: { desktopname, status } } = yield select(state => state.deskconfig);
@@ -71,10 +84,14 @@ export default {
         message.error(e.message || '获取列表数据失败');
       }
     },
-    *queryRoles(action, { put, call, select }) {
+    *queryVoca(action, { put, call, select }) {
       try {
-        const { data } = yield call(getroles);
-        yield put({ type: 'putState', payload: { roles: data } });
+        const { data } = yield call(queryVocations, {
+          pageIndex: 1,
+          pageSize: 99999,
+          vocationName: ''
+        });
+        yield put({ type: 'putState', payload: { vocations: data.datacursor } });
       } catch (e) {
         console.error(e.message)
         message.error(e.message);
@@ -103,17 +120,6 @@ export default {
       try {
         yield call(savedesktop, params);
         message.success(params.desktopid ? '修改成功' : '新增成功');
-        yield put({ type: 'putState', payload: { showModals: '' } });
-        yield put({ type: 'queryList' });
-      } catch (e) {
-        console.error(e.message);
-        message.error(e.message);
-      }
-    },
-    *saveRoles({ payload: submitData }, { select, call, put }) {
-      try {
-        yield call(savedesktoprolerelate, submitData);
-        message.success('操作成功');
         yield put({ type: 'putState', payload: { showModals: '' } });
         yield put({ type: 'queryList' });
       } catch (e) {
@@ -155,7 +161,7 @@ export default {
         list: [],
         currItems: [],
         showModals: '',
-        roles: []
+        vocations: []
       };
     }
   }

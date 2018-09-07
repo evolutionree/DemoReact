@@ -5,56 +5,43 @@ import React from 'react';
 import _ from "lodash";
 import { Button } from 'antd';
 import { connect } from 'dva';
-import classnames from 'classnames';
-import RightLayout from './RightLayout.js';
-import LeftLayout from './LeftLayout.js';
-import mainstyles from './main.less';
 import Packery from 'packery';
 import Draggabilly from 'draggabilly';
 import styles from './index.less';
-import Dnd from './Dn/Dnd';
 
 Packery.prototype.getShiftPositions = function(attrName = 'id') {
   const _this = this;
   return this.items.map(function(item) {
     return {
       attr: item.element.getAttribute(attrName),
-      x: item.rect.x / _this.packer.width
+      x: item.rect.x / _this.packer.width,
+      L: item.element.offsetLeft,
+      T: item.element.offsetTop,
+      W: item.element.offsetWidth,
+      H: item.element.offsetHeight,
+      componentId: item.element.dataset.itemId
     };
   });
 };
 
 Packery.prototype.initShiftLayout = function(positions, attr = 'id') {
-  console.log(positions)
   if (!positions) {
     // if no initial positions, run packery layout
     this.layout();
     return;
   }
-  // parse string to JSON
-  if (typeof positions === 'string') {
-    try {
-      positions = JSON.parse(positions);
-    } catch (error) {
-      console.error('JSON parse error: ' + error);
-      this.layout();
-      return;
-    }
-  }
 
   this._resetLayout();
   // set item order and horizontal position from saved positions
   this.items = positions.map(function(itemPosition) {
-    const selector = '[' + attr + '="' + itemPosition.attr + '"]'
+    const selector = '[' + attr + '="' + itemPosition.dscomponetid + '"]'
     const itemElem = this.element.querySelector(selector);
     const item = this.getItem(itemElem);
-    console.log(item)
     if (item) {
-      item.rect.x = itemPosition.x * this.packer.width;
+      item.rect.x = itemPosition.postion.X_Proportion || 0;
       return item;
     }
   }, this).filter(item => item);
-  console.log(this.items)
   this.shiftLayout();
 };
 
@@ -66,137 +53,60 @@ class Desk extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      pckry: null
+
     };
   }
 
   componentDidMount() {
-    // const pckry = new Packery('#grid1', {
-    //   itemSelector: '.grid-item',
-    //   columnWidth: '.grid-sizer',
-    //   percentPosition: true,
-    //   initLayout: true // disable initial layout
-    // });
 
-    // get saved dragged positions
-    const initPositions = localStorage.getItem('dragPositions');
-    // init layout with saved positions
-   // pckry.initShiftLayout(initPositions, 'data-item-id');
-
-    // make draggable
-    // console.log(pckry.getItemElements())
-    // pckry.getItemElements().forEach(function(itemElem) {
-    //   const draggie = new Draggabilly(itemElem);
-    //   pckry.bindDraggabillyEvents(draggie);
-    // });
-
-    // save drag positions on event
-    // pckry.on('dragItemPositioned', function() {
-    //   // save drag positions
-    //   const positions = pckry.getShiftPositions('data-item-id');
-    //   localStorage.setItem('dragPositions', JSON.stringify(positions));
-    // });
-
-    // const draggiedragEle = new Draggabilly('.dragEle');
-    // const stampElem = document.querySelector('.stamp');
-    // let bool = true;
-    // console.log(pckry)
-    // draggiedragEle.on('pointerMove', (event, pointer, moveVector) => {
-    //   if ((moveVector.x + pointer.target.offsetWidth) > 300) {
-    //     bool && pckry.stamp(stampElem);
-    //     // let position = this.getItemPosition(itemPotions, moveVector.x + pointer.target.offsetWidth - 300, moveVector.y + 100, pointer.target.offsetWidth);
-    //     stampElem.style.left = 0 + 'px';
-    //     stampElem.style.top = 0 + 'px';
-    //     bool = false;
-    //     pckry.layout();
-    //   }
-    // });
-
-    // draggiedragEle.on('pointerUp', function (event, pointer, moveVector) {
-    //   // let positions = pckry.getShiftPositions('data-item-id');
-    //   // positions = positions.splice(3, 0, {
-    //   //   attr: '10',
-    //   //   x: 0
-    //   // });
-    //   pckry.unstamp(stampElem);
-    //   pckry.layout();
-    //   const items = [
-    //     getItemElement()
-    //   ];
-    //   //append elements to container
-    //   const fragment = document.createDocumentFragment();
-    //   fragment.appendChild(items[0]);
-    //   document.getElementById('grid1').appendChild(fragment);
-    //   // add and lay out newly appended elements
-    //   pckry.appended(items);
-    //   pckry.fit(items[0], 0, 0);
-    //
-    //   //pckry.initShiftLayout(positions, 'data-item-id');
-    //   // console.log(pckry.items);
-    //   // pckry.items = pckry.items.map(function(item) {
-    //   //   console.log(item.element.dataset.itemId)
-    //   //   if (item.element.dataset.itemId == 10) {
-    //   //     item.rect.x = 0;
-    //   //     item.rect.y = 100;
-    //   //   }
-    //   //   return item;
-    //   // }, pckry);
-    //   // pckry.shiftLayout();
-    // });
-
-    function getItemElement(position) {
-      const item = document.createElement('div');
-      // add width and height class
-      item.className = 'grid-item ';
-      item.dataset.itemId = '10';
-      return item;
-    }
   }
 
   componentDidUpdate() {
-    const pckry = new Packery('#grid1', {
+    window.pckry = new Packery('#grid1', {
       itemSelector: '.grid-item',
       columnWidth: '.grid-sizer',
       percentPosition: true,
-      initLayout: true // disable initial layout
+      initLayout: false // disable initial layout
     });
-    console.log('componentDidUpdate')
 
-    // get saved dragged positions
-    let initPositions = localStorage.getItem('dragPositions');
-    console.log(initPositions)
     // init layout with saved positions
-   // pckry.initShiftLayout(initPositions, 'data-item-id');
+    window.pckry.initShiftLayout(this.props.layoutComponents, 'data-item-id');
 
     // make draggable
-    document.querySelectorAll('.grid-item').forEach(function(itemElem) {
+    let layoutComponents = document.querySelectorAll('.grid-item');
+    layoutComponents.forEach(function(itemElem) {
       const option = /grid-item-width2/.test(itemElem.getAttribute('class')) ? {
         axis: 'y'
       } : {};
       const draggie = new Draggabilly(itemElem, option);
-      pckry.bindDraggabillyEvents(draggie);
+      window.pckry.bindDraggabillyEvents(draggie);
     });
 
+    let itemPotions = window.pckry.getShiftPositions('data-item-id');
+
     let _this = this;
-    const draggableElems = document.querySelectorAll('.component');
+    const stampElem = document.querySelector('.stamp');
+
+    let draggableElems = document.querySelectorAll('.component');
     let draggies = [];
+    let bool = true;
+
     for (let i = 0; i < draggableElems.length; i++) {
       let draggableElem = draggableElems[i];
       let draggie = new Draggabilly(draggableElem);
 
-      const stampElem = document.querySelector('.stamp');
-      let bool = true;
       draggie.enter = false;
       draggie.on('dragMove', function (event, pointer, moveVector) {
-        console.log(pointer)
-        if ((moveVector.x + pointer.target.offsetWidth) > 192) {
+        if (moveVector.x > 40) {
           this.enter = true;
-          bool && pckry.stamp(stampElem);
-          //let position = this.getItemPosition(itemPotions, moveVector.x + pointer.target.offsetWidth - 300, moveVector.y + 100, pointer.target.offsetWidth);
-          stampElem.style.left = 0 + 'px';
-          stampElem.style.top = 0 + 'px';
+          bool && window.pckry.stamp(stampElem);
+          this.position = _this.getItemPosition(itemPotions, moveVector.x - 40, moveVector.y + 10, pointer.target.offsetWidth);
+          stampElem.style.left = this.position.L + 'px';
+          stampElem.style.top = this.position.T + 'px';
+          stampElem.style.width = 350 + 'px';
+          //stampElem.style.height = pointer.target.dataset.componentHeight + 'px';
           bool = false;
-          pckry.shiftLayout();
+          window.pckry.shiftLayout();
         } else {
           this.enter = false;
         }
@@ -204,41 +114,27 @@ class Desk extends React.PureComponent {
 
       draggie.on('dragEnd', function (event, pointer) {
         if (this.enter) { //TODO: 进入拖拽区域
-          // console.log(2222222)
-          // const newInitPositions = _.cloneDeep(newInitPositions);
-          // newInitPositions.splice(0, 0, {
-          //   attr: pointer.target.dataset.componentId,
-          //   x: 0
-          // });
-          // localStorage.setItem('dragPositions', JSON.stringify(newInitPositions));
-
-
-          // const items = [
-          //   getItemElement()
-          // ];
-          // //append elements to container
-          // const fragment = document.createDocumentFragment();
-          // fragment.appendChild(items[0]);
-          // document.getElementById('grid1').appendChild(fragment);
-          // // add and lay out newly appended elements
-          // pckry.appended(items);
-          // pckry.fit(items[0], 0, 0);
-
-
-          _this.props.addLayout(pointer.target.dataset.componentId);
+          draggableElems = null;
+          layoutComponents = null;
+          draggie = [];
+          _this.props.reload();
+          //TODO:  记录拖拽后的定位  每个组件的顺序  别忘了  宽度不能设置成固定值
+          _this.props.addLayout(pointer.target.dataset.componentId, this.position, itemPotions);
         }
-        pckry.unstamp(stampElem);
-        pckry.shiftLayout();
+        window.pckry.unstamp(stampElem);
+        window.pckry.shiftLayout();
       });
       draggies.push(draggie);
     }
 
 
-    pckry.on('layoutComplete', function() {
-      // save drag positions
-      const positions = pckry.getShiftPositions('data-item-id');
-      localStorage.setItem('dragPositions', JSON.stringify(positions));
-    });
+    window.pckry.on('layoutComplete', getCurrentItemPosition);
+
+    window.pckry.on('dragItemPositioned', getCurrentItemPosition);
+
+    function getCurrentItemPosition() {
+      itemPotions = window.pckry.getShiftPositions('data-item-id');
+    }
 
 
     function getItemElement(position) {
@@ -246,15 +142,80 @@ class Desk extends React.PureComponent {
       // add width and height class
       item.className = 'grid-item ';
       item.dataset.itemId = '10';
+      item.style.width = '350px';
+      item.style.height = '100px';
       return item;
     }
   }
 
+
+  getItemPosition = (itemPotions, L, T, W) => {
+    console.log(new Date().getTime());
+    console.log(JSON.stringify(itemPotions))
+    let layout;
+    let Layout_L = 0;
+    if (L < 175) {
+      layout = itemPotions.filter(item => {
+        return item.L === 0;
+      });
+      Layout_L = 0;
+    } else if (L >= 525) {
+      layout = itemPotions.filter(item => {
+        return item.L === 700;
+      });
+      Layout_L = 700;
+    } else {
+      layout = itemPotions.filter(item => {
+        return item.L + item.W === 700;
+      });
+      Layout_L = 350;
+    }
+
+
+    let insertIndex;
+    for (let i = 0; i < layout.length; i++) {
+      if (T < (layout[i].T + layout[i].H / 2)) {
+        insertIndex = i;
+        break;
+      } else {
+        insertIndex = i + 1;
+      }
+    }
+
+    if (!insertIndex) { //TODO: 共三列 当前插入列 插到最前面  或者当前列为空
+      return {
+        L: Layout_L,
+        T: 0,
+        insetComponentId: ''
+      };
+    } else {
+      return {
+        L: Layout_L,
+        T: layout[insertIndex - 1].T + layout[insertIndex - 1].H,
+        insetComponentId: layout[insertIndex - 1].componentId
+      };
+    }
+  }
+
   saveDeskTops = () => {
-    this.props.saveDeskTops();
+    const { layoutComponents } = this.props;
+    const currentItemPosition = window.pckry.getShiftPositions('data-item-id');
+    const newLayoutComponents = currentItemPosition.map(newItemComponentPosition => {
+      const currentItem = _.find(layoutComponents, oldItemCompomemt => oldItemCompomemt.dscomponetid === newItemComponentPosition.componentId);
+      currentItem.postion = JSON.stringify({
+        X_Proportion: newItemComponentPosition.L
+      });
+      return currentItem;
+    });
+    this.props.saveDeskTops(newLayoutComponents);
   }
 
   render() {
+    console.log(this.props.layoutComponents)
+    const layoutComponent = this.props.layoutComponents.map(item => item.dscomponetid);
+    const showComponentList = this.props.componentList.filter(item => {
+      return layoutComponent.indexOf(item.dscomponetid) === -1;
+    });
     return (
       <div className={styles.deskWrap}>
         <div className={styles.toolBar}>
@@ -262,23 +223,29 @@ class Desk extends React.PureComponent {
         </div>
         <div className={styles.componentsWrap} id='componentsWrap'>
           {
-            this.props.componentList.map((item, index) => {
+            !this.props.reloadStatus ? showComponentList.map((item, index) => {
               return (
-                <div className='component' key={item.dscomponetid} data-component-id={item.dscomponetid}>
+                <div key={item.dscomponetid} className='component' data-component-id={item.dscomponetid} data-component-height={item.maxcomheight}>
                   {
-                    item.comname
+                    item.comname + '||' + item.dscomponetid
                   }
                 </div>
               );
-            })
+            }) : null
           }
         </div>
         <div className={styles.layoutWrap}>
           <div className="grid" id="grid1">
             {
-              this.props.leftComponent.map((item, index) => {
-                return <div key={index} className={item.comwidth === 2 ? 'grid-item grid-item-width2' : 'grid-item'} data-item-id={item.dscomponetid}>{item.comname}</div>;
-              })
+              !this.props.reloadStatus ? this.props.layoutComponents.map((item, index) => {
+                return (
+                  <div key={item.dscomponetid} style={{ height: item.maxcomheight }} className={item.comwidth === 2 ? 'grid-item grid-item-width2' : 'grid-item'} data-item-id={item.dscomponetid}>
+                    {
+                      item.comname + '||' + item.dscomponetid
+                    }
+                  </div>
+                );
+              }) : null
             }
             <div className="grid-sizer"></div>
             <div className="stamp"></div>
@@ -293,12 +260,14 @@ export default connect(
   state => state.desk,
   dispatch => {
     return {
-      addLayout: (componentid) => {
-        dispatch({ type: 'desk/addLayout', payload: componentid });
+      addLayout: (componentid, position, AllItemPotions) => {
+        dispatch({ type: 'desk/addLayout', payload: { componentid, position, AllItemPotions } });
       },
-      saveDeskTops: () => {
-        console.log(111111)
-        dispatch({ type: 'desk/saveDeskTops' });
+      saveDeskTops: (newLayoutComponents) => {
+        dispatch({ type: 'desk/saveDeskTops', payload: newLayoutComponents });
+      },
+      reload: () => {
+        dispatch({ type: 'desk/putState', payload: { reloadStatus: true } });
       }
     };
   }

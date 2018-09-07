@@ -58,11 +58,37 @@ export async function getdesktops(params) {
 }
 
 /**
+ * 获取工作台组件布局
+ * {
+"DesktopName":""
+"status":1
+}
+ * @returns {Promise.<Object>}
+ */
+export async function getactualdesktopcom(desktopid) {
+  return request('/api/desktop/getactualdesktopcom', {
+    method: 'post',
+    body: JSON.stringify({ desktopid })
+  });
+}
+
+/**
  * 保存工作台
  * @returns {Promise.<Object>}
  */
 export async function savedesktop(params) {
   return request('/api/desktop/savedesktop', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
+ * 保存工作台组件
+ * @returns {Promise.<Object>}
+ */
+export async function saveactualdesktopcom(params) {
+  return request('/api/desktop/saveactualdesktopcom', {
     method: 'post',
     body: JSON.stringify(params)
   });
@@ -79,16 +105,6 @@ export async function enabledesktop(params) {
   });
 }
 
-/**
- * 获取绑定角色
- * @returns {Promise.<Object>}
- */
-export async function getroles() {
-  return request('api/desktop/getroles', {
-    method: 'post',
-    body: JSON.stringify({})
-  });
-}
 
 /**
  * 绑定工作台角色

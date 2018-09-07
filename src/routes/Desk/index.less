@@ -32,7 +32,6 @@
   }
   .layoutWrap{
     width: ~"calc(100% - 200px)";
-    height: ~"calc(100vh - 130px)";
     float: left;
     background: #fff;
   }
@@ -90,8 +89,10 @@
     .stamp, .stamp2{
       .packery-drop-placeholder;
       position: absolute;
-      width: 200px;
+      width: 10px;
       height: 100px;
+      -webkit-transition: -webkit-transform 0.2s;
+      transition: transform 0.2s;
     }
     .dragEle {
       position: absolute;

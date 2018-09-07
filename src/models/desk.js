@@ -2,16 +2,159 @@
  * Created by 0291 on 2018/8/3.
  */
 import { message } from 'antd';
-import { getdesktop, getdeskcomponentlist } from '../services/deskConfig.js';
+import { getactualdesktopcom, getdeskcomponentlist } from '../services/deskConfig.js';
 import _ from 'lodash';
-import { savedesktop } from "../services/deskConfig";
+import { saveactualdesktopcom } from "../services/deskConfig";
+
+const testData = [
+  {
+    "dscomponetid":"f58623233e8d-7311-4df8-b352-858309ba9f41",
+    "postion":{
+      X_Proportion: 0
+    },
+    "comname":"新增客户统计1",
+    "comtype":1,
+    "comwidth":1,
+    "comheighttype":1,
+    "mincomheight":500,
+    "maxcomheight":200,
+    "comurl":null,
+    "comargs":null,
+    "comdesciption":null,
+    "status":1,
+    "validationstate":{
+      "errors":[
+        "组件处理页面不能为空",
+        "组件描述不能为空"
+      ],
+      "isvalid":false
+    }
+  },
+  {
+    "dscomponetid":"f532863e8d-7311-4df8-b352-858309ba9f42",
+    "postion":{
+      X_Proportion: 350
+    },
+    "comname":"新增客户统计2",
+    "comtype":1,
+    "comwidth":1,
+    "comheighttype":1,
+    "mincomheight":500,
+    "maxcomheight":100,
+    "comurl":null,
+    "comargs":null,
+    "comdesciption":null,
+    "status":1,
+    "validationstate":{
+      "errors":[
+        "组件处理页面不能为空",
+        "组件描述不能为空"
+      ],
+      "isvalid":false
+    }
+  },
+  {
+    "dscomponetid":"f5863e8d-7311-4df8-b352-858309ba9f4f",
+    "postion":{
+      X_Proportion: 0
+    },
+    "comname":"新增客户统计",
+    "comtype":1,
+    "comwidth":2,
+    "comheighttype":1,
+    "mincomheight":500,
+    "maxcomheight":100,
+    "comurl":null,
+    "comargs":null,
+    "comdesciption":null,
+    "status":1,
+    "validationstate":{
+      "errors":[
+        "组件处理页面不能为空",
+        "组件描述不能为空"
+      ],
+      "isvalid":false
+    }
+  },
+  {
+    "dscomponetid":"f35863e8d-7311-4df8-b352-858309ba9f43",
+    "postion":{
+      X_Proportion: 0
+    },
+    "comname":"新增客户统计3",
+    "comtype":1,
+    "comwidth":1,
+    "comheighttype":1,
+    "mincomheight":500,
+    "maxcomheight":100,
+    "comurl":null,
+    "comargs":null,
+    "comdesciption":null,
+    "status":1,
+    "validationstate":{
+      "errors":[
+        "组件处理页面不能为空",
+        "组件描述不能为空"
+      ],
+      "isvalid":false
+    }
+  }
+];
+const submitData = [
+  {
+    "dscomponetid":"f5863e8d-7311-4df8-b352-858309ba9f4f",
+    "postion":{
+      X_Proportion: 0
+    },
+    "comname":"新增客户统计",
+    "comtype":1,
+    "comwidth":2,
+    "comheighttype":1,
+    "mincomheight":500,
+    "maxcomheight":600,
+    "comurl":null,
+    "comargs":null,
+    "comdesciption":null,
+    "status":1,
+    "validationstate":{
+      "errors":[
+        "组件处理页面不能为空",
+        "组件描述不能为空"
+      ],
+      "isvalid":false
+    }
+  },
+  {
+    "dscomponetid":"a9cdb940-8349-4b92-a8ed-34dbfbc79af1",
+    "postion": {
+      X_Proportion: 0
+    },
+    "comname":"动态消息",
+    "comtype":1,
+    "comwidth":1,
+    "comheighttype":1,
+    "mincomheight":300,
+    "maxcomheight":400,
+    "comurl":null,
+    "comargs":null,
+    "comdesciption":null,
+    "status":1,
+    "validationstate":{
+      "errors":[
+        "组件处理页面不能为空",
+        "组件描述不能为空"
+      ],
+      "isvalid":false
+    }
+  }
+]
 
 export default {
   namespace: 'desk',
   state: {
-    leftComponent: [],
-    rightComponent: [],
-    componentList: []
+    layoutComponents: submitData,
+    componentList: [],
+    reloadStatus: false
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -29,10 +172,9 @@ export default {
     },
     *fetchdesk(action, { put, call, select }) {
       try {
-        const { data } = yield call(getdesktop);
+        const { data } = yield call(getactualdesktopcom, '32a5dcf3-ce37-46d8-a6f0-6f641cd3c1d9');
         yield put({ type: 'putState', payload: {
-          leftComponent: data.leftdesktopcomponents,
-          rightComponent: data.rightdesktopcomponents
+          layoutComponents: data.comitems
         } });
       } catch (e) {
         console.error(e);
@@ -51,50 +193,55 @@ export default {
         message.error(e.message || '获取列表数据失败');
       }
     },
-    *addLayout({ payload: componentid }, { put, call, select }) {
+    *addLayout({ payload: { componentid, position, AllItemPotions } }, { put, call, select }) {
       console.log('------------------------------------------------')
-      const { componentList, leftComponent } = yield select(state => state.desk);
-      const newComponent = componentList.filter(item => {
-        return item.dscomponetid === componentid;
+      console.log(position)
+      //TODO: 为什么多次执行？
+      yield put({
+        type: 'putState',
+        payload: {
+          reloadStatus: false
+        }
       });
-      const newComponentList = componentList.filter(item => {
-        return item.dscomponetid !== componentid;
-      });
-      let initPositions = JSON.parse(localStorage.getItem('dragPositions'));
-      if (initPositions instanceof Array) {
-        initPositions = [
-          {
-            attr: componentid,
-            x: 0
-          },
-          ...initPositions
-        ];
-      } else {
-        initPositions = [{
-          attr: componentid,
-          x: 0
-        }];
-      }
-console.log(initPositions)
-      localStorage.setItem('dragPositions', JSON.stringify(initPositions));
-      yield put({ type: 'putState', payload: { componentList: newComponentList, leftComponent: [...leftComponent, ...newComponent] } });
-    },
-    *saveDeskTops({ payload }, { put, call, select }) {
-      const { leftComponent } = yield select(state => state.desk);
-      const params = {
-        "desktopid":"32a5dcf3-ce37-46d8-a6f0-6f641cd3c1d9",
-        "desktopname":"111",
-        "desktoptype": 1,
-        "leftitems": leftComponent,
-        "rightitems":null,
-        "basedeskid":"00000000-0000-0000-0000-000000000000",
-        "description":"111",
-        "status":1,
-        "rolesname":"",
-        "rolesid":""
-      };
       try {
-        yield call(savedesktop, params);
+        let { componentList, layoutComponents } = yield select(state => state.desk);
+
+        //TODO: 页面组件布局变动后，再添加组件后， 需要记录布局，重新渲染页面
+        const newLayoutComponents = AllItemPotions.map(newItemComponentPosition => {
+          const currentItem = _.find(layoutComponents, oldItemCompomemt => oldItemCompomemt.dscomponetid === newItemComponentPosition.componentId);
+          currentItem.postion = {
+            X_Proportion: newItemComponentPosition.L
+          };
+          return currentItem;
+        });
+        const newComponent = componentList.filter(item => {
+          return item.dscomponetid === componentid;
+        });
+        let newlayoutComponents = _.cloneDeep(newLayoutComponents);
+        if (newComponent.length === 1) {
+          newComponent[0].postion = {
+            X_Proportion: position.L
+          };
+          const findInsetComIndex = _.findIndex(newlayoutComponents, item => item.dscomponetid === position.insetComponentId);
+          if (findInsetComIndex) { //插入到后面
+            newlayoutComponents.splice(findInsetComIndex * 1 + 1, 0, newComponent[0]);
+          } else {
+            newlayoutComponents = [...newComponent, ...newlayoutComponents];
+          }
+          yield put({ type: 'putState', payload: { reloadStatus: false, layoutComponents: _.uniqBy(newlayoutComponents, 'dscomponetid') } });
+        }
+      } catch (e) {
+        console.error(e.message);
+      }
+    },
+    *saveDeskTops({ payload: newLayoutComponents }, { put, call, select }) {
+      const params = {
+        desktopid: '32a5dcf3-ce37-46d8-a6f0-6f641cd3c1d9',
+        comitems: newLayoutComponents
+      };
+
+      try {
+        yield call(saveactualdesktopcom, params);
         message.success('更新成功');
       } catch (e) {
         console.error(e.message);
@@ -117,9 +264,9 @@ console.log(initPositions)
     },
     resetState() {
       return {
-        leftComponent: [],
-        rightComponent: [],
-        componentList: []
+        layoutComponents: submitData,
+        componentList: [],
+        reloadStatus: false
       };
     }
   }

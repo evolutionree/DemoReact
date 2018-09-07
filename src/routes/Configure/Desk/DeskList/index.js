@@ -8,7 +8,6 @@ import Toolbar from '../../../../components/Toolbar';
 import Page from '../../../../components/Page';
 import Search from '../../../../components/Search';
 import FormModal from './FormModal';
-import BindModal from './bindModal';
 
 const Option = Select.Option;
 
@@ -47,10 +46,6 @@ function DeskList({
     dispatch({ type: 'deskconfig/setDeskStatus', payload: { setStatus: 0 } });
   }
 
-  function bind() {
-    dispatch({ type: 'deskconfig/showModals', payload: 'bind' });
-  }
-
   const { desktopname, status } = queries;
 
   return (
@@ -62,8 +57,7 @@ function DeskList({
           { label: '停用', handler: disableComponent, single: true,
             show: () => currItems[0].status === 1 },
           { label: '启用', handler: enableComponent, single: true,
-            show: () => currItems[0].status === 0 },
-          { label: '绑定/解绑', handler: bind, single: true }
+            show: () => currItems[0].status === 0 }
         ]}
       >
         <Select value={status + ''} onChange={changeStatus}>
@@ -90,7 +84,6 @@ function DeskList({
                onChange: (keys, items) => selectItems(items)
              }} />
       <FormModal />
-      <BindModal />
     </Page>
   );
 }

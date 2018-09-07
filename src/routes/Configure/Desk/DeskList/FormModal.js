@@ -4,7 +4,6 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Modal, Form, Input, Select } from 'antd';
-
 const { TextArea } = Input;
 
 const FormItem = Form.Item;
@@ -28,11 +27,12 @@ class FormModal extends Component {
 
   componentWillReceiveProps(nextProps) {
     const isOpening = !this.props.visible && nextProps.visible;
+    const { form, editingRecord } = nextProps;
     if (isOpening) {
-      const { form, editingRecord } = nextProps;
       if (editingRecord) {
         form.setFieldsValue({
-          ...editingRecord
+          ...editingRecord,
+          vocationsid: editingRecord.vocationsid && editingRecord.vocationsid.split(',')
         });
       } else {
         form.resetFields();
@@ -47,10 +47,18 @@ class FormModal extends Component {
       if (err) return;
       this.props.confirm({
         ...editingRecord,
-        ...values
+        ...values,
+        desktoptype: values.desktoptype * 1,
+        vocationsid: values.vocationsid.join(',')
       });
     });
   };
+
+  getHtml = () => {
+    return this.props.vocations.map(item => {
+      return <Option key={item.vocationid}>{item.vocationname}</Option>;
+    });
+  }
 
   render() {
     const { getFieldDecorator } = this.props.form;
@@ -72,6 +80,27 @@ class FormModal extends Component {
               <Input placeholder="请输入工作台名称" maxLength="10" />
             )}
           </FormItem>
+          <FormItem label="类型">
+            {getFieldDecorator('desktoptype', {
+              initialValue: '1'
+            })(
+              <Select disabled={true}>
+                <Option key={0}>通用型</Option>
+                <Option key={1}>岗位型</Option>
+              </Select>
+            )}
+          </FormItem>
+          <FormItem label="职能">
+            {getFieldDecorator('vocationsid')(
+              <Select mode="multiple">
+                {
+                  this.props.vocations.map(item => {
+                    return <Option key={item.vocationid}>{item.vocationname}</Option>;
+                  })
+                }
+              </Select>
+            )}
+          </FormItem>
           <FormItem label="说明">
             {getFieldDecorator('description', {
               rules: [{ required: true, message: '请输入说明' }]
@@ -87,10 +116,11 @@ class FormModal extends Component {
 
 export default connect(
   state => {
-    const { showModals, currItems, modalPending } = state.deskconfig;
+    const { showModals, currItems, modalPending, vocations } = state.deskconfig;
     return {
       visible: /add|edit/.test(showModals),
       editingRecord: /edit/.test(showModals) ? currItems[0] : undefined,
+      vocations,
       modalPending
     };
   },
