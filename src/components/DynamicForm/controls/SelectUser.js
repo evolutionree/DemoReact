@@ -13,7 +13,7 @@ class UserSelect extends React.Component {
   static propTypes = {
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     value_name: PropTypes.string,
-    onChange: PropTypes.func.isRequired,
+    onChange: PropTypes.func,
     onChangeWithName: PropTypes.func,
     dataRange: PropTypes.oneOf([0, 1, 2]),
     multiple: PropTypes.oneOf([0, 1]),

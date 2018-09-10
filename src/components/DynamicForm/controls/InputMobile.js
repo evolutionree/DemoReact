@@ -5,7 +5,7 @@ const InputText = createNormalInput('text', {
     return inputValue.replace(/[^\d]/g, '');
   },
   props: {
-    maxLength: 11
+    maxLength: '11'
   }
 });
 
