@@ -225,7 +225,6 @@ class DynamicFormBase extends Component {
   };
 
   onFieldValueChange = (fieldName, fieldid, newValue, isFromApi) => {
-    if (isFromApi) return;
     const relObject = this.state.RelObjectConfig;
     relObject.map(item => {
       const fieldconfig = item.fieldconfig;
@@ -238,6 +237,7 @@ class DynamicFormBase extends Component {
         }
       }
     })
+    if (isFromApi) return;
     const { jsEngine } = this.props;
     if (jsEngine) {
       setTimeout(() => {
