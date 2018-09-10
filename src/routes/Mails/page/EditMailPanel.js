@@ -1064,7 +1064,7 @@ class EditMailPanel extends Component {
             </div>
           </div>
           <div style={{ width: 220, float: 'left', height: '100%' }}>
-            <AddressList data={this.state.editEmailFormData} setFormData={this.formDataChange} />
+            <AddressList key='AddressList' data={this.state.editEmailFormData} setFormData={this.formDataChange} />
           </div>
         </Spin>
       </div>
