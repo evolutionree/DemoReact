@@ -9,15 +9,26 @@
 
 .deskWrap{
   .clearfix;
+  position: relative;
   .toolBar{
     height: 70px;
     line-height: 60px;
     padding: 0 20px;
-    background: #464e5d;
+    background: #f6f9fc;
+    border: 1px solid #e6e6e6
+  }
+  .content{
+    position: absolute;
+    top: 70px;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: #f6f9fc;
   }
   .componentsWrap{
     width: 200px;
     height: ~"calc(100vh - 130px)";
+    padding: 20px;
     float: left;
 
     :global{
@@ -33,14 +44,13 @@
   .layoutWrap{
     width: ~"calc(100% - 200px)";
     float: left;
-    background: #fff;
   }
 
   :global{
     /* ---- grid ---- */
 
     .grid {
-      width: 1050px;
+      width: 100%;
       height: 100%;
     }
 
@@ -56,28 +66,43 @@
 
     .grid-item, .grid-sizer {
       float: left;
-      width: 350px;
+      width: 33.3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333%;
       height: 100px;
-      background: #dcdce3;
-      border: 2px solid hsla(0, 0%, 0%, 0.5);
+      background: #fff;
+      border: 1px solid #e2e6ec;
+      >i{
+        font-size: 18px;
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        cursor: pointer;
+        color: #999;
+        &:hover{
+          color: #3A3C4F;
+        }
+      }
+    }
+    .grid-sizer{
+      background-color: #f6f9fc;
     }
 
-    .grid-item-width2 { width: 700px; }
+    .grid-item-width2 { width: 66.6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666%; }
     .grid-item-height2 { height: 400px; }
 
     .grid-item:hover {
-      border-color: hsla(0, 0%, 100%, 0.5);
+      box-shadow: 0 0 8px 0 #a9bbd5;
+      border: 1px solid #89c2ff;
       cursor: move;
     }
 
     .grid-item.is-dragging,
     .grid-item.is-positioning-post-drag {
-      background: #cae9ee;
+      opacity: 0.5;
       z-index: 2;
     }
 
     .packery-drop-placeholder {
-      outline: 3px dashed hsla(0, 0%, 0%, 0.5);
+      outline: 3px dashed #89c2ff;
       outline-offset: -6px;
       -webkit-transition: -webkit-transform 0.2s;
       transition: transform 0.2s;
@@ -89,7 +114,7 @@
     .stamp, .stamp2{
       .packery-drop-placeholder;
       position: absolute;
-      width: 10px;
+      width: 0px;
       height: 100px;
       -webkit-transition: -webkit-transform 0.2s;
       transition: transform 0.2s;

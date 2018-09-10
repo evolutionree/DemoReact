@@ -11,7 +11,7 @@ const columns = [{
   title: '工作台名称',
   dataIndex: 'desktopname',
   render: (text, record) => {
-    const linkUrl = `/desk/${record.desktopid}`;
+    const linkUrl = `/deskconfig/${record.desktopid}`;
     return <Link to={linkUrl}>{text}</Link>;
   }
 }, {
