@@ -132,9 +132,31 @@ export async function delMails(params) {
  * @returns {Promise.<Object>}
  */
 export async function queryMailDetail(mailid) {
-  return request('api/mail/maildetail', {
-    method: 'post',
-    body: JSON.stringify({ mailid })
+  //TODO: 2018-9-10 后端性能优化  之前一个接口获取的数据  改由两个接口分别获取
+  function queryMailContent() { //获取邮件内容数据
+    return request('api/mail/maildetail', {
+      method: 'post',
+      body: JSON.stringify({ mailid })
+    });
+  }
+
+  function queryMailOtherInfo() { //获取一些发送人啊  抄送人的这些数据
+    return request('api/mail/mailsubdetail', {
+      method: 'post',
+      body: JSON.stringify({ mailid })
+    });
+  }
+
+  return Promise.all([
+    queryMailContent(),
+    queryMailOtherInfo()
+  ]).then(([res1, res2]) => {
+    return {
+      data: {
+        maildetail: res1.data,
+        ...res2.data
+      }
+    };
   });
 }
 
