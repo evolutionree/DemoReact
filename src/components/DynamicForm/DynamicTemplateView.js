@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import DynamicFieldView from './DynamicFieldView';
-import IntlText from '../UKComponent/Form/IntlText';
+import { getIntlText } from '../UKComponent/Form/IntlText';
 import styles from './styles.less';
 
 const propTypes = {
@@ -23,7 +23,7 @@ function DynamicTemplateView({
         const { fieldname, fieldlabel, controltype } = field;
         return (
           <div className={styles.templateitem} key={fieldname}>
-            <div className={styles.templatetitle}><IntlText name="displayname" value={field} /></div>
+            <div className={styles.templatetitle}>{getIntlText('fieldlabel', field)}</div>
             <div className={styles.templatecontent}>
               <DynamicFieldView
                 value={value[fieldname]}
