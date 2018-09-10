@@ -60,30 +60,23 @@ class SelectProductBigData extends React.Component {
       this.props.onChange('', true);
       return;
     }
-    const allProductData = this.props.productsRaw.products;
-    const arrVal = val.split(',');
-    const validVals = arrVal.filter(id => {
-      return allProductData.some(obj => obj.productid === id);
+    let valMap = { ...this.state.valMap };
+    val.forEach(item => {
+      valMap[item.id] = item.name;
+    });
+
+    const value = val.map(item => item.id).join(',');
+    this.setState({ valMap }, () => {
+      this.props.onChange(value);
+    });
+    const setValue = val.map(item => {
+      return item.id;
     }).join(',');
-    this.props.onChange(validVals);
+    this.props.onChange(setValue);
   };
 
-  setValueByName = valueName => {
-    if (!valueName) {
-      this.props.onChange('', true);
-      return;
-    }
-    const allProductData = this.props.productsRaw.products;
-    const arrVal = valueName.split(',');
-    const validVals = arrVal
-      .map(name => {
-        const match = _.find(allProductData, ['productname', name]);
-        if (match) return match.productid;
-        return undefined;
-      })
-      .filter(i => !!i)
-      .join(',');
-    this.props.onChange(validVals);
+  setValueByName = val => {
+    this.setValue(val);
   };
 
   parseTextValue = () => {
@@ -116,6 +109,7 @@ class SelectProductBigData extends React.Component {
 
     const value = array.map(item => item.productid).join(',');
     const value_name = array.map(item => item.productname).join(',');
+    console.log(value)
     this.setState({ valMap }, () => {
       this.props.onChange(value);
     });
@@ -220,7 +214,6 @@ class SelectProductBigData extends React.Component {
         <SelectProductModal
           visible={this.state.modalVisible}
           value={this.props.value}
-          data={this.props.productsRaw}
           onOk={this.handleOk}
           onCancel={this.hideModal}
           multiple={this.props.multiple === 1}
