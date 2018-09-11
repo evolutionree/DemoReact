@@ -9,6 +9,7 @@ import { gettemporarylist, deletetemporarylist } from '../../../services/structu
 import { queryWorkflow } from '../../../services/entcomm';
 import { queryEntityDetail } from '../../../services/entity';
 import EntcommAddModal from '../../../components/EntcommAddModal';
+import { BackEndData_to_frontEndData } from './formStorageUtils';
 
 class TemporaryStorage extends Component {
   constructor(props) {
@@ -131,24 +132,7 @@ class TemporaryStorage extends Component {
   processProtocol = fields => {
     const { addModalInfo } = this.state;
     const fieldjson = addModalInfo.fieldjson;
-
-    let fields_ = fields;
-    if (fieldjson) {
-      fields_ = fields.map(item => {
-        let newItem = item;
-        if (fieldjson[item.fieldid]) {
-          const fieldconfig = fieldjson[item.fieldid];
-          newItem.fieldconfig = {
-            ...item.fieldconfig,
-            ...fieldconfig,
-            isRequiredJS: fieldconfig.isRequired,
-            isReadOnlyJS: fieldconfig.isReadOnly,
-            isVisibleJS: fieldconfig.isHidden === 0 ? 1 : 0
-          };
-        }
-        return newItem;
-      });
-    }
+    const fields_ = BackEndData_to_frontEndData(fields, fieldjson);
     return fields_;
   };
 

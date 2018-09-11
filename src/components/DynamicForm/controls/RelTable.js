@@ -9,6 +9,7 @@ import styles from './RelTable.less';
 import generateDefaultFormData from '../generateDefaultFormData';
 import RelTableImportModal from '../RelTableImportModal';
 import RelTableBatchModal from '../RelTableBatchModal';
+import { getBackEndField_TO_FrontEnd } from '../../AppHeader/TemporaryStorage/formStorageUtils';
 
 const TableMaxHeight = 400;
 
@@ -66,18 +67,13 @@ class RelTable extends Component {
             tableFields_ = tableFields.map(item => {
               let newItem = item;
               if (sheetfieldglobal[item.fieldid]) {
-                const fieldconfig = sheetfieldglobal[item.fieldid];
+                let fieldJson_config = getBackEndField_TO_FrontEnd(sheetfieldglobal[item.fieldid], item);
                 newItem.fieldconfig = {
                   ...item.fieldconfig,
-                  isRequiredJS: fieldconfig.isRequired,
-                  isReadOnlyJS: fieldconfig.isReadOnly,
-                  isVisibleJS: fieldconfig.isHidden === 0 ? 1 : 0,
-                  designateDataSource: fieldconfig.designateDataSource,
-                  designateDataSourceByName: fieldconfig.designateDataSourceByName,
-                  designateFilterDataSource: fieldconfig.designateFilterDataSource,
-                  designateFilterDataSourceByName: fieldconfig.designateFilterDataSourceByName,
-                  designateNodes: fieldconfig.designateNodes,
-                  designateFilterNodes: fieldconfig.designateFilterNodes
+                  ...fieldJson_config,
+                  isRequiredJS: fieldJson_config.isRequired,
+                  isReadOnlyJS: fieldJson_config.isReadOnly,
+                  isVisibleJS: fieldJson_config.isHidden === 0 ? 1 : 0
                 };
               }
               return newItem;

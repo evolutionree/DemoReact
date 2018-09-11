@@ -373,6 +373,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     designateNodes = (fieldName, nodePath, includeSubNode = false) => {
+      //TODO:Android端开发湛强 说这个函数不再使用了  具体原因我,,,,听不懂,,,,
       if (!nodePath) return;
       const conf = this.getFieldConfig(fieldName);
       if (!conf) return;
