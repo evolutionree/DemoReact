@@ -24,7 +24,12 @@ export default {
     *querypwdpolicy(action, { put, call, select }) {
       try {
         const { data } = yield call(getpwdpolicy);
-        yield put({ type: 'putState', payload: { pwdpolicyData: data } });
+        const transfromData = {
+          ...data,
+          historypwd: data.historypwdcount
+        };
+
+        yield put({ type: 'putState', payload: { pwdpolicyData: transfromData } });
       } catch (e) {
         message.error(e.message || '查询失败');
       }

@@ -42,7 +42,7 @@ class PasswordStrategy extends React.Component {
       likeletter: nextProps.pwdpolicyData.likeletter || '',
       pwdexpiry: nextProps.pwdpolicyData.pwdexpiry || '',
       cueuserdate: nextProps.pwdpolicyData.cueuserdate || '',
-      historypwd: this.props.pwdpolicyData.historypwd || ''
+      historypwd: nextProps.pwdpolicyData.historypwd || ''
     });
   }
 
@@ -136,6 +136,12 @@ class PasswordStrategy extends React.Component {
         submitData[hasInputOption[i]] = this.state[hasInputOption[i]];
       }
     }
+
+    if (submitData.historypwd) {
+      submitData.historypwdcount = submitData.historypwd;
+      delete submitData.historypwd;
+    }
+
     this.props.dispatch({ type: 'passwordstrategy/save', payload: submitData });
   }
 
