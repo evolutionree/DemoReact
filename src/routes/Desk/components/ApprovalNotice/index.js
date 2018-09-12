@@ -19,7 +19,7 @@ class ApprovalNotice extends PureComponent {
 
   state = {
     data: null,
-    emptyText: '暂无新的审批通知',
+    emptyText: '暂无新的审批通知 ',
     clear: '清空',
     total: '查看更多',
     title: '审批通知',
