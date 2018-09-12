@@ -9,7 +9,7 @@ import { queryNoticeList } from '../../../../services/approvalNotice';
 
 const Option = Select.Option;
 const optionList = [
-  { key: '-1', name: '全部' },
+  { key: '-1', name: '全部1' },
   { key: '0', name: '审批中' },
   { key: '1', name: '通过' },
   { key: '2', name: '不通过' }
