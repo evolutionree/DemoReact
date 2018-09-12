@@ -1,9 +1,11 @@
 import React, { PropTypes, Component } from 'react';
 import { Modal, Select, message, Radio, Button } from 'antd';
 import * as _ from 'lodash';
+import { connect } from 'dva';
 import { DynamicFormAdd, generateDefaultFormData } from './DynamicForm';
 import { getGeneralProtocol, addEntcomm, temporarysave } from '../services/entcomm';
 import { WorkflowCaseForAddModal } from "./WorkflowCaseModal";
+import { frontEndData_to_BackEndData } from '../components/AppHeader/TemporaryStorage/formStorageUtils';
 import uuid from 'uuid';
 
 const Option = Select.Option;
@@ -136,37 +138,7 @@ class EntcommAddModal extends Component {
 
   onFormModalStorage = () => {
     const formValue = this.form.formInst.getFieldsValue();
-    let fieldjson = {};
-    this.form.props.fields.map(item => {
-      const fieldconfig = item.fieldconfig;
-      const isVisible = fieldconfig.isVisible !== 1 ? 0 : fieldconfig.isVisibleJS === 0 ? 0 : 1;
-      const isReadOnly = fieldconfig.isReadOnly === 1 ? 1 : fieldconfig.isReadOnlyJS ? 1 : 0;
-      const isRequired = fieldconfig.isRequired === 1 ? 1 : fieldconfig.isRequiredJS ? 1 : 0;
-
-      fieldjson[item.fieldid] = {
-        ...fieldconfig,
-        isHidden: isVisible === 0 ? 1 : 0,
-        isReadOnly: isReadOnly,
-        isRequired: isRequired
-      };
-
-      if (item.controltype === 24) {
-        const tableFields = this.form.formRef.getTableFields(item.fieldname);
-        fieldjson[item.fieldid].sheetfieldglobal = {};
-        tableFields.map(tableFieldItem => {
-          const tableFieldConfig = tableFieldItem.fieldconfig;
-          const tableFieldIsVisible = tableFieldConfig.isVisible !== 1 ? 0 : tableFieldConfig.isVisibleJS === 0 ? 0 : 1;
-          const tableFieldIsReadOnly = tableFieldConfig.isReadOnly === 1 ? 1 : tableFieldConfig.isReadOnlyJS ? 1 : 0;
-          const tableFieldIsRequired = tableFieldConfig.isRequired === 1 ? 1 : tableFieldConfig.isRequiredJS ? 1 : 0;
-          fieldjson[item.fieldid].sheetfieldglobal[tableFieldItem.fieldid] = {
-            ...tableFieldConfig,
-            isHidden: tableFieldIsVisible === 0 ? 1 : 0,
-            isReadOnly: tableFieldIsReadOnly,
-            isRequired: tableFieldIsRequired
-          };
-        });
-      }
-    });
+    const fieldJson = frontEndData_to_BackEndData(this.form);
 
     const relObjectFields = this.getRelObjectConfig(this.form.props.fields);
     relObjectFields.map(item => { //TODO: 引用对象 新增的时候  表单不会传值给后端  但是暂存的时候 需要传
@@ -182,7 +154,7 @@ class EntcommAddModal extends Component {
         extraData: { commonid: this.state.commonid }, //客户引用 新增 存在extraData
         expandfields: formValue
       }),
-      fieldjson: JSON.stringify(fieldjson),
+      fieldjson: JSON.stringify(fieldJson),
       typeid: this.state.selectedEntityType,
       title: `新增${this.props.modalTitle && this.props.modalTitle.replace(/新增/, '') || this.props.entityName}`,
       entityId: this.props.entityId,
@@ -309,9 +281,15 @@ class EntcommAddModal extends Component {
     };
     getGeneralProtocol(params).then(result => {
       const protocolFields = result.data;
+      const formData = generateDefaultFormData(protocolFields, this.state.formData);
+      if (protocolFields.some(field => field.fieldname === 'recmanager')) {
+        const { currentUser } = this.props;
+        formData.recmanager = currentUser && currentUser.userid;
+        formData.recmanager_name = currentUser && currentUser.username;
+      }
       this.setState({
         protocolFields: this.props.processProtocol ? this.props.processProtocol(protocolFields) : protocolFields,
-        formData: generateDefaultFormData(protocolFields, this.state.formData)
+        formData: formData
       });
     });
   };
@@ -377,33 +355,35 @@ class EntcommAddModal extends Component {
             {/*))}*/}
           {/*</Select>*/}
         </Modal>}
-        <Modal
-          title={this.state.commonid ? '客户引用' : (this.props.modalTitle || `新增${this.props.entityName || '表单'}`)}
-          visible={showFormModal}
-          onCancel={this.onFormModalCancel}
-          onOk={this.onFormModalConfirm}
-          width={document.body.clientWidth > 1400 ? 1200 : 800}
-          wrapClassName="DynamicFormModal"
-          footer={[
-            <Button key="back" type="default" onClick={this.onFormModalCancel}>取消</Button>,
-            <Button key="storage" loading={storageLoading} onClick={this.onFormModalStorage}>暂存</Button>,
-            <Button key="submit" loading={confirmLoading} onClick={this.onFormModalConfirm}>提交</Button>
-          ]}
-        >
-          <DynamicFormAdd
-            entityId={entityId}
-            entityTypeId={selectedEntityType}
-            fields={protocolFields}
-            value={formData}
-            refEntity={this.props.refEntity}
-            refRecord={refRecord}
-            onChange={val => { this.setState({ formData: val }); }}
-            ref={form => { this.form = form; }}
-            setExtraData={this.setExtraData}
-            setFieldsConfig={this.setFieldsConfig}
-          />
-          {/*{JSON.stringify(this.state.formData)}*/}
-        </Modal>
+        {
+          showFormModal ? <Modal
+            title={this.state.commonid ? '客户引用' : (this.props.modalTitle || `新增${this.props.entityName || '表单'}`)}
+            visible={showFormModal}
+            onCancel={this.onFormModalCancel}
+            onOk={this.onFormModalConfirm}
+            width={document.body.clientWidth > 1400 ? 1200 : 800}
+            wrapClassName="DynamicFormModal"
+            footer={[
+              <Button key="back" type="default" onClick={this.onFormModalCancel}>取消</Button>,
+              <Button key="storage" loading={storageLoading} onClick={this.onFormModalStorage}>暂存</Button>,
+              <Button key="submit" loading={confirmLoading} onClick={this.onFormModalConfirm}>提交</Button>
+            ]}
+          >
+            <DynamicFormAdd
+              entityId={entityId}
+              entityTypeId={selectedEntityType}
+              fields={protocolFields}
+              value={formData}
+              refEntity={this.props.refEntity}
+              refRecord={refRecord}
+              onChange={val => { this.setState({ formData: val }); }}
+              ref={form => { this.form = form; }}
+              setExtraData={this.setExtraData}
+              setFieldsConfig={this.setFieldsConfig}
+            />
+            {/*{JSON.stringify(this.state.formData)}*/}
+          </Modal> : null
+        }
         <WorkflowCaseForAddModal
           visible={this.state.showWorkflowCaseModal}
           isAddCase={this.props.isAddCase}
@@ -416,4 +396,10 @@ class EntcommAddModal extends Component {
   }
 }
 
-export default EntcommAddModal;
+export default connect(
+  state => {
+    return {
+      currentUser: state.app.user
+    };
+  }
+)(EntcommAddModal);

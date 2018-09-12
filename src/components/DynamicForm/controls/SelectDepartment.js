@@ -34,25 +34,23 @@ class SelectDepartment extends Component {
       designateFilterNodes
     } = this.props;
     return (
-      <div>
-        <DepartmentSelect
-          value={value ? value.split(',') : []}
-          onChange={val => {
-            if (multiple) {
-              onChange((val && val.length) ? val.join(',') : undefined);
-            } else {
-              onChange(val);
-            }
-          }}
-          multiple={multiple === 1}
-          disabled={isReadOnly === 1}
-          designateNodes={designateNodes}
-          designateFilterNodes={designateFilterNodes}
-          onFocus={onFocus}
-          ref={inst => this.componentInst = inst}
-          width={width || '100%'}
-        />
-      </div>
+      <DepartmentSelect
+        value={value ? value.split(',') : []}
+        onChange={val => {
+          if (multiple) {
+            onChange((val && val.length) ? val.join(',') : undefined);
+          } else {
+            onChange(val);
+          }
+        }}
+        multiple={multiple === 1}
+        disabled={isReadOnly === 1}
+        designateNodes={designateNodes}
+        designateFilterNodes={designateFilterNodes}
+        onFocus={onFocus}
+        ref={inst => this.componentInst = inst}
+        width={width || '100%'}
+      />
     );
   }
 }

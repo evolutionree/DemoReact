@@ -55,8 +55,7 @@ class DSourceDetail extends PureComponent {
       });
     } else {
       this.setState({
-        visible: nextProps.visible,
-        data: {}
+        visible: nextProps.visible
       });
     }
   }

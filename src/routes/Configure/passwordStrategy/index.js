@@ -42,7 +42,7 @@ class PasswordStrategy extends React.Component {
       likeletter: nextProps.pwdpolicyData.likeletter || '',
       pwdexpiry: nextProps.pwdpolicyData.pwdexpiry || '',
       cueuserdate: nextProps.pwdpolicyData.cueuserdate || '',
-      historypwd: this.props.pwdpolicyData.historypwd || ''
+      historypwd: nextProps.pwdpolicyData.historypwd || ''
     });
   }
 
@@ -63,9 +63,11 @@ class PasswordStrategy extends React.Component {
           [hasInputOption[i]]: ''
         });
       } else {
-        this.setState({
-          [hasInputOption[i]]: hasInputOption[i] === 'setpwdlength' ? 3 : 1
-        });
+        if (!this.state[hasInputOption[i]]) { //选中 设置 默认初始值，存在了值的项 不改变
+          this.setState({
+            [hasInputOption[i]]: hasInputOption[i] === 'setpwdlength' ? 6 : 1
+          });
+        }
       }
     }
     this.setState({
@@ -94,11 +96,16 @@ class PasswordStrategy extends React.Component {
   }
 
   InputBlue = () => {
-    if (parseInt(this.state.setpwdlength) < 3) {
+    if (parseInt(this.state.setpwdlength) < 6) {
       this.setState({
-        setpwdlength: 3
+        setpwdlength: 6
       });
-      return message.error('密码长度不能小于3');
+      return message.error('密码长度不能小于6位字符');
+    } else if (parseInt(this.state.setpwdlength) > 16) {
+      this.setState({
+        setpwdlength: 16
+      });
+      return message.error('密码长度不能大于16位字符');
     }
   }
 
@@ -129,16 +136,22 @@ class PasswordStrategy extends React.Component {
         submitData[hasInputOption[i]] = this.state[hasInputOption[i]];
       }
     }
+
+    if (submitData.historypwd) {
+      submitData.historypwdcount = submitData.historypwd;
+      delete submitData.historypwd;
+    }
+
     this.props.dispatch({ type: 'passwordstrategy/save', payload: submitData });
   }
 
   render() { //IsUserPolicy
     const options = [
-      { label: <label><span>至少包含</span><InputNumber onChange={this.InputChange.bind(this, 'setpwdlength')} value={this.state.setpwdlength} onBlur={this.InputBlue} /><span>个字母</span></label>, value: 'issetpwdlength' },
+      { label: <label><span>至少包含</span><InputNumber onChange={this.InputChange.bind(this, 'setpwdlength')} value={this.state.setpwdlength} onBlur={this.InputBlue} /><span>个字符</span></label>, value: 'issetpwdlength' },
       { label: '数字', value: 'isnumber' },
       { label: '大小写', value: 'isupper' },
       { label: '特殊字符', value: 'isspecialstr' },
-      { label: <label><span>不得连续多于</span><InputNumber min={0} step={1} onChange={this.InputChange.bind(this, 'likeletter')} value={this.state.likeletter} /><span>位相同的字母</span></label>, value: 'islikeletter' },
+      { label: <label><span>不得连续多于</span><InputNumber min={0} step={1} onChange={this.InputChange.bind(this, 'likeletter')} value={this.state.likeletter} /><span>位相同的字符</span></label>, value: 'islikeletter' },
       { label: '不得包含用户名', value: 'iscontainaccount' },
       { label: '首次必须修改密码', value: 'isfirstupdatepwd' },
       { label: <label>密码有效期<InputNumber min={0} step={1} onChange={this.InputChange.bind(this, 'pwdexpiry')} value={this.state.pwdexpiry} />天</label>, value: 'ispwdexpiry' },

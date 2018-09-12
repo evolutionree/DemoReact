@@ -7,10 +7,9 @@ import { queryrules,trnasfer } from '../services/entityTransfer';
 class EntcommTransferModal extends Component {
   static propTypes = {
     visible: PropTypes.bool.isRequired,
-    routePath:PropTypes.string.isRequired,
+    routePath:PropTypes.string,
     buttoncode:PropTypes.string,
     entityId: PropTypes.string,
-    recordId: PropTypes.string,
     dstEntityId:PropTypes.string,
     onCancel: PropTypes.func.isRequired,
     onOk: PropTypes.func,

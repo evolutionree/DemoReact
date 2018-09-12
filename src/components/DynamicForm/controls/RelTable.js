@@ -10,6 +10,7 @@ import generateDefaultFormData from '../generateDefaultFormData';
 import RelTableImportModal from '../RelTableImportModal';
 import IntlText from '../../UKComponent/Form/IntlText';
 import RelTableBatchModal from '../RelTableBatchModal';
+import { getBackEndField_TO_FrontEnd } from '../../AppHeader/TemporaryStorage/formStorageUtils';
 
 const TableMaxHeight = 400;
 
@@ -57,7 +58,6 @@ class RelTable extends Component {
   }
 
   setInitFieldConfig = (tableFields, sheetfieldglobal) => {
-    console.log('setInitFieldConfig')
     const _this = this;
     doWhileGet();
     function doWhileGet() {
@@ -68,18 +68,13 @@ class RelTable extends Component {
             tableFields_ = tableFields.map(item => {
               let newItem = item;
               if (sheetfieldglobal[item.fieldid]) {
-                const fieldconfig = sheetfieldglobal[item.fieldid];
+                let fieldJson_config = getBackEndField_TO_FrontEnd(sheetfieldglobal[item.fieldid], item);
                 newItem.fieldconfig = {
                   ...item.fieldconfig,
-                  isRequiredJS: fieldconfig.isRequired,
-                  isReadOnlyJS: fieldconfig.isReadOnly,
-                  isVisibleJS: fieldconfig.isHidden === 0 ? 1 : 0,
-                  designateDataSource: fieldconfig.designateDataSource,
-                  designateDataSourceByName: fieldconfig.designateDataSourceByName,
-                  designateFilterDataSource: fieldconfig.designateFilterDataSource,
-                  designateFilterDataSourceByName: fieldconfig.designateFilterDataSourceByName,
-                  designateNodes: fieldconfig.designateNodes,
-                  designateFilterNodes: fieldconfig.designateFilterNodes
+                  ...fieldJson_config,
+                  isRequiredJS: fieldJson_config.isRequired,
+                  isReadOnlyJS: fieldJson_config.isReadOnly,
+                  isVisibleJS: fieldJson_config.isHidden === 0 ? 1 : 0
                 };
               }
               return newItem;
@@ -113,7 +108,6 @@ class RelTable extends Component {
   };
 
   queryFields = (entityId, props) => {
-    console.log('queryFields')
     const modeMap = {
       ADD: 0,
       EDIT: 1,
@@ -294,7 +288,6 @@ class RelTable extends Component {
   };
 
   setRowFieldVisible = (fieldName, isVisible) => {
-    console.log('setRowFieldVisible')
     doWhileGet();
     const _this = this;
     function doWhileGet() {
@@ -347,7 +340,6 @@ class RelTable extends Component {
   };
 
   setRowFieldReadOnly = (fieldName, isReadonly) => {
-    console.log('setRowFieldReadOnly')
     doWhileGet(); //因为全局js设置的时候,可能异步请求的表格协议还没获取到，设置会出问题，所以需要保证 表格协议已经获取到再设置 config
     const _this = this;
     function doWhileGet() {
@@ -371,7 +363,6 @@ class RelTable extends Component {
   };
 
   setRowFieldRequired = (fieldName, isRequired) => {
-    console.log('setRowFieldRequired')
     const _this = this;
     doWhileGet();
     function doWhileGet() {
@@ -400,7 +391,6 @@ class RelTable extends Component {
   };
 
   setFieldConfig = (fieldName, config) => {
-    console.log('setFieldConfig')
     const _this = this;
     doWhileGet();
     function doWhileGet() {
@@ -496,7 +486,7 @@ class RelTable extends Component {
   };
 
   componentDidUpdate() {
-    setTimeout(this.setAlignTableWidthAndHeight(), 300);
+    setTimeout(this.setAlignTableWidthAndHeight(), 10000);
   }
 
   componentWillUnmount() {
@@ -504,7 +494,6 @@ class RelTable extends Component {
   }
 
   setAlignTableWidthAndHeight = () => {
-    console.log('setAlignTableWidthAndHeight')
     //列表的原始表头的列
     const realHeader = this.relTableRef.children[0].children[0].children;
     //列表的固定表头的列
@@ -551,6 +540,8 @@ class RelTable extends Component {
     for (let i = 0; i < realBody.length; i++) {
       let realBody_trHeight = realBody[i].getBoundingClientRect().height;
       let fixedLeftBody_trHeight = fixedLeftBody[i].getBoundingClientRect().height;
+
+      fixedLeftBody[i].children[0].style.width = fixedWidth + 'px';
       if (realBody_trHeight !== fixedLeftBody_trHeight) {
         fixedLeftBody[i].children[0].style.height = realBody_trHeight + 'px';
       }
@@ -617,6 +608,12 @@ class RelTable extends Component {
                 {this.renderTableHeader()}
               </div>
             </div>
+            <div className={styles.tableWrap} style={{ maxHeight: TableMaxHeight }} onScroll={this.tableScroll} ref={ref => this.relTableWrapRef = ref}>
+              <div className={styles.table} ref={ref => this.relTableRef = ref}>
+                {this.renderTableHeader()}
+                {this.renderTableBody()}
+              </div>
+            </div>
             <div className={styles.fixLeftWrap} ref={ref => this.fixLeftWrapRef = ref}>
               <div className={classnames([styles.table, styles.fixLeftTopTable])}>
                 {this.renderTableHeader('fixed')}
@@ -624,12 +621,6 @@ class RelTable extends Component {
               <div className={classnames([styles.table, styles.fixLeftTable])} ref={ref => this.fixLeftTableRef = ref}>
                 {this.renderTableHeader('fixed')}
                 {this.renderTableBody('fixed')}
-              </div>
-            </div>
-            <div className={styles.tableWrap} style={{ maxHeight: TableMaxHeight }} onScroll={this.tableScroll} ref={ref => this.relTableWrapRef = ref}>
-              <div className={styles.table} ref={ref => this.relTableRef = ref}>
-                {this.renderTableHeader()}
-                {this.renderTableBody()}
               </div>
             </div>
           </div>
