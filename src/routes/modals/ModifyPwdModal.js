@@ -90,7 +90,9 @@ function ModifyPwdModal({
               validator: checkPasswordConfirm
             }]
           })(
-            <Input type="password" maxLength="16" placeholder="请输入确认密码" />
+            <Input onPaste={(e) => {
+              e.preventDefault();
+            }} type="password" maxLength="16" placeholder="请输入确认密码" />
           )}
         </FormItem>
       </Form>
