@@ -9,6 +9,9 @@ import Packery from 'packery';
 import Draggabilly from 'draggabilly';
 import styles from './index.less';
 
+import ApprovalNotice from './components/ApprovalNotice';
+
+
 Packery.prototype.getShiftPositions = function(attrName = 'id') {
   const _this = this;
   return this.items.map(function(item) {
@@ -322,10 +325,10 @@ class Desk extends React.PureComponent {
                 !this.state.reload ? this.props.layoutComponents.map((item, index) => {
                   return (
                     <div key={item.dscomponetid} style={{ height: item.maxcomheight }} className={item.comwidth === 2 ? 'grid-item grid-item-width2' : 'grid-item'} data-item-id={item.dscomponetid}>
-                      {
+                      {/* {
                         item.comname + '||' + item.dscomponetid
-                      }
-
+                      } */}
+                      <ApprovalNotice height={200}/>
                     </div>
                   );
                 }) : null
