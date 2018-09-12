@@ -144,7 +144,7 @@ class TemporaryStorage extends Component {
           <Icon
             type="inbox"
             title="暂存列表"
-            style={{ fontSize: 26, cursor: 'pointer', verticalAlign: 'middle', marginLeft: '10px' }}
+            style={{ fontSize: 26, cursor: 'pointer', verticalAlign: 'middle', marginRight: '10px' }}
             onClick={this.togglePanelVisible}
           />
           <div className={classnames(styles.panelWrap, { [styles.panelVisible]: this.state.panelVisible })}>
