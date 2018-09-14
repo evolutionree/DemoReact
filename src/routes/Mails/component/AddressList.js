@@ -41,10 +41,11 @@ class AddressList extends Component {
     // }
   }
 
-  shouldComponentUpdate(nextProps) {
-    if (_.isEqual(nextProps.data, this.props.data)) {
+  shouldComponentUpdate(nextProps, nextStates) {
+    if (_.isEqual(nextProps.customerContact, this.props.customerContact) && _.isEqual(nextStates, this.state)) {
       return false;
     }
+    return true;
   }
 
   componentDidMount() {
