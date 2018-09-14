@@ -5,6 +5,8 @@ import _ from 'lodash';
 import Page from '../../components/Page';
 import styles from './styles.less';
 import MobileViewStyleSelect from './MobileViewStyleSelect';
+import DragList from '../../components/UKComponent/Data/DragList';
+import FormModal from './FormModal';
 
 const FormItem = Form.Item;
 
@@ -13,7 +15,8 @@ const DataSourceHome = ({
   dataSourceName,
   sqlContent,
   mobViewConfig,
-  colNames
+  colNames,
+                          columnsDataSource
 }) => {
   function onSqlContentChange(event) {
     dispatch({ type: 'dSourceHome/sqlContent', payload: event.target.value });
@@ -31,6 +34,52 @@ const DataSourceHome = ({
   function onSave() {
     dispatch({ type: 'dSourceHome/save' });
   }
+
+  function addColumn() {
+    dispatch({ type: 'dSourceHome/showModals', payload: 'add' });
+  }
+  function updateColumn(rowData) {
+    dispatch({ type: 'dSourceHome/putState', payload: { showModals: 'edit', editData: rowData } });
+  }
+  function delColumn(rowData) {
+    const newColumnsDataSource = columnsDataSource.filter(item => item.recorder * 1 !== rowData.recorder * 1);
+    dispatch({ type: 'dSourceHome/updateColumnsDataSource', payload: newColumnsDataSource });
+  }
+
+  function listSortEnd(list) {
+    dispatch({ type: 'dSourceHome/updateColumnsDataSource', payload: list });
+  }
+  const column = [
+    {
+      key: 'recorder',
+      name: '序号',
+      span: 7
+    },
+    {
+      key: 'fieldname',
+      name: '字段名',
+      span: 7
+    },
+    {
+      key: 'displayname',
+      name: '显示名',
+      span: 7
+    },
+    {
+      key: 'operate',
+      name: '操作',
+      span: 3,
+      render: (text, rowData, rowIndex) => {
+        return (
+          <div>
+            <a onClick={updateColumn.bind(this, rowData)}>编辑</a>
+            <a onClick={delColumn.bind(this, rowData)}>删除</a>
+          </div>
+        );
+      }
+    }
+  ];
+
   return (
     <Page title={`数据源设置 - ${dataSourceName}`} showGoBack goBackPath="/data-source">
       <div style={{ width: '900px', margin: '0 auto' }}>
@@ -53,6 +102,12 @@ const DataSourceHome = ({
             <span>定义显示列名</span>
           </div>
           <div>
+            <Button onClick={addColumn} className={styles.addColumn}>新增</Button>
+            <DragList dataSource={columnsDataSource}
+                      column={column}
+                      onSortEnd={listSortEnd}
+                      delayDragColumn={['operate']} />
+            <FormModal />
             <Form style={{ width: '482px' }}>
               <FormItem label="列名1">
                 <Input value={colNames[0]} onChange={onColNameChange(0)} placeholder="请输入字段列名" />

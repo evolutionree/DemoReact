@@ -9,7 +9,10 @@ export default {
     dataSourceName: '',
     sqlContent: '',
     mobViewConfig: {},
-    colNames: []
+    colNames: [],
+    columnsDataSource: [],
+    showModals: '',
+    editData: null
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -72,6 +75,27 @@ export default {
     }
   },
   reducers: {
+    putState(state, { payload: assignment }) {
+      return {
+        ...state,
+        ...assignment
+      };
+    },
+    showModals(state, { payload: type }) {
+      return {
+        ...state,
+        showModals: type
+      };
+    },
+    updateColumnsDataSource(state, { payload: newColumnsDataSource }) {
+      return {
+        ...state,
+        columnsDataSource: newColumnsDataSource.map((item, index) => {
+          item.recorder = index + 1;
+          return item;
+        })
+      };
+    },
     dataSourceId(state, { payload: dataSourceId }) {
       return {
         ...state,
