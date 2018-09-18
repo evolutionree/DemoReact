@@ -1,15 +1,12 @@
 import React, { PropTypes, Component } from 'react';
 import * as _ from 'lodash';
-import { Modal, Col, Row, Icon, message, Spin, Pagination, Button, Tabs, Table } from 'antd';
-import classnames from 'classnames';
+import { Modal, message, Spin, Button, Tabs, Table } from 'antd';
 import Search from '../../../components/Search';
 import Toolbar from '../../../components/Toolbar';
-import { parseConfigData } from '../../../components/ListStylePicker';
 import { queryDataSourceData, queryDatasourceInfo } from '../../../services/datasource';
 import EntcommAddModal from '../../../components/EntcommAddModal';
 import styles from './SelectData.less';
-import Avatar from "../../Avatar";
-import { queryMobFieldVisible, queryTypes } from '../../../services/entity';
+import { queryTypes } from '../../../services/entity';
 import { queryPermission } from '../../../services/functions';
 
 const TabPane = Tabs.TabPane;
@@ -40,7 +37,6 @@ class DataSourceSelectModal extends Component {
       list: [],
       pageIndex: 1,
       total: 0,
-      config: {},
       addModalVisible: false,
       entityTypes: [],
       refEntity: '',
@@ -75,7 +71,6 @@ class DataSourceSelectModal extends Component {
         const entityId = result.data.entityid;
         const entityname = result.data.entityname;
         if (entityId) {
-          this.getColumns(entityId);
           queryPermission(entityId).then(perssionResult => {
             const hasAddPermission = _.find(perssionResult.data, item => item.funccode === 'EntityDataAdd');
             if (hasAddPermission) { //先查看 用户是否有 新增该数据源数据的权限 再判断该数据源表单字段是否支持 快速新增 数据源数据的功能
@@ -105,28 +100,6 @@ class DataSourceSelectModal extends Component {
     });
   }
 
-  getColumns = (entityId) => {
-    queryMobFieldVisible(entityId).then(result => {
-      const columns = result.data.fieldvisible.map(item => {
-        return {
-          key: item.fieldname,
-          dataIndex: item.fieldname,
-          title: item.displayname
-        };
-      });
-
-      this.setState({
-        columns: [{
-          key: 'name',
-          dataIndex: 'name',
-          title: '客户名称'
-        }]
-      });
-    }).catch(e => {
-      console.error(e.message);
-    });
-  }
-
   fetchList = () => {
     this.setState({ loading: true });
     const params = {
@@ -145,9 +118,21 @@ class DataSourceSelectModal extends Component {
         });
       });
     }
+
     queryDataSourceData(params).then(result => {
       if (result.data.dsconfig) {
-        this.setState({ config: result.data.dsconfig[0] });
+        const columnsConfig = result.data.dsconfig[0] && result.data.dsconfig[0].columns;
+        const columns = JSON.parse(columnsConfig);
+        const tableColumns = columns instanceof Array && columns.map(item => {
+          return {
+            key: item.fieldname,
+            dataIndex: item.fieldname,
+            title: item.displayname
+          };
+        })
+        this.setState({
+          columns: tableColumns
+        });
       }
       const list = result.data.page;
       const total = result.data.pagecount[0].total;
@@ -217,43 +202,6 @@ class DataSourceSelectModal extends Component {
       currentSelected: currentSelected
     });
   }
-  //
-  // onPageChange = pageIndex => {
-  //   this.setState({ pageIndex }, this.fetchList);
-  // };
-  //
-  // selectAll = () => {
-  //   this.setState({
-  //     currentSelected: _.unionBy(this.state.currentSelected, this.state.list, i => i.id)
-  //   });
-  // };
-
-  // select = item => {
-  //   this.setState({
-  //     currentSelected: _.unionBy(this.state.currentSelected, [item], i => i.id)
-  //   });
-  // };
-  //
-  // selectSingle = item => {
-  //   this.setState({ currentSelected: [item] });
-  // };
-
-  // doubleSelectSingle = item => {
-  //   const selected = [item].map(
-  //     item => ({ id: item.id, name: item.name })
-  //   );
-  //   this.props.onOk(selected);
-  // }
-  //
-  // remove = item => {
-  //   this.setState({
-  //     currentSelected: this.state.currentSelected.filter(i => i !== item)
-  //   });
-  // };
-  //
-  // removeAll = () => {
-  //   this.setState({ currentSelected: [] });
-  // };
 
   addDataSource = () => {
     this.setState({
@@ -273,40 +221,6 @@ class DataSourceSelectModal extends Component {
     }, this.fetchList);
   }
 
-  renderItem = (item) => {
-    const { iconField, listFields } = parseConfigData(this.state.config);
-    // const { fieldkeys } = this.state.config;
-    // const keys = fieldkeys.split(',');
-    return (
-      <div className={classnames([styles.listrow, { [styles.hasIcon]: !!iconField }])}>
-        {iconField && (
-          <Avatar
-            className={styles.listIcon}
-            style={{ width: '28px', height: '28px' }}
-            image={`/api/fileservice/read?fileid=${item[iconField.fieldName]}&filetype=3`}
-          />
-        )}
-        <Row gutter={10}>
-          {/*{keys.map(key => (*/}
-            {/*<Col span={12} key={key}><span title={item[key]}>{item[key]}</span></Col>*/}
-          {/*))}*/}
-          {listFields.map(({ fieldName, color, font }) => {
-            const text = item[fieldName + '_name'] !== undefined ? item[fieldName + '_name'] : item[fieldName];
-            return (
-              <Col span={12} key={fieldName}>
-                <span
-                  title={text}
-                  style={{ color, fontSize: font + 'px' }}
-                >
-                  {text}
-                </span>
-              </Col>
-            );
-          })}
-        </Row>
-      </div>
-    );
-  };
   render() {
     const { visible, onCancel, multiple } = this.props;
     const { currentSelected, allowadd, list } = this.state;

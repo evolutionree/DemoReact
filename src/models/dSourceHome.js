@@ -9,7 +9,6 @@ export default {
     dataSourceName: '',
     sqlContent: '',
     mobViewConfig: {},
-    colNames: [],
     columnsDataSource: [],
     showModals: '',
     editData: null
@@ -45,18 +44,17 @@ export default {
         dataSourceId,
         sqlContent,
         mobViewConfig,
-        colNames
+        columnsDataSource: columns
       } = yield select(state => state.dSourceHome);
       if (!sqlContent) return message.error('请输入数据源内容');
       if (!mobViewConfig.viewstyleid) return message.error('请选择数据源样式');
-      if (!colNames.length) return message.error('请输入字段列名');
       try {
         const isUpdate = rawDetailData.dataconfid;
         const saveFn = isUpdate ? updateDetail : saveDetail;
         const params = {
           rulesql: sqlContent,
           viewstyleid: mobViewConfig.viewstyleid,
-          colnames: colNames.filter(n => !!n).map(v => v && v.replace(/^\s+|\s+$/g, '')).join(','),
+          columns: JSON.stringify(columns),
           fonts: mobViewConfig.fonts,
           colors: mobViewConfig.colors
         };
@@ -106,24 +104,23 @@ export default {
       const {
         datasrcname: dataSourceName,
         rulesql: sqlContent,
-        fieldkeys,
         colors,
         fonts,
-        viewstyleid
+        viewstyleid,
+        columns
       } = detailData;
       const mobViewConfig = {
         colors: colors || '#666666,#666666,#666666,#666666,#666666,#666666',
         fonts: fonts || '14,14,14,14,14,14',
         viewstyleid
       };
-      const colNames = (fieldkeys && fieldkeys.split(',')) || [];
       return {
         ...state,
         rawDetailData: detailData,
         dataSourceName,
         sqlContent,
         mobViewConfig,
-        colNames
+        columnsDataSource: JSON.parse(columns) || []
       };
     },
     sqlContent(state, { payload: sqlContent }) {
@@ -136,12 +133,6 @@ export default {
       return {
         ...state,
         mobViewConfig
-      };
-    },
-    colNames(state, { payload: colNames }) {
-      return {
-        ...state,
-        colNames
       };
     }
   }
