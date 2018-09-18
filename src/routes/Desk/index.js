@@ -328,7 +328,7 @@ class Desk extends React.PureComponent {
                       {/* {
                         item.comname + '||' + item.dscomponetid
                       } */}
-                      <ApprovalNotice height={200}/>
+                      <ApprovalNotice title="审批" height={200} maxListLength={10} defaultKey={1} />
                     </div>
                   );
                 }) : null

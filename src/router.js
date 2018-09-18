@@ -73,6 +73,7 @@ import AttendanceGroupSet from './routes/AttendanceGroupSet';
 import AttendanceGroupDetail from './routes/AttendanceGroupSet/Detail';
 
 import Desk from './routes/Desk';
+import Demo from './routes/Demo';
 
 const appRoutes = [
   { path: 'home', comp: Home },
@@ -132,6 +133,7 @@ const appRoutes = [
   { path: 'attendancegroupset', comp: AttendanceGroupSet, model: require('./models/attendanceGroupSet') },
   { path: 'attendancegroupset/detail', comp: AttendanceGroupDetail, model: require('./models/attendanceGroupSet') },
   { path: 'desk', comp: Desk, model: require('./models/desk') },
+  { path: 'demo', comp: Demo },
   { path: '*', comp: NoFoundPage }
 ];
 
