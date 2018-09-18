@@ -30,8 +30,7 @@ class ApprovalNotice extends PureComponent {
   }
 
   state = {
-    pendingData: null,
-    msgData: null,
+    data: null,
     params: {
       pageIndex: 1,
       pageSize: 10,
@@ -46,56 +45,33 @@ class ApprovalNotice extends PureComponent {
   }
 
   onTabsChange = key => {
-    const { pendingData, msgData, params } = this.state;
-    if(key === '1') {
-      !pendingData && this.fetchList(key, params);
-    } else if(key === '2') {
-      !msgData && this.fetchList(key, params);
-    }
+    const { params } = this.state;
+
+    this.fetchList(key, params);
   };
 
   fetchList = (key = '1', params) => {
     switch(key) {
       case '1':
         queryGetunmsglist(params)
-        .then(res => this.setState({ pendingData: res.data }))
+        .then(res => this.setState({ data: res.data }))
         .catch(err => console.log(err))
         break
       case '2':
         queryGetwflist(params)
-        .then(res => this.setState({ msgData: res.data }))
+        .then(res => this.setState({ data: res.data }))
         .catch(err => console.log(err))
         break
     }
   }
 
-  renderListElms = (item, index) => {
-    return (
-      <Link className={styles.list} key={index} to={`/affair/${item.msgparam.Data.caseid}`}>
-        <Badge className={styles.text} status="processing" />
-        <p>
-          <Tooltip title={item.reccreated}>
-            【{moment(item.reccreated).fromNow()}】
-          </Tooltip>
-          ，{item.msgcontent}
-        </p>
-      </Link>
-    );
-  }
-
   renderWrapElms() {
     const { maxListLength = 10, defaultKey = '1' } = this.props;
-    const { pendingData, msgData } = this.state;
+    const { data } = this.state;
     let list = [];
-    console.log(pendingData, msgData)
 
-    if(defaultKey === '1') { //判断数据源
-      if(!!pendingData) list = [...pendingData.datalist];
-      if(list.length >= 10) list = [...list.slice(0, 10)]; // 数据长度最大10
-    } else if(defaultKey === '2') {
-      if(!!msgData) list = [...msgData.datalist];
-      if(list.length >= 10) list = [...list.slice(0, 10)];
-    }
+    if(!!data) list = [...data.datalist];
+    if(list.length >= 10) list = [...list.slice(0, 10)]; // 数据长度最大10
 
     // list
     const showList = list.length !== 0 ?
@@ -126,11 +102,25 @@ class ApprovalNotice extends PureComponent {
     )
   }
 
+  renderListElms = (item, index) => {
+    return (
+      <Link className={styles.list} key={index} to={`/affair/${item.msgparam.Data.caseid}`}>
+        <Badge className={styles.text} status="processing" />
+        <p>
+          <Tooltip title={item.reccreated}>
+            【{moment(item.reccreated).fromNow()}】
+          </Tooltip>
+          ，{item.msgcontent}
+        </p>
+      </Link>
+    );
+  }
+
   render() {
     const { height = 200, title='title', defaultKey='1' } = this.props;
-    const { pendingData } = this.state;
+    const { data } = this.state;
 
-    if(pendingData) optionList[0].count = pendingData.pageinfo.totalcount;
+    if(data) optionList[0].count = data.pageinfo.totalcount;
 
     return (
       <div className={styles.container} style={{ maxHeight: height }}>
