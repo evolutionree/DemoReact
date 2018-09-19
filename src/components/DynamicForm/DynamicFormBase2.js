@@ -1,6 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { Form } from 'antd';
 import classnames from 'classnames';
+import { is } from 'immutable';
 import FoldableGroup from './FoldableGroup';
 import DynamicField from './DynamicField';
 import { getEntcommDetail } from '../../services/entcomm';
@@ -76,11 +77,35 @@ class DynamicFormBase extends Component {
     }
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    const thisProps = this.props || {};
+    const thisState = this.state || {};
+
+    if (Object.keys(thisProps).length !== Object.keys(nextProps).length || Object.keys(thisState).length !== Object.keys(nextState).length) {
+      return true;
+    }
+
+    for (const key in nextProps) {
+      if (['form', 'wrappedComponentRef'].indexOf(key) === -1 && !is(thisProps[key], nextProps[key])) {
+        //console.log('DynamicFormBase2_props:' + key);
+        return true;
+      }
+    }
+
+    for (const key in nextState) {
+      if (thisState[key] !== nextState[key] || !is(thisState[key], nextState[key])) {
+        //console.log('DynamicFormBase2_state:' + key);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   componentDidMount() { //表格批量新增的时候  需要执行配置JS
-    const { batchAddInfo } = this.props;
-    const batchAddField = batchAddInfo && batchAddInfo.field;
-    if (batchAddInfo && batchAddInfo.type === 'add') {
-      this.onFieldValueChange(batchAddField && batchAddField.fieldname, batchAddField && batchAddField.fieldid);
+    const { batchAddInfo_type, batchAddInfo_fieldname, batchAddInfo_fieldid } = this.props;
+    if (batchAddInfo_type === 'add') {
+      this.onFieldValueChange(batchAddInfo_fieldname, batchAddInfo_fieldid);
     }
   }
 
@@ -349,7 +374,7 @@ class DynamicFormBase extends Component {
         value_name={value_name}
         fieldLabel={displayname}
         onFocus={this.onFieldFocus.bind(this, fieldname)}
-        quoteHandler={this.handleQuote.bind(this)}
+        quoteHandler={this.handleQuote}
         jsEngine={this.props.jsEngine}
       />
     );

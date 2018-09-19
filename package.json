@@ -28,6 +28,7 @@
     "echarts": "^3.7.0",
     "element-resize-event": "^2.0.9",
     "html-to-draftjs": "0.1.0-beta7",
+    "immutable": "^3.8.2",
     "js-base64": "^2.1.9",
     "js-cookie": "^2.1.4",
     "jsencrypt": "^2.3.1",
