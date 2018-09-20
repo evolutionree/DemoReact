@@ -4,8 +4,8 @@
 import React, {  PureComponent } from 'react';
 import _ from "lodash";
 
-import ApprovalNotice from "./components/ApprovalNotice";
-import Filtrate from './components/Filtrate';
+import ApprovalNotice from "../Desk/components/ApprovalNotice";
+import Filtrate from '../Desk/components/Filtrate';
 
 class Demo extends PureComponent {
 
@@ -15,8 +15,8 @@ class Demo extends PureComponent {
         <div style={{ width: '450px' }}>
           <ApprovalNotice title="审批" height={800} maxListLength={10} />
         </div>
-        <div style={{ width: '800px' }}>
-          <Filtrate />
+        <div style={{ width: '880px' }}>
+          <Filtrate height={660} />
         </div>
      </div>
     )

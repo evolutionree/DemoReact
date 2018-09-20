@@ -1,156 +1,193 @@
 /**
- * jingren
+ * 0920
  */
 import React, { PropTypes, PureComponent } from 'react';
-import { Tabs, Badge } from 'antd';
+import { Tabs, Tag, Badge, Spin, Icon, Tooltip } from 'antd';
 import styles from './index.less';
 import { Link } from 'dva/router';
-import { queryNoticeList } from '../../../../services/approvalNotice';
+import { queryGetunmsglist, queryGetwflist } from '../../../../services/approvalNotice';
+import dayjs from 'dayjs';
 
 const { TabPane } = Tabs;
 
 const optionList = [
   { key: '1',
     name: '待处理',
-    count: '8',
-    data: {
-      name: '发起人姓名',
-      lcName: '审批流程名称',
-      result: '待我审批',
-      person: '当前节点人'
-    }
+    icon: 'schedule',
+    count: 0
   }, {
     key: '2',
-    name: '通知消息',
-    count: '233',
-    data: {
-      name: '发起人姓名',
-      lcName: '审批流程名称',
-      result: '待我审批',
-      person: '当前节点人'
-    }
+    name: '通知',
+    icon: 'message',
+    count: 0
 }];
+
+function isStrings(str) {
+  return typeof str === 'string' && str.constructor === String
+}
+
+function showTimeDiffText(timeStr) {
+  const defaultTimes = '2018-09-18 15:18:49';
+  const str = isStrings(timeStr) ? timeStr : defaultTimes;
+  const second = dayjs().diff(dayjs(str), 'seconds');
+
+  if(second >= 0 && second < 60) {
+    return {type: 'second', value: `${second}秒前`};
+  } else if (second >= 60 && second < 3600) {
+    return {type: 'minute', value: `${Math.floor(second / 60)}分钟前`};
+  } else if (second >= 3600 && second < 3600*24) {
+    return {type: 'hour', value: `${Math.floor(second / 3600)}小时前`};
+  } else if (second >= 3600*24 && second < 3600*24*30) {
+    return {type: 'day', value: `${Math.floor(second / 3600 / 24)}天前`};
+  } else {
+    return {type: 'extra', value: defaultTimes.substring(0, 10)};
+  }
+}
 
 class ApprovalNotice extends PureComponent {
   static propTypes = {
-    height: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    height: PropTypes.number.isRequired,
   }
 
   state = {
+    tabKeys: '1',
     data: null,
-    tabState: '1', //tabs 状态
-    title: '审批',
-    more: '查看全部',
     params: {
-      entityId: "00000000-0000-0000-0000-000000000001",
-      isAdvanceQuery: 1,
-      menuId: "cdc16143-1420-4efa-9420-c7141ee13744",
       pageIndex: 1,
       pageSize: 10,
-      searchData: {},
-      searchOrder: "",
-      viewType: 0
     }
   }
+
+  setStateAsync = state => new Promise(resolve => this.setState(state, resolve));
 
   componentDidMount() {
     const { params } = this.state;
 
-    this.fetchList(params);
+    this.fetchList('1', params);
   }
 
-  onTabsChange = type => {
+  onTabsChange = key => {
     const { params } = this.state;
-    const auditstatus = (type === '-1') ? null : parseInt(type);
-    const mergeParams = {
-      ...params,
-      searchData: {
-        auditstatus
-      }
-    }
 
-    this.fetchList(mergeParams);
+    this.fetchList(key, params);
   };
 
-  onReadMsg = idx => {
+  fetchList = (key = '1', params) => {
+    switch(key) {
+      case '1':
+        queryGetunmsglist(params)
+        .then(res => this.setState({ tabKeys: '1', data: res.data }))
+        .catch(err => console.log(err))
+        break
+      case '2':
+        queryGetwflist(params)
+        .then(res => this.setState({ tabKeys: '2', data: res.data }))
+        .catch(err => console.log(err))
+        break
+    }
+  }
+
+  renderWrapElms() {
+    const { maxListLength = 10 } = this.props;
+    const { tabKeys } = this.state;
     
-  }
+    const { data } = this.state;
+    let list = [];
 
-  fetchList = (params) => {
-    this.setState({ params });
+    if(!!data) list = [...data.datalist];
+    if(list.length >= 10) list = [...list.slice(0, 10)]; // 数据长度最大10
 
-    queryNoticeList(params)
-    .then(res => this.setState({ data: res.data }))
-    .catch(err => console.log(err))
-  }
+    // list
+    const showList = list.length !== 0 ?
+      (
+        <div className={styles.contents}>
+          {list.map((item, index) => this.renderListElms(item, index))}
+        </div>
+      ) :
+      (
+        <div className={styles.notNewMsg}>
+          {tabKeys === '1' ? '暂无新的待处理审批！' : '暂无新的审批通知！'}
+        </div>
+      )
 
-  render() {
-    const { height = 200 } = this.props;
-    const { tabState, more, title, data } = this.state;
-
-    const listDom = !!data && (
-      <div className={styles.container}>
+    return (
+      <div className={styles.warp}>
         {
-          data.pagedata.map((item, index) => {
-            return (
-              <div className={styles.list} key={index} onClick={this.onReadMsg.bind(this,index)}>
-                <Link to='/'>
-                  <font></font>
-                  <span>{`【${item.auditstatus_name}】`}</span>
-                  <span className={styles.text}>
-                    {item.data.name}发起的{item.data.lcname}，
-                    {
-                      item.id === '3' ? 
-                      `等待${item.data.person}审批！`
-                      :
-                      <span className={styles.weight}>{`${item.auditstatus_name}`}！</span>
-                    }
-                  </span>
-                </Link>
-              </div>
-            );
-          })
+          !!list ? showList : <div className={styles.spins}><Spin /></div>
+        }
+        {
+          !!list && list.length >= maxListLength ?
+            <div className={styles.footer}>
+              <Link to='/affair-list'><span>查看更多</span></Link>
+            </div>
+          : null
         }
       </div>
     )
+  }
 
-    const showList = (!!data) ?  listDom  :
-    <div className={styles.notNewMsg}>{tabState === '1' ? '暂无新的待处理审批！' : '暂无新的审批通知！'}</div>
-    ;
+  renderListElms = (item, index) => {
+    return (
+      <Link className={styles.list} key={index} to={`/affair/${item.msgparam.Data.caseid}`}>
+        <Badge className={styles.text} status="processing" />
+        <p>
+          <Tooltip title={item.reccreated}>
+            {this.renderTimeTag(showTimeDiffText(item.reccreated))}
+          </Tooltip>
+          ，{item.msgcontent}
+        </p>
+      </Link>
+    );
+  }
+
+  renderTimeTag(obj) {
+    switch(obj.type) {
+      case 'second':
+        return <Tag color="red">{obj.value}</Tag>
+      case 'minute':
+        return <Tag color="magenta">{obj.value}</Tag>
+      case 'hour':
+        return <Tag color="volcano">{obj.value}</Tag>
+      case 'day':
+        return <Tag color="purple">{obj.value}</Tag>
+      case 'extra':
+        return <Tag color="green">{obj.value}</Tag>
+    }
+  }
+
+  render() {
+    const { height = 200, title='title', defaultKey='1' } = this.props;
+    const { data } = this.state;
+
+    if(data && optionList[0].count === 0) optionList[0].count = data.pageinfo.totalcount; //显示消息条数
 
     return (
-      <div className={styles.contains} style={{ maxHeight: height }}>
+      <div className={styles.container} style={{ maxHeight: height }}>
         <div className={styles.header}>
-          <Tabs defaultActiveKey={tabState}
-          animated
-          tabBarExtraContent={<span className={styles.title}>{title}</span>}
-          onTabClick={this.onTabsChange}
+          <Tabs defaultActiveKey={defaultKey}
+            tabBarExtraContent={<span className={styles.title}>{title}</span>}
+            onChange={this.onTabsChange}
           >
             {
               Array.isArray(optionList) ?
-                optionList.map(item => {
-                  return (
-                    <TabPane 
-                      tab={
-                        <Badge className={styles.badge} count={item.count} title={`共${item.count}条信息`}>
-                          <span className={styles.tabText}>{item.name}</span>
-                        </Badge>
-                      }
-                      key={item.key}
-                    >
-                      <div className={styles.warp} >
-                      {showList}
-                      {
-                        (!!data) && data.pagedata.length >= 10 ?
-                          <div className={styles.footer}>
-                            <Link to='/affair-list'><span>{more}</span></Link>
-                          </div>
-                          : null
-                      }
-                      </div>
-                    </TabPane>
-                  )
-                }) : null
+                optionList.map(item => (
+                  <TabPane
+                    key={item.key}
+                    tab={
+                      <Badge
+                        className={styles.badge}
+                        count={item.count}
+                        title={`共${item.count}条信息`}
+                      >
+                        <span className={styles.tabText}><Icon type={item.icon} />{item.name}</span>
+                      </Badge>
+                    }
+                  >
+                    {this.renderWrapElms()}
+                  </TabPane>
+                )
+              ) : null
             }
           </Tabs>
         </div>
