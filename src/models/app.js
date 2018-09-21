@@ -1,4 +1,4 @@
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import { routerRedux, hashHistory } from 'dva/router';
 import storage from '../utils/storage';
 import { subscribe as subscribeRequest } from '../utils/request';
@@ -53,7 +53,11 @@ export default {
         onRequest: () => {},
         onResponse: (error, response) => {
           if (response && response.data && response.data.error_code === -25013) {
-            dispatch({ type: 'app/logout' });
+            Modal.info({
+              title: '被迫下线了,跳转到登录页',
+              content: response.data.error_msg,
+              onOk() { dispatch({ type: 'app/logout' }); }
+            });
           }
         }
       });

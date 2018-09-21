@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import { Button } from 'antd';
 import EntcommDetailModal from '../../components/EntcommDetailModal';
 import { getFunctionbutton } from '../../services/entcomm';
-const style = { display: 'inline-block' };
+const style = { display: 'inline-block', marginLeft: '6px' };
 const RecordDetailModal = WrappedComponent => {
   class RecordDetail extends Component {
     componentWillReceiveProps(nextProps) {
@@ -31,14 +31,14 @@ const RecordDetailModal = WrappedComponent => {
         <ul style={style} key="extraToolbarData">
           {
             extraToolbarData instanceof Array && extraToolbarData.map(item => {
-              return <li key={item.id}><a onClick={this.extraToolBarClickHandler.bind(this, item)}>{item.title}</a></li>;
+              return <li style={style} key={item.id}><a onClick={this.extraToolBarClickHandler.bind(this, item)}>{item.title}</a></li>;
             })
           }
         </ul>,
         <ul style={style} key="extraButtonData">
           {
             extraButtonData instanceof Array && extraButtonData.map(item => {
-              return <li key={item.id}><a onClick={this.extraBtnClickHandler.bind(this, item)}>{item.title}</a></li>;
+              return <li style={style} key={item.id}><a onClick={this.extraBtnClickHandler.bind(this, item)}>{item.title}</a></li>;
             })
           }
         </ul>,

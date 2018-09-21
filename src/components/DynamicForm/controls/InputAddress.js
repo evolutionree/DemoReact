@@ -266,7 +266,7 @@ class InputAddress extends Component {
 InputAddress.View = ({ value, dispatch }) => {
   if (!value || !value.address) return <span style={{ color: '#999999' }}>(空)</span>;
   return (
-    <div style={{ height: 32 }}>
+    <div style={{ height: 26 }}>
       <span style={{ verticalAlign: 'middle' }}>{value.address}</span>
       <img
         style={{ verticalAlign: 'middle', marginLeft: '5px', cursor: 'pointer' }}

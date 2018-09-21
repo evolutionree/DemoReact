@@ -233,7 +233,7 @@ SelectDataSource.View = ({ value, value_name, dataSource }) => {
   }
 
   if (!value || !value_name) return null;
-  const linkUrl = `/entcomm/${dataSourceRelEntityId}/${value.id}`;
+  const linkUrl = `#/entcomm/${dataSourceRelEntityId}/${value.id}`;
 
   function redirect() {
     checkHasPermission({
@@ -245,7 +245,8 @@ SelectDataSource.View = ({ value, value_name, dataSource }) => {
       } else if (result.data === '2') {
         message.error('该数据已删除，无法查看');
       } else {
-        hashHistory.push(linkUrl);
+        window.open(linkUrl, '_blank');
+        // hashHistory.push(linkUrl);
       }
     }, err => {
       message.error('获取超时，请检查网络!');
