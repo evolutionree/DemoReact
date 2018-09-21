@@ -2,11 +2,16 @@
  * 0920
  */
 import React, { PropTypes, PureComponent } from 'react';
-import { Select, Input, Card, Button, Spin, Pagination, Menu, Dropdown, Icon, BackTop, Alert } from 'antd';
+import {
+  Select, Input, Card, Button, Spin,
+  Pagination, Menu, Dropdown, Icon,
+  BackTop, Alert, Popover, InputNumber, DatePicker,
+} from 'antd';
 import { queryDynamiclist, queryMainTypeList, queryRelatedEntityList } from '../../../../services/dynamiclist';
 import { likeEntcommActivity, commentEntcommActivity } from '../../../../services/entcomm';
 import ActivityBoard from '../../../../components/ActivityBoard';
 import styles from './index.less';
+import dayjs from 'dayjs';
 
 const Item = Menu.Item;
 const Option = Select.Option;
@@ -44,13 +49,18 @@ class Filtrate extends PureComponent {
 
   state = {
     tipSwitch: false,
+    timeStr: '当天',
     tipMessage: '',
+    endOpen: false,
+    replaceButton: false,
+    startValue: null,
+    endValue: null,
     mainTypeList: null, // 主实体类型列表
     relatedEntityList: null, // 关联实体类型列表
     dataSource: null, // 过滤列表
     params: { // 初始化配置参数
       DataRangeType: '2',
-      TimeRangeType: '4',
+      TimeRangeType: '1',
       MainEntityId: '00000000-0000-0000-0000-000000000000',
       SearchKey: '',
       RelatedEntityId: '00000000-0000-0000-0000-000000000000',
@@ -104,6 +114,7 @@ class Filtrate extends PureComponent {
     await this.setStateAsync({dataSource: null});
 
     const { params } = this.state;
+
     queryDynamiclist(params)
     .then((res) => {
       this.setState({dataSource: res.data});
@@ -118,7 +129,19 @@ class Filtrate extends PureComponent {
     this.setState({params: newParams});
   }
 
-  changeMainType = value => {
+  onSelectMainType = (item) => {
+    switch(item.key) {
+      case '12':
+        this.setState({replaceButton: true});
+        this.mergeParams({TimeRangeType: item.key});
+        break
+      default:
+        this.setState({timeStr: item.name, replaceButton: false});
+        this.mergeParams({TimeRangeType: item.key});
+    }
+  }
+
+  onChangeMainType = value => {
     this.mergeParams({MainEntityId: value});
 
     // 请求动态实体列表
@@ -157,6 +180,47 @@ class Filtrate extends PureComponent {
     setTimeout(() => this.setState({tipSwitch: false}), 1000)
   }
 
+  // 时间函数 start
+  disabledStartDate = (startValue) => {
+    const endValue = this.state.endValue;
+    if (!startValue || !endValue) {
+      return false;
+    }
+    return startValue.valueOf() > endValue.valueOf();
+  }
+
+  disabledEndDate = (endValue) => {
+    const startValue = this.state.startValue;
+    if (!endValue || !startValue) {
+      return false;
+    }
+    return endValue.valueOf() <= startValue.valueOf();
+  }
+
+  onTimeChange = (field, value) => {
+    this.mergeParams({[field]: value});
+  }
+
+  onStartTimeChange = (date, dateString) => {
+    this.onTimeChange('StartTime', dateString);
+    this.setState({startValue: date});
+  }
+
+  onEndTimeChange = (date, dateString) => {
+    this.onTimeChange('EndTime', dateString);
+    this.setState({endValue: date});
+  }
+
+  handleStartOpenChange = (open) => {
+    if (!open) this.setState({ endOpen: true });
+  }
+
+  handleEndOpenChange = (open) => {
+    this.setState({ endOpen: open });
+  }
+
+  // 时间函数 end
+
   renderHeaders() {
     return (
       <div className={styles.header}>
@@ -165,7 +229,6 @@ class Filtrate extends PureComponent {
             style={{ width: '120px' }}
             defaultValue={selectDataList[1].key}
             onChange={this.handleChange}
-            disabled
           >
             {selectDataList.map(item => {
               return <Option value={item.key} key={item.key}>{item.name}</Option>;
@@ -174,16 +237,7 @@ class Filtrate extends PureComponent {
         </div>
 
         <div className={styles.margins}>
-          <Select
-            style={{ width: '120px' }}
-            defaultValue={selectTimeList[3].key}
-            onChange={this.handleChange}
-            disabled
-          >
-            {selectTimeList.map(item => {
-              return <Option value={item.key} key={item.key}>{item.name}</Option>;
-            })}
-          </Select>
+          {this.renderSelectTime()}
         </div>
 
         <div className={styles.margins}>
@@ -204,11 +258,73 @@ class Filtrate extends PureComponent {
           </Button>
         </div>
 
-        <div className={styles.margins}>
-          
-        </div>
       </div>
     )
+  }
+
+  renderSelectTime() {
+    const { minYear = 2015 } = this.props;
+    const { timeStr, replaceButton, startValue, endValue, endOpen } = this.state;
+
+    const content = (
+      <div className={styles.selectTimeWrap}>
+        {
+          selectTimeList.map(item => {
+            switch(item.key) {
+              case '11':
+                return (
+                  <InputNumber
+                    style={{width: '100px', margin: '10px'}}
+                    key={item.key}
+                    placeholder={item.name}
+                    min={minYear}
+                    max={dayjs().year()}
+                    onChange={async value => {
+                      await this.setStateAsync({replaceButton: false});
+                      this.setState({timeStr: value + '年'});
+                      this.mergeParams({TimeRangeType: item.key, SpecialYear: value});
+                    }}
+                  />
+                );
+              default:
+                return <Button type='default' key={item.key} onClick={this.onSelectMainType.bind(this, item)}>{item.name}</Button>
+            }
+          })
+        }
+      </div>
+    );
+
+    return (
+      <Popover placement="bottom" content={content} title="请选择筛选时间">
+        {
+          replaceButton ?
+            <div style={{ marginRight: '10px' }}>
+              <DatePicker
+                style={{ marginRight: '10px' }}
+                disabledDate={this.disabledStartDate}
+                showTime
+                format="YYYY-MM-DD HH:mm:ss"
+                value={startValue}
+                placeholder="开始时间"
+                onChange={this.onStartTimeChange}
+                onOpenChange={this.handleStartOpenChange}
+              />
+              <DatePicker
+                disabledDate={this.disabledEndDate}
+                showTime
+                format="YYYY-MM-DD HH:mm:ss"
+                value={endValue}
+                placeholder="结束时间"
+                onChange={this.onEndTimeChange}
+                open={endOpen}
+                onOpenChange={this.handleEndOpenChange}
+              />
+            </div>
+          :
+          <Button type='default'>{timeStr}<Icon type="down" /></Button>
+        }
+      </Popover>
+    );
   }
 
   renderMainTypeElms() {
@@ -218,7 +334,7 @@ class Filtrate extends PureComponent {
       <Select
         style={{ width: '120px' }}
         defaultValue={params.MainEntityId}
-        onChange={this.changeMainType}
+        onChange={this.onChangeMainType}
         showSearch
       >
         {mainTypeList.map((item, idx) => <Option value={item.entityid} key={idx}>{item.entityname}</Option>)}
@@ -332,12 +448,18 @@ class Filtrate extends PureComponent {
     }
   }
 
-  like = (dynamicid) => {
-    likeEntcommActivity(dynamicid)
-    .then((res) => {
-      console.log(res);
-    })
-    .catch(err => console.log(err))
+  like = async (dynamicid) => {
+    await likeEntcommActivity(dynamicid)
+      .then((res) => {
+        console.log(res);
+      }).catch(err => console.log(err));
+
+    const { data } = await getActivityDetail(dynamicid)
+      .then((res) => {
+        return res
+      }).catch(err => console.log(err));
+
+    // 需要更新state
   }
 
   comment = (dynamicid, content) => {
@@ -362,21 +484,26 @@ class Filtrate extends PureComponent {
   }
 
   render() {
-    const { height = 660 } = this.props;
+    const { height = 660, filtrateScrollId } = this.props;
     const { tipSwitch, tipMessage } = this.state;
+
     return (
       <div className={styles.container}>
         <Card
           title={this.renderHeaders()}
           extra={this.renderExtra()}
         >
-          <div id='filtrateScroll' className={styles.list} style={{ height: height - 128 }}>
+          <div id={filtrateScrollId || ''} className={styles.list} style={{ height: height - 128 }}>
             {this.renderList()}
-            <BackTop className={styles.backtop} target={() => document.getElementById('filtrateScroll')}>
-              <div className={styles.backTopInner}>UP</div>
-            </BackTop>
+            {filtrateScrollId &&
+              <BackTop className={styles.backtop} target={() => document.getElementById(filtrateScrollId)}>
+                <div className={styles.backTopInner}>UP</div>
+              </BackTop>
+            }
           </div>
+
           {this.renderPagination()}
+
           {tipSwitch &&
             <div className={styles.alert}>
               <Alert showIcon message={tipMessage} type="success" />
