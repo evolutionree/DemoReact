@@ -1,17 +1,21 @@
-/**
- * 0920
+/*
+ * @Author: geewonii 
+ * @Date: 2018-09-21 14:27:19 
+ * @Last Modified by: geewonii
+ * @Last Modified time: 2018-09-25 16:25:42
  */
 import React, { PropTypes, PureComponent } from 'react';
 import {
   Select, Input, Card, Button, Spin,
   Pagination, Menu, Dropdown, Icon,
-  BackTop, Alert, Popover, InputNumber, DatePicker,
+  BackTop, Alert, message
 } from 'antd';
 import { queryDynamiclist, queryMainTypeList, queryRelatedEntityList } from '../../../../services/dynamiclist';
 import { likeEntcommActivity, commentEntcommActivity } from '../../../../services/entcomm';
+import ScreenTime from './ScreenTime';
 import ActivityBoard from '../../../../components/ActivityBoard';
+import EntcommDetailModal from '../../../../components/EntcommDetailModal';
 import styles from './index.less';
-import dayjs from 'dayjs';
 
 const Item = Menu.Item;
 const Option = Select.Option;
@@ -48,11 +52,14 @@ class Filtrate extends PureComponent {
   }
 
   state = {
-    tipSwitch: false,
-    timeStr: '当天',
-    tipMessage: '',
     endOpen: false,
-    replaceButton: false,
+    visible: false,
+    modalVisible: false,
+    entityId: '',
+    recordId: '',
+    tipSwitch: false,
+    showText: '当天',
+    tipMessage: '',
     startValue: null,
     endValue: null,
     mainTypeList: null, // 主实体类型列表
@@ -79,22 +86,18 @@ class Filtrate extends PureComponent {
 
   }
 
-  handleChange = value => {
-    console.log(`selected ${value}`);
-  }
-
   initConfigs = async () => {
     const { params } = this.state;
     const filtrateConfig = localStorage.getItem('filtrateConfig');
 
     if (filtrateConfig) {
-      await this.setStateAsync({params: JSON.parse(filtrateConfig)});
+      await this.setStateAsync({ params: JSON.parse(filtrateConfig) });
 
       const { params } = this.state;
-      queryRelatedEntityList({EntityId: params.MainEntityId})
-      .then((res) => {
-        this.setState({relatedEntityList: res.data});
-      }).catch(err => console.log(err));
+      queryRelatedEntityList({ EntityId: params.MainEntityId })
+        .then((res) => {
+          this.setState({ relatedEntityList: res.data });
+        }).catch(err => console.log(err));
 
       return false;
     }
@@ -104,64 +107,57 @@ class Filtrate extends PureComponent {
 
   getMainTypeList = () => {
     queryMainTypeList()
-    .then((res) => {
-      this.setState({mainTypeList: res.data});
-    })
-    .catch(err => console.log(err));
+      .then((res) => {
+        this.setState({ mainTypeList: res.data });
+      })
+      .catch(err => console.log(err));
   }
 
   getDynamiclist = async () => {
-    await this.setStateAsync({dataSource: null});
+    // await this.setStateAsync({ dataSource: null });
 
     const { params } = this.state;
 
     queryDynamiclist(params)
-    .then((res) => {
-      this.setState({dataSource: res.data});
-    }).catch(err => console.log(err));
-  }
-  
-  mergeParams = (obj) => {
-    const { params } = this.state;
-    
-    const newObj = typeof obj === 'object' ? obj : {}
-    const newParams = {...params, ...newObj}
-    this.setState({params: newParams});
+      .then((res) => {
+        this.setState({ dataSource: res.data });
+      }).catch(err => console.log(err));
   }
 
-  onSelectMainType = (item) => {
-    switch(item.key) {
-      case '12':
-        this.setState({replaceButton: true});
-        this.mergeParams({TimeRangeType: item.key});
-        break
-      default:
-        this.setState({timeStr: item.name, replaceButton: false});
-        this.mergeParams({TimeRangeType: item.key});
-    }
+  mergeParams = (obj) => {
+    const { params } = this.state;
+
+    const newObj = typeof obj === 'object' ? obj : {}
+    const newParams = { ...params, ...newObj }
+
+    this.setState({ params: newParams });
+  }
+
+  handleMainTypeChange = value => {
+    console.log(`selected ${value}`);
   }
 
   onChangeMainType = value => {
-    this.mergeParams({MainEntityId: value});
+    this.mergeParams({ MainEntityId: value });
 
     // 请求动态实体列表
-    queryRelatedEntityList({EntityId: value})
-    .then((res) => {
-      this.setState({relatedEntityList: res.data});
-    }).catch(err => console.log(err));
+    queryRelatedEntityList({ EntityId: value })
+      .then((res) => {
+        this.setState({ relatedEntityList: res.data });
+      }).catch(err => console.log(err));
   }
 
   changeRelatedEntityType = value => {
-    this.mergeParams({RelatedEntityId: value});
+    this.mergeParams({ RelatedEntityId: value });
   }
 
   search = () => {
     this.getDynamiclist();
   }
 
-  onSaveConfigs = async ({ key }) => {
+  onSaveConfigs = ({ key }) => {
     const { params } = this.state;
-    switch(key) {
+    switch (key) {
       case '1':
         localStorage.setItem('filtrateConfig', JSON.stringify(params));
         this.showTips('当前配置已保存！');
@@ -169,66 +165,27 @@ class Filtrate extends PureComponent {
       case '2':
         localStorage.removeItem('filtrateConfig');
         const filtrateDefaultConfig = localStorage.getItem('filtrateDefaultConfig');
-        await this.setState({params: JSON.parse(filtrateDefaultConfig)});
+        this.setState({ params: JSON.parse(filtrateDefaultConfig) });
         this.showTips('配置已重置成功！');
         break
     }
   }
 
   showTips(tipMessage) {
-    this.setState({tipSwitch: true, tipMessage})
-    setTimeout(() => this.setState({tipSwitch: false}), 1000)
+    this.setState({ tipSwitch: true, tipMessage })
+    setTimeout(() => this.setState({ tipSwitch: false }), 1000)
   }
-
-  // 时间函数 start
-  disabledStartDate = (startValue) => {
-    const endValue = this.state.endValue;
-    if (!startValue || !endValue) {
-      return false;
-    }
-    return startValue.valueOf() > endValue.valueOf();
-  }
-
-  disabledEndDate = (endValue) => {
-    const startValue = this.state.startValue;
-    if (!endValue || !startValue) {
-      return false;
-    }
-    return endValue.valueOf() <= startValue.valueOf();
-  }
-
-  onTimeChange = (field, value) => {
-    this.mergeParams({[field]: value});
-  }
-
-  onStartTimeChange = (date, dateString) => {
-    this.onTimeChange('StartTime', dateString);
-    this.setState({startValue: date});
-  }
-
-  onEndTimeChange = (date, dateString) => {
-    this.onTimeChange('EndTime', dateString);
-    this.setState({endValue: date});
-  }
-
-  handleStartOpenChange = (open) => {
-    if (!open) this.setState({ endOpen: true });
-  }
-
-  handleEndOpenChange = (open) => {
-    this.setState({ endOpen: open });
-  }
-
-  // 时间函数 end
 
   renderHeaders() {
+    const { params, showText, endOpen, visible, startValue, endValue } = this.state;
+
     return (
       <div className={styles.header}>
         <div className={styles.margins}>
           <Select
             style={{ width: '120px' }}
-            defaultValue={selectDataList[1].key}
-            onChange={this.handleChange}
+            defaultValue={params.DataRangeType}
+            onChange={this.handleMainTypeChange}
           >
             {selectDataList.map(item => {
               return <Option value={item.key} key={item.key}>{item.name}</Option>;
@@ -237,7 +194,21 @@ class Filtrate extends PureComponent {
         </div>
 
         <div className={styles.margins}>
-          {this.renderSelectTime()}
+          <ScreenTime
+            title='请选择时间'
+            minYear={2015}
+            dataSource={selectTimeList}
+            showText={showText}
+            endOpen={endOpen}
+            visible={visible}
+            startValue={startValue}
+            endValue={endValue}
+            handleVisibleChange={this.onHandleVisibleChange}
+            changeScreenTimeNumber={this.onChangeScreenTimeNumber}
+            changeTimeType={this.onChangeTimeType}
+            changeTime={this.onChangeTime}
+            changeEndOpen={this.onChangeEndOpen}
+          />
         </div>
 
         <div className={styles.margins}>
@@ -257,75 +228,38 @@ class Filtrate extends PureComponent {
             查询
           </Button>
         </div>
-
       </div>
     )
   }
 
-  renderSelectTime() {
-    const { minYear = 2015 } = this.props;
-    const { timeStr, replaceButton, startValue, endValue, endOpen } = this.state;
-
-    const content = (
-      <div className={styles.selectTimeWrap}>
-        {
-          selectTimeList.map(item => {
-            switch(item.key) {
-              case '11':
-                return (
-                  <InputNumber
-                    style={{width: '100px', margin: '10px'}}
-                    key={item.key}
-                    placeholder={item.name}
-                    min={minYear}
-                    max={dayjs().year()}
-                    onChange={async value => {
-                      await this.setStateAsync({replaceButton: false});
-                      this.setState({timeStr: value + '年'});
-                      this.mergeParams({TimeRangeType: item.key, SpecialYear: value});
-                    }}
-                  />
-                );
-              default:
-                return <Button type='default' key={item.key} onClick={this.onSelectMainType.bind(this, item)}>{item.name}</Button>
-            }
-          })
-        }
-      </div>
-    );
-
-    return (
-      <Popover placement="bottom" content={content} title="请选择筛选时间">
-        {
-          replaceButton ?
-            <div style={{ marginRight: '10px' }}>
-              <DatePicker
-                style={{ marginRight: '10px' }}
-                disabledDate={this.disabledStartDate}
-                showTime
-                format="YYYY-MM-DD HH:mm:ss"
-                value={startValue}
-                placeholder="开始时间"
-                onChange={this.onStartTimeChange}
-                onOpenChange={this.handleStartOpenChange}
-              />
-              <DatePicker
-                disabledDate={this.disabledEndDate}
-                showTime
-                format="YYYY-MM-DD HH:mm:ss"
-                value={endValue}
-                placeholder="结束时间"
-                onChange={this.onEndTimeChange}
-                open={endOpen}
-                onOpenChange={this.handleEndOpenChange}
-              />
-            </div>
-          :
-          <Button type='default'>{timeStr}<Icon type="down" /></Button>
-        }
-      </Popover>
-    );
+  onChangeScreenTimeNumber = async (key, value) => {
+    await this.setStateAsync({ showText: value + '年' });
+    this.mergeParams({ TimeRangeType: key, SpecialYear: value });
   }
+
+  onChangeTimeType = (item) => {
+    this.setState({ showText: item.name });
+    this.mergeParams({ TimeRangeType: item.key });
+  }
+
+  onChangeTime = async (mergeObj, updataObj) => {
+    const updateValue = updataObj && Object.entries(updataObj)[0];
+    const key = updateValue[0];
+    const value = updateValue[1];
+
+    await this.setStateAsync({ [key]: value });
+    await this.mergeParams(mergeObj);
+
+    const { params } = this.state;
+    let start = params.StartTime ? params.StartTime.substring(0, 10) : '（未选择）';
+    let end = params.EndTime ? params.EndTime.substring(0, 10) : '（未选择）';
+
+    this.setStateAsync({ showText: `从 ${start} 到 ${end}` });
+  }
+
+  onChangeEndOpen = endOpen => this.setState({ endOpen });
+
+  onHandleVisibleChange = visible => this.setState({ visible });
 
   renderMainTypeElms() {
     const { mainTypeList, params } = this.state;
@@ -343,7 +277,7 @@ class Filtrate extends PureComponent {
 
     return renderMainTypeElms;
   }
-  
+
   renderRelatedElms() {
     const { relatedEntityList, params } = this.state;
     const renderrelatedElm = relatedEntityList && (
@@ -387,40 +321,40 @@ class Filtrate extends PureComponent {
     console.log(dataSource)
     const list = !!dataSource ? (
       dataSource.datalist.length === 0 ? <div className={styles.spins}>没有查询到相关数据，请重新过滤条件!</div> :
-      dataSource.datalist.map((item, idx) => {
-        const user = {
-          id: item.reccreator,
-          name: item.reccreator_name,
-          icon: item.usericon
-        };
-        const comments = item.commentlist && item.commentlist.map(comm => ({
-          id: comm.commentsid,
-          user: {
-            id: +comm.reccreator,
-            name: comm.reccreator_name,
-            icon: comm.reccreator_icon
-          },
-          time: comm.reccreated,
-          content: comm.comments
-        }));
+        dataSource.datalist.map((item, idx) => {
+          const user = {
+            id: item.reccreator,
+            name: item.reccreator_name,
+            icon: item.usericon
+          };
+          const comments = item.commentlist && item.commentlist.map(comm => ({
+            id: comm.commentsid,
+            user: {
+              id: +comm.reccreator,
+              name: comm.reccreator_name,
+              icon: comm.reccreator_icon
+            },
+            time: comm.reccreated,
+            content: comm.comments
+          }));
 
-        return (
-          <ActivityBoard
-            style={{ marginBottom: '24px' }}
-            key={idx}
-            title={item.entityname}
-            time={item.reccreated}
-            user={user}
-            template={item.tempcontent}
-            templateData={item.tempdata}
-            likes={item.praiseusers}
-            comments={comments || []}
-            onLike={this.like.bind(this, item.dynamicid)}
-            onComment={this.comment.bind(this, item.dynamicid)}
-            // onShowDetail={showDynamicDetail.bind(null, item)}
-          />
-        )
-      })
+          return (
+            <ActivityBoard
+              style={{ marginBottom: '24px' }}
+              key={idx}
+              title={item.entityname}
+              time={item.reccreated}
+              user={user}
+              template={item.tempcontent}
+              templateData={item.tempdata}
+              likes={item.praiseusers}
+              comments={comments || []}
+              onLike={this.like.bind(this, item.dynamicid)}
+              onComment={this.comment.bind(this, item.dynamicid)}
+              onShowDetail={this.showDynamicDetail.bind(this, item)}
+            />
+          )
+        })
     ) : <div className={styles.spins}><Spin /></div>
 
     return list;
@@ -429,7 +363,7 @@ class Filtrate extends PureComponent {
   renderPagination() {
     const { dataSource, params } = this.state;
 
-    if(dataSource) {
+    if (dataSource) {
       const { pageinfo: { totalcount, pagesize } } = dataSource;
       let PageIndex = parseInt(params.PageIndex);
 
@@ -448,18 +382,18 @@ class Filtrate extends PureComponent {
     }
   }
 
-  like = async (dynamicid) => {
-    await likeEntcommActivity(dynamicid)
+  like = (dynamicid) => {
+    try {
+      likeEntcommActivity(dynamicid)
       .then((res) => {
-        console.log(res);
+        if(res.error_code === 0) {
+          this.getDynamiclist();
+          message.success('点赞成功！');
+        }
       }).catch(err => console.log(err));
-
-    const { data } = await getActivityDetail(dynamicid)
-      .then((res) => {
-        return res
-      }).catch(err => console.log(err));
-
-    // 需要更新state
+    } catch (e) {
+      message.error(e.message || '点赞失败');
+    }
   }
 
   comment = (dynamicid, content) => {
@@ -468,24 +402,47 @@ class Filtrate extends PureComponent {
       comments: content
     };
     commentEntcommActivity(params)
-    .then((res) => {
-      console.log(res);
-    })
-    .catch(err => console.log(err))
+      .then((res) => {
+        if(res.error_code === 0) {
+          this.getDynamiclist();
+          message.success('评论成功！');
+        }
+      })
+      .catch(err => console.log(err))
+  }
+
+  showDynamicDetail = (item) => {
+    const { modalVisible } = this.state;
+
+    this.setState({
+      entityId: item.entityid,
+      recordId: item.businessid,
+      modalVisible: !modalVisible
+    });
   }
 
   onChangePage = (PageIndex) => {
     const { params: { pagecount } } = this.state;
 
-    if(PageIndex >= pagecount) PageIndex = '1';
+    if (PageIndex >= pagecount) PageIndex = '1';
 
-    this.mergeParams({PageIndex: PageIndex + ''});
+    this.mergeParams({ PageIndex: PageIndex + '' });
     this.getDynamiclist();
+  }
+
+  onCancelModal = () => {
+    const { modalVisible } = this.state;
+
+    this.setState({
+      entityId: '',
+      recordId: '',
+      modalVisible: !modalVisible
+    });
   }
 
   render() {
     const { height = 660, filtrateScrollId } = this.props;
-    const { tipSwitch, tipMessage } = this.state;
+    const { tipSwitch, tipMessage, modalVisible, entityId, recordId } = this.state;
 
     return (
       <div className={styles.container}>
@@ -509,6 +466,14 @@ class Filtrate extends PureComponent {
               <Alert showIcon message={tipMessage} type="success" />
             </div>
           }
+
+          <EntcommDetailModal
+            visible={modalVisible}
+            entityId={entityId}
+            recordId={recordId}
+            onCancel={this.onCancelModal}
+            onOk={this.onCancelModal}
+          />
         </Card>
       </div>
     );

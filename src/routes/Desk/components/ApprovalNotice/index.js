@@ -1,6 +1,10 @@
-/**
- * 0920
+/*
+ * @Author: geewonii 
+ * @Date: 2018-09-21 14:27:02 
+ * @Last Modified by: geewonii
+ * @Last Modified time: 2018-09-25 13:50:53
  */
+
 import React, { PropTypes, PureComponent } from 'react';
 import { Tabs, Tag, Badge, Spin, Icon, Tooltip } from 'antd';
 import styles from './index.less';
@@ -25,7 +29,10 @@ const optionList = [
 function isStrings(str) {
   return typeof str === 'string' && str.constructor === String
 }
-
+/**
+ * 
+ * @param {String} timeStr 
+ */
 function showTimeDiffText(timeStr) {
   const defaultTimes = '2018-09-18 15:18:49';
   const str = isStrings(timeStr) ? timeStr : defaultTimes;
@@ -131,12 +138,12 @@ class ApprovalNotice extends PureComponent {
     return (
       <Link className={styles.list} key={index} to={`/affair/${item.msgparam.Data.caseid}`}>
         <Badge className={styles.text} status="processing" />
-        <p>
+        <div className={styles.listChild}>
           <Tooltip title={item.reccreated}>
             {this.renderTimeTag(showTimeDiffText(item.reccreated))}
           </Tooltip>
           ，{item.msgcontent}
-        </p>
+        </div>
       </Link>
     );
   }
