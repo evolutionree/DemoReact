@@ -16,6 +16,7 @@ import { getGlobalMenus } from '../services/webmenus';
 import { clearServerCache, queryYearWeekData } from '../services/basicdata';
 
 const KEY_SIDER_FOLD = 'uke100_siderFold';
+let logoutInfoBool = false;
 
 export default {
   namespace: 'app',
@@ -52,7 +53,9 @@ export default {
       subscribeRequest({
         onRequest: () => {},
         onResponse: (error, response) => {
-          if (response && response.data && response.data.error_code === -25013) {
+          message.destroy();
+          if (response && response.data && response.data.error_code === -25013 && !logoutInfoBool) {
+            logoutInfoBool = true;
             Modal.info({
               title: '被迫下线了,跳转到登录页',
               content: response.data.error_msg,
