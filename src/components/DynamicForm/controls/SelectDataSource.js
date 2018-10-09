@@ -226,13 +226,13 @@ class SelectDataSource extends React.Component {
 
 SelectDataSource.View = ({ value, value_name, dataSource }) => {
   const dataSourceRelEntityId = dataSource && dataSource.entityId;
+  const emptyText = <span style={{ color: '#999999' }}>(空)</span>;
   if (!dataSourceRelEntityId) { // 没有数据源关联实体id entityid，以普通文本显示
-    const emptyText = <span style={{ color: '#999999' }}>(空)</span>;
     const text = value_name !== undefined ? value_name : value;
     return <div className={styles.dataSourceViewWrap}>{text ? (text + '') : emptyText}</div>;
   }
 
-  if (!value || !value_name) return null;
+  if (!value || !value_name) return <div className={styles.dataSourceViewWrap}>{emptyText}</div>;
   const linkUrl = `#/entcomm/${dataSourceRelEntityId}/${value.id}`;
 
   function redirect() {

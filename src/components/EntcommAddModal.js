@@ -209,7 +209,7 @@ class EntcommAddModal extends Component {
         message.success('新增成功');
         if (this.props.pageType === 'entcommList' && this.state.entityFormDoneLink) {
           const addRecid = result.data;
-          hashHistory.push(`/entcomm/${this.state.selectedEntityType}/${addRecid}`);
+          hashHistory.push(`/entcomm/${this.props.entityId}/${addRecid}`);
         } else {
           this.props.done(result);
         }

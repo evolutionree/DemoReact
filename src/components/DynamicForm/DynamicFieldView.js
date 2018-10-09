@@ -18,7 +18,7 @@ export const DefaultTextView = ({ value, value_name, dataSource, yearWeekData })
       }
     }
   }
-  return <div style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}>{text}</div>;
+  return <div style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}>{text || emptyText}</div>;
 };
 
 class DynamicFieldView extends React.Component {

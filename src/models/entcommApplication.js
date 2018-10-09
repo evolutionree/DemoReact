@@ -295,8 +295,10 @@ export default {
       };
       try {
         const { data } = yield call(extraToolbarClickSendData, item.routepath, params);
+        yield put({ type: 'showModals', payload: '' });
         if (item.buttoncode === 'EntityDataOpenH5') {
           window.open(data.htmlurl);
+          yield put({ type: 'queryList' });
         } else {
           yield put({ type: 'queryList' });
           message.success('更新成功');

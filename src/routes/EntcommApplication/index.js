@@ -111,6 +111,7 @@ function EntcommList({
   }
 
   function extraButtonClickHandler(item) {
+    dispatch({ type: 'entcommApplication/showModals', payload: '' });
     dispatch({
       type: 'entcommApplication/putState',
       payload: {
