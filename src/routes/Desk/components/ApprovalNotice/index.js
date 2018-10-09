@@ -2,7 +2,7 @@
  * @Author: geewonii 
  * @Date: 2018-09-21 14:27:02 
  * @Last Modified by: geewonii
- * @Last Modified time: 2018-09-26 09:01:37
+ * @Last Modified time: 2018-09-25 13:50:53
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -31,7 +31,7 @@ function isStrings(str) {
 }
 /**
  * 
- * @param {String} timeStr
+ * @param {String} timeStr 
  */
 function showTimeDiffText(timeStr) {
   const defaultTimes = '2018-09-18 15:18:49';
@@ -54,9 +54,7 @@ function showTimeDiffText(timeStr) {
 class ApprovalNotice extends PureComponent {
   static propTypes = {
     title: PropTypes.string.isRequired,
-    style: PropTypes.object,
-    maxHeight: PropTypes.number.isRequired,
-    minHeight: PropTypes.number,
+    height: PropTypes.number.isRequired,
   }
 
   state = {
@@ -166,13 +164,13 @@ class ApprovalNotice extends PureComponent {
   }
 
   render() {
-    const { maxHeight = 500, minHeight = 200, title='title', defaultKey='1' } = this.props;
+    const { height = 200, title='title', defaultKey='1' } = this.props;
     const { data } = this.state;
 
     if(data && optionList[0].count === 0) optionList[0].count = data.pageinfo.totalcount; //显示消息条数
 
     return (
-      <div className={styles.container} style={{ maxHeight, minHeight }}>
+      <div className={styles.container} style={{ maxHeight: height }}>
         <div className={styles.header}>
           <Tabs defaultActiveKey={defaultKey}
             tabBarExtraContent={<span className={styles.title}>{title}</span>}

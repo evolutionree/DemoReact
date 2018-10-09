@@ -2,7 +2,7 @@
  * @Author: geewonii 
  * @Date: 2018-09-21 14:27:19 
  * @Last Modified by: geewonii
- * @Last Modified time: 2018-09-26 09:20:02
+ * @Last Modified time: 2018-09-25 16:25:42
  */
 import React, { PropTypes, PureComponent } from 'react';
 import {
@@ -48,9 +48,7 @@ const selectTimeList = [
 
 class Filtrate extends PureComponent {
   static propTypes = {
-    style: PropTypes.object,
-    maxHeight: PropTypes.number.isRequired,
-    minHeight: PropTypes.number,
+    height: PropTypes.number.isRequired,
   }
 
   state = {
@@ -179,7 +177,7 @@ class Filtrate extends PureComponent {
   }
 
   renderHeaders() {
-    const { params, showText, endOpen, visible, startValue, endValue, relatedEntityList } = this.state;
+    const { params, showText, endOpen, visible, startValue, endValue } = this.state;
 
     return (
       <div className={styles.header}>
@@ -217,12 +215,9 @@ class Filtrate extends PureComponent {
           {this.renderMainTypeElms()}
         </div>
 
-        {
-          relatedEntityList &&
-          <div className={styles.margins}>
-            {this.renderRelatedElms()}
-          </div>
-        }
+        <div className={styles.margins}>
+          {this.renderRelatedElms()}
+        </div>
 
         <div className={styles.margins}>
           <Button
@@ -390,12 +385,12 @@ class Filtrate extends PureComponent {
   like = (dynamicid) => {
     try {
       likeEntcommActivity(dynamicid)
-        .then((res) => {
-          if (res.error_code === 0) {
-            this.getDynamiclist();
-            message.success('点赞成功！');
-          }
-        }).catch(err => console.log(err));
+      .then((res) => {
+        if(res.error_code === 0) {
+          this.getDynamiclist();
+          message.success('点赞成功！');
+        }
+      }).catch(err => console.log(err));
     } catch (e) {
       message.error(e.message || '点赞失败');
     }
@@ -408,7 +403,7 @@ class Filtrate extends PureComponent {
     };
     commentEntcommActivity(params)
       .then((res) => {
-        if (res.error_code === 0) {
+        if(res.error_code === 0) {
           this.getDynamiclist();
           message.success('评论成功！');
         }
@@ -446,7 +441,7 @@ class Filtrate extends PureComponent {
   }
 
   render() {
-    const { maxHeight = 660, minHeight = 500, filtrateScrollId } = this.props;
+    const { height = 660, filtrateScrollId } = this.props;
     const { tipSwitch, tipMessage, modalVisible, entityId, recordId } = this.state;
 
     return (
@@ -455,7 +450,7 @@ class Filtrate extends PureComponent {
           title={this.renderHeaders()}
           extra={this.renderExtra()}
         >
-          <div id={filtrateScrollId || ''} className={styles.list} style={{ maxHeight: maxHeight - 128, minHeight: minHeight - 128 }}>
+          <div id={filtrateScrollId || ''} className={styles.list} style={{ height: height - 128 }}>
             {this.renderList()}
             {filtrateScrollId &&
               <BackTop className={styles.backtop} target={() => document.getElementById(filtrateScrollId)}>
