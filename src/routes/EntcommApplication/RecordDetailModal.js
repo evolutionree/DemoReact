@@ -21,7 +21,7 @@ const RecordDetailModal = connect(
     return {
       footer: [
         <Button key="close" type="default" onClick={hideModal}>
-          关闭
+          关闭12
         </Button>
       ],
       onCancel() {
