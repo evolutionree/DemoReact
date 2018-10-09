@@ -4,6 +4,8 @@ import * as _ from 'lodash';
 import connectBizParam from '../../components/connectBizParam';
 import SelectAppIcon from '../../components/SelectAppIcon';
 import AjaxSelect from './AjaxRelObjSelect';
+import IntlInput from '../../components/UKComponent/Form/IntlInput';
+import IntlText from '../../components/UKComponent/Form/IntlText';
 
 const Option = Select.Option;
 const FormItem = Form.Item;
@@ -27,7 +29,7 @@ let RelateEntitySelect = (props) => {
     <Select {...props} onChange={handleSelectChange}>
       <Option value={''}>无</Option>
       {bizParam.filter(filter).map(item => (
-        <Option key={item.entityid}>{item.entityname}</Option>
+        <Option key={item.entityid}><IntlText value={item.entityname} value_lang={item.entityname_lang} /></Option>
       ))}
     </Select>
   );
@@ -106,6 +108,16 @@ class EntityFormModal extends Component {
     });
   }
 
+  entitynameRequireValidator = (rule, value, callback) => {
+    let langlist = JSON.parse(window.localStorage.getItem('langlist'));
+    langlist instanceof Array && langlist.map(item => {
+      if (!(value && value[item.key])) {
+        callback(item.dispaly + '必填');
+      }
+    });
+    callback();
+  }
+
   render() {
     const {
       showModals,
@@ -130,10 +142,13 @@ class EntityFormModal extends Component {
              onCancel={onCancel}>
         <Form horizontal>
           <FormItem label="实体名称">
-            {getFieldDecorator('entityname', {
-              rules: [{ required: true, message: '请输入实体名称' }]
+            {getFieldDecorator('entityname_lang', {//<Input placeholder="实体名称" maxLength={50} />   rules: [{ required: true, message: '请输入实体名称' }],
+              rules: [
+                { required: true, message: '请输入实体名称' },
+                { validator: this.entitynameRequireValidator }
+              ]
             })(
-              <Input placeholder="实体名称" maxLength={50} />
+              <IntlInput maxLength={50} />
             )}
           </FormItem>
           <FormItem label="实体表名">

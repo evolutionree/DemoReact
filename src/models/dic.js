@@ -15,7 +15,8 @@ export default {
     navList: null,
     dicdata: null,
     extConfig: null,
-    currentEditRowIndex: ''
+    currentEditRowIndex: '',
+    editData: {}
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -98,6 +99,7 @@ export default {
         yield call(savedictionary, submitData);
         message.success('修改成功');
         yield put({ type: 'fetchdicvalue', payload: currentDicType });
+        yield put({ type: 'showModals', payload: '' });
       } catch (e) {
         console.error(e);
         message.error(e.message);
@@ -133,7 +135,12 @@ export default {
         ...payload
       };
     },
-
+    showModals(state, { payload: type }) {
+      return {
+        ...state,
+        showModals: type
+      };
+    },
     changeType(state, { payload: newActiveId }) {
       return {
         ...state,
@@ -149,7 +156,8 @@ export default {
         navList: null,
         dicdata: null,
         extConfig: null,
-        currentEditRowIndex: ''
+        currentEditRowIndex: '',
+        editData: {}
       };
     }
   }

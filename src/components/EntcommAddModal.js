@@ -1,13 +1,14 @@
 import React, { PropTypes, Component } from 'react';
-import { Modal, message, Radio, Button, Checkbox, Spin } from 'antd';
+import { Modal, Select, message, Radio, Button } from 'antd';
 import * as _ from 'lodash';
 import { connect } from 'dva';
-import { hashHistory } from 'dva/router';
 import { DynamicFormAdd, generateDefaultFormData } from './DynamicForm';
 import { getGeneralProtocol, addEntcomm, temporarysave } from '../services/entcomm';
 import { WorkflowCaseForAddModal } from "./WorkflowCaseModal";
 import { frontEndData_to_BackEndData } from '../components/AppHeader/TemporaryStorage/formStorageUtils';
 import uuid from 'uuid';
+
+const Option = Select.Option;
 
 class EntcommAddModal extends Component {
   static propTypes = {
@@ -27,8 +28,7 @@ class EntcommAddModal extends Component {
     processProtocol: PropTypes.func,
     isAddCase: PropTypes.bool,
     entityTypeId: PropTypes.string, //暂存表单时  默认选中当前暂存表单的 实体类型
-    cacheId: PropTypes.string, //新增 暂存表单数据时  需要带上暂存id
-    pageType: PropTypes.string //当前属于哪个页面的新增表单Modal 独立实体新增 支持新增后 可跳转到页签页
+    cacheId: PropTypes.string //新增 暂存表单数据时  需要带上暂存id
   };
   static defaultProps = {
     entityTypeId: ''
@@ -36,7 +36,6 @@ class EntcommAddModal extends Component {
 
   constructor(props) {
     super(props);
-    const entityFormDoneLink = JSON.parse(localStorage.getItem('entityFormDoneLink')) || {};
     this.state = {
       showTypeModal: false,
       showFormModal: false,
@@ -48,23 +47,17 @@ class EntcommAddModal extends Component {
       storageLoading: false,
       dataModel: undefined,
       key: new Date().getTime(), // 每次打开弹窗时，都重新渲染
-      commonid: '',
-      entityFormDoneLink: entityFormDoneLink[this.props.entityId] !== false,
-      fetchProtocolLoading: false
+      commonid: ''
     };
   }
 
   componentWillReceiveProps(nextProps) {
     const isOpening = !this.props.visible && nextProps.visible;
     const isClosing = this.props.visible && !nextProps.visible;
-    const entityFormDoneLink = JSON.parse(localStorage.getItem('entityFormDoneLink')) || {};
     if (!_.isEqual(this.props.initFormData, nextProps.initFormData)) {
       this.setState({ formData: nextProps.initFormData || {} });
     }
     if (isOpening) {
-      this.setState({
-        entityFormDoneLink: entityFormDoneLink[this.props.entityId] !== false
-      })
       if (nextProps.initFormData && Object.keys(nextProps.initFormData).length) {
         this.setState({ formData: nextProps.initFormData || {} }); //关闭的时候  formdat被清空了  需要重新得到initFormData
       }
@@ -207,12 +200,7 @@ class EntcommAddModal extends Component {
       addEntcomm(params).then(result => {
         this.setState({ confirmLoading: false });
         message.success('新增成功');
-        if (this.props.pageType === 'entcommList' && this.state.entityFormDoneLink) {
-          const addRecid = result.data;
-          hashHistory.push(`/entcomm/${this.state.selectedEntityType}/${addRecid}`);
-        } else {
-          this.props.done(result);
-        }
+        this.props.done(result);
       }).catch(e => {
         this.setState({ confirmLoading: false });
         console.error(e);
@@ -259,10 +247,34 @@ class EntcommAddModal extends Component {
     this.props.done(result);
   };
 
+  // onFormModalConfirmAddCase = () => {
+  //   this.form.validateFields((err, values) => {
+  //     if (err) {
+  //       return message.error('请检查表单');
+  //     }
+  //
+  //     const params = {
+  //       entityid: this.state.selectedEntityType,
+  //       flowid: this.props.flow ? this.props.flow.flowid : undefined,
+  //       recid: this.props.recId,
+  //       relentityid: this.props.refEntity,
+  //       relrecid: this.props.refRecord,
+  //       casedata: values
+  //     };
+  //     this.setState({ confirmLoading: true });
+  //     addCase(params).then(result => {
+  //       this.setState({ confirmLoading: false });
+  //       message.success('新增成功');
+  //       this.props.done(result);
+  //     }).catch(e => {
+  //       this.setState({ confirmLoading: false });
+  //       console.error(e);
+  //       message.error(e.message || '新增失败');
+  //     });
+  //   });
+  // };
+
   fetchProtocol = (typeId) => {
-    this.setState({
-      fetchProtocolLoading: true
-    });
     const params = {
       typeId,
       OperateType: 0
@@ -270,19 +282,14 @@ class EntcommAddModal extends Component {
     getGeneralProtocol(params).then(result => {
       const protocolFields = result.data;
       const formData = generateDefaultFormData(protocolFields, this.state.formData);
-      if (protocolFields.some(field => field.fieldname === 'recmanager')) { //负责人组件设置 默认值
+      if (protocolFields.some(field => field.fieldname === 'recmanager')) {
         const { currentUser } = this.props;
         formData.recmanager = currentUser && currentUser.userid;
         formData.recmanager_name = currentUser && currentUser.username;
       }
       this.setState({
         protocolFields: this.props.processProtocol ? this.props.processProtocol(protocolFields) : protocolFields,
-        formData: formData,
-        fetchProtocolLoading: false
-      });
-    }).catch(e => {
-      this.setState({
-        fetchProtocolLoading: false
+        formData: formData
       });
     });
   };
@@ -306,19 +313,8 @@ class EntcommAddModal extends Component {
     });
   }
 
-  checkboxChange = (e) => {
-    //TODO: 独立实体新增后  根据用户个人意愿 系统可直接跳转到页签页
-    const { entityId } = this.props;
-    let entityFormDoneLink = JSON.parse(localStorage.getItem('entityFormDoneLink')) || {};
-    entityFormDoneLink[entityId] = e.target.checked;
-    localStorage.setItem('entityFormDoneLink', JSON.stringify(entityFormDoneLink));
-    this.setState({
-      entityFormDoneLink: e.target.checked
-    });
-  }
-
   render() {
-    const { entityTypes, footer, refRecord, entityId, pageType } = this.props;
+    const { entityTypes, footer, refRecord, entityId } = this.props;
     const {
       showTypeModal,
       showFormModal,
@@ -326,10 +322,13 @@ class EntcommAddModal extends Component {
       protocolFields,
       formData,
       confirmLoading,
-      storageLoading,
-      entityFormDoneLink,
-      fetchProtocolLoading
+      storageLoading
     } = this.state;
+
+    const hasTable = protocolFields.some(field => {
+      return (field.controltype === 24 && field.fieldconfig.isVisible === 1)
+        || (field.controltype === 5 && field.fieldconfig.textType === 1 && field.fieldconfig.isVisible === 1);
+    });
 
     return (
       <div key={this.state.key}>
@@ -347,6 +346,14 @@ class EntcommAddModal extends Component {
               <Radio key={type.categoryid} value={type.categoryid}>{type.categoryname}</Radio>
             ))}
           </Radio.Group>
+          {/*<Select*/}
+            {/*value={selectedEntityType}*/}
+            {/*onChange={val => this.setState({ selectedEntityType: val })}*/}
+          {/*>*/}
+            {/*{entityTypes.map(type => (*/}
+              {/*<Option key={type.categoryid}>{type.categoryname}</Option>*/}
+            {/*))}*/}
+          {/*</Select>*/}
         </Modal>}
         {
           showFormModal ? <Modal
@@ -357,26 +364,24 @@ class EntcommAddModal extends Component {
             width={document.body.clientWidth > 1400 ? 1200 : 800}
             wrapClassName="DynamicFormModal"
             footer={[
-              pageType === 'entcommList' ? <Checkbox key={entityId} onChange={this.checkboxChange} checked={entityFormDoneLink}>新增后跳转到页签</Checkbox> : null,
               <Button key="back" type="default" onClick={this.onFormModalCancel}>取消</Button>,
               <Button key="storage" loading={storageLoading} onClick={this.onFormModalStorage}>暂存</Button>,
               <Button key="submit" loading={confirmLoading} onClick={this.onFormModalConfirm}>提交</Button>
             ]}
           >
-            <Spin spinning={fetchProtocolLoading}>
-              <DynamicFormAdd
-                entityId={entityId}
-                entityTypeId={selectedEntityType}
-                fields={protocolFields}
-                value={formData}
-                refEntity={this.props.refEntity}
-                refRecord={refRecord}
-                onChange={val => { this.setState({ formData: val }); }}
-                ref={form => { this.form = form; }}
-                setExtraData={this.setExtraData}
-                setFieldsConfig={this.setFieldsConfig}
-              />
-            </Spin>
+            <DynamicFormAdd
+              entityId={entityId}
+              entityTypeId={selectedEntityType}
+              fields={protocolFields}
+              value={formData}
+              refEntity={this.props.refEntity}
+              refRecord={refRecord}
+              onChange={val => { this.setState({ formData: val }); }}
+              ref={form => { this.form = form; }}
+              setExtraData={this.setExtraData}
+              setFieldsConfig={this.setFieldsConfig}
+            />
+            {/*{JSON.stringify(this.state.formData)}*/}
           </Modal> : null
         }
         <WorkflowCaseForAddModal

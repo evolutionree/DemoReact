@@ -5,6 +5,7 @@ import React, { PropTypes, Component } from 'react';
 import { Icon, Dropdown, Menu, Input, Button, DatePicker, Checkbox } from 'antd';
 import SelectList from './SelectList';
 import RangeNumber from './RangeNumber';
+import { getIntlText } from '../../UKComponent/Form/IntlText';
 import moment from 'moment';
 import Styles from './index.less';
 
@@ -177,7 +178,7 @@ class FilterDrop extends Component {
     return (
       <div className={Styles.Wrap} onClick={e => e.nativeEvent.stopImmediatePropagation()}>
         <div className={Styles.header}>
-          <span><Icon type="filter" /><label>筛选-{field.displayname}</label></span>
+          <span><Icon type="filter" /><label>筛选-{getIntlText('displayname', field)}</label></span>
           {
             this.props.value ? <span onClick={this.clearFilter}>清除筛选</span> : null
           }

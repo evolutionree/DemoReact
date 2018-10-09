@@ -1,9 +1,11 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Form, message, Input, Select, Checkbox, Modal } from 'antd';
+import IntlInput from '../../../../components/UKComponent/Form/IntlInput';
 import * as _ from 'lodash';
 import { getrelentityfields } from '../../../../services/entity';
 import SelectAppIcon from '../../../../components/SelectAppIcon';
+import { IntlInputRequireValidator } from '../../../../utils/validator';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -34,7 +36,8 @@ class EntityTabFormModal extends Component {
     if (isOpening) {
       const { isEdit, currentItem, form, entityId } = nextProps;
       if (isEdit) {
-        const formValues = _.pick(currentItem, ['relname', 'relentityid', 'fieldid', 'ismanytomany', 'srctitle', 'srcsql', 'icon']);
+        form.resetFields();
+        const formValues = _.pick(currentItem, ['relname_lang', 'relentityid', 'fieldid', 'ismanytomany', 'srctitle', 'srcsql', 'icon']);
         formValues.ismanytomany = !!formValues.ismanytomany;
         form.setFieldsValue(formValues);
         this.fetchEntityFields(entityId, formValues.relentityid);
@@ -102,10 +105,13 @@ class EntityTabFormModal extends Component {
       >
         <Form>
           <FormItem label="页签名称">
-            {form.getFieldDecorator('relname', {
-              rules: [{ required: true, message: '请输入页签名称' }]
+            {form.getFieldDecorator('relname_lang', {
+              rules: [
+                { required: true, message: '请输入页签名称' },
+                { validator: IntlInputRequireValidator }
+              ]
             })(
-              <Input placeholder="请输入页签名称" />
+              <IntlInput placeholder="请输入页签名称" />
             )}
           </FormItem>
           {<FormItem label="关联实体" style={isEntityTab ? null : { display: 'none' }}>

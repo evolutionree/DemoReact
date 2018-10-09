@@ -8,6 +8,7 @@ import styles from './styles.less';
 import { getGeneralProtocol, queryEntityStage, queryStageInfo, saveStageData, pushStage, backStage, restartSaleStage } from '../../services/entcomm';
 import StageFlowModal from './StageFlowModal';
 import StageBarUpload from "./StageBarUpload";
+import IntlText from '../../components/UKComponent/Form/IntlText';
 import { formatFileSize } from '../../utils';
 
 class StageBar extends Component {
@@ -167,9 +168,9 @@ class StageBar extends Component {
       return {
         keyEvents,
         entityFields,
-        entityFieldsData: this.getEditData(entityFieldsData, entityFields),
+        entityFieldsData,
         customFields,
-        customFieldsData: this.getEditData(customFieldsData, customFields),
+        customFieldsData,
         rawInfo: stageInfo
       };
     });
@@ -642,7 +643,7 @@ class StageBar extends Component {
           return (
             <li className={liCls} key={item.salesstageid}
                 onClick={() => { this.toggleStageDetail(item); }}>
-              <div className={styles.stagetext}>{item.stagename}</div>
+              <div className={styles.stagetext}><IntlText name="stagename" value={item} /></div>
               <div className={styles.stageicon}>
                 <Icon type="down" />
               </div>
@@ -663,22 +664,6 @@ class StageBar extends Component {
       </ul>
     );
   };
-
-  getEditData(recordDetail, protocol) { //表格数据 需要再套一层
-    const retData = { ...recordDetail };
-    protocol.forEach(field => {
-      const { controltype, fieldname, fieldconfig } = field;
-      if (controltype === 24 && retData[fieldname]) {
-        retData[fieldname] = retData[fieldname].map(item => {
-          return {
-            TypeId: fieldconfig.entityId,
-            FieldData: item
-          };
-        });
-      }
-    });
-    return retData;
-  }
 
   renderStageDetail = () => {
     if (!this.state.showingStageId) return null;

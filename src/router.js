@@ -72,6 +72,9 @@ import AttendanceClassSet from './routes/AttendanceClassSet';
 import AttendanceGroupSet from './routes/AttendanceGroupSet';
 import AttendanceGroupDetail from './routes/AttendanceGroupSet/Detail';
 
+import Desk from './routes/Desk';
+import Demo from './routes/Demo';
+
 const appRoutes = [
   { path: 'home', comp: Home },
   { path: 'attendance', comp: AttendanceList, entid: '969d32b6-d81c-43a3-bc0d-124ffc26855c' },
@@ -129,6 +132,8 @@ const appRoutes = [
   { path: 'attendanceclassset', comp: AttendanceClassSet, model: require('./models/attendanceClassSet') },
   { path: 'attendancegroupset', comp: AttendanceGroupSet, model: require('./models/attendanceGroupSet') },
   { path: 'attendancegroupset/detail', comp: AttendanceGroupDetail, model: require('./models/attendanceGroupSet') },
+  { path: 'desk', comp: Desk, model: require('./models/desk') },
+  { path: 'demo', comp: Demo },
   { path: '*', comp: NoFoundPage }
 ];
 

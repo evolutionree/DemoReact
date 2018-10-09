@@ -189,36 +189,30 @@ export default {
       if (!entityId) return;
       try {
         let { data: functionbutton } = yield call(getFunctionbutton, { entityid: entityId, RecIds: currItems.map((item) => item.recid) });
-        yield put({
-          type: 'functionButton_category',
-          payload: functionbutton
+        /*
+         DisplayPosition	按钮的显示位置（int数组）：web列表=0，web详情=1，手机列表=100，手机详情=101	array<number>	@mock=$order(0,1)
+         */
+
+        functionbutton = functionbutton.filter(item => _.indexOf(item.displayposition, 0) > -1);
+
+        const extraButtonData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'ShowModals');
+        const buttoncode = ['CallService', 'CallService_showModal', 'PrintEntity', 'EntityDataOpenH5'];
+        const extraToolbarData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => buttoncode.indexOf(item.buttoncode) > -1);
+
+        functionbutton instanceof Array && functionbutton.map(item => {
+          //转化表单是通过functionButton对象里extradata.type==='transform'匹配显示在页面的   对，这里的规则确实恶心 我也没办法啊啊啊啊啊啊啊啊啊啊啊啊啊  搞不懂  0_0
+          const extradataType = ['transform', 'copybutton'];
+          if (extradataType.indexOf(item.extradata && item.extradata.type) > -1) {
+            item.funccode = item.buttoncode;
+            item.buttoncode = item.extradata && item.extradata.type;
+            extraToolbarData.push(item);
+          }
         });
+
+        yield put({ type: 'functionbutton', payload: { extraButtonData, extraToolbarData } });
       } catch (e) {
         message.error(e.message);
       }
-    },
-    *functionButton_category({ payload }, { select, put }) {
-      /**
-      TODO: DisplayPosition	按钮的显示位置（int数组）：web列表=0，web详情=1，手机列表=100，手机详情=101	array<number>	@mock=$order(0,1)
-      */
-
-      const functionbutton = payload.filter(item => _.indexOf(item.displayposition, 0) > -1);
-
-      const extraButtonData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'ShowModals');
-      const buttoncode = ['CallService', 'CallService_showModal', 'PrintEntity', 'EntityDataOpenH5'];
-      const extraToolbarData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => buttoncode.indexOf(item.buttoncode) > -1);
-
-      functionbutton instanceof Array && functionbutton.map(item => {
-        //转化表单是通过functionButton对象里extradata.type==='transform'匹配显示在页面的   对，这里的规则确实恶心 我也没办法啊啊啊啊啊啊啊啊啊啊啊啊啊  搞不懂  0_0
-        const extradataType = ['transform', 'copybutton'];
-        if (extradataType.indexOf(item.extradata && item.extradata.type) > -1) {
-          item.funccode = item.buttoncode;
-          item.buttoncode = item.extradata && item.extradata.type;
-          extraToolbarData.push(item);
-        }
-      });
-
-      yield put({ type: 'functionbutton', payload: { extraButtonData, extraToolbarData } });
     },
     *addDone(action, { select, put }) {
       yield put({ type: 'showModals', payload: '' });

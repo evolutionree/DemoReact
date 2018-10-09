@@ -30,7 +30,7 @@ class ParamsBoard extends React.Component {
   render() {
     return (
       <div className={styles.board}>
-        <Toolbar>
+        <Toolbar style={{ overflow: 'visible' }}>
           <NewParamForm toolbarNode={this.props.toolbarNode} onSubmit={this.props.onCreate} fields={this.props.fields} showAdd={this.props.showAdd} />
         </Toolbar>
         <ParamsList {...this.props} />

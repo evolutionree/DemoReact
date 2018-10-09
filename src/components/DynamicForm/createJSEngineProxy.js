@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import * as _ from 'lodash';
-import { is } from 'immutable';
 import { Modal } from 'antd';
 import { getAuthedHeaders } from '../../utils/request';
 import { queryEntityDetail } from '../../services/entity';
@@ -105,31 +104,6 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       //     // this.handleFieldValueChange(key);
       //   }
       // });
-    }
-
-    shouldComponentUpdate(nextProps, nextState) {
-      const thisProps = this.props || {};
-      const thisState = this.state || {};
-
-      if (Object.keys(thisProps).length !== Object.keys(nextProps).length || Object.keys(thisState).length !== Object.keys(nextState).length) {
-        return true;
-      }
-
-      for (const key in nextProps) {
-        if (['form', 'wrappedComponentRef'].indexOf(key) === -1 && !is(thisProps[key], nextProps[key])) {
-          //console.log('createJSEngineProxy_props:' + key);
-          return true;
-        }
-      }
-
-      for (const key in nextState) {
-        if (thisState[key] !== nextState[key] || !is(thisState[key], nextState[key])) {
-          //console.log('state:' + key);
-          return true;
-        }
-      }
-
-      return false;
     }
 
     validateFields = (opts, callback) => {

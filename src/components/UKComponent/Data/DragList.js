@@ -13,7 +13,7 @@ let tableBodyRef;
 //   return props.children;
 // });
 
-const SortableItem = SortableElement(({ column, item, rowIndex, preventDefault, delayDragColumn }) => {
+const SortableItem = SortableElement(({ column, item, rowIndex, preventDefault }) => {
   const renderCell = (columnItem, rowData) => {
     if (typeof columnItem.render === 'function') {
       return columnItem.render(rowData[columnItem.key], rowData, rowIndex);
@@ -23,7 +23,7 @@ const SortableItem = SortableElement(({ column, item, rowIndex, preventDefault, 
   }
 
   const cellMouseOver = (columnItem) => {
-    if (delayDragColumn.indexOf(columnItem.key) > -1) { //操作栏  阻止组件默认事件  让其可以点击
+    if (columnItem.delayDrag) { //操作栏  阻止组件默认事件  让其可以点击
       preventDefault(200);
     } else {
       preventDefault(0);
@@ -35,7 +35,7 @@ const SortableItem = SortableElement(({ column, item, rowIndex, preventDefault, 
       <Row>
         {
           column.map((columnItem, index) => {
-            const isDelayDragColumn = delayDragColumn.indexOf(columnItem.key) > -1;
+            const isDelayDragColumn = columnItem.delayDrag;
             return (
               <Col span={columnItem.span} key={index}>
                 <div className={classnames(Styles.tableColumn, { [Styles.delayDragColumn]: isDelayDragColumn })} onMouseOver={cellMouseOver.bind(this, columnItem)}>
@@ -52,12 +52,12 @@ const SortableItem = SortableElement(({ column, item, rowIndex, preventDefault, 
   );
 });
 
-const SortableList = SortableContainer(({ column, items, preventDefault, delayDragColumn, ...props }) => {
+const SortableList = SortableContainer(({ column, items, preventDefault, ...props }) => {
   return (
     <div className={Styles.body} ref={ref => tableBodyRef = ref} {...props}>
       {
         items instanceof Array && items.map((item, index) => { //一定要加Index属性 否则拖拽不了 preventDefault： 延时拖拽
-          return <SortableItem key={index} column={column} index={index} rowIndex={index} item={item} preventDefault={preventDefault} delayDragColumn={delayDragColumn} />;
+          return <SortableItem key={index} column={column} index={index} rowIndex={index} item={item} preventDefault={preventDefault} />;
         })
       }
     </div>
@@ -72,18 +72,15 @@ class DragList extends Component {
      [{
        key: React.PropTypes.string,
        name: React.PropTypes.string,
-       span: React.PropTypes.number
+       span: React.PropTypes.number,
+       delayDrag: React.PropTypes.book
      }]
      */
-    dataSource: React.PropTypes.array,
-    delayDragColumn: React.PropTypes.oneOfType([ //列的key值 延时拖拽的列（当插件拖拽时，不允许用户点击，所以采用pressDelay，让用户可以点击操作当前列进行一些行为）
-      React.PropTypes.array,
-      React.PropTypes.string
-    ])
+    dataSource: React.PropTypes.array //列的key值 延时拖拽的列（当插件拖拽时，不允许用户点击，所以采用pressDelay，让用户可以点击操作当前列进行一些行为）
   }
 
   static defaultProps = {
-    delayDragColumn: []
+
   };
 
   constructor(props) {
@@ -146,8 +143,7 @@ class DragList extends Component {
                       items={this.state.list}
                       onSortEnd={this.onSortEnd}
                       pressDelay={this.state.pressDelay}
-                      preventDefault={this.preventDefault}
-                      delayDragColumn={this.props.delayDragColumn} />
+                      preventDefault={this.preventDefault} />
       </div>
     );
   }

@@ -1,5 +1,4 @@
 import React, { PropTypes } from 'react';
-import { is } from 'immutable';
 import { controlMap } from './constants';
 
 class DynamicField extends React.Component {
@@ -38,26 +37,8 @@ class DynamicField extends React.Component {
     return controlRef;
   };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    const thisProps = this.props || {};
-
-    if (Object.keys(thisProps).length !== Object.keys(nextProps).length) {
-      return true;
-    }
-
-    for (const key in nextProps) {
-      if (['onFocus', 'data-__meta'].indexOf(key) === -1 && !is(thisProps[key], nextProps[key])) {
-        // console.error(this.props.fieldname, key);
-        // console.log(nextProps[key])
-        return true;
-      }
-    }
-    return false;
-  }
-
   render() {
     const props = {
-      key: this.props.fieldId,
       isCommonForm: this.props.isCommonForm,
       entityId: this.props.entityId,
       mainEntityId: this.props.entityId, //嵌套表格的实体定义属性名 跟 独立实体 简单实体 重名了，重新加一个  （嵌套实体 导入用到）

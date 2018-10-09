@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'dva';
 import { Modal, Form, Select, message } from 'antd';
 import _ from 'lodash';
+import { getIntlText } from '../../../../components/UKComponent/Form/IntlText';
 import { queryPageConfigInfo, savePageConfig } from '../../../../services/entity';
 
 const FormItem = Form.Item;
@@ -91,7 +92,7 @@ class SetMainFieldModal extends React.Component {
       <Select>
         <Option value="">不显示</Option>
         {fields.filter(field => [2, 15, 20, 22, 23, 24].indexOf(field.controltype) === -1).map(field => (
-          <Option key={field.fieldid} value={field.fieldid} disabled={field.recstatus !== 1}>{field.displayname}</Option>
+          <Option key={field.fieldid} value={field.fieldid} disabled={field.recstatus !== 1}>{getIntlText('displayname', field)}</Option>
         ))}
       </Select>
     )

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { is } from 'immutable';
-import { Modal, Input, message } from 'antd';
+import { Modal, Button, Form, Input, Table, message } from 'antd';
 import { searchcustomerrepeat } from '../../../services/datasource';
 import styles from './InputCustomerRecName.less';
 
@@ -31,31 +30,6 @@ class InputCustomerRecName extends Component {
     if (nextProps.value !== this.props.value) {
       this.setState({ inputValue: nextProps.value });
     }
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    const thisProps = this.props || {};
-    const thisState = this.state || {};
-
-    if (Object.keys(thisProps).length !== Object.keys(nextProps).length || Object.keys(thisState).length !== Object.keys(nextState).length) {
-      return true;
-    }
-
-    for (const key in nextProps) {
-      if (!is(thisProps[key], nextProps[key])) {
-        //console.log('createJSEngineProxy_props:' + key);
-        return true;
-      }
-    }
-
-    for (const key in nextState) {
-      if (thisState[key] !== nextState[key] || !is(thisState[key], nextState[key])) {
-        //console.log('state:' + key);
-        return true;
-      }
-    }
-
-    return false;
   }
 
   componentDidMount() {

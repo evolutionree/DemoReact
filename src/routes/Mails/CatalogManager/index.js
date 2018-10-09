@@ -75,7 +75,7 @@ class CatalogManager extends Component {
     const isPersonalCat = selected.ctype === 2002;
     const isPersonalSubCat = selected.ctype === 3002;
     const isCustSubCat = selected.ctype === 4001;
-    const isTempCat = [2003, 2006].indexOf(selected.ctype) > -1; // 收件箱 发件箱未归类文件夹
+    const isTempCat = selected.ctype === 2003; // 未归类文件夹
     const isInboxCat = selected.ctype > 2000; // 收件箱子文件夹(包括下属)
     const transCatalog = () => {
       if (!isTempCat && hasSubCat) {

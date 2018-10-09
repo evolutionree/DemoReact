@@ -9,6 +9,9 @@ import ParamsList from './component/ParamsList';
 import styles from './index.less';
 import classnames from 'classnames';
 import { hashHistory } from 'react-router';
+import IntlInput from '../../../components/UKComponent/Form/IntlInput';
+import { getIntlText } from '../../../components/UKComponent/Form/IntlText';
+import { IntlInputRequireValidator } from '../../../utils/validator';
 
 
 const FormItem = Form.Item;
@@ -18,7 +21,8 @@ let fields = [{
   key: 'stagename',
   name: '阶段名称',
   link: true,
-  maxLength: 10
+  maxLength: 10,
+  intl: true
 },{
   key: 'winrate',
   name: 'winrate'
@@ -97,7 +101,7 @@ function SaleStage({
               const cls = classnames({
                 [styles.businessLiActive]: businessTypeActiveId === item.categoryid  //当前商机
               });
-              return <li key={item.categoryid} className={cls} onClick={changeTypeHandler.bind(this, item.categoryid)}>{item.categoryname}</li>
+              return <li key={item.categoryid} className={cls} onClick={changeTypeHandler.bind(this, item.categoryid)}>{getIntlText('categoryname', item)}</li>
             })
           }
         </ul>
@@ -106,13 +110,14 @@ function SaleStage({
         <div>
           <Form layout="inline" style={{ display: checkFunc('SalesstageSettingAdd') ? 'inline-block' : 'none' }} onSubmit={addParams}>
             <FormItem>
-              {getFieldDecorator('stageName', {
+              {getFieldDecorator('stageName_lang', {
                 initialValue: '',
                 validateTrigger: 'onChange',
-                rules: [{ required: true, message: '销售阶段名称不能为空' },
-                  { pattern: new RegExp(/^.{1,10}$/), message: '请输入10个以内的字符' }]
+                rules: [{
+                  validator: IntlInputRequireValidator
+                }]
               })(
-                <Input placeholder='请输入销售阶段名称' />
+                <IntlInput placeholder='请输入销售阶段名称' />
               )}
             </FormItem>
             <FormItem>

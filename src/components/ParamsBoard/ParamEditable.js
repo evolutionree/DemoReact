@@ -1,5 +1,8 @@
 import React from 'react';
 import { Input } from 'antd';
+import IntlInput from '../../components/UKComponent/Form/IntlInput';
+import IntlText from '../../components/UKComponent/Form/IntlText';
+import classnames from 'classnames';
 import styles from './styles.less';
 
 class ParamEditable extends React.Component {
@@ -31,18 +34,26 @@ class ParamEditable extends React.Component {
   }
 
   render() {
-    const { value, editing, onChange, onBlur, maxLength, link } = this.props;
+    const { value, editing, onChange, onBlur, maxLength, link, isIntl, value_lang } = this.props; //intl  是否需要国际化输入
+
+    const showText = isIntl ? <IntlText value={value} value_lang={value_lang} /> : value;
     return (
-      <div className={styles.text}>
+      <div className={classnames(styles.text, { [styles.textEidt]: editing })}>
         {editing
-          ? (<Input
-                value={value}
+          ? (isIntl ? <IntlInput
+                value={value_lang}
                 ref={input => { this.input = input; }}
-                onChange={(e) => onChange(e.target.value)}
+                onChange={(data) => onChange(data)}
                 onBlur={onBlur}
                 maxLength={maxLength}
-              />)
-          : link ? <a onClick={this.cellClickHandler.bind(this)}>{value}</a> : <span>{value}</span>
+              /> : <Input
+            value={value}
+            ref={input => { this.input = input; }}
+            onChange={(e) => onChange(e.target.value)}
+            onBlur={onBlur}
+            maxLength={maxLength}
+          />)
+          : link ? <a onClick={this.cellClickHandler.bind(this)}>{showText}</a> : <span>{showText}</span>
         }
       </div>
     );

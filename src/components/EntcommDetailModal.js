@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import { Modal, Spin } from 'antd';
+import { Modal, Select } from 'antd';
 import { DynamicFormView } from './DynamicForm';
 import { getGeneralProtocol, getEntcommDetail } from '../services/entcomm';
 
@@ -20,8 +20,7 @@ class EntcommDetailModal extends Component {
     this.state = {
       protocol: [], // 协议字段
       data: {}, // 表单数据
-      key: new Date().getTime(), // 每次打开弹窗时，都重新渲染
-      loading: false
+      key: new Date().getTime() // 每次打开弹窗时，都重新渲染
     };
   }
 
@@ -37,9 +36,6 @@ class EntcommDetailModal extends Component {
   }
 
   fetchDetailAndProtocol = (entityId, recordId) => {
-    this.setState({
-      loading: true
-    });
     getEntcommDetail({
       entityId,
       recId: recordId,
@@ -55,12 +51,7 @@ class EntcommDetailModal extends Component {
         OperateType: 2
       });
     }).then(result => {
-      this.setState({ protocol: result.data, loading: false });
-    }).catch(e => {
-      console.error(e.message)
-      this.setState({
-        loading: false
-      });
+      this.setState({ protocol: result.data });
     });
   };
 
@@ -76,6 +67,10 @@ class EntcommDetailModal extends Component {
     const { visible, footer, entityId } = this.props;
     const { protocol, data } = this.state;
 
+    const hasTable = protocol.some(field => {
+      return field.controltype === 24 && (field.fieldconfig.isVisible === 1);
+    });
+
     return (
       <Modal
         title={this.props.title || `${this.props.entityName || ''}详情`}
@@ -87,14 +82,12 @@ class EntcommDetailModal extends Component {
         wrapClassName="DynamicFormModal"
         key={this.state.key}
       >
-        <Spin spinning={this.state.loading}>
-          <DynamicFormView
-            entityId={entityId}
-            entityTypeId={data.rectype || entityId}
-            fields={protocol}
-            value={data}
-          />
-        </Spin>
+        <DynamicFormView
+          entityId={entityId}
+          entityTypeId={data.rectype || entityId}
+          fields={protocol}
+          value={data}
+        />
       </Modal>
     );
   }

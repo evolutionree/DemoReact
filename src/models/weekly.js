@@ -47,12 +47,12 @@ export default {
 
         const pathReg3 = /^\/allweekly\/detail\/([^/]+)/;
         const match3 = location.pathname.match(pathReg3);
+        dispatch({ type: 'queryReceiveWeeklyDetailProtocol' });
         if (match) {
           dispatch({ type: 'init', payload: match && match[1] });
           dispatch({ type: 'putState', payload: { route: '' } });
         } else if (match2) { //收到的周报详情页
           dispatch({ type: 'queryReceiveWeeklyDetail', payload: match2 && match2[1] });
-          dispatch({ type: 'queryReceiveWeeklyDetailProtocol' });
           dispatch({ type: 'putState', payload: { route: `/weekly/receiveweekly/${match2 && match2[1]}?weeklabel=${GetArgsFromHref('weeklabel')}`, current_ReceiveWeekly_Detail_WeekLable: decodeURI(GetArgsFromHref('weeklabel')) } });
         } else if (match3) { //所有周报 列表 第一项链接的页面
           dispatch({ type: 'queryAllWeeklyDetail', payload: match3 && match3[1] });

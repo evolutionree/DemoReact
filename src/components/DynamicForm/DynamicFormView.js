@@ -3,6 +3,7 @@ import { Form, Row, Col } from 'antd';
 import createJSEngineProxy from './createJSEngineProxy';
 import FoldableGroup from './FoldableGroup';
 import DynamicFieldView from './DynamicFieldView';
+import IntlText from '../UKComponent/Form/IntlText';
 import styles from './styles.less';
 
 const FormItem = Form.Item;

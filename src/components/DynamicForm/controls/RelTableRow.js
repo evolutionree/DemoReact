@@ -55,14 +55,8 @@ class RelTableRow extends DynamicFormBase {
       );
     });
   };
-
-  checkChangeHandler = (e) => {
-    const { onSelect, rowIndex } = this.props;
-    onSelect && onSelect(rowIndex, e.target.checked);
-  }
-
   render() {
-    const { fields: allFields, selected, mode, fixedColumn } = this.props;
+    const { fields: allFields, selected, onSelect, mode, fixedColumn } = this.props;
     let fields = allFields.filter(item => item.controltype !== 20);
 
     // if (fixedColumn) { //左侧固定表格的
@@ -73,7 +67,7 @@ class RelTableRow extends DynamicFormBase {
       <div className={styles.tr}>
         {mode !== 'DETAIL' && <div className={classnames([styles.td, styles.selectionCell])}>
           <span>
-            <Checkbox checked={selected} onChange={this.checkChangeHandler} />
+            <Checkbox checked={selected} onChange={e => onSelect(e.target.checked)} />
           </span>
         </div>}
         {mode === 'DETAIL' ? this.renderFieldsView(fields) : this.renderFields(fields)}

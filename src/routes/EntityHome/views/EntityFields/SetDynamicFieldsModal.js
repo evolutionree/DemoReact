@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'dva';
 import { Modal, Form, Select, message } from 'antd';
 import _ from 'lodash';
+import { getIntlText } from '../../../../components/UKComponent/Form/IntlText';
 import { queryDynamicConfig, saveDynamicConfig, queryTypes } from '../../../../services/entity';
 
 const FormItem = Form.Item;
@@ -91,7 +92,7 @@ class SetDynamicFieldsModal extends React.Component {
       <Select>
         <Option value="">不显示</Option>
         {fields.map(field => (
-          <Option key={field.fieldid} value={field.fieldid} disabled={field.recstatus !== 1}>{field.displayname}</Option>
+          <Option key={field.fieldid} value={field.fieldid} disabled={field.recstatus !== 1}>{getIntlText('displayname', field)}</Option>
         ))}
       </Select>
     )

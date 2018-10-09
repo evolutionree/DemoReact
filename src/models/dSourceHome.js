@@ -9,9 +9,7 @@ export default {
     dataSourceName: '',
     sqlContent: '',
     mobViewConfig: {},
-    columnsDataSource: [],
-    showModals: '',
-    editData: null
+    colNames: []
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -44,17 +42,18 @@ export default {
         dataSourceId,
         sqlContent,
         mobViewConfig,
-        columnsDataSource: columns
+        colNames
       } = yield select(state => state.dSourceHome);
       if (!sqlContent) return message.error('请输入数据源内容');
       if (!mobViewConfig.viewstyleid) return message.error('请选择数据源样式');
+      if (!colNames.length) return message.error('请输入字段列名');
       try {
         const isUpdate = rawDetailData.dataconfid;
         const saveFn = isUpdate ? updateDetail : saveDetail;
         const params = {
           rulesql: sqlContent,
           viewstyleid: mobViewConfig.viewstyleid,
-          columns: JSON.stringify(columns),
+          colnames: colNames.filter(n => !!n).map(v => v && v.replace(/^\s+|\s+$/g, '')).join(','),
           fonts: mobViewConfig.fonts,
           colors: mobViewConfig.colors
         };
@@ -73,27 +72,6 @@ export default {
     }
   },
   reducers: {
-    putState(state, { payload: assignment }) {
-      return {
-        ...state,
-        ...assignment
-      };
-    },
-    showModals(state, { payload: type }) {
-      return {
-        ...state,
-        showModals: type
-      };
-    },
-    updateColumnsDataSource(state, { payload: newColumnsDataSource }) {
-      return {
-        ...state,
-        columnsDataSource: newColumnsDataSource.map((item, index) => {
-          item.recorder = index + 1;
-          return item;
-        })
-      };
-    },
     dataSourceId(state, { payload: dataSourceId }) {
       return {
         ...state,
@@ -104,23 +82,24 @@ export default {
       const {
         datasrcname: dataSourceName,
         rulesql: sqlContent,
+        fieldkeys,
         colors,
         fonts,
-        viewstyleid,
-        columns
+        viewstyleid
       } = detailData;
       const mobViewConfig = {
         colors: colors || '#666666,#666666,#666666,#666666,#666666,#666666',
         fonts: fonts || '14,14,14,14,14,14',
         viewstyleid
       };
+      const colNames = (fieldkeys && fieldkeys.split(',')) || [];
       return {
         ...state,
         rawDetailData: detailData,
         dataSourceName,
         sqlContent,
         mobViewConfig,
-        columnsDataSource: JSON.parse(columns) || []
+        colNames
       };
     },
     sqlContent(state, { payload: sqlContent }) {
@@ -133,6 +112,12 @@ export default {
       return {
         ...state,
         mobViewConfig
+      };
+    },
+    colNames(state, { payload: colNames }) {
+      return {
+        ...state,
+        colNames
       };
     }
   }

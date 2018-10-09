@@ -7,6 +7,7 @@ import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import DynamicTable from '../../components/DynamicTable/index';
 import EntcommAddModal from '../../components/EntcommAddModal';
+import IntlText from '../../components/UKComponent/Form/IntlText';
 import RecordDetailModal from './RecordDetailModal';
 import RecordEditModal from './RecordEditModal';
 import TransferModal from './TransferModal';
@@ -121,7 +122,6 @@ function EntcommList({
   }
 
   function showDetail(record) {
-    dispatch({ type: 'entcommApplication/currItems', payload: [record] });
     dispatch({
       type: 'entcommApplication/showModals',
       payload: `recordDetail?${entityId}:${record.recid}`
@@ -228,7 +228,7 @@ function EntcommList({
       single = false;
       multiple = true;
     }
-    return { label: item.title, handler: extraToolbarClickHandler.bind(this, item), single: single, multiple: multiple, show: true };
+    return { label: <IntlText name="title" value={item} />, handler: extraToolbarClickHandler.bind(this, item), single: single, multiple: multiple, show: true };
   });
   ajaxToolbarActions = ajaxToolbarActions || [];
   return (
@@ -242,7 +242,7 @@ function EntcommList({
       >
         <Select style={{ minWidth: '120px' }} value={menuId} onChange={onMenuChange}>
           {menus.map(menu => (
-            <Option key={menu.menuId}>{menu.menuName}</Option>
+            <Option key={menu.menuId}><IntlText name="menuName" value={menu} /></Option>
           ))}
         </Select>
         {checkFunc('EntityDataAdd') && <Button onClick={openAdd}>新增</Button>}
@@ -251,7 +251,7 @@ function EntcommList({
         {shouldShowExport() && <Button onClick={exportData}>导出</Button>}
         {
           extraButtonData && extraButtonData instanceof Array && extraButtonData.map((item, index) => {
-            return <Button onClick={extraButtonClickHandler} key={index}>{item.title}</Button>;
+            return <Button onClick={extraButtonClickHandler} key={index}><IntlText name="title" value={item} /></Button>;
           })
         }
         <Toolbar.Right>
@@ -306,7 +306,7 @@ function EntcommList({
         done={onAddModalDone}
       />
       <TransferModal />
-      <RecordDetailModal onExtraToolbarClick={extraToolbarClickHandler} onExtraBtnClick={extraButtonClickHandler} />
+      <RecordDetailModal />
       <RecordEditModal />
       <AdvanceSearchModal />
       <DynamicModal />

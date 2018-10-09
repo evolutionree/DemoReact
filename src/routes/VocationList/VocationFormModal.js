@@ -1,6 +1,8 @@
 import React, { PropTypes, Component } from 'react';
 import { Modal, Form, Input, Select } from 'antd';
+import IntlInput from '../../components/UKComponent/Form/IntlInput';
 import _ from 'lodash';
+import { IntlInputRequireValidator } from '../../utils/validator';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -24,7 +26,7 @@ class VocationFormModal extends Component {
       if (!isEdit) {
       } else {
         const record = currentRecords[0];
-        const tmp = _.pick(record, ['vocationname', 'description']);
+        const tmp = _.pick(record, ['vocationname_lang', 'description']);
         form.setFieldsValue(tmp);
       }
     }
@@ -66,11 +68,13 @@ class VocationFormModal extends Component {
              confirmLoading={savePending}>
         <Form>
           <FormItem label="职能名称">
-            {decorate('vocationname', {
+            {decorate('vocationname_lang', {
               initialValue: '',
-              rules: [{ required: true, message: '请输入职能名称' }]
+              rules: [{
+                validator: IntlInputRequireValidator
+              }]
             })(
-              <Input placeholder="请输入职能名称" maxLength={50} />
+              <IntlInput placeholder="请输入职能名称" maxLength={50} />
             )}
           </FormItem>
 

@@ -1,8 +1,8 @@
 import React, { PropTypes, Component } from 'react';
 import { Select } from 'antd';
-import { is } from 'immutable';
 import _ from 'lodash';
 import connectBasicData from '../../../models/connectBasicData';
+import IntlText from '../../UKComponent/Form/IntlText';
 import { blurByHelper } from './helpers';
 
 const Option = Select.Option;
@@ -48,31 +48,6 @@ class SelectMultiple extends Component {
     // }
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    const thisProps = this.props || {};
-    const thisState = this.state || {};
-
-    if (Object.keys(thisProps).length !== Object.keys(nextProps).length || Object.keys(thisState).length !== Object.keys(nextState).length) {
-      return true;
-    }
-
-    for (const key in nextProps) {
-      if (!is(thisProps[key], nextProps[key])) {
-        //console.log('createJSEngineProxy_props:' + key);
-        return true;
-      }
-    }
-
-    for (const key in nextState) {
-      if (thisState[key] !== nextState[key] || !is(thisState[key], nextState[key])) {
-        //console.log('state:' + key);
-        return true;
-      }
-    }
-
-    return false;
-  }
-
   setDataReady = () => {
     this._dataReady = true;
     if (this._onDataReady) {
@@ -94,6 +69,7 @@ class SelectMultiple extends Component {
       return dictionaryData[sourceId].map(dic => ({
         value: dic.dataid,
         label: dic.dataval,
+        label_lang: dic.dataval_lang,
         disabled: dic.recstatus === 0
       }));
     }
@@ -187,7 +163,7 @@ class SelectMultiple extends Component {
         style={{ width: '100%', height: '32px' }}
       >
         {options.map(opt => (
-          <Option key={opt.value} style={opt.disabled ? { display: 'none'} : null}>{opt.label}</Option>
+          <Option key={opt.value} style={opt.disabled ? { display: 'none'} : null}><IntlText name="label" value={opt} /></Option>
         ))}
       </Select>
     );

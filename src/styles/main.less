@@ -31,7 +31,6 @@ body {
     .DynamicFormModal{
         overflow: hidden;
         .ant-modal-body{
-          min-height: 100px;
           max-height: @ant-Modal-height;
           overflow: auto;
         }
@@ -255,3 +254,15 @@ body {
     z-index: 9999!important;
   }
 }
+
+/* -webkit-滚动条 */
+::-webkit-scrollbar {width:10px;height:10px;}
+::-webkit-scrollbar-track {background-color:#a5a5a5;}
+::-webkit-scrollbar-track-piece {background-color:#F5F5F5;}
+::-webkit-scrollbar-thumb {
+  margin-right: 10px;
+  background-color:#a5a5a5;
+  border-radius: 12px;
+}
+::-webkit-scrollbar-thumb:hover {background-color:#999; cursor: pointer;}
+::-webkit-scrollbar-resizer {background-color:#FF6E00;}

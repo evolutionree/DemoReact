@@ -3,6 +3,9 @@
  */
 import React from 'react';
 import { Input, InputNumber, message } from 'antd';
+import IntlInput from '../../../../components/UKComponent/Form/IntlInput';
+import IntlText from '../../../../components/UKComponent/Form/IntlText';
+import classnames from 'classnames';
 import styles from './styles.less';
 
 class ParamEditable extends React.Component {
@@ -43,18 +46,25 @@ class ParamEditable extends React.Component {
   }
 
   render() {
-    const { value, editing, onChange, onBlur, maxLength, link, name } = this.props;
+    const { value, editing, onChange, onBlur, maxLength, link, name, isIntl, value_lang } = this.props;
+    const showText = isIntl ? <IntlText value={value} value_lang={value_lang} /> : value;
     return (
-      <div className={styles.text}>
+      <div className={classnames(styles.text, { [styles.textEidt]: editing })}>
         {editing
-          ? name === 'winrate' ? <InputNumber step={1} min={1} max={99}  value={value.toString().indexOf('%') > -1 ? (value.split('%')[0]) : value} onChange={this.inputNumberChange.bind(this)} /> : <Input
+          ? name === 'winrate' ? <InputNumber step={1} min={1} max={99} value={value.toString().indexOf('%') > -1 ? (value.split('%')[0]) : value} onChange={this.inputNumberChange.bind(this)} /> : (isIntl ? <IntlInput
+              value={value_lang}
+              ref={input => { this.input = input; }}
+              onChange={(data) => onChange(data)}
+              onBlur={onBlur}
+              maxLength={maxLength}
+            /> : <Input
             value={value}
             ref={input => { this.input = input; }}
             onChange={(e) => onChange(e.target.value)}
             onBlur={onBlur}
             maxLength={maxLength}
-          />
-          : link ? <a onClick={this.cellClickHandler.bind(this)}>{value}</a> : <span>{value}</span>
+          />)
+          : link ? <a onClick={this.cellClickHandler.bind(this)}>{showText}</a> : <span>{showText}</span>
         }
       </div>
     );

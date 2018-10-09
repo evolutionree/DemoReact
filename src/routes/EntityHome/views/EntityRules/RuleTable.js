@@ -1,5 +1,6 @@
 import React from 'react';
 import { Table, Checkbox } from 'antd';
+import { getIntlText } from '../../../../components/UKComponent/Form/IntlText';
 // import styles from './RuleTable.less';
 
 function RuleTable({
@@ -52,7 +53,9 @@ function RuleTable({
   }
   const columns = useType === 0 ? [
     { title: '序号', key: 'order', dataIndex: 'order' },
-    { title: '名称', key: 'displayname', dataIndex: 'displayname' },
+    { title: '名称', key: 'displayname', dataIndex: 'displayname', render: (value, record) => {
+      return <span>{getIntlText('displayname', record)}</span>;
+    } },
     { title: '是否使用', key: 'recstatus', dataIndex: 'recstatus', render: checkboxRender.bind(null, 'recstatus') },
     {
       title: '新增',

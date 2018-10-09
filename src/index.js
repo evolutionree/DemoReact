@@ -2,8 +2,6 @@ import './utils/check-browser';
 import dva from 'dva';
 import { routerRedux } from 'dva/router';
 import { message, Table, Pagination, Button, Select, TreeSelect, DatePicker, Modal, Input, Cascader} from 'antd';
-import Perf from 'react-addons-perf';
-window.Perf = Perf;
 
 function getPopupContainer(elem) {
   if (!elem) return document.body;

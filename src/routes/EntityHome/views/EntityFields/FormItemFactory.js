@@ -1,6 +1,7 @@
 import React from 'react';
 import { Form, Select, Input, Radio, Checkbox, message } from 'antd';
 import RelBusDataSource from './RelBusDataSource';
+import { getIntlText } from '../../../../components/UKComponent/Form/IntlText';
 import { queryDicTypes, queryDicOptions } from '../../../../services/dictionary';
 import { queryList as queryDataSource } from '../../../../services/datasource';
 import { query as queryEntity, queryFields, getreffieldsbyfield } from '../../../../services/entity';
@@ -219,6 +220,7 @@ class DataSourceSelect extends React.Component {
       const options = result.data.pagedata.map(item => ({
         id: item.datasourceid + '',
         label: item.datasourcename,
+        label_lang: item.datasourcename_lang,
         entityId: item.entityid,
         entityName: item.entityname
       }));
@@ -274,7 +276,7 @@ class DataSourceSelect extends React.Component {
     return (
       <Select mode={this.props.multiple ? 'multiple' : 'single'} value={this.parseValue()} onChange={this.handleChange}>
         {this.state.options.map(item => (
-          <Option value={item.id} key={item.id}>{item.label}</Option>
+          <Option value={item.id} key={item.id}>{getIntlText('label', item)}</Option>
         ))}
       </Select>
     );

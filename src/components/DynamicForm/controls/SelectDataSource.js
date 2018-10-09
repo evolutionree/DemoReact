@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react';
-import { hashHistory } from 'react-router';
+import { Link } from 'dva/router';
 import { Icon, message, Select } from 'antd';
-import { is } from 'immutable';
 import classnames from 'classnames';
 import DataSourceSelectModal from './DataSourceSelectModal';
 import styles from './SelectUser.less';
@@ -38,31 +37,6 @@ class SelectDataSource extends React.Component {
       refEntity: '',
       refEntityName: ''
     };
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    const thisProps = this.props || {};
-    const thisState = this.state || {};
-
-    if (Object.keys(thisProps).length !== Object.keys(nextProps).length || Object.keys(thisState).length !== Object.keys(nextState).length) {
-      return true;
-    }
-
-    for (const key in nextProps) {
-      if (!is(thisProps[key], nextProps[key])) {
-        //console.log('createJSEngineProxy_props:' + key);
-        return true;
-      }
-    }
-
-    for (const key in nextState) {
-      if (thisState[key] !== nextState[key] || !is(thisState[key], nextState[key])) {
-        //console.log('state:' + key);
-        return true;
-      }
-    }
-
-    return false;
   }
 
   setValue = val => {
@@ -224,20 +198,19 @@ class SelectDataSource extends React.Component {
   }
 }
 
-SelectDataSource.View = ({ value, value_name, dataSource }) => {
-  const dataSourceRelEntityId = dataSource && dataSource.entityId;
-  if (!dataSourceRelEntityId) { // 没有数据源关联实体id entityid，以普通文本显示
+SelectDataSource.View = ({ value, value_name, entityId }) => {
+  if (!entityId) { // 没有entityid，以普通文本显示
     const emptyText = <span style={{ color: '#999999' }}>(空)</span>;
     const text = value_name !== undefined ? value_name : value;
     return <div className={styles.dataSourceViewWrap}>{text ? (text + '') : emptyText}</div>;
   }
 
   if (!value || !value_name) return null;
-  const linkUrl = `#/entcomm/${dataSourceRelEntityId}/${value.id}`;
+  const linkUrl = `/entcomm/${entityId}/${value.id}`;
 
   function redirect() {
     checkHasPermission({
-      entityid: dataSourceRelEntityId,
+      entityid: entityId,
       recid: value.id
     }).then(result => {
       if (result.data === '0') {
@@ -245,8 +218,7 @@ SelectDataSource.View = ({ value, value_name, dataSource }) => {
       } else if (result.data === '2') {
         message.error('该数据已删除，无法查看');
       } else {
-        window.open(linkUrl, '_blank');
-        // hashHistory.push(linkUrl);
+        window.open('#' + linkUrl);
       }
     }, err => {
       message.error('获取超时，请检查网络!');
@@ -256,6 +228,7 @@ SelectDataSource.View = ({ value, value_name, dataSource }) => {
   return (
     <div className={styles.dataSourceViewWrap}>
       <a href="javascript:;" onClick={redirect}>{value_name}</a>
+      {/*<Link to={linkUrl} target="_blank">{value_name}</Link>*/}
     </div>
   );
 };

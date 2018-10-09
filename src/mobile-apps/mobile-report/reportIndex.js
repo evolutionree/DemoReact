@@ -386,8 +386,8 @@ class ReportIndex extends Component {
       //表格(Mobile device)
       case 8:
         const tableInfo = this.getMobileColumns(item, item.datasourcename);
-        return ( //this.state[item.datasourcename + 'loading']
-          <div className={Styles.ListWrap}>
+        return (
+          <div>
             {
               this.state[item.datasourcename] && this.state[item.datasourcename].map((dataItem, dataIndex) => {
                 return <List key={dataIndex} data={dataItem} tableInfo={tableInfo} style={{ margin: margin }} />;

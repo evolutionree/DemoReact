@@ -1,11 +1,11 @@
 import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import * as _ from 'lodash';
-import { is } from 'immutable';
 import SelectProductModal from './SelectProductModal';
 import styles from './SelectUser.less';
 import { Icon, Select } from "antd";
-import { searchproductformobile } from '../../../services/products';
+import { getProductdetail, searchproductformobile } from '../../../services/products';
+import connectBasicData from "../../../models/connectBasicData";
 
 const Option = Select.Option;
 
@@ -53,31 +53,6 @@ class SelectProductBigData extends React.Component {
         valMap
       });
     }
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    const thisProps = this.props || {};
-    const thisState = this.state || {};
-
-    if (Object.keys(thisProps).length !== Object.keys(nextProps).length || Object.keys(thisState).length !== Object.keys(nextState).length) {
-      return true;
-    }
-
-    for (const key in nextProps) {
-      if (!is(thisProps[key], nextProps[key])) {
-        //console.log('createJSEngineProxy_props:' + key);
-        return true;
-      }
-    }
-
-    for (const key in nextState) {
-      if (thisState[key] !== nextState[key] || !is(thisState[key], nextState[key])) {
-        //console.log('state:' + key);
-        return true;
-      }
-    }
-
-    return false;
   }
 
   setValue = val => {

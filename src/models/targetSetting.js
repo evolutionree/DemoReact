@@ -39,7 +39,7 @@ export default {
     },
     *addTarget({ payload: params }, { put, call }) {
       try {
-        yield call(savenormtype, { name: params.normtypename });
+        yield call(savenormtype, { normtypename_lang: params.normtypename_lang });
         yield put({ type: 'getnormtypelist' });
         message.success('新增成功');
       } catch (e) {
@@ -48,7 +48,7 @@ export default {
     },
     *updateTarget({ payload: params }, { put, call }) {
       try {
-        yield call(savenormtype, { id: params.normtypeid, name: params.normtypename });
+        yield call(savenormtype, { id: params.normtypeid, normtypename_lang: params.normtypename_lang });
         yield put({ type: 'getnormtypelist' });
         message.success('更新成功');
       } catch (e) {

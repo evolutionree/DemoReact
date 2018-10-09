@@ -8,6 +8,8 @@ import Page from '../../components/Page';
 import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 
+import IntlText from '../../components/UKComponent/Form/IntlText';
+
 import DSourceFormModal from './DSourceFormModal';
 
 const Option = Select.Option;
@@ -100,9 +102,10 @@ function DSourceList(props) {
           dataIndex="datasourcename"
           title="数据源名称"
           render={(text, record) => {
+            const intlText = <IntlText value={text} value_lang={record.datasourcename_lang} />;
             return checkFunc('DataSourceEdit')
-              ? <Link to={`/dsource/${record.datasourceid}`}>{text}</Link>
-              : <span>{text}</span>;
+              ? <Link to={`/dsource/${record.datasourceid}`}>{intlText}</Link>
+              : <span>{intlText}</span>;
           }}
         />
         <Column key="entityname" dataIndex="entityname" title="关联实体" />

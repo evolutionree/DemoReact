@@ -1,5 +1,6 @@
 import React from 'react';
 import { Menu } from 'antd';
+import { getIntlText } from '../../../../components/UKComponent/Form/IntlText';
 
 function EntitySelect({
     value,
@@ -11,7 +12,7 @@ function EntitySelect({
           style={{ maxHeight: '500px', overflowY: 'auto', overflowX: 'hidden' }}
           onSelect={event => onChange(event.key)}>
       {entities.map(entity => (
-        <Menu.Item key={entity.entityid}>{entity.entityname}</Menu.Item>
+        <Menu.Item key={entity.entityid}>{getIntlText('entityname', entity)}</Menu.Item>
       ))}
     </Menu>
   );

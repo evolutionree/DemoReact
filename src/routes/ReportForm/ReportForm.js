@@ -23,7 +23,7 @@ import CollapseWrap from './component/Chart/CollapseWrap'; //折叠面板
 import BreadCrumb from './component/Chart/BreadCrumb'; //面包屑导航条
 import { chinaMap } from './component/Chart/china-main-map';
 import storage from '../../utils/storage';
-import moment from 'moment';
+// import moment from 'moment';
 import DynamicFieldView from '../../components/DynamicForm/DynamicFieldView';
 
 import styles from './index.less';

@@ -1,5 +1,8 @@
 import React, { PropTypes, Component } from 'react';
 import { Modal, Form, Input, Select } from 'antd';
+import IntlInput from '../../components/UKComponent/Form/IntlInput';
+import IntlText from '../../components/UKComponent/Form/IntlText';
+import { IntlInputRequireValidator } from '../../utils/validator';
 import _ from 'lodash';
 
 const FormItem = Form.Item;
@@ -25,7 +28,7 @@ class RoleFormModal extends Component {
 
       } else {
         const record = currentRecords[0];
-        const tmp = _.pick(record, ['rolename', 'rolegroupid', 'roleremark']);
+        const tmp = _.pick(record, ['rolename_lang', 'rolegroupid', 'roleremark']);
         form.setFieldsValue(tmp);
       }
     }
@@ -62,9 +65,10 @@ class RoleFormModal extends Component {
     const roleTypesOption = roleGroups.slice(1).filter(role => {
       return role.grouptype !== 0; //过滤掉系统默认角色
     }).map(item => (
-      <Option key={item.rolegroupid} value={item.rolegroupid}>{item.rolegroupname}</Option>
+      <Option key={item.rolegroupid} value={item.rolegroupid}>
+        <IntlText name="rolegroupname" value={item} />
+      </Option>
     ));
-
     return (
       <Modal title={isEdit ? '编辑角色' : '新建角色'}
              visible={/edit|add/.test(showModals)}
@@ -73,11 +77,18 @@ class RoleFormModal extends Component {
              confirmLoading={savePending}>
         <Form>
           <FormItem label="角色名称">
-            {decorate('rolename', {
+            {decorate('rolename_lang', {
               initialValue: '',
-              rules: [{ required: true, message: '请输入角色名称' }]
+              rules: [{
+                validator: (rule, value, callback) => {
+                  this.intlInputRef.validator(rule, value, err => {
+                    if (err) return callback(err);
+                    callback();
+                  });
+                }
+              }]
             })(
-              <Input placeholder="请输入角色名称" maxLength={50} />
+              <IntlInput placeholder="请输入角色名称" maxLength={50} ref={ref => this.intlInputRef = ref} />
             )}
           </FormItem>
           <FormItem label="角色分类">

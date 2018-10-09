@@ -1,24 +1,16 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Form, Button, Input, Checkbox, message, Select, Row, Col, Modal } from 'antd';
+import { Form, Button, Input, Select, Modal } from 'antd';
 import Page from '../../components/Page';
 import DragList from '../../components/UKComponent/Data/DragList';
+import IntlInput from '../../components/UKComponent/Form/IntlInput';
+import IntlText from '../../components/UKComponent/Form/IntlText';
+import { IntlInputRequireValidator } from '../../utils/validator';
+import FormModal from './FormModal';
 import styles from './index.less';
 import classnames from 'classnames';
 
-
 const FormItem = Form.Item;
-const Option = Select.Option;
-
-let fields = [{
-  key: 'stagename',
-  name: '阶段名称',
-  link: true,
-  maxLength: 10
-},{
-  key: 'winrate',
-  name: 'winrate'
-}];
 
 function DicPage({
                      form: {
@@ -53,8 +45,8 @@ function DicPage({
     dispatch({ type: 'dic/changeDicType', payload: value });
   }
 
-  function changeCurrentEditRowIndex(editIndex) {
-    dispatch({ type: 'dic/putState', payload: { currentEditRowIndex: editIndex } });
+  function edit(editIndex, editData) {
+    dispatch({ type: 'dic/putState', payload: { showModals: 'edit', editData: editData } });
   }
 
   function del(rowData) {
@@ -67,22 +59,6 @@ function DicPage({
       onCancel() {}
     });
   }
-
-  function update(rowData) {
-    let newExtConfig = {};
-    if (extConfig && extConfig instanceof Object) {
-      for (let key in extConfig) {
-        newExtConfig[key] = window[rowData.dicid + 'extfieldRef' + key].refs.input.value;
-      }
-    }
-
-    dispatch({ type: 'dic/update', payload: {
-      ...rowData,
-      dataval: window[rowData.dicid + 'InputRef'].refs.input.value,
-      ...newExtConfig
-    } });
-  }
-
 
   function listSortEnd(list) {
     dispatch({ type: 'dic/orderby', payload: list });
@@ -102,15 +78,10 @@ function DicPage({
     {
       key: 'dataval',
       name: '字典值',
+      delayDrag: true,
       span: span,
       render: (text, rowData, rowIndex) => {
-        if (currentEditRowIndex === rowIndex) {
-          return (
-            <Input defaultValue={text} ref={ref => window[rowData.dicid + 'InputRef'] = ref} />
-          );
-        } else {
-          return text;
-        }
+        return <IntlText value={text} value_lang={rowData.dataval_lang} />;
       }
     }
   ];
@@ -121,13 +92,7 @@ function DicPage({
           name: extConfig[key],
           span: span,
           render: (text, rowData, rowIndex) => {
-            if (currentEditRowIndex === rowIndex) {
-              return (
-                <Input defaultValue={text} ref={ref => window[rowData.dicid + 'extfieldRef' + key] = ref} />
-              );
-            } else {
-              return text;
-            }
+            return text;
           }
         });
     }
@@ -137,16 +102,11 @@ function DicPage({
     key: 'operate',
     name: '操作',
     span: span,
+    delayDrag: true,
     render: (text, rowData, rowIndex) => {
       return (
         <div>
-          {
-            currentEditRowIndex === rowIndex ? (
-              <a style={{ marginRight: '10px' }} onClick={update.bind(this, rowData, rowIndex)}>保存</a>
-            ) : (
-              <a style={{ marginRight: '10px' }} onClick={changeCurrentEditRowIndex.bind(this, rowIndex)}>编辑</a>
-            )
-          }
+          <a style={{ marginRight: '10px' }} onClick={edit.bind(this, rowIndex, rowData)}>编辑</a>
           <a onClick={del.bind(this, rowData)}>删除</a>
         </div>
       );
@@ -155,7 +115,7 @@ function DicPage({
 
 
   return (
-    <Page title="字典参数" >
+    <Page title='字典参数' >
       <div className={styles.Header}>
         <Select
           showSearch
@@ -172,13 +132,15 @@ function DicPage({
         <div className={styles.formWrap}>
           <Form layout="inline" onSubmit={addParams}>
             <FormItem>
-              {getFieldDecorator('dataval', {
+              {getFieldDecorator('dataval_lang', {
                 initialValue: '',
                 validateTrigger: 'onChange',
-                rules: [{ required: true, message: '字典值不能为空' },
-                  { pattern: new RegExp(/^.{1,10}$/), message: '请输入10个以内的字符' }]
+                rules: [
+                  { required: true, message: '字典值不能为空' },
+                  { validator: IntlInputRequireValidator }
+                ]
               })(
-                <Input placeholder='请输入字典值' />
+                <IntlInput placeholder='请输入字典值' maxLength={10} />
               )}
             </FormItem>
             <FormItem>
@@ -207,6 +169,7 @@ function DicPage({
                                       delayDragColumn={['operate']} /> : <DragList dataSource={dicdata} column={column} onSortEnd={listSortEnd} delayDragColumn={['operate']} />
         }
       </div>
+      <FormModal />
     </Page>
   );
 }

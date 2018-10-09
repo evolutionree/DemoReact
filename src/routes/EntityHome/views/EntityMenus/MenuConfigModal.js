@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import { Modal, Mention, message, Input } from 'antd';
+import IntlInput from '../../../../components/UKComponent/Form/IntlInput';
 import _ from 'lodash';
 import FilterConfigBoard from '../../../../components/FilterConfigBoard';
 import { queryFields, queryMenuRule } from '../../../../services/entity';
@@ -75,7 +76,7 @@ class MenuConfigModal extends React.Component {
     return queryMenuRule(menuId).then(result => {
       const data = result.data[0];
       this.setState({
-        menuName: data.menuname,
+        menuName: data.menuname_lang || data.menuname,
         ruleList: this.itemsToRuleList(data.ruleitems),
         ruleSet: data.ruleset.ruleset,
         rawRuleInfo: _.cloneDeep(data)
@@ -91,8 +92,8 @@ class MenuConfigModal extends React.Component {
     this.setState({ ruleSet });
   };
 
-  onMenuNameChange = event => {
-    this.setState({ menuName: event.target.value });
+  onMenuNameChange = value => {
+    this.setState({ menuName: value });
   };
 
   /**
@@ -135,8 +136,8 @@ class MenuConfigModal extends React.Component {
     const params = {
       typeid: 1,
       entityid: this.props.entityId,
-      menuname: menuName,
-      rulename: menuName,
+      menuname_lang: menuName,
+      rulename_lang: menuName,
       ruleitems: ruleList.map(this.toRuleItem),
       ruleset: {
         ruleset: ruleSet,
@@ -207,12 +208,7 @@ class MenuConfigModal extends React.Component {
           <div>
             <div>筛选项名称</div>
             <div style={{ margin: '10px 0 20px' }}>
-              <Input
-                value={this.state.menuName}
-                onChange={this.onMenuNameChange}
-                placeholder="请输入筛选项名称"
-                maxLength="50"
-              />
+              <IntlInput placeholder="请输入筛选项名称" maxLength={50} value={this.state.menuName} onChange={this.onMenuNameChange} />
             </div>
             <FilterConfigBoard
               entityId={this.props.entityId}

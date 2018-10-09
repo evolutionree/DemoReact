@@ -1,0 +1,80 @@
+.container {
+  // margin: 24px;
+  position: relative;
+}
+
+.header {
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.mainInput {
+  min-width: 60px;
+  max-width: 110px;
+  margin-right: 20px;
+}
+
+.relatedEntity {
+  display: flex;
+  align-items: center;
+}
+
+.spins {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.margins {
+  margin-right: 20px;
+}
+
+.configStyle {
+  display: flex;
+  flex-direction: column;
+}
+
+.pagination {
+  text-align: center;
+}
+
+.list {
+  overflow-x: hidden;
+}
+
+.backtop {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+}
+
+.backtop .backTopInner {
+  height: 30px;
+  width: 30px;
+  line-height: 30px;
+  border-radius: 4px;
+  background-color: #1088e9;
+  color: #fff;
+  text-align: center;
+  font-size: 16px;
+}
+
+.alert {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.container {
+  :global {
+    .ant-card-head {
+      height: auto;
+      line-height: auto;
+    }
+  }
+}
