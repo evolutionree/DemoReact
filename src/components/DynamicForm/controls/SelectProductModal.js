@@ -1,13 +1,12 @@
 import React, { PropTypes, Component } from 'react';
 import * as _ from 'lodash';
-import { Modal, Col, Row, Icon, message, Spin, Pagination, Table, Tabs } from 'antd';
+import { Modal, message, Spin, Table, Tabs } from 'antd';
+import { is } from 'immutable';
 import Search from '../../../components/Search';
 import Toolbar from '../../../components/Toolbar';
-import { queryProductData } from '../../../services/basicdata';
 import styles from './SelectProductModal.less';
-import SelectProductSerial from './SelectProductSerial';
 import { queryMobFieldVisible } from '../../../services/entity';
-import { getSeries, getProducts, searchproductformobile, getProductdetail } from '../../../services/products';
+import { searchproductformobile, getProductdetail } from '../../../services/products';
 import ProductSerialSelect from '../../ProductSerialSelect';
 
 const TabPane = Tabs.TabPane;
@@ -63,6 +62,31 @@ class SelectProductModal extends Component {
         filterKeyWord: ''
       });
     }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    const thisProps = this.props || {};
+    const thisState = this.state || {};
+
+    if (Object.keys(thisProps).length !== Object.keys(nextProps).length || Object.keys(thisState).length !== Object.keys(nextState).length) {
+      return true;
+    }
+
+    for (const key in nextProps) {
+      if (!is(thisProps[key], nextProps[key])) {
+        //console.log('createJSEngineProxy_props:' + key);
+        return true;
+      }
+    }
+
+    for (const key in nextState) {
+      if (thisState[key] !== nextState[key] || !is(thisState[key], nextState[key])) {
+        //console.log('state:' + key);
+        return true;
+      }
+    }
+
+    return false;
   }
 
   fetchProductsDetail = (productId) => {

@@ -31,14 +31,14 @@ const RecordDetailModal = WrappedComponent => {
         <ul style={style} key="extraToolbarData">
           {
             extraToolbarData instanceof Array && extraToolbarData.map(item => {
-              return <li style={style} key={item.id}><a onClick={this.extraToolBarClickHandler.bind(this, item)}>{item.title}11</a></li>;
+              return <li style={style} key={item.id}><Button onClick={this.extraToolBarClickHandler.bind(this, item)}>{item.title}</Button></li>;
             })
           }
         </ul>,
         <ul style={style} key="extraButtonData">
           {
             extraButtonData instanceof Array && extraButtonData.map(item => {
-              return <li style={style} key={item.id}><a onClick={this.extraBtnClickHandler.bind(this, item)}>{item.title}</a></li>;
+              return <li style={style} key={item.id}><Button onClick={this.extraBtnClickHandler.bind(this, item)}>{item.title}</Button></li>;
             })
           }
         </ul>,

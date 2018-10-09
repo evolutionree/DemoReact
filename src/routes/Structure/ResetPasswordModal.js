@@ -76,18 +76,16 @@ function ResetPasswordModal({
           {getFieldDecorator('accountpwd', {
             initialValue: '',
             rules: [{
-              min: 6,
-              max: 16,
-              message: '密码为6-16位数字字母'
-            }, {
               required: true,
-              pattern: /^[a-zA-Z0-9]*$/,
-              message: '密码为6-16位字母数字'
+              pattern: /^.{6,16}$/,
+              message: '密码为6-16位字符'
             }, {
               validator: checkSameChar
             }]
           })(
-            <Input type="password" maxLength={16} placeholder="请输入6-16位新密码" />
+            <Input onPaste={(e) => {
+              e.preventDefault();
+            }} type="password" maxLength="16" placeholder="请输入6-16位新密码" />
           )}
         </FormItem>
         <FormItem label="确认密码">
@@ -100,7 +98,9 @@ function ResetPasswordModal({
               validator: checkPasswordConfirm
             }]
           })(
-            <Input type="password" maxLength={16} placeholder="请输入确认密码" />
+            <Input onPaste={(e) => {
+              e.preventDefault();
+            }} type="password" maxLength="16" placeholder="请输入确认密码" />
           )}
         </FormItem>
       </Form>

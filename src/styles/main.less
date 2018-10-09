@@ -31,6 +31,7 @@ body {
     .DynamicFormModal{
         overflow: hidden;
         .ant-modal-body{
+          min-height: 100px;
           max-height: @ant-Modal-height;
           overflow: auto;
         }
@@ -44,8 +45,16 @@ body {
       margin-bottom: 0px;
     }
 
+    .ant-form-item-label{
+      padding-right: 8px;
+    }
+
     .ant-form-item-label label {
       font-size: 12px;
+    }
+
+    .ant-form-item-label label:after {
+      margin: 0;
     }
 
     .threeCol_onlylineFormItem {
