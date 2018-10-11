@@ -167,9 +167,9 @@ class StageBar extends Component {
       return {
         keyEvents,
         entityFields,
-        entityFieldsData,
+        entityFieldsData: this.getEditData(entityFieldsData, entityFields),
         customFields,
-        customFieldsData,
+        customFieldsData: this.getEditData(customFieldsData, customFields),
         rawInfo: stageInfo
       };
     });
@@ -663,6 +663,22 @@ class StageBar extends Component {
       </ul>
     );
   };
+
+  getEditData(recordDetail, protocol) { //表格数据 需要再套一层
+    const retData = { ...recordDetail };
+    protocol.forEach(field => {
+      const { controltype, fieldname, fieldconfig } = field;
+      if (controltype === 24 && retData[fieldname]) {
+        retData[fieldname] = retData[fieldname].map(item => {
+          return {
+            TypeId: fieldconfig.entityId,
+            FieldData: item
+          };
+        });
+      }
+    });
+    return retData;
+  }
 
   renderStageDetail = () => {
     if (!this.state.showingStageId) return null;

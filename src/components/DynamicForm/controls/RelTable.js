@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { Button, Checkbox } from 'antd';
 import classnames from 'classnames';
+import { is } from 'immutable';
 import * as _ from 'lodash';
 import { getGeneralProtocolForGrid } from '../../../services/entcomm';
 import RelTableRow from './RelTableRow';
@@ -54,6 +55,31 @@ class RelTable extends Component {
     if (this.props.entityId !== nextProps.entityId) {
       this.queryFields(nextProps.entityId, nextProps);
     }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    const thisProps = this.props || {};
+    const thisState = this.state || {};
+
+    if (Object.keys(thisProps).length !== Object.keys(nextProps).length || Object.keys(thisState).length !== Object.keys(nextState).length) {
+      return true;
+    }
+
+    for (const key in nextProps) {
+      if (!is(thisProps[key], nextProps[key])) {
+        //console.log('RelTable_props:' + key);
+        return true;
+      }
+    }
+
+    for (const key in nextState) {
+      if (thisState[key] !== nextState[key] || !is(thisState[key], nextState[key])) {
+        //console.log('RelTable_state:' + key);
+        return true;
+      }
+    }
+
+    return false;
   }
 
   setInitFieldConfig = (tableFields, sheetfieldglobal) => {
@@ -462,23 +488,28 @@ class RelTable extends Component {
     }
     return this.parseValue().map((item, index) => {
       const value = this.props.mode === 'ADD' ? generateDefaultFormData(this.state.tableFields, item && item.FieldData || item) : item && item.FieldData || item;
+      const batchAddInfo = {
+        type: item && item.type,
+        field: _.find(this.state.tableFields, filedItem => filedItem.fieldname === this.props.batchAddField)
+      };
+
       return (
         <RelTableRow
           key={index}
+          rowIndex={index}
           fixedColumn={fixedColumn}
           mode={this.props.mode}
           selected={_.includes(this.state.selectedRows, index)}
           fields={this.state.tableFields}
           value={value}
           onChange={this.onRowValueChange.bind(this, index)}
-          onSelect={this.onRowSelect.bind(this, index)}
+          onSelect={this.onRowSelect}
           ref={formInst => fixed ? this.arrFixedFormInstance[index] = formInst : this.arrFormInstance[index] = formInst}
           onFieldControlFocus={this.onRowFieldFocus}
           parentJsEngine={this.props.jsEngine}
-          batchAddInfo={{
-            type: item && item.type,
-            field: _.find(this.state.tableFields, filedItem => filedItem.fieldname === this.props.batchAddField)
-          }}
+          batchAddInfo_type={batchAddInfo.type}
+          batchAddInfo_fieldname={batchAddInfo.field && batchAddInfo.field.fieldname}
+          batchAddInfo_fieldid={batchAddInfo.field && batchAddInfo.field.fieldid}
         />
       );
     });

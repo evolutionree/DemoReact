@@ -111,6 +111,7 @@ function EntcommList({
   }
 
   function extraButtonClickHandler(item) {
+    dispatch({ type: 'entcommApplication/showModals', payload: '' });
     dispatch({
       type: 'entcommApplication/putState',
       payload: {
@@ -121,6 +122,7 @@ function EntcommList({
   }
 
   function showDetail(record) {
+    dispatch({ type: 'entcommApplication/currItems', payload: [record] });
     dispatch({
       type: 'entcommApplication/showModals',
       payload: `recordDetail?${entityId}:${record.recid}`
@@ -305,7 +307,7 @@ function EntcommList({
         done={onAddModalDone}
       />
       <TransferModal />
-      <RecordDetailModal />
+      <RecordDetailModal onExtraToolbarClick={extraToolbarClickHandler} onExtraBtnClick={extraButtonClickHandler} />
       <RecordEditModal />
       <AdvanceSearchModal />
       <DynamicModal />
