@@ -2,7 +2,7 @@
  * @Author: geewonii 
  * @Date: 2018-09-21 14:27:02 
  * @Last Modified by: geewonii
- * @Last Modified time: 2018-09-26 09:01:37
+ * @Last Modified time: 2018-10-11 14:43:53
  */
 
 import React, { PropTypes, PureComponent } from 'react';
@@ -26,14 +26,9 @@ const optionList = [
     count: 0
 }];
 
-function isStrings(str) {
-  return typeof str === 'string' && str.constructor === String
-}
-/**
- * 
- * @param {String} timeStr
- */
-function showTimeDiffText(timeStr) {
+const isStrings = (str) => typeof str === 'string' && str.constructor === String;
+
+const showTimeDiffText = (timeStr) => {
   const defaultTimes = '2018-09-18 15:18:49';
   const str = isStrings(timeStr) ? timeStr : defaultTimes;
   const second = dayjs().diff(dayjs(str), 'seconds');
@@ -54,9 +49,9 @@ function showTimeDiffText(timeStr) {
 class ApprovalNotice extends PureComponent {
   static propTypes = {
     title: PropTypes.string.isRequired,
+    height: PropTypes.number.isRequired,
     style: PropTypes.object,
-    maxHeight: PropTypes.number.isRequired,
-    minHeight: PropTypes.number,
+    maxHeight: PropTypes.number,
   }
 
   state = {
@@ -99,6 +94,8 @@ class ApprovalNotice extends PureComponent {
 
   renderWrapElms() {
     const { maxListLength = 10 } = this.props;
+    const { height = 500, minHeight = 100 } = this.props;
+
     const { tabKeys } = this.state;
     
     const { data } = this.state;
@@ -121,7 +118,7 @@ class ApprovalNotice extends PureComponent {
       )
 
     return (
-      <div className={styles.warp}>
+      <div className={styles.warp} style={{ height: height - 70, minHeight }}>
         {
           !!list ? showList : <div className={styles.spins}><Spin /></div>
         }
@@ -166,13 +163,13 @@ class ApprovalNotice extends PureComponent {
   }
 
   render() {
-    const { maxHeight = 500, minHeight = 200, title='title', defaultKey='1' } = this.props;
+    const { title='title', defaultKey='1' } = this.props;
     const { data } = this.state;
 
     if(data && optionList[0].count === 0) optionList[0].count = data.pageinfo.totalcount; //显示消息条数
 
     return (
-      <div className={styles.container} style={{ maxHeight, minHeight }}>
+      <div className={styles.container}>
         <div className={styles.header}>
           <Tabs defaultActiveKey={defaultKey}
             tabBarExtraContent={<span className={styles.title}>{title}</span>}
