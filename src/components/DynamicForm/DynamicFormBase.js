@@ -196,7 +196,7 @@ class DynamicFormBase extends Component {
     let lastGroup = groups[0];
 
     this.props.fields.forEach(field => {
-      if (field.controltype === 20) {
+      if (field.controltype === 20 && field.fieldconfig.isVisible === 1 ) {
         lastGroup = {
           title: field.displayname,
           foldable: field.fieldconfig.foldable === 1,
