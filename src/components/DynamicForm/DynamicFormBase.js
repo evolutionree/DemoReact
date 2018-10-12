@@ -226,7 +226,8 @@ class DynamicFormBase extends Component {
         lastGroup = {
           title: field.displayname,
           foldable: field.fieldconfig.foldable === 1,
-          fields: []
+          fields: [],
+          isVisible: field.fieldconfig.isVisible === 1
         };
         groups.push(lastGroup);
         return;
@@ -422,7 +423,7 @@ class DynamicFormBase extends Component {
         <Row gutter={24}>
           {this.renderFields(fieldsGroup[0].fields)}
           {fieldsGroup.slice(1).map(group => (
-            <FoldableGroup key={group.title} title={group.title} foldable={group.foldable}>
+            <FoldableGroup key={group.title} title={group.title} isVisible={group.isVisible} foldable={group.foldable}>
               {this.renderFields(group.fields)}
             </FoldableGroup>
           ))}
