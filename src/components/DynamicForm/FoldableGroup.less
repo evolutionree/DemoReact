@@ -50,7 +50,15 @@
     border-top: none;
     border-bottom-left-radius: 2px;
     border-bottom-right-radius: 2px;
-
+    & > :global(.ant-form-item) {
+      margin-bottom: 0px;
+    }
+  }
+  .contentWhile {
+    .clearFix;
+    padding: 15px;
+    background-color: #ffffff;
+    border-top: none;
     & > :global(.ant-form-item) {
       margin-bottom: 0px;
     }
@@ -61,7 +69,9 @@
     }
   }
 }
-
+.wrap.foldableWhile {
+  box-shadow: none;
+}
 
 .content {
   .clearFix;
