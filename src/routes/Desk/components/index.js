@@ -3,8 +3,8 @@ import Filtrate from './Filtrate';
 
 
 const EnableComponent = {
-  ApprovalNotice: ApprovalNotice, 
-  Filtrate: Filtrate,
+  ApprovalNotice, 
+  Filtrate,
 }
 
 export default EnableComponent;

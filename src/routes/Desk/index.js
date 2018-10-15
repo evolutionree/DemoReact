@@ -11,9 +11,9 @@ import styles from './index.less';
 // import asyncComponent from './asyncComponent';
 import EnableComponent from './components/index';
 
-Packery.prototype.getShiftPositions = function(attrName = 'id') {
+Packery.prototype.getShiftPositions = function (attrName = 'id') {
   const _this = this;
-  return this.items.map(function(item) {
+  return this.items.map(function (item) {
     return {
       attr: item.element.getAttribute(attrName),
       X: item.rect.x / _this.packer.width,
@@ -26,7 +26,7 @@ Packery.prototype.getShiftPositions = function(attrName = 'id') {
   });
 };
 
-Packery.prototype.initShiftLayout = function(positions, attr = 'id') {
+Packery.prototype.initShiftLayout = function (positions, attr = 'id') {
   if (!positions) {
     // if no initial positions, run packery layout
     this.layout();
@@ -35,7 +35,7 @@ Packery.prototype.initShiftLayout = function(positions, attr = 'id') {
 
   this._resetLayout();
   // set item order and horizontal position from saved positions
-  this.items = positions.map(function(itemPosition) {
+  this.items = positions.map(function (itemPosition) {
     const selector = '[' + attr + '="' + itemPosition.dscomponetid + '"]'
     const itemElem = this.element.querySelector(selector);
     const item = this.getItem(itemElem);
@@ -97,7 +97,7 @@ class Desk extends React.PureComponent {
 
     // make draggable
     let layoutComponents = document.querySelectorAll('.grid-item');
-    layoutComponents.forEach(function(itemElem) {
+    layoutComponents.forEach(function (itemElem) {
       const option = /grid-item-width2/.test(itemElem.getAttribute('class')) ? {
         axis: 'y'
       } : {};
@@ -189,7 +189,6 @@ class Desk extends React.PureComponent {
       // _this.props.updateComponent(layoutComponents);
     }
   }
-
 
   getItemPosition = (itemPotions, L, T, W, dragTarget) => {
     if (dragTarget.dataset.widthType === undefined) {
@@ -294,7 +293,6 @@ class Desk extends React.PureComponent {
       return layoutComponent.indexOf(item.dscomponetid) === -1;
     });
 
-    console.log(layoutComponent)
     return (
       <div className={styles.deskWrap} style={{ height: this.state.documentHeight - 60 }}>
         <div className={styles.toolBar}>
@@ -306,10 +304,10 @@ class Desk extends React.PureComponent {
               !this.state.reload ? this.props.componentList.map((item, index) => {
                 return (
                   <div key={item.dscomponetid}
-                       className='component'
-                       data-component-id={item.dscomponetid}
-                       data-component-height={item.maxcomheight}
-                       data-width-type={item.comwidth}>
+                    className='component'
+                    data-component-id={item.dscomponetid}
+                    data-component-height={item.maxcomheight}
+                    data-width-type={item.comwidth}>
                     {
                       item.comname + '||' + item.dscomponetid
                     }
@@ -326,23 +324,30 @@ class Desk extends React.PureComponent {
                   const Children = EnableComponent[item.comurl];
 
                   return (
-                    <div key={item.dscomponetid} style={{ maxHeight: item.maxcomheight }} className={item.comwidth === 2 ? 'grid-item grid-item-width2' : 'grid-item'} data-item-id={item.dscomponetid}>
-                      {/* {
-                        item.comname + '||' + item.dscomponetid
-                      } */}
-                      {console.log(item)}
-
+                    <div
+                      key={item.dscomponetid}
+                      style={{ height: item.mincomheight }}
+                      className={item.comwidth === 2 ? 'grid-item grid-item-width2' : 'grid-item'}
+                      data-item-id={item.dscomponetid}
+                    >
                       <Children
-                        maxHeight={item.maxcomheight}
-                        minHeight={item.mincomheight}
+                        height={item.mincomheight}
                         title={item.comname}
                       />
+                      <div
+                        className={item.comwidth === 2 ? 'grid-sizer grid-item-width2 ' : 'stamp'} //虚线框
+                        style={{ height: item.mincomheight }}
+                      ></div>
+                      <div
+                        className={item.comwidth === 2 ? 'grid-sizer grid-item-width2 ' : 'grid-sizer'} //实线框
+                        style={{ height: item.mincomheight }}
+                      ></div>
                     </div>
                   );
                 }) : null
               }
-              <div className="grid-sizer"></div>
-              <div className="stamp"></div>
+
+
             </div>
           </div>
         </div>

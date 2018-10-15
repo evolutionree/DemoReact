@@ -2,7 +2,7 @@
  * @Author: geewonii 
  * @Date: 2018-09-21 14:27:19 
  * @Last Modified by: geewonii
- * @Last Modified time: 2018-09-26 09:20:02
+ * @Last Modified time: 2018-10-11 13:49:04
  */
 import React, { PropTypes, PureComponent } from 'react';
 import {
@@ -48,9 +48,9 @@ const selectTimeList = [
 
 class Filtrate extends PureComponent {
   static propTypes = {
+    height: PropTypes.number.isRequired,
+    maxHeight: PropTypes.number,
     style: PropTypes.object,
-    maxHeight: PropTypes.number.isRequired,
-    minHeight: PropTypes.number,
   }
 
   state = {
@@ -323,7 +323,7 @@ class Filtrate extends PureComponent {
 
   renderList() {
     const { dataSource } = this.state;
-    console.log(dataSource)
+    // console.log(dataSource)
     const list = !!dataSource ? (
       dataSource.datalist.length === 0 ? <div className={styles.spins}>没有查询到相关数据，请重新过滤条件!</div> :
         dataSource.datalist.map((item, idx) => {
@@ -446,7 +446,7 @@ class Filtrate extends PureComponent {
   }
 
   render() {
-    const { maxHeight = 660, minHeight = 500, filtrateScrollId } = this.props;
+    const { height = 660, minHeight = 500, filtrateScrollId } = this.props;
     const { tipSwitch, tipMessage, modalVisible, entityId, recordId } = this.state;
 
     return (
@@ -455,7 +455,7 @@ class Filtrate extends PureComponent {
           title={this.renderHeaders()}
           extra={this.renderExtra()}
         >
-          <div id={filtrateScrollId || ''} className={styles.list} style={{ maxHeight: maxHeight - 128, minHeight: minHeight - 128 }}>
+          <div id={filtrateScrollId || ''} className={styles.list} style={{ height: height - 99, minHeight }}>
             {this.renderList()}
             {filtrateScrollId &&
               <BackTop className={styles.backtop} target={() => document.getElementById(filtrateScrollId)}>
