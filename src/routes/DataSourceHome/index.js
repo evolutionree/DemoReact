@@ -66,6 +66,7 @@ const DataSourceHome = ({
       key: 'operate',
       name: '操作',
       span: 3,
+      delayDrag: true,
       render: (text, rowData, rowIndex) => {
         return (
           <div>
