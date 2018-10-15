@@ -95,7 +95,6 @@ class FieldHolder extends React.Component {
         fontSize: this.props.field.font + 'px'
       };
     }
-    console.log(JSON.stringify(style));
     return (
       <Popover
         content={this.renderForm()}
