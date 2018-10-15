@@ -283,7 +283,6 @@ function EntcommList({
         entityTypes={entityTypes}
         cancel={onAddModalCanel}
         done={onAddModalDone}
-        pageType="entcommList"
       />
       <EntcommCopyModal />
       <TransferModal />

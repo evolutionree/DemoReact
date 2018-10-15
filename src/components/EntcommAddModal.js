@@ -5,6 +5,7 @@ import { connect } from 'dva';
 import { hashHistory } from 'dva/router';
 import { DynamicFormAdd, generateDefaultFormData } from './DynamicForm';
 import { getGeneralProtocol, addEntcomm, temporarysave } from '../services/entcomm';
+import { queryEntityDetail } from '../services/entity';
 import { WorkflowCaseForAddModal } from "./WorkflowCaseModal";
 import { frontEndData_to_BackEndData } from '../components/AppHeader/TemporaryStorage/formStorageUtils';
 import uuid from 'uuid';
@@ -28,10 +29,10 @@ class EntcommAddModal extends Component {
     isAddCase: PropTypes.bool,
     entityTypeId: PropTypes.string, //暂存表单时  默认选中当前暂存表单的 实体类型
     cacheId: PropTypes.string, //新增 暂存表单数据时  需要带上暂存id
-    pageType: PropTypes.string //当前属于哪个页面的新增表单Modal 独立实体新增 支持新增后 可跳转到页签页
   };
   static defaultProps = {
-    entityTypeId: ''
+    entityTypeId: '',
+    entityModelType: '' //当前实体类型0独立实体1嵌套实体2应用实体3动态实体';
   };
 
   constructor(props) {
@@ -62,13 +63,14 @@ class EntcommAddModal extends Component {
       this.setState({ formData: nextProps.initFormData || {} });
     }
     if (isOpening) {
+      const { entityTypes, entityId } = nextProps;
+      this.queryEntityinfo(entityId);
       this.setState({
         entityFormDoneLink: entityFormDoneLink[this.props.entityId] !== false
       })
       if (nextProps.initFormData && Object.keys(nextProps.initFormData).length) {
         this.setState({ formData: nextProps.initFormData || {} }); //关闭的时候  formdat被清空了  需要重新得到initFormData
       }
-      const { entityTypes, entityId } = nextProps;
       if (nextProps.entityTypeId) { //暂存 新增表单
         this.setState({
           showFormModal: true,
@@ -90,6 +92,14 @@ class EntcommAddModal extends Component {
     } else if (isClosing) {
       this.resetState();
     }
+  }
+
+  queryEntityinfo = (entityId) => {
+    queryEntityDetail(entityId).then(data => {
+      this.setState({
+        entityModelType: data.data.entityproinfo[0].modeltype
+      });
+    });
   }
 
   resetState = () => {
@@ -207,7 +217,8 @@ class EntcommAddModal extends Component {
       addEntcomm(params).then(result => {
         this.setState({ confirmLoading: false });
         message.success('新增成功');
-        if (this.props.pageType === 'entcommList' && this.state.entityFormDoneLink) {
+        if (this.state.entityModelType === 0 && this.state.entityFormDoneLink) {
+          this.props.done(result);
           const addRecid = result.data;
           hashHistory.push(`/entcomm/${this.props.entityId}/${addRecid}`);
         } else {
@@ -318,7 +329,7 @@ class EntcommAddModal extends Component {
   }
 
   render() {
-    const { entityTypes, footer, refRecord, entityId, pageType } = this.props;
+    const { entityTypes, footer, refRecord, entityId } = this.props;
     const {
       showTypeModal,
       showFormModal,
@@ -328,7 +339,8 @@ class EntcommAddModal extends Component {
       confirmLoading,
       storageLoading,
       entityFormDoneLink,
-      fetchProtocolLoading
+      fetchProtocolLoading,
+      entityModelType
     } = this.state;
 
     return (
@@ -357,7 +369,7 @@ class EntcommAddModal extends Component {
             width={document.body.clientWidth > 1400 ? 1200 : 800}
             wrapClassName="DynamicFormModal"
             footer={[
-              pageType === 'entcommList' ? <Checkbox key={entityId} onChange={this.checkboxChange} checked={entityFormDoneLink}>新增后跳转到页签</Checkbox> : null,
+              entityModelType === 0 ? <Checkbox key={entityId} onChange={this.checkboxChange} checked={entityFormDoneLink}>新增后跳转到页签</Checkbox> : null,
               <Button key="back" type="default" onClick={this.onFormModalCancel}>取消</Button>,
               <Button key="storage" loading={storageLoading} onClick={this.onFormModalStorage}>暂存</Button>,
               <Button key="submit" loading={confirmLoading} onClick={this.onFormModalConfirm}>提交</Button>

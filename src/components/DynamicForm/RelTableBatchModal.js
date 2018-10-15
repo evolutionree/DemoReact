@@ -14,7 +14,7 @@ const formItemLayout = { labelCol: { span: 4 }, wrapperCol: { span: 20 } };
 class RelTableBatchModal extends Component {
   static propTypes = {
     visible: PropTypes.bool.isRequired,
-    cancel: PropTypes.func.isRequired,
+    onCancel: PropTypes.func.isRequired,
     onConfirm: PropTypes.func.isRequired,
     protocl: PropTypes.object
   };
