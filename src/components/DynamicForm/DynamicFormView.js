@@ -109,7 +109,8 @@ class DynamicFormView extends React.Component {
         lastGroup = {
           title: field.displayname,
           foldable: field.fieldconfig.foldable === 1,
-          fields: []
+          fields: [],
+          isVisible: field.fieldconfig.isVisible === 1
         };
         groups.push(lastGroup);
         return;
@@ -126,7 +127,7 @@ class DynamicFormView extends React.Component {
         <Row gutter={24} style={{ margin: 0 }}>
           {this.renderFields(noGroupFields)}
           {groups.map(group => (
-            <FoldableGroup key={group.title} title={group.title} foldable={group.foldable} theme="light">
+            <FoldableGroup key={group.title} title={group.title} isVisible={group.isVisible} foldable={group.foldable} theme="light">
               {this.renderFields(group.fields)}
             </FoldableGroup>
           ))}
