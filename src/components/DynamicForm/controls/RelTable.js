@@ -516,7 +516,10 @@ class RelTable extends Component {
   };
 
   componentDidUpdate() {
-    setTimeout(this.setAlignTableWidthAndHeight(), 10000);
+    this.setAlignTableWidthAndHeight();
+    setTimeout(() => {
+      this.setAlignTableWidthAndHeight();
+    }, 500);
   }
 
   componentWillUnmount() {
@@ -562,21 +565,19 @@ class RelTable extends Component {
       let realBody_trHeight = realBody[i].getBoundingClientRect().height;
       let fixedLeftBody_trHeight = fixedLeftBody[i].getBoundingClientRect().height;
 
-      //fixedLeftBody[i].children[0].style.width = fixedWidth + 'px';
       if (realBody_trHeight !== fixedLeftBody_trHeight) {
         fixedLeftBody[i].children[0].style.height = realBody_trHeight + 'px';
       }
     }
 
+    for(let i = 0; i < realHeader.length; i++) {
+      //console.log(realHeader[i])
+    }
     for (let i = 0; i < fixedLeftBody.length; i++) {
       const fixedLeftBody_Tds = fixedLeftBody[i].children[0].children;
-      const relBody_Tds = realBody[i].children[0].children;
       for (let j = 0; j < fixedLeftBody_Tds.length; j++) {
-        const fixedLeftBody_Td_Width = fixedLeftBody_Tds[j].getBoundingClientRect().width;
-        const relBody_Td_Width = relBody_Tds[j].getBoundingClientRect().width;
-        fixedLeftBody_Tds[j].style.width = Math.max(fixedLeftBody_Td_Width, relBody_Td_Width) + 'px';
-        fixedLeftBody_Tds[j].children[0].style.maxWidth = '201px';
-        relBody_Tds[j].style.width = Math.max(fixedLeftBody_Td_Width, relBody_Td_Width) + 'px';
+        fixedLeftBody_Tds[j].style.width = realHeader[j].getBoundingClientRect().width + 'px';
+        fixedLeftBody_Tds[j].children[0].style.width = realHeader[j].getBoundingClientRect().width - 21 + 'px';
       }
     }
 
