@@ -517,7 +517,10 @@ class RelTable extends Component {
   };
 
   componentDidUpdate() {
-    setTimeout(this.setAlignTableWidthAndHeight(), 10000);
+    this.setAlignTableWidthAndHeight();
+    setTimeout(() => {
+      this.setAlignTableWidthAndHeight();
+    }, 500);
   }
 
   componentWillUnmount() {
@@ -555,15 +558,6 @@ class RelTable extends Component {
     this.fixTopWrapRef.style.width = `calc(100% - ${scrollWidth}px)`;
     this.fixTopWrapRef.style.height = this.relTableWrapRef.children[0].children[0].getBoundingClientRect().height + 1 + 'px';
 
-    //列表的左固定的表格
-    let fixedWidth = 0
-    for (let i = 0; i < realHeader.length; i++) {
-      if (i < 2) {
-        fixedWidth += realHeader[i].getBoundingClientRect().width;
-      }
-    }
-    this.fixLeftWrapRef.style.width = fixedWidth + 'px';
-
     //列表的原始表头的行
     const realBody = this.relTableRef.children;
     //列表的左固定表的行
@@ -572,11 +566,30 @@ class RelTable extends Component {
       let realBody_trHeight = realBody[i].getBoundingClientRect().height;
       let fixedLeftBody_trHeight = fixedLeftBody[i].getBoundingClientRect().height;
 
-      fixedLeftBody[i].children[0].style.width = fixedWidth + 'px';
       if (realBody_trHeight !== fixedLeftBody_trHeight) {
         fixedLeftBody[i].children[0].style.height = realBody_trHeight + 'px';
       }
     }
+
+    for(let i = 0; i < realHeader.length; i++) {
+      //console.log(realHeader[i])
+    }
+    for (let i = 0; i < fixedLeftBody.length; i++) {
+      const fixedLeftBody_Tds = fixedLeftBody[i].children[0].children;
+      for (let j = 0; j < fixedLeftBody_Tds.length; j++) {
+        fixedLeftBody_Tds[j].style.width = realHeader[j].getBoundingClientRect().width + 'px';
+        fixedLeftBody_Tds[j].children[0].style.width = realHeader[j].getBoundingClientRect().width - 21 + 'px';
+      }
+    }
+
+    //列表的左固定的表格
+    let fixedWidth = 0
+    for (let i = 0; i < realHeader.length; i++) {
+      if (i < 2) {
+        fixedWidth += realHeader[i].getBoundingClientRect().width;
+      }
+    }
+    this.fixLeftWrapRef.style.width = fixedWidth + 'px';
 
     let scrollHeight = 0;
     if (horizontal) {
