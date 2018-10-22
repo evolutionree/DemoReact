@@ -27,8 +27,8 @@ function processFormValues(values, editingRecord) {
   let {
     fieldId,
     controlType,
-    fieldLabel,
-    displayName,
+    fieldlabel_lang,
+    displayname_lang,
     recStatus,
     fieldName,
     ...fieldConfig
@@ -36,7 +36,7 @@ function processFormValues(values, editingRecord) {
   /* eslint-enable */
 
   controlType = parseInt(controlType, 10);
-  displayName = displayName || fieldLabel;
+  // displayName = displayName || fieldLabel;
 
   const extraFieldConfig = genExtraFieldConfig(controlType);
   const fieldConfigJSON = JSON.stringify({
@@ -46,8 +46,8 @@ function processFormValues(values, editingRecord) {
 
   const retValues = {
     controlType,
-    fieldLabel,
-    displayName,
+    fieldlabel_lang,
+    displayname_lang,
     recStatus,
     fieldName,
     fieldConfig: fieldConfigJSON,
