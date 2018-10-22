@@ -55,7 +55,7 @@ function FieldForm({ form, isEdit, entityFields, entityId }) {
         )}
       </FormItem>
       <FormItem label="字段名称" key="fieldLabel">
-        {getFieldDecorator('fieldLabel_lang', {
+        {getFieldDecorator('fieldlabel_lang', {
           rules: [
             { required: true, message: '关联对象显示字段' },
             { validator: IntlInputRequireValidator }
@@ -63,7 +63,7 @@ function FieldForm({ form, isEdit, entityFields, entityId }) {
         })(<IntlInput placeholder="字段名称" maxLength={20} />)}
       </FormItem>
       <FormItem label="显示名称" key="displayName">
-        {getFieldDecorator('displayName_lang', {
+        {getFieldDecorator('displayname_lang', {
 
         })(<IntlInput placeholder="显示名称" maxLength={20} />)}
       </FormItem>
