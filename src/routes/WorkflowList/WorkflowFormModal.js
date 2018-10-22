@@ -1,7 +1,10 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Modal, Form, Input, Select, Radio, Checkbox, InputNumber, message } from 'antd';
+import IntlInput from '../../components/UKComponent/Form/IntlInput';
+import { getIntlText } from '../../components/UKComponent/Form/IntlText';
 import { query as queryEntities } from '../../services/entity';
+import { IntlInputRequireValidator } from '../../utils/validator';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -25,9 +28,10 @@ class WorkflowFormModal extends Component {
   componentWillReceiveProps(nextProps) {
     const isOpening = !this.props.visible && nextProps.visible;
     if (isOpening) {
+      const { form, editingRecord } = nextProps;
+      form.resetFields();
       this.fetchRelEntities();
 
-      const { form, editingRecord } = nextProps;
       if (editingRecord) {
         form.setFieldsValue({
           ...editingRecord,
@@ -108,11 +112,14 @@ class WorkflowFormModal extends Component {
       >
         <Form>
           <FormItem label="流程名称">
-            {getFieldDecorator('flowname', {
+            {getFieldDecorator('flowname_lang', {
               initialValue: '',
-              rules: [{ required: true, message: '请输入流程名称' }]
+              rules: [
+                { required: true, message: '请输入流程名称' },
+                { validator: IntlInputRequireValidator }
+              ]
             })(
-              <Input disabled={isEdit} placeholder="请输入流程名称" maxLength={10} />
+              <IntlInput disabled={isEdit} placeholder="请输入页签名称" maxLength={10} />
             )}
           </FormItem>
           <FormItem label="流程类型">
@@ -154,7 +161,7 @@ class WorkflowFormModal extends Component {
             })(
               <Select placeholder="请选择关联实体" disabled={isEdit}>
                 {this.state.entities.map(entity => (
-                  <Option key={entity.entityid}>{entity.entityname}</Option>
+                  <Option key={entity.entityid}>{getIntlText('entityname', entity)}</Option>
                 ))}
               </Select>
             )}

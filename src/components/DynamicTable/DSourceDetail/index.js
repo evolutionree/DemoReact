@@ -55,8 +55,7 @@ class DSourceDetail extends PureComponent {
       });
     } else {
       this.setState({
-        visible: nextProps.visible,
-        data: {}
+        visible: nextProps.visible
       });
     }
   }
@@ -134,6 +133,7 @@ class DSourceDetail extends PureComponent {
               entityTypeId={data.rectype || entityId}
               fields={protocol}
               value={data}
+              cols={24}
             />
           </div>
         </Spin>

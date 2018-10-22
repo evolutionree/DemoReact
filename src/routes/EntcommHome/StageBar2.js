@@ -8,6 +8,7 @@ import styles from './styles.less';
 import { getGeneralProtocol, queryEntityStage, queryStageInfo, saveStageData, pushStage, backStage, restartSaleStage } from '../../services/entcomm';
 import StageFlowModal from './StageFlowModal';
 import StageBarUpload from "./StageBarUpload";
+import IntlText from '../../components/UKComponent/Form/IntlText';
 import { formatFileSize } from '../../utils';
 
 class StageBar extends Component {
@@ -107,6 +108,16 @@ class StageBar extends Component {
    */
   parseStageInfo = stageInfo => {
     const { eventset, oppinfoset, dynamicentityset, dynamicvalcursor } = stageInfo;
+    if (oppinfoset && oppinfoset.length) {
+      this.setState({
+        entityTypeId: oppinfoset[0].typeid || oppinfoset[0].entityid
+      });
+    } else if (dynamicentityset && dynamicentityset[0] && dynamicentityset[0].typeid) {
+      this.setState({
+        entityTypeId: dynamicentityset[0].typeid
+      });
+    }
+
     const fetchEntityFields = (oppinfoset && oppinfoset.length)
       ? getGeneralProtocol({
         typeid: oppinfoset[0].typeid || oppinfoset[0].entityid,
@@ -157,9 +168,9 @@ class StageBar extends Component {
       return {
         keyEvents,
         entityFields,
-        entityFieldsData,
+        entityFieldsData: this.getEditData(entityFieldsData, entityFields),
         customFields,
-        customFieldsData,
+        customFieldsData: this.getEditData(customFieldsData, customFields),
         rawInfo: stageInfo
       };
     });
@@ -201,7 +212,6 @@ class StageBar extends Component {
           relRecId: this.props.recordDetail.recid,
           isweb: 1
         };
-        console.log(params);
         const stageName = this.getStageName(showingStageId);
         if (stageName === '赢单' || stageName === '输单') {
           params.SalesStageFlag = 1;
@@ -590,7 +600,6 @@ class StageBar extends Component {
     let i = 0;
     const { flowEntity } = this.state;
     const relEntityId = this.props.entityId;
-    console.log(this.state);
     const relRecId = this.props.recordDetail.recid;
     const stageList = [];
     for (i = 0; i < this.state.stageList.length; i += 1) {
@@ -634,7 +643,7 @@ class StageBar extends Component {
           return (
             <li className={liCls} key={item.salesstageid}
                 onClick={() => { this.toggleStageDetail(item); }}>
-              <div className={styles.stagetext}>{item.stagename}</div>
+              <div className={styles.stagetext}><IntlText name="stagename" value={item} /></div>
               <div className={styles.stageicon}>
                 <Icon type="down" />
               </div>
@@ -655,6 +664,22 @@ class StageBar extends Component {
       </ul>
     );
   };
+
+  getEditData(recordDetail, protocol) { //表格数据 需要再套一层
+    const retData = { ...recordDetail };
+    protocol.forEach(field => {
+      const { controltype, fieldname, fieldconfig } = field;
+      if (controltype === 24 && retData[fieldname]) {
+        retData[fieldname] = retData[fieldname].map(item => {
+          return {
+            TypeId: fieldconfig.entityId,
+            FieldData: item
+          };
+        });
+      }
+    });
+    return retData;
+  }
 
   renderStageDetail = () => {
     if (!this.state.showingStageId) return null;
@@ -745,6 +770,7 @@ class StageBar extends Component {
               horizontal
               ref={form => this.entityForm = form}
               entityId={this.props.entityId}
+              entityTypeId={this.state.entityTypeId}
               fields={entityFields}
               value={entityFieldsData}
               refEntityData={this.props.recordDetail}
@@ -761,6 +787,7 @@ class StageBar extends Component {
               horizontal
               ref={form => this.customForm = form}
               entityId={this.props.entityId}
+              entityTypeId={this.state.entityTypeId}
               fields={customFields}
               value={customFieldsData}
               refEntityData={this.props.recordDetail}

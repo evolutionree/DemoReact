@@ -28,7 +28,7 @@ export default {
         // TODO 获取流程详情
         const { data } = yield call(queryFlowJSONv2, flowId);
         const flowInfo = data.flow[0];
-        yield put({ type: 'putState', payload: { flowName: flowInfo && flowInfo.flowname } });
+        yield put({ type: 'putState', payload: { flowName: flowInfo && flowInfo.flowname, flowInfo } });
       } catch (e) {
         message.error(e.message || '获取流程数据失败');
       }

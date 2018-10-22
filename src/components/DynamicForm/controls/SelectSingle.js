@@ -1,9 +1,10 @@
 import React, { PropTypes, Component } from 'react';
-import ReactDom from 'react-dom';
 import { Select, Tooltip, Icon } from 'antd';
+import { is } from 'immutable';
 import _ from 'lodash';
 import connectBasicData from '../../../models/connectBasicData';
 import { queryYearWeekData } from '../../../services/basicdata';
+import IntlText from '../../UKComponent/Form/IntlText';
 import { blurByHelper } from './helpers';
 
 const Option = Select.Option;
@@ -55,6 +56,31 @@ class SelectSingle extends Component {
     // }
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    const thisProps = this.props || {};
+    const thisState = this.state || {};
+
+    if (Object.keys(thisProps).length !== Object.keys(nextProps).length || Object.keys(thisState).length !== Object.keys(nextState).length) {
+      return true;
+    }
+
+    for (const key in nextProps) {
+      if (!is(thisProps[key], nextProps[key])) {
+        //console.log('createJSEngineProxy_props:' + key);
+        return true;
+      }
+    }
+
+    for (const key in nextState) {
+      if (thisState[key] !== nextState[key] || !is(thisState[key], nextState[key])) {
+        //console.log('state:' + key);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   getTimeStamp(timeStr) {
     const timeStamp = Date.parse(new Date(timeStr));
     return timeStamp / 1000;
@@ -90,6 +116,7 @@ class SelectSingle extends Component {
       const options = dictionaryData[sourceId].map(dic => ({
         value: dic.dataid,
         label: dic.dataval,
+        label_lang: dic.dataval_lang,
         disabled: dic.recstatus === 0
       }));
       this.setState({ options }, this.setDataReady);
@@ -182,8 +209,9 @@ class SelectSingle extends Component {
     const { value, isReadOnly, onFocus } = this.props;
     const options = this.getOptions();
     return (
-      <div>
+      <div style={{ height: '32px' }}>
         <Select
+          showSearch
           value={value === null || value === undefined ? '' : (value + '')}
           disabled={isReadOnly === 1}
           onChange={this.onChange}
@@ -193,7 +221,7 @@ class SelectSingle extends Component {
         >
           <Option value="">- 请选择 -</Option>
           {options.map(opt => (
-            <Option key={opt.value + ''} disabled={opt.disabled}>{opt.label}</Option>
+            <Option key={opt.value + ''} disabled={opt.disabled}><IntlText name="label" value={opt} /></Option>
           ))}
         </Select>
         {

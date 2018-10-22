@@ -107,7 +107,7 @@ class RelTableView extends Component {
             <DynamicFieldView value={text} value_name={text_name} controlType={item.controltype} />
           </span>
         );
-      }, fixed: showFields.length >= 6 ? (index < 2 ? 'left' : null) : null };
+      }, fixed: showFields.length >= 6 ? (index < 1 ? 'left' : null) : null };
     })
 
     const scroll = showFields.length >= 6 ? { x: showFields.length * 200, y: 400 } : { x: '100%' }

@@ -52,11 +52,16 @@ class ParamsList extends React.Component {
     });
   }
 
-  handleFieldsChange(fieldKey, val) {
+  handleFieldsChange(fieldKey, val, field) {
+    let key = fieldKey;
+    if (field.intl) {
+      key = fieldKey + '_lang';
+    }
+
     this.setState({
       currFieldsValues: {
         ...this.state.currFieldsValues,
-        [fieldKey]: val
+        [key]: val
       }
     });
   }
@@ -107,12 +112,14 @@ class ParamsList extends React.Component {
             key={field.key}
             name={field.key}
             value={isEditing ? this.state.currFieldsValues[field.key] : item[field.key]}
+            value_lang={isEditing ? this.state.currFieldsValues[field.key + '_lang'] : item[field.key + '_lang']}
             editing={isEditing}
-            onChange={(val) => this.handleFieldsChange(field.key, val)}
+            onChange={(val) => this.handleFieldsChange(field.key, val, field)}
             onBlur={this.handleBlur}
             maxLength={field.maxLength}
             link={(item[field.key] === '赢单' || item[field.key] === '输单') ? false : field.link}
             onClick={this.paramsClickHandler.bind(this, item)}
+            isIntl={field.intl}
           />
         ))}
 

@@ -5,6 +5,8 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Modal, Form, Input, Select, Checkbox } from 'antd';
 import DataTable from './DataTable';
+import IntlInput from '../../components/UKComponent/Form/IntlInput';
+import { IntlInputRequireValidator } from '../../utils/validator';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -74,11 +76,14 @@ class FormModal extends Component {
       >
         <Form>
           <FormItem label="字典类型名称">
-            {getFieldDecorator('dictypename', {
+            {getFieldDecorator('dictypename_lang', {
               initialValue: '',
-              rules: [{ required: true, message: '请输入字典类型名称' }]
+              rules: [
+                { required: true, message: '请输入字典类型名称' },
+                { validator: IntlInputRequireValidator }
+              ]
             })(
-              <Input placeholder="请输入字典名称" maxLength="10" />
+              <IntlInput placeholder="请输入字典名称" maxLength="10" />
             )}
           </FormItem>
           <FormItem label="关联字典类型">

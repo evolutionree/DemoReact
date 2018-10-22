@@ -17,7 +17,7 @@ class ExportModal extends React.Component {
     onOk: React.PropTypes.func,
     onCancel: React.PropTypes.func,
     entityId: React.PropTypes.string.isRequired,
-    currentUser: React.PropTypes.string.isRequired,
+    currentUser: React.PropTypes.number.isRequired,
     protocol: React.PropTypes.array.isRequired
   };
   static defaultProps = {
@@ -107,9 +107,9 @@ class ExportModal extends React.Component {
                 }]
               })(
                 <Select>
-                  <Option value={0}>按web列表设置字段</Option>
-                  <Option value={1}>按个人显示设置字段</Option>
-                  <Option value={2}>全部字段导出</Option>
+                  <Option value="0">按web列表设置字段</Option>
+                  <Option value="1">按个人显示设置字段</Option>
+                  <Option value="2">全部字段导出</Option>
                 </Select>
               )}
             </FormItem>
@@ -134,9 +134,9 @@ class ExportModal extends React.Component {
                   }]
                 })(
                   <Select>
-                    <Option value={0}>数据冗余显示</Option>
-                    <Option value={1}>去除重复拆分显示</Option>
-                    <Option value={2}>去除重复合并显示</Option>
+                    <Option value="0">数据冗余显示</Option>
+                    <Option value="1">去除重复拆分显示</Option>
+                    <Option value="2">去除重复合并显示</Option>
                   </Select>
                 )}
               </FormItem> : null

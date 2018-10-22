@@ -1,6 +1,8 @@
 import React from 'react';
 import { Modal, Form, Input, Select, message, Radio } from 'antd';
 import SelectNumber from '../../components/SelectNumber';
+import IntlInput from '../../components/UKComponent/Form/IntlInput';
+import { getIntlText } from '../../components/UKComponent/Form/IntlText';
 import { query as queryEntityList } from '../../services/entity';
 
 const _ = require('lodash');
@@ -37,7 +39,7 @@ class EntitySelect extends React.Component {
     return (
       <Select value={value} onChange={onChange} {...rest}>
         {this.state.entityList.map(entity => (
-          <Option key={entity.entityid}>{entity.entityname}</Option>
+          <Option key={entity.entityid}>{getIntlText('entityname', entity)}</Option>
         ))}
       </Select>
     );
@@ -80,11 +82,11 @@ function DSourceFormModal({
            confirmLoading={savePending}>
       <Form>
         <FormItem label="数据源名称">
-          {decorate('datasourcename', {
+          {decorate('datasourcename_lang', {
             initialValue: '',
             rules: [{ required: true, message: '请输入数据源名称' }]
           })(
-            <Input placeholder="请输入数据源名称" />
+            <IntlInput placeholder="请输入数据源名称" />
           )}
         </FormItem>
         <FormItem label="状态">

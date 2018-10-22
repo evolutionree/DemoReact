@@ -25,7 +25,8 @@ export default {
     relTabs: [],
     entityStages: [],
     stageDetail: null,
-    mainFieldsConfig: {}
+    mainFieldsConfig: {},
+    firstLoad: true
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -157,7 +158,8 @@ export default {
         relTabs: [],
         entityStages: [],
         stageDetail: null,
-        mainFieldsConfig: {}
+        mainFieldsConfig: {},
+        firstLoad: true
       };
     }
   }

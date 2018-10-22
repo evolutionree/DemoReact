@@ -103,7 +103,20 @@ class DataGrid extends  React.Component {
     };
     this.setState({
       queryListParams: queryListParams
-    })
+    });
+
+    if (parameArray.length === 0) {
+      this.queryListData(url, {
+        DataSourceId: datasources.datasourcedefineid,
+        InstId: datasources.instid,
+        Parameters: {
+          ...getParameters(),
+          ['@pageindex']: current,
+          ['@pagesize']: pageSize,
+          ...(this.props.reportDataInjectedParams || {})
+        }
+      }, current, pageSize);
+    }
 
     for (let key in params) {
       if (parameArray.indexOf(key) > -1) {

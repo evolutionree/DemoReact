@@ -1,8 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import _ from 'lodash';
 import { Modal, Col, Row, Icon, message, Spin } from 'antd';
-import Search from '../../../components/Search';
-import Toolbar from '../../../components/Toolbar';
+import { is } from 'immutable';
 import { queryProductSerialData } from '../../../services/basicdata';
 import styles from './SelectUser.less';
 
@@ -41,6 +40,31 @@ class SelectProductSerialModal extends Component {
         currentSelected: nextProps.selected.map(i => i.id)
       }, this.fetchList);
     }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    const thisProps = this.props || {};
+    const thisState = this.state || {};
+
+    if (Object.keys(thisProps).length !== Object.keys(nextProps).length || Object.keys(thisState).length !== Object.keys(nextState).length) {
+      return true;
+    }
+
+    for (const key in nextProps) {
+      if (!is(thisProps[key], nextProps[key])) {
+        //console.log('createJSEngineProxy_props:' + key);
+        return true;
+      }
+    }
+
+    for (const key in nextState) {
+      if (thisState[key] !== nextState[key] || !is(thisState[key], nextState[key])) {
+        //console.log('state:' + key);
+        return true;
+      }
+    }
+
+    return false;
   }
 
   fetchList = () => {

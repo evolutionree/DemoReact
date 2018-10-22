@@ -44,7 +44,7 @@ export default {
           typeId: -1 // 独立实体
         };
         const { data } = yield call(queryEntities, params);
-        const entities = data.pagedata.filter(item => item.modeltype === 0 || item.modeltype === 2);
+        const entities = data.pagedata.filter(item => item.modeltype === 0 || item.modeltype === 2 || item.modeltype === 3);
         yield put({ type: 'queryEntitiesSuccess', payload: entities });
         if (entities && entities.length) {
           yield put({

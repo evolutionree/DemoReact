@@ -7,10 +7,9 @@ import { queryrules,trnasfer } from '../services/entityTransfer';
 class EntcommTransferModal extends Component {
   static propTypes = {
     visible: PropTypes.bool.isRequired,
-    routePath:PropTypes.string.isRequired,
+    routePath:PropTypes.string,
     buttoncode:PropTypes.string,
     entityId: PropTypes.string,
-    recordId: PropTypes.string,
     dstEntityId:PropTypes.string,
     onCancel: PropTypes.func.isRequired,
     onOk: PropTypes.func,
@@ -78,6 +77,9 @@ class EntcommTransferModal extends Component {
           entityRules: ruleArr,
           title: ruleArr[0].dstentityname
         });
+      } else {
+        this.props.onCancel();
+        message.error('没有获取到实体类型,无法操作');
       }
     })
   };
@@ -312,7 +314,6 @@ class EntcommTransferModal extends Component {
 
     const DynamicFormComponent =isAdd? DynamicFormAdd:DynamicFormEdit;
     const nextTitle=isAdd?'新增'+title:'编辑'+title;
-
     return (
       <div key={this.state.key}>
         {entityRules && <Modal
@@ -336,7 +337,7 @@ class EntcommTransferModal extends Component {
         onCancel={this.props.onCancel}
         onOk={this.handleSubmit}
         confirmLoading={confirmLoading}
-        width={hasTable ? 900 : 550}
+        width={document.body.clientWidth > 1400 ? 1200 : 800}
       >
         <DynamicFormComponent
           key={ selectedEntityType|| dstEntityId}

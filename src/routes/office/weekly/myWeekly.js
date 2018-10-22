@@ -9,7 +9,7 @@ import { groupBy } from './component/unit';
 import Styles from './weekly.less';
 
 
-function MyWeekly({ myWeeklistData, comment, commentParent, myWeekTotalPage, myWeekCurrentPage, loadMoreHandler }) {
+function MyWeekly({ receiveWeeklyDetailWeeklyProtocal, receiveWeeklyDetailSummaryProtocal, myWeeklistData, comment, commentParent, myWeekTotalPage, myWeekCurrentPage, loadMoreHandler }) {
   function renderHtml() {
     let html = [];
     _.forEach(groupBy(myWeeklistData), (value, key) => {
@@ -28,12 +28,14 @@ function MyWeekly({ myWeeklistData, comment, commentParent, myWeekTotalPage, myW
           {
             value.map((item, index) => {
               const detailData = item.detail;
+              const detailFields = item.weektype === 0 ? receiveWeeklyDetailWeeklyProtocal && receiveWeeklyDetailWeeklyProtocal.filter(field => !!field.fieldname && field.fieldname !== 'reportdate') :
+                receiveWeeklyDetailSummaryProtocal && receiveWeeklyDetailSummaryProtocal.filter(field => !!field.fieldname && field.fieldname !== 'reportdate');
               return <WeeklyListDetail dropMenu={pessionSummary ? ['详情', '编辑', '周总结'] : ['详情', '编辑']}
                                        key={index}
                                        data={item}
                                        onCommentParent={commentParent.bind(this, item.detail instanceof Array && item.detail.length > 0 && item.detail[0].dynamicid)}
                                        onComment={comment.bind(this, item.detail instanceof Array && item.detail.length > 0 && item.detail[0].dynamicid)}
-                                       detailFields={item.tempcontent && item.tempcontent.format.filter(field => !!field.fieldname && field.fieldname !== 'reportdate')}
+                                       detailFields={detailFields}
                                        detailValue={item.tempdata}
                                        commentList={detailData instanceof Array && detailData.length > 0 && detailData[0].commentlist && detailData[0].commentlist.detail} />;
             })

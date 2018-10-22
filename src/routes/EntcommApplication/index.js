@@ -7,6 +7,7 @@ import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import DynamicTable from '../../components/DynamicTable/index';
 import EntcommAddModal from '../../components/EntcommAddModal';
+import IntlText from '../../components/UKComponent/Form/IntlText';
 import RecordDetailModal from './RecordDetailModal';
 import RecordEditModal from './RecordEditModal';
 import TransferModal from './TransferModal';
@@ -14,6 +15,9 @@ import connectPermission from '../../models/connectPermission';
 import AdvanceSearchModal from './AdvanceSearchModal';
 import DynamicModal from './DynamicModal';
 import ExportModal from './ExportModal';
+import EntcommTransferModal from '../../components/EntcommTransferModal';
+import EntcommCopyModal from '../../components/EntcommCopyModal';
+import EntcommRepeatViewModal from '../../components/EntcommRepeatViewModal';
 
 const Option = Select.Option;
 
@@ -38,7 +42,9 @@ function EntcommList({
     entityTypes,
     selectedFlowObj,
                        onAddModalCanel,
-                       onAddModalDone
+                       onAddModalDone,
+                       funBtnInfo,
+                       copyData
   }) {
   function selectItems(items) {
     dispatch({ type: 'entcommApplication/currItems', payload: items });
@@ -59,6 +65,18 @@ function EntcommList({
       payload: 'add'
     });
   }
+
+  function queryRepeat() {
+    dispatch({
+      type: 'entcommList/showModals',
+      payload: 'repeatview'
+    });
+  }
+
+  function modalCancel() {
+    dispatch({ type: 'entcommList/showModals', payload: '' });
+  }
+
   function extraToolbarClickHandler(item) {
     if (item.buttoncode === 'CallService' || item.buttoncode === 'EntityDataOpenH5') {
       dispatch({
@@ -81,10 +99,20 @@ function EntcommList({
           recordId: currItems && currItems[0] && currItems[0].recid
         }
       });
+    } else if (item.buttoncode === 'transform') {
+      dispatch({
+        type: 'entcommApplication/putState',
+        payload: { showModals: 'changeForm', funBtnInfo: item }
+      });
+    } else if (item.buttoncode === 'copybutton') {
+      dispatch({
+        type: 'entcommApplication/queryCopyData'
+      });
     }
   }
 
   function extraButtonClickHandler(item) {
+    dispatch({ type: 'entcommApplication/showModals', payload: '' });
     dispatch({
       type: 'entcommApplication/putState',
       payload: {
@@ -95,6 +123,7 @@ function EntcommList({
   }
 
   function showDetail(record) {
+    dispatch({ type: 'entcommApplication/currItems', payload: [record] });
     dispatch({
       type: 'entcommApplication/showModals',
       payload: `recordDetail?${entityId}:${record.recid}`
@@ -201,10 +230,9 @@ function EntcommList({
       single = false;
       multiple = true;
     }
-    return { label: item.title, handler: extraToolbarClickHandler.bind(this, item), single: single, multiple: multiple, show: true };
+    return { label: <IntlText name="title" value={item} />, handler: extraToolbarClickHandler.bind(this, item), single: single, multiple: multiple, show: true };
   });
   ajaxToolbarActions = ajaxToolbarActions || [];
-
   return (
     <Page title={entityName}>
       <Toolbar
@@ -216,15 +244,16 @@ function EntcommList({
       >
         <Select style={{ minWidth: '120px' }} value={menuId} onChange={onMenuChange}>
           {menus.map(menu => (
-            <Option key={menu.menuId}>{menu.menuName}</Option>
+            <Option key={menu.menuId}><IntlText name="menuName" value={menu} /></Option>
           ))}
         </Select>
         {checkFunc('EntityDataAdd') && <Button onClick={openAdd}>新增</Button>}
+        {checkFunc('EntityDataSearch') && <Button onClick={queryRepeat}>查重</Button>}
         {shouldShowImport() && <Button onClick={importData}>导入</Button>}
         {shouldShowExport() && <Button onClick={exportData}>导出</Button>}
         {
           extraButtonData && extraButtonData instanceof Array && extraButtonData.map((item, index) => {
-            return <Button onClick={extraButtonClickHandler} key={index}>{item.title}</Button>;
+            return <Button onClick={extraButtonClickHandler} key={index}><IntlText name="title" value={item} /></Button>;
           })
         }
         <Toolbar.Right>
@@ -279,11 +308,33 @@ function EntcommList({
         done={onAddModalDone}
       />
       <TransferModal />
-      <RecordDetailModal />
+      <RecordDetailModal onExtraToolbarClick={extraToolbarClickHandler} onExtraBtnClick={extraButtonClickHandler} />
       <RecordEditModal />
       <AdvanceSearchModal />
       <DynamicModal />
       <ExportModal currentUser={currentUser} />
+      <EntcommTransferModal
+        visible={/changeForm/.test(showModals)}
+        dstEntityId={funBtnInfo && funBtnInfo.extradata.dstentityid}
+        routePath={funBtnInfo && funBtnInfo.routepath}
+        buttoncode={funBtnInfo && funBtnInfo.funccode}
+        entityId={entityId}
+        recordId={currItems.length > 0 && currItems[0].recid}
+        onCancel={onAddModalDone}
+      />
+      <EntcommCopyModal
+        visible={/showCopy/.test(showModals)}
+        entityId={entityId}
+        entityTypes={entityTypes}
+        copyData={copyData}
+        currentUser={currentUser}
+        onCancel={onAddModalCanel}
+        onDone={onAddModalDone}
+      />
+      <EntcommRepeatViewModal visible={/repeatview/.test(showModals)}
+                              entityId={entityId}
+                              simpleSearchKey={simpleSearchKey}
+                              onCancel={modalCancel} />
     </Page>
   );
 }

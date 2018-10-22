@@ -13,7 +13,7 @@ class Search extends React.Component {
     mode: React.PropTypes.oneOf(['button', 'icon'])
   };
   static defaultProps = {
-    maxLength: 20,
+    maxLength: 200,
     mode: 'button'
   };
 

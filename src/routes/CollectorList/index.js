@@ -6,6 +6,7 @@ import Page from '../../components/Page';
 import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import CollectorFormModal from './CollectorFormModal';
+import { getIntlText } from '../../components/UKComponent/Form/IntlText';
 
 const Option = Select.Option;
 const Column = Table.Column;
@@ -65,8 +66,9 @@ function CollectorList({
           key="remindername"
           dataIndex="remindername"
           render={(val, record) => {
-            const remindername = encodeURI(record.remindername);
-            return <Link to={`collector/${record.reminderid}/${remindername}`}>{val}</Link>;
+            const renderIntlText = getIntlText('remindername', record);
+            const remindername = encodeURI(renderIntlText);
+            return <Link to={`collector/${record.reminderid}/${remindername}`}>{renderIntlText}</Link>;
           }}
         />
         <Column title="关联实体" key="entityname" dataIndex="entityname" />

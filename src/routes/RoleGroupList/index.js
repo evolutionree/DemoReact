@@ -11,19 +11,20 @@ function RoleGroups({
   checkFunc
 }) {
   function handleSave(data) {
-    dispatch({ type: 'roleGroups/save', payload: { groupname: data.rolegroupname } });
+    dispatch({ type: 'roleGroups/save', payload: { groupname_lang: data.rolegroupname_lang } });
   }
   function handleDel(item, index) {
     dispatch({ type: 'roleGroups/del', payload: item.rolegroupid });
   }
-  function handleUpdate({ rolegroupid, rolegroupname }) {
-    dispatch({ type: 'roleGroups/update', payload: { rolegroupid, groupname: rolegroupname } });
+  function handleUpdate({ rolegroupid, rolegroupname_lang }) {
+    dispatch({ type: 'roleGroups/update', payload: { rolegroupid, groupname_lang: rolegroupname_lang } });
   }
 
   const fields = [{
     key: 'rolegroupname',
     name: '角色分类名称',
-    maxLength: 20
+    maxLength: 20,
+    intl: true
   }];
 
   return (

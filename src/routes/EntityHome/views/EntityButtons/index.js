@@ -66,7 +66,6 @@ function EntityButtons({
     window.formRef.resetFields();
     createButton();
   }
-
   return (
     <div style={{ position: 'relative' }}>
       <Row gutter={10}>

@@ -205,19 +205,18 @@ export default {
         });
         return retData;
       }
-      const {
-        entityEditProtocol,
-        entityDetail
-      } = yield select(state => state.affairDetail);
+      let { entityEditProtocol } = yield select(state => state.affairDetail);
+      const { entityDetail } = yield select(state => state.affairDetail);
       if (!entityEditProtocol.length) {
         const { flowDetail, entityDetail } = yield select(state => state.affairDetail);
         const rectype = entityDetail.rectype || flowDetail.entityid;
         if (!rectype) return;
         try {
-          const { data: entityEditProtocol } = yield call(getGeneralProtocol, {
+          const result = yield call(getGeneralProtocol, {
             typeid: rectype,
             operatetype: 1
           });
+          entityEditProtocol = result.data;
           yield put({ type: 'putState', payload: { entityEditProtocol } });
         } catch (e) {
           message.error(e.message || '获取协议失败');

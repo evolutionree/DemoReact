@@ -1,11 +1,14 @@
 import React, { PropTypes, Component } from 'react';
-import { Form } from 'antd';
+import { Form, Row, Col } from 'antd';
 import classnames from 'classnames';
+import { is } from 'immutable';
 import FoldableGroup from './FoldableGroup';
 import DynamicField from './DynamicField';
+import { getIntlText } from '../UKComponent/Form/IntlText';
 import { getEntcommDetail } from '../../services/entcomm';
 
 const FormItem = Form.Item;
+const onlylineField = [2, 5, 15, 22, 23, 24];
 
 class CustomFormItem extends FormItem {
   renderValidateWrapper(c1, c2, c3) {
@@ -48,7 +51,8 @@ class DynamicFormBase extends Component {
     onFieldControlFocus: PropTypes.func,
     horizontal: PropTypes.bool,
     form: PropTypes.object,
-    jsEngine: PropTypes.object
+    jsEngine: PropTypes.object,
+    cols: PropTypes.number //单个表单项所占栅格宽 没有传 则默认走系统计算（超1400宽的客户端三列， 否则两列展示）
   };
   static defaultProps = {
     horizontal: false,
@@ -73,6 +77,38 @@ class DynamicFormBase extends Component {
         fieldsDecorator: this.generateFieldsDecorators(nextProps.fields),
         RelObjectConfig: this.getRelObjectConfig(nextProps.fields)
       });
+    }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    const thisProps = this.props || {};
+    const thisState = this.state || {};
+
+    if (Object.keys(thisProps).length !== Object.keys(nextProps).length || Object.keys(thisState).length !== Object.keys(nextState).length) {
+      return true;
+    }
+
+    for (const key in nextProps) {
+      if (['form', 'wrappedComponentRef'].indexOf(key) === -1 && !is(thisProps[key], nextProps[key])) {
+        //console.log('DynamicFormBase_props:' + key);
+        return true;
+      }
+    }
+
+    for (const key in nextState) {
+      if (thisState[key] !== nextState[key] || !is(thisState[key], nextState[key])) {
+        //console.log('DynamicFormBase_state:' + key);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  componentDidMount() { //表格批量新增的时候  需要执行配置JS  base2文件才有效 只是为了统一文件内容
+    const { batchAddInfo_type, batchAddInfo_fieldname, batchAddInfo_fieldid } = this.props;
+    if (batchAddInfo_type === 'add') {
+      this.onFieldValueChange(batchAddInfo_fieldname, batchAddInfo_fieldid);
     }
   }
 
@@ -174,7 +210,7 @@ class DynamicFormBase extends Component {
 
   getFormItemLayout = () => {
     return this.getFormLayout() === 'horizontal'
-      ? { labelCol: { span: 4 }, wrapperCol: { span: 20 } }
+      ? { labelCol: { span: 6 }, wrapperCol: { span: 18 } }
       : null;
   };
 
@@ -190,7 +226,8 @@ class DynamicFormBase extends Component {
         lastGroup = {
           title: field.displayname,
           foldable: field.fieldconfig.foldable === 1,
-          fields: []
+          fields: [],
+          isVisible: field.fieldconfig.isVisible === 1
         };
         groups.push(lastGroup);
         return;
@@ -217,7 +254,6 @@ class DynamicFormBase extends Component {
   };
 
   onFieldValueChange = (fieldName, fieldid, newValue, isFromApi) => {
-    if (isFromApi) return;
     const relObject = this.state.RelObjectConfig;
     relObject.map(item => {
       const fieldconfig = item.fieldconfig;
@@ -233,7 +269,8 @@ class DynamicFormBase extends Component {
           }
         }
       }
-    })
+    });
+    if (isFromApi) return;
     const { jsEngine } = this.props;
     if (jsEngine) {
       setTimeout(() => {
@@ -293,25 +330,53 @@ class DynamicFormBase extends Component {
       );
     }
 
+    let colNum = 24;
+    if (onlylineField.indexOf(field.controltype) > -1 || (field.controltype === 25 && field.fieldconfig.multiple === 1)) {
+      colNum = 24;
+    } else if (this.props.cols) {
+      colNum = this.props.cols;
+    } else {
+      colNum = document.body.clientWidth > 1400 ? 8 : 12;
+    }
+
     const fieldControl = this.renderFieldControl(field);
-    return this.renderFieldControlWrapper(field)(fieldControl);
+
+    let className = '';
+    if (this.getFormLayout() === 'horizontal' && !this.props.cols) { //TODO： 如果表单单元项 lable 和 formItem是横向布局， 有的单元项会占一行，导致lable的宽跟其他表单项对不齐  so...
+      if (document.body.clientWidth > 1400) {
+        className = colNum === 24 ? 'threeCol_onlylineFormItem' : '';
+      } else {
+        className = colNum === 24 ? 'twoCol_onlylineFormItem' : '';
+      }
+    }
+
+    return (
+      <Col span={colNum}
+           key={field.fieldname}
+           className={className}
+           style={{ padding: '0 10px' }}>
+        {this.renderFieldControlWrapper(field, colNum)(fieldControl)}
+      </Col>
+    );
   };
 
-  renderFieldControlWrapper = field => {
+  renderFieldControlWrapper = (field, colNum) => {
     const WrapFormItem = field.controltype === 24 ? CustomFormItem : FormItem; // 表格控件特殊处理
     const fieldConfig = field.fieldconfig || {};
     const cls = classnames([
       'dynamic-form-field',
       'dynamic-form-field-' + field.controltype
     ]);
+
+    const layout = this.getFormItemLayout(field.fieldname);
     return children => (
       <WrapFormItem
         key={field.fieldname}
-        label={field.displayname}
+        label={getIntlText('displayname', field)}
         colon={false}
         required={field.isrequire || fieldConfig.isRequiredJS}
         className={cls}
-        {...this.getFormItemLayout(field.fieldname)}
+        {...layout}
       >
         {children}
       </WrapFormItem>
@@ -345,7 +410,7 @@ class DynamicFormBase extends Component {
         value_name={value_name}
         fieldLabel={displayname}
         onFocus={this.onFieldFocus.bind(this, fieldname)}
-        quoteHandler={this.handleQuote.bind(this)}
+        quoteHandler={this.handleQuote}
         jsEngine={this.props.jsEngine}
       />
     );
@@ -355,12 +420,14 @@ class DynamicFormBase extends Component {
     const fieldsGroup = this.getFieldsGroup();
     return (
       <Form layout={this.getFormLayout()}>
-        {this.renderFields(fieldsGroup[0].fields)}
-        {fieldsGroup.slice(1).map(group => (
-          <FoldableGroup key={group.title} title={group.title} foldable={group.foldable}>
-            {this.renderFields(group.fields)}
-          </FoldableGroup>
-        ))}
+        <Row gutter={24}>
+          {this.renderFields(fieldsGroup[0].fields)}
+          {fieldsGroup.slice(1).map(group => (
+            <FoldableGroup key={group.title} title={group.title} isVisible={group.isVisible} foldable={group.foldable}>
+              {this.renderFields(group.fields)}
+            </FoldableGroup>
+          ))}
+        </Row>
       </Form>
     );
   }

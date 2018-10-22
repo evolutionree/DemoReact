@@ -22,7 +22,8 @@ import _ from 'lodash';
 import Styles from './EditMailPanel.less';
 import {
   validsendmaildata,
-  savedraft
+  savedraft,
+  queryMailDetail
 } from '../../../services/mails';
 
 const confirm = Modal.confirm;
@@ -171,9 +172,7 @@ class EditMailPanel extends Component {
         this.setState({
           queryLoading: true
         })
-        request('/api/mail/maildetail', {
-          method: 'post', body: JSON.stringify({ mailid: mailid })
-        }).then((result) => {
+        queryMailDetail(mailid).then((result) => {
           const { data: { maildetail } } = result;
           let setUmeditorContent = '';
           if (editMailType === 'draft') { //草稿箱
@@ -1065,7 +1064,7 @@ class EditMailPanel extends Component {
             </div>
           </div>
           <div style={{ width: 220, float: 'left', height: '100%' }}>
-            <AddressList data={this.state.editEmailFormData} setFormData={this.formDataChange} />
+            <AddressList key='AddressList' data={this.state.editEmailFormData} setFormData={this.formDataChange} />
           </div>
         </Spin>
       </div>

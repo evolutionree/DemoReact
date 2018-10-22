@@ -120,12 +120,12 @@ export default connect(
     const isEdit = /editDept/.test(showModals);
     if (isEdit) {
       fields = {
-        deptname: currentDept.deptname,
+        deptname_lang: currentDept.deptname_lang,
         pdeptid: currentDept.ancestor
       };
     } else {
       fields = {
-        deptname: '',
+        deptname_lang: '',
         pdeptid: currentDept.deptid
       };
     }

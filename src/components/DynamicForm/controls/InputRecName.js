@@ -7,7 +7,7 @@ const xiansuoNameFieldId = 'e61403f1-4511-49b9-a1c1-52a8cea855d1'; //线索名�
 
 const Text = createNormalInput('text', {
   props: {
-    maxLength: 200
+    maxLength: '200'
   }
 });
 

@@ -31,6 +31,17 @@ export async function queryUsers(params) {
 }
 
 /**
+ * 查询系统支持的语言环境
+ * @returns {Promise.<Array>}
+ */
+export async function querylanglist() {
+  return request('/api/MoreLanguage/morelanglist', {
+    method: 'post',
+    body: JSON.stringify({})
+  });
+}
+
+/**
  * 重置密码
  * @param userid
  * @returns {Promise.<Object>}
@@ -478,5 +489,36 @@ export async function updategroupName(params) {
   return request('api/chat/updategroup', {
     method: 'post',
     body: JSON.stringify(params)
+  });
+}
+
+
+
+/**
+ * 查询暂存列表
+ * {
+ "cacheid" : “fsdfasdfasfdsadfsafsa” //不传 cacheid ,则取所有的暂存列表
+}
+ * @returns {Promise.<Object>}
+ */
+export async function gettemporarylist(params) {
+  return request('api/dynamicentity/gettemporarylist', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+
+/**
+ * 删除暂存列表
+ * {
+ "cacheid" : “fsdfasdfasfdsadfsafsa”
+}
+ * @returns {Promise.<Object>}
+ */
+export async function deletetemporarylist(CacheIds) {
+  return request('api/dynamicentity/deletetemporarylist', {
+    method: 'post',
+    body: JSON.stringify({ CacheIds })
   });
 }

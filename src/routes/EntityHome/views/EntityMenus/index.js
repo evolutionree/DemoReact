@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'dva';
 import { Dropdown, Menu, Button, Table, Icon, message, Modal } from 'antd';
 import Toolbar from '../../../../components/Toolbar';
+import IntlText from '../../../../components/UKComponent/Form/IntlText';
 import MenuConfigModal from './MenuConfigModal';
 import styles from './EntityMenus.less';
 
@@ -45,13 +46,17 @@ function EntityMenus({
       </div>
     );
   }
+
+  function renderMenuNameCell(text, item, index) {
+    return <IntlText value={text} value_lang={item.menuname_lang} />;
+  }
   return (
     <div>
       <Toolbar>
         <Button onClick={add}>新增</Button>
       </Toolbar>
       <Table rowKey="menuid" dataSource={list} pagination={false}>
-        <Column title="名称" dataIndex="menuname" key="menuname" />
+        <Column title="名称" dataIndex="menuname" key="menuname" render={renderMenuNameCell} />
         {/* <Column title="页签规则" dataIndex="menurule" key="menurule" /> */}
         <Column title="操作" key="operaiton" render={renderOperationCell} />
       </Table>

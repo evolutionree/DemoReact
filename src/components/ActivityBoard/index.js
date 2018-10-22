@@ -28,7 +28,7 @@ class ActivityBoard extends Component {
         icon: PropTypes.string
       }).isRequired,
       time: PropTypes.string.isRequired,
-      content: PropTypes.string.isRequired
+      // content: PropTypes.string.isRequired
     })).isRequired,
     onLike: PropTypes.func.isRequired,
     onComment: PropTypes.func.isRequired,
@@ -59,7 +59,7 @@ class ActivityBoard extends Component {
 
   renderTemplate = () => {
     const { template, templateData } = this.props;
-    const fields = template.filter(field => !!field.fieldname);
+    const fields = template instanceof Array ? template.filter(field => !!field.fieldname) : [];
     return (
       <DynamicTemplateView fields={fields} value={templateData} />
     );
@@ -82,9 +82,10 @@ class ActivityBoard extends Component {
   };
 
   render() {
-    const { title, time, user, likes, comments, onShowDetail, children } = this.props;
+    const { style, title, time, user, likes, comments, onShowDetail, children } = this.props;
+
     return (
-      <div className={styles.wrap}>
+      <div className={styles.wrap} style={style}>
         <Button onClick={onShowDetail} className={styles.showdetailbtn} type="default">查看全部</Button>
         <div className={styles.titlebar}>
           <span className={styles.title}>{title}</span>

@@ -9,6 +9,7 @@ import Page from '../../components/Page';
 import FormModal from './formModal';
 import SetGlobalConfig from './setGlobalConfig';
 import Search from '../../components/Search';
+import IntlText from '../../components/UKComponent/Form/IntlText';
 
 function DicType({
                           dispatch,
@@ -50,7 +51,10 @@ function DicType({
     title: '字典类型名称',
     dataIndex: 'dictypename',
     key: 'dictypename',
-    width: 300
+    width: 300,
+    render: (text, record) => {
+      return <IntlText value={text} value_lang={record.dictypename_lang} />;
+    }
   }, {
     title: '关联字典名称',
     dataIndex: 'relatedictypname',

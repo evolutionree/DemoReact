@@ -151,3 +151,22 @@ export async function searchcustomerrepeat(params) {
     body: JSON.stringify(params)
   });
 }
+
+
+/**
+ * 查询数据源关联实体ID
+ * @param params
+ * {
+    "EntityId":"ac051b46-7a20-4848-9072-3b108f1de9b0",
+    "CheckName":"客户名称",
+    "Exact":0,//模糊查询
+    "searchdata": {}
+  }
+ * @returns {Object}
+ */
+export async function queryDatasourceInfo(datasourceid) {
+  return request('/api/datasource/getfieldrelation', {
+    method: 'post',
+    body: JSON.stringify({ datasourceid })
+  });
+}

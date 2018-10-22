@@ -1,5 +1,6 @@
 @import './_variables';
 
+
 body {
   background-color: #e7ecef;
 }
@@ -26,8 +27,58 @@ body {
 }
 
 :global {
-
   .uke {
+    .DynamicFormModal{
+        overflow: hidden;
+        .ant-modal-body{
+          min-height: 100px;
+          max-height: @ant-Modal-height;
+          overflow: auto;
+        }
+    }
+
+    .ant-form-item { //保持表单 在有校验不通过的时候  表单能对齐
+      margin-bottom: 18px;
+    }
+
+    .ant-form-item-with-help{ //保持表单 在有校验不通过的时候  表单能对齐
+      margin-bottom: 0px;
+    }
+
+    .ant-form-item-label{
+      padding-right: 8px;
+    }
+
+    .ant-form-item-label label {
+      font-size: 12px;
+    }
+
+    .ant-form-item-label label:after {
+      margin: 0;
+    }
+
+    .threeCol_onlylineFormItem {
+      .ant-form-item-label{
+        width: ~"calc(8.333333333% - 5px)";
+      }
+      .ant-form-item-control-wrapper{
+        width: ~"calc(91.666666667% + 5px)";
+      }
+    }
+
+    .twoCol_onlylineFormItem {
+      .ant-form-item-label{
+        width: ~"calc(12.5% - 5px)";
+      }
+      .ant-form-item-control-wrapper{
+        width: ~"calc(87.5% + 5px)";
+      }
+    }
+
+    .ant-form-explain{
+      font-size: 12px;
+    }
+
     .ant-input,
     .ant-input-number {
       line-height: 1.5;
@@ -134,7 +185,7 @@ body {
     }
 
     .ant-modal {
-      padding-bottom: 160px;
+      top: @ant-Modal-top
     }
     .ant-modal-header {
       padding-left: 22px;
@@ -152,12 +203,12 @@ body {
     }
     .ant-modal-footer {
       border-color: #f4f4f4;
-      text-align: center;
+      text-align: right;
       padding-top: 14px;
       padding-bottom: 14px;
     }
     .ant-modal-footer .ant-btn {
-      margin: 0 20px;
+      margin: 0 10px;
       padding-left: 24px;
       padding-right: 24px;
     }
@@ -191,6 +242,9 @@ body {
     }
   }
 
+  .ant-select-selection-selected-value{
+    max-height: 31px;
+  }
   /**
     fix 树形控件选项错位
    */
@@ -209,3 +263,15 @@ body {
     z-index: 9999!important;
   }
 }
+
+/* -webkit-滚动条 */
+::-webkit-scrollbar {width:10px;height:10px;}
+::-webkit-scrollbar-track {background-color:#a5a5a5;}
+::-webkit-scrollbar-track-piece {background-color:#F5F5F5;}
+::-webkit-scrollbar-thumb {
+  margin-right: 10px;
+  background-color:#a5a5a5;
+  border-radius: 12px;
+}
+::-webkit-scrollbar-thumb:hover {background-color:#999; cursor: pointer;}
+::-webkit-scrollbar-resizer {background-color:#FF6E00;}

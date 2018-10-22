@@ -1,10 +1,15 @@
 import React, { PropTypes } from 'react';
-import { Link } from 'dva/router';
-import { Icon, message } from 'antd';
+import { hashHistory } from 'react-router';
+import { Icon, message, Select } from 'antd';
+import { is } from 'immutable';
 import classnames from 'classnames';
 import DataSourceSelectModal from './DataSourceSelectModal';
 import styles from './SelectUser.less';
 import { checkHasPermission } from '../../../services/entcomm';
+import { queryDataSourceData } from '../../../services/datasource';
+import _ from 'lodash';
+
+const Option = Select.Option;
 
 class SelectDataSource extends React.Component {
   static propTypes = {
@@ -28,8 +33,36 @@ class SelectDataSource extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      modalVisible: false
+      modalVisible: false,
+      options: [],
+      refEntity: '',
+      refEntityName: ''
     };
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    const thisProps = this.props || {};
+    const thisState = this.state || {};
+
+    if (Object.keys(thisProps).length !== Object.keys(nextProps).length || Object.keys(thisState).length !== Object.keys(nextState).length) {
+      return true;
+    }
+
+    for (const key in nextProps) {
+      if (!is(thisProps[key], nextProps[key])) {
+        //console.log('createJSEngineProxy_props:' + key);
+        return true;
+      }
+    }
+
+    for (const key in nextState) {
+      if (thisState[key] !== nextState[key] || !is(thisState[key], nextState[key])) {
+        //console.log('state:' + key);
+        return true;
+      }
+    }
+
+    return false;
   }
 
   setValue = val => {
@@ -48,6 +81,7 @@ class SelectDataSource extends React.Component {
     const id = arrIdName.map(obj => obj.id).join(',');
     const name = arrIdName.map(obj => obj.name).join(',');
     this.props.onChange(JSON.stringify({ id, name }));
+    this.changeWithName(id, name);
   };
 
   showModal = () => {
@@ -93,11 +127,61 @@ class SelectDataSource extends React.Component {
     this.props.onChange();
   };
 
+  selectChange = (options, value) => {
+    const selectData = options instanceof Array && options.filter(item => value && value.indexOf(item.id) > -1);
+    const id = selectData.map(obj => obj.id).join(',');
+    const name = selectData.map(obj => obj.name).join(',');
+    this.props.onChange(JSON.stringify({ id, name }));
+    this.changeWithName(id, name);
+  }
+
+  changeWithName = (id, name) => {
+    if (this.props.onChangeWithName) {
+      this.props.onChangeWithName({
+        value: id,
+        value_name: name
+      });
+    }
+  }
+
+  queryOptions = (searchKey) => {
+    this.setState({ loading: true });
+    const params = {
+      sourceId: this.props.dataSource && this.props.dataSource.sourceId,
+      keyword: searchKey,
+      pageSize: 10,
+      pageIndex: 1,
+      queryData: []
+    };
+    const { designateDataSource } = this.props;
+    if (designateDataSource && typeof designateDataSource === 'object') {
+      Object.keys(designateDataSource).forEach(key => {
+        params.queryData.push({
+          [key]: designateDataSource[key],
+          islike: 0
+        });
+      });
+    }
+    queryDataSourceData(params).then(result => {
+      let options = result.data.page;
+      const { text, array } = this.parseValue();
+      options = _.uniqBy(_.concat(array, options), 'id');
+      this.setState({ loading: false, options });
+    }, err => {
+      this.setState({ loading: false });
+      console.error(err.message || '加载数据失败');
+    });
+  }
+
   render() {
+    let { options } = this.state;
+    const isReadOnly = this.props.isReadOnly === 1;
     const { text, array } = this.parseValue();
+    options = _.uniqBy(_.concat(array, options), 'id');
+
     const cls = classnames([styles.wrap, {
       [styles.empty]: !text,
-      [styles.disabled]: this.props.isReadOnly === 1
+      [styles.disabled]: isReadOnly
     }]);
 
     const iconCls = classnames([styles.iconClose, {//非禁用状态且有值得时候  支持删除操作
@@ -106,18 +190,30 @@ class SelectDataSource extends React.Component {
 
     return (
       <div className={cls} style={{ ...this.props.style }}>
-        <div
-          className="ant-input"
-          onClick={this.showModal}
-          title={text}
-        >
-          {text || this.props.placeholder}
-          <Icon type="close-circle" className={iconCls} onClick={this.iconClearHandler} />
+        <div className={styles.inputSelectWrap}>
+          <Select onChange={this.selectChange.bind(this, options)}
+                  onSearch={this.queryOptions}
+                  placeholder={this.props.placeholder}
+                  disabled={isReadOnly}
+                  mode={this.props.multiple === 1 ? 'multiple' : null}
+                  value={array.map(item => item.id)}
+                  allowClear
+          >
+            {
+              options instanceof Array && options.map(item => {
+                return <Option key={item.id}>{item.name}</Option>;
+              })
+            }
+          </Select>
+          <div className={classnames(styles.openModal, { [styles.openModalDisabled]: isReadOnly })} onClick={this.showModal}>
+            <Icon type="plus-square" />
+          </div>
         </div>
         <DataSourceSelectModal
           visible={this.state.modalVisible}
           designateDataSource={this.props.designateDataSource}
           selected={array}
+          allowadd={this.props.allowadd}
           sourceId={this.props.dataSource && this.props.dataSource.sourceId}
           onOk={this.handleOk}
           onCancel={this.hideModal}
@@ -128,19 +224,20 @@ class SelectDataSource extends React.Component {
   }
 }
 
-SelectDataSource.View = ({ value, value_name, entityId }) => {
-  if (!entityId) { // 没有entityid，以普通文本显示
-    const emptyText = <span style={{ color: '#999999' }}>(空)</span>;
+SelectDataSource.View = ({ value, value_name, dataSource }) => {
+  const dataSourceRelEntityId = dataSource && dataSource.entityId;
+  const emptyText = <span style={{ color: '#999999' }}>(空)</span>;
+  if (!dataSourceRelEntityId) { // 没有数据源关联实体id entityid，以普通文本显示
     const text = value_name !== undefined ? value_name : value;
-    return <div>{text ? (text + '') : emptyText}</div>;
+    return <div className={styles.dataSourceViewWrap}>{text ? (text + '') : emptyText}</div>;
   }
 
-  if (!value || !value_name) return null;
-  const linkUrl = `/entcomm/${entityId}/${value.id}`;
+  if (!value || !value_name) return <div className={styles.dataSourceViewWrap}>{emptyText}</div>;
+  const linkUrl = `#/entcomm/${dataSourceRelEntityId}/${value.id}`;
 
   function redirect() {
     checkHasPermission({
-      entityid: entityId,
+      entityid: dataSourceRelEntityId,
       recid: value.id
     }).then(result => {
       if (result.data === '0') {
@@ -148,7 +245,8 @@ SelectDataSource.View = ({ value, value_name, entityId }) => {
       } else if (result.data === '2') {
         message.error('该数据已删除，无法查看');
       } else {
-        window.open('#' + linkUrl);
+        window.open(linkUrl, '_blank');
+        // hashHistory.push(linkUrl);
       }
     }, err => {
       message.error('获取超时，请检查网络!');
@@ -156,9 +254,8 @@ SelectDataSource.View = ({ value, value_name, entityId }) => {
   }
 
   return (
-    <div>
+    <div className={styles.dataSourceViewWrap}>
       <a href="javascript:;" onClick={redirect}>{value_name}</a>
-      {/*<Link to={linkUrl} target="_blank">{value_name}</Link>*/}
     </div>
   );
 };

@@ -1,13 +1,14 @@
 import React, { Component, PropTypes } from 'react';
 import * as _ from 'lodash';
+import { is } from 'immutable';
 import { Modal } from 'antd';
 import { getAuthedHeaders } from '../../utils/request';
 import { queryEntityDetail } from '../../services/entity';
 import { getLocalAuthentication } from '../../services/authentication';
 
-function debugMsg(msg) {
+function debugMsg(type, msg) {
   Modal.info({
-    title: 'Debug',
+    title: type,
     content: msg,
     okText: 'OK'
   });
@@ -78,7 +79,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       }
 
       this.setState({ fields: nextProps.fields }, () => {
-        if (this.globalJS && !this.globalJSExecuted && this.props.fields.length) {
+        if (this.globalJS && !this.globalJSExecuted && nextProps.fields.length) {
           setTimeout(() => {
             this.excuteJS(this.globalJS, 'global');
           }, 0);
@@ -104,6 +105,31 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       //     // this.handleFieldValueChange(key);
       //   }
       // });
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+      const thisProps = this.props || {};
+      const thisState = this.state || {};
+
+      if (Object.keys(thisProps).length !== Object.keys(nextProps).length || Object.keys(thisState).length !== Object.keys(nextState).length) {
+        return true;
+      }
+
+      for (const key in nextProps) {
+        if (['form', 'wrappedComponentRef'].indexOf(key) === -1 && !is(thisProps[key], nextProps[key])) {
+          //console.log('createJSEngineProxy_props:' + key);
+          return true;
+        }
+      }
+
+      for (const key in nextState) {
+        if (thisState[key] !== nextState[key] || !is(thisState[key], nextState[key])) {
+          //console.log('state:' + key);
+          return true;
+        }
+      }
+
+      return false;
     }
 
     validateFields = (opts, callback) => {
@@ -165,9 +191,9 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
 
     alert = (type, content) => {
       if (typeof content === 'object') {
-        debugMsg(JSON.stringify(content));
+        debugMsg(type, JSON.stringify(content));
       } else {
-        debugMsg(content);
+        debugMsg(type, content);
       }
     };
 
@@ -314,6 +340,14 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       }
     };
 
+    getTableFields = (fieldName) => {
+      if (this.getFieldControlType(fieldName) !== 24) return [];
+      const instance = this.getFieldComponentInstance(fieldName);
+      if (instance && instance.getFields) {
+        return instance.getFields();
+      }
+    }
+
     designateDataSource = (fieldName, ids) => {
       if (ids === undefined || ids === null) ids = '';
       this.setFieldConfig(fieldName, {
@@ -365,6 +399,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     designateNodes = (fieldName, nodePath, includeSubNode = false) => {
+      //TODO:Android端开发湛强 说这个函数不再使用了  具体原因我,,,,听不懂,,,,
       if (!nodePath) return;
       const conf = this.getFieldConfig(fieldName);
       if (!conf) return;
@@ -530,13 +565,17 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
 
     setFieldConfig = (fieldName, config) => {
       const field = this.getFieldByName(fieldName);
-      if (field) {
-        field.fieldconfig = {
-          ...field.fieldconfig,
-          ...config
-        };
-      }
-      this.setState({ fields: [...this.state.fields] });
+      const newFields = this.props.fields.map(item => {
+        const newItem = item;
+        if (field && item.fieldid === field.fieldid) {
+          newItem.fieldconfig = {
+            ...item.fieldconfig,
+            ...config
+          };
+        }
+        return newItem;
+      });
+      this.setState({ fields: newFields });
     };
 
     getFieldByName = (fieldName) => {

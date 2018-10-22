@@ -1,3 +1,12 @@
+.clearfix{
+  zoom:1
+}
+.clearfix:after{
+  content:"";
+  display:block;
+  clear:both;
+}
+
 .dynamictable {
   :global {
     .ant-table-thead > tr > th,
@@ -38,4 +47,18 @@
   white-space: nowrap;//不允许换行
   overflow: hidden;//超出宽度不显示
   text-overflow: ellipsis;//规定当文本溢出包含元素时显示省略号。
+}
+
+.dataSoureceCellWrap{
+  .clearfix;
+  div:first-of-type{
+    float: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  >i{
+    padding-left: 6px;
+    cursor: pointer;
+  }
 }

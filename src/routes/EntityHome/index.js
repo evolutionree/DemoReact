@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'dva';
 import Page from '../../components/Page';
 import LinkTab from '../../components/LinkTab';
+import { getIntlText } from '../../components/UKComponent/Form/IntlText';
 import { checkIsDev } from '../../utils';
 
 const tabVisibleMap = {
@@ -13,6 +14,7 @@ const tabVisibleMap = {
 function EntityConfig({
   dispatch,
   entityName,
+  entityInfo,
   params,
   showBtns,
   children
@@ -39,7 +41,7 @@ function EntityConfig({
     </LinkTab.Group>
   );
   return (
-    <Page title={`实体配置 - ${entityName}`} fixedTop={tabbar} showGoBack goBackPath="/entity">
+    <Page title={<span>实体配置 - {getIntlText('entityname', entityInfo)}</span>} fixedTop={tabbar} showGoBack goBackPath="/entity">
       {children}
     </Page>
   );

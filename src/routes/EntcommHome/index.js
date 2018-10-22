@@ -6,6 +6,8 @@ import { HomePageMainFieldsView } from '../../components/DynamicForm';
 import StageBar from './StageBar2';
 import connectPermission from '../../models/connectPermission';
 import { Icon } from "antd";
+import IntlText from '../../components/UKComponent/Form/IntlText';
+import { hashHistory } from 'react-router';
 
 function EntcommHome({
   checkFunc,
@@ -16,7 +18,9 @@ function EntcommHome({
   children,
   location,
   mainFieldsConfig,
-  toggleFollow
+  toggleFollow,
+                       firstLoad,
+                       stopAutoLink
 }) {
   const entityId = params.entityId;
   const recordId = params.recordId;
@@ -29,8 +33,8 @@ function EntcommHome({
       {'f9db9d79-e94b-4678-a5cc-aa6e281c1246' === entityId && <LinkTab to={`/entcomm/${entityId}/${recordId}/relationtree`}>客户关系</LinkTab>}*/}
       {[...relTabs.map(t => (
         t.entitytaburl ?
-        <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/${t.entitytaburl}`}>{t.relname}</LinkTab> :
-        <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/rel/${t.relid}/${t.relentityid}`}>{t.relname}</LinkTab>
+        <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/${t.entitytaburl}`}><IntlText name="relname" value={t} /></LinkTab> :
+        <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/rel/${t.relid}/${t.relentityid}`}><IntlText name="relname" value={t} /></LinkTab>
       ))]}
       {'9834d2bc-084a-49de-bbbf-02f35c191b64' === entityId && <LinkTab to={`/entcomm/${entityId}/${recordId}/relationschema`}>关系图</LinkTab>}
     </LinkTab.Group>
@@ -53,6 +57,23 @@ function EntcommHome({
       />
     </span>
   );
+
+    const routhPath = relTabs.map(item => {
+      if (item.entitytaburl) {
+        return `/entcomm/${entityId}/${recordId}/${item.entitytaburl}`;
+      } else {
+        return `/entcomm/${entityId}/${recordId}/rel/${item.relid}/${item.relentityid}`;
+      }
+    });
+
+    if (firstLoad && routhPath.length > 0) {
+      if (location.pathname !== routhPath[0]) {
+        stopAutoLink();
+        hashHistory.push(routhPath[0]);
+      } else { //TODO: 第一个页签  跟 路由配置文件对应的首个路由一致  则也需设置 firstLoad： false
+        stopAutoLink();
+      }
+    }
 
   return (
     <Page
@@ -79,6 +100,9 @@ export default connect(
     return {
       toggleFollow() {
         dispatch({ type: 'entcommHome/toggleFollow' });
+      },
+      stopAutoLink() {
+        dispatch({ type: 'entcommHome/putState', payload: { firstLoad: false } });
       }
     };
   }

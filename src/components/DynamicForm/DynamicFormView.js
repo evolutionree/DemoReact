@@ -1,11 +1,14 @@
 import React, { PropTypes } from 'react';
-import { Form } from 'antd';
+import { Form, Row, Col } from 'antd';
 import createJSEngineProxy from './createJSEngineProxy';
 import FoldableGroup from './FoldableGroup';
 import DynamicFieldView from './DynamicFieldView';
+import IntlText from '../UKComponent/Form/IntlText';
 import styles from './styles.less';
 
 const FormItem = Form.Item;
+const onlylineField = [2, 5, 15, 22, 23, 24];
+const formItemWrap_hasNoBackground_field = [2, 15, 20, 21, 22, 23, 24];
 
 class DynamicFormView extends React.Component {
   static propTypes = {
@@ -17,7 +20,8 @@ class DynamicFormView extends React.Component {
       fieldconfig: PropTypes.object.isRequired
     })),
     value: PropTypes.object.isRequired,
-    horizontal: PropTypes.bool
+    horizontal: PropTypes.bool,
+    cols: PropTypes.number //单个表单项所占栅格宽 没有传 则默认走系统计算（超1400宽的客户端三列， 否则两列展示）
   };
 
   static defaultProps = {
@@ -39,32 +43,58 @@ class DynamicFormView extends React.Component {
 
   getFormItemLayout = () => {
     return this.getFormLayout() === 'horizontal'
-      ? { labelCol: { span: 4 }, wrapperCol: { span: 20 } }
+      ? { labelCol: { span: 6 }, wrapperCol: { span: 18 } }
       : null;
   };
 
   renderFields = fields => {
-    const { value, entityId, entityTypeId } = this.props;
+    const { value, entityId, entityTypeId, cols } = this.props;
     return fields.filter(field => field.controltype !== 30).map(field => {
       const { fieldname, displayname, controltype, fieldconfig } = field;
+      const layout = this.getFormItemLayout(field.fieldname);
+
+      let colNum = 24;
+      if (onlylineField.indexOf(field.controltype) > -1 || (field.controltype === 25 && field.fieldconfig.multiple === 1)) {
+        colNum = 24;
+      } else if (cols) {
+        colNum = cols;
+      } else {
+        colNum = document.body.clientWidth > 1400 ? 8 : 12;
+      }
+
+      //TODO: 表单查看 项 用样式区分label和值项
+      let className = formItemWrap_hasNoBackground_field.indexOf(field.controltype) > -1 ? '' : this.getFormLayout() === 'horizontal' ? 'hasBackgroundAndPadding' : 'hasBackground';
+      //this.props.cols 暂时数据源 也是用本组件  然后每单元项一列显示
+      if (this.getFormLayout() === 'horizontal' && !cols) { //TODO： 如果表单单元项 lable 和 formItem是横向布局， 有的单元项会占一行，导致lable的宽跟其他表单项对不齐  so...
+        if (document.body.clientWidth > 1400) {
+          className = colNum === 24 ? ('threeCol_onlylineFormItem ' + className) : className;
+        } else {
+          className = colNum === 24 ? ('twoCol_onlylineFormItem ' + className) : className;
+        }
+      }
+
       return (
-        <FormItem
-          key={fieldname}
-          colon={false}
-          label={displayname}
-          {...this.getFormItemLayout(field.fieldname)}
-          style={(fieldconfig.isVisible !== 1 || field.fieldconfig.isVisibleJS === 0) ? { display: 'none' } : {}}
-        >
-          <DynamicFieldView
-            isCommonForm
-            entityId={entityId}
-            entityTypeId={entityTypeId}
-            value={value[fieldname]}
-            controlType={controltype}
-            config={fieldconfig}
-            value_name={value[fieldname + '_name']}
-          />
-        </FormItem>
+        <Col span={colNum}
+             key={field.fieldname}
+             className={className}
+             style={(fieldconfig.isVisible !== 1 || field.fieldconfig.isVisibleJS === 0) ? { display: 'none' } : { padding: '0 10px' }} >
+          <FormItem
+            key={fieldname}
+            colon={false}
+            label={displayname}
+            {...layout}
+          >
+            <DynamicFieldView
+              isCommonForm
+              entityId={entityId}
+              entityTypeId={entityTypeId}
+              value={value[fieldname]}
+              controlType={controltype}
+              config={fieldconfig}
+              value_name={value[fieldname + '_name']}
+            />
+          </FormItem>
+        </Col>
       );
     });
   };
@@ -80,7 +110,8 @@ class DynamicFormView extends React.Component {
         lastGroup = {
           title: field.displayname,
           foldable: field.fieldconfig.foldable === 1,
-          fields: []
+          fields: [],
+          isVisible: field.fieldconfig.isVisible === 1
         };
         groups.push(lastGroup);
         return;
@@ -94,12 +125,14 @@ class DynamicFormView extends React.Component {
 
     return (
       <Form className={styles.dyformview}>
-        {this.renderFields(noGroupFields)}
-        {groups.map(group => (
-          <FoldableGroup key={group.title} title={group.title} foldable={group.foldable} theme="light">
-            {this.renderFields(group.fields)}
-          </FoldableGroup>
-        ))}
+        <Row gutter={24} style={{ margin: 0 }}>
+          {this.renderFields(noGroupFields)}
+          {groups.map(group => (
+            <FoldableGroup key={group.title} title={group.title} isVisible={group.isVisible} foldable={group.foldable} theme="light">
+              {this.renderFields(group.fields)}
+            </FoldableGroup>
+          ))}
+        </Row>
       </Form>
     );
   }

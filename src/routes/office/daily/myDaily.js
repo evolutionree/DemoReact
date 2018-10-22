@@ -9,7 +9,8 @@ import { groupBy } from '../weekly/component/unit';
 import Styles from '../weekly/weekly.less';
 
 
-function MyDaily({ myDailylistData, comment, commentParent, myDailyTotalPage, myDailyCurrentPage, loadMoreHandler }) {
+function MyDaily({ allDailyDetailListProtocal, myDailylistData, comment, commentParent, myDailyTotalPage, myDailyCurrentPage, loadMoreHandler }) {
+  const detailFields = allDailyDetailListProtocal && allDailyDetailListProtocal instanceof Array && allDailyDetailListProtocal.filter(field => !!field.fieldname);
   function renderHtml() {
     let html = [];
     _.forEach(groupBy(myDailylistData), (value, key) => {
@@ -27,7 +28,7 @@ function MyDaily({ myDailylistData, comment, commentParent, myDailyTotalPage, my
                                  data={item}
                                  onCommentParent={commentParent.bind(this, detailData.dynamicid)}
                                  onComment={comment.bind(this, detailData.dynamicid)}
-                                 detailFields={item.tempcontent && item.tempcontent.format.filter(field => !!field.fieldname && field.fieldname !== 'reportdate')}
+                                 detailFields={detailFields}
                                  detailValue={item.tempdata}
                                  commentList={detailData.commentlist && detailData.commentlist.detail} />
               );

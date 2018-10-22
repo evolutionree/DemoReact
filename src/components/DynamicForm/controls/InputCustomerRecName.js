@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Modal, Button, Form, Input, Table, message } from 'antd';
+import { is } from 'immutable';
+import { Modal, Input, message } from 'antd';
 import { searchcustomerrepeat } from '../../../services/datasource';
 import styles from './InputCustomerRecName.less';
 
@@ -22,7 +23,7 @@ class InputCustomerRecName extends Component {
     this.state = {
       inputValue: props.value,
       repeatCustomData: [],
-      listHide: false
+      listHide: true
     };
   }
 
@@ -32,16 +33,64 @@ class InputCustomerRecName extends Component {
     }
   }
 
-  componentDidMount() {
+  shouldComponentUpdate(nextProps, nextState) {
+    const thisProps = this.props || {};
+    const thisState = this.state || {};
 
+    if (Object.keys(thisProps).length !== Object.keys(nextProps).length || Object.keys(thisState).length !== Object.keys(nextState).length) {
+      return true;
+    }
+
+    for (const key in nextProps) {
+      if (!is(thisProps[key], nextProps[key])) {
+        //console.log('createJSEngineProxy_props:' + key);
+        return true;
+      }
+    }
+
+    for (const key in nextState) {
+      if (thisState[key] !== nextState[key] || !is(thisState[key], nextState[key])) {
+        //console.log('state:' + key);
+        return true;
+      }
+    }
+
+    return false;
   }
 
+  componentDidMount() {
+    document.body.addEventListener('click', this.clickOutsideClose, false);
+  }
+
+  componentWillUnmount() {
+    document.body.removeEventListener('click', this.clickOutsideClose);
+  }
+
+  clickOutsideClose = (event) => {
+    if ($(event.target).closest('#InputCustomerRecNameWrap').length) {
+      return;
+    }
+    this.setState({
+      listHide: true
+    });
+  };
+
   onInputChange(event) {
-    this.setState({ inputValue: event.target.value });
+    this.setState({ inputValue: event.target.value, listHide: false });
+    this.querycustomerrepeat(event.target.value);
+  }
+
+  onInputFocus = () => {
+    this.setState({
+      listHide: false
+    });
   }
 
   onInputBlur(event) {
-    let val = event.target.value;
+
+  }
+
+  querycustomerrepeat = (val) => {
     this.props.onChange(val);
     //客户新增， 客户名称键入后，需要查重引用
     if (val == '') {
@@ -86,17 +135,19 @@ class InputCustomerRecName extends Component {
   }
 
   render() {
+    const listHide = this.state.listHide || this.state.repeatCustomData.length === 0
     return (
-      <div>
+      <div className={styles.InputCustomerRecNameWrap} id="InputCustomerRecNameWrap">
         <Input
           type={this.props.type}
           value={this.state.inputValue}
           onChange={this.onInputChange.bind(this)}
+          onFocus={this.onInputFocus}
           onBlur={this.onInputBlur.bind(this)}
           disabled={this.props.isReadOnly === 1}
-          maxLength={this.props.maxLength ? this.props.maxLength : 200}
+          maxLength={this.props.maxLength ? this.props.maxLength : '200'}
         />
-        <div style={{ display: this.state.listHide ? 'none' : 'block' }}>
+        <div style={{ display: listHide ? 'none' : 'block' }} className={styles.listWrap}>
           {this.state.repeatCustomData.length > 0 ? <div>系统已有相似{this.getEntityInfo().entityName}:</div> : ''}
           {
             this.state.repeatCustomData.map((item, index) => {

@@ -6,6 +6,7 @@ import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import { Spin, message, Select } from 'antd';
 import Page from '../../../components/Page';
+import { getIntlText } from '../../../components/UKComponent/Form/IntlText';
 // import { hashHistory } from 'react-router';
 import styles from '../../../components/ParamsBoard/styles.less';
 import Toolbar from '../../../components/Toolbar';
@@ -24,13 +25,14 @@ function TargetSet({
     key: 'normtypename',
     name: '指标名称',
     link: checkFunc('IndexSettingEdit'),
-    maxLength: 10
+    maxLength: 10,
+    intl: true
   }];
 
   return (
     <Page title="销售指标设置">
       <div className={styles.board}>
-        {checkFunc('IndexSettingAdd') && <Toolbar>
+        {checkFunc('IndexSettingAdd') && <Toolbar style={{ overflow: 'visible' }}>
           <NewParamForm onSubmit={onCreate} fields={fields} />
         </Toolbar>}
         <ParamsList
@@ -57,7 +59,7 @@ export default connect(
         dispatch(routerRedux.push({
           pathname: '/targetsetting/' + item.normtypeid,
           query: {
-            normtypename: item.normtypename
+            normtypename: getIntlText('normtypename', item)
           }
         }));
       },

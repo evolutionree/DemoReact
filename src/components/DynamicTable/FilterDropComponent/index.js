@@ -5,6 +5,7 @@ import React, { PropTypes, Component } from 'react';
 import { Icon, Dropdown, Menu, Input, Button, DatePicker, Checkbox } from 'antd';
 import SelectList from './SelectList';
 import RangeNumber from './RangeNumber';
+import { getIntlText } from '../../UKComponent/Form/IntlText';
 import moment from 'moment';
 import Styles from './index.less';
 
@@ -41,7 +42,7 @@ class FilterDrop extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.visible !== this.props.visible) {
+    if (nextProps.visible !== this.props.visible && this.props.value !== nextProps.value) {
       this.setState({
         value: this.getTransformDateValue(nextProps.value),
         checked: nextProps.value === 'isnull' ? 'isnull' : false
@@ -50,9 +51,14 @@ class FilterDrop extends Component {
   }
 
   getTransformDateValue(toTransformValue) {
-    if (typeof toTransformValue === 'string' && toTransformValue !== '' && toTransformValue !== 'isnull') {
+    if (typeof toTransformValue === 'string' && toTransformValue !== '') {
       const field = this.props.field;
       let newValue = toTransformValue;
+
+      if (filterShowComponent.multiple.indexOf(field.controltype) === -1 && toTransformValue === 'isnull') {
+        return null;
+      }
+
       if (filterShowComponent.date.indexOf(field.controltype) > -1) {
         newValue = newValue.split(',');
         const dateFormat = 'YYYY-MM-DD';
@@ -93,7 +99,8 @@ class FilterDrop extends Component {
 
   onSelectChange = (checkedValues) => {
     this.setState({
-      value: checkedValues
+      value: checkedValues,
+      checked: false
     });
   }
 
@@ -171,7 +178,7 @@ class FilterDrop extends Component {
     return (
       <div className={Styles.Wrap} onClick={e => e.nativeEvent.stopImmediatePropagation()}>
         <div className={Styles.header}>
-          <span><Icon type="filter" /><label>筛选-{field.displayname}</label></span>
+          <span><Icon type="filter" /><label>筛选-{getIntlText('displayname', field)}</label></span>
           {
             this.props.value ? <span onClick={this.clearFilter}>清除筛选</span> : null
           }

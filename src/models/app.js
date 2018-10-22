@@ -1,8 +1,8 @@
-import { message } from 'antd';
+import { message, Modal } from 'antd';
 import { routerRedux, hashHistory } from 'dva/router';
 import storage from '../utils/storage';
 import { subscribe as subscribeRequest } from '../utils/request';
-import { queryUserInfo } from '../services/structure';
+import { queryUserInfo, querylanglist } from '../services/structure';
 
 import {
   modifyPassword,
@@ -16,6 +16,7 @@ import { getGlobalMenus } from '../services/webmenus';
 import { clearServerCache, queryYearWeekData } from '../services/basicdata';
 
 const KEY_SIDER_FOLD = 'uke100_siderFold';
+let logoutInfoBool = false;
 
 export default {
   namespace: 'app',
@@ -28,7 +29,10 @@ export default {
     permissionLevel: 3,
     imageGallery: {},
     mapModal: {},
-    noMinWidth: false
+    noMinWidth: false,
+
+    langlist: [],
+    currentLocale: '' //系统设置默认语言【简体中文】
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -45,6 +49,8 @@ export default {
         dispatch({ type: 'fetchUserInfo' });
         dispatch({ type: 'fetchYearWeekData' });
         dispatch({ type: 'initRsaPublicKey' });
+
+        dispatch({ type: 'querylangs' })
       }
     },
     // session过期，退出登录
@@ -52,8 +58,14 @@ export default {
       subscribeRequest({
         onRequest: () => {},
         onResponse: (error, response) => {
-          if (response && response.data && response.data.error_code === -25013) {
-            dispatch({ type: 'app/logout' });
+          message.destroy();
+          if (response && response.data && response.data.error_code === -25013 && !logoutInfoBool) {
+            logoutInfoBool = true;
+            Modal.info({
+              title: '被迫下线了,跳转到登录页',
+              content: response.data.error_msg,
+              onOk() { dispatch({ type: 'app/logout' }); }
+            });
           }
         }
       });
@@ -70,6 +82,27 @@ export default {
     }
   },
   effects: {
+    *querylangs({ payload }, { select, call, put }) {
+      try {
+        const { data } = yield call(querylanglist);
+        window.localStorage.setItem('langlist', JSON.stringify(data));
+        yield put({ type: 'initCurrentLocale', payload: data });
+      } catch (e) {
+        message.error(e.message);
+      }
+    },
+    *initCurrentLocale({ payload: langlist }, { select, put }) {
+      let currentLocale = window.localStorage.getItem('currentLocale') || '';
+      if (!currentLocale && langlist instanceof Array && langlist.length > 0) {
+        currentLocale = langlist[0].key;
+      }
+      yield put({ type: 'putState', payload: { currentLocale, langlist } });
+    },
+    *changeCurrentLocale({ payload: newLocale }, { select, call, put }) { //切换语言
+      window.localStorage.setItem('currentLocale', newLocale);
+      location.reload();
+    },
+
     *toggleSider({ payload }, { select, put }) {
       const { siderFold } = yield select(state => state.app);
       const bool = payload !== undefined ? payload : !siderFold;

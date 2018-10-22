@@ -3,6 +3,7 @@ import { connect } from 'dva';
 import _ from 'lodash';
 import { Button, Table, Dropdown, Menu, Icon, Popconfirm, Modal } from 'antd';
 import Toolbar from '../../../../components/Toolbar';
+import IntlText from '../../../../components/UKComponent/Form/IntlText';
 import FieldFormModal from './FieldFormModal';
 import { fieldModels } from '../../controlTypes';
 import FieldSortModal from './FieldSortModal';
@@ -132,10 +133,13 @@ function EntityFields({
       key: 'row_number' },
     { title: '字段名称',
       dataIndex: 'fieldlabel',
-      key: 'fieldlabel' },
+      key: 'fieldlabel',
+      render: (text, record) => <IntlText value={text} value_lang={record.fieldlabel_lang} />
+    },
     { title: '显示名称',
       dataIndex: 'displayname',
-      key: 'displayname' },
+      key: 'displayname',
+      render: (text, record) => <IntlText value={text} value_lang={record.displayname_lang} /> },
     { title: '格式',
       dataIndex: 'controltype',
       key: 'controltype',

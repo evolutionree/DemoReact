@@ -2,6 +2,8 @@ import React, { PropTypes, Component } from 'react';
 import { Button, Form, Input, Radio, Select, message } from 'antd';
 import SelectAppIcon from '../../../../components/SelectAppIcon';
 import PowerTextArea from '../../../../components/PowerTextArea';
+import IntlInput from '../../../../components/UKComponent/Form/IntlInput';
+import { IntlInputRequireValidator } from '../../../../utils/validator';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -38,10 +40,13 @@ class EntityButtonForm extends Component {
           )}
         </FormItem>
         <FormItem {...itemLayout} label="按钮标题">
-          {form.getFieldDecorator('title', {
-            rules: [{ required: true, message: '请填写按钮标题' }]
+          {form.getFieldDecorator('title_lang', {
+            rules: [
+              { required: true, message: '请填写按钮标题' },
+              { validator: IntlInputRequireValidator }
+            ]
           })(
-            <Input maxLength="50" />
+            <IntlInput maxLength="50" />
           )}
         </FormItem>
         <FormItem {...itemLayout} label="FunctionCode">

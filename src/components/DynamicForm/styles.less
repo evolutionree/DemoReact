@@ -2,14 +2,26 @@
 
 .dyformview {
   :global {
-    .ant-form-item {
-      margin-bottom: 18px;
-    }
-    .ant-form-item-label {
-      line-height: 32px;
+    .ant-form-item-label, .ant-form-item-control {
+      line-height: 26px;
     }
     .ant-form-item-label label {
       color: #9b9b9b;
+    }
+    .ant-form-item {
+      margin-bottom: 6px;
+    }
+
+    .hasBackground{
+      .ant-form-item-control-wrapper{
+        background: #f5f5f5;
+      }
+    }
+    .hasBackgroundAndPadding{
+      .ant-form-item-control-wrapper{
+        background: #f5f5f5;
+        padding: 0 8px;
+      }
     }
   }
 }
@@ -41,10 +53,14 @@
   padding-bottom: 12px;
 
   .field {
+    .clearfix();
     float: left;
     margin-right: 2.5em;
+    height: 22px;
+    line-height: 22px;
 
     .label {
+      float: left;
       display: inline-block;
       color: #9b9b9b;
       margin-right: .75em;
@@ -54,6 +70,7 @@
       white-space: nowrap;
     }
     .value {
+      float: left;
       display: inline-block;
       color: #333;
       max-width: 340px;

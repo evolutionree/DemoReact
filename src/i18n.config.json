@@ -1,0 +1,12 @@
+{
+  // 引用语句
+  "importStatement": "import intl from 'react-intl-universal';",
+  // 调用语句
+  "callStatement": "intl.get",
+  // 语言文件目标目录
+  "targetDir": "i18n-messages",
+  // 不予扫描的文件，遵循 glob
+  "exclude": [
+    "**/demo.{js,jsx}"
+  ]
+}

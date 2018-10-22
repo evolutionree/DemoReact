@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import { is } from 'immutable';
 import { controlMap } from './constants';
 
 class DynamicField extends React.Component {
@@ -11,6 +12,7 @@ class DynamicField extends React.Component {
     value: PropTypes.any,
     value_name: PropTypes.string, // 给控件显示值用，如用户控件
     onChange: PropTypes.func,
+    onChangeWithName: PropTypes.func,
     onFocus: PropTypes.func,
     quoteHandler: PropTypes.func,
     controlType: PropTypes.number.isRequired,
@@ -36,8 +38,26 @@ class DynamicField extends React.Component {
     return controlRef;
   };
 
+  shouldComponentUpdate(nextProps, nextState) {
+    const thisProps = this.props || {};
+
+    if (Object.keys(thisProps).length !== Object.keys(nextProps).length) {
+      return true;
+    }
+
+    for (const key in nextProps) {
+      if (['onFocus', 'data-__meta'].indexOf(key) === -1 && !is(thisProps[key], nextProps[key])) {
+        // console.error(this.props.fieldname, key);
+        // console.log(nextProps[key])
+        return true;
+      }
+    }
+    return false;
+  }
+
   render() {
     const props = {
+      key: this.props.fieldId,
       isCommonForm: this.props.isCommonForm,
       entityId: this.props.entityId,
       mainEntityId: this.props.entityId, //嵌套表格的实体定义属性名 跟 独立实体 简单实体 重名了，重新加一个  （嵌套实体 导入用到）
@@ -48,6 +68,7 @@ class DynamicField extends React.Component {
       value_name: this.props.value_name,
       fieldId: this.props.fieldId,
       onChange: this.props.onChange,
+      onChangeWithName: this.props.onChangeWithName,
       onFocus: this.props.onFocus,
       quoteHandler: this.props.quoteHandler,
       ref: instRef => { this.instRef = instRef; },

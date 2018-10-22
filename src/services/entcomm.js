@@ -161,6 +161,18 @@ export async function getListData(params) {
 }
 
 /**
+ * 暂存新增表单
+ * @param params
+ * @returns {Promise.<Object>}
+ */
+export async function temporarysave(params) {
+  return request('/api/dynamicentity/temporarysave', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
  * 提交新增表单
  * @param params
  * {
@@ -381,6 +393,7 @@ export async function queryPlugins({ entityid, recid }) {
             return null;
           }
           plugin.name = entity.entityname;
+          plugin.name_lang = entity.entityname_lang;
           plugin.icon = entity.icons;
           return plugin;
         }).filter(item => !!item);
@@ -390,6 +403,7 @@ export async function queryPlugins({ entityid, recid }) {
             type: 'flow',
             flowid: item.flowid,
             name: item.flowname,
+            name_lang: item.flowname_lang,
             icon: item.icons,
             recid: item.recid,
             entity: {
@@ -403,66 +417,71 @@ export async function queryPlugins({ entityid, recid }) {
             type: 'audit',
             flowid: item.flowid,
             name: item.flowname,
+            name_lang: item.flowname_lang,
             icon: item.icons
           });
         });
 
         buttons.forEach(item => {
           if (item.buttoncode === 'CallService') {
-
             plugins.push({
               type: 'CallService',
               name: item.title,
+              name_lang: item.title_lang,
               icon: item.icon,
-              routepath:item.routepath,
-              entity:item
+              routepath: item.routepath,
+              entity: item
             });
           } else if (item.buttoncode === 'PrintEntity') {
             plugins.push({
               type: 'FunctionButton',
               code: 'PrintEntity',
               name: item.title,
+              name_lang: item.title_lang,
               icon: item.icon,
               entity: item
-            })
+            });
           } else if (item.buttoncode === 'EntityDataOpenH5') {
             plugins.push({
               type: 'EntityDataOpenH5',
               name: item.title,
+              name_lang: item.title_lang,
               icon: item.icon,
-              routepath:item.routepath,
-              entity:item
+              routepath: item.routepath,
+              entity: item
             });
-          } else{
-          if(item.extradata)
-          {
-            if(item.extradata.type=='transform'){
+          } else {
+          if (item.extradata) {
+            if (item.extradata.type === 'transform') {
               plugins.push({
                 type: 'transform',
-                name: item.name,
+                name: item.title,
+                name_lang: item.title_lang,
                 icon: item.icon,
-                entity:item
+                entity: item
               });
-            }else if(item.extradata.type=='upatebutton'){
+            } else if (item.extradata.type === 'upatebutton') {
               plugins.push({
                 type: 'upatebutton',
-                name: item.name,
+                name: item.title,
+                name_lang: item.title_lang,
                 icon: item.icon,
-                entity:item
+                entity: item
               });
-            }else if(item.extradata.type=='copybutton'){
+            } else if (item.extradata.type === 'copybutton') {
               plugins.push({
                 type: 'copybutton',
-                name: item.name,
+                name: item.title,
+                name_lang: item.title_lang,
                 icon: item.icon,
-                entity:item
+                entity: item
               });
             }
           }
           }
         });
         return plugins;
-      });
+     });
 }
 
 /**

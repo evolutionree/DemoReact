@@ -137,7 +137,8 @@ class EntcommEditModal extends Component {
         onCancel={this.props.cancel}
         onOk={this.handleSubmit}
         confirmLoading={confirmLoading}
-        width={hasTable ? 900 : 550}
+        width={document.body.clientWidth > 1400 ? 1200 : 800}
+        wrapClassName="DynamicFormModal"
         key={this.state.key}
       >
         <DynamicFormEdit

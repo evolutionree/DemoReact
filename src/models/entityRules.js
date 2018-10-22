@@ -137,6 +137,7 @@ export default {
             rule.rules = completeSubRules(rule.rules);
           }
           rule.displayname = field.displayname;
+          rule.displayname_lang = field.displayname_lang;
           rule.order = field.row_number;
           rule.controlType = field.controltype;
           return rule;

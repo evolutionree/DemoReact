@@ -17,11 +17,13 @@ const clientHeight = document.body.offsetHeight && document.documentElement.clie
 //   {key:6, text:'工作报告'},{key:7, text:'公告通知'},{key:99, text:'导入结果提醒'}];
 
 const MSG_GROUP_ID = 1004;
+const APPROVE_GROUP_ID = 1006;
 const msgTypes = {
   IMPORT_RESULT: 99,
-  TASK: 4
+  TASK: 4,
+  APPROVE: 5
 };
-const menuData = [{ key: msgTypes.IMPORT_RESULT, text: '导入结果提醒' }, { key: msgTypes.TASK, text: '智能提醒' }];
+const menuData = [{ key: msgTypes.IMPORT_RESULT, text: '导入结果提醒' }, { key: msgTypes.TASK, text: '智能提醒' }, { key: msgTypes.APPROVE, text: '审批提醒' }];
 
 class MessageList extends React.Component {
   static propTypes = {};
@@ -78,7 +80,7 @@ class MessageList extends React.Component {
 
   fetchUnReadCount() {
     request('api/notify/unreadcount', {
-      method: 'post', body: JSON.stringify({ MsgGroupIds: [MSG_GROUP_ID], MsgStyleTypes: [4, 8, 99] })
+      method: 'post', body: JSON.stringify({ MsgGroupIds: [MSG_GROUP_ID, APPROVE_GROUP_ID] })
     }).then((result) => {
       this.setState({
         unReadCount: result.data.reduce((total, item) => total + item.count, 0)
@@ -92,12 +94,16 @@ class MessageList extends React.Component {
     this.setState({
       loading: true
     });
+    let MsgGroupIds = [MSG_GROUP_ID];
     let newData = this.state.data;
     let MsgStyleTypes;
     if (msgType === -1) {
       MsgStyleTypes = [msgTypes.IMPORT_RESULT, msgTypes.TASK, 8];
     } else if (+msgType === msgTypes.TASK) {
-      MsgStyleTypes = [msgTypes.TASK, 8];
+      MsgStyleTypes = [1, msgTypes.TASK, 8];
+    } else if (+msgType === msgTypes.APPROVE) {
+      MsgStyleTypes = [msgTypes.APPROVE];
+      MsgGroupIds = [APPROVE_GROUP_ID];
     } else {
       MsgStyleTypes = [msgTypes.IMPORT_RESULT];
     }
@@ -105,7 +111,7 @@ class MessageList extends React.Component {
       RecVersion: RecVersion,
       Direction: RecVersion === 0 ? 0 : -1, //以版本号为基线，向前或者向后取值，-1为取小于RecVersion的数据，0为全量，1为取大于RecVersion的数据
       PageSize: 10,
-      MsgGroupIds: [MSG_GROUP_ID],
+      MsgGroupIds: MsgGroupIds,
       MsgStyleTypes
     };
     request(this.props.url, {
@@ -146,7 +152,7 @@ class MessageList extends React.Component {
 
   hideList(event) {
     if (this.state.modalVisible) return;
-    if ($(event.target).closest('#message-panel').length) {
+    if ($(event.target).closest('#message-panel').length || $(event.target).closest('.ant-dropdown').length) {
       return;
     }
     this.setState({
@@ -276,9 +282,9 @@ class MessageList extends React.Component {
     );
 
     return (
-      <div>
+      <div style={{ marginRight: '10px' }}>
         <Badge count={this.state.unReadCount}>
-          <Icon type='bell' title="系统通知" style={{ fontSize: 24, cursor: "pointer", marginLeft: '10px'  }} onClick={this.toggleList.bind(this)} />
+          <Icon type='bell' title="系统通知" style={{ fontSize: 24, cursor: 'pointer' }} onClick={this.toggleList.bind(this)} />
         </Badge>
         <div id="message-panel" className={styles.listContent}
              style={{ right: this.state.visible ? 0 : "-440px", height: this.state.clientHeight - 60 }}
@@ -321,7 +327,7 @@ class MessageList extends React.Component {
                           导入结果：
                           {this.isRenderMsgProgress(item)}
                         </li>}
-                        {(msgstyletype === msgTypes.TASK || msgstyletype === 8) && <li title={msgcontent}>
+                        {(msgstyletype === msgTypes.TASK || msgstyletype === 8 || msgstyletype === 5) && <li title={msgcontent}>
                           {msgcontent}
                         </li>}
                       </ul>

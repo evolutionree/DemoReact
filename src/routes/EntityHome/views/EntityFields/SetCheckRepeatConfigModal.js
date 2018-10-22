@@ -6,8 +6,8 @@ import { connect } from 'dva';
 import { Modal, Row, Col, Button, Icon, message } from 'antd';
 import _ from 'lodash';
 import { queryentitycondition } from '../../../../services/entity';
+import { getIntlText } from '../../../../components/UKComponent/Form/IntlText';
 import styles from './WebListConfigModal.less';
-
 
 class CheckRepeat extends React.Component {
   static propTypes = {};
@@ -103,7 +103,7 @@ class CheckRepeat extends React.Component {
               <ul className={styles.list}>
                 {this.state.data.fieldnotvisible.map(field => (
                   <li className={styles.item} key={field.fieldid}>
-                    <span title={field.displayname}>{field.displayname}</span>
+                    <span title={field.displayname}>{getIntlText('displayname', field)}</span>
                     <Icon type="plus" onClick={() => { this.pickField(field); }} />
                   </li>
                 ))}
@@ -124,7 +124,7 @@ class CheckRepeat extends React.Component {
               <ul className={styles.list}>
                 {this.state.data.fieldvisible.map((field, index) => (
                   <li className={styles.item} key={field.fieldid}>
-                    <span>{field.displayname}</span>
+                    <span>{getIntlText('displayname', field)}</span>
                     <Icon type="minus" onClick={() => { this.removeField(field); }} />
                   </li>
                 ))}

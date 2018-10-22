@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import { Modal, Select } from 'antd';
+import { Modal, Spin } from 'antd';
 import { DynamicFormView } from './DynamicForm';
 import { getGeneralProtocol, getEntcommDetail } from '../services/entcomm';
 
@@ -20,7 +20,8 @@ class EntcommDetailModal extends Component {
     this.state = {
       protocol: [], // 协议字段
       data: {}, // 表单数据
-      key: new Date().getTime() // 每次打开弹窗时，都重新渲染
+      key: new Date().getTime(), // 每次打开弹窗时，都重新渲染
+      loading: false
     };
   }
 
@@ -36,6 +37,9 @@ class EntcommDetailModal extends Component {
   }
 
   fetchDetailAndProtocol = (entityId, recordId) => {
+    this.setState({
+      loading: true
+    });
     getEntcommDetail({
       entityId,
       recId: recordId,
@@ -51,7 +55,12 @@ class EntcommDetailModal extends Component {
         OperateType: 2
       });
     }).then(result => {
-      this.setState({ protocol: result.data });
+      this.setState({ protocol: result.data, loading: false });
+    }).catch(e => {
+      console.error(e.message)
+      this.setState({
+        loading: false
+      });
     });
   };
 
@@ -67,10 +76,6 @@ class EntcommDetailModal extends Component {
     const { visible, footer, entityId } = this.props;
     const { protocol, data } = this.state;
 
-    const hasTable = protocol.some(field => {
-      return field.controltype === 24 && (field.fieldconfig.isVisible === 1);
-    });
-
     return (
       <Modal
         title={this.props.title || `${this.props.entityName || ''}详情`}
@@ -78,15 +83,18 @@ class EntcommDetailModal extends Component {
         onCancel={this.props.onCancel}
         onOk={this.props.onOk}
         footer={footer}
-        width={hasTable ? 900 : 550}
+        width={document.body.clientWidth > 1400 ? 1200 : 800}
+        wrapClassName="DynamicFormModal"
         key={this.state.key}
       >
-        <DynamicFormView
-          entityId={entityId}
-          entityTypeId={data.rectype || entityId}
-          fields={protocol}
-          value={data}
-        />
+        <Spin spinning={this.state.loading}>
+          <DynamicFormView
+            entityId={entityId}
+            entityTypeId={data.rectype || entityId}
+            fields={protocol}
+            value={data}
+          />
+        </Spin>
       </Modal>
     );
   }

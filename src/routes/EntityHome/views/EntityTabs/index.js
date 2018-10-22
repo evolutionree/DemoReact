@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Table, Icon, Modal } from 'antd';
 import { connect } from 'dva';
+import IntlText from '../../../../components/UKComponent/Form/IntlText';
 import EntityTabFormModal from './EntityTabFormModal';
 import SetCountRuleModal from './SetCountRuleModal';
 import styles from './EntityTabs.less';
@@ -24,7 +25,7 @@ function EntityTabs({
       <div>
         <Table rowKey="relid" dataSource={list} pagination={false}>
           <Column title="序号" key="relid" width={100} render={(text, record, index) => (<span>{index + 1}</span>)} />
-          <Column title="页签名称" dataIndex="relname" key="relname" width={200} />
+          <Column title="页签名称" dataIndex="relname" key="relname" width={200} render={(text, record, index) => (<IntlText value={text} value_lang={record.relname_lang} />)} />
           <Column title="关联实体" dataIndex="entityname" key="entityname" width={200} />
           <Column title="关联字段" dataIndex="fieldlabel" key="fieldlabel" width={250} />
           <Column

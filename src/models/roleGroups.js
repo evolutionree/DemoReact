@@ -32,12 +32,15 @@ export default {
         message.error(e.message || '保存失败');
       }
     },
-    *update({ payload: item }, { call, put }) {
-      try {
-        if (!item.groupname) {
-          message.error('角色分类名称不能为空');
+    *update({ payload: item }, { call, put, select }) {
+      const langlist = yield select(state => state.app.langlist);
+      for(let i = 0; i < langlist.length; i++) {
+        if (!item.groupname_lang[langlist[i].key]) {
+          message.error('角色分类名称[' + langlist[i].dispaly + ']不能为空');
           return;
         }
+      }
+      try {
         yield call(updateGroup, item);
         yield put({ type: 'query' });
       } catch (e) {

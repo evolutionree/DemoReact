@@ -5,6 +5,7 @@ import { connect } from 'dva';
 import Page from '../../components/Page';
 import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
+import IntlText from '../../components/UKComponent/Form/IntlText';
 import WorkflowFormModal from './WorkflowFormModal';
 import WorkflowEventModal from './WorkflowEventModal';
 import WorkflowRuleModal from './WorkflowRuleModal';
@@ -82,11 +83,10 @@ function WorkflowList({
           title="审批流程"
           key="flowname"
           dataIndex="flowname"
-          render={(text, record) => (
-            record.flowtype === 0 ?
-              <span>{text}</span> :
-              <Link to={`/workflow/${record.flowid}`}>{text}</Link>
-          )}
+          render={(text, record) => {
+            const intlText = <IntlText value={text} value_lang={record.flowname_lang} />;
+            return record.flowtype === 0 ? <span>{intlText}</span> : <Link to={`/workflow/${record.flowid}`}>{intlText}</Link>;
+          }}
         />
         <Column title="关联实体" key="entityname" dataIndex="entityname" />
         <Column title="流程类型" key="flowtype" dataIndex="flowtype" render={v => ['自由流程', '固定流程'][v]} />

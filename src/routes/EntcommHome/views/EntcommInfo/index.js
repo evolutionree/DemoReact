@@ -46,14 +46,16 @@ function EntcommInfo({
           <Button onClick={saveEdit} style={{ marginRight: '10px' }}>保存</Button>
           <Button type="default" onClick={cancelEdit}>取消</Button>
         </div>
-        <DynamicFormEdit
-          entityId={entityId}
-          entityTypeId={editData && editData.rectype}
-          fields={editProtocol}
-          value={editData}
-          onChange={onEditDataChange}
-          ref={editFormRef}
-        />
+        <div style={{ maxHeight: document.documentElement.clientHeight - 270 }} className={styles.formBody}>
+          <DynamicFormEdit
+            entityId={entityId}
+            entityTypeId={editData && editData.rectype}
+            fields={editProtocol}
+            value={editData}
+            onChange={onEditDataChange}
+            ref={editFormRef}
+          />
+        </div>
       </div>
     );
   } else {
@@ -62,12 +64,14 @@ function EntcommInfo({
         <div className={styles.btnrow}>
           {checkFunc('EntityDataEdit') && <Button onClick={startEdit}>编辑</Button>}
         </div>
-        <DynamicFormView
-          entityId={entityId}
-          entityTypeId={detailData && detailData.rectype}
-          fields={detailProtocol}
-          value={detailData}
-        />
+        <div style={{ maxHeight: document.documentElement.clientHeight - 270 }} className={styles.formBody}>
+          <DynamicFormView
+            entityId={entityId}
+            entityTypeId={detailData && detailData.rectype}
+            fields={detailProtocol}
+            value={detailData}
+          />
+        </div>
       </div>
     );
   }
