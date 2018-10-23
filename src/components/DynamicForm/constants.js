@@ -104,6 +104,7 @@ export const controlMap = {
   // 1008: StatusSelect, // 1008 记录状态
   1009: SelectEntityType, // 1009 记录类型
   1011: DateTime, // 1011 活动时间
-  1012: InputRecName // 1012 实体名称
+  1012: InputRecName, // 1012 实体名称
+  1013: InputText //销售阶段
 };
 
