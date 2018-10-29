@@ -28,13 +28,13 @@ function ReminderDetail({
   function saveData() {
     if (!validate()) return;
     const data = {
-      entityid: reminderDetail.entityid,
+      entityid: reminderDetail && reminderDetail.entityid,
       content: messageTemplateContent,
       contentparam: getParamFromContent(messageTemplateContent),
       receiver: receivers,
       receiverrange: receiverRange,
       reminderid: reminderId,
-      ruleitems: ruleListToItems(ruleList, formattedFields, reminderDetail.entityid),
+      ruleitems: ruleListToItems(ruleList, formattedFields, reminderDetail && reminderDetail.entityid),
       rulename: '',
       ruleset: {
         ruleset: ruleSet,
@@ -51,7 +51,7 @@ function ReminderDetail({
     if (!filterConfigBoardRef.validate()) {
       return false;
     }
-    if (!receivers.length) {
+    if (receivers && !receivers.length) {
       message.error('请设置提醒消息发送人');
       return false;
     }
