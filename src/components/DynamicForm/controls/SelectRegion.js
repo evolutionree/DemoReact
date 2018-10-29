@@ -140,7 +140,7 @@ class SelectRegion extends Component {
         let matched = false;
         let childrenMatched = false;
 
-        if (regionid === value) {
+        if (regionid === value * 1) {
           matched = true;
         } else if (children && children.length) {
           childrenMatched = _loopRegions(children);

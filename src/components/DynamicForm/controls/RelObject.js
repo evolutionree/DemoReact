@@ -32,8 +32,8 @@ class RelObject extends React.Component {
   }
 
   render() {
-    const { value_name } = this.props; //编辑页 数据源不允许修改  直接取value_name值
-    const showTitle = value_name || this.state.title;
+    const { value_name, value } = this.props; //编辑页 数据源不允许修改  直接取value_name值
+    const showTitle = value_name || value || this.state.title;
     return (
       <div style={{ height: '32px' }}>
         <div className="ant-input" title={showTitle} style={{
