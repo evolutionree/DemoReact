@@ -144,7 +144,7 @@ class NewAffairModal extends Component {
         <EntcommAddModal
           visible={/step2/.test(currModals)}
           entityId={selectedFlowObj ? selectedFlowObj.entityid : ''}
-          entityName={selectedFlowObj ? selectedFlowObj.entityname : ''}
+          entityName={selectedFlowObj ? selectedFlowObj.flowname : ''}
           entityTypes={entityTypes}
           flow={selectedFlowObj}
           cancel={this.onStep2Cancel}
