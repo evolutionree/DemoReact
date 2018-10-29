@@ -36,7 +36,14 @@ function processFormValues(values, editingRecord) {
   /* eslint-enable */
 
   controlType = parseInt(controlType, 10);
-  // displayName = displayName || fieldLabel;
+  displayname_lang = displayname_lang || {};
+  //TODO: 显示名称无值得时候  用字段名称的值 覆盖
+  let langlist = JSON.parse(window.localStorage.getItem('langlist')) || [];
+  for (let i = 0; i < langlist.length; i++) {
+    if (displayname_lang[langlist[i].key] === undefined) {
+      displayname_lang[langlist[i].key] = fieldlabel_lang[langlist[i].key];
+    }
+  }
 
   const extraFieldConfig = genExtraFieldConfig(controlType);
   const fieldConfigJSON = JSON.stringify({
