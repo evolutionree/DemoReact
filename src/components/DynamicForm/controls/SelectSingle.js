@@ -212,6 +212,14 @@ class SelectSingle extends Component {
       <div style={{ height: '32px' }}>
         <Select
           showSearch
+          optionFilterProp="children"
+          filterOption={(input, option) => {
+            const _list = ['props', 'children', 'props', 'value'];
+            const _get = (p, o) => p.reduce((xs, x) => typeof xs !== 'string' ? xs[x] : xs, o);
+            const res = _get(_list, option);
+            const values = typeof res !== 'string' ? res[option.props.children.props.name] : res;
+            return values.toLowerCase().indexOf(input.toLowerCase()) >= 0
+          }}
           value={value === null || value === undefined ? '' : (value + '')}
           disabled={isReadOnly === 1}
           onChange={this.onChange}
@@ -229,7 +237,7 @@ class SelectSingle extends Component {
             <Icon type="info-circle" style={{ color: '#b8c7ce', fontSize: '18px', marginLeft: '4px' }} />
           </Tooltip> : null
         }
-      </div>
+      </div >
     );
   }
 }

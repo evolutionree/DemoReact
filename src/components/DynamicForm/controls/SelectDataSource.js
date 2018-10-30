@@ -198,6 +198,14 @@ class SelectDataSource extends React.Component {
                   mode={this.props.multiple === 1 ? 'multiple' : null}
                   value={array.map(item => item.id)}
                   allowClear
+                  showSearch
+                  filterOption={(input, option) => {
+                    const _list = ['props', 'children', 'props', 'value'];
+                    const _get = (p, o) => p.reduce((xs, x) => typeof xs !== 'string' ? xs[x] : xs, o);
+                    const res = _get(_list, option);
+                    const values = typeof res !== 'string' ? res[option.props.children.props.name] : res;
+                    return values.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                  }}
           >
             {
               options instanceof Array && options.map(item => {

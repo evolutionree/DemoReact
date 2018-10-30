@@ -19,7 +19,6 @@ import DataTransferModal from './DataTransferModal';
 import IntlText from '../../components/UKComponent/Form/IntlText';
 import EntcommRepeatViewModal from '../../components/EntcommRepeatViewModal';
 
-
 const Option = Select.Option;
 
 function EntcommList({
@@ -224,7 +223,20 @@ function EntcommList({
           ...ajaxToolbarActions
         ]}
       >
-        <Select style={{ minWidth: '120px' }} value={menuId} onChange={onMenuChange}>
+        <Select
+          style={{ minWidth: '120px' }}
+          value={menuId}
+          onChange={onMenuChange}
+          showSearch
+          optionFilterProp="children"
+          filterOption={(input, option) => {
+            const _list = ['props', 'children', 'props', 'value'];
+            const _get = (p, o) => p.reduce((xs, x) => typeof xs !== 'string' ? xs[x] : xs, o);
+            const res = _get(_list, option);
+            const values = typeof res !== 'string' ? res[option.props.children.props.name] : res;
+            return values.toLowerCase().indexOf(input.toLowerCase()) >= 0
+          }}
+        >
           {menus.map(menu => (
             <Option key={menu.menuId}><IntlText name="menuName" value={menu} /></Option>
           ))}

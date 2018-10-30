@@ -22,30 +22,30 @@ import EntcommRepeatViewModal from '../../components/EntcommRepeatViewModal';
 const Option = Select.Option;
 
 function EntcommList({
-    checkFunc,
-    dispatch,
-    entityName,
-    menus,
-    protocol,
-    queries,
-    list,
-    total,
-    currItems,
-    entityId,
-    currentUser,
-    simpleSearchKey,
-    extraButtonData,
-    extraToolbarData,
-    showModals,
-    sortFieldAndOrder,  //当前排序的字段及排序顺序
-    ColumnFilter,
-    entityTypes,
-    selectedFlowObj,
-                       onAddModalCanel,
-                       onAddModalDone,
-                       funBtnInfo,
-                       copyData
-  }) {
+  checkFunc,
+  dispatch,
+  entityName,
+  menus,
+  protocol,
+  queries,
+  list,
+  total,
+  currItems,
+  entityId,
+  currentUser,
+  simpleSearchKey,
+  extraButtonData,
+  extraToolbarData,
+  showModals,
+  sortFieldAndOrder,  //当前排序的字段及排序顺序
+  ColumnFilter,
+  entityTypes,
+  selectedFlowObj,
+  onAddModalCanel,
+  onAddModalDone,
+  funBtnInfo,
+  copyData
+}) {
   function selectItems(items) {
     dispatch({ type: 'entcommApplication/currItems', payload: items });
     dispatch({ type: 'entcommApplication/queryFuntionbutton__', payload: {} });
@@ -191,7 +191,7 @@ function EntcommList({
       type: 'entcommApplication/putState',
       payload: { ColumnFilter: filterData }
     });
-    dispatch({ type: 'entcommApplication/search', payload: { } });
+    dispatch({ type: 'entcommApplication/search', payload: {} });
   }
 
 
@@ -242,7 +242,20 @@ function EntcommList({
           ...ajaxToolbarActions
         ]}
       >
-        <Select style={{ minWidth: '120px' }} value={menuId} onChange={onMenuChange}>
+        <Select
+          style={{ minWidth: '120px' }}
+          value={menuId}
+          onChange={onMenuChange}
+          showSearch
+          optionFilterProp="children"
+          filterOption={(input, option) => {
+            const _list = ['props', 'children', 'props', 'value'];
+            const _get = (p, o) => p.reduce((xs, x) => typeof xs !== 'string' ? xs[x] : xs, o);
+            const res = _get(_list, option);
+            const values = typeof res !== 'string' ? res[option.props.children.props.name] : res;
+            return values.toLowerCase().indexOf(input.toLowerCase()) >= 0
+          }}
+        >
           {menus.map(menu => (
             <Option key={menu.menuId}><IntlText name="menuName" value={menu} /></Option>
           ))}
@@ -269,7 +282,7 @@ function EntcommList({
         </Toolbar.Right>
       </Toolbar>
       <DynamicTable
-        ref={(ref) => dynamicTableRef = ref }
+        ref={(ref) => dynamicTableRef = ref}
         sorter={true}
         sortFieldAndOrder={sortFieldAndOrder}
         protocol={protocol}
@@ -332,9 +345,9 @@ function EntcommList({
         onDone={onAddModalDone}
       />
       <EntcommRepeatViewModal visible={/repeatview/.test(showModals)}
-                              entityId={entityId}
-                              simpleSearchKey={simpleSearchKey}
-                              onCancel={modalCancel} />
+        entityId={entityId}
+        simpleSearchKey={simpleSearchKey}
+        onCancel={modalCancel} />
     </Page>
   );
 }
