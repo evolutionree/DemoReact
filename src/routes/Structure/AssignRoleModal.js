@@ -168,7 +168,7 @@ class AssignRoleModal extends Component {
               {currentItems.map(u => u.username).join('、')}
             </div>
             <div className={styles.title}>角色</div>
-            <Select value={selectedRoleGroup} onChange={this.selectRoleGroup} style={{ width: '100%' }}>
+            <Select showSearch value={selectedRoleGroup} onChange={this.selectRoleGroup} style={{ width: '100%' }}>
               {roleGroups.map(item => (
                 <Option key={item.rolegroupid} value={item.rolegroupid}>{item.rolegroupname}</Option>
               ))}

@@ -182,6 +182,14 @@ class SelectMultiple extends Component {
         disabled={isReadOnly === 1}
         onChange={this.onSelectChange}
         onFocus={onFocus}
+        showSearch
+        filterOption={(input, option) => {
+          const _list = ['props', 'children', 'props', 'value'];
+          const _get = (p, o) => p.reduce((xs, x) => typeof xs !== 'string' ? xs[x] : xs, o);
+          const res = _get(_list, option);
+          const values = typeof res !== 'string' ? res[option.props.children.props.name] : res;
+          return values.toLowerCase().indexOf(input.toLowerCase()) >= 0
+        }}
         optionFilterProp="children"
         mode="multiple"
         style={{ width: '100%', height: '32px' }}
