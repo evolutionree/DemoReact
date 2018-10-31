@@ -7,7 +7,7 @@ import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import DynamicTable from '../../components/DynamicTable/index';
 import EntcommAddModal from '../../components/EntcommAddModal';
-import IntlText from '../../components/UKComponent/Form/IntlText';
+import { getIntlText } from '../../components/UKComponent/Form/IntlText';
 import RecordDetailModal from './RecordDetailModal';
 import RecordEditModal from './RecordEditModal';
 import TransferModal from './TransferModal';
@@ -247,18 +247,8 @@ function EntcommList({
           value={menuId}
           onChange={onMenuChange}
           showSearch
-          optionFilterProp="children"
-          filterOption={(input, option) => {
-            const _list = ['props', 'children', 'props', 'value'];
-            const _get = (p, o) => p.reduce((xs, x) => typeof xs !== 'string' ? xs[x] : xs, o);
-            const res = _get(_list, option);
-            const values = typeof res !== 'string' ? res[option.props.children.props.name] : res;
-            return values.toLowerCase().indexOf(input.toLowerCase()) >= 0
-          }}
         >
-          {menus.map(menu => (
-            <Option key={menu.menuId}><IntlText name="menuName" value={menu} /></Option>
-          ))}
+          {menus.map(menu => <Option key={menu.menuId}>{getIntlText('menuName', menu)}</Option>)}
         </Select>
         {checkFunc('EntityDataAdd') && <Button onClick={openAdd}>新增</Button>}
         {checkFunc('EntityDataSearch') && <Button onClick={queryRepeat}>查重</Button>}

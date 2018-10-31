@@ -16,7 +16,7 @@ import connectPermission from '../../models/connectPermission';
 import DynamicModal from './DynamicModal';
 import ExportModal from './ExportModal';
 import DataTransferModal from './DataTransferModal';
-import IntlText from '../../components/UKComponent/Form/IntlText';
+import { getIntlText } from '../../components/UKComponent/Form/IntlText';
 import EntcommRepeatViewModal from '../../components/EntcommRepeatViewModal';
 
 const Option = Select.Option;
@@ -228,17 +228,9 @@ function EntcommList({
           value={menuId}
           onChange={onMenuChange}
           showSearch
-          optionFilterProp="children"
-          filterOption={(input, option) => {
-            const _list = ['props', 'children', 'props', 'value'];
-            const _get = (p, o) => p.reduce((xs, x) => typeof xs !== 'string' ? xs[x] : xs, o);
-            const res = _get(_list, option);
-            const values = typeof res !== 'string' ? res[option.props.children.props.name] : res;
-            return values.toLowerCase().indexOf(input.toLowerCase()) >= 0
-          }}
         >
           {menus.map(menu => (
-            <Option key={menu.menuId}><IntlText name="menuName" value={menu} /></Option>
+            <Option key={menu.menuId}>{getIntlText('menuName', menu)}</Option>
           ))}
         </Select>
         {checkFunc('EntityDataAdd') && <Button onClick={openAdd}>新增</Button>}
