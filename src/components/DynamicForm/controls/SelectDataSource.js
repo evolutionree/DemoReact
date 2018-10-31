@@ -8,6 +8,7 @@ import styles from './SelectUser.less';
 import { checkHasPermission } from '../../../services/entcomm';
 import { queryDataSourceData } from '../../../services/datasource';
 import _ from 'lodash';
+import { getIntlText } from '../../UKComponent/Form/IntlText';
 
 const Option = Select.Option;
 
@@ -192,20 +193,13 @@ class SelectDataSource extends React.Component {
       <div className={cls} style={{ ...this.props.style }}>
         <div className={styles.inputSelectWrap}>
           <Select onChange={this.selectChange.bind(this, options)}
-                  onSearch={this.queryOptions}
-                  placeholder={this.props.placeholder}
-                  disabled={isReadOnly}
-                  mode={this.props.multiple === 1 ? 'multiple' : null}
-                  value={array.map(item => item.id)}
-                  allowClear
-                  showSearch
-                  filterOption={(input, option) => {
-                    const _list = ['props', 'children', 'props', 'value'];
-                    const _get = (p, o) => p.reduce((xs, x) => typeof xs !== 'string' ? xs[x] : xs, o);
-                    const res = _get(_list, option);
-                    const values = typeof res !== 'string' ? res[option.props.children.props.name] : res;
-                    return values.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                  }}
+            onSearch={this.queryOptions}
+            placeholder={this.props.placeholder}
+            disabled={isReadOnly}
+            mode={this.props.multiple === 1 ? 'multiple' : null}
+            value={array.map(item => item.id)}
+            allowClear
+            showSearch
           >
             {
               options instanceof Array && options.map(item => {

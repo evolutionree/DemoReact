@@ -4,7 +4,7 @@ import { is } from 'immutable';
 import _ from 'lodash';
 import connectBasicData from '../../../models/connectBasicData';
 import { queryYearWeekData } from '../../../services/basicdata';
-import IntlText from '../../UKComponent/Form/IntlText';
+import { getIntlText } from '../../UKComponent/Form/IntlText';
 import { blurByHelper } from './helpers';
 
 const Option = Select.Option;
@@ -212,14 +212,6 @@ class SelectSingle extends Component {
       <div style={{ height: '32px' }}>
         <Select
           showSearch
-          optionFilterProp="children"
-          filterOption={(input, option) => {
-            const _list = ['props', 'children', 'props', 'value'];
-            const _get = (p, o) => p.reduce((xs, x) => typeof xs !== 'string' ? xs[x] : xs, o);
-            const res = _get(_list, option);
-            const values = typeof res !== 'string' ? res[option.props.children.props.name] : res;
-            return values.toLowerCase().indexOf(input.toLowerCase()) >= 0
-          }}
           value={value === null || value === undefined ? '' : (value + '')}
           disabled={isReadOnly === 1}
           onChange={this.onChange}
@@ -229,7 +221,7 @@ class SelectSingle extends Component {
         >
           <Option value="">- 请选择 -</Option>
           {options.map(opt => (
-            <Option key={opt.value + ''} disabled={opt.disabled}><IntlText name="label" value={opt} /></Option>
+            <Option key={opt.value + ''} disabled={opt.disabled}>{getIntlText('label', opt)}</Option>
           ))}
         </Select>
         {

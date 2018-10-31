@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import { message, Select } from 'antd';
-import IntlText from '../components/UKComponent/Form/IntlText';
+import { getIntlText } from '../components/UKComponent/Form/IntlText';
 import { query as queryEntityList } from '../services/entity';
 
 class EntitySelect extends Component {
@@ -29,24 +29,17 @@ class EntitySelect extends Component {
   };
   render() {
     const { value, onChange, ...rest } = this.props;
+    console.log(this.state.entityList)
     return (
       <Select
         value={value}
         onChange={onChange}
         showSearch
-        optionFilterProp="children"
-        filterOption={(input, option) => {
-          const _list = ['props', 'children', 'props', 'value'];
-            const _get = (p, o) => p.reduce((xs, x) => typeof xs !== 'string' ? xs[x] : xs, o);
-            const res = _get(_list, option);
-            const values = typeof res !== 'string' ? res[option.props.children.props.name] : res;
-            return values.toLowerCase().indexOf(input.toLowerCase()) >= 0
-        }}
         {...rest}
       >
         {this.state.entityList.map(entity => (
           <Select.Option key={entity.entityid}>
-            <IntlText value={entity.entityname} value_lang={entity.entityname_lang} />
+            {getIntlText('entityname', entity)}
           </Select.Option>
         ))}
       </Select>

@@ -3,9 +3,7 @@ import { Select } from 'antd';
 import { is } from 'immutable';
 import _ from 'lodash';
 import connectBasicData from '../../../models/connectBasicData';
-import IntlText from '../../UKComponent/Form/IntlText';
-import { blurByHelper } from './helpers';
-
+import { getIntlText } from '../../UKComponent/Form/IntlText';
 const Option = Select.Option;
 
 class SelectMultiple extends Component {
@@ -24,7 +22,7 @@ class SelectMultiple extends Component {
   };
   static defaultProps = {
     value: '',
-    onFocus: () => {}
+    onFocus: () => { }
   };
 
   constructor(props) {
@@ -185,20 +183,11 @@ class SelectMultiple extends Component {
         onChange={this.onSelectChange}
         onFocus={onFocus}
         showSearch
-        filterOption={(input, option) => {
-          console.log(option)
-          const _list = ['props', 'children', 'props', 'value'];
-          const _get = (p, o) => p.reduce((xs, x) => typeof xs !== 'string' ? xs[x] : xs, o);
-          const res = _get(_list, option);
-          const values = typeof res !== 'string' ? res[option.props.children.props.name] : res;
-          return values.toLowerCase().indexOf(input.toLowerCase()) >= 0
-        }}
-        optionFilterProp="children"
         mode="multiple"
         style={{ width: '100%', height: '32px' }}
       >
         {options.map(opt => (
-          <Option key={opt.value} style={opt.disabled ? { display: 'none' } : null}><IntlText name="label" value={opt} /></Option>
+          <Option key={opt.value} style={opt.disabled ? { display: 'none' } : null}>{getIntlText('label', opt)}</Option>
         ))}
       </Select>
     );
