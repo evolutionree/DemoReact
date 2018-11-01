@@ -8,7 +8,6 @@ import styles from './SelectUser.less';
 import { checkHasPermission } from '../../../services/entcomm';
 import { queryDataSourceData } from '../../../services/datasource';
 import _ from 'lodash';
-import { getIntlText } from '../../UKComponent/Form/IntlText';
 
 const Option = Select.Option;
 
