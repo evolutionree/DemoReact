@@ -1,6 +1,5 @@
 {
   "entry": [
-    //"src/mobile_crm/mobilecrm.js",
     "src/index.js",
     "src/admin-index.js",
     "src/login.js",
