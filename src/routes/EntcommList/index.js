@@ -16,33 +16,34 @@ import connectPermission from '../../models/connectPermission';
 import DynamicModal from './DynamicModal';
 import ExportModal from './ExportModal';
 import DataTransferModal from './DataTransferModal';
-import { getIntlText } from '../../components/UKComponent/Form/IntlText';
+import IntlText, { getIntlText } from '../../components/UKComponent/Form/IntlText';
+
 import EntcommRepeatViewModal from '../../components/EntcommRepeatViewModal';
 
 const Option = Select.Option;
 
 function EntcommList({
-    checkFunc,
-    dispatch,
-    entityName,
-    menus,
-    protocol,
-    queries,
-    list,
-    total,
-    currItems,
-    entityId,
-    currentUser,
-    simpleSearchKey,
-    extraButtonData,
-    extraToolbarData,
-    sortFieldAndOrder,  //当前排序的字段及排序顺序
-    ColumnFilter,
-                       entityTypes,
-                       showModals,
-                       onAddModalCanel,
-                       onAddModalDone
-  }) {
+  checkFunc,
+  dispatch,
+  entityName,
+  menus,
+  protocol,
+  queries,
+  list,
+  total,
+  currItems,
+  entityId,
+  currentUser,
+  simpleSearchKey,
+  extraButtonData,
+  extraToolbarData,
+  sortFieldAndOrder,  //当前排序的字段及排序顺序
+  ColumnFilter,
+  entityTypes,
+  showModals,
+  onAddModalCanel,
+  onAddModalDone
+}) {
   function selectItems(items) {
     dispatch({ type: 'entcommList/currItems', payload: items });
     dispatch({ type: 'entcommList/queryFuntionbutton__', payload: {} });
@@ -178,7 +179,7 @@ function EntcommList({
       type: 'entcommList/putState',
       payload: { ColumnFilter: filterData }
     });
-    dispatch({ type: 'entcommList/search', payload: { } });
+    dispatch({ type: 'entcommList/search', payload: {} });
   }
 
   let dynamicTableRef;
@@ -199,19 +200,19 @@ function EntcommList({
   //{ label: entityId === '1ce5e2d5-6cf7-440d-83f4-0d500c4a2cd9' ? '分配' : '转移', handler: openTransfer, show: shouldShowTransfer },
 
   let ajaxToolbarActions = extraToolbarData && extraToolbarData instanceof Array && extraToolbarData.map((item) => {
-      let single = true;
-      let multiple = false;
-      if (item.selecttype === 0) {
-        single = false;
-        multiple = false;
-      } else if (item.selecttype === 1) {
-        single = true;
-        multiple = false;
-      } else if (item.selecttype === 2) {
-        single = false;
-        multiple = true;
-      }
-      return { label: <IntlText name="title" value={item} />, handler: extraToolbarClickHandler.bind(this, item), single: single, multiple: multiple, show: true };
+    let single = true;
+    let multiple = false;
+    if (item.selecttype === 0) {
+      single = false;
+      multiple = false;
+    } else if (item.selecttype === 1) {
+      single = true;
+      multiple = false;
+    } else if (item.selecttype === 2) {
+      single = false;
+      multiple = true;
+    }
+    return { label: <IntlText name="title" value={item} />, handler: extraToolbarClickHandler.bind(this, item), single: single, multiple: multiple, show: true };
   });
   ajaxToolbarActions = ajaxToolbarActions || [];
   return (
@@ -256,7 +257,7 @@ function EntcommList({
         </Toolbar.Right>
       </Toolbar>
       <DynamicTable
-        ref={(ref) => dynamicTableRef = ref }
+        ref={(ref) => dynamicTableRef = ref}
         sorter={true}
         sortFieldAndOrder={sortFieldAndOrder}
         entityId={entityId}
@@ -299,9 +300,9 @@ function EntcommList({
       <ExportModal currentUser={currentUser} />
       <DataTransferModal />
       <EntcommRepeatViewModal visible={/repeatview/.test(showModals)}
-                              entityId={entityId}
-                              simpleSearchKey={simpleSearchKey}
-                              onCancel={modalCancel} />
+        entityId={entityId}
+        simpleSearchKey={simpleSearchKey}
+        onCancel={modalCancel} />
     </Page>
   );
 }
