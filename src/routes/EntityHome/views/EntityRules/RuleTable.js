@@ -52,11 +52,11 @@ function RuleTable({
     );
   }
   const columns = useType === 0 ? [
-    { title: '序号', key: 'order', dataIndex: 'order' },
-    { title: '名称', key: 'displayname', dataIndex: 'displayname', render: (value, record) => {
+    { title: '序号', key: 'order', dataIndex: 'order', width: 70 },
+    { title: '名称', key: 'displayname', dataIndex: 'displayname', width: 120, render: (value, record) => {
       return <span>{getIntlText('displayname', record)}</span>;
     } },
-    { title: '是否使用', key: 'recstatus', dataIndex: 'recstatus', render: checkboxRender.bind(null, 'recstatus') },
+    { title: '是否使用', key: 'recstatus', dataIndex: 'recstatus', width: 100, render: checkboxRender.bind(null, 'recstatus') },
     {
       title: '新增',
       children: [
@@ -76,14 +76,14 @@ function RuleTable({
     {
       title: '查看',
       children: [
-        { title: '显示', key: 'rule-detail-isVisible', dataIndex: 'rule-detail-isVisible', render: checkboxRender.bind(null, 'rule-detail-isVisible') }
+        { title: '显示', key: 'rule-detail-isVisible', dataIndex: 'rule-detail-isVisible', width: 70, render: checkboxRender.bind(null, 'rule-detail-isVisible') }
       ]
     },
     {
       title: '导入',
       children: [
-        { title: '显示', key: 'rule-import-isVisible', dataIndex: 'rule-import-isVisible', render: checkboxRender.bind(null, 'rule-import-isVisible') },
-        { title: '必填', key: 'rule-import-isRequired', dataIndex: 'rule-import-isRequired', render: checkboxRender.bind(null, 'rule-import-isRequired') }
+        { title: '显示', key: 'rule-import-isVisible', dataIndex: 'rule-import-isVisible', width: 70, render: checkboxRender.bind(null, 'rule-import-isVisible') },
+        { title: '必填', key: 'rule-import-isRequired', dataIndex: 'rule-import-isRequired', width: 70, render: checkboxRender.bind(null, 'rule-import-isRequired') }
       ]
     },
     {
@@ -93,9 +93,9 @@ function RuleTable({
       ]
     }
   ] : [
-    { title: '序号', key: 'order', dataIndex: 'order' },
-    { title: '名称', key: 'displayname', dataIndex: 'displayname' },
-    { title: '是否禁用', key: 'recstatus', dataIndex: 'recstatus', render: checkboxRender1.bind(null, 'recstatus') },
+    { title: '序号', key: 'order', dataIndex: 'order', width: 70 },
+    { title: '名称', key: 'displayname', dataIndex: 'displayname', width: 120 },
+    { title: '是否禁用', key: 'recstatus', dataIndex: 'recstatus', width: 100, render: checkboxRender1.bind(null, 'recstatus') },
     {
       title: '新增',
       children: [
@@ -113,13 +113,13 @@ function RuleTable({
     {
       title: '查看',
       children: [
-        { title: '隐藏', key: 'rule-detail-isVisible', dataIndex: 'rule-detail-isVisible', render: checkboxRender1.bind(null, 'rule-detail-isVisible') }
+        { title: '隐藏', key: 'rule-detail-isVisible', dataIndex: 'rule-detail-isVisible', width: 70, render: checkboxRender1.bind(null, 'rule-detail-isVisible') }
       ]
     },
     {
       title: '导入',
       children: [
-        { title: '隐藏', key: 'rule-import-isVisible', dataIndex: 'rule-import-isVisible', render: checkboxRender1.bind(null, 'rule-import-isVisible') }
+        { title: '隐藏', key: 'rule-import-isVisible', dataIndex: 'rule-import-isVisible', width: 70, render: checkboxRender1.bind(null, 'rule-import-isVisible') }
       ]
     },
     {
@@ -136,6 +136,7 @@ function RuleTable({
       dataSource={list}
       pagination={false}
       rowKey={(record) => (record.fieldid + record.typeid)}
+      scroll={{ y: document.body.clientHeight - 306 }}
     />
   );
 }
