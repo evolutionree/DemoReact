@@ -140,7 +140,7 @@ function DicPage({
                   { validator: IntlInputRequireValidator }
                 ]
               })(
-                <IntlInput placeholder='请输入字典值' maxLength={10} />
+                <IntlInput placeholder='请输入字典值' maxLength="30" className={styles.intlInput} />
               )}
             </FormItem>
             <FormItem>
