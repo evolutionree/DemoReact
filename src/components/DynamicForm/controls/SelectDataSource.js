@@ -202,7 +202,7 @@ class SelectDataSource extends React.Component {
           >
             {
               options instanceof Array && options.map(item => {
-                return <Option key={item.productsetid}>{item.productsetname}</Option>;
+                return <Option key={item.id}>{item.name}</Option>;
               })
             }
           </Select>
