@@ -117,7 +117,7 @@ class EditMailPanel extends Component {
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this.onWindowResize.bind(this));
+    window.addEventListener('resize', this.onWindowResize);
     if (this.refs.domListenRef) { //监听节点变化  动态计算编辑器的高度
       const MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
       if (MutationObserver) {
@@ -145,7 +145,7 @@ class EditMailPanel extends Component {
     window.removeEventListener('resize', this.onWindowResize);
   }
 
-  onWindowResize(e) {
+  onWindowResize = (e) => {
     this.setState({
       height: document.body.clientHeight - 60 - 10 - 42
     });

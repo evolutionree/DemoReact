@@ -25,7 +25,7 @@ class MultipleInput extends Component {
   }
 
   componentDidMount() {
-    document.addEventListener('keydown', this.docKeyDownHandler.bind(this));
+    document.addEventListener('keydown', this.docKeyDownHandler);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -38,7 +38,7 @@ class MultipleInput extends Component {
     document.removeEventListener('keydown', this.docKeyDownHandler);
   }
 
-  docKeyDownHandler(e) {
+  docKeyDownHandler = (e) => {
     if (e.keyCode === 8) { //删除最后一条数据
       if (document.activeElement.tagName && document.activeElement.tagName.toUpperCase() === 'BODY') {
         const newData = this.state.data && this.state.data instanceof Array && this.state.data.filter((item, index) => {

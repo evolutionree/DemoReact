@@ -34,7 +34,7 @@ class FilterDrop extends Component {
   }
 
   componentDidMount() {
-    document.addEventListener('click', this.hideFilterDrop.bind(this));
+    document.addEventListener('click', this.hideFilterDrop);
   }
 
   componentWillUnmount() {
@@ -79,7 +79,7 @@ class FilterDrop extends Component {
     }
   }
 
-  hideFilterDrop(e) {
+  hideFilterDrop = () => {
     const parentDom = document.getElementsByClassName('ant-calendar-panel')[0];
     setTimeout(() => {
       if (parentDom) {
