@@ -17,7 +17,7 @@ import DynamicModal from './DynamicModal';
 import connectPermission from "../../../../models/connectPermission";
 import DeptTree from '../DeptTree';
 
-const deptEntityId = '0741e97c-9f08-44f0-8ae3-de46c80ff31b';
+const deptEntityId = 'd51aca76-a168-48c7-aa14-eb69ca407050';
 function EntcommRel({
   list,
   listFields,
