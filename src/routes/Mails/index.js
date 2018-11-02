@@ -20,14 +20,14 @@ class Mails extends Component {
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this.onWindowResize.bind(this));
+    window.addEventListener('resize', this.onWindowResize);
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.onWindowResize);
   }
 
-  onWindowResize(e) {
+  onWindowResize = () => {
     this.setState({
       height: document.body.clientHeight
     });

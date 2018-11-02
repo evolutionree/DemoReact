@@ -24,14 +24,14 @@ class SelectBar extends Component {
   }
 
   componentDidMount() {
-    document.addEventListener('click', this.docClick.bind(this));
+    document.addEventListener('click', this.docClick);
   }
 
   componentWillUnmount() {
     document.removeEventListener('click', this.docClick);
   }
 
-  docClick(e) {
+  docClick = (e) => {
     this.setState({
       visible: false
     });

@@ -23,7 +23,7 @@ class Filter extends Component {
   }
 
   componentDidMount() {
-    document.addEventListener('click', this.hideList.bind(this), false);
+    document.addEventListener('click', this.hideList, false);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -34,7 +34,7 @@ class Filter extends Component {
     document.removeEventListener('click', this.hideList, false);
   }
 
-  hideList(e) {
+  hideList = (e) => {
     this.setState({
       visible: false
     });

@@ -44,8 +44,8 @@ class MailTabs extends Component {
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this.onWindowResize.bind(this));
-    document.addEventListener('click', this.hideFoldTabPanel.bind(this));
+    window.addEventListener('resize', this.onWindowResize);
+    document.addEventListener('click', this.hideFoldTabPanel);
     this.setState({
       width: this.tabWrapRef.offsetWidth
     });
@@ -57,14 +57,14 @@ class MailTabs extends Component {
     document.removeEventListener('click', this.hideFoldTabPanel);
   }
 
-  onWindowResize(e) {
+  onWindowResize = () => {
     this.setState({
       width: this.tabWrapRef.offsetWidth
     });
     this.updataTabSort(this.props.mailTabs, this.tabWrapRef.offsetWidth);
   }
 
-  hideFoldTabPanel() {
+  hideFoldTabPanel = () => {
     this.setState({
       foldTabVisible: false
     });

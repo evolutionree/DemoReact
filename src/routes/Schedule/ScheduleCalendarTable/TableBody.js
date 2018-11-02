@@ -25,7 +25,7 @@ class TableBody extends Component {
   }
 
   componentDidMount() {
-    this.refs.dayUl.addEventListener('mousedown', this.onDocumentMouseDown.bind(this));
+    this.refs.dayUl.addEventListener('mousedown', this.onDocumentMouseDown);
   }
 
 
@@ -46,7 +46,7 @@ class TableBody extends Component {
     //document.removeEventListener('mousedown', this.onDocumentMouseDown.bind(this));
   }
 
-  onDocumentMouseDown(e) {
+  onDocumentMouseDown = (e) => {
     let selList = this.refs.dayUl.children;
     let isSelect = true;
 
