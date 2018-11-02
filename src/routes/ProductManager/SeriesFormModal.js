@@ -33,12 +33,12 @@ class SeriesFormModal extends Component {
       const { form, currentSeries, isEdit } = nextProps;
       if (isEdit) {
         form.setFieldsValue({
-          seriesName_lang: currentSeries.productsetname,
+          seriesName: currentSeries.productsetname,
           seriesCode: currentSeries.productsetcode || ''
         });
       } else {
         form.setFieldsValue({
-          seriesName_lang: '',
+          seriesName: '',
           seriesCode: ''
         });
       }
@@ -65,7 +65,7 @@ class SeriesFormModal extends Component {
       >
         <Form>
           <FormItem label="名称">
-            {getFieldDecorator('seriesName_lang', {
+            {getFieldDecorator('seriesName', {
               initialValue: '',
               rules: [{ required: true, message: '请输入名称' }]
             })(
