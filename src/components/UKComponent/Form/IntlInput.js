@@ -166,7 +166,7 @@ class IntlInput extends Component {
 
   render() {
     return (
-      <div className={styles.wrap} id="dropdownPanel">
+      <div className={classnames(styles.wrap, this.props.className)} id="dropdownPanel">
         <Input onChange={this.inputChange}
                onBlur={this.inputBlur}
                ref={ref => this.inputRef = ref}
