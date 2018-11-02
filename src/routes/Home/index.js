@@ -41,14 +41,14 @@ class Home extends React.Component {
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this.onWindowResize.bind(this));
+    window.addEventListener('resize', this.onWindowResize);
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.onWindowResize);
   }
 
-  onWindowResize(e) {
+  onWindowResize = () => {
     this.setState({
       width: this.props.siderFold ? document.body.clientWidth - 61 : document.body.clientWidth - 200
     });

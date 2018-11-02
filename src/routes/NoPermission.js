@@ -12,14 +12,14 @@ class NoPermission extends React.Component {
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this.onWindowResize.bind(this));
+    window.addEventListener('resize', this.onWindowResize);
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.onWindowResize);
   }
 
-  onWindowResize(e) {
+  onWindowResize = (e) => {
     this.setState({
       height: document.body.clientHeight
     });

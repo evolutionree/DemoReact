@@ -61,8 +61,8 @@ class DynamicTable extends Component {
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this.onWindowResize.bind(this));
-    document.addEventListener('click', this.hideList.bind(this), false);
+    window.addEventListener('resize', this.onWindowResize);
+    document.addEventListener('click', this.hideList, false);
   }
 
   componentWillUnmount() {
@@ -70,7 +70,7 @@ class DynamicTable extends Component {
     document.removeEventListener('click', this.hideList, false);
   }
 
-  hideList(e) {
+  hideList = (e) => {
     this.setState({
       dSourceDetailVisible: false
     });

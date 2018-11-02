@@ -42,10 +42,10 @@ class Schedule extends Component {
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this.onWindowResize.bind(this));
+    window.addEventListener('resize', this.onWindowResize);
   }
 
-  onWindowResize() {
+  onWindowResize = () => {
     this.setState({
       height: document.body.clientHeight - otherHeight
     });

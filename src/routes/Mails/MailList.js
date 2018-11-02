@@ -21,14 +21,14 @@ class MailList extends Component {
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this.onWindowResize.bind(this));
+    window.addEventListener('resize', this.onWindowResize);
   }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.onWindowResize);
   }
 
-  onWindowResize() {
+  onWindowResize = () => {
     this.setState({
       width: document.body.clientWidth
     });

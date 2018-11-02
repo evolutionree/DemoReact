@@ -54,8 +54,8 @@ class MessageList extends React.Component {
   }
 
   componentDidMount() {
-    document.body.addEventListener('click', this.hideList.bind(this), false);
-    window.addEventListener('resize', this.onWindowResize.bind(this), false);
+    document.body.addEventListener('click', this.hideList, false);
+    window.addEventListener('resize', this.onWindowResize, false);
     const clientHeight = document.body.offsetHeight && document.documentElement.clientHeight;
     this.setState({
       clientHeight: clientHeight
@@ -71,7 +71,7 @@ class MessageList extends React.Component {
     }
   }
 
-  onWindowResize() {
+  onWindowResize = () => {
     const clientHeight = document.body.offsetHeight && document.documentElement.clientHeight;
     this.setState({
       clientHeight: clientHeight
@@ -150,7 +150,7 @@ class MessageList extends React.Component {
     });
   }
 
-  hideList(event) {
+  hideList = (event) => {
     if (this.state.modalVisible) return;
     if ($(event.target).closest('#message-panel').length || $(event.target).closest('.ant-dropdown').length) {
       return;
