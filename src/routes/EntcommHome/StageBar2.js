@@ -670,7 +670,7 @@ class StageBar extends Component {
     protocol.forEach(field => {
       const { controltype, fieldname, fieldconfig } = field;
       if (controltype === 24 && retData[fieldname]) {
-        retData[fieldname] = retData[fieldname].map(item => {
+        retData[fieldname] = retData[fieldname] instanceof Array && retData[fieldname].map(item => {
           return {
             TypeId: fieldconfig.entityId,
             FieldData: item
