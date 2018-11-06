@@ -6,18 +6,30 @@ import { DefaultTextView } from '../DynamicFieldView';
 
 const InputDecimal = createNormalInput('text', {
   filter: (inputValue, props) => {
-    let val = inputValue.replace(/[^\d.。]/g, '');
-    if (/^0+$/.test(val)) return '0';
-    val = val.replace(/^\./, '0.').replace(/^。/, '0.')
+    let val = inputValue.replace(/[^-?\d.。]/g, '');
+    val = val.substring(0, 1) + val.substring(1).replace(/-/g, '');
+
+    let number = val;
+    if (val.substring(0, 1) === '-') {
+      number = val.substring(1);
+    }
+    if (/^0+$/.test(number)) return '0';
+    number = number.replace(/^\./, '0.').replace(/^。/, '0.')
       .replace(/^0+\./, '0.').replace(/^0+。/, '0.')
       .replace(/^0+(\d)/, '$1');
-    return val;
+
+    if (val.substring(0, 1) === '-') {
+      return '-' + number;
+    } else {
+      return number;
+    }
   },
   filterOnBlur: (inputValue, props) => {
     const { decimalsLength } = props;
     if (inputValue) {
       const split = inputValue.split('.');
-      const int = split[0];
+      let int = split[0];
+
       if (split.length === 1) {
         return int;
       } else if (split.length >= 2 && !split[1]) {
