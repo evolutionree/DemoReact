@@ -6,12 +6,25 @@ import { DefaultTextView } from '../DynamicFieldView';
 
 const InputInteger = createNormalInput('text', {
   filter: inputValue => {
-    let val = inputValue.replace(/[^\d]/g, '');
+    let val = inputValue.replace(/[^0-9-]+/, '');
+    val = val.substring(0, 1) + val.substring(1).replace(/-/g, '');
+
     if (/^0+$/.test(val)) return 0;
     if (!val) return '';
-    return parseInt(val.replace(/^0+/, ''), 10);
+
+    if (val === '-') {
+      return '-';
+    } else if (val.substring(0, 1) === '-') {
+      val = parseInt(val.substring(1).replace(/^0+/, ''), 10);
+      return -val;
+    } else {
+      return parseInt(val.replace(/^0+/, ''), 10);
+    }
   },
   filterOnBlur: inputValue => {
+    if (inputValue === '-') {
+      return '';
+    }
     return parseInt(inputValue, 10);
   }
 });

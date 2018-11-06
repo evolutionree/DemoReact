@@ -165,6 +165,9 @@ class SelectRegion extends Component {
         disabled={isReadOnly === 1}
         onFocus={onFocus}
         style={{ width: '100%', height: '32px' }}
+        showSearch={(inputValue, path) => {
+          return path.some(option => (option.label).toLowerCase().indexOf(inputValue.toLowerCase()) > -1)
+        }}
       />
     );
   }

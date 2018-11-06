@@ -29,8 +29,14 @@ class EntitySelect extends Component {
   };
   render() {
     const { value, onChange, ...rest } = this.props;
+    console.log(this.state.entityList)
     return (
-      <Select value={value} onChange={onChange} {...rest}>
+      <Select
+        value={value}
+        onChange={onChange}
+        showSearch
+        {...rest}
+      >
         {this.state.entityList.map(entity => (
           <Select.Option key={entity.entityid}>
             <IntlText value={entity.entityname} value_lang={entity.entityname_lang} />

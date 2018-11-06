@@ -191,7 +191,7 @@ function EntcommList({
       type: 'entcommApplication/putState',
       payload: { ColumnFilter: filterData }
     });
-    dispatch({ type: 'entcommApplication/search', payload: { } });
+    dispatch({ type: 'entcommApplication/search', payload: {} });
   }
 
 
@@ -242,7 +242,12 @@ function EntcommList({
           ...ajaxToolbarActions
         ]}
       >
-        <Select style={{ minWidth: '120px' }} value={menuId} onChange={onMenuChange}>
+        <Select
+          style={{ minWidth: '120px' }}
+          value={menuId}
+          onChange={onMenuChange}
+          showSearch
+        >
           {menus.map(menu => (
             <Option key={menu.menuId}><IntlText name="menuName" value={menu} /></Option>
           ))}
@@ -269,7 +274,7 @@ function EntcommList({
         </Toolbar.Right>
       </Toolbar>
       <DynamicTable
-        ref={(ref) => dynamicTableRef = ref }
+        ref={(ref) => dynamicTableRef = ref}
         sorter={true}
         sortFieldAndOrder={sortFieldAndOrder}
         protocol={protocol}

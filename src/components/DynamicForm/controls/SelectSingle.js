@@ -229,7 +229,7 @@ class SelectSingle extends Component {
             <Icon type="info-circle" style={{ color: '#b8c7ce', fontSize: '18px', marginLeft: '4px' }} />
           </Tooltip> : null
         }
-      </div>
+      </div >
     );
   }
 }

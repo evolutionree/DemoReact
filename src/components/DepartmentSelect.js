@@ -184,7 +184,7 @@ class DepartmentSelect extends React.Component {
     return treeNodes ? (
       <TreeSelect
         allowClear
-        showSearch={showSearch}
+        showSearch={showSearch || true}
         searchPlaceholder="输入团队名称搜索"
         treeNodeFilterProp="name"
         style={{ width }}

@@ -24,7 +24,7 @@ class SelectMultiple extends Component {
   };
   static defaultProps = {
     value: '',
-    onFocus: () => {}
+    onFocus: () => { }
   };
 
   constructor(props) {
@@ -184,7 +184,7 @@ class SelectMultiple extends Component {
         disabled={isReadOnly === 1}
         onChange={this.onSelectChange}
         onFocus={onFocus}
-        optionFilterProp="children"
+        showSearch
         mode="multiple"
         style={{ width: '100%', height: '32px' }}
       >

@@ -192,12 +192,13 @@ class SelectDataSource extends React.Component {
       <div className={cls} style={{ ...this.props.style }}>
         <div className={styles.inputSelectWrap}>
           <Select onChange={this.selectChange.bind(this, options)}
-                  onSearch={this.queryOptions}
-                  placeholder={this.props.placeholder}
-                  disabled={isReadOnly}
-                  mode={this.props.multiple === 1 ? 'multiple' : null}
-                  value={array.map(item => item.id)}
-                  allowClear
+            onSearch={this.queryOptions}
+            placeholder={this.props.placeholder}
+            disabled={isReadOnly}
+            mode={this.props.multiple === 1 ? 'multiple' : null}
+            value={array.map(item => item.id)}
+            allowClear
+            showSearch
           >
             {
               options instanceof Array && options.map(item => {
