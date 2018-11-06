@@ -7,7 +7,7 @@ import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import DynamicTable from '../../components/DynamicTable/index';
 import EntcommAddModal from '../../components/EntcommAddModal';
-import IntlText from '../../components/UKComponent/Form/IntlText';
+import { getIntlText } from '../../components/UKComponent/Form/IntlText';
 import RecordDetailModal from './RecordDetailModal';
 import RecordEditModal from './RecordEditModal';
 import TransferModal from './TransferModal';
@@ -22,30 +22,30 @@ import EntcommRepeatViewModal from '../../components/EntcommRepeatViewModal';
 const Option = Select.Option;
 
 function EntcommList({
-    checkFunc,
-    dispatch,
-    entityName,
-    menus,
-    protocol,
-    queries,
-    list,
-    total,
-    currItems,
-    entityId,
-    currentUser,
-    simpleSearchKey,
-    extraButtonData,
-    extraToolbarData,
-    showModals,
-    sortFieldAndOrder,  //当前排序的字段及排序顺序
-    ColumnFilter,
-    entityTypes,
-    selectedFlowObj,
-                       onAddModalCanel,
-                       onAddModalDone,
-                       funBtnInfo,
-                       copyData
-  }) {
+  checkFunc,
+  dispatch,
+  entityName,
+  menus,
+  protocol,
+  queries,
+  list,
+  total,
+  currItems,
+  entityId,
+  currentUser,
+  simpleSearchKey,
+  extraButtonData,
+  extraToolbarData,
+  showModals,
+  sortFieldAndOrder,  //当前排序的字段及排序顺序
+  ColumnFilter,
+  entityTypes,
+  selectedFlowObj,
+  onAddModalCanel,
+  onAddModalDone,
+  funBtnInfo,
+  copyData
+}) {
   function selectItems(items) {
     dispatch({ type: 'entcommApplication/currItems', payload: items });
     dispatch({ type: 'entcommApplication/queryFuntionbutton__', payload: {} });
@@ -248,9 +248,7 @@ function EntcommList({
           onChange={onMenuChange}
           showSearch
         >
-          {menus.map(menu => (
-            <Option key={menu.menuId}><IntlText name="menuName" value={menu} /></Option>
-          ))}
+          {menus.map(menu => <Option key={menu.menuId}>{getIntlText('menuName', menu)}</Option>)}
         </Select>
         {checkFunc('EntityDataAdd') && <Button onClick={openAdd}>新增</Button>}
         {checkFunc('EntityDataSearch') && <Button onClick={queryRepeat}>查重</Button>}
@@ -337,9 +335,9 @@ function EntcommList({
         onDone={onAddModalDone}
       />
       <EntcommRepeatViewModal visible={/repeatview/.test(showModals)}
-                              entityId={entityId}
-                              simpleSearchKey={simpleSearchKey}
-                              onCancel={modalCancel} />
+        entityId={entityId}
+        simpleSearchKey={simpleSearchKey}
+        onCancel={modalCancel} />
     </Page>
   );
 }

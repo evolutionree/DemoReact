@@ -3,9 +3,7 @@ import { Select } from 'antd';
 import { is } from 'immutable';
 import _ from 'lodash';
 import connectBasicData from '../../../models/connectBasicData';
-import IntlText from '../../UKComponent/Form/IntlText';
-import { blurByHelper } from './helpers';
-
+import { getIntlText } from '../../UKComponent/Form/IntlText';
 const Option = Select.Option;
 
 class SelectMultiple extends Component {
@@ -189,7 +187,7 @@ class SelectMultiple extends Component {
         style={{ width: '100%', height: '32px' }}
       >
         {options.map(opt => (
-          <Option key={opt.value} style={opt.disabled ? { display: 'none'} : null}><IntlText name="label" value={opt} /></Option>
+          <Option key={opt.value} style={opt.disabled ? { display: 'none' } : null}>{getIntlText('label', opt)}</Option>
         ))}
       </Select>
     );

@@ -1,6 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import { message, Select } from 'antd';
-import IntlText from '../components/UKComponent/Form/IntlText';
+import { getIntlText } from '../components/UKComponent/Form/IntlText';
 import { query as queryEntityList } from '../services/entity';
 
 class EntitySelect extends Component {
@@ -39,7 +39,7 @@ class EntitySelect extends Component {
       >
         {this.state.entityList.map(entity => (
           <Select.Option key={entity.entityid}>
-            <IntlText value={entity.entityname} value_lang={entity.entityname_lang} />
+            {getIntlText('entityname', entity)}
           </Select.Option>
         ))}
       </Select>

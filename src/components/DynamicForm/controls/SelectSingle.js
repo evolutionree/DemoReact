@@ -4,7 +4,7 @@ import { is } from 'immutable';
 import _ from 'lodash';
 import connectBasicData from '../../../models/connectBasicData';
 import { queryYearWeekData } from '../../../services/basicdata';
-import IntlText from '../../UKComponent/Form/IntlText';
+import { getIntlText } from '../../UKComponent/Form/IntlText';
 import { blurByHelper } from './helpers';
 
 const Option = Select.Option;
@@ -221,7 +221,7 @@ class SelectSingle extends Component {
         >
           <Option value="">- 请选择 -</Option>
           {options.map(opt => (
-            <Option key={opt.value + ''} disabled={opt.disabled}><IntlText name="label" value={opt} /></Option>
+            <Option key={opt.value + ''} disabled={opt.disabled}>{getIntlText('label', opt)}</Option>
           ))}
         </Select>
         {
