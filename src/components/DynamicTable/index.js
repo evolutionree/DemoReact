@@ -87,7 +87,7 @@ class DynamicTable extends Component {
     });
   }
 
-  onWindowResize(e) {
+  onWindowResize = (e) => {
     this.setState({
       height: document.body.clientHeight,
       width: document.body.clientWidth
