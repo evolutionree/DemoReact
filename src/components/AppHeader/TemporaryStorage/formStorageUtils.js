@@ -66,6 +66,7 @@ export function frontEndData_to_BackEndData(form) {
 
     if (item.controltype === 24) {
       const tableFields = form.formRef.getTableFields(item.fieldname);
+      const tableRowFields = form.formRef.getTableRowFields(item.fieldname);
       fieldjson[item.fieldid].sheetfieldglobal = {};
       tableFields.map(tableFieldItem => {
         let tableFieldConfig = getFielConfig(tableFieldItem);
@@ -78,6 +79,24 @@ export function frontEndData_to_BackEndData(form) {
           isReadOnly: tableFieldIsReadOnly,
           isRequired: tableFieldIsRequired
         };
+      });
+
+      fieldjson[item.fieldid].sheetfield = [];
+      tableRowFields.map(tableRowFieldItem => { //TODO 表格每一行的协议
+        let rowFieldConfig = {};
+        tableRowFieldItem.map(tableFieldItem => {
+          let tableFieldConfig = getFielConfig(tableFieldItem);
+          const tableFieldIsVisible = tableFieldConfig.isVisible !== 1 ? 0 : tableFieldConfig.isVisibleJS === 0 ? 0 : 1;
+          const tableFieldIsReadOnly = tableFieldConfig.isReadOnly === 1 ? 1 : tableFieldConfig.isReadOnlyJS ? 1 : 0;
+          const tableFieldIsRequired = tableFieldConfig.isRequired === 1 ? 1 : tableFieldConfig.isRequiredJS ? 1 : 0;
+          rowFieldConfig[tableFieldItem.fieldid] = {
+            ...tableFieldConfig,
+            isHidden: tableFieldIsVisible === 0 ? 1 : 0,
+            isReadOnly: tableFieldIsReadOnly,
+            isRequired: tableFieldIsRequired
+          };
+        });
+        fieldjson[item.fieldid].sheetfield.push(rowFieldConfig);
       });
     }
   });

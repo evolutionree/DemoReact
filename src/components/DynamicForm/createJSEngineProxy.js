@@ -348,6 +348,14 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       }
     }
 
+    getTableRowFields = (fieldName) => { //TODO:2018.11.8 为解决表格某列字段在不同行会有不同表现（必填、只读），表格协议改为每一行都由自身的协议渲染
+      if (this.getFieldControlType(fieldName) !== 24) return [];
+      const instance = this.getFieldComponentInstance(fieldName);
+      if (instance && instance.getRowFields) {
+        return instance.getRowFields();
+      }
+    }
+
     designateDataSource = (fieldName, ids) => {
       if (ids === undefined || ids === null) ids = '';
       this.setFieldConfig(fieldName, {
@@ -439,7 +447,11 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     setVisible = (fieldName, isVisible) => {
-      this.setFieldConfig(fieldName, { isVisibleJS: isVisible ? 1 : 0 });
+      if (this.props.origin === 'RelTableRow') { //TODO: 表格里的表单执行js 则setVisible 替换为 setReadOnly
+        this.setFieldConfig(fieldName, { isReadOnlyJS: isVisible ? 0 : 1 });
+      } else {
+        this.setFieldConfig(fieldName, { isVisibleJS: isVisible ? 1 : 0 });
+      }
       if (!isVisible) {
         // this.setValue(fieldName, undefined);
         this.props.form && this.props.form.setFieldsValue({ [fieldName]: '' });
@@ -564,18 +576,27 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     setFieldConfig = (fieldName, config) => {
+      // const field = this.getFieldByName(fieldName);
+      // const newFields = this.props.fields.map(item => {
+      //   const newItem = item;
+      //   if (field && item.fieldid === field.fieldid) {
+      //     newItem.fieldconfig = {
+      //       ...item.fieldconfig,
+      //       ...config
+      //     };
+      //   }
+      //   return newItem;
+      // });
+      // this.setState({ fields: newFields });
+
       const field = this.getFieldByName(fieldName);
-      const newFields = this.props.fields.map(item => {
-        const newItem = item;
-        if (field && item.fieldid === field.fieldid) {
-          newItem.fieldconfig = {
-            ...item.fieldconfig,
-            ...config
-          };
-        }
-        return newItem;
-      });
-      this.setState({ fields: newFields });
+      if (field) {
+        field.fieldconfig = {
+          ...field.fieldconfig,
+          ...config
+        };
+      }
+      this.setState({ fields: [...this.state.fields] });
     };
 
     getFieldByName = (fieldName) => {
