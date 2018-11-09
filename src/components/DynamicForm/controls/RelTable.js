@@ -9,7 +9,7 @@ import RelTableView from './RelTableView';
 import styles from './RelTable.less';
 import generateDefaultFormData from '../generateDefaultFormData';
 import RelTableImportModal from '../RelTableImportModal';
-import IntlText from '../../UKComponent/Form/IntlText';
+import { getIntlText } from '../../UKComponent/Form/IntlText';
 import RelTableBatchModal from '../RelTableBatchModal';
 import { getBackEndField_TO_FrontEnd } from '../../AppHeader/TemporaryStorage/formStorageUtils';
 
@@ -44,7 +44,8 @@ class RelTable extends Component {
       selectedRows: [],
       allSelected: false,
       importVisible: false,
-      showModals: ''
+      showModals: '',
+      tableRowFields: []
     };
   }
 
@@ -91,20 +92,7 @@ class RelTable extends Component {
         if (!_this.state.loading) {
           let tableFields_ = tableFields;
           if (sheetfieldglobal) {
-            tableFields_ = tableFields.map(item => {
-              let newItem = item;
-              if (sheetfieldglobal[item.fieldid]) {
-                let fieldJson_config = getBackEndField_TO_FrontEnd(sheetfieldglobal[item.fieldid], item);
-                newItem.fieldconfig = {
-                  ...item.fieldconfig,
-                  ...fieldJson_config,
-                  isRequiredJS: fieldJson_config.isRequired,
-                  isReadOnlyJS: fieldJson_config.isReadOnly,
-                  isVisibleJS: fieldJson_config.isHidden === 0 ? 1 : 0
-                };
-              }
-              return newItem;
-            });
+            tableFields_ = _this.mergeStorageAndLocal(tableFields, sheetfieldglobal);
           }
           _this.setState({ tableFields: tableFields_ });
         } else {
@@ -113,6 +101,54 @@ class RelTable extends Component {
       }, 100);
     }
   };
+
+  setInitRowFieldConfig = (tableRowFields, sheetfield) => { //TODO：从暂存数据打开表单 则表格每行的协议 需要跟暂存的每行表单协议 做 并集处理
+    const _this = this;
+    doWhileGet();
+    function doWhileGet() {
+      setTimeout(() => {
+        if (!_this.state.loading) {
+          let tableRowFields_ = tableRowFields instanceof Array && tableRowFields.map((tableRowFieldItem, index) => {
+            let tableRowFieldItem_ = tableRowFieldItem;
+            const currentRowSheetField = sheetfield[index];
+            if (currentRowSheetField) {
+              tableRowFieldItem_ = _this.mergeStorageAndLocal(tableRowFieldItem, currentRowSheetField, 'row');
+            }
+            return tableRowFieldItem_;
+          })
+          _this.setState({ tableRowFields: tableRowFields_ });
+        } else {
+          doWhileGet();
+        }
+      }, 100);
+    }
+  };
+
+  mergeStorageAndLocal = (tableField, storageSheetField, type) => {
+    return tableField.map(item => {
+      let newItem = item;
+      if (storageSheetField[item.fieldid]) {
+        let fieldJson_config = getBackEndField_TO_FrontEnd(storageSheetField[item.fieldid], item);
+        if (type === 'row') {
+          newItem.fieldconfig = {
+            ...item.fieldconfig,
+            ...fieldJson_config,
+            isRequiredJS: fieldJson_config.isRequired,
+            isReadOnlyJS: fieldJson_config.isReadOnly || fieldJson_config.isHidden === 0 ? 0 : 1  //表格某行单元格不可见转成可读
+          };
+        } else {
+          newItem.fieldconfig = {
+            ...item.fieldconfig,
+            ...fieldJson_config,
+            isRequiredJS: fieldJson_config.isRequired,
+            isReadOnlyJS: fieldJson_config.isReadOnly,
+            isVisibleJS: fieldJson_config.isHidden === 0 ? 1 : 0
+          };
+        }
+      }
+      return newItem;
+    });
+  }
 
   parseValue = () => {
     let { value } = this.props;
@@ -152,10 +188,14 @@ class RelTable extends Component {
       this.setState({
         tableFields: result.data,
         selectedRows: [],
-        loading: false
+        loading: false,
+        tableRowFields: this.getInitTableRowFields(result.data)
       });
       if (props.sheetfieldglobal) { //暂存数据需要做处理
         this.setInitFieldConfig(result.data, props.sheetfieldglobal);
+      }
+      if (props.sheetfield) { //暂存数据需要做处理
+        this.setInitRowFieldConfig(this.getInitTableRowFields(result.data), props.sheetfield);
       }
     }).catch(e => {
       console.error(e.message);
@@ -164,6 +204,13 @@ class RelTable extends Component {
       });
     });
   };
+
+  getInitTableRowFields = (fields) => {
+    const tableRowFields = this.parseValue().map(item => {
+      return _.cloneDeep(fields);
+    });
+    return tableRowFields;
+  }
 
   validate = (callback) => {
     //TODO: why do we need to repeat call function which named validateTableForm, 表格是有多个表格叠加出来的，所有多个表格需要做校验
@@ -200,6 +247,12 @@ class RelTable extends Component {
       FieldData: generateDefaultFormData(this.state.tableFields)
     };
     onChange([...this.parseValue(), newRow]);
+    this.setState({
+      tableRowFields: [
+        ..._.cloneDeep(this.state.tableRowFields),
+        _.cloneDeep(this.state.tableFields)
+      ]
+    });
   };
 
   batchAdd = (data) => {
@@ -216,6 +269,16 @@ class RelTable extends Component {
       showModals: false
     });
     onChange([...this.parseValue(), ...newAddData]);
+
+    const batchAddTableRowFields = data instanceof Array && data.map(item => {
+      return _.cloneDeep(this.state.tableFields);
+    });
+    this.setState({
+      tableRowFields: [
+        ..._.cloneDeep(this.state.tableRowFields),
+        ...batchAddTableRowFields
+      ]
+    });
   }
 
   addImportData = (data, operateType) => { //operateType== 1  追加导入 覆盖导入
@@ -224,6 +287,22 @@ class RelTable extends Component {
       importVisible: false
     });
     operateType === 1 ? onChange([...this.parseValue(), ...data]) : onChange(data);
+
+    const importTableRowFields = data instanceof Array && data.map(item => {
+      return _.cloneDeep(this.state.tableFields);
+    });
+    if (operateType === 1) {
+      this.setState({
+        tableRowFields: [
+          ..._.cloneDeep(this.state.tableRowFields),
+          ...importTableRowFields
+        ]
+      });
+    } else {
+      this.setState({
+        tableRowFields: importTableRowFields
+      });
+    }
   }
 
   importData = () => {
@@ -314,101 +393,30 @@ class RelTable extends Component {
   };
 
   setRowFieldVisible = (fieldName, isVisible) => {
-    doWhileGet();
-    const _this = this;
-    function doWhileGet() {
-      setTimeout(() => {
-        if (!_this.state.loading) {
-          const newFields = [..._this.state.tableFields];
-          const fieldIndex = _.findIndex(newFields, ['fieldname', fieldName]);
-          if (fieldIndex !== -1) {
-            const field = _this.state.tableFields[fieldIndex];
-            // const newField = {
-            //   ...field,
-            //   fieldconfig: {
-            //     ...field.fieldconfig,
-            //     isVisibleJS: isVisible ? 1 : 0
-            //   }
-            // };
-            field.fieldconfig = {
-              ...field.fieldconfig,
-              isVisibleJS: isVisible ? 1 : 0
-            };
-
-            if (!isVisible) {
-              const value = _this.parseValue();
-              if (value.length) {
-                const newVal = value.map(item => {
-                  return {
-                    TypeId: _this.props.entityId,
-                    FieldData: {
-                      ...(item.FieldData || {}),
-                      [fieldName]: ''
-                    }
-                  };
-                });
-                _this.props.onChange(newVal);
-              }
-              // this.arrFormInstance.forEach(form => {
-              //   if (!form) return;
-              //   form.formInst && form.formInst.setFieldsValue({ [fieldName]: '' });
-              // });
+    this.setFieldConfig(fieldName, { isVisibleJS: isVisible ? 1 : 0 });
+    if (!isVisible) {
+      const value = this.parseValue();
+      if (value.length) {
+        const newVal = value.map(item => {
+          return {
+            TypeId: this.props.entityId,
+            FieldData: {
+              ...(item.FieldData || {}),
+              [fieldName]: ''
             }
-
-            // newFields[fieldIndex] = newField;
-            _this.setState({ tableFields: newFields });
-          }
-        } else {
-          doWhileGet();
-        }
-      }, 100);
+          };
+        });
+        this.props.onChange(newVal);
+      }
     }
   };
 
   setRowFieldReadOnly = (fieldName, isReadonly) => {
-    doWhileGet(); //因为全局js设置的时候,可能异步请求的表格协议还没获取到，设置会出问题，所以需要保证 表格协议已经获取到再设置 config
-    const _this = this;
-    function doWhileGet() {
-      setTimeout(() => {
-        if (!_this.state.loading) {
-          const newFields = [..._this.state.tableFields];
-          const fieldIndex = _.findIndex(newFields, ['fieldname', fieldName]);
-          if (fieldIndex !== -1) {
-            const field = _this.state.tableFields[fieldIndex];
-            field.fieldconfig = {
-              ...field.fieldconfig,
-              isReadOnlyJS: isReadonly ? 1 : 0
-            };
-            _this.setState({ tableFields: newFields });
-          }
-        } else {
-          doWhileGet();
-        }
-      }, 10);
-    }
+    this.setFieldConfig(fieldName, { isReadOnlyJS: isReadonly ? 1 : 0 });
   };
 
   setRowFieldRequired = (fieldName, isRequired) => {
-    const _this = this;
-    doWhileGet();
-    function doWhileGet() {
-      setTimeout(() => {
-        if (!_this.state.loading) {
-          const newFields = [..._this.state.tableFields];
-          const fieldIndex = _.findIndex(newFields, ['fieldname', fieldName]);
-          if (fieldIndex !== -1) {
-            const field = _this.state.tableFields[fieldIndex];
-            field.fieldconfig = {
-              ...field.fieldconfig,
-              isRequiredJS: isRequired ? 1 : 0
-            };
-            _this.setState({ tableFields: newFields });
-          }
-        } else {
-          doWhileGet();
-        }
-      }, 100);
-    }
+    this.setFieldConfig(fieldName, { isRequiredJS: isRequired ? 1 : 0 });
   };
 
   getFieldConfig = fieldName => {
@@ -419,6 +427,7 @@ class RelTable extends Component {
   setFieldConfig = (fieldName, config) => {
     const _this = this;
     doWhileGet();
+    //因为全局js设置的时候,可能异步请求的表格协议还没获取到，设置会出问题，所以需要保证 表格协议已经获取到再设置 config
     function doWhileGet() {
       setTimeout(() => {
         if (!_this.state.loading) {
@@ -429,6 +438,7 @@ class RelTable extends Component {
               ...config
             };
           }
+          _this.updateTableRowFields([..._this.state.tableFields]);
           _this.setState({ tableFields: [..._this.state.tableFields] });
         } else {
           doWhileGet();
@@ -436,6 +446,33 @@ class RelTable extends Component {
       }, 100);
     }
   };
+
+  updateTableRowFields = (tableFields) => {
+    console.log(tableFields)
+    const { tableRowFields } = this.state;
+    //console.log(tableRowFields)
+    const newTableRowFields = tableRowFields.map(rowFields => {
+      return rowFields.map(item => {
+        const newFieldItem = _.cloneDeep(item);
+        const field = _.find(tableFields, ['fieldname', item.fieldname]);
+        console.log(field)
+        console.log(field.isVisibleJS)
+        if (field) {
+          newFieldItem.fieldconfig = {
+            ...item.fieldconfig,
+            isReadOnlyJS: field.fieldconfig.isReadOnlyJS || item.fieldconfig.isReadOnlyJS,
+            isRequiredJS: field.fieldconfig.isRequiredJS || item.fieldconfig.isRequiredJS,
+            isVisibleJS: field.fieldconfig.isVisibleJS === 0 ? 0 : undefined
+          };
+        }
+        return newFieldItem;
+      });
+    });
+    console.log(newTableRowFields)
+    this.setState({
+      tableRowFields: newTableRowFields
+    });
+  }
 
   getFieldByName = (fieldName) => {
     return _.find(this.state.tableFields, ['fieldname', fieldName]);
@@ -447,6 +484,10 @@ class RelTable extends Component {
 
   getFields = () => {
     return this.state.tableFields;
+  }
+
+  getRowFields = () => {
+    return this.state.tableRowFields;
   }
 
   // 渲染表格列头
@@ -471,7 +512,11 @@ class RelTable extends Component {
               <div className={classnames([styles.th, {
                 [styles.required]: !!required
               }])} key={field.fieldname}>
-                <IntlText name="displayname" value={field} />
+                <span>
+                  {
+                    getIntlText('displayname', field)
+                  }
+                </span>
               </div>
             );
           })}
@@ -493,15 +538,16 @@ class RelTable extends Component {
         type: item && item.type,
         field: _.find(this.state.tableFields, filedItem => filedItem.fieldname === this.props.batchAddField)
       };
-
       return (
         <RelTableRow
           key={index}
           rowIndex={index}
           fixedColumn={fixedColumn}
+          origin="RelTableRow"
           mode={this.props.mode}
           selected={_.includes(this.state.selectedRows, index)}
-          fields={this.state.tableFields}
+          fields={this.state.tableRowFields[index] || []}
+          entityId={this.props.entityId}
           value={value}
           onChange={this.onRowValueChange.bind(this, index)}
           onSelect={this.onRowSelect}
@@ -528,75 +574,79 @@ class RelTable extends Component {
   }
 
   setAlignTableWidthAndHeight = () => {
-    //列表的原始表头的列
-    const realHeader = this.relTableRef.children[0].children[0].children;
-    //列表的固定表头的列
-    const fixedTopHeader = this.fixTopTableRef.children[0].children[0].children;
+    try {
+      //列表的原始表头的列
+      const realHeader = this.relTableRef.children[0].children[0].children;
+      //列表的固定表头的列
+      const fixedTopHeader = this.fixTopTableRef.children[0].children[0].children;
 
-    this.fixTopTableRef.style.width = this.relTableRef.getBoundingClientRect().width + 'px';
-    //顶部固定表格的列宽 需与真实表格保持一致
-    for (let i = 0; i < realHeader.length; i++) {
-      let realHeader_thWidth = realHeader[i].getBoundingClientRect().width;
-      let fixedTopHeader_thWidth = fixedTopHeader[i].getBoundingClientRect().width;
+      this.fixTopTableRef.style.width = this.relTableRef.getBoundingClientRect().width + 'px';
+      //顶部固定表格的列宽 需与真实表格保持一致
+      for (let i = 0; i < realHeader.length; i++) {
+        let realHeader_thWidth = realHeader[i].getBoundingClientRect().width;
+        let fixedTopHeader_thWidth = fixedTopHeader[i].getBoundingClientRect().width;
 
-      let realHeader_thHeight = realHeader[i].getBoundingClientRect().height;
-      let fixedTopHeader_thHeight = fixedTopHeader[i].getBoundingClientRect().height;
-      if (realHeader_thWidth !== fixedTopHeader_thWidth || realHeader_thHeight !== fixedTopHeader_thHeight) {
-        fixedTopHeader[i].style.width = realHeader_thWidth + 'px';
-        fixedTopHeader[i].style.height = realHeader_thHeight + 'px';
+        let realHeader_thHeight = realHeader[i].getBoundingClientRect().height;
+        let fixedTopHeader_thHeight = fixedTopHeader[i].getBoundingClientRect().height;
+        if (realHeader_thWidth !== fixedTopHeader_thWidth || realHeader_thHeight !== fixedTopHeader_thHeight) {
+          fixedTopHeader[i].style.width = realHeader_thWidth + 'px';
+          fixedTopHeader[i].style.height = realHeader_thHeight + 'px';
+        }
       }
-    }
 
-    //是否存在横 纵向滚动条
-    const vertical = this.hasScrolled(this.relTableWrapRef);
-    const horizontal = this.hasScrolled(this.relTableWrapRef, 'horizontal');
+      //是否存在横 纵向滚动条
+      const vertical = this.hasScrolled(this.relTableWrapRef);
+      const horizontal = this.hasScrolled(this.relTableWrapRef, 'horizontal');
 
-    let scrollWidth = 0;
-    if (vertical) {
-      scrollWidth = this.getScrollWidth();
-    }
-    this.fixTopWrapRef.style.width = `calc(100% - ${scrollWidth}px)`;
-    this.fixTopWrapRef.style.height = this.relTableWrapRef.children[0].children[0].getBoundingClientRect().height + 1 + 'px';
-
-    //列表的原始表头的行
-    const realBody = this.relTableRef.children;
-    //列表的左固定表的行
-    const fixedLeftBody = this.fixLeftTableRef.children;
-    for (let i = 0; i < realBody.length; i++) {
-      let realBody_trHeight = realBody[i].getBoundingClientRect().height;
-      let fixedLeftBody_trHeight = fixedLeftBody[i].getBoundingClientRect().height;
-
-      if (realBody_trHeight !== fixedLeftBody_trHeight) {
-        fixedLeftBody[i].children[0].style.height = realBody_trHeight + 'px';
+      let scrollWidth = 0;
+      if (vertical) {
+        scrollWidth = this.getScrollWidth();
       }
-    }
+      this.fixTopWrapRef.style.width = `calc(100% - ${scrollWidth}px)`;
+      this.fixTopWrapRef.style.height = this.relTableWrapRef.children[0].children[0].getBoundingClientRect().height + 1 + 'px';
 
-    for(let i = 0; i < realHeader.length; i++) {
-      //console.log(realHeader[i])
-    }
-    for (let i = 0; i < fixedLeftBody.length; i++) {
-      const fixedLeftBody_Tds = fixedLeftBody[i].children[0].children;
-      for (let j = 0; j < fixedLeftBody_Tds.length; j++) {
-        fixedLeftBody_Tds[j].style.width = realHeader[j].getBoundingClientRect().width + 'px';
-        fixedLeftBody_Tds[j].children[0].style.width = realHeader[j].getBoundingClientRect().width - 21 + 'px';
+      //列表的原始表头的行
+      const realBody = this.relTableRef.children;
+      //列表的左固定表的行
+      const fixedLeftBody = this.fixLeftTableRef.children;
+      for (let i = 0; i < realBody.length; i++) {
+        let realBody_trHeight = realBody[i].getBoundingClientRect().height;
+        let fixedLeftBody_trHeight = fixedLeftBody[i].getBoundingClientRect().height;
+
+        if (realBody_trHeight !== fixedLeftBody_trHeight) {
+          fixedLeftBody[i].children[0].style.height = realBody_trHeight + 'px';
+        }
       }
-    }
 
-    //列表的左固定的表格
-    let fixedWidth = 0
-    for (let i = 0; i < realHeader.length; i++) {
-      if (i < 2) {
-        fixedWidth += realHeader[i].getBoundingClientRect().width;
+      for(let i = 0; i < realHeader.length; i++) {
+        //console.log(realHeader[i])
       }
-    }
-    this.fixLeftWrapRef.style.width = fixedWidth + 'px';
+      for (let i = 0; i < fixedLeftBody.length; i++) {
+        const fixedLeftBody_Tds = fixedLeftBody[i].children[0].children;
+        for (let j = 0; j < fixedLeftBody_Tds.length; j++) {
+          fixedLeftBody_Tds[j].style.width = realHeader[j].getBoundingClientRect().width + 'px';
+          fixedLeftBody_Tds[j].children[0].style.width = realHeader[j].getBoundingClientRect().width - 21 + 'px';
+        }
+      }
 
-    let scrollHeight = 0;
-    if (horizontal) {
-      scrollHeight = this.getScrollWidth();
+      //列表的左固定的表格
+      let fixedWidth = 0
+      for (let i = 0; i < realHeader.length; i++) {
+        if (i < 2) {
+          fixedWidth += realHeader[i].getBoundingClientRect().width;
+        }
+      }
+      this.fixLeftWrapRef.style.width = fixedWidth + 'px';
+
+      let scrollHeight = 0;
+      if (horizontal) {
+        scrollHeight = this.getScrollWidth();
+      }
+      this.fixLeftWrapRef.style.height = this.relTableWrapRef.getBoundingClientRect().height - scrollHeight + 'px';
+      this.fixLeftWrapRef.style.maxHeight = TableMaxHeight - scrollHeight + 'px';
+    } catch (e) {
+      console.error(e);
     }
-    this.fixLeftWrapRef.style.height = this.relTableWrapRef.getBoundingClientRect().height - scrollHeight + 'px';
-    this.fixLeftWrapRef.style.maxHeight = TableMaxHeight - scrollHeight + 'px';
   }
 
   tableScroll = (e) => {
