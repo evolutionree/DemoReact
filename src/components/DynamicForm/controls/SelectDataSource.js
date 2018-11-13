@@ -73,7 +73,7 @@ class SelectDataSource extends React.Component {
     }
     const name = val.map(item => item.name).join(',');
     const id = val.map(item => item.id).join(',');
-    const _val = JSON.stringify({ name, id });
+    const _val = id ? JSON.stringify({ name, id }) : '';
     this.props.onChange(_val, true);
   };
 
@@ -81,7 +81,8 @@ class SelectDataSource extends React.Component {
     this.hideModal();
     const id = arrIdName.map(obj => obj.id).join(',');
     const name = arrIdName.map(obj => obj.name).join(',');
-    this.props.onChange(JSON.stringify({ id, name }));
+    const updateValue = id ? JSON.stringify({ id, name }) : '';
+    this.props.onChange(updateValue);
     this.changeWithName(id, name);
   };
 
@@ -132,7 +133,8 @@ class SelectDataSource extends React.Component {
     const selectData = options instanceof Array && options.filter(item => value && value.indexOf(item.id) > -1);
     const id = selectData.map(obj => obj.id).join(',');
     const name = selectData.map(obj => obj.name).join(',');
-    this.props.onChange(JSON.stringify({ id, name }));
+    const updateValue = id ? JSON.stringify({ id, name }) : '';
+    this.props.onChange(updateValue);
     this.changeWithName(id, name);
   }
 
