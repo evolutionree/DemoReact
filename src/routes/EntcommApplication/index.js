@@ -7,7 +7,7 @@ import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import DynamicTable from '../../components/DynamicTable/index';
 import EntcommAddModal from '../../components/EntcommAddModal';
-import { getIntlText } from '../../components/UKComponent/Form/IntlText';
+import IntlText, { getIntlText } from '../../components/UKComponent/Form/IntlText';
 import RecordDetailModal from './RecordDetailModal';
 import RecordEditModal from './RecordEditModal';
 import TransferModal from './TransferModal';
