@@ -203,7 +203,10 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     getFormValue = () => {
-      const formValue = {};
+      const { entityTypeId } = this.props;
+      const formValue = {
+        entityTypeId
+      };
       this.props.fields.forEach(field => {
         const val = this.getValue(field.fieldname);
         formValue[field.fieldname] = val;
@@ -646,22 +649,28 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     handleFieldValueChange = (fieldName) => {
       const expandJS = this.fieldExpandJS[fieldName];
       if (expandJS) {
-        if (this.globalJSLoading) {
-          console.warn('global js 未加载完成，将不触发此次js脚本：', fieldName);
-          return;
-        }
-        this.excuteJS(expandJS, `field value change__${fieldName}`);
+        this.expandJstimer = setInterval(() => {
+          if (this.globalJSLoading) {
+            console.warn('global js 未加载完成，将不触发此次js脚本：', fieldName);
+            return;
+          }
+          this.excuteJS(expandJS, `field value change__${fieldName}`);
+          clearInterval(this.expandJstimer);
+        }, 100);
       }
     };
 
     handleFieldControlFocus = (fieldName) => {
       const filterJS = this.fieldExpandFilterJS[fieldName];
       if (filterJS) {
-        if (this.globalJSLoading) {
-          console.warn('global js 未加载完成，将不触发此次js脚本：', fieldName);
-          return;
-        }
-        this.excuteJS(filterJS, `field focused__${fieldName}`);
+        this.filterJstimer = setInterval(() => {
+          if (this.globalJSLoading) {
+            console.warn('global js 未加载完成，将不触发此次js脚本：', fieldName);
+            return;
+          }
+          this.excuteJS(filterJS, `field focused__${fieldName}`);
+          clearInterval(this.filterJstimer);
+        }, 100);
       }
     };
 
