@@ -1,13 +1,14 @@
 /*
  * @Author: geewonii 
  * @Date: 2018-09-21 15:39:12 
- * @Last Modified by: geewonii
- * @Last Modified time: 2018-09-25 13:47:58
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-11-14 14:42:46
  */
+import dayjs from 'dayjs';
 import React from 'react';
 import { Popover, DatePicker, Button, InputNumber, Icon } from 'antd';
 import styles from './index.less';
-import dayjs from 'dayjs';
+
 
 const ScreenTime = (props) => {
   const {
@@ -16,31 +17,31 @@ const ScreenTime = (props) => {
     changeScreenTimeNumber, changeTimeType, changeTime, changeEndOpen, handleVisibleChange
   } = props;
 
-  const disabledStartDate = (startValue) => {
-    if (!startValue || !endValue) {
+  const disabledStartDate = (startvalue) => {
+    if (!startvalue || !endValue) {
       return false;
     }
-    return startValue.valueOf() > endValue.valueOf();
-  }
+    return startvalue.valueOf() > endValue.valueOf();
+  };
 
-  const disabledEndDate = (endValue) => {
-    if (!endValue || !startValue) {
+  const disabledEndDate = (endvalue) => {
+    if (!endvalue || !startValue) {
       return false;
     }
-    return endValue.valueOf() <= startValue.valueOf();
-  }
+    return endvalue.valueOf() <= startValue.valueOf();
+  };
 
   const startTimeChange = (date, dateString) => {
     changeTime({ StartTime: dateString, TimeRangeType: '12' }, { startValue: date });
-  }
+  };
 
   const endTimeChange = (date, dateString) => {
     changeTime({ EndTime: dateString, TimeRangeType: '12' }, { endValue: date });
-  }
+  };
 
   const handleStartOpenChange = (open) => {
     if (!open) changeEndOpen(!endOpen);
-  }
+  };
 
   const handleEndOpenChange = (open) => changeEndOpen(open);
 
@@ -90,7 +91,7 @@ const ScreenTime = (props) => {
                 </div>
               );
             default:
-              return <Button type='default' key={item.key} onClick={changeTimeType.bind(this, item)}>{item.name}</Button>
+              return <Button type="default" key={item.key} onClick={changeTimeType.bind(this, item)}>{item.name}</Button>;
           }
         })
       }
@@ -100,15 +101,15 @@ const ScreenTime = (props) => {
   return (
     <Popover
       placement="bottom"
-      content={!!content ? content : contents}
+      content={content || contents}
       title={title}
       trigger="click"
       visible={visible}
       onVisibleChange={handleVisibleChange}
     >
-      <Button type='default'>{showText}<Icon type="down" /></Button>
+      <Button type="default">{showText}<Icon type="down" /></Button>
     </Popover>
   );
-}
+};
 
 export default ScreenTime;

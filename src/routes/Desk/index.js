@@ -2,8 +2,8 @@
  * Created by 0291 on 2018/7/31.
  */
 import React from 'react';
-import _ from "lodash";
-import { Icon, Button } from 'antd';
+import _ from 'lodash';
+import { Button } from 'antd';
 import { connect } from 'dva';
 import Packery from 'packery';
 import Draggabilly from 'draggabilly';
@@ -69,17 +69,25 @@ class Desk extends React.PureComponent {
     window.removeEventListener('resize', this.onWindowResize);
   }
 
-  onWindowResize = (e) => {
+  onWindowResize = () => {
+    let width = this.layoutWrapRef.offsetWidth;
+    // if (this.hasScrolled(document.querySelector('body'))) { //存在滚动条
+    //   width = width - this.getScrollWidth();
+    // }
     this.setState({
-      width: this.layoutWrapRef.offsetWidth,
+      width,
       documentHeight: document.body.clientHeight
     });
   }
 
   componentWillReceiveProps() {
+    let width = this.layoutWrapRef.offsetWidth;
+    // if (this.hasScrolled(document.querySelector('body'))) { //存在滚动条
+    //   width = width - this.getScrollWidth();
+    // }
     this.setState({
       reload: false,
-      width: this.layoutWrapRef.offsetWidth
+      width
     });
   }
 
@@ -166,7 +174,6 @@ class Desk extends React.PureComponent {
     //   // shiftLayout remaining item elements
     //   window.pckry.shiftLayout();
     // });
-
 
     window.pckry.on('layoutComplete', getCurrentItemPosition);
 
@@ -286,27 +293,27 @@ class Desk extends React.PureComponent {
     this.props.updateComponent(newLayoutComponents);
   }
 
-  getScrollWidth = () => {
-    let noScroll = document.createElement('DIV');
-    let scroll = document.createElement('DIV');
-    const oDiv = document.createElement('DIV');
-    oDiv.style.cssText = 'position:absolute; top:-1000px; width:100px; height:100px; overflow:hidden;';
-    noScroll = document.body.appendChild(oDiv).clientWidth;
-    oDiv.style.overflowY = 'scroll';
-    scroll = oDiv.clientWidth;
-    document.body.removeChild(oDiv);
-    return noScroll - scroll;
-  }
+  // getScrollWidth = () => {
+  //   let noScroll = document.createElement('DIV');
+  //   let scroll = document.createElement('DIV');
+  //   const oDiv = document.createElement('DIV');
+  //   oDiv.style.cssText = 'position:absolute; top:-1000px; width:100px; height:100px; overflow:hidden;';
+  //   noScroll = document.body.appendChild(oDiv).clientWidth;
+  //   oDiv.style.overflowY = 'scroll';
+  //   scroll = oDiv.clientWidth;
+  //   document.body.removeChild(oDiv);
+  //   return noScroll - scroll;
+  // }
 
-  hasScrolled = (el, direction = 'vertical') => {
-    if (el && el.scrollHeight && el.clientHeight) {
-      if (direction === 'vertical') {
-        return el.scrollHeight > el.clientHeight;
-      } else if (direction === 'horizontal') {
-        return el.scrollWidth > el.clientWidth;
-      }
-    }
-  }
+  // hasScrolled = (el, direction = 'vertical') => {
+  //   if (el && el.scrollHeight && el.clientHeight) {
+  //     if (direction === 'vertical') {
+  //       return el.scrollHeight > el.clientHeight;
+  //     } else if (direction === 'horizontal') {
+  //       return el.scrollWidth > el.clientWidth;
+  //     }
+  //   }
+  // }
 
   render() {
     const { layoutComponents, componentList } = this.props;

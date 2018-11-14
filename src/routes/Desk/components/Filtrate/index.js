@@ -1,8 +1,8 @@
 /*
  * @Author: geewonii 
  * @Date: 2018-09-21 14:27:19 
- * @Last Modified by: geewonii
- * @Last Modified time: 2018-10-11 13:49:04
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2018-11-14 14:16:40
  */
 import React, { PropTypes, PureComponent } from 'react';
 import {
@@ -26,7 +26,7 @@ const selectDataList = [
   { key: '2', name: '我的部门' },
   { key: '3', name: '下级部门' },
   { key: '4', name: '指定部门' },
-  { key: '5', name: '指定员工' },
+  { key: '5', name: '指定员工' }
 
 ];
 
@@ -43,14 +43,14 @@ const selectTimeList = [
   { key: '9', name: '上季度' },
   { key: '10', name: '去年' },
   { key: '11', name: '指定年' },
-  { key: '12', name: '指定时间范围' },
-]
+  { key: '12', name: '指定时间范围' }
+];
 
 class Filtrate extends PureComponent {
   static propTypes = {
     height: PropTypes.number.isRequired,
-    maxHeight: PropTypes.number,
-    style: PropTypes.object,
+    minHeight: PropTypes.number,
+    style: PropTypes.object
   }
 
   state = {
@@ -75,23 +75,19 @@ class Filtrate extends PureComponent {
       RelatedEntityId: '00000000-0000-0000-0000-000000000000',
       PageSize: '10',
       PageIndex: '1'
-    },
+    }
   }
 
   setStateAsync = state => new Promise(resolve => this.setState(state, resolve));
 
   componentDidMount() {
-
     this.getMainTypeList(); // 获取主实体列表
     this.initConfigs(); // 初始化过滤配置
     this.getDynamiclist(); // 初始化过滤数据
-
   }
 
   initConfigs = async () => {
-    const { params } = this.state;
     const filtrateConfig = localStorage.getItem('filtrateConfig');
-
     if (filtrateConfig) {
       await this.setStateAsync({ params: JSON.parse(filtrateConfig) });
 
@@ -103,7 +99,7 @@ class Filtrate extends PureComponent {
 
       return false;
     }
-
+    const { params } = this.state;
     localStorage.setItem('filtrateDefaultConfig', JSON.stringify(params));
   }
 
@@ -129,8 +125,8 @@ class Filtrate extends PureComponent {
   mergeParams = (obj) => {
     const { params } = this.state;
 
-    const newObj = typeof obj === 'object' ? obj : {}
-    const newParams = { ...params, ...newObj }
+    const newObj = typeof obj === 'object' ? obj : {};
+    const newParams = { ...params, ...newObj };
 
     this.setState({ params: newParams });
   }
@@ -163,19 +159,19 @@ class Filtrate extends PureComponent {
       case '1':
         localStorage.setItem('filtrateConfig', JSON.stringify(params));
         this.showTips('当前配置已保存！');
-        break
+        break;
       case '2':
         localStorage.removeItem('filtrateConfig');
-        const filtrateDefaultConfig = localStorage.getItem('filtrateDefaultConfig');
-        this.setState({ params: JSON.parse(filtrateDefaultConfig) });
+        this.setState({ params: JSON.parse(localStorage.getItem('filtrateDefaultConfig')) });
         this.showTips('配置已重置成功！');
-        break
+        break;
+      default:
     }
   }
 
   showTips(tipMessage) {
-    this.setState({ tipSwitch: true, tipMessage })
-    setTimeout(() => this.setState({ tipSwitch: false }), 1000)
+    this.setState({ tipSwitch: true, tipMessage });
+    setTimeout(() => this.setState({ tipSwitch: false }), 1000);
   }
 
   renderHeaders() {
@@ -197,7 +193,7 @@ class Filtrate extends PureComponent {
 
         <div className={styles.margins}>
           <ScreenTime
-            title='请选择时间'
+            title="请选择时间"
             minYear={2015}
             dataSource={selectTimeList}
             showText={showText}
@@ -226,7 +222,7 @@ class Filtrate extends PureComponent {
 
         <div className={styles.margins}>
           <Button
-            type='primary'
+            type="primary"
             icon="search"
             onClick={this.search}
           >
@@ -234,7 +230,7 @@ class Filtrate extends PureComponent {
           </Button>
         </div>
       </div>
-    )
+    );
   }
 
   onChangeScreenTimeNumber = async (key, value) => {
@@ -269,7 +265,7 @@ class Filtrate extends PureComponent {
   renderMainTypeElms() {
     const { mainTypeList, params } = this.state;
 
-    const renderMainTypeElms = !!mainTypeList ? (
+    const renderMainTypeElms = mainTypeList ? (
       <Select
         style={{ width: '120px' }}
         defaultValue={params.MainEntityId}
@@ -278,7 +274,7 @@ class Filtrate extends PureComponent {
       >
         {mainTypeList.map((item, idx) => <Option value={item.entityid} key={idx}>{item.entityname}</Option>)}
       </Select>
-    ) : null
+    ) : null;
 
     return renderMainTypeElms;
   }
@@ -296,11 +292,11 @@ class Filtrate extends PureComponent {
           onChange={this.changeRelatedEntityType}
         >
           {relatedEntityList.map((item, idx) => {
-            return <Option value={item.entityid} key={idx}>{item.entityname}</Option>
+            return <Option value={item.entityid} key={idx}>{item.entityname}</Option>;
           })}
         </Select>
       </div>
-    )
+    );
     return renderrelatedElm;
   }
 
@@ -318,13 +314,13 @@ class Filtrate extends PureComponent {
           配置 <Icon type="down" />
         </a>
       </Dropdown>
-    )
+    );
   }
 
   renderList() {
     const { dataSource } = this.state;
     // console.log(dataSource)
-    const list = !!dataSource ? (
+    const list = dataSource ? (
       dataSource.datalist.length === 0 ? <div className={styles.spins}>没有查询到相关数据，请重新过滤条件!</div> :
         dataSource.datalist.map((item, idx) => {
           const user = {
@@ -358,9 +354,9 @@ class Filtrate extends PureComponent {
               onComment={this.comment.bind(this, item.dynamicid)}
               onShowDetail={this.showDynamicDetail.bind(this, item)}
             />
-          )
+          );
         })
-    ) : <div className={styles.spins}><Spin /></div>
+    ) : <div className={styles.spins}><Spin /></div>;
 
     return list;
   }
@@ -370,7 +366,7 @@ class Filtrate extends PureComponent {
 
     if (dataSource) {
       const { pageinfo: { totalcount, pagesize } } = dataSource;
-      let PageIndex = parseInt(params.PageIndex);
+      const PageIndex = parseInt(params.PageIndex, 10);
 
       return (
         <div className={styles.pagination}>
@@ -413,7 +409,7 @@ class Filtrate extends PureComponent {
           message.success('评论成功！');
         }
       })
-      .catch(err => console.log(err))
+      .catch(err => console.log(err));
   }
 
   showDynamicDetail = (item) => {
@@ -428,10 +424,9 @@ class Filtrate extends PureComponent {
 
   onChangePage = (PageIndex) => {
     const { params: { pagecount } } = this.state;
-
-    if (PageIndex >= pagecount) PageIndex = '1';
-
-    this.mergeParams({ PageIndex: PageIndex + '' });
+    let idx = PageIndex;
+    if (idx >= pagecount) idx = '1';
+    this.mergeParams({ PageIndex: idx + '' });
     this.getDynamiclist();
   }
 
@@ -446,11 +441,11 @@ class Filtrate extends PureComponent {
   }
 
   render() {
-    const { height = 660, minHeight = 500, filtrateScrollId } = this.props;
+    const { height = 660, minHeight = 500, filtrateScrollId, style } = this.props;
     const { tipSwitch, tipMessage, modalVisible, entityId, recordId } = this.state;
 
     return (
-      <div className={styles.container}>
+      <div className={styles.container} style={style}>
         <Card
           title={this.renderHeaders()}
           extra={this.renderExtra()}
