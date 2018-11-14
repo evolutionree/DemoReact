@@ -48,7 +48,8 @@ export default {
       try {
         const { entityId } = yield select(({ entityMenus }) => entityMenus);
         const { data } = yield call(queryMenus, entityId);
-        yield put({ type: 'querySuccess', payload: data.rulemenu });
+        let menus = data.rulemenu.sort((a, b) => a.recorder - b.recorder);
+        yield put({ type: 'querySuccess', payload: menus });
       } catch (err) {
         message.error(err.message || '查询数据出错');
       }
@@ -83,7 +84,7 @@ export default {
       const orderbyList = list.map((item, i) => {
         return {
           menuid: item.menuid,
-          orderby: list.length - i
+          orderby: i
         };
       });
       try {
