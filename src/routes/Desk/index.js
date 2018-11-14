@@ -36,7 +36,7 @@ Packery.prototype.initShiftLayout = function (positions, attr = 'id') {
   this._resetLayout();
   // set item order and horizontal position from saved positions
   this.items = positions.map(function (itemPosition) {
-    const selector = '[' + attr + '="' + itemPosition.dscomponetid + '"]'
+    const selector = '[' + attr + '="' + itemPosition.dscomponetid + '"]';
     const itemElem = this.element.querySelector(selector);
     const item = this.getItem(itemElem);
     if (item) {
@@ -56,14 +56,12 @@ class Desk extends React.PureComponent {
     super(props);
     this.state = {
       reload: false,
+      width: undefined,
       documentHeight: document.body.clientHeight
     };
   }
 
   componentDidMount() {
-    this.setState({
-      width: this.layoutWrapRef.offsetWidth
-    })
     window.addEventListener('resize', this.onWindowResize);
   }
 
@@ -80,7 +78,8 @@ class Desk extends React.PureComponent {
 
   componentWillReceiveProps() {
     this.setState({
-      reload: false
+      reload: false,
+      width: this.layoutWrapRef.offsetWidth
     });
   }
 
@@ -96,7 +95,7 @@ class Desk extends React.PureComponent {
     window.pckry.initShiftLayout(this.props.layoutComponents, 'data-item-id');
 
     // make draggable
-    let layoutComponents = document.querySelectorAll('.grid-item');
+    const layoutComponents = document.querySelectorAll('.grid-item');
     layoutComponents.forEach(function (itemElem) {
       const option = /grid-item-width2/.test(itemElem.getAttribute('class')) ? {
         axis: 'y'
@@ -107,15 +106,15 @@ class Desk extends React.PureComponent {
 
     let itemPotions = window.pckry.getShiftPositions('data-item-id');
 
-    let _this = this;
+    const _this = this;
     const stampElem = document.querySelector('.stamp');
 
-    let draggableElems = document.querySelectorAll('.component');
+    const draggableElems = document.querySelectorAll('.component');
     let draggies = [];
     let bool = true;
 
-    for (let i = 0; i < draggableElems.length; i++) {
-      let draggableElem = draggableElems[i];
+    for (let i = 0; i < draggableElems.length; i += 1) {
+      const draggableElem = draggableElems[i];
       let draggie = new Draggabilly(draggableElem);
 
       draggie.enter = false;
@@ -138,7 +137,7 @@ class Desk extends React.PureComponent {
 
       draggie.on('dragEnd', function (event, pointer) {
         if (this.enter) { //TODO: 进入拖拽区域
-          console.log('dragEnd')
+          console.log('dragEnd');
           this.enter = false;
           this.destroy();
           //TODO:  记录拖拽后的定位  每个组件的顺序  别忘了  宽度不能设置成固定值
@@ -199,7 +198,7 @@ class Desk extends React.PureComponent {
         insetComponentId: ''
       };
     }
-    const fixedLeft = parseInt(dragTarget.dataset.widthType) === 2;
+    const fixedLeft = parseInt(dragTarget.dataset.widthType, 10) === 2;
     const itemWidth = this.state.width / 3;
     let layout;
     let Layout_L = 0;
@@ -227,7 +226,7 @@ class Desk extends React.PureComponent {
 
 
     let insertIndex;
-    for (let i = 0; i < layout.length; i++) {
+    for (let i = 0; i < layout.length; i += 1) {
       if (T < (layout[i].T + layout[i].H / 2)) {
         insertIndex = i;
         break;
@@ -259,8 +258,8 @@ class Desk extends React.PureComponent {
     });
   }
 
-  saveDeskTops = () => {
-    const { layoutComponents } = this.props;
+  onSaveDeskTops = () => {
+    const { layoutComponents, saveDeskTops } = this.props;
     const currentItemPosition = window.pckry.getShiftPositions('data-item-id');
     const newLayoutComponents = currentItemPosition.map(newItemComponentPosition => {
       const currentItem = _.find(layoutComponents, oldItemCompomemt => oldItemCompomemt.dscomponetid === newItemComponentPosition.componentId);
@@ -269,7 +268,7 @@ class Desk extends React.PureComponent {
       });
       return currentItem;
     });
-    this.props.saveDeskTops(newLayoutComponents);
+    saveDeskTops(newLayoutComponents);
   }
 
   removeComponent = (dscomponetid) => {
@@ -283,28 +282,50 @@ class Desk extends React.PureComponent {
       return currentItem;
     }).filter(item => item.dscomponetid !== dscomponetid);
     this.reloadDragComponent();
-    console.log(newLayoutComponents)
+    console.log(newLayoutComponents);
     this.props.updateComponent(newLayoutComponents);
   }
 
+  getScrollWidth = () => {
+    let noScroll = document.createElement('DIV');
+    let scroll = document.createElement('DIV');
+    const oDiv = document.createElement('DIV');
+    oDiv.style.cssText = 'position:absolute; top:-1000px; width:100px; height:100px; overflow:hidden;';
+    noScroll = document.body.appendChild(oDiv).clientWidth;
+    oDiv.style.overflowY = 'scroll';
+    scroll = oDiv.clientWidth;
+    document.body.removeChild(oDiv);
+    return noScroll - scroll;
+  }
+
+  hasScrolled = (el, direction = 'vertical') => {
+    if (el && el.scrollHeight && el.clientHeight) {
+      if (direction === 'vertical') {
+        return el.scrollHeight > el.clientHeight;
+      } else if (direction === 'horizontal') {
+        return el.scrollWidth > el.clientWidth;
+      }
+    }
+  }
+
   render() {
-    const layoutComponent = this.props.layoutComponents.map(item => item.dscomponetid);
-    const showComponentList = this.props.componentList.filter(item => {
-      return layoutComponent.indexOf(item.dscomponetid) === -1;
-    });
+    const { layoutComponents, componentList } = this.props;
+    const layoutComponent = layoutComponents.map(item => item.dscomponetid);
+    const showComponentList = componentList.filter(item => layoutComponent.indexOf(item.dscomponetid) !== -1);
+    console.log(showComponentList);
 
     return (
-      <div className={styles.deskWrap} style={{ height: this.state.documentHeight - 60 }}>
+      <div className={styles.deskWrap} style={{ height: this.state.documentHeight - 59 }}>
         <div className={styles.toolBar}>
-          <Button onClick={this.saveDeskTops}>保存</Button>
+          <Button onClick={this.onSaveDeskTops}>保存</Button>
         </div>
         <div className={styles.content}>
-          <div className={styles.componentsWrap} id='componentsWrap'>
+          <div className={styles.componentsWrap} id="componentsWrap">
             {
-              !this.state.reload ? this.props.componentList.map((item, index) => {
+              !this.state.reload ? showComponentList.map((item) => {
                 return (
                   <div key={item.dscomponetid}
-                    className='component'
+                    className="component"
                     data-component-id={item.dscomponetid}
                     data-component-height={item.maxcomheight}
                     data-width-type={item.comwidth}>
@@ -319,35 +340,27 @@ class Desk extends React.PureComponent {
           <div className={styles.layoutWrap} ref={ref => this.layoutWrapRef = ref}>
             <div className="grid" id="grid1">
               {
-                !this.state.reload ? this.props.layoutComponents.map((item, index) => {
+                !this.state.reload ? layoutComponents.map((item) => {
                   // const Children = asyncComponent(() => require(`./components/${item.comurl}`));
                   const Children = EnableComponent[item.comurl];
 
                   return (
                     <div
                       key={item.dscomponetid}
+                      data-item-id={item.dscomponetid}
                       style={{ height: item.mincomheight }}
                       className={item.comwidth === 2 ? 'grid-item grid-item-width2' : 'grid-item'}
-                      data-item-id={item.dscomponetid}
                     >
                       <Children
-                        height={item.mincomheight}
                         title={item.comname}
+                        height={item.mincomheight}
                       />
-                      <div
-                        className={item.comwidth === 2 ? 'grid-sizer grid-item-width2 ' : 'stamp'} //虚线框
-                        style={{ height: item.mincomheight }}
-                      ></div>
-                      <div
-                        className={item.comwidth === 2 ? 'grid-sizer grid-item-width2 ' : 'grid-sizer'} //实线框
-                        style={{ height: item.mincomheight }}
-                      ></div>
                     </div>
                   );
                 }) : null
               }
-
-
+              <div className="grid-sizer"></div>
+              {/* <div className="stamp"></div> */}
             </div>
           </div>
         </div>

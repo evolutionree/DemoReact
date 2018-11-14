@@ -1,38 +1,27 @@
-.clearfix{
-  zoom:1
-}
-.clearfix:after{
-  content:"";
-  display:block;
-  clear:both;
-}
-
-.deskWrap{
-  .clearfix;
+.deskWrap {
   position: relative;
-  .toolBar{
+  .toolBar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
     height: 70px;
-    line-height: 60px;
-    padding: 0 20px;
+    padding: 0 15px;
     background: #f6f9fc;
-    border: 1px solid #e6e6e6
+    border: 1px solid #e6e6e6;
   }
-  .content{
-    position: absolute;
+  .content {
+    display: flex;
     top: 70px;
-    left: 0;
     bottom: 0;
-    right: 0;
+    width: 100%;
     background-color: #f6f9fc;
   }
-  .componentsWrap{
+  .componentsWrap {
     width: 200px;
     height: ~"calc(100vh - 130px)";
-    padding: 20px;
-    float: left;
-
-    :global{
-      .component{
+    padding: 15px;
+    :global {
+      .component {
         width: 150px;
         height: 80px;
         margin: 10px;
@@ -41,9 +30,12 @@
       }
     }
   }
-  .layoutWrap{
-    width: ~"calc(100% - 200px)";
-    float: left;
+  .layoutWrap {
+    flex: 1;
+    overflow: hidden;
+    padding: 15px;
+    box-shadow: 3px 3px 15px #999 inset;
+    -webkit-box-shadow: 3px 3px 15px #999 inset;
   }
 
   :global{
@@ -52,6 +44,8 @@
     .grid {
       width: 100%;
       height: 100%;
+      display: flex;
+      justify-content: space-between;
     }
 
     /* clear fix */
@@ -65,12 +59,10 @@
     /* ---- .grid-item ---- */
 
     .grid-item, .grid-sizer {
-      float: left;
       width: 33.3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333%;
       height: 100px;
-      background: #fff;
-      border: 1px solid #e2e6ec;
-      >i{
+      // border: 1px solid #e2e6ec;
+      >i {
         font-size: 18px;
         position: absolute;
         right: 10px;
@@ -82,8 +74,8 @@
         }
       }
     }
-    .grid-sizer{
-      background-color: #f6f9fc;
+    .grid-item {
+      background: #fff;
     }
 
     .grid-item-width2 { width: 66.6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666%; }
@@ -91,7 +83,6 @@
 
     .grid-item:hover {
       // box-shadow: 0 0 8px 0 #a9bbd5;
-      // border: 1px solid #89c2ff;
       cursor: move;
     }
 
