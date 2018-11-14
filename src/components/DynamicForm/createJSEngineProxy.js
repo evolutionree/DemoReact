@@ -647,6 +647,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     handleFieldValueChange = (fieldName) => {
+      clearInterval(this.expandJstimer);
       const expandJS = this.fieldExpandJS[fieldName];
       if (expandJS) {
         this.expandJstimer = setInterval(() => {
@@ -661,6 +662,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     handleFieldControlFocus = (fieldName) => {
+      clearInterval(this.expandJstimer);
       const filterJS = this.fieldExpandFilterJS[fieldName];
       if (filterJS) {
         this.filterJstimer = setInterval(() => {
