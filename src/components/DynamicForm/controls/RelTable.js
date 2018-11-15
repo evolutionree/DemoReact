@@ -160,12 +160,18 @@ class RelTable extends Component {
   setValue = val => {
     if (val === '' || val === undefined || val === null) {
       this.props.onChange([], true);
+      this.setState({
+        tableRowFields: []
+      });
       return;
     }
     if (Array.isArray(val)) {
       const entityId = this.props.entityId;
       const newValue = entityId ? val.map(item => ({ TypeId: entityId, FieldData: item })) : val;
       this.props.onChange(newValue, true);
+      this.setState({
+        tableRowFields: val.map(() => _.cloneDeep(this.state.tableFields))
+      });
     }
   };
 
@@ -321,8 +327,11 @@ class RelTable extends Component {
     const { onChange } = this.props;
     const newValue = this.parseValue().filter((item, index) => !_.includes(this.state.selectedRows, index));
     onChange(newValue);
-    this.arrFormInstance = this.arrFormInstance.slice(0, newValue.length);
-    this.arrFixedFormInstance = this.arrFixedFormInstance.slice(0, newValue.length);
+    this.setState({
+      tableRowFields: this.state.tableRowFields.filter((item, index) => !_.includes(this.state.selectedRows, index))
+    });
+    this.arrFormInstance = this.arrFormInstance.filter((item, index) => !_.includes(this.state.selectedRows, index));
+    this.arrFixedFormInstance = this.arrFixedFormInstance.filter((item, index) => !_.includes(this.state.selectedRows, index));
     this.setState({ selectedRows: [] });
   };
 
