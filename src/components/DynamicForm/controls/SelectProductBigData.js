@@ -27,9 +27,9 @@ class SelectProductBigData extends React.Component {
     super(props);
     let valMap = {};
     if (props.value_name) {
-      const arrVal = props.value.split(',');
-      const arrName = props.value_name.split(',');
-      arrVal.forEach((val, index) => {
+      const arrVal = props.value && props.value.split(',');
+      const arrName = props.value_name && props.value_name.split(',');
+      arrVal instanceof Array && arrVal.forEach((val, index) => {
         valMap[val] = arrName[index];
       });
     }
@@ -43,10 +43,10 @@ class SelectProductBigData extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.value_name !== nextProps.value_name) {
-      const arrVal = nextProps.value.split(',');
-      const arrName = nextProps.value_name.split(',');
+      const arrVal = nextProps.value && nextProps.value.split(',');
+      const arrName = nextProps.value_name && nextProps.value_name.split(',');
       let valMap = { ...this.state.valMap };
-      arrVal.forEach((val, index) => {
+      arrVal instanceof Array && arrVal.forEach((val, index) => {
         valMap[val] = arrName[index];
       });
       this.setState({
