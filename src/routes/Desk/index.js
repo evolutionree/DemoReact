@@ -48,9 +48,7 @@ Packery.prototype.initShiftLayout = function (positions, attr = 'id') {
 };
 
 class Desk extends React.PureComponent {
-  static defaultProps = {
-
-  };
+  static defaultProps = {};
 
   constructor(props) {
     super(props);
@@ -70,10 +68,8 @@ class Desk extends React.PureComponent {
   }
 
   onWindowResize = () => {
-    let width = this.layoutWrapRef.offsetWidth;
-    // if (this.hasScrolled(document.querySelector('body'))) { //存在滚动条
-    //   width = width - this.getScrollWidth();
-    // }
+    const width = this.layoutWrapRef.offsetWidth;
+  
     this.setState({
       width,
       documentHeight: document.body.clientHeight
@@ -81,10 +77,7 @@ class Desk extends React.PureComponent {
   }
 
   componentWillReceiveProps() {
-    let width = this.layoutWrapRef.offsetWidth;
-    // if (this.hasScrolled(document.querySelector('body'))) { //存在滚动条
-    //   width = width - this.getScrollWidth();
-    // }
+    const width = this.layoutWrapRef.offsetWidth;
     this.setState({
       reload: false,
       width
@@ -134,7 +127,7 @@ class Desk extends React.PureComponent {
           stampElem.style.display = 'block';
           stampElem.style.left = this.position.L + 'px';
           stampElem.style.top = this.position.T + 'px';
-          stampElem.style.width = parseInt(pointer.target.dataset.widthType) === 2 ? '66.6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666%' : '33.3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333%';
+          stampElem.style.width = parseInt(pointer.target.dataset.widthType, 10) === 2 ? '66.6666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666666%' : '33.3333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333%';
           //stampElem.style.height = pointer.target.dataset.componentHeight + 'px';
           bool = false;
           window.pckry.shiftLayout();
