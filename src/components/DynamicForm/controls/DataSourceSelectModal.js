@@ -61,7 +61,10 @@ class DataSourceSelectModal extends Component {
         list: [],
         pageIndex: 1,
         total: 0
-      }, this.fetchList);
+      });
+    }
+    if (nextProps.visible) {
+      this.fetchList(nextProps);
     }
   }
 
@@ -126,16 +129,16 @@ class DataSourceSelectModal extends Component {
     });
   }
 
-  fetchList = () => {
+  fetchList = (props = this.props) => {
     this.setState({ loading: true });
     const params = {
-      sourceId: this.props.sourceId,
+      sourceId: props.sourceId,
       keyword: this.state.keyword,
       pageSize: 10,
       pageIndex: this.state.pageIndex,
       queryData: []
     };
-    const { designateDataSource } = this.props;
+    const { designateDataSource } = props;
     if (designateDataSource && typeof designateDataSource === 'object') {
       Object.keys(designateDataSource).forEach(key => {
         params.queryData.push({
@@ -164,7 +167,7 @@ class DataSourceSelectModal extends Component {
       const total = result.data.pagecount[0].total;
       this.setState({ loading: false, list, total });
 
-      if (!this.props.multiple && this.state.currentSelected.length) {
+      if (!props.multiple && this.state.currentSelected.length) {
         if (list.every(item => item.id !== this.state.currentSelected[0].id)) {
           this.setState({ currentSelected: [] });
         }
