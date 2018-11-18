@@ -229,6 +229,7 @@ class DetailModal extends Component {
               value={this.state.editData}
               onChange={this.onEditDataChange}
               ref={ref => this.editForm = ref}
+              cols={24}
             />
           ) : (
             <DynamicFormView
@@ -236,6 +237,7 @@ class DetailModal extends Component {
               entityTypeId={(this.props.detailData && this.props.detailData.rectype) || this.props.entityId}
               fields={this.state.protocol}
               value={this.state.detailData || {}}
+              cols={24}
             />
           )}
         </Spin>
