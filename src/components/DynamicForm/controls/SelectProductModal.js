@@ -135,8 +135,8 @@ class SelectProductModal extends Component {
     const excludefilter = designateFilterNodes && designateFilterNodes.join(',');
     const params = {
       istopset: -1,
-      includefilter: includefilter,
-      excludefilter: excludefilter
+      includefilter: includefilter || '',
+      excludefilter: excludefilter || ''
     };
     this.setState({ loading: true });
     searchproductformobile(params).then(result => {
@@ -163,8 +163,8 @@ class SelectProductModal extends Component {
       searchKey: this.state.keyword,
       pageIndex: this.state.pageIndex,
       pagecount: 10,
-      includefilter: includefilter,
-      excludefilter: excludefilter
+      includefilter: includefilter || '',
+      excludefilter: excludefilter || ''
     };
     this.setState({ loading: true });
     searchproductformobile(params).then(result => {
