@@ -272,7 +272,7 @@ export default connect(
         dispatch({ type: 'entcommRel/putState', payload: { currItem: null } });
       },
       onEdit(newData) {
-        dispatch({ type: 'entcommRel/fetchList' });
+        dispatch({ type: 'entcommRel/queryList' });
       },
       delCurrItem() {
         dispatch({ type: 'entcommRel/delCurrItem' });
