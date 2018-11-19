@@ -4,6 +4,7 @@ import { is } from 'immutable';
 import classnames from 'classnames';
 import { addSeparator } from '../../../utils';
 
+const style = { height: '32px' };
 export function createNormalInput(type, options) {
   return class InputComponent extends Component {
     inputRef = null;
@@ -102,7 +103,7 @@ export function createNormalInput(type, options) {
       }
 
       return (
-        <div className={classnames({ 'input-table-view': isTable })}>
+        <div className={classnames({ 'input-table-view': isTable })} style={style}>
           <Input
             ref={ref => this.inputRef = ref}
             type={inputType}

@@ -5,6 +5,7 @@ import { connect } from 'dva';
 import Search from '../../Search';
 import gpsIcon from '../../../assets/icon_gps.png';
 
+const style = { height: '32px' };
 class InputAddress extends Component {
   static propTypes = {
     value: PropTypes.shape({
@@ -235,7 +236,7 @@ class InputAddress extends Component {
   render() {
     const { isReadOnly } = this.props;
     return (
-      <div>
+      <div style={style}>
         <Input
           value={this.state.inputValue}
           onChange={this.onInputChange}

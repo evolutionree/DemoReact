@@ -28,7 +28,7 @@ class DateTime extends Component {
     return (
       <DatePicker
         showTime
-        style={{ width: '100%' }}
+        style={{ width: '100%', height: '32px' }}
         value={date}
         onChange={this.onDateChange}
         disabled={isReadOnly === 1}
