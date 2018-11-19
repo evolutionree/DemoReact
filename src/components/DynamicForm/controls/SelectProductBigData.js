@@ -180,8 +180,8 @@ class SelectProductBigData extends React.Component {
       searchKey: searchKey,
       pageIndex: 1,
       pagecount: 10,
-      includefilter: includefilter,
-      excludefilter: excludefilter
+      includefilter: includefilter || '',
+      excludefilter: excludefilter || ''
     };
     this.setState({ loading: true });
     searchproductformobile(params).then(result => {
