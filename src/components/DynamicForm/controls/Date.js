@@ -29,7 +29,7 @@ class Date extends Component {
 
     return (
       <DatePicker
-        style={{ width: '100%' }}
+        style={{ width: '100%', height: '32px' }}
         value={date}
         onChange={this.onDateChange}
         disabled={isReadOnly === 1}

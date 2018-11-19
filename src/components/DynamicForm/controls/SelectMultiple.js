@@ -184,7 +184,7 @@ class SelectMultiple extends Component {
         onFocus={onFocus}
         showSearch
         mode="multiple"
-        style={{ width: '100%', height: '32px' }}
+        style={{ width: '100%', minHeight: '32px' }}
       >
         {options.map(opt => (
           <Option key={opt.value} style={opt.disabled ? { display: 'none' } : null}>{getIntlText('label', opt)}</Option>
