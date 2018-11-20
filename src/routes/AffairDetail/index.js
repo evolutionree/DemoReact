@@ -244,7 +244,7 @@ class AffairDetail extends Component {
                 {selectedNextNode && selectedNextNode.nodeinfo.flowtype === 0 && (
                   <Button onClick={this.props.closeFlow}>关闭流程</Button>
                 )}
-                <Button onClick={this.onSubmitPreAudit}>下一步</Button>
+                <Button onClick={this.onSubmitPreAudit} loading={this.props.submitBtnLoading}>下一步</Button>
               </div>
             </div>
           </div>
