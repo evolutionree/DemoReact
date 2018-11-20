@@ -5,6 +5,7 @@ import { Menu, Icon } from 'antd';
 import * as _ from 'lodash';
 import Sider from './Sider';
 import IntlText from '../UKComponent/Form/IntlText';
+import { uuid } from '../../utils';
 
 const { SubMenu, Item } = Menu;
 
@@ -28,12 +29,26 @@ function renderLink({ name, name_lang, icon, path }) {
                 : <Link to={path}>{iconEl} {textEl}</Link>;
 }
 function mapLocationToMenuKeys(location, menus) {
+  let locationNew = location.pathname;
+  if (locationNew.split('/').indexOf('entcomm') > -1) {
+    locationNew = location.pathname.replace(/entcomm/, 'entcomm-list');
+  }
+  if (locationNew.split('/').indexOf('notice') > -1) {
+    locationNew = location.pathname.replace(/notice/, 'notice-list');
+  }
+  if (locationNew.split('/').indexOf('role') > -1) {
+    locationNew = location.pathname.replace(/role/, 'roles');
+  }
+  if (locationNew.split('/').indexOf('vocation') > -1) {
+    locationNew = location.pathname.replace(/vocation/, 'vocations');
+  }
+
   let openKeys = [];
   const selectedKeys = [];
-  walkNodes(menus, menu => menu.path === location.pathname, (match, stack) => {
+  walkNodes(menus, menu => locationNew.indexOf(menu.path) > -1 && menu.path, (match, stack) => {
     if (!match) return;
-    selectedKeys.push(match.name);
-    openKeys = stack.map(s => s.name);
+    selectedKeys.push(match.id);
+    openKeys = stack.map(s => s.id);
   });
   return {
     openKeys,
@@ -82,7 +97,7 @@ const AppMenu = ({ location, menus, siderFold, permissionLevel }) => {
     );
   }
   return (
-    <Sider fold={siderFold} fixBottom={bottomMenu}>
+    <Sider fold={siderFold} fixBottom={bottomMenu} key={uuid()}>
       <Menu mode={siderFold ? 'vertical' : 'inline'}
             theme="dark"
             defaultOpenKeys={openKeys}
