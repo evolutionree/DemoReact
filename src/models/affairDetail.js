@@ -29,7 +29,9 @@ export default {
     selectedOperate: undefined,
 
     nextNodesData: [],
-    selectedNextNode: null
+    selectedNextNode: null,
+
+    submitBtnLoading: false
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -350,7 +352,8 @@ export default {
       } = yield select(state => state.affairDetail);
 
       // if (selectedOperate === 1 || selectedOperate === 4) {
-        yield put({ type: 'showModals', payload: 'workflowCase' });
+      yield put({ type: 'showModals', payload: 'workflowCase' });
+      yield put({ type: 'putState', payload: { submitBtnLoading: true } });
       // } else {
       //   try {
       //     const params = {
@@ -417,12 +420,14 @@ export default {
     },
     *onCaseModalCancel(action, { select, call, put }) {
       yield put({ type: 'showModals', payload: '' });
+      yield put({ type: 'putState', payload: { submitBtnLoading: false } });
       // const { caseId } = yield select(state => state.affairDetail);
       // yield put({ type: 'init', payload: caseId });
     },
     *onCaseModalDone(action, { select, call, put }) {
       // message.success('提交成功');
       yield put({ type: 'showModals', payload: '' });
+      yield put({ type: 'putState', payload: { submitBtnLoading: false } });
       const { caseId } = yield select(state => state.affairDetail);
       // yield put({ type: 'init', payload: caseId });
 
@@ -469,7 +474,8 @@ export default {
         columnConfigFormProtocols: {},
         columnConfigFormInstance: {},
         suggest: '',
-        selectedOperate: undefined
+        selectedOperate: undefined,
+        submitBtnLoading: false
       };
     }
   }

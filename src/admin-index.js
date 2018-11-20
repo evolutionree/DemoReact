@@ -3,9 +3,7 @@ import { routerRedux } from 'dva/router';
 import { message, Table, Pagination, Button, Select, TreeSelect, DatePicker, Modal, Input, Cascader} from 'antd';
 
 function getPopupContainer(elem) {
-  if (!elem) return document.body;
-  const parentModal = $(elem).parents('.ant-modal')[0];
-  return parentModal || document.body;
+  return elem.parentNode;
 }
 function setDefaultProps(Component, defaultProps) {
     Component.defaultProps = {
