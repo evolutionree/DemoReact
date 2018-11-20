@@ -2,6 +2,7 @@ import React, { PropTypes, Component } from 'react';
 import * as _ from 'lodash';
 import { Modal, message, Spin, Button, Icon } from 'antd';
 import { connect } from 'dva';
+import { Link } from 'dva/router';
 import { DynamicFormView, DynamicFormEdit } from '../../../../components/DynamicForm';
 import { editEntcomm, getGeneralProtocol, getEntcommDetail } from '../../../../services/entcomm';
 import styles from './styles.less';
@@ -201,6 +202,9 @@ class DetailModal extends Component {
             {this.props.checkFunc('EntityDataEdit') && <span onClick={this.startEdit}>
               <Icon type="edit" /> 编辑
             </span>}
+            {
+              this.props.entityModelType === 0 ? <Link className={styles.linkEntity} to={`/entcomm/${this.props.entityId}/${(this.props.detailData && this.props.detailData.recid)}`}>跳转到主页</Link> : null
+            }
             {/*{this.props.checkFunc('EntityDataDelete') && <span onClick={this.handleDel}>*/}
               {/*<Icon type="delete" /> 删除*/}
             {/*</span>}*/}
@@ -248,7 +252,7 @@ class DetailModal extends Component {
 
 export default connect(
   state => {
-    const { currItem, list, relEntityId, recordId, relId } = state.entcommRel;
+    const { currItem, list, relEntityId, recordId, relId, entityModelType } = state.entcommRel;
     const { relTabs } = state.entcommHome;
 
     let tabInfo = {};
@@ -263,7 +267,8 @@ export default connect(
       visible: !!currItem,
       entityId: relEntityId,
       detailData: _.find(list, ['recid', currItem]),
-      tabInfoFieldName: tabInfo.fieldname
+      tabInfoFieldName: tabInfo.fieldname,
+      entityModelType
     };
   },
   dispatch => {

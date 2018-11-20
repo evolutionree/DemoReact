@@ -50,7 +50,8 @@ export default {
     sortFieldAndOrder: null, //当前排序的字段及排序顺序
     relCountData: null,
     relEntityFromInitData: null, //实体页签下  添加表单的初始化数据
-    selectedFlowObj: null  //审批流
+    selectedFlowObj: null,  //审批流
+    entityModelType: ''
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -82,6 +83,9 @@ export default {
         yield put({ type: 'putState', payload: { entityTypes } });
 
         const { data: { entityproinfo } } = yield call(queryEntityDetail, relEntityId);
+        if (entityproinfo instanceof Array && entityproinfo.length > 0) { // 当前实体类型0独立实体1嵌套实体2应用实体3动态实体';
+          yield put({ type: 'putState', payload: { entityModelType: entityproinfo[0].modeltype } });
+        }
         if (entityproinfo instanceof Array && entityproinfo.length > 0 && entityproinfo[0].modeltype === 2) { //只有存在审批流的简单实体  新增时 才走审批流
           //获取审批信息
           const { data: selectedFlowObj } = yield call(queryWorkflow, entityId);
@@ -428,7 +432,8 @@ export default {
         sortFieldAndOrder: null, //当前排序的字段及排序顺序
         relCountData: null,
         relEntityFromInitData: null, //实体页签下  添加表单的初始化数据
-        selectedFlowObj: null  //审批流
+        selectedFlowObj: null,  //审批流
+        entityModelType: ''
       };
     }
   }
