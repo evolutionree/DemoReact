@@ -42,6 +42,9 @@ function mapLocationToMenuKeys(location, menus) {
   if (locationNew.split('/').indexOf('vocation') > -1) {
     locationNew = location.pathname.replace(/vocation/, 'vocations');
   }
+  if (locationNew.split('/').indexOf('affair') > -1) {
+    locationNew = location.pathname.replace(/affair/, 'affair-list');
+  }
 
   let openKeys = [];
   const selectedKeys = [];
