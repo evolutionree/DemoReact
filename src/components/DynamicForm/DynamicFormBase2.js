@@ -1,9 +1,10 @@
 import React, { PropTypes, Component } from 'react';
-import { Form } from 'antd';
+import { Form, Row, Col } from 'antd';
 import classnames from 'classnames';
 import { is } from 'immutable';
 import FoldableGroup from './FoldableGroup';
 import DynamicField from './DynamicField';
+import { getIntlText } from '../UKComponent/Form/IntlText';
 import { getEntcommDetail } from '../../services/entcomm';
 
 const FormItem = Form.Item;
@@ -24,7 +25,7 @@ class CustomFormItem extends FormItem {
           'has-success': validateStatus === 'success',
           'has-warning': validateStatus === 'warning',
           'custom-has-error': validateStatus === 'error',
-          'is-validating': validateStatus === 'validating',
+          'is-validating': validateStatus === 'validating'
         },
       );
     }
@@ -87,14 +88,14 @@ class DynamicFormBase extends Component {
 
     for (const key in nextProps) {
       if (['form', 'wrappedComponentRef'].indexOf(key) === -1 && !is(thisProps[key], nextProps[key])) {
-        //console.log('DynamicFormBase2_props:' + key);
+        //console.log('DynamicFormBase_props:' + key);
         return true;
       }
     }
 
     for (const key in nextState) {
       if (thisState[key] !== nextState[key] || !is(thisState[key], nextState[key])) {
-        //console.log('DynamicFormBase2_state:' + key);
+        //console.log('DynamicFormBase_state:' + key);
         return true;
       }
     }
@@ -102,7 +103,7 @@ class DynamicFormBase extends Component {
     return false;
   }
 
-  componentDidMount() { //表格批量新增的时候  需要执行配置JS
+  componentDidMount() { //表格批量新增的时候  需要执行配置JS  base2文件才有效 只是为了统一文件内容
     const { batchAddInfo_type, batchAddInfo_fieldname, batchAddInfo_fieldid } = this.props;
     if (batchAddInfo_type === 'add') {
       this.onFieldValueChange(batchAddInfo_fieldname, batchAddInfo_fieldid);
@@ -155,7 +156,7 @@ class DynamicFormBase extends Component {
         }
       });
     }
-    if (field.isrequire || isRequiredJS) {
+    if ((field.isrequire || isRequiredJS) && field.controltype !== 31) { //31:引用对象 永远不做必填校验
       rules.push({
         validator(rule, value, callback) {
           const isEmptyArray = Array.isArray(value) && !value.length;
@@ -181,8 +182,18 @@ class DynamicFormBase extends Component {
     if (field.controltype === 10) {
       rules.push({
         validator(rule, value, callback) {
-          if (value && !/[0-9]{11}/.test(value)) {
+          if (value && !(/^1[34578]\d{9}$/.test(value))) {
             return callback('请输入11位的手机号码');
+          }
+          callback();
+        }
+      });
+    }
+    if (field.controltype === 12) {
+      rules.push({
+        validator(rule, value, callback) {
+          if (value && !/^(\(\d{3,4}\)|\d{3,4}-|\s)?\d{7,14}$/.test(value)) {
+            return callback('请输入正确的电话号码');
           }
           callback();
         }
@@ -207,7 +218,7 @@ class DynamicFormBase extends Component {
 
   getFormItemLayout = () => {
     return this.getFormLayout() === 'horizontal'
-      ? { labelCol: { span: 4 }, wrapperCol: { span: 20 } }
+      ? { labelCol: { span: 6 }, wrapperCol: { span: 18 } }
       : null;
   };
 
@@ -219,7 +230,7 @@ class DynamicFormBase extends Component {
     let lastGroup = groups[0];
 
     this.props.fields.forEach(field => {
-      if (field.controltype === 20) {
+      if (field.controltype === 20 ) {
         lastGroup = {
           title: field.displayname,
           foldable: field.fieldconfig.foldable === 1,
@@ -259,10 +270,14 @@ class DynamicFormBase extends Component {
           console.info('引用对象不允许数据源多选的情况下setValue()');
         } else {
           const dataSourceData = typeof newValue === 'string' ? JSON.parse(newValue) : newValue;
-          this.fetchEntcommDetail(fieldconfig.originEntity, dataSourceData.id, fieldconfig.originFieldname, item.fieldname); //数据源关联的实体id  记录recid  记录详情下要取得字段id
+          if (dataSourceData) { //可能用户在做清除操作
+            this.fetchEntcommDetail(fieldconfig.originEntity, dataSourceData.id, fieldconfig.originFieldname, item.fieldname); //数据源关联的实体id  记录recid  记录详情下要取得字段id
+          } else {
+            this.getFieldControlInstance(item.fieldname).setTitle('');
+          }
         }
       }
-    })
+    });
     if (isFromApi) return;
     const { jsEngine } = this.props;
     if (jsEngine) {
@@ -337,7 +352,7 @@ class DynamicFormBase extends Component {
     return children => (
       <WrapFormItem
         key={field.fieldname}
-        label={field.displayname}
+        label={getIntlText('displayname', field)}
         colon={false}
         required={field.isrequire || fieldConfig.isRequiredJS}
         className={cls}
