@@ -58,6 +58,7 @@ export function createNormalInput(type, options) {
         val = options.filter(val, this.props);
       }
       this.setState({ innerVal: val });
+      //TODO  这里不要写onchange 回调，因为本系统有JS配置 不然得话 会一直执行JS
     };
 
     onInputBlur = event => {
@@ -65,7 +66,9 @@ export function createNormalInput(type, options) {
       if (val && options && options.filterOnBlur) {
         val = options.filterOnBlur(val, this.props);
       }
-      this.props.onChange(val);
+      setTimeout(() => {
+        this.props.onChange(val);
+      }, 100)
       this.setState({ isFocused: false });
     };
 
