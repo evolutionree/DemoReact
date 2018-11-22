@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import { connect } from 'dva';
 import { Button } from 'antd';
 import { DynamicFormEdit, DynamicFormView } from '../../../../components/DynamicForm';
@@ -46,7 +47,7 @@ function EntcommInfo({
           <Button onClick={saveEdit} style={{ marginRight: '10px' }}>保存</Button>
           <Button type="default" onClick={cancelEdit}>取消</Button>
         </div>
-        <div style={{ maxHeight: document.documentElement.clientHeight - 270 }} className={styles.formBody}>
+        <div style={{ maxHeight: document.documentElement.clientHeight - 270 }} className={classnames(styles.formBody, 'entcomminfoBody')}>
           <DynamicFormEdit
             entityId={entityId}
             entityTypeId={editData && editData.rectype}
