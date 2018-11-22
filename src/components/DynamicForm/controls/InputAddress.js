@@ -106,8 +106,8 @@ class InputAddress extends Component {
       centerPoint = new BMap.Point(lon, lat);
       markerPoint = centerPoint;
     } else {
-      if (address) message.error('无法定位当前地址');
-      centerPoint = new BMap.Point(116.404, 39.915); // 默认地址
+      if (address) this.handleSearch(address);
+      //centerPoint = new BMap.Point(116.404, 39.915); // 默认地址
     }
 
     map.centerAndZoom(centerPoint, 16); // 初始化地图，设置中心点和地图级别
