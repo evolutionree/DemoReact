@@ -6,7 +6,10 @@ import Perf from 'react-addons-perf';
 window.Perf = Perf;
 
 function getPopupContainer(elem) {
-  return elem.parentNode;
+  if (!elem) return document.body;
+  const parentModal = $(elem).parents('.ant-modal-body')[0];
+  const entcomminfoBody = $(elem).parents('.entcomminfoBody')[0];
+  return parentModal || entcomminfoBody || document.body;
 }
 function setDefaultProps(Component, defaultProps) {
     Component.defaultProps = {
