@@ -130,22 +130,27 @@ function EntityFields({
   const columns = [
     { title: '序号',
       dataIndex: 'row_number',
+      width: 60,
       key: 'row_number' },
     { title: '字段名称',
       dataIndex: 'fieldlabel',
+      width: 160,
       key: 'fieldlabel',
       render: (text, record) => <IntlText value={text} value_lang={record.fieldlabel_lang} />
     },
     { title: '显示名称',
       dataIndex: 'displayname',
+      width: 160,
       key: 'displayname',
       render: (text, record) => <IntlText value={text} value_lang={record.displayname_lang} /> },
     { title: '格式',
       dataIndex: 'controltype',
       key: 'controltype',
+      width: 100,
       render: val => getCtrlNameByType(val) },
     { title: '字段类型',
       dataIndex: 'fieldtype',
+      width: 100,
       key: 'fieldtype',
       render: val => (['系统字段', '默认字段', '自定义字段'][val]) },
     { title: '字段列名',
@@ -153,24 +158,26 @@ function EntityFields({
       key: 'fieldname' },
     { title: '状态',
       dataIndex: 'recstatus',
+      width: 80,
       key: 'recstatus',
       render: val => (['禁用', '启用'][val]) },
     { title: '配置JS',
       dataIndex: 'expandjs',
       key: 'expandjs',
-      width: 60,
+      width: 70,
       render: (val) => {
         return val ? <Icon type="check" /> : null;
       } },
     { title: '过滤JS',
       dataIndex: 'filterjs',
       key: 'filterjs',
-      width: 60,
+      width: 70,
       render: (val) => {
         return val ? <Icon type="check" /> : null;
       } },
     { title: '操作',
       key: 'operation',
+      width: 100,
       render: (val, record) => {
         const menu = (
           <Menu onClick={(e) => handleMenuClick(record, e)}>
@@ -211,6 +218,7 @@ function EntityFields({
         rowKey="fieldid"
         pagination={false}
         dataSource={list}
+        scroll={{ y: document.body.clientHeight - 290 }}
       />
       <FieldFormModal
         showModals={showModals}
