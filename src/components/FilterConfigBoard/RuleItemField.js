@@ -51,10 +51,8 @@ class RuleItemField extends Component {
 
     const field = _.find(fields, item => item.fieldId === fieldId);
     if (!field) {
-      message.error('解析规则出错');
       console.error(`解析规则出错，找不到字段 fieldid : ${fieldId}`);
-      console.error(fields);
-      return null;
+      return <Row gutter={10} style={{ color: 'red', fontSize: '12px' }}><Col span={24}>{`解析规则出错,找不到字段fieldid:${fieldId},请删除此规则`}</Col></Row>;
     }
     const { controlType, fieldConfig } = field;
     const operators = getOperators(controlType);
