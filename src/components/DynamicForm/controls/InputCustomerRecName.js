@@ -146,6 +146,7 @@ class InputCustomerRecName extends Component {
           onBlur={this.onInputBlur.bind(this)}
           disabled={this.props.isReadOnly === 1}
           maxLength={this.props.maxLength ? this.props.maxLength : '200'}
+          style={{ height: '32px' }}
         />
         <div style={{ display: listHide ? 'none' : 'block' }} className={styles.listWrap}>
           {this.state.repeatCustomData.length > 0 ? <div>系统已有相似{this.getEntityInfo().entityName}:</div> : ''}
