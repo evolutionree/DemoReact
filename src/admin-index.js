@@ -6,7 +6,7 @@ function getPopupContainer(elem) {
   if (!elem) return document.body;
   const parentModal = $(elem).parents('.ant-modal-body')[0];
   const entcomminfoBody = $(elem).parents('.entcomminfoBody')[0];
-  return parentModal.offsetHeight > 500 && parentModal || entcomminfoBody || document.body;
+  return parentModal && parentModal.offsetHeight > 500 && parentModal || entcomminfoBody || document.body;
 }
 function setDefaultProps(Component, defaultProps) {
     Component.defaultProps = {
