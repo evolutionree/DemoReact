@@ -184,7 +184,7 @@ class AssignRoleModal extends Component {
                     checked={checked}
                     onChange={this.handleRoleCheck.bind(this, item)}
                   >
-                    {item.rolename}
+                    <span title={item.rolename}>{item.rolename}</span>
                   </Checkbox>
                 );
               })}
@@ -204,7 +204,7 @@ class AssignRoleModal extends Component {
                     checked={vchecked}
                     onChange={this.handleVocationCheck.bind(this, item)}
                   >
-                    {item.vocationname}
+                    <span title={item.vocationname}>{item.vocationname}</span>
                   </Checkbox>
                 );
               })}
