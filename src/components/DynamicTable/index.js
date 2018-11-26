@@ -470,7 +470,7 @@ class DynamicTable extends Component {
       relIds instanceof Array && relIds.map((item, index) => {
         dataArray.push({
           id: item,
-          name: relNames[index]
+          name: relNames && relNames[index]
         });
       });
 
