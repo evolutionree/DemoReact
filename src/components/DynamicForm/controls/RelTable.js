@@ -510,6 +510,24 @@ class RelTable extends Component {
     return this.state.tableRowFields;
   }
 
+  reloadTableRow = (rowIndex, uuid) => {
+    const { tableRowFields, tableUpdateUuid } = this.state;
+    if (uuid === tableUpdateUuid) {
+      return;
+    }
+    const newTableRowFields = tableRowFields.map((item, index) => {
+      if (rowIndex === index) {
+        return _.cloneDeep(item);
+      } else {
+        return item;
+      }
+    });
+    this.setState({
+      tableRowFields: newTableRowFields,
+      tableUpdateUuid: uuid
+    });
+  }
+
   // 渲染表格列头
   renderTableHeader = (fixed) => {
     const value = this.parseValue();
@@ -577,6 +595,7 @@ class RelTable extends Component {
           batchAddInfo_type={batchAddInfo.type}
           batchAddInfo_fieldname={batchAddInfo.field && batchAddInfo.field.fieldname}
           batchAddInfo_fieldid={batchAddInfo.field && batchAddInfo.field.fieldid}
+          reloadTable={this.reloadTableRow}
         />
       );
     });

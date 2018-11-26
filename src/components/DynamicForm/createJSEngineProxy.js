@@ -5,6 +5,7 @@ import { Modal } from 'antd';
 import { getAuthedHeaders } from '../../utils/request';
 import { queryEntityDetail } from '../../services/entity';
 import { getLocalAuthentication } from '../../services/authentication';
+import {uuid} from "../../utils";
 
 function debugMsg(type, msg) {
   Modal.info({
@@ -599,6 +600,8 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
           ...config
         };
       }
+      //TODO： 表格重新渲染
+      this.props.reloadTable && this.props.reloadTable(this.props.rowIndex, uuid());
       this.setState({ fields: [...this.state.fields] });
     };
 
