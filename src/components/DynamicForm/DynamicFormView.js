@@ -21,6 +21,7 @@ class DynamicFormView extends React.Component {
     })),
     value: PropTypes.object.isRequired,
     horizontal: PropTypes.bool,
+    applyContent: PropTypes.bool,
     cols: PropTypes.number //单个表单项所占栅格宽 没有传 则默认走系统计算（超1400宽的客户端三列， 否则两列展示）
   };
 
@@ -75,9 +76,9 @@ class DynamicFormView extends React.Component {
 
       return (
         <Col span={colNum}
-             key={field.fieldname}
-             className={className}
-             style={(fieldconfig.isVisible !== 1 || field.fieldconfig.isVisibleJS === 0) ? { display: 'none' } : { padding: '0 10px' }} >
+          key={field.fieldname}
+          className={className}
+          style={(fieldconfig.isVisible !== 1 || field.fieldconfig.isVisibleJS === 0) ? { display: 'none' } : { padding: '0 10px' }} >
           <FormItem
             key={fieldname}
             colon={false}
@@ -99,7 +100,7 @@ class DynamicFormView extends React.Component {
     });
   };
   render() {
-    const { fields: allFields } = this.props;
+    const { fields: allFields, applyContent } = this.props;
 
     // 处理分组
     const noGroupFields = [];
@@ -128,7 +129,7 @@ class DynamicFormView extends React.Component {
         <Row gutter={24} style={{ margin: 0 }}>
           {this.renderFields(noGroupFields)}
           {groups.map(group => (
-            <FoldableGroup key={group.title} title={group.title} isVisible={group.isVisible} foldable={group.foldable} theme="light">
+            <FoldableGroup key={group.title} title={group.title} isVisible={group.isVisible} foldable={group.foldable} applyContent={applyContent} theme="light">
               {this.renderFields(group.fields)}
             </FoldableGroup>
           ))}

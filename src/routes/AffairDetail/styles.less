@@ -86,3 +86,32 @@
     }
   }
 }
+
+
+// 申请内容特殊处理
+.applySection {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  border: 1px solid #999999;
+  margin-bottom: 16px;
+  .applySectitle {
+    padding: 20px;
+    span {
+      color: #32adef;
+    }
+  }
+  .applyAuditform {
+    flex: 1;
+    border-left: 1px solid #999999;
+    :global {
+      .ant-row {
+        display: flex;
+        flex-wrap: wrap;
+        &:first-child {
+          margin-top: 8px;
+        }
+      }
+    }
+  }
+}

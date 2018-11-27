@@ -8,6 +8,7 @@ class FoldableGroup extends Component {
     title: PropTypes.string.isRequired,
     isVisible: PropTypes.bool,
     foldable: PropTypes.bool,
+    applyContent: PropTypes.bool,
     children: PropTypes.arrayOf(PropTypes.node),
     theme: PropTypes.string
   };
@@ -31,7 +32,7 @@ class FoldableGroup extends Component {
 
   render() {
     const { isFolded } = this.state;
-    const { title, children, foldable, theme, isVisible } = this.props;
+    const { title, children, foldable, theme, isVisible, applyContent } = this.props;
     const wrapCls = classnames(
       styles.wrap,
       styles[theme],
@@ -39,21 +40,28 @@ class FoldableGroup extends Component {
 
       { [styles.folded]: isFolded }
     );
+    const applyWrapCls = classnames(
+      styles.applyWrap,
+      styles[theme],
+      foldable ? (isVisible ? styles.foldable : styles.foldableWhile) : styles.static,
+
+      { [styles.folded]: isFolded }
+    );
     return (
-      <div className={wrapCls}>
+      <div className={!applyContent ? wrapCls : applyWrapCls}>
         {
           isVisible &&
-          <div className={styles.title}>
-            <span className={styles.titleText} title={title}>{title}</span>
+          <div className={styles.applyTitle}>
+            <span className={styles.applyTitleText} title={title}>{title}</span>
             {foldable && <Icon
-              className={styles.titleControl}
+              className={styles.applyTitleControl}
               type={isFolded ? 'plus' : 'minus'}
               onClick={this.handleToggle}
             />}
           </div>
         }
 
-        <div className={isVisible ? styles.content : styles.contentWhile}>
+        <div className={isVisible ? styles.applyContent : styles.contentWhile}>
           {children}
         </div>
       </div>

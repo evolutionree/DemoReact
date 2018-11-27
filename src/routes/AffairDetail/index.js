@@ -126,7 +126,7 @@ class AffairDetail extends Component {
   shouldShowUserForm = () => {
     const { selectedNextNode: node, selectedOperate } = this.props;
     return node && node.nodeinfo.nodestate !== 2 && (selectedOperate === 1 || selectedOperate === 4)
-              && !(node.nodeinfo.nodetype === 1 && node.nodeinfo.needsuccauditcount > 1);
+      && !(node.nodeinfo.nodetype === 1 && node.nodeinfo.needsuccauditcount > 1);
   };
   render() {
     const {
@@ -157,7 +157,6 @@ class AffairDetail extends Component {
       putState,
       suggest,
       selectedOperate,
-
       nextNodesData,
       selectedNextNode
     } = this.props;
@@ -172,21 +171,23 @@ class AffairDetail extends Component {
 
     const columnConfigFormsArray = _.map(columnConfigFormProtocols, (val, key) => ({ entityId: key, protocols: val }));
 
+    const flowBool = flowDetail.flowid === '42e3c146-8733-4ea6-b66c-9a151ca49716';
+
     return (
       <Page title="审批详情" showGoBack goBackPath="/affair-list">
         <div className={styles.title}>
           <span>{`${flowDetail.flowname}【${flowDetail.reccode}】`}</span>
           {/*{shouldSelectNextAuditUser &&*/}
-            {/*<a*/}
-              {/*href="javascript:;"*/}
-              {/*onClick={showFlowCaseModal}*/}
-              {/*style={{*/}
-                {/*color: 'red',*/}
-                {/*fontWeight: 'normal',*/}
-                {/*fontSize: '14px',*/}
-                {/*textDecoration: 'underline'*/}
-              {/*}}*/}
-            {/*>未选择审批人</a>}*/}
+          {/*<a*/}
+          {/*href="javascript:;"*/}
+          {/*onClick={showFlowCaseModal}*/}
+          {/*style={{*/}
+          {/*color: 'red',*/}
+          {/*fontWeight: 'normal',*/}
+          {/*fontSize: '14px',*/}
+          {/*textDecoration: 'underline'*/}
+          {/*}}*/}
+          {/*>未选择审批人</a>}*/}
         </div>
         <div className={styles.metas}>
           <span>申请人：</span>
@@ -250,8 +251,8 @@ class AffairDetail extends Component {
           </div>
         )}
 
-        <div className={styles.section}>
-          <div className={styles.sectitle}>
+        <div className={flowBool ? styles.applySection : styles.section}>
+          <div className={flowBool ? styles.applySectitle : styles.sectitle}>
             <span>申请内容</span>
             {(!!flowOperates.edit && !editing) && <a href="javascript:;" onClick={startEdit}>
               <Icon type="edit" /> 编辑
@@ -263,7 +264,7 @@ class AffairDetail extends Component {
               <Icon type="check" /> 保存
             </a>}
           </div>
-          <div className={styles.auditform}>
+          <div className={styles.applyAuditform}>
             <div>
               {editing ? (
                 <DynamicFormEdit
@@ -275,13 +276,22 @@ class AffairDetail extends Component {
                   ref={editFormRef}
                 />
               ) : (
-                <DynamicFormView
-                  entityId={flowDetail.entityid}
-                  entityTypeId={entityDetail.rectype || flowDetail.entityid}
-                  fields={entityDetailProtocol}
-                  value={entityDetail}
-                />
-              )}
+                  flowBool ? // 评估审批特殊处理
+                    <DynamicFormView
+                      entityId={flowDetail.entityid}
+                      entityTypeId={entityDetail.rectype || flowDetail.entityid}
+                      fields={entityDetailProtocol}
+                      value={entityDetail}
+                      cols={24}
+                      applyContent={true}
+                    /> :
+                    <DynamicFormView
+                      entityId={flowDetail.entityid}
+                      entityTypeId={entityDetail.rectype || flowDetail.entityid}
+                      fields={entityDetailProtocol}
+                      value={entityDetail}
+                    />
+                )}
             </div>
           </div>
         </div>
