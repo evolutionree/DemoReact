@@ -85,6 +85,7 @@ class AdvanceSearchModal extends Component {
         <Spin spinning={loading}>
           <Button onClick={this.clearForm} type="default" style={{ marginBottom: '10px' }}>清空查询条件</Button>
           <DynamicFormAdvanceSearch
+            cols={24}
             value={formData}
             fields={searchFields}
             onChange={val => { this.setState({ formData: val }); }}
