@@ -16,7 +16,6 @@ class IDataPicker extends Component {
 
   handleChange = date => {
     const val = date ? moment(date).format('YYYY-MM-DD HH:mm:ss') : '';
-    debugger;
     this.props.onChange({ dataVal: val });
   };
 
