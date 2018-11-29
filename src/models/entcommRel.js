@@ -44,6 +44,7 @@ export default {
     showModals: '',
     protocol: [],
     simpleSearchKey: 'recname',
+    searchTips: '',
     extraButtonData: [], //页面动态 按钮数据源
     extraToolbarData: [], //页面toolbar 动态按钮数据源
     dynamicModalData: {},
@@ -119,12 +120,19 @@ export default {
         yield put({ type: 'putState', payload: { menus } });
 
         // 获取简单搜索
-        const { data: { simple } } = yield call(queryListFilter, entityId);
+        const { data: { simple, fields } } = yield call(queryListFilter, entityId);
         let simpleSearchKey = 'recname';
+        let searchTips = '';
+        let simpleSearchId = '';
         if (simple && simple.length) {
           simpleSearchKey = simple[0].fieldname;
+          simpleSearchId = simple[0].fieldid;
         }
-        yield put({ type: 'putState', payload: { simpleSearchKey } });
+        if (fields && fields.length) {
+          const searchList = fields.filter(item => (item.fieldid === simpleSearchId));
+          searchTips = searchList.length === 1 && searchList[0].displayname;
+        }
+        yield put({ type: 'putState', payload: { simpleSearchKey, searchTips } });
 
         yield put({ type: 'queryList' });
 
@@ -426,6 +434,7 @@ export default {
         showModals: '',
         protocol: [],
         simpleSearchKey: 'recname',
+        searchTips: '',
         extraButtonData: [], //页面动态 按钮数据源
         extraToolbarData: [], //页面toolbar 动态按钮数据源
         dynamicModalData: {},

@@ -34,6 +34,7 @@ function EntcommList({
   entityId,
   currentUser,
   simpleSearchKey,
+  searchTips,
   extraButtonData,
   extraToolbarData,
   showModals,
@@ -261,7 +262,7 @@ function EntcommList({
         }
         <Toolbar.Right>
           <Search
-            placeholder="请输入关键字"
+            placeholder={`请输入${searchTips || '关键字'}`}
             value={keyword}
             onSearch={val => searchKeyword(val)}
           >

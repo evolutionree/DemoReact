@@ -36,15 +36,18 @@ export default {
     }
   },
   effects: {
-    *search({ payload }, { select, call, put }) {
+    *search({ payload }, { select, put }) {
       const location = yield select(({ routing }) => routing.locationBeforeTransitions);
       const { pathname, query } = location;
+      const keys = { ...payload };
+      const { recStatus, productSeriesId } = keys;
+      if (recStatus || productSeriesId) keys.searchKey = '';
       yield put(routerRedux.push({
         pathname,
         query: {
           ...query,
           pageIndex: 1,
-          ...payload
+          ...keys
         }
       }));
     },
@@ -130,10 +133,10 @@ export default {
           seriesCode,
           ProductsetId: productSeriesId
         } : {
-          seriesName,
-          seriesCode,
-          TopSeriesId: productSeriesId
-        };
+            seriesName,
+            seriesCode,
+            TopSeriesId: productSeriesId
+          };
         yield call(isEdit ? updateSeries : addSeries, params);
         yield put({ type: 'showModals', payload: '' });
         message.success('保存成功');
