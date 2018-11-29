@@ -47,13 +47,13 @@ function EntcommHome({
     titleText = value_name !== undefined ? value_name : recordDetail[titleField.fieldname];
   }
   const title = (
-    <span>
+    <span style={{ wordBreak: 'break-all' }}>
       <span>{entityName || ''} : </span>
       {titleText}
       <Icon
         type={(recordDetail && recordDetail.isfollowed) ? 'star' : 'star-o'}
         onClick={toggleFollow}
-        style={{ marginLeft: '10px', color: '#f5a623', cursor: 'pointer' }}
+        style={{ marginLeft: '10px', color: '#f5a623', cursor: 'pointer', wordBreak: 'break-all' }}
       />
     </span>
   );
