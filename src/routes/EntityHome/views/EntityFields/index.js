@@ -142,7 +142,7 @@ function EntityFields({
       dataIndex: 'displayname',
       width: 160,
       key: 'displayname',
-      render: (text, record) => <IntlText value={text} value_lang={record.displayname_lang} /> },
+      render: (text, record) => <IntlText value={text || record.fieldlabel} value_lang={record.displayname_lang || record.fieldlabel_lang} /> },
     { title: '格式',
       dataIndex: 'controltype',
       key: 'controltype',
