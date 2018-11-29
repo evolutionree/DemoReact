@@ -35,6 +35,7 @@ function EntcommList({
   entityId,
   currentUser,
   simpleSearchKey,
+  searchTips,
   extraButtonData,
   extraToolbarData,
   sortFieldAndOrder,  //当前排序的字段及排序顺序
@@ -189,8 +190,7 @@ function EntcommList({
 
   const { menuId, searchData, pageIndex, pageSize, isAdvanceQuery } = queries;
   const keyword = (!isAdvanceQuery && searchData && searchData[simpleSearchKey]) || '';
-
-  let defaultToolbarActions = [
+  const defaultToolbarActions = [
     { label: '删除', handler: del, show: checkFunc('EntityDataDelete') },
     { label: '分配线索', handler: allocate, show: shouldShowAllocate }//db330ae1-b78c-4e39-bbb5-cc3c4a0c2e3b 销售线索批量分配
   ];
@@ -241,7 +241,7 @@ function EntcommList({
         }
         <Toolbar.Right>
           <Search
-            placeholder="请输入关键字"
+            placeholder={`请输入${searchTips || '关键字'}`}
             value={keyword}
             onSearch={val => searchKeyword(val)}
           >
