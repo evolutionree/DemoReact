@@ -100,9 +100,10 @@ const AppMenu = ({ location, menus, siderFold, permissionLevel }) => {
     );
   }
   return (
-    <Sider fold={siderFold} fixBottom={bottomMenu} key={uuid()}>
+    <Sider fold={siderFold} fixBottom={bottomMenu}>
       <Menu mode={siderFold ? 'vertical' : 'inline'}
             theme="dark"
+            key={siderFold ? '' : uuid()}
             defaultOpenKeys={openKeys}
             defaultSelectedKeys={selectedKeys}>
         {renderMenus(menus)}
