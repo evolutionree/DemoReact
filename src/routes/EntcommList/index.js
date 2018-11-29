@@ -16,7 +16,7 @@ import connectPermission from '../../models/connectPermission';
 import DynamicModal from './DynamicModal';
 import ExportModal from './ExportModal';
 import DataTransferModal from './DataTransferModal';
-import IntlText from '../../components/UKComponent/Form/IntlText';
+import { getIntlText } from '../../components/UKComponent/Form/IntlText';
 import EntcommRepeatViewModal from '../../components/EntcommRepeatViewModal';
 
 
@@ -212,7 +212,7 @@ function EntcommList({
       single = false;
       multiple = true;
     }
-    return { label: <IntlText name="title" value={item} />, handler: extraToolbarClickHandler.bind(this, item), single: single, multiple: multiple, show: true };
+    return { label: getIntlText('title', item), handler: extraToolbarClickHandler.bind(this, item), single: single, multiple: multiple, show: true };
   });
   ajaxToolbarActions = ajaxToolbarActions || [];
   return (
@@ -226,7 +226,7 @@ function EntcommList({
       >
         <Select style={{ minWidth: '120px' }} value={menuId} onChange={onMenuChange}>
           {menus.map(menu => (
-            <Option key={menu.menuId}><IntlText name="menuName" value={menu} /></Option>
+            <Option key={menu.menuId}>{getIntlText('menuName', menu)}</Option>
           ))}
         </Select>
         {checkFunc('EntityDataAdd') && <Button onClick={openAdd}>新增</Button>}
@@ -236,7 +236,7 @@ function EntcommList({
         {shouldShowExport() && <Button onClick={exportData}>导出</Button>}
         {
           extraButtonData && extraButtonData instanceof Array && extraButtonData.map((item, index) => {
-            return <Button onClick={extraButtonClickHandler.bind(this, item)} key={index}><IntlText name="title" value={item} /></Button>;
+            return <Button onClick={extraButtonClickHandler.bind(this, item)} key={index}>{getIntlText('title', item)}</Button>;
           })
         }
         <Toolbar.Right>

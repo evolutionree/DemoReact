@@ -5,7 +5,7 @@ import connectBizParam from '../../components/connectBizParam';
 import SelectAppIcon from '../../components/SelectAppIcon';
 import AjaxSelect from './AjaxRelObjSelect';
 import IntlInput from '../../components/UKComponent/Form/IntlInput';
-import IntlText from '../../components/UKComponent/Form/IntlText';
+import { getIntlText } from '../../components/UKComponent/Form/IntlText';
 
 const Option = Select.Option;
 const FormItem = Form.Item;
@@ -29,7 +29,7 @@ let RelateEntitySelect = (props) => {
     <Select {...props} onChange={handleSelectChange}>
       <Option value={''}>无</Option>
       {bizParam.filter(filter).map(item => (
-        <Option key={item.entityid}><IntlText value={item.entityname} value_lang={item.entityname_lang} /></Option>
+        <Option key={item.entityid}>{getIntlText('entityname', item)}</Option>
       ))}
     </Select>
   );

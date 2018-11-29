@@ -7,7 +7,7 @@ import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import DynamicTable from '../../components/DynamicTable/index';
 import EntcommAddModal from '../../components/EntcommAddModal';
-import IntlText, { getIntlText } from '../../components/UKComponent/Form/IntlText';
+import { getIntlText } from '../../components/UKComponent/Form/IntlText';
 import RecordDetailModal from './RecordDetailModal';
 import RecordEditModal from './RecordEditModal';
 import TransferModal from './TransferModal';
@@ -230,7 +230,7 @@ function EntcommList({
       single = false;
       multiple = true;
     }
-    return { label: <IntlText name="title" value={item} />, handler: extraToolbarClickHandler.bind(this, item), single: single, multiple: multiple, show: true };
+    return { label: getIntlText('title', item), handler: extraToolbarClickHandler.bind(this, item), single: single, multiple: multiple, show: true };
   });
   ajaxToolbarActions = ajaxToolbarActions || [];
   return (
@@ -256,7 +256,7 @@ function EntcommList({
         {shouldShowExport() && <Button onClick={exportData}>导出</Button>}
         {
           extraButtonData && extraButtonData instanceof Array && extraButtonData.map((item, index) => {
-            return <Button onClick={extraButtonClickHandler} key={index}><IntlText name="title" value={item} /></Button>;
+            return <Button onClick={extraButtonClickHandler} key={index}>{getIntlText('title', item)}</Button>;
           })
         }
         <Toolbar.Right>
