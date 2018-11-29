@@ -7,6 +7,7 @@ import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import styles from './styles.less';
 import ProductFormModal from './ProductFormModal';
+import { downloadFile } from '../../utils/ukUtil';
 
 const Option = Select.Option;
 
@@ -44,7 +45,7 @@ function ProductList({
       pageSize: 65535,
       includeChild: '1'
     }, val => val + ''));
-    window.open(`/api/excel/exportdata?TemplateType=0&FuncName=products_export&QueryParameters=${params}&UserId=${currentUser}`);
+    downloadFile(`/api/excel/exportdata?TemplateType=0&FuncName=products_export&QueryParameters=${params}&UserId=${currentUser}`);
   }
   function handleSeriesSelect(seriesId) {
     if (seriesId === currentSeries.productsetid) return;

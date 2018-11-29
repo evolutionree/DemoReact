@@ -9,6 +9,7 @@ import ChangeDeptModal from './ChangeDeptModal';
 import SelectRole from "../../components/SelectRole";
 import BindAttence from './BindAttence';
 import TransferData from './TransferDataModal/TransferData';
+import { downloadFile } from '../../utils/ukUtil';
 
 const Option = Select.Option;
 const Column = Table.Column;
@@ -38,7 +39,7 @@ function UserList({
 }) {
   function exportData() {
     const params = JSON.stringify(_.mapValues({ ...queries, pageIndex: 1, pageSize: 65535 }, val => val + ''));
-    window.open(`/api/excel/exportdata?TemplateType=0&FuncName=account_userinfo_export&QueryParameters=${params}&UserId=${currentUser}`);
+    downloadFile(`/api/excel/exportdata?TemplateType=0&FuncName=account_userinfo_export&QueryParameters=${params}&UserId=${currentUser}`);
   }
   const currentDept = _.find(departments, ['deptid', queries.deptId]);
   const isDisabledDept = currentDept && currentDept.recstatus === 0;

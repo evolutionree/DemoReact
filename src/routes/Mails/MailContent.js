@@ -5,6 +5,7 @@ import ImgIcon from '../../components/ImgIcon';
 import { formatTime } from '../../utils';
 import { markMails } from '../../services/mails';
 import styles from './MailContent.less';
+import {downloadFile} from "../../utils/ukUtil";
 
 class MailContent extends Component {
   static propTypes = {
@@ -38,7 +39,7 @@ class MailContent extends Component {
   };
 
   download = file => {
-    window.open(`/api/fileservice/download?fileid=${file.fileid}`);
+    downloadFile(`/api/fileservice/download?fileid=${file.fileid}`);
   };
 
   toggleHeader = () => {

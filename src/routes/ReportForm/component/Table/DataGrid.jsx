@@ -10,6 +10,7 @@ import moment from 'moment';
 import { Link } from 'dva/router';
 import request from '../../../../utils/request';
 import { Modal, Button, Form, Input, Table, message, Spin } from 'antd';
+import { downloadFile } from '../../../../utils/ukUtil';
 import styles from '../../index.less';
 
 const rowKey = 'key';
@@ -365,7 +366,7 @@ class DataGrid extends  React.Component {
       })
     }).then(result => {
       const fileid = result.data;
-      window.open('api/ReportEngine/export2file?fileid=' + fileid, '_self');
+      downloadFile('api/ReportEngine/export2file?fileid=' + fileid, '_self');
     }).catch((e) => {
       console.error(e);
       message.error(e.message);

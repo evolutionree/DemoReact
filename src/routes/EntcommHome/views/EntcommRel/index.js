@@ -14,6 +14,7 @@ import MerageModal from './MerageModal';
 import AllocateModal from './AllocateModal';
 import DynamicModal from './DynamicModal';
 import connectPermission from "../../../../models/connectPermission";
+import { downloadFile } from '../../../../utils/ukUtil';
 
 function EntcommRel({
   list,
@@ -47,7 +48,7 @@ function EntcommRel({
 
   function exportData() {
     const params = JSON.stringify({ ...queries, pageIndex: 1, pageSize: 65535 });
-    window.open(`/api/excel/exportdata?TemplateType=1&DynamicQuery=${params}&UserId=${currentUser}`);
+    downloadFile(`/api/excel/exportdata?TemplateType=1&DynamicQuery=${params}&UserId=${currentUser}`);
   }
 
   function shouldShowExport() {

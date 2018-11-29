@@ -2,6 +2,7 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Form, Modal, Radio, message, Spin } from 'antd';
 import { printEntity } from '../../../services/printTemplate';
+import {downloadFile} from "../../../utils/ukUtil";
 
 class PrintEntityModal extends Component {
   static propTypes = {
@@ -57,7 +58,7 @@ class PrintEntityModal extends Component {
       lodingPrint: true
     });
     printEntity(params).then(result => {
-      window.open(`api/PrintForm/exportfile?fileid=${result.data.fileid}&fileName=${result.data.filename}`);
+      downloadFile(`api/PrintForm/exportfile?fileid=${result.data.fileid}&fileName=${result.data.filename}`);
       this.setState({
         lodingPrint: false
       });
