@@ -9,8 +9,8 @@ export default {
   state: {
     entityId: '',
     entityName: '',
-    importUrl:'',
-    importTemplate:'',
+    importUrl: '',
+    importTemplate: '',
     entityTypes: [],
     menus: [],
     protocol: [],
@@ -227,12 +227,12 @@ export default {
           entityId,
           recid: currItems.map(item => item.recid).join(','),
           needPower: 0
-       };
+        };
         const { data: { detail: copyData } } = yield call(getEntcommDetail, params);
-         yield put({
-            type: 'copyFromData',
-            payload: copyData
-         });
+        yield put({
+          type: 'copyFromData',
+          payload: copyData
+        });
       } catch (e) {
         message.error(e.message);
       }
@@ -340,12 +340,12 @@ export default {
         modalPending: false
       };
     },
-    impModals(state, { payload: { importUrl,importTemplate} }) {
+    impModals(state, { payload: { importUrl, importTemplate } }) {
       return {
         ...state,
         importUrl,
         importTemplate,
-        showModals:'import',
+        showModals: 'import',
         modalPending: false
       };
     },
@@ -367,18 +367,18 @@ export default {
         ...stateAssignment
       };
     },
-    copyFromData(state, { payload: copyData }){
+    copyFromData(state, { payload: copyData }) {
       return {
         ...state,
         copyData,
-        showModals:'copy',
+        showModals: 'copy',
       };
     },
     resetState() {
       return {
         entityId: '',
-        importUrl:'',
-        importTemplate:'',
+        importUrl: '',
+        importTemplate: '',
         entityName: '',
         entityTypes: [],
         menus: [],
