@@ -293,28 +293,29 @@ class DataSourceSelectModal extends Component {
           <TabPane tab="可选" key="1">
             <Spin spinning={this.state.loading}>
               <Table columns={this.state.columns}
-                     dataSource={list}
-                     onRowDoubleClick={this.tableRowDoubleClick}
-                     pagination={{
-                       total: this.state.total,
-                       pageSize: 10,
-                       current: this.state.pageIndex,
-                       showSizeChanger: false
-                     }}
-                     onChange={this.handleTableChange}
-                     rowSelection={{
-                       type: multiple ? 'checkbox' : 'radio',
-                       selectedRowKeys: currentSelected.map(item => item.id),
-                       onChange: (keys, items) => this.onSelectItems(keys, items)
-                     }}
-                     rowKey="id" />
+                dataSource={list}
+                onRowDoubleClick={this.tableRowDoubleClick}
+                pagination={this.state.total >= 10 ? {
+                  total: this.state.total,
+                  pageSize: 10,
+                  current: this.state.pageIndex,
+                  showSizeChanger: false,
+                  showQuickJumper: false
+                } : false}
+                onChange={this.handleTableChange}
+                rowSelection={{
+                  type: multiple ? 'checkbox' : 'radio',
+                  selectedRowKeys: currentSelected.map(item => item.id),
+                  onChange: (keys, items) => this.onSelectItems(keys, items)
+                }}
+                rowKey="id" />
             </Spin>
           </TabPane>
           <TabPane tab="已选" key="2">
             <Table columns={alreadyColumns}
-                   dataSource={filterSelectedItems}
-                   pagination={false}
-                   rowKey="id" />
+              dataSource={filterSelectedItems}
+              pagination={false}
+              rowKey="id" />
           </TabPane>
         </Tabs>
         <EntcommAddModal
