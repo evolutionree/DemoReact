@@ -21,6 +21,7 @@ export default {
     showModals: '',
     modalPending: false,
     simpleSearchKey: 'recname',
+    searchTips: '',
     extraButtonData: [], //页面动态 按钮数据源
     extraToolbarData: [], //页面toolbar 动态按钮数据源
     dynamicModalData: {},
@@ -97,19 +98,26 @@ export default {
         yield put({ type: 'menus', payload: menus });
 
         // 获取简单搜索
-        const { data: { simple } } = yield call(queryListFilter, entityId);
+        const { data: { simple, fields } } = yield call(queryListFilter, entityId);
         let simpleSearchKey = 'recname';
+        let searchTips = '';
+        let simpleSearchId = '';
         if (simple && simple.length) {
           simpleSearchKey = simple[0].fieldname;
+          simpleSearchId = simple[0].fieldid;
         }
-        yield put({ type: 'putState', payload: { simpleSearchKey } });
+        if (fields && fields.length) {
+          const searchList = fields.filter(item => (item.fieldid === simpleSearchId));
+          searchTips = searchList.length === 1 && searchList[0].displayname;
+        }
+        yield put({ type: 'putState', payload: { simpleSearchKey, searchTips } });
 
         yield put({ type: 'queryList' });
       } catch (e) {
         message.error(e.message || '获取协议失败');
       }
     },
-    *search({ payload }, { select, call, put }) {
+    *search({ payload }, { select, put }) {
       const location = yield select(({ routing }) => routing.locationBeforeTransitions);
       const { pathname, query } = location;
       yield put(routerRedux.push({
@@ -371,12 +379,12 @@ export default {
         modalPending: false
       };
     },
-    impModals(state, { payload: { importUrl,importTemplate} }) {
+    impModals(state, { payload: { importUrl, importTemplate } }) {
       return {
         ...state,
         importUrl,
         importTemplate,
-        showModals:'import',
+        showModals: 'import',
         modalPending: false
       };
     },
@@ -401,8 +409,8 @@ export default {
     resetState() {
       return {
         entityId: '',
-        importUrl:'',
-        importTemplate:'',
+        importUrl: '',
+        importTemplate: '',
         entityName: '',
         entityTypes: [],
         menus: [],
@@ -414,6 +422,7 @@ export default {
         showModals: '',
         modalPending: false,
         simpleSearchKey: 'recname',
+        searchTips: '',
         extraButtonData: [], //页面动态 按钮数据源
         extraToolbarData: [], //页面toolbar 动态按钮数据源
         dynamicModalData: {},

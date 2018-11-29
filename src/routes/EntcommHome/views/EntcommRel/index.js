@@ -5,7 +5,6 @@ import classnames from 'classnames';
 import * as _ from 'lodash';
 import styles from './styles.less';
 import DetailModal from './DetailModal';
-import Avatar from '../../../../components/Avatar';
 import RelEntityAddModal from './RelEntityAddModal';
 import Toolbar from '../../../../components/Toolbar';
 import Search from '../../../../components/Search';
@@ -18,10 +17,7 @@ import connectPermission from "../../../../models/connectPermission";
 
 function EntcommRel({
   list,
-  listFields,
   relEntityId,
-  relEntityName,
-  iconField,
   showDetail,
   addRelEntity,
   tabInfo,
@@ -31,14 +27,15 @@ function EntcommRel({
   menus,
   queries,
   simpleSearchKey,
-                      total,
-                      currItems,
-                      dispatch,
-                      extraToolbarData,
-                      extraButtonData,
-                      sortFieldAndOrder,
-                      currentUser,
-                      relCountData
+  searchTips,
+  total,
+  currItems,
+  dispatch,
+  extraToolbarData,
+  extraButtonData,
+  sortFieldAndOrder,
+  currentUser,
+  relCountData
 }) {
   function onMenuChange(payload) {
     dispatch({ type: 'entcommRel/selectMenu', payload });
@@ -77,7 +74,7 @@ function EntcommRel({
   }
 
   function handleTableChange(pagination, filters, sorter) {
-    const searchOrder = sorter.field ? (sorter.field + (sorter.order === 'ascend' ? ' asc' : ' desc')) : ''
+    const searchOrder = sorter.field ? (sorter.field + (sorter.order === 'ascend' ? ' asc' : ' desc')) : '';
     search({
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
@@ -152,7 +149,7 @@ function EntcommRel({
 
   const callHandler = (mobilephone) => {
     call(mobilephone);
-  }
+  };
 
 
   function shouldShowImport() {
@@ -169,19 +166,19 @@ function EntcommRel({
   ];
 
   let ajaxToolbarActions = extraToolbarData && extraToolbarData instanceof Array && extraToolbarData.map((item) => {
-      let single = true;
-      let multiple = false;
-      if (item.selecttype === 0) {
-        single = false;
-        multiple = false;
-      } else if (item.selecttype === 1) {
-        single = true;
-        multiple = false;
-      } else if (item.selecttype === 2) {
-        single = false;
-        multiple = true;
-      }
-      return { label: item.title, handler: extraToolbarClickHandler.bind(this, item), single: single, multiple: multiple, show: true };
+    let single = true;
+    let multiple = false;
+    if (item.selecttype === 0) {
+      single = false;
+      multiple = false;
+    } else if (item.selecttype === 1) {
+      single = true;
+      multiple = false;
+    } else if (item.selecttype === 2) {
+      single = false;
+      multiple = true;
+    }
+    return { label: item.title, handler: extraToolbarClickHandler.bind(this, item), single: single, multiple: multiple, show: true };
   });
   ajaxToolbarActions = ajaxToolbarActions || [];
 
@@ -234,7 +231,7 @@ function EntcommRel({
         }
         <Toolbar.Right>
           <Search
-            placeholder="请输入关键字"
+            placeholder={`请输入${searchTips || '关键字'}`}
             value={keyword}
             onSearch={val => searchKeyword(val)}
           >
