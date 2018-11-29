@@ -16,7 +16,7 @@ function DBSQLObjectList({
   currentUser
 }) {
   function exportData() {
-    window.open(`/api/excel/exportdata?TemplateType=0&FuncName=products_export&QueryParameters=${params}&UserId=${currentUser}`);
+    //window.open(`/api/excel/exportdata?TemplateType=0&FuncName=products_export&QueryParameters=${params}&UserId=${currentUser}`);
   }
 
   function getColumns() {

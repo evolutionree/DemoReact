@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import _ from 'lodash';
 import { queryFolderList, queryDocumentList, delFolder, addDocument, delDocument, updateDocumentDownloadCount } from '../services/document';
+import { downloadFile } from '../utils/ukUtil';
 
 const modelSelector = state => state.entcommDocs;
 
@@ -104,7 +105,7 @@ export default {
     },
     *download(action, { select, call, put }) {
       const { currentItems } = yield select(modelSelector);
-      window.open(`/api/fileservice/download?fileid=${currentItems[0].fileid}`);
+      downloadFile(`/api/fileservice/download?fileid=${currentItems[0].fileid}`);
       yield call(updateDocumentDownloadCount, currentItems[0].documentid);
       yield put({ type: 'fetchList' });
     },

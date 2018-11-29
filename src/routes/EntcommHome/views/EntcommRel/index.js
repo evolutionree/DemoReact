@@ -15,6 +15,7 @@ import AllocateModal from './AllocateModal';
 import DynamicModal from './DynamicModal';
 import connectPermission from '../../../../models/connectPermission';
 import DeptTree from '../DeptTree';
+import { downloadFile } from '../../../../utils/ukUtil';
 
 const deptEntityId = 'd51aca76-a168-48c7-aa14-eb69ca407050';
 function EntcommRel({
@@ -49,7 +50,7 @@ function EntcommRel({
 
   function exportData() {
     const params = JSON.stringify({ ...queries, pageIndex: 1, pageSize: 65535 });
-    window.open(`/api/excel/exportdata?TemplateType=1&DynamicQuery=${params}&UserId=${currentUser}`);
+    downloadFile(`/api/excel/exportdata?TemplateType=1&DynamicQuery=${params}&UserId=${currentUser}`);
   }
 
   function shouldShowExport() {

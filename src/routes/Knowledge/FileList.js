@@ -7,6 +7,7 @@ import Search from '../../components/Search';
 import styles from './Knowledge.less';
 import UploadButton from './UploadButton';
 import { formatFileSize } from '../../utils';
+import { downloadFile } from '../../utils/ukUtil';
 
 const Option = Select.Option;
 const Column = Table.Column;
@@ -62,7 +63,7 @@ function UserList({
       >
         <Column title="文档名称" dataIndex="filename" key="filename" render={(val, record) => (
           checkFunc('FileDownload')
-            ? <a onClick={onDownload.bind(null, record.documentid)} href={`/api/fileservice/download?fileid=${record.fileid}`}>{val}</a>
+            ? <a onClick={onDownload.bind(null, record.documentid, record.fileid)}>{val}</a>
             : <span>{val}</span>
         )} />
         <Column title="目录" dataIndex="foldername" key="foldername" />
@@ -76,7 +77,7 @@ function UserList({
           key="operation"
           render={(val, record) => (
             checkFunc('FileDownload')
-              ? <a onClick={onDownload.bind(null, record.documentid)} href={`/api/fileservice/download?fileid=${record.fileid}`}>下载</a>
+              ? <a onClick={onDownload.bind(null, record.documentid, record.fileid)}>下载</a>
               : <span>下载</span>
           )}
         />
@@ -104,8 +105,9 @@ function mapDispatchToProps(dispatch, { location }) {
         }
       });
     },
-    onDownload: (documentId) => {
+    onDownload: (documentId, fileid) => {
       dispatch({ type: 'knowledge/onDownload', payload: documentId });
+      downloadFile(`/api/fileservice/download?fileid=${fileid}`);
     },
     del: () => {
       Modal.confirm({

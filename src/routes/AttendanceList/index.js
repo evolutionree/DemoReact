@@ -10,6 +10,7 @@ import Search from '../../components/Search';
 import { queryAttendanceList } from '../../services/attendance';
 import { getCurrentMonthFirstDay, getCurrentDay } from '../../utils';
 import * as _ from 'lodash';
+import { downloadFile } from '../../utils/ukUtil';
 
 const Option = Select.Option;
 const Column = Table.Column;
@@ -120,7 +121,7 @@ class AttendanceList extends React.Component {
 
   exportData = () => {
     const params = JSON.stringify(_.mapValues({ ...this.state.queries, pageIndex: 1, pageSize: 65535 }, val => val + ''));
-    window.open(`/api/excel/exportdata?TemplateType=0&FuncName=attendance_export&QueryParameters=${params}&UserId=${this.props.currentUser}`);
+    downloadFile(`/api/excel/exportdata?TemplateType=0&FuncName=attendance_export&QueryParameters=${params}&UserId=${this.props.currentUser}`);
   };
 
   render() {
