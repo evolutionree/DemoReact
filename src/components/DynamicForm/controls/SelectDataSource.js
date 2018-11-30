@@ -37,7 +37,8 @@ class SelectDataSource extends React.Component {
       modalVisible: false,
       options: [],
       refEntity: '',
-      refEntityName: ''
+      refEntityName: '',
+      searchKey: ''
     };
   }
 
@@ -136,6 +137,9 @@ class SelectDataSource extends React.Component {
     const updateValue = id ? JSON.stringify({ id, name }) : '';
     this.props.onChange(updateValue);
     this.changeWithName(id, name);
+    this.setState({
+      searchKey: ''
+    });
   }
 
   changeWithName = (id, name) => {
@@ -148,7 +152,7 @@ class SelectDataSource extends React.Component {
   }
 
   queryOptions = (searchKey) => {
-    this.setState({ loading: true });
+    this.setState({ loading: true, searchKey });
     const params = {
       sourceId: this.props.dataSource && this.props.dataSource.sourceId,
       keyword: searchKey,
@@ -177,10 +181,19 @@ class SelectDataSource extends React.Component {
   }
 
   render() {
-    let { options } = this.state;
+    let { options, searchKey } = this.state;
     const isReadOnly = this.props.isReadOnly === 1;
     const { text, array } = this.parseValue();
+    const value = array.map(item => item.id);
     options = _.uniqBy(_.concat(array, options), 'id');
+
+    if (searchKey === '' && array.length) {
+      options = options.filter(item => {
+        return value.indexOf(item.id) > -1;
+      });
+    } else if (searchKey === '' && !array.length) {
+      options = [];
+    }
 
     const cls = classnames([styles.wrap, {
       [styles.empty]: !text,
@@ -199,7 +212,7 @@ class SelectDataSource extends React.Component {
             placeholder={this.props.placeholder}
             disabled={isReadOnly}
             mode={this.props.multiple === 1 ? 'multiple' : null}
-            value={array.map(item => item.id)}
+            value={value}
             allowClear
             showSearch
           >
