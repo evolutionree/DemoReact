@@ -3,6 +3,7 @@ import { connect } from 'dva';
 import { Modal, Select, Row, Col, Button, Upload, message, Option } from 'antd';
 import styles from './ImportModal.less';
 import { getDeviceHeaders } from '../../../utils/request';
+import {downloadFile} from "../../../utils/ukUtil";
 
 
 class ImportModal extends Component {
@@ -68,6 +69,10 @@ class ImportModal extends Component {
       ? `/api/excel/exporttemplate?templateType=0&exportType=1&key=${templateKey}&UserId=${currentUser}`
       : `/api/excel/exporttemplate?templateType=1&key=${templateKey}&UserId=${currentUser}`;
   };
+
+  downTemplate = () => {
+    downloadFile(this.getImportTemplateUrl());
+  }
 
   handleChange = (value) => {
     this.setState({
@@ -173,9 +178,7 @@ class ImportModal extends Component {
               <Col span={2} className={styles.col_icon}>1</Col>
               <Col span={16} className={styles.col_context}>请按照Excel数据模版格式准备数据</Col>
               <Col span={6}>
-                <a href={this.getImportTemplateUrl()}>
-                  <Button className={styles.col_downButton}>下载模版</Button>
-                </a>
+                <Button className={styles.col_downButton} onClick={this.downTemplate}>下载模版</Button>
               </Col>
             </Row>
             {this.props.showOperatorType && <Row className={styles.row}>
