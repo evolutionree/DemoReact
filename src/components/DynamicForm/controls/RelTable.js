@@ -51,6 +51,17 @@ class RelTable extends Component {
 
   componentDidMount() {
     this.props.entityId && this.queryFields(this.props.entityId, this.props);
+    document.body.addEventListener('keydown', this.onKeyDownHandler, false);
+  }
+
+  componentWillUnmount() {
+    document.body.removeEventListener('keydown', this.onKeyDownHandler, false);
+  }
+
+  onKeyDownHandler = (e) => { //不允许Tab键 切换 表格中的表单项
+    if (event.keyCode === 9) {
+      e.preventDefault();
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -255,7 +266,7 @@ class RelTable extends Component {
     onChange([...this.parseValue(), newRow]);
     this.setState({
       tableRowFields: [
-        ..._.cloneDeep(this.state.tableRowFields),
+        ...this.state.tableRowFields,
         _.cloneDeep(this.state.tableFields)
       ]
     });
@@ -281,7 +292,7 @@ class RelTable extends Component {
     });
     this.setState({
       tableRowFields: [
-        ..._.cloneDeep(this.state.tableRowFields),
+        ...this.state.tableRowFields,
         ...batchAddTableRowFields
       ]
     });
@@ -300,7 +311,7 @@ class RelTable extends Component {
     if (operateType === 1) {
       this.setState({
         tableRowFields: [
-          ..._.cloneDeep(this.state.tableRowFields),
+          ...this.state.tableRowFields,
           ...importTableRowFields
         ]
       });
@@ -576,10 +587,6 @@ class RelTable extends Component {
     setTimeout(() => {
       this.setAlignTableWidthAndHeight();
     }, 500);
-  }
-
-  componentWillUnmount() {
-
   }
 
   setAlignTableWidthAndHeight = () => {
