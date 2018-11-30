@@ -33,7 +33,8 @@ class UserSelect extends React.Component {
       modalVisible: false,
       userNameMap: {},
       allUsers: [],
-      options: []
+      options: [],
+      searchKey: ''
     };
     if (props.value) {
       const users = this.toUserArray(props.value, props.value_name);
@@ -252,6 +253,9 @@ class UserSelect extends React.Component {
         value_name: selectData.name
       });
     }
+    this.setState({
+      searchKey: ''
+    });
   }
 
   queryOptions = (userName) => {
@@ -279,6 +283,9 @@ class UserSelect extends React.Component {
           return this.filterOption(opt);
         })
       });
+    });
+    this.setState({
+      searchKey: userName
     });
   }
 
@@ -311,9 +318,19 @@ class UserSelect extends React.Component {
   };
 
   render() {
-    let { options } = this.state;
+    let { options, searchKey } = this.state;
     const { text, users } = this.parseValue();
+    const value = users.map(item => item.id + '');
     options = _.uniqBy(_.concat(users, options), 'id');
+
+    if (searchKey === '' && users.length) {
+      options = options.filter(item => {
+        return value.indexOf(item.id + '') > -1;
+      });
+    } else if (searchKey === '' && !users.length) {
+      options = [];
+    }
+
     if (this.props.view && this.props.multiple && this.props.isCommonForm) { //查看页
       return <ImgCardList.View
                   dataSouce={this.state.allUsers}
@@ -346,7 +363,7 @@ class UserSelect extends React.Component {
                       onSearch={this.queryOptions}
                       placeholder={this.props.placeholder}
                       disabled={this.props.isReadOnly === 1}
-                      value={users.map(item => item.id + '')}
+                      value={value}
                       allowClear
               >
                 {
