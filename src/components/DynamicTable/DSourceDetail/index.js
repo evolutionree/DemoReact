@@ -37,6 +37,8 @@ class DSourceDetail extends PureComponent {
     if (entityId && recordId) {
       this.fetchDetailAndProtocol(entityId, recordId);
       this.fetchEntityDetail(entityId);
+    } else {
+      message.error('缺少必要参数');
     }
   }
 
