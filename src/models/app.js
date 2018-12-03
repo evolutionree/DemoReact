@@ -56,7 +56,7 @@ export default {
     // session过期，退出登录
     onAjax({ dispatch }) {
       subscribeRequest({
-        onRequest: () => {},
+        onRequest: () => { },
         onResponse: (error, response) => {
           message.destroy();
           if (response && response.data && response.data.error_code === -25013 && !logoutInfoBool) {
@@ -116,6 +116,7 @@ export default {
         yield call(modifyPassword, params);
         message.success('修改密码成功');
         yield put({ type: 'showModals', payload: '' });
+        yield put({ type: 'relogout' });
       } catch (e) {
         message.error(e.message || '修改密码失败');
       }
@@ -129,6 +130,11 @@ export default {
       } catch (e) {
         message.error(e.message || '修改头像失败');
       }
+    },
+    *relogout(_, { call }) {
+      yield call(logout);
+      localStorage.removeItem('defaultPathType');
+      setTimeout(() => (location.href = '/login.html'), 500);
     },
     *logout(action, { call }) {
       yield call(logout);
