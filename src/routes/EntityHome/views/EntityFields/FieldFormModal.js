@@ -132,7 +132,7 @@ class FieldFormModal extends Component {
         let newKey = key;
         if (/^dataSource_/.test(key)) newKey = 'dataSource';
         newValues[newKey] = values[key];
-        if (/^displayname_lang$/.test(newKey)) {
+        if (/^displayname_lang$/.test(newKey) && newValues[newKey]) {
           Object.keys(newValues[newKey]).some(item => (newValues[newKey][item] === '')) &&
             (newValues[newKey] = { ...newValues.fieldlabel_lang });
         }
