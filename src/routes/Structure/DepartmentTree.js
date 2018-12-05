@@ -5,6 +5,9 @@ import styles from './Structure.less';
 
 const TreeNode = Tree.TreeNode;
 
+const screenHeight = document.body.offsetHeight && document.documentElement.clientHeight;
+const modalHeight = screenHeight * 0.6;
+
 function transformData(data) {
   if (!data || !data.length) return;
   const root = _.find(data, item => item.nodepath === 0);
@@ -58,7 +61,7 @@ class DepartmentTree extends React.Component {
   render() {
     const treeNodes = transformData(this.props.data);
     return (
-      <div className={styles.wrap}>
+      <div className={styles.wrap} style={{ maxHeight: `${modalHeight + 10}px` }}>
         {(treeNodes && treeNodes.length)
           ? (
             <Tree

@@ -6,13 +6,16 @@ import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import styles from './Structure.less';
 import ChangeDeptModal from './ChangeDeptModal';
-import SelectRole from "../../components/SelectRole";
+// import SelectRole from "../../components/SelectRole";
 import BindAttence from './BindAttence';
 import TransferData from './TransferDataModal/TransferData';
 import { downloadFile } from '../../utils/ukUtil';
 
 const Option = Select.Option;
-const Column = Table.Column;
+
+const screenHeight = document.body.offsetHeight && document.documentElement.clientHeight;
+const modalHeight = screenHeight * 0.6;
+
 
 function UserList({
   checkFunc,
@@ -32,10 +35,10 @@ function UserList({
   toggleSetLeader,
   importData,
   currentUser,
-   bindAttence,
-                    setPwdValid,
-                    setForceLogout,
-                    transferData
+  bindAttence,
+  setPwdValid,
+  setForceLogout,
+  transferData
 }) {
   function exportData() {
     const params = JSON.stringify(_.mapValues({ ...queries, pageIndex: 1, pageSize: 65535 }, val => val + ''));
@@ -43,6 +46,47 @@ function UserList({
   }
   const currentDept = _.find(departments, ['deptid', queries.deptId]);
   const isDisabledDept = currentDept && currentDept.recstatus === 0;
+
+  const tooltipElements = (text, width) => (
+    <div
+      className={`${text}`.length > 5 ? styles.hide : ''}
+      title={`${text}`}
+      style={{ maxWidth: `${width - 21}px` }}
+    >
+      {text}
+    </div>
+  );
+
+  const LoopList = [
+    { title: '姓名', key: 'username', width: 80, fixed: 'left' },
+    { title: '手机号', key: 'userphone', width: 110, fixed: 'left' },
+    { title: '账号', key: 'accountname', width: 110 },
+    { title: '工号', key: 'workcode', width: 90 },
+    { title: '团队组织', key: 'deptname', width: 110 },
+    { title: '上级团队', key: 'pdeptname', width: 160 },
+    { title: '角色', key: 'rolename', width: 110 },
+    { title: '职能', key: 'vocationname' },
+    { title: '是否领导', key: 'isleader', width: 80, render: text => tooltipElements(text ? '是' : '否', 80) },
+    { title: '状态', key: 'recstatus', width: 50, render: text => tooltipElements(['停用', '启用'][text], 50) },
+    { title: '最后更新人', key: 'updator' },
+    { title: '最后更新时间', key: 'recupdated', width: 150 }
+  ];
+
+  const renderList = (colList) => (
+    colList.map(item => {
+      return {
+        ...item,
+        dataIndex: item.key,
+        width: item.width || 100,
+        fixed: item.fixed || false,
+        render: item.render ? item.render : (text => tooltipElements(text, item.width || 100)),
+        children: item.children ? renderList(item.children) : false
+      };
+    })
+  );
+  const columns = renderList(LoopList);
+  const tableWidth = columns.reduce((sum, current) => sum + current.width, 0) + 62;
+
   return (
     <div className={styles.rightContent}>
       <div className={styles.subtitle}>{currentDept && currentDept.deptname}</div>
@@ -51,18 +95,28 @@ function UserList({
         actions={[
           { label: '编辑', handler: edit, single: true, show: checkFunc('UserEdit') },
           { label: '分配角色职能', handler: assignRole, show: checkFunc('RoleAndVocation') },
-          { label: '停用', handler: toggleUserStatus, single: true,
-            show: () => checkFunc('UserEnable') && currentItems[0].recstatus === 1 },
-          { label: '启用', handler: toggleUserStatus, single: true,
-            show: () => checkFunc('UserEnable') && currentItems[0].recstatus === 0 },
+          {
+            label: '停用', handler: toggleUserStatus, single: true,
+            show: () => checkFunc('UserEnable') && currentItems[0].recstatus === 1
+          },
+          {
+            label: '启用', handler: toggleUserStatus, single: true,
+            show: () => checkFunc('UserEnable') && currentItems[0].recstatus === 0
+          },
           { label: '转换团队', handler: changeDept, single: true, show: checkFunc('DepartmentChange') },
           { label: '重置密码', handler: revertPassword, single: false, show: checkFunc('ReconvertPwd') },
-          { label: '取消设为领导', handler: toggleSetLeader, single: true,
-            show: () => checkFunc('SetLeader') && !!currentItems[0].isleader },
-          { label: '设为领导', handler: toggleSetLeader, single: true,
-            show: () => checkFunc('SetLeader') && !currentItems[0].isleader },
-          { label: '绑定考勤组', handler: bindAttence, single: false,
-            show: () => checkFunc('SetLeader') },
+          {
+            label: '取消设为领导', handler: toggleSetLeader, single: true,
+            show: () => checkFunc('SetLeader') && !!currentItems[0].isleader
+          },
+          {
+            label: '设为领导', handler: toggleSetLeader, single: true,
+            show: () => checkFunc('SetLeader') && !currentItems[0].isleader
+          },
+          {
+            label: '绑定考勤组', handler: bindAttence, single: false,
+            show: () => checkFunc('SetLeader')
+          },
           { label: '密码失效', handler: setPwdValid, single: false },
           { label: '注销设备', handler: setForceLogout, single: false },
           { label: '一键转移数据', handler: transferData, single: false }
@@ -86,10 +140,11 @@ function UserList({
       </Toolbar>
 
       <Table
-        scroll={{ x: '100%' }}
+        scroll={{ x: `${tableWidth}px`, y: `${modalHeight}px` }}
         className={styles.table}
         rowKey="accountid"
         dataSource={list}
+        columns={columns}
         rowSelection={{
           selectedRowKeys: currentItems.map(item => item.accountid),
           onChange: (keys, items) => { selectItems(items); }
@@ -101,26 +156,7 @@ function UserList({
           onChange: search.bind(null, 'pageIndex'),
           onShowSizeChange: (page, size) => { search('pageSize', size); }
         }}
-      >
-        <Column title="姓名" dataIndex="username" key="username" render={text => <span>{text}</span>} />
-        <Column title="手机号" dataIndex="userphone" key="userphone" render={text => <span>{text}</span>} />
-        <Column title="账号" dataIndex="accountname" key="accountname" render={text => <span>{text}</span>} />
-        <Column title="工号" dataIndex="workcode" key="workcode" render={text => <span>{text}</span>} />
-        <Column title="团队组织" dataIndex="deptname" key="deptname" render={text => <span>{text}</span>} />
-        <Column title="上级团队" dataIndex="pdeptname" key="pdeptname" render={text => <span>{text}</span>} />
-        <Column title="角色" dataIndex="rolename" key="rolename" render={text => <span>{text}</span>} />
-        <Column title="职能" dataIndex="vocationname" key="vocationname" render={text => <span>{text}</span>} />
-        <Column title="是否领导" dataIndex="isleader" key="isleader" render={text => <span>{text ? '是' : '否'}</span>} />
-
-        <Column
-          title="状态"
-          dataIndex="recstatus"
-          key="recstatus"
-          render={text => <span>{['停用', '启用'][text]}</span>}
-        />
-        <Column title="最后更新人" dataIndex="updator" key="updator" render={text => <span>{text}</span>} />
-        <Column title="最后更新时间" dataIndex="recupdated" key="recupdated" render={text => <span>{text}</span>} />
-      </Table>
+      />
       <ChangeDeptModal />
       <BindAttence />
       <TransferData />
