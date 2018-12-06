@@ -50,7 +50,7 @@ class AttendanceList extends React.Component {
     return {
       pageIndex: 1,
       pageSize: 10,
-      type: 2,
+      type: 1,
       searchName: '',
       deptId: '7f74192d-b937-403f-ac2a-8be34714278b',
       startDate: getCurrentMonthFirstDay(),
@@ -135,8 +135,8 @@ class AttendanceList extends React.Component {
             onChange={this.search.bind(this, 'type')}
           >
             <Option value="0">全部</Option>
-            <Option value="2">外勤</Option>
-            <Option value="1">内勤</Option>
+            <Option value="1">外勤</Option>
+            <Option value="2">内勤</Option>
           </Select>
           <DepartmentSelect
             width="200px"
