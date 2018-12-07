@@ -363,6 +363,7 @@ class UserSelect extends React.Component {
                       onSearch={this.queryOptions}
                       placeholder={this.props.placeholder}
                       disabled={this.props.isReadOnly === 1}
+                      mode={this.props.multiple === 1 ? 'multiple' : null}
                       value={value}
                       allowClear
               >
