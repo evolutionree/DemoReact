@@ -148,7 +148,7 @@ class StageBar extends Component {
       if (res1) {
         entityFields = oppinfoset.map(item => {
           const match = _.find(res1.data, ['fieldid', item.fieldid]);
-          if (match) {
+          if (match && match.controltype !== 20) { //分组不必填
             match.isrequire = true;
           }
           return match;
