@@ -245,12 +245,14 @@ class UserSelect extends React.Component {
   };
 
   selectChange = (options, value) => {
-    const selectData = options instanceof Array && options.filter(item => value && value.indexOf(item.userid) > -1);
-    this.props.onChange(value);
+    const selectData = options instanceof Array && options.filter(item => value && value.indexOf(item.id + '') > -1);
+    const id = selectData.map(obj => obj.id).join(',');
+    const name = selectData.map(obj => obj.name).join(',');
+    this.props.onChange(id);
     if (this.props.onChangeWithName) {
       this.props.onChangeWithName({
-        value: selectData.id,
-        value_name: selectData.name
+        value: id,
+        value_name: name
       });
     }
     this.setState({
