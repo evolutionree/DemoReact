@@ -37,7 +37,7 @@ function AllWeekly({
         {
           checkFunc('EntityDataAdd') ? <Button type="primary" icon="edit" onClick={addWeekly} style={{ marginRight: '20px' }}>写周计划</Button> : null
         }
-        {<Button onClick={exportData}>导出</Button>}
+        {shouldShowExport() && <Button onClick={exportData}>导出</Button>}
         <Toolbar.Right>
           <div style={{ display: 'inline-block', width: 220 }}>
             <RangePicker onChange={onChange} value={getDate()} />

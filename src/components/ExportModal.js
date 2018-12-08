@@ -29,7 +29,9 @@ class ExportModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: false
+      loading: false,
+      resultModalVisible: false,
+      ExportMessage: ''
     };
   }
 
@@ -39,30 +41,43 @@ class ExportModal extends React.Component {
 
   handleOk = () => {
     const { form, queries, userId, entityId } = this.props;
-    const params = { ...queries, pageIndex: 1, pageSize: 655535 };
-    form.validateFields((err, values) => {
-      if (err) return;
-      this.setState({ loading: true });
-
-      request('/api/excel/exportdata', {
-        method: 'post', body: JSON.stringify({
-          TemplateType: 1,
-          DynamicQuery: JSON.stringify(params),
-          UserId: userId,
-          entityId,
-          ...values
-        })
-      }).then(result => {
-        this.setState({ loading: false });
-        this.closeModal();
-        const fileid = result.data;
-        downloadFile('api/ReportEngine/export2file?fileid=' + fileid);
-      }).catch((e) => {
-        this.setState({ loading: false });
-        console.error(e);
-        message.error(e.message);
+    const { resultModalVisible } = this.state;
+    if (!resultModalVisible) {
+      const params = { ...queries, pageIndex: 1, pageSize: 655535 };
+      form.validateFields((err, values) => {
+        if (err) return;
+        this.setState({ loading: true });
+        request('/api/excel/exportdata', {
+          method: 'post', body: JSON.stringify({
+            TemplateType: 1,
+            DynamicQuery: JSON.stringify(params),
+            UserId: userId,
+            entityId,
+            ...values
+          })
+        }).then(result => {
+          this.setState({ loading: false });
+          const { rettype, fileid, message: ExportMessage } = result.data;
+          if (rettype === 1) {
+            if (fileid.indexOf('数据量较大') >= 0) {
+              message.error(fileid);
+            } else {
+              downloadFile('api/ReportEngine/export2file?fileid=' + fileid);
+            }
+            this.closeModal();
+          } else {
+            this.setState({ resultModalVisible: true, ExportMessage });
+          }
+        }).catch((e) => {
+          this.setState({ loading: false });
+          this.closeModal();
+          console.error(e);
+          message.error(e.message);
+        });
       });
-    });
+    } else {
+      this.closeModal();
+    }
   };
 
   closeModal = () => {
@@ -70,11 +85,13 @@ class ExportModal extends React.Component {
     if (!this.state.loading) {
       form.resetFields();
       onCancel && onCancel();
+      this.setState({ resultModalVisible: false });
     }
   }
 
   render() {
     const { visible, protocol, form: { getFieldDecorator, getFieldValue } } = this.props;
+    const { resultModalVisible, ExportMessage } = this.state;
     const relTableField = protocol.filter(item => {
       return item.controltype === 24;
     }).map(item => {
@@ -93,52 +110,56 @@ class ExportModal extends React.Component {
         onCancel={this.closeModal}
       >
         <Spin tip="数据正在处理中..." spinning={this.state.loading}>
-          <Form>
-            <FormItem
-              {...formItemLayout}
-              label="导出字段"
-            >
-              {getFieldDecorator('columnsource', {
-                rules: [{
-                  required: true, message: '请选择导出字段'
-                }]
-              })(
-                <Select>
-                  <Option value="0">按web列表设置字段</Option>
-                  <Option value="1">按个人显示设置字段</Option>
-                  <Option value="2">全部字段导出</Option>
-                </Select>
-              )}
-            </FormItem>
-            {
-              relTableField.length > 0 ? <FormItem
-                {...formItemLayout}
-                label="需导出的分录"
-              >
-                {getFieldDecorator('nesttablelist')(
-                  <CheckboxGroup options={relTableField} />
-                )}
-              </FormItem> : null
-            }
-            {
-              getFieldValue('nesttablelist') && getFieldValue('nesttablelist') instanceof Array && getFieldValue('nesttablelist').length > 0 ? <FormItem
-                {...formItemLayout}
-                label="Excel数据处理方式"
-              >
-                {getFieldDecorator('rowmode', {
-                  rules: [{
-                    required: true, message: '请选择Excel数据处理方式'
-                  }]
-                })(
-                  <Select>
-                    <Option value="0">数据冗余显示</Option>
-                    <Option value="1">去除重复拆分显示</Option>
-                    <Option value="2">去除重复合并显示</Option>
-                  </Select>
-                )}
-              </FormItem> : null
-            }
-          </Form>
+          {
+            !resultModalVisible ? (
+              <Form>
+                <FormItem
+                  {...formItemLayout}
+                  label="导出字段"
+                >
+                  {getFieldDecorator('columnsource', {
+                    rules: [{
+                      required: true, message: '请选择导出字段'
+                    }]
+                  })(
+                    <Select>
+                      <Option value="0">按web列表设置字段</Option>
+                      <Option value="1">按个人显示设置字段</Option>
+                      <Option value="2">全部字段导出</Option>
+                    </Select>
+                  )}
+                </FormItem>
+                {
+                  relTableField.length > 0 ? <FormItem
+                    {...formItemLayout}
+                    label="需导出的分录"
+                  >
+                    {getFieldDecorator('nesttablelist')(
+                      <CheckboxGroup options={relTableField} />
+                    )}
+                  </FormItem> : null
+                }
+                {
+                  getFieldValue('nesttablelist') && getFieldValue('nesttablelist') instanceof Array && getFieldValue('nesttablelist').length > 0 ? <FormItem
+                    {...formItemLayout}
+                    label="Excel数据处理方式"
+                  >
+                    {getFieldDecorator('rowmode', {
+                      rules: [{
+                        required: true, message: '请选择Excel数据处理方式'
+                      }]
+                    })(
+                      <Select>
+                        <Option value="0">数据冗余显示</Option>
+                        <Option value="1">去除重复拆分显示</Option>
+                        <Option value="2">去除重复合并显示</Option>
+                      </Select>
+                    )}
+                  </FormItem> : null
+                }
+              </Form>
+            ) : <div>{ExportMessage}</div>
+          }
         </Spin>
       </Modal>
     );
