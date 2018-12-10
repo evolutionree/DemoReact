@@ -26,11 +26,11 @@ function DynamicTemplateView({
             <div className={styles.templatetitle}>{getIntlText('fieldlabel', field)}</div>
             <div className={styles.templatecontent}>
               <DynamicFieldView
-                value={value[fieldname]}
+                value={value && value[fieldname]}
                 controlType={controltype}
-                value_name={value[fieldname + '_name']}
+                value_name={value && value[fieldname + '_name']}
                 config={field.fieldconfig}
-                entityTypeId={value.rectype || entityId}
+                entityTypeId={value && (value.rectype || entityId)}
               />
             </div>
           </div>
