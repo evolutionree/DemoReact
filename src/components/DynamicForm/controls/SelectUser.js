@@ -33,7 +33,8 @@ class UserSelect extends React.Component {
       modalVisible: false,
       userNameMap: {},
       allUsers: [],
-      options: []
+      options: [],
+      searchKey: ''
     };
     if (props.value) {
       const users = this.toUserArray(props.value, props.value_name);
@@ -244,14 +245,19 @@ class UserSelect extends React.Component {
   };
 
   selectChange = (options, value) => {
-    const selectData = options instanceof Array && options.filter(item => value && value.indexOf(item.userid) > -1);
-    this.props.onChange(value);
+    const selectData = options instanceof Array && options.filter(item => value && value.indexOf(item.id + '') > -1);
+    const id = selectData.map(obj => obj.id).join(',');
+    const name = selectData.map(obj => obj.name).join(',');
+    this.props.onChange(id);
     if (this.props.onChangeWithName) {
       this.props.onChangeWithName({
-        value: selectData.id,
-        value_name: selectData.name
+        value: id,
+        value_name: name
       });
     }
+    this.setState({
+      searchKey: ''
+    });
   }
 
   queryOptions = (userName) => {
@@ -279,6 +285,9 @@ class UserSelect extends React.Component {
           return this.filterOption(opt);
         })
       });
+    });
+    this.setState({
+      searchKey: userName
     });
   }
 
@@ -311,9 +320,19 @@ class UserSelect extends React.Component {
   };
 
   render() {
-    let { options } = this.state;
+    let { options, searchKey } = this.state;
     const { text, users } = this.parseValue();
+    const value = users.map(item => item.id + '');
     options = _.uniqBy(_.concat(users, options), 'id');
+
+    if (searchKey === '' && users.length) {
+      options = options.filter(item => {
+        return value.indexOf(item.id + '') > -1;
+      });
+    } else if (searchKey === '' && !users.length) {
+      options = [];
+    }
+
     if (this.props.view && this.props.multiple && this.props.isCommonForm) { //查看页
       return <ImgCardList.View
                   dataSouce={this.state.allUsers}
@@ -346,7 +365,8 @@ class UserSelect extends React.Component {
                       onSearch={this.queryOptions}
                       placeholder={this.props.placeholder}
                       disabled={this.props.isReadOnly === 1}
-                      value={users.map(item => item.id + '')}
+                      mode={this.props.multiple === 1 ? 'multiple' : null}
+                      value={value}
                       allowClear
               >
                 {

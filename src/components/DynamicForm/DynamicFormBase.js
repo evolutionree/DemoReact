@@ -265,13 +265,13 @@ class DynamicFormBase extends Component {
 
   onFieldValueChange = (fieldName, fieldid, newValue, isFromApi) => {
     const relObject = this.state.RelObjectConfig;
-    relObject.map(item => {
+    relObject.forEach(item => {
       const fieldconfig = item.fieldconfig;
       if (fieldconfig.controlField === fieldid) {
         if (newValue instanceof Array) {
           console.info('引用对象不允许数据源多选的情况下setValue()');
         } else {
-          const dataSourceData = typeof newValue === 'string' ? JSON.parse(newValue) : newValue;
+          const dataSourceData = typeof newValue === 'string' ? (newValue === '' ? false : JSON.parse(newValue)) : newValue;
           if (dataSourceData) { //可能用户在做清除操作
             this.fetchEntcommDetail(fieldconfig.originEntity, dataSourceData.id, fieldconfig.originFieldname, item.fieldname); //数据源关联的实体id  记录recid  记录详情下要取得字段id
           } else {

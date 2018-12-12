@@ -37,7 +37,8 @@ class SelectProductBigData extends React.Component {
       modalVisible: false,
       valMap: valMap,
       currentSerial: '',
-      options: []
+      options: [],
+      searchKey: ''
     };
   }
 
@@ -168,6 +169,9 @@ class SelectProductBigData extends React.Component {
         value_name: newValue_name
       });
     }
+    this.setState({
+      searchKey: ''
+    });
   }
 
   queryOptions = (searchKey) => {
@@ -183,7 +187,7 @@ class SelectProductBigData extends React.Component {
       includefilter: includefilter || '',
       excludefilter: excludefilter || ''
     };
-    this.setState({ loading: true });
+    this.setState({ loading: true, searchKey });
     searchproductformobile(params).then(result => {
       let options = result.data.pagedata.map(item => {
         return {
@@ -201,9 +205,19 @@ class SelectProductBigData extends React.Component {
   }
 
   render() {
-    let { options } = this.state;
+    let { options, searchKey } = this.state;
     const { text, array } = this.parseTextValue();
+    const value = array.map(item => item.productid);
     options = _.uniqBy(_.concat(array, options), 'productid');
+
+    if (searchKey === '' && array.length) {
+      options = options.filter(item => {
+        return value.indexOf(item.productid) > -1;
+      });
+    } else if (searchKey === '' && !array.length) {
+      options = [];
+    }
+
     const isReadOnly = this.props.isReadOnly === 1;
     const cls = classnames([styles.wrap, {
       [styles.empty]: !text,
@@ -223,7 +237,7 @@ class SelectProductBigData extends React.Component {
                   placeholder={this.props.placeholder}
                   disabled={isReadOnly}
                   mode={this.props.multiple === 1 ? 'multiple' : null}
-                  value={array.map(item => item.productid)}
+                  value={value}
                   allowClear
           >
             {
