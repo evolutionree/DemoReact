@@ -74,6 +74,7 @@ class PrintEntityModal extends Component {
   render() {
     return (
       <Modal
+        key={new Date().getTime()}
         title="打印确认"
         visible={this.props.currentStep === 1}
         onCancel={this.handleCancel}
