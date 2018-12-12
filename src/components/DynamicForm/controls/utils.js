@@ -58,7 +58,7 @@ export function createNormalInput(type, options) {
         val = options.filter(val, this.props);
       }
       this.setState({ innerVal: val });
-      this.props.onChange(val, true);
+      this.props.onChange(val);
     };
 
     onInputBlur = event => {
