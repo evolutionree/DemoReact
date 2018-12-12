@@ -140,7 +140,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     setJS = props => {
       const fieldExpandJS = {};
       const fieldExpandFilterJS = {};
-      props.fields.forEach(field => {
+      Array.isArray(props.fields) && props.fields.forEach(field => {
         if (field.expandjs) {
           fieldExpandJS[field.fieldname] = field.expandjs;
         }
@@ -174,7 +174,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
         }
         this.globalJSLoading = false;
         this.globalJS = globalJS;
-        if (this.props.fields.length) {
+        if (this.props.fields && this.props.fields.length) {
           setTimeout(() => {
             this.excuteJS(this.globalJS, 'global');
           }, 0);
