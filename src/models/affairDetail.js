@@ -167,11 +167,28 @@ export default {
           dynamicFormProtocols[entityId] = item.fields;
 
           if (entityId === flowDetail.entityid) {
-            dynamicForms[entityId] = _.cloneDeep(entityDetail);
+            dynamicForms[entityId] = getEditData(_.cloneDeep(entityDetail), item.fields);
           } else if (entityId === flowDetail.relentityid) {
-            dynamicForms[entityId] = _.cloneDeep(relentityDetail);
+            dynamicForms[entityId] = getEditData(_.cloneDeep(relentityDetail), item.fields);
           }
         });
+
+        function getEditData(recordDetail, protocol) { //表格数据 需要再套一层
+          const retData = { ...recordDetail };
+          protocol.forEach(field => {
+            const { controltype, fieldname, fieldconfig } = field;
+            if (controltype === 24 && retData[fieldname]) {
+              retData[fieldname] = retData[fieldname].map(item => {
+                return {
+                  TypeId: fieldconfig.entityId,
+                  FieldData: item
+                };
+              });
+            }
+          });
+          return retData;
+        }
+
         yield put({ type: 'putState', payload: { columnConfigForms: dynamicForms, columnConfigFormProtocols: dynamicFormProtocols } });
       } catch (e) {
         message.error('获取动态表单字段出错');
