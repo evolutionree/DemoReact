@@ -65,7 +65,8 @@ class DynamicFormBase extends Component {
     super(props);
     this.state = {
       fieldsDecorator: this.generateFieldsDecorators(props.fields),
-      RelObjectConfig: this.getRelObjectConfig(props.fields) //引用对象集合
+      RelObjectConfig: this.getRelObjectConfig(props.fields), //引用对象集合
+      entcommDetail: {}
     };
   }
 
@@ -117,7 +118,19 @@ class DynamicFormBase extends Component {
         RelObjectConfig.push(item);
       }
     });
-    return RelObjectConfig;
+
+    //TODO: 整理 共用一个来源对象的引用字段 集合在一起  减少网络请求次数
+    let relObject = {};
+    RelObjectConfig.map(item => {
+      const { controlField } = item.fieldconfig;
+      if (relObject[controlField]) {
+        relObject[controlField].push(item);
+      } else {
+        relObject[controlField] = [item];
+      }
+    });
+
+    return relObject;
   }
 
   generateFieldsDecorators = (fields) => {
@@ -262,22 +275,22 @@ class DynamicFormBase extends Component {
   };
 
   onFieldValueChange = (fieldName, fieldid, newValue, isFromApi) => {
-    const relObject = this.state.RelObjectConfig;
-    relObject.map(item => {
-      const fieldconfig = item.fieldconfig;
-      if (fieldconfig.controlField === fieldid) {
-        if (newValue instanceof Array) {
-          console.info('引用对象不允许数据源多选的情况下setValue()');
-        } else {
-          const dataSourceData = typeof newValue === 'string' ? JSON.parse(newValue) : newValue;
-          if (dataSourceData) { //可能用户在做清除操作
-            this.fetchEntcommDetail(fieldconfig.originEntity, dataSourceData.id, fieldconfig.originFieldname, item.fieldname); //数据源关联的实体id  记录recid  记录详情下要取得字段id
-          } else {
+    const relObjectSetFields = this.state.RelObjectConfig[fieldid];
+    if (relObjectSetFields) {  //存在引用对象控件 引用的是当前控件的值
+      if (newValue instanceof Array) {
+        console.info('引用对象不允许数据源多选的情况下setValue()');
+      } else {
+        const dataSourceData = typeof newValue === 'string' ? (newValue === '' ? false : JSON.parse(newValue)) : newValue;
+        if (dataSourceData) {
+          this.fetchEntcommDetail(dataSourceData.id, relObjectSetFields); //数据源关联的实体id  记录recid  记录详情下要取得字段id
+        } else { //可能用户在做清除操作
+          relObjectSetFields.map(item => {
             this.getFieldControlInstance(item.fieldname).setTitle('');
-          }
+          });
         }
       }
-    });
+    }
+
     if (isFromApi) return;
     const { jsEngine } = this.props;
     if (jsEngine) {
@@ -287,19 +300,40 @@ class DynamicFormBase extends Component {
     }
   };
 
-  fetchEntcommDetail = (entityId, recId, originFieldname, fieldname) => {
+  fetchEntcommDetail = (recId, setRelObjectFields) => {
+    const { entcommDetail } = this.state;
+    const entityId = setRelObjectFields[0].fieldconfig.originEntity;
+    const hasEntCommDetailData = entcommDetail[entityId + '' + recId];
+    if (hasEntCommDetailData) { //已经存在数据  不再请求了
+      setRelObjectFields.map(item => { //引用同一个字段的 引用对象  共用一个接口  减少性能消耗
+        const { originFieldname } = item.fieldconfig;
+        const value_name = hasEntCommDetailData[originFieldname + '_name'] || hasEntCommDetailData[originFieldname];
+        this.getFieldControlInstance(item.fieldname).setTitle(value_name);
+      });
+      return;
+    }
+
     getEntcommDetail({
       entityId,
-      recId,
+      recId: recId,
       needPower: 0
     }).then(result => {
       const detailData = result.data.detail;
-      const value_name = detailData[originFieldname + '_name'] || detailData[originFieldname];
-      this.getFieldControlInstance(fieldname).setTitle(value_name);
+      setRelObjectFields.map(item => { //引用同一个字段的 引用对象  共用一个接口  减少性能消耗
+        const { originFieldname } = item.fieldconfig;
+        const value_name = detailData[originFieldname + '_name'] || detailData[originFieldname];
+        this.getFieldControlInstance(item.fieldname).setTitle(value_name);
+        this.setState({
+          entcommDetail: {
+            ...entcommDetail,
+            [entityId + '' + recId]: result.data.detail
+          }
+        });
+      });
     }, err => {
       console.error(err.message);
     });
-  };
+  }
 
   // 用于客户引用
   handleQuote = formData => {
