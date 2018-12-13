@@ -5,7 +5,7 @@ import { is } from 'immutable';
 import SelectProductModal from './SelectProductModal';
 import styles from './SelectUser.less';
 import { Icon, Select } from "antd";
-import { searchproductformobile } from '../../../services/products';
+import { getProductdetail, searchproductformobile } from '../../../services/products';
 
 const Option = Select.Option;
 
@@ -42,17 +42,25 @@ class SelectProductBigData extends React.Component {
     };
   }
 
+  componentWillMount() {
+    this.fetchProductsDetail(this.props.value, this.state.valMap);
+  }
+
   componentWillReceiveProps(nextProps) {
+    let valMap = { ...this.state.valMap };
     if (this.props.value_name !== nextProps.value_name) {
       const arrVal = nextProps.value && nextProps.value.split(',');
       const arrName = nextProps.value_name && nextProps.value_name.split(',');
-      let valMap = { ...this.state.valMap };
       arrVal instanceof Array && arrVal.forEach((val, index) => {
         valMap[val] = arrName[index];
       });
       this.setState({
         valMap
       });
+    }
+
+    if (this.props.value !== nextProps.value) {
+      this.fetchProductsDetail(nextProps.value, valMap);
     }
   }
 
@@ -135,7 +143,6 @@ class SelectProductBigData extends React.Component {
 
     const value = array.map(item => item.productid).join(',');
     const value_name = array.map(item => item.productname).join(',');
-    console.log(value)
     this.setState({ valMap }, () => {
       this.props.onChange(value);
     });
@@ -202,6 +209,39 @@ class SelectProductBigData extends React.Component {
       this.setState({ loading: false });
       console.error(e.message || '获取产品列表失败');
     });
+  }
+
+  fetchProductsDetail = (productId, valMap) => {
+    let queryApi = false;
+    const arrVal = productId && productId.split(',');
+    if (arrVal instanceof Array) {
+      for (let i = 0; i < arrVal.length; i++) {
+        if (!valMap[arrVal[i]]) {
+          queryApi = true;
+          break;
+        }
+      }
+    }
+
+    if (productId && queryApi) {
+      getProductdetail({
+        recids: productId
+      }).then(result => {
+        const data = result.data;
+        let valMap = { ...this.state.valMap };
+        data instanceof Array && data.map(item => {
+          valMap[item.recid] = item.productname;
+        });
+
+        this.setState({
+          valMap
+        });
+      }).catch(e => {
+        console.error(e.message);
+      });
+    } else { //value为空 清空
+
+    }
   }
 
   render() {
