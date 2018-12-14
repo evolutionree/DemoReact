@@ -54,6 +54,10 @@ class Picture extends Component {
     return false;
   }
 
+  setValue = val => {
+    this.props.onChange(val, true);
+  };
+
   onPictureAdd = fileId => {
     const { value } = this.props;
     const newValue = value ? `${value},${fileId}` : fileId;

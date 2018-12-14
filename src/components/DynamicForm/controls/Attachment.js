@@ -74,6 +74,10 @@ class Attachment_ extends Component {
     return false;
   }
 
+  setValue = val => {
+    this.props.onChange(val, true);
+  };
+
   getUploadParams = (file) => {
     return {
       filename: file.name
