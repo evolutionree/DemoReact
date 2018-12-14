@@ -51,6 +51,8 @@ class SelectProductModal extends Component {
   componentWillReceiveProps(nextProps) {
     if (!this.props.visible && nextProps.visible) {
       this.getColumns();
+    }
+    if (nextProps.visible) {
       this.setState({
         keyword: '',
         list: [],
@@ -58,11 +60,10 @@ class SelectProductModal extends Component {
         total: 0,
         currentTabsKey: '1',
         filterKeyWord: ''
+      }, () => {
+        this.getProductSerial(nextProps);
+        this.fetchProductsDetail(nextProps.value);
       });
-    }
-    if (nextProps.visible) {
-      this.getProductSerial(nextProps);
-      this.fetchProductsDetail(nextProps.value);
     }
   }
 

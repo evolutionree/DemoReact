@@ -319,6 +319,10 @@ class UserSelect extends React.Component {
     return flag;
   };
 
+  selectFocus = () => {
+    this.props.onFocus && this.props.onFocus();
+  }
+
   render() {
     let { options, searchKey } = this.state;
     const { text, users } = this.parseValue();
@@ -367,6 +371,7 @@ class UserSelect extends React.Component {
                       disabled={this.props.isReadOnly === 1}
                       mode={this.props.multiple === 1 ? 'multiple' : null}
                       value={value}
+                      onFocus={this.selectFocus}
                       allowClear
               >
                 {

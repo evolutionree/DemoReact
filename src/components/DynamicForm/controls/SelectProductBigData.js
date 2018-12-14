@@ -244,6 +244,10 @@ class SelectProductBigData extends React.Component {
     }
   }
 
+  selectFocus = () => {
+    this.props.onFocus && this.props.onFocus();
+  }
+
   render() {
     let { options, searchKey } = this.state;
     const { text, array } = this.parseTextValue();
@@ -278,6 +282,7 @@ class SelectProductBigData extends React.Component {
                   disabled={isReadOnly}
                   mode={this.props.multiple === 1 ? 'multiple' : null}
                   value={value}
+                  onFocus={this.selectFocus}
                   allowClear
           >
             {

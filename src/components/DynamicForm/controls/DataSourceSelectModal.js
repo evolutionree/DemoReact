@@ -54,17 +54,14 @@ class DataSourceSelectModal extends Component {
   componentWillReceiveProps(nextProps) {
     if (!this.props.visible && nextProps.visible) {
       this.queryDatasourceEntityAndPession(nextProps);
+    }
+    if (nextProps.visible) {
       this.setState({
         keyword: '',
         currentSelected: [...nextProps.selected],
         selectedRows: [...nextProps.selected], //因为antd 表格前的checkbox控件选择时，第二个参数只会记录当前页的选中的值，所有需要记录所有分页的选中的数据
-        list: [],
-        pageIndex: 1,
-        total: 0
-      });
-    }
-    if (nextProps.visible) {
-      this.fetchList(nextProps);
+        pageIndex: 1
+      }, this.fetchList.bind(nextProps));
     }
   }
 
