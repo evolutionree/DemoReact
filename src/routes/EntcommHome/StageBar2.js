@@ -686,13 +686,11 @@ class StageBar extends Component {
     if (!showingStageId) return null;
 
     const currentStageId = this.getRecordCurrentStage();
+    const stageIndex = this.compareStageIndex(this.state.showingStageId, currentStageId);
     const showingStageName = this.getStageName(this.state.showingStageId);
     if (this.state.highSetting === 0 && showingStageName !== '赢单' && showingStageName !== '输单') {
-      const isShowingCurrent = this.compareStageIndex(this.state.showingStageId, currentStageId) === 0;
-      if (isShowingCurrent) return null;
+      if (stageIndex === 0) return null;
     }
-
-    const equalStageBool = (showingStageId === currentStageId);
 
     const {
       keyEvents,
@@ -702,7 +700,7 @@ class StageBar extends Component {
     return (
       <div className={styles.stagedropdown}>
         {
-          keyEvents.length !== 0 && equalStageBool &&
+          keyEvents.length !== 0 && stageIndex <= 0 &&
           <div className={styles.detailsection}>
             <div className={styles.title}>阶段任务</div>
             {keyEvents.map(evt => {
@@ -770,7 +768,7 @@ class StageBar extends Component {
           </div>
         }
         {
-          entityFields.length !== 0 && equalStageBool &&
+          entityFields.length !== 0 && stageIndex <= 0 &&
           <div className={styles.detailsection}>
             <div className={styles.title}>关键信息</div>
             <div className={styles.stageform}>
@@ -790,7 +788,7 @@ class StageBar extends Component {
           </div>
         }
         {
-          customFields.length !== 0 && equalStageBool &&
+          customFields.length !== 0 && stageIndex <= 0 &&
           <div className={styles.detailsection}>
             <div className={styles.title}>补充信息</div>
             <div className={styles.stageform}>
