@@ -260,7 +260,7 @@ class StageBar extends Component {
       fn();
     }
   };
-  restartStage= () => {
+  restartStage = () => {
     if (this.checkCurrentIsLose()) {
       const { recordDetail } = this.props;
       const params = {
@@ -560,7 +560,7 @@ class StageBar extends Component {
     let fileArray = [];
     try {
       fileArray = JSON.parse(evt.fileid);
-    } catch (e) {}
+    } catch (e) { }
     fileArray = fileArray || [];
     fileArray.push({
       fileId,
@@ -583,7 +583,7 @@ class StageBar extends Component {
     let fileArray = [];
     try {
       fileArray = JSON.parse(evt.fileid);
-    } catch (e) {}
+    } catch (e) { }
     fileArray = fileArray || [];
     fileArray = fileArray.filter(file => file.fileId !== fileId);
     evt.isuploadfile = fileArray.length > 0 ? 1 : 0;
@@ -642,7 +642,7 @@ class StageBar extends Component {
           }]);
           return (
             <li className={liCls} key={item.salesstageid}
-                onClick={() => { this.toggleStageDetail(item); }}>
+              onClick={() => { this.toggleStageDetail(item); }}>
               <div className={styles.stagetext}><IntlText name="stagename" value={item} /></div>
               <div className={styles.stageicon}>
                 <Icon type="down" />
@@ -682,14 +682,17 @@ class StageBar extends Component {
   }
 
   renderStageDetail = () => {
-    if (!this.state.showingStageId) return null;
+    const { showingStageId } = this.state;
+    if (!showingStageId) return null;
 
+    const currentStageId = this.getRecordCurrentStage();
     const showingStageName = this.getStageName(this.state.showingStageId);
     if (this.state.highSetting === 0 && showingStageName !== '赢单' && showingStageName !== '输单') {
-      const currentStageId = this.getRecordCurrentStage();
       const isShowingCurrent = this.compareStageIndex(this.state.showingStageId, currentStageId) === 0;
       if (isShowingCurrent) return null;
     }
+
+    const equalStageBool = (showingStageId === currentStageId);
 
     const {
       keyEvents,
@@ -698,105 +701,114 @@ class StageBar extends Component {
     } = this.state.showingStageDetail;
     return (
       <div className={styles.stagedropdown}>
-        {keyEvents.length !== 0 && <div className={styles.detailsection}>
-          <div className={styles.title}>阶段任务</div>
-          {keyEvents.map(evt => {
-            let fileArray = [];
-            try {
-              fileArray = JSON.parse(evt.fileid);
-            } catch (e) {}
-            fileArray = fileArray || []
-            return (
-              <div key={evt.eventsetid}>
-                <Checkbox
-                  checked={evt.isfinish}
-                  style={{ marginBottom: '15px' }}
-                  onChange={(e) => { this.onKeyEventToggle(evt, e); }}
-                >
-                  <span>{evt.eventname}</span>
-                </Checkbox>
-                {evt.isneedupfile === 1 && (
-                  <span title="上传附件" style={{ marginLeft: '-12px', cursor: 'pointer', display: 'inline-block' }}>
-                    <StageBarUpload
-                      onUpload={this.onFileUpload.bind(this, evt.eventsetid)}
-                      uploaded={!!evt.isuploadfile}
-                    />
-                  </span>
-                )}
-                {fileArray.length > 0 && (
-                  <ul style={{ width: '420px', background: '#eee' }}>
-                    {fileArray.map(file => {
-                      const style = {
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        padding: '5px 10px',
-                        fontSize: '12px'
-                      };
-                      return (
-                        <li key={file.fileId} style={style}>
-                          <Row>
-                            <Col span={20}>
-                              <Icon type="link" style={{ marginRight: '3px' }} />
-                              {/*<a href={`/api/fileservice/read?fileid=${file.fileId}`}>*/}
+        {
+          keyEvents.length !== 0 && equalStageBool &&
+          <div className={styles.detailsection}>
+            <div className={styles.title}>阶段任务</div>
+            {keyEvents.map(evt => {
+              let fileArray = [];
+              try {
+                fileArray = JSON.parse(evt.fileid);
+              } catch (e) { }
+              fileArray = fileArray || []
+              return (
+                <div key={evt.eventsetid}>
+                  <Checkbox
+                    checked={evt.isfinish}
+                    style={{ marginBottom: '15px' }}
+                    onChange={(e) => { this.onKeyEventToggle(evt, e); }}
+                  >
+                    <span>{evt.eventname}</span>
+                  </Checkbox>
+                  {evt.isneedupfile === 1 && (
+                    <span title="上传附件" style={{ marginLeft: '-12px', cursor: 'pointer', display: 'inline-block' }}>
+                      <StageBarUpload
+                        onUpload={this.onFileUpload.bind(this, evt.eventsetid)}
+                        uploaded={!!evt.isuploadfile}
+                      />
+                    </span>
+                  )}
+                  {fileArray.length > 0 && (
+                    <ul style={{ width: '420px', background: '#eee' }}>
+                      {fileArray.map(file => {
+                        const style = {
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          padding: '5px 10px',
+                          fontSize: '12px'
+                        };
+                        return (
+                          <li key={file.fileId} style={style}>
+                            <Row>
+                              <Col span={20}>
+                                <Icon type="link" style={{ marginRight: '3px' }} />
+                                {/*<a href={`/api/fileservice/read?fileid=${file.fileId}`}>*/}
                                 <span>{file.fileName}({formatFileSize(file.fileSize)})</span>
-                              {/*</a>*/}
-                            </Col>
-                            <Col span={4} style={{ textAlign: 'right' }}>
-                              <a href={`/api/fileservice/read?fileid=${file.fileId}`} style={{ fontSize: '14px', color: '#666', marginRight: '8px' }}>
-                                {/*<span>{file.fileName}({formatFileSize(file.fileSize)})</span>*/}
-                                <Icon type="download" />
-                              </a>
-                              <Icon
-                                type="close"
-                                style={{ cursor: 'pointer' }}
-                                onClick={this.onFileDel.bind(this, evt.eventsetid, file.fileId)}
-                              />
-                            </Col>
-                          </Row>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                )}
-              </div>
-            );
-          })}
-        </div>}
-        {entityFields.length !== 0 && <div className={styles.detailsection}>
-          <div className={styles.title}>关键信息</div>
-          <div className={styles.stageform}>
-            <DynamicFormEdit
-              horizontal
-              ref={form => this.entityForm = form}
-              entityId={this.props.entityId}
-              entityTypeId={this.state.entityTypeId}
-              fields={entityFields}
-              value={entityFieldsData}
-              refEntityData={this.props.recordDetail}
-              onChange={val => this.setState({
-                showingStageDetail: { ...this.state.showingStageDetail, entityFieldsData: val }
-              })}
-            />
+                                {/*</a>*/}
+                              </Col>
+                              <Col span={4} style={{ textAlign: 'right' }}>
+                                <a href={`/api/fileservice/read?fileid=${file.fileId}`} style={{ fontSize: '14px', color: '#666', marginRight: '8px' }}>
+                                  {/*<span>{file.fileName}({formatFileSize(file.fileSize)})</span>*/}
+                                  <Icon type="download" />
+                                </a>
+                                <Icon
+                                  type="close"
+                                  style={{ cursor: 'pointer' }}
+                                  onClick={this.onFileDel.bind(this, evt.eventsetid, file.fileId)}
+                                />
+                              </Col>
+                            </Row>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </div>
+              );
+            })}
           </div>
-        </div>}
-        {customFields.length !== 0 && <div className={styles.detailsection}>
-          <div className={styles.title}>补充信息</div>
-          <div className={styles.stageform}>
-            <DynamicFormEdit
-              horizontal
-              ref={form => this.customForm = form}
-              entityId={this.props.entityId}
-              entityTypeId={this.state.entityTypeId}
-              fields={customFields}
-              value={customFieldsData}
-              refEntityData={this.props.recordDetail}
-              onChange={val => this.setState({
-                showingStageDetail: { ...this.state.showingStageDetail, customFieldsData: val }
-              })}
-            />
+        }
+        {
+          entityFields.length !== 0 && equalStageBool &&
+          <div className={styles.detailsection}>
+            <div className={styles.title}>关键信息</div>
+            <div className={styles.stageform}>
+              <DynamicFormEdit
+                horizontal
+                ref={form => this.entityForm = form}
+                entityId={this.props.entityId}
+                entityTypeId={this.state.entityTypeId}
+                fields={entityFields}
+                value={entityFieldsData}
+                refEntityData={this.props.recordDetail}
+                onChange={val => this.setState({
+                  showingStageDetail: { ...this.state.showingStageDetail, entityFieldsData: val }
+                })}
+              />
+            </div>
           </div>
-        </div>}
+        }
+        {
+          customFields.length !== 0 && equalStageBool &&
+          <div className={styles.detailsection}>
+            <div className={styles.title}>补充信息</div>
+            <div className={styles.stageform}>
+              <DynamicFormEdit
+                horizontal
+                ref={form => this.customForm = form}
+                entityId={this.props.entityId}
+                entityTypeId={this.state.entityTypeId}
+                fields={customFields}
+                value={customFieldsData}
+                refEntityData={this.props.recordDetail}
+                onChange={val => this.setState({
+                  showingStageDetail: { ...this.state.showingStageDetail, customFieldsData: val }
+                })}
+              />
+            </div>
+          </div>
+        }
         {this.renderSubmitButton()}
       </div>
     );
