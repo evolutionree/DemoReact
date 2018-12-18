@@ -187,7 +187,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
 
     getFieldComponentInstance = (fieldName) => {
       const inst = this.formComponentInstance;
-      return inst.getFieldControlInstance(fieldName);
+      return inst && inst.getFieldControlInstance && inst.getFieldControlInstance(fieldName);
     };
 
     alert = (type, content) => {

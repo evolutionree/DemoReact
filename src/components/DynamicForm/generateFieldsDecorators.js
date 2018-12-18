@@ -47,7 +47,7 @@ function generateValidateRules(field, formInstance) {
   if (field.controltype === 24) {
     rules.push({
       validator: (rule, value, callback) => {
-        const tableInstance = formInstance.getFieldControlInstance(field.fieldname);
+        const tableInstance = formInstance && formInstance.getFieldControlInstance(field.fieldname);
         tableInstance.validate().then(() => {
           callback();
         }, (err) => {
