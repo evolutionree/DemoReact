@@ -387,7 +387,7 @@ function endWith(path, other) {
   const revPath = _.reverse([...path]);
   const revOther = _.reverse([...other]);
   return revOther.every((item, index) => {
-    return revPath[index] === item;
+    return revPath[index].indexOf(item) > -1;
   });
 }
 // ['广东省', '广州市', '天河区'] startWith ['广东省', '广州市']
