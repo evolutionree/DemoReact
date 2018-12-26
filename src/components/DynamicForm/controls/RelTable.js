@@ -52,6 +52,33 @@ class RelTable extends Component {
   componentDidMount() {
     this.props.entityId && this.queryFields(this.props.entityId, this.props);
     document.body.addEventListener('keydown', this.onKeyDownHandler, false);
+
+    this.setAlignTableWidthAndHeight();
+    let timer = null;
+    if (this.relTableRef) { //监听节点变化  动态计算编辑器的高度
+      const MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+      if (MutationObserver) {
+        const observer = new MutationObserver((mutations) => {
+          if (timer) { clearTimeout(timer); }
+          timer = setTimeout(() => {
+            this.setAlignTableWidthAndHeight();
+          }, 150);
+
+          mutations.forEach(function(mutation) {
+            //console.log(mutation);
+          });
+        });
+        //主要监听节点变化
+        observer.observe(this.relTableRef, {
+          attributes: true,
+          childList: true,
+          subtree: true,
+          characterData: false,
+          attributeOldValue: true,
+          attributeFilter: ['width']
+        });
+      }
+    }
   }
 
   componentWillUnmount() {
@@ -602,10 +629,10 @@ class RelTable extends Component {
   };
 
   componentDidUpdate() {
-    this.setAlignTableWidthAndHeight();
-    setTimeout(() => {
-      this.setAlignTableWidthAndHeight();
-    }, 500);
+    // this.setAlignTableWidthAndHeight();
+    // setTimeout(() => {
+    //   this.setAlignTableWidthAndHeight();
+    // }, 500);
   }
 
   setAlignTableWidthAndHeight = () => {
@@ -653,9 +680,6 @@ class RelTable extends Component {
         }
       }
 
-      for(let i = 0; i < realHeader.length; i++) {
-        //console.log(realHeader[i])
-      }
       for (let i = 0; i < fixedLeftBody.length; i++) {
         const fixedLeftBody_Tds = fixedLeftBody[i].children[0].children;
         for (let j = 0; j < fixedLeftBody_Tds.length; j++) {
