@@ -24,6 +24,7 @@ function EntityScripts({
   addScript,
   editScript,
   viewScript,
+  copyScript,
   showingScript,
   toggleShowing,
   onChange,
@@ -32,7 +33,7 @@ function EntityScripts({
   onSave,
   onClear
 }) {
-  const allScripts = [addScript, editScript, viewScript];
+  const allScripts = [addScript, editScript, viewScript, copyScript];
   const scriptItem = _.find(allScripts, ['name', showingScript]);
   const { title, name, content, editingContent, editing } = scriptItem;
   return (

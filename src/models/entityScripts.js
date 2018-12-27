@@ -6,7 +6,8 @@ function getScriptServerKey(scriptName) {
   const serverNameMap = {
     addScript: 'newload',
     editScript: 'editload',
-    viewScript: 'checkload'
+    viewScript: 'checkload',
+    copyScript: 'copyload'
   };
   return serverNameMap[scriptName] || '';
 }
@@ -28,6 +29,10 @@ export default {
     viewScript: {
       title: '查看装载',
       name: 'viewScript'
+    },
+    copyScript: {
+      title: '复制新增装载',
+      name: 'copyScript'
     },
     showingScript: 'addScript'
   },
@@ -63,7 +68,8 @@ export default {
           payload: {
             addScript: entityproinfo[0].newload,
             editScript: entityproinfo[0].editload,
-            viewScript: entityproinfo[0].checkload
+            viewScript: entityproinfo[0].checkload,
+            copyScript: entityproinfo[0].copyload
           }
         });
       } catch (e) {
@@ -71,13 +77,14 @@ export default {
       }
     },
     *saveScript({ payload: scriptName }, { call, select, put }) {
-      const { entityId, addScript, editScript, viewScript } = yield select(state => state.entityScripts);
+      const { entityId, addScript, editScript, viewScript, copyScript } = yield select(state => state.entityScripts);
       try {
         const params = {
           entityid: entityId,
           newload: addScript.editingContent || '',
           editload: editScript.editingContent || '',
-          checkload: viewScript.editingContent || ''
+          checkload: viewScript.editingContent || '',
+          copyload: copyScript.editingContent || ''
         };
         if (scriptName) {
           const { editingContent } = yield select(state => state.entityScripts[scriptName]);
@@ -163,6 +170,10 @@ export default {
         viewScript: {
           title: '查看装载',
           name: 'viewScript'
+        },
+        copyScript: {
+          title: '复制新增装载',
+          name: 'copyScript'
         },
         showingScript: 'addScript'
       };
