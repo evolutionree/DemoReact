@@ -85,7 +85,10 @@ class ReportForm extends React.Component {
         const defaultParams = this.getDefaultParameters(item, result.data.components)
         if (_.indexOf(dataGridDatasouces, item.instid) === -1) { //不请求 表格对应的数据源 交给组件DataGrid去处理
           this.setState({
-            [item.instid + 'loading']: true
+            [item.instid + 'loading']: true,
+            [item.instid]: [],
+            [item.instid + 'columns']: [],
+            [item.instid + 'xseries']: null
           });
           this.queryData(item, {
             DataSourceId: item.datasourcedefineid,
