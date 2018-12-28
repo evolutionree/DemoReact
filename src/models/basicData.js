@@ -28,7 +28,7 @@ export default {
 
   },
   effects: {
-    *fetchData({ payload: key }, { select, call, put }) {
+    *__fetchData({ payload: key }, { select, call, put }) {
       const { dataTimestamp } = yield select(state => state.basicData);
 
       if (shouldRequestData(dataTimestamp[key])) {

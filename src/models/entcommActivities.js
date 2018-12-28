@@ -134,7 +134,7 @@ export default {
       }
     },
     *pluginAdd({ payload: pluginIndex }, { select, put, call,cps }) {
-      const { plugins,recordId,entityId} = yield select(state => state.entcommActivities);
+      const { plugins, recordId, entityId } = yield select(state => state.entcommActivities);
       const currPlugin = plugins[pluginIndex];
       switch (currPlugin.type) {
         case 'normal': // 填写实体表单即可
@@ -157,6 +157,7 @@ export default {
               ...plugins[pluginIndex].extradata
             };
             yield call(extraToolbarClickSendData, plugins[pluginIndex].routepath, params);
+            yield put({ type: 'init', payload: { entityId, recordId } });
             message.success('提交成功');
           } catch (e) {
             message.error(e.message || '提交失败');
@@ -172,7 +173,8 @@ export default {
               ...plugins[pluginIndex].extradata
             };
             const { data } = yield call(extraToolbarClickSendData, plugins[pluginIndex].routepath, params);
-            window.open(data.htmlurl);
+            yield put({ type: 'init', payload: { entityId, recordId } });
+            window.open(data.htmlurl, '_blank', 'toolbar=no,menubar=no,scrollbars=yes,resizable=yes,location=no,status=no');
           } catch (e) {
             message.error(e.message || '提交失败');
           }

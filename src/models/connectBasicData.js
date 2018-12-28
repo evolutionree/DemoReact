@@ -23,7 +23,7 @@ export default function connectBasicData(key, WrappedComponent) {
     }
     componentDidMount() {
       this.props.dispatch({
-        type: 'basicData/fetchData',
+        type: 'basicData/__fetchData',
         payload: key
       });
     }
