@@ -105,10 +105,12 @@ class SeriesFormModal extends Component {
         onCancel={this.props.cancel}
         onOk={this.submitForm}
         confirmLoading={this.props.modalPending}
+        width={document.body.clientWidth > 1400 ? 1200 : 800}
       >
         <DynamicFormComponent
           ref={form => this.form = form}
           entityId="59cf141c-4d74-44da-bca8-3ccf8582a1f2"
+          entityTypeId="59cf141c-4d74-44da-bca8-3ccf8582a1f2"
           fields={this.state.protocolFields}
           value={this.state.formData}
           onChange={formData => this.setState({ formData })}
