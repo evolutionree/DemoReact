@@ -67,35 +67,33 @@ export default function createFormErrorsStore(WrappedFormComponent, isTable) {
       //     callback(err, this.processRetValues(retValues));
       //   });
       // } else {
-        setTimeout(() => {
-          this.formInst.validateFieldsAndScroll(opts, (err, values) => {
-            // console.log('createFormErrorsStore validate callbacked err: ', err);
-            const retValues = _.mapValues(values, val => {
-              if (val === undefined || val === null) return '';
-              return val;
-            });
-            if (err) {
-              let flag = true;
-              Object.keys(err).forEach(k => {
-                const fieldErr = err[k];
-                if (fieldErr.errors && fieldErr.errors.some(item => !/need\sto\srevalidate/.test(item.message))) {
-                  flag = false;
-                }
-              });
-              if (flag) {
-                // this.validateFields(opts, callback);
-                callback(null, this.processRetValues(retValues));
-              } else {
-                callback(err, this.processRetValues(retValues));
-              }
-            } else {
-              callback(err, this.processRetValues(retValues));
-            }
-            // if (!isTable) {
-            //   debugger;
-            // }
-          });
+      this.formInst.validateFieldsAndScroll(opts, (err, values) => {
+        // console.log('createFormErrorsStore validate callbacked err: ', err);
+        const retValues = _.mapValues(values, val => {
+          if (val === undefined || val === null) return '';
+          return val;
         });
+        if (err) {
+          let flag = true;
+          Object.keys(err).forEach(k => {
+            const fieldErr = err[k];
+            if (fieldErr.errors && fieldErr.errors.some(item => !/need\sto\srevalidate/.test(item.message))) {
+              flag = false;
+            }
+          });
+          if (flag) {
+            // this.validateFields(opts, callback);
+            callback(null, this.processRetValues(retValues));
+          } else {
+            callback(err, this.processRetValues(retValues));
+          }
+        } else {
+          callback(err, this.processRetValues(retValues));
+        }
+        // if (!isTable) {
+        //   debugger;
+        // }
+      });
       // }
     };
     handleFormValueChange = formValue => {

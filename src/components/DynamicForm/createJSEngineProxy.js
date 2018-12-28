@@ -69,7 +69,9 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     }
 
     componentDidMount() {
-      if (this.props.entityId) {
+      if (this.props.origin === 'RelTableRow') { //来源于表格 为了不多次请求 全局JS 由父组件传（不然  表格多行会引起多次请求 ）
+        this.setGlobalJS(this.props.globalJS);
+      } else if (this.props.entityId) {
         this.fetchGlobalJS(this.props.entityId);
       }
     }
@@ -88,7 +90,12 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
         }
       });
 
-      if (nextProps.entityId !== this.props.entityId) {
+      if (nextProps.origin === 'RelTableRow') { //来源于表格 为了不多次请求 全局JS 由父组件传（不然  表格多行会引起多次请求 ）
+        const nextPropGlobalJS = nextProps.globalJS || {};
+        if (Object.keys(nextPropGlobalJS).length > 0 && !this.globalJSExecuted) {
+          this.setGlobalJS(nextProps.globalJS);
+        }
+      } else if (nextProps.entityId !== this.props.entityId) {
         this.fetchGlobalJS(nextProps.entityId);
       }
 
@@ -140,11 +147,11 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     setJS = props => {
       const fieldExpandJS = {};
       const fieldExpandFilterJS = {};
-      Array.isArray(props.fields) && props.fields.forEach(field => {
-        if (field.expandjs) {
+      props.fields instanceof Array && props.fields.forEach(field => {
+        if (field && field.expandjs) {
           fieldExpandJS[field.fieldname] = field.expandjs;
         }
-        if (field.filterjs) {
+        if (field && field.filterjs) {
           fieldExpandFilterJS[field.fieldname] = field.filterjs;
         }
       });
@@ -152,34 +159,39 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       this.fieldExpandFilterJS = fieldExpandFilterJS;
     };
 
+    setGlobalJS = (JS) => {
+      let globalJS = '';
+      const data = JS;
+      if (data) {
+        let ftype = this.props.mode || formType;
+        switch (ftype) {
+          case FormTypes.ADD:
+            globalJS = data.newload;
+            break;
+          case FormTypes.EDIT:
+            globalJS = data.editload;
+            break;
+          case FormTypes.DETAIL:
+            globalJS = data.checkload;
+            break;
+          default:
+        }
+      }
+      this.globalJS = globalJS;
+      if (this.props.fields.length) {
+        setTimeout(() => {
+          this.excuteJS(this.globalJS, 'global');
+        }, 0);
+        this.globalJSExecuted = true;
+      }
+    }
+
     fetchGlobalJS = (entityId) => {
       this.globalJSLoading = true;
       queryEntityDetail(entityId).then(result => {
-        let globalJS = '';
         const data = result.data.entityproinfo[0];
-        if (data) {
-          let ftype = this.props.mode || formType;
-          switch (ftype) {
-            case FormTypes.ADD:
-              globalJS = data.newload;
-              break;
-            case FormTypes.EDIT:
-              globalJS = data.editload;
-              break;
-            case FormTypes.DETAIL:
-              globalJS = data.checkload;
-              break;
-            default:
-          }
-        }
         this.globalJSLoading = false;
-        this.globalJS = globalJS;
-        if (this.props.fields && this.props.fields.length) {
-          setTimeout(() => {
-            this.excuteJS(this.globalJS, 'global');
-          }, 0);
-          this.globalJSExecuted = true;
-        }
+        this.setGlobalJS(data);
       }, err => {
         // this.setState({ loadingGlobalJS: false, globalJS: '' });
       });
@@ -650,32 +662,37 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     handleFieldValueChange = (fieldName) => {
-      clearInterval(this.expandJstimer);
       const expandJS = this.fieldExpandJS[fieldName];
       if (expandJS) {
-        this.expandJstimer = setInterval(() => {
-          if (this.globalJSLoading) {
-            console.warn('global js 未加载完成，将不触发此次js脚本：', fieldName);
-            return;
-          }
-          this.excuteJS(expandJS, `field value change__${fieldName}`);
-          clearInterval(this.expandJstimer);
-        }, 100);
+        if (this.globalJSLoading) {
+          console.warn('global js 未加载完成，将不触发此次js脚本：', fieldName);
+          return;
+        }
+        this.excuteJS(expandJS, `field value change__${fieldName}`);
       }
+
+      // clearInterval(this.expandJstimer);
+      // const expandJS = this.fieldExpandJS[fieldName];
+      // if (expandJS) {
+      //   this.expandJstimer = setInterval(() => {
+      //     if (this.globalJSLoading) {
+      //       console.warn('global js 未加载完成，将不触发此次js脚本：', fieldName);
+      //       return;
+      //     }
+      //     this.excuteJS(expandJS, `field value change__${fieldName}`);
+      //     clearInterval(this.expandJstimer);
+      //   }, 100);
+      // }
     };
 
     handleFieldControlFocus = (fieldName) => {
-      clearInterval(this.expandJstimer);
       const filterJS = this.fieldExpandFilterJS[fieldName];
       if (filterJS) {
-        this.filterJstimer = setInterval(() => {
-          if (this.globalJSLoading) {
-            console.warn('global js 未加载完成，将不触发此次js脚本：', fieldName);
-            return;
-          }
-          this.excuteJS(filterJS, `field focused__${fieldName}`);
-          clearInterval(this.filterJstimer);
-        }, 100);
+        if (this.globalJSLoading) {
+          console.warn('global js 未加载完成，将不触发此次js脚本：', fieldName);
+          return;
+        }
+        this.excuteJS(filterJS, `field focused__${fieldName}`);
       }
     };
 
