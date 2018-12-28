@@ -12,6 +12,7 @@ import RelTableImportModal from '../RelTableImportModal';
 import { getIntlText } from '../../UKComponent/Form/IntlText';
 import RelTableBatchModal from '../RelTableBatchModal';
 import { getBackEndField_TO_FrontEnd } from '../../AppHeader/TemporaryStorage/formStorageUtils';
+import { queryEntityDetail } from '../../../services/entity';
 
 const TableMaxHeight = 400;
 
@@ -45,12 +46,14 @@ class RelTable extends Component {
       allSelected: false,
       importVisible: false,
       showModals: '',
-      tableRowFields: []
+      tableRowFields: [],
+      globalJS: {}
     };
   }
 
   componentDidMount() {
     this.props.entityId && this.queryFields(this.props.entityId, this.props);
+    this.fetchGlobalJS(this.props.entityId);
     document.body.addEventListener('keydown', this.onKeyDownHandler, false);
 
     this.setAlignTableWidthAndHeight();
@@ -94,6 +97,7 @@ class RelTable extends Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.entityId !== nextProps.entityId) {
       this.queryFields(nextProps.entityId, nextProps);
+      this.fetchGlobalJS(nextProps.entityId);
     }
   }
 
@@ -120,6 +124,16 @@ class RelTable extends Component {
     }
 
     return false;
+  }
+
+  fetchGlobalJS = (entityId) => {
+    if (entityId) {
+      queryEntityDetail(entityId).then(result => {
+        this.setState({
+          globalJS: result.data.entityproinfo[0]
+        });
+      });
+    }
   }
 
   setInitFieldConfig = (tableFields, sheetfieldglobal) => {
@@ -609,6 +623,7 @@ class RelTable extends Component {
           rowIndex={index}
           fixedColumn={fixedColumn}
           origin="RelTableRow"
+          globalJS={this.state.globalJS}
           mode={this.props.mode}
           selected={_.includes(this.state.selectedRows, index)}
           fields={this.state.tableRowFields[index] || []}

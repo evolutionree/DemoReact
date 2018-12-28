@@ -294,9 +294,7 @@ class DynamicFormBase extends Component {
     if (isFromApi) return;
     const { jsEngine } = this.props;
     if (jsEngine) {
-      setTimeout(() => {
-        jsEngine.handleFieldValueChange(fieldName);
-      }, 0);
+      jsEngine.handleFieldValueChange(fieldName);
     }
   };
 
