@@ -671,19 +671,14 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     handleFieldValueChange = (fieldName) => {
-      this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(true);
-      setTimeout(() => {
-        const expandJS = this.fieldExpandJS[fieldName];
-        if (expandJS) {
-          if (this.globalJSLoading) {
-            console.warn('global js 未加载完成，将不触发此次js脚本：', fieldName);
-            this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(false);
-            return;
-          }
-          this.excuteJS(expandJS, `field value change__${fieldName}`);
+      const expandJS = this.fieldExpandJS[fieldName];
+      if (expandJS) {
+        if (this.globalJSLoading) {
+          console.warn('global js 未加载完成，将不触发此次js脚本：', fieldName);
+          return;
         }
-        this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(false);
-      }, 0);
+        this.excuteJS(expandJS, `field value change__${fieldName}`);
+      }
 
       // clearInterval(this.expandJstimer);
       // const expandJS = this.fieldExpandJS[fieldName];
@@ -700,19 +695,14 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     handleFieldControlFocus = (fieldName) => {
-      this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(true);
-      setTimeout(() => {
-        const filterJS = this.fieldExpandFilterJS[fieldName];
-        if (filterJS) {
-          if (this.globalJSLoading) {
-            console.warn('global js 未加载完成，将不触发此次js脚本：', fieldName);
-            this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(false);
-            return;
-          }
-          this.excuteJS(filterJS, `field focused__${fieldName}`);
+      const filterJS = this.fieldExpandFilterJS[fieldName];
+      if (filterJS) {
+        if (this.globalJSLoading) {
+          console.warn('global js 未加载完成，将不触发此次js脚本：', fieldName);
+          return;
         }
-        this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(false);
-      }, 0);
+        this.excuteJS(filterJS, `field focused__${fieldName}`);
+      }
     };
 
     excuteJS = (js, logTitle) => {
