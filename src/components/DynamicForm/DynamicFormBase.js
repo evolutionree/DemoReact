@@ -207,7 +207,7 @@ class DynamicFormBase extends Component {
     if (field.controltype === 12) {
       rules.push({
         validator(rule, value, callback) {
-          if (value && !/^(\(\d{3,4}\)|\d{3,4}-|\s)?\d{7,14}$/.test(value)) {
+          if (value && !/^[0-9\-]{1,}$/.test(value)) {
             return callback('请输入正确的电话号码');
           }
           callback();
