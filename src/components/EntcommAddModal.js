@@ -51,7 +51,8 @@ class EntcommAddModal extends Component {
       key: new Date().getTime(), // 每次打开弹窗时，都重新渲染
       commonid: '',
       entityFormDoneLink: entityFormDoneLink[this.props.entityId] !== false,
-      fetchProtocolLoading: false
+      fetchProtocolLoading: false,
+      excutingJSLoading: false
     };
   }
 
@@ -114,7 +115,8 @@ class EntcommAddModal extends Component {
       storageLoading: false,
       dataModel: undefined,
       key: new Date().getTime(),
-      commonid: ''
+      commonid: '',
+      excutingJSLoading: false
     });
   };
 
@@ -328,6 +330,12 @@ class EntcommAddModal extends Component {
     });
   }
 
+  excutingJSStatusChange = (status) => {
+    this.setState({
+      excutingJSLoading: status
+    });
+  }
+
   render() {
     const { entityTypes, footer, refRecord, entityId } = this.props;
     const {
@@ -340,7 +348,8 @@ class EntcommAddModal extends Component {
       storageLoading,
       entityFormDoneLink,
       fetchProtocolLoading,
-      entityModelType
+      entityModelType,
+      excutingJSLoading
     } = this.state;
 
     return (
@@ -371,8 +380,8 @@ class EntcommAddModal extends Component {
             footer={[
               entityModelType === 0 ? <Checkbox key={entityId} onChange={this.checkboxChange} checked={entityFormDoneLink}>新增后跳转到页签</Checkbox> : null,
               <Button key="back" type="default" onClick={this.onFormModalCancel}>取消</Button>,
-              <Button key="storage" loading={storageLoading} onClick={this.onFormModalStorage}>暂存</Button>,
-              <Button key="submit" loading={confirmLoading} onClick={this.onFormModalConfirm}>提交</Button>
+              <Button key="storage" loading={storageLoading || excutingJSLoading} onClick={this.onFormModalStorage}>暂存</Button>,
+              <Button key="submit" loading={confirmLoading || excutingJSLoading} onClick={this.onFormModalConfirm}>提交</Button>
             ]}
           >
             <Spin spinning={fetchProtocolLoading}>
@@ -387,6 +396,7 @@ class EntcommAddModal extends Component {
                 ref={form => { this.form = form; }}
                 setExtraData={this.setExtraData}
                 setFieldsConfig={this.setFieldsConfig}
+                excutingJSStatusChange={this.excutingJSStatusChange}
               />
             </Spin>
           </Modal> : null

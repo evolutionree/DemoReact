@@ -28,7 +28,8 @@ class SeriesFormModal extends Component {
     super(props);
     this.state = {
       protocolFields: [],
-      formData: {}
+      formData: {},
+      excutingJSLoading: false
     };
   }
 
@@ -68,7 +69,8 @@ class SeriesFormModal extends Component {
   resetState = () => {
     this.setState({
       protocolFields: [],
-      formData: {}
+      formData: {},
+      excutingJSLoading: false
     });
   };
 
@@ -96,6 +98,12 @@ class SeriesFormModal extends Component {
     });
   };
 
+  excutingJSStatusChange = (status) => {
+    this.setState({
+      excutingJSLoading: status
+    });
+  }
+
   render() {
     const DynamicFormComponent = this.props.isEdit ? DynamicFormEdit : DynamicFormAdd;
     return (
@@ -104,7 +112,7 @@ class SeriesFormModal extends Component {
         visible={this.props.visible}
         onCancel={this.props.cancel}
         onOk={this.submitForm}
-        confirmLoading={this.props.modalPending}
+        confirmLoading={this.props.modalPending || this.state.excutingJSLoading}
         width={document.body.clientWidth > 1400 ? 1200 : 800}
       >
         <DynamicFormComponent
@@ -114,6 +122,7 @@ class SeriesFormModal extends Component {
           fields={this.state.protocolFields}
           value={this.state.formData}
           onChange={formData => this.setState({ formData })}
+          excutingJSStatusChange={this.excutingJSStatusChange}
         />
       </Modal>
     );

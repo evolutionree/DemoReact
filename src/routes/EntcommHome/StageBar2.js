@@ -34,7 +34,8 @@ class StageBar extends Component {
         customFieldsData: {},
         rawInfo: null
       },
-      flowModalVisible: false // 控制审批弹窗是否可见
+      flowModalVisible: false, // 控制审批弹窗是否可见
+      excutingJSLoading: false
     };
   }
 
@@ -681,8 +682,14 @@ class StageBar extends Component {
     return retData;
   }
 
+  excutingJSStatusChange = (status) => {
+    this.setState({
+      excutingJSLoading: status
+    });
+  }
+
   renderStageDetail = () => {
-    const { showingStageId } = this.state;
+    const { showingStageId, excutingJSLoading } = this.state;
     if (!showingStageId) return null;
 
     const currentStageId = this.getRecordCurrentStage();
@@ -783,6 +790,7 @@ class StageBar extends Component {
                 onChange={val => this.setState({
                   showingStageDetail: { ...this.state.showingStageDetail, entityFieldsData: val }
                 })}
+                excutingJSStatusChange={this.excutingJSStatusChange}
               />
             </div>
           </div>
@@ -803,23 +811,24 @@ class StageBar extends Component {
                 onChange={val => this.setState({
                   showingStageDetail: { ...this.state.showingStageDetail, customFieldsData: val }
                 })}
+                excutingJSStatusChange={this.excutingJSStatusChange}
               />
             </div>
           </div>
         }
-        {this.renderSubmitButton()}
+        {this.renderSubmitButton(excutingJSLoading)}
       </div>
     );
   };
 
-  renderSubmitButton = () => {
+  renderSubmitButton = (excutingJSLoading) => {
     const currentStageId = this.getRecordCurrentStage();
     const { showingStageId } = this.state;
     const showingStageName = this.getStageName(showingStageId);
     if (showingStageName !== '赢单' && showingStageName !== '输单') {
       const result = this.compareStageIndex(showingStageId, currentStageId);
       if (result === 0) {
-        return <Button onClick={this.saveStageDetail}>保存</Button>;
+        return <Button loading={excutingJSLoading} onClick={this.saveStageDetail}>保存</Button>;
       } else if (result < 0) {
         return <Button onClick={() => { this.backToStage(showingStageId); }}>回退到此阶段</Button>;
       } else {
