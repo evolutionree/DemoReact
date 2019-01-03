@@ -105,7 +105,7 @@ class DynamicFormView extends React.Component {
     const noGroupFields = [];
     const groups = [];
     let lastGroup = null;
-    Array.isArray(allFields) && allFields.forEach((field, index) => {
+    allFields && allFields.forEach((field, index) => {
       if (field.controltype === 20) {
         lastGroup = {
           title: field.displayname,

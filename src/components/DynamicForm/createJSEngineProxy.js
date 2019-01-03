@@ -146,7 +146,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     setJS = props => {
       const fieldExpandJS = {};
       const fieldExpandFilterJS = {};
-      props.fields instanceof Array && props.fields.forEach(field => {
+      Array.isArray(props.fields) && props.fields.forEach(field => {
         if (field && field.expandjs) {
           fieldExpandJS[field.fieldname] = field.expandjs;
         }
