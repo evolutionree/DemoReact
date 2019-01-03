@@ -30,7 +30,7 @@ export default {
     imageGallery: {},
     mapModal: {},
     noMinWidth: false,
-
+    redirectPath: '/',
     langlist: [],
     currentLocale: '' //系统设置默认语言【简体中文】
   },
@@ -168,9 +168,10 @@ export default {
             return defaultPath;
           }
 
-          const firstPagePath = getDefaultPath(result.data);
-          if (firstPagePath) {
-            hashHistory.push(firstPagePath);
+          const redirectPath = getDefaultPath(result.data);
+          if (redirectPath) {
+            hashHistory.push(redirectPath);
+            yield put({ type: 'putState', payload: { redirectPath } });
           } else {
             hashHistory.push('/nopermission');
           }

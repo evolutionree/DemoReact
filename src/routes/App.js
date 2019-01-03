@@ -16,11 +16,11 @@ import MapModal from '../components/MapModal';
 import JsonEditModal from '../components/JsonEditModal';
 import IntlWrap from './IntlWrap'; //国际版(多语言)容器
 
-const App = ({ children, location, siderFold, loading, dispatch, user, noMinWidth }) => {
+const App = ({ children, location, siderFold, loading, dispatch, user, noMinWidth, redirectPath }) => {
   const cls = classnames({ [styles.app]: true, [styles.fold]: siderFold, [styles.noMinWidth]: noMinWidth });
   return (
     <div className={cls}>
-      <AppHeader />
+      <AppHeader redirectPath={redirectPath} />
       <AppMenu location={location} />
       <Spin spinning={loading}>
         <div className={styles.main} style={{ minHeight: '200px' }}>

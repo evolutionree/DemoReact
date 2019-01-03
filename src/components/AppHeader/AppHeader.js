@@ -11,12 +11,11 @@ import WebIMPanel from './WebIMPanel';
 import LocaleSelect from './LocaleSelect';
 import TemporaryStorage from './TemporaryStorage';
 
-
-const AppHeader = () => {
+const AppHeader = ({ redirectPath }) => {
   return (
     <Header>
       <NavToggle />
-      <SiteLogo />
+      <SiteLogo path={redirectPath} />
       <Header.Right>
         <ImportTask />
         <ProgressModal />
