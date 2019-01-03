@@ -10,7 +10,8 @@ import EntcommAddModal from '../../components/EntcommAddModal';
 import EntcommCopyModal from './EntcommCopyModal';
 import TransferModal from './TransferModal';
 import MerageModal from './MerageModal';
-import AdvanceSearchModal from './AdvanceSearchModal';
+// import AdvanceSearchModal from './AdvanceSearchModal';
+import DynamicLoadFilterModal from '../../components/DynamicLoadFilterModal';
 import AllocateModal from './AllocateModal';
 import connectPermission from '../../models/connectPermission';
 import DynamicModal from './DynamicModal';
@@ -91,8 +92,11 @@ function EntcommList({
   function merageCustom() {
     dispatch({ type: 'entcommList/showModals', payload: 'merage' });
   }
-  function advanceSearch() {
-    dispatch({ type: 'entcommList/showModals', payload: 'advanceSearch' });
+  // function advanceSearch() { // 高级搜索
+  //   dispatch({ type: 'entcommList/showModals', payload: 'advanceSearch' });
+  // }
+  function cancelFilter() {
+    dispatch({ type: 'entcommList/showModals', payload: 'cancelFilter' });
   }
   function del() {
     Modal.confirm({
@@ -180,7 +184,7 @@ function EntcommList({
       type: 'entcommList/putState',
       payload: { ColumnFilter: filterData }
     });
-    dispatch({ type: 'entcommList/search', payload: {} });
+    dispatch({ type: 'entcommList/search', payload: { ColumnFilter: filterData } });
   }
 
   let dynamicTableRef;
@@ -252,7 +256,7 @@ function EntcommList({
           >
             搜索
           </Search>
-          <Button onClick={advanceSearch} style={{ marginLeft: '10px', height: '31px' }}>高级搜索</Button>
+          <Button onClick={cancelFilter} style={{ marginLeft: '10px', height: '31px' }}>过滤筛选</Button>
           <Icon type="setting" onClick={openSetHeader} style={{ fontSize: '20px', marginLeft: '10px', cursor: 'pointer', color: '#9ba1ad', position: 'relative', top: '2px' }} />
         </Toolbar.Right>
       </Toolbar>
@@ -294,7 +298,13 @@ function EntcommList({
       <EntcommCopyModal />
       <TransferModal />
       <MerageModal />
-      <AdvanceSearchModal />
+      {/* <AdvanceSearchModal /> 高级搜索*/}
+      <DynamicLoadFilterModal
+        keyName="entcommList"
+        title="筛选条件"
+        protocol={protocol}
+        ColumnFilter={ColumnFilter}
+      />
       <AllocateModal />
       <DynamicModal />
       <ExportModal currentUser={currentUser} />

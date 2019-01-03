@@ -19,6 +19,7 @@ export default {
     showModals: '',
     modalPending: false,
     simpleSearchKey: 'recname',
+    searchTips: '',
     sortFieldAndOrder: null, //当前排序的字段及排序顺序
     ColumnFilter: null, //字段查询
     detailData: null,
@@ -47,6 +48,7 @@ export default {
       }
       yield put({ type: 'resetState' });
       yield put({ type: 'entityId', payload: entityId });
+      sessionStorage.setItem('seachQuery', '');
       try {
         // 获取实体信息
         const { data } = yield call(queryEntityDetail, entityId);
@@ -61,12 +63,19 @@ export default {
         yield put({ type: 'protocol', payload: protocol });
 
         // 获取简单搜索
-        const { data: { simple } } = yield call(queryListFilter, entityId);
+        const { data: { simple, fields } } = yield call(queryListFilter, entityId);
         let simpleSearchKey = 'recname';
+        let searchTips = '';
+        let simpleSearchId = '';
         if (simple && simple.length) {
           simpleSearchKey = simple[0].fieldname;
+          simpleSearchId = simple[0].fieldid;
         }
-        yield put({ type: 'putState', payload: { simpleSearchKey } });
+        if (fields && fields.length) {
+          const searchList = fields.filter(item => (item.fieldid === simpleSearchId));
+          searchTips = searchList.length === 1 && searchList[0].displayname;
+        }
+        yield put({ type: 'putState', payload: { simpleSearchKey, searchTips } });
 
         yield put({ type: 'queryList' });
       } catch (e) {
@@ -76,12 +85,19 @@ export default {
     *search({ payload }, { select, call, put }) {
       const location = yield select(({ routing }) => routing.locationBeforeTransitions);
       const { pathname, query } = location;
+      let newMergeParams = { ...payload };
+      if (payload.hasOwnProperty('ColumnFilter')) {
+        const ColumnFilter = JSON.stringify(payload.ColumnFilter);
+        newMergeParams = { ColumnFilter };
+        sessionStorage.setItem('seachQuery', ColumnFilter);
+      }
+
       yield put(routerRedux.push({
         pathname,
         query: {
           ...query,
           pageIndex: 1,
-          ...payload
+          ...newMergeParams
         }
       }));
     },
@@ -94,28 +110,40 @@ export default {
       const searchData = JSON.stringify(payload);
       yield put({ type: 'search', payload: { searchData, isAdvanceQuery: 1 } });
     },
+    *cancelFilter({ payload }, { put }) {
+      yield put({ type: 'search', payload: { ColumnFilter: payload } });
+      yield put({ type: 'putState', payload: { ColumnFilter: payload } });
+    },
     *queryList(action, { select, call, put }) {
       const location = yield select(({ routing }) => routing.locationBeforeTransitions);
-      const { query } = location;
+      let { query } = location;
       const { entityId, ColumnFilter } = yield select(({ entcommDynamic }) => entcommDynamic);
+      const seachQuery = sessionStorage.getItem('seachQuery');
+      if (!ColumnFilter && query.ColumnFilter) {
+        let filterParams = null;
+        if (seachQuery && seachQuery !== '{}') {
+          filterParams = JSON.parse(seachQuery);
+        } else {
+          filterParams = JSON.parse(query.ColumnFilter);
+        }
+        query = { ...query, ColumnFilter: filterParams };
+        yield put({ type: 'putState', payload: { ColumnFilter: query.ColumnFilter } });
+      }
+
       const queries = {
         entityId,
         pageIndex: 1,
         pageSize: 10,
-        menuId: "75ce6617-2016-46f0-8cb4-8467b77ef468",
+        menuId: '75ce6617-2016-46f0-8cb4-8467b77ef468',
         keyword: '',
         isAdvanceQuery: 0,
         ...query
       };
-      queries.pageIndex = parseInt(queries.pageIndex);
-      queries.pageSize = parseInt(queries.pageSize);
-      queries.isAdvanceQuery = parseInt(queries.isAdvanceQuery);
-      if (queries.searchData) {
-        queries.searchData = JSON.parse(queries.searchData);
-      }
-      if (ColumnFilter) {
-        queries.ColumnFilter = ColumnFilter;
-      }
+      queries.pageIndex = parseInt(queries.pageIndex, 10);
+      queries.pageSize = parseInt(queries.pageSize, 10);
+      queries.isAdvanceQuery = parseInt(queries.isAdvanceQuery, 10);
+      if (queries.searchData) queries.searchData = JSON.parse(queries.searchData);
+      if (ColumnFilter) queries.ColumnFilter = ColumnFilter;
       yield put({ type: 'putState', payload: { sortFieldAndOrder: queries.searchOrder } }); //其他查询条件 发生改变  排序保持不变
       yield put({ type: 'queries', payload: queries });
       try {
@@ -240,6 +268,7 @@ export default {
         showModals: '',
         modalPending: false,
         simpleSearchKey: 'recname',
+        searchTips: '',
         sortFieldAndOrder: null, //当前排序的字段及排序顺序
         ColumnFilter: null, //字段查询
         detailData: [],

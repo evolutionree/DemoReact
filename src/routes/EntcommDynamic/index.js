@@ -10,11 +10,11 @@ import Search from '../../components/Search';
 import DynamicTable from '../../components/DynamicTable/index';
 import DynamicDetailModal from './DynamicDetailModal';
 import connectPermission from '../../models/connectPermission';
-import AdvanceSearchModal from './AdvanceSearchModal';
+// import AdvanceSearchModal from './AdvanceSearchModal';
+import DynamicLoadFilterModal from '../../components/DynamicLoadFilterModal';
 import ExportModal from './ExportModal';
 
-
-function EntcommList({
+function entcommDynamic({
                        checkFunc,
                        dispatch,
                        entityName,
@@ -25,6 +25,7 @@ function EntcommList({
                        entityId,
                        currentUser,
                        simpleSearchKey,
+                       searchTips,
                        sortFieldAndOrder,
                        ColumnFilter
                      }) {
@@ -41,8 +42,11 @@ function EntcommList({
       payload: 'export'
     });
   }
-  function advanceSearch() {
-    dispatch({ type: 'entcommDynamic/showModals', payload: 'advanceSearch' });
+  // function advanceSearch() {
+  //   dispatch({ type: 'entcommDynamic/showModals', payload: 'advanceSearch' });
+  // }
+  function cancelFilter() {
+    dispatch({ type: 'entcommDynamic/showModals', payload: 'cancelFilter' });
   }
   function shouldShowExport() {
     return checkFunc('EntityDataExport');
@@ -83,20 +87,19 @@ function EntcommList({
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap'
   };
-
   return (
     <Page title={entityName}>
       <Toolbar>
         <Button onClick={exportData}>导出</Button>
         <Toolbar.Right>
           <Search
-            placeholder="请输入关键字"
+            placeholder={`请输入${searchTips || '关键字'}`}
             value={keyword}
             onSearch={val => searchKeyword(val)}
           >
             搜索
           </Search>
-          <Button onClick={advanceSearch} style={{ marginLeft: '10px', height: '31px' }}>高级搜索</Button>
+          <Button onClick={cancelFilter} style={{ marginLeft: '10px', height: '31px' }}>过滤筛选</Button>
           <Icon type="setting" onClick={openSetHeader} style={{ fontSize: '20px', marginLeft: '10px', cursor: 'pointer', color: '#9ba1ad', position: 'relative', top: '2px' }} />
         </Toolbar.Right>
       </Toolbar>
@@ -123,7 +126,13 @@ function EntcommList({
           <a href="javascript:;" style={titleStyle} title={text} onClick={() => { showDetail(record); }}>{text}</a>
         )}
       />
-      <AdvanceSearchModal />
+      {/* <AdvanceSearchModal /> */}
+      <DynamicLoadFilterModal
+        keyName="entcommDynamic"
+        title="筛选条件"
+        protocol={protocol}
+        ColumnFilter={ColumnFilter}
+      />
       <DynamicDetailModal />
       <ExportModal currentUser={currentUser} />
     </Page>
@@ -134,4 +143,4 @@ export default connect(
   state => {
     return { ...state.entcommDynamic, currentUser: state.app.user.userid };
   }
-)(connectPermission(props => props.entityId, EntcommList));
+)(connectPermission(props => props.entityId, entcommDynamic));
