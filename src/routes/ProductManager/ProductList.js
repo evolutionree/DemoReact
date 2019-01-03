@@ -99,6 +99,7 @@ function ProductList({
         ignoreRecName
         rowKey="recid"
         protocol={listProtocol}
+        entityId="59cf141c-4d74-44da-bca8-3ccf8582a1f2"
         dataSource={list}
         rowSelection={{
           selectedRowKeys: currentItems.map(item => item.recid),
