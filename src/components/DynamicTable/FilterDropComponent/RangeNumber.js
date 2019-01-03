@@ -7,7 +7,8 @@ import { InputNumber } from 'antd';
 class RangeNumber extends Component {
   static propTypes = {
     value: PropTypes.array.isRequired,
-    onChange: PropTypes.func.isRequired
+    onChange: PropTypes.func.isRequired,
+    width: PropTypes.number
   };
   static defaultProps = {
 
@@ -45,13 +46,14 @@ class RangeNumber extends Component {
   }
 
   render() {
+    const { width = 160 } = this.props;
     const rangeNumberArr = this.props.value;
     return (
       <div>
         <div>从</div>
-        <InputNumber style={{ width: 160 }} onChange={this.onChange.bind(this, 'min')} value={rangeNumberArr[0] || null} />
+        <InputNumber style={{ width, marginRight: 8 }} onChange={this.onChange.bind(this, 'min')} value={rangeNumberArr[0] || null} />
         <div>到</div>
-        <InputNumber style={{ width: 160 }} onChange={this.onChange.bind(this, 'max')} value={rangeNumberArr[1] || null} />
+        <InputNumber style={{ width, marginRight: 8 }} onChange={this.onChange.bind(this, 'max')} value={rangeNumberArr[1] || null} />
       </div>
     );
   }

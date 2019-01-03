@@ -177,7 +177,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
         }
       }
       this.globalJS = globalJS;
-      if (this.props.fields.length) {
+      if (this.props.fields && this.props.fields.length) {
         setTimeout(() => {
           this.excuteJS(this.globalJS, 'global');
         }, 0);

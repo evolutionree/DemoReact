@@ -21,6 +21,7 @@ class DynamicField extends React.Component {
       maxLength: PropTypes.number
     }),
     fieldLabel: PropTypes.string,
+    startValue: PropTypes.string,
     fieldId: PropTypes.string,
     jsEngine: PropTypes.object
   };
@@ -67,6 +68,7 @@ class DynamicField extends React.Component {
       value: this.props.value,
       value_name: this.props.value_name,
       fieldId: this.props.fieldId,
+      startValue: this.props.startValue,
       onChange: this.props.onChange,
       onChangeWithName: this.props.onChangeWithName,
       onFocus: this.props.onFocus,

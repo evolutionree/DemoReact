@@ -5,7 +5,8 @@ import { getDeviceHeaders } from '../../utils/request';
 
 class UploadButton extends React.Component {
   static propTypes = {
-    onUpload: React.PropTypes.func
+    onUpload: React.PropTypes.func,
+    accept: React.PropTypes.string
   };
   static defaultProps = {};
 
@@ -62,8 +63,11 @@ class UploadButton extends React.Component {
   };
 
   render() {
+    const { accept } = this.props;
+
     return (
       <Upload
+        accept={accept || ''}
         name="data"
         data={this.getUploadParams}
         showUploadList={false}

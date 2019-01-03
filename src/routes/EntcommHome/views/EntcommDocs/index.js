@@ -10,17 +10,17 @@ import { formatFileSize } from '../../../../utils';
 const Column = Table.Column;
 
 function EntcommDocs({
-    checkFunc,
-    docTypes,
-    currentDocType,
-    list,
-    currentItems,
-    selectItems,
-    selectDocType,
-    onUpload,
-    download,
-    delDoc
-  }) {
+  checkFunc,
+  docTypes,
+  currentDocType,
+  list,
+  currentItems,
+  selectItems,
+  selectDocType,
+  onUpload,
+  download,
+  delDoc
+}) {
   const getLabel = folderId => {
     const match = _.find(docTypes, ['value', folderId]);
     return match ? match.label : '';
@@ -39,7 +39,23 @@ function EntcommDocs({
             <Select.Option key={t.value}>{t.label}</Select.Option>
           ))}
         </Select>
-        {checkFunc('DocumentUpload') && <UploadButton onUpload={onUpload}>上传文档</UploadButton>}
+        {
+          checkFunc('DocumentUpload') &&
+          <UploadButton
+            onUpload={onUpload}
+            accept={
+              `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
+              .doc,.docx,application/pdf,
+              application/vnd.ms-works,
+              application/msword,
+              application/xml-dtd,
+              application/vnd.ms-excel,
+              application/vnd.ms-powerpoint,
+              .csv,text/html,text/plain`
+            }>
+            上传文档
+         </UploadButton>
+        }
       </Toolbar>
       <Table
         rowKey="documentid"
@@ -90,7 +106,7 @@ export default connect(
         });
       },
       download() {
-        dispatch({ type: 'entcommDocs/download'});
+        dispatch({ type: 'entcommDocs/download' });
       },
       delDoc() {
         Modal.confirm({

@@ -1,12 +1,13 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Badge, Icon, Tabs, message, Spin } from "antd";
+import { Icon, Tabs, message, Spin } from "antd";
 import classnames from 'classnames';
-import styles from './ContactsPanel.less';
 import Avatar from "../Avatar";
 import Search from "../Search";
 import DepartmentSelect from "../DepartmentSelect";
 import { queryContacts, queryUsers, flagContact } from '../../services/structure';
+import BadgeIcon from './BadgeIcon';
+import styles from './ContactsPanel.less';
 
 const TabPane = Tabs.TabPane;
 
@@ -130,7 +131,7 @@ class ContactsPanel extends Component {
         userid: this.props.userInfo.userid,
         searchkey: searchKey,
         pageIndex: pageIndex,
-        pageSize:  currentTab === '1' ? 20 : -1
+        pageSize: currentTab === '1' ? 20 : -1
       };
       queryContacts(params).then(result => {
         this.setState({
@@ -245,14 +246,12 @@ class ContactsPanel extends Component {
     };
     return (
       <div>
-        <Badge>
-          <Icon
-            type="contacts"
-            title="通讯录"
-            style={{ fontSize: 24, cursor: "pointer", marginRight: '10px' }}
-            onClick={this.togglePanelVisible}
-          />
-        </Badge>
+        <BadgeIcon
+          textBool={false}
+          IconType="contacts"
+          title="通讯录"
+          onClick={this.togglePanelVisible}
+        />
         <div id="contacts-panel" className={classnames(styles.panelWrap, { [styles.panelVisible]: this.state.panelVisible })}>
           <div className={styles.panelHeader}>
             <Icon type='contacts' />
@@ -273,14 +272,14 @@ class ContactsPanel extends Component {
                     style={{ width: '100%' }}
                   />
                 ) : (
-                  <Search
-                    mode="icon"
-                    placeholder="按姓名搜索"
-                    value={this.state.searchKey}
-                    onSearch={this.onSearch}
-                    width="100%"
-                  />
-                )}
+                    <Search
+                      mode="icon"
+                      placeholder="按姓名搜索"
+                      value={this.state.searchKey}
+                      onSearch={this.onSearch}
+                      width="100%"
+                    />
+                  )}
               </div>
               <ContactList>
                 {this.state.list.map(item => (
@@ -320,8 +319,8 @@ class ContactsPanel extends Component {
                 <MetaValue>{detailData.deptname}</MetaValue>
               </p>
               {/*<p className={styles.detailMeta}>*/}
-                {/*<span>入职日期：</span>*/}
-                {/*<MetaValue>{formatDate(detailData.joineddate)}</MetaValue>*/}
+              {/*<span>入职日期：</span>*/}
+              {/*<MetaValue>{formatDate(detailData.joineddate)}</MetaValue>*/}
               {/*</p>*/}
               <p className={styles.detailMeta}>
                 <span>性别：</span>
@@ -332,12 +331,12 @@ class ContactsPanel extends Component {
                 <MetaValue>{detailData.userjob}</MetaValue>
               </p>
               {/*<p className={styles.detailMeta}>*/}
-                {/*<span>出生日期：</span>*/}
-                {/*<MetaValue>{formatDate(detailData.birthday)}</MetaValue>*/}
+              {/*<span>出生日期：</span>*/}
+              {/*<MetaValue>{formatDate(detailData.birthday)}</MetaValue>*/}
               {/*</p>*/}
               {/*<p className={styles.detailMeta}>*/}
-                {/*<span>备注：</span>*/}
-                {/*<MetaValue>{detailData.remark}</MetaValue>*/}
+              {/*<span>备注：</span>*/}
+              {/*<MetaValue>{detailData.remark}</MetaValue>*/}
               {/*</p>*/}
               <div style={{ marginBottom: '15px', borderTop: '1px solid #f0f0f0' }} />
               <p className={styles.detailMeta}>
