@@ -45,7 +45,7 @@ class SeriesFormModal extends Component {
         ]).then(([protocolFields, detailData]) => {
           this.setState({
             protocolFields,
-            formData: detailData
+            formData: this.getEditData(protocolFields, detailData)
           });
         });
       } else {
@@ -59,6 +59,23 @@ class SeriesFormModal extends Component {
     } else if (isClosing) {
       this.resetState();
     }
+  }
+
+  // fix 表格控件，加typeid
+  getEditData = (editProtocol, detail) => {
+    const retData = _.cloneDeep(detail);
+    editProtocol.forEach(field => {
+      const { controltype, fieldname, fieldconfig } = field;
+      if (controltype === 24 && retData[fieldname]) {
+        retData[fieldname] = retData[fieldname].map(item => {
+          return {
+            TypeId: fieldconfig.entityId,
+            FieldData: item
+          };
+        });
+      }
+    });
+    return retData;
   }
 
   shouldComponentUpdate(nextProps, nextState) {
