@@ -8,6 +8,7 @@ import SetSeriesModal from './SetSeriesModal';
 import SelectDataSource from '../../../../components/DynamicForm/controls/SelectDataSource';
 import SelectProductBigData from '../../../../components/DynamicForm/controls/SelectProductBigData';
 import SelectProductSerial from '../../../../components/DynamicForm/controls/SelectProductSerial';
+import YearPicker from '../../../../components/UKComponent/Form/YearPicker';
 import moment from 'moment';
 
 const { MonthPicker } = DatePicker;
@@ -60,6 +61,8 @@ class InputComponent extends Component {
         return <div style={{ width: '200px' }}><SelectProductSerial value={this.props.value} onChange={value => this.props.onChange(value) } {...this.props.multichoosedatasource} /></div>;
       case 9:
         return <MonthPicker value={this.props.value ? moment(this.props.value, monthFormat) : null} style={{ width: '120px' }} onChange={(date) => { this.props.onChange(date && date.format(monthFormat)) }} format={monthFormat} />;
+      case 10:
+        return <YearPicker defaultValue={this.props.value} onChange={this.props.onChange} />;
       default:
         return <div>searchBar未识别</div>;
     }

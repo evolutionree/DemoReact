@@ -1,0 +1,132 @@
+@focuscolor: #108ee9;
+@bordercolor: #d9d9d9;
+/*这部分根据你自己的容器样式，我这个地方是因为公用组件的原因需要设置*/
+#roo .toolbar {
+  overflow: inherit !important;
+}
+#root .toolbar > div:after {
+  content: "";
+  display: block;
+  visibility: hidden;
+  width: 0;
+  clear: both;
+}
+/*---以下为必备样式----*/
+.calendar-wrap {
+  position: relative;
+  .calendar-input {
+    width: 151px;
+    position: relative;
+    cursor: pointer;
+    .calendar-icon {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      color: #919191;
+    }
+    input {
+      width: 151px;
+      height: 31px;
+      border: 1px solid @bordercolor;
+      border-radius: 4px;
+      font-size: 14px;
+      outline: none;
+      display: block;
+      padding: 6px 7px;
+      transition: all 0.3s;
+      &:hover,
+      &:active {
+        border-color: @focuscolor;
+      }
+    }
+  }
+
+  .calendar-container {
+    width: 232px;
+    outline: none;
+    border-radius: 4px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+    border: 1px solid @bordercolor;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    background-color: #fff;
+    line-height: 1.5;
+  }
+  .calendar-head-year {
+    height: 34px;
+    line-height: 34px;
+    text-align: center;
+    width: 100%;
+    position: relative;
+    border-bottom: 1px solid #e9e9e9;
+    .calendar-year-range {
+      padding: 0 2px;
+      font-weight: bold;
+      display: inline-block;
+      color: rgba(0, 0, 0, 0.65);
+      line-height: 34px;
+    }
+    .calendar-btn {
+      position: absolute;
+      top: 0;
+      color: rgba(0, 0, 0, 0.43);
+      padding: 0 5px;
+      font-size: 12px;
+      display: inline-block;
+      line-height: 34px;
+      cursor: pointer;
+      &:hover {
+        color: @focuscolor;
+      }
+    }
+    .prev-btn {
+      left: 7px;
+    }
+    .next-btn {
+      right: 7px;
+    }
+  }
+  .calendar-body-year {
+    width: 100%;
+    height: 218px;
+    .calendar-year-ul {
+      list-style: none;
+      .calendar-year-li {
+        float: left;
+        text-align: center;
+        width: 76px;
+        cursor: pointer;
+        > button {
+          cursor: pointer;
+          outline: none;
+          border: 0;
+          display: inline-block;
+          margin: 0 auto;
+          color: rgba(0, 0, 0, 0.65);
+          background: transparent;
+          text-align: center;
+          height: 24px;
+          line-height: 24px;
+          padding: 0 6px;
+          border-radius: 4px;
+          transition: background 0.3s ease;
+          margin: 14px 0;
+          &:hover {
+            color: @focuscolor;
+          }
+        }
+      }
+      .calendar-year-selected {
+        > button {
+          background: #108ee9;
+          color: #fff;
+          &:hover {
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+}
