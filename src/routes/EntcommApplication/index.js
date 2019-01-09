@@ -12,7 +12,7 @@ import RecordDetailModal from './RecordDetailModal';
 import RecordEditModal from './RecordEditModal';
 import TransferModal from './TransferModal';
 import connectPermission from '../../models/connectPermission';
-// import AdvanceSearchModal from './AdvanceSearchModal';
+import AdvanceSearchModal from './AdvanceSearchModal';
 import DynamicLoadFilterModal from '../../components/DynamicLoadFilterModal';
 import DynamicModal from './DynamicModal';
 import ExportModal from './ExportModal';
@@ -149,9 +149,9 @@ function EntcommList({
       payload: 'export'
     });
   }
-  // function advanceSearch() {
-  //   dispatch({ type: 'entcommApplication/showModals', payload: 'advanceSearch' });
-  // }
+  function advanceSearch() {
+    dispatch({ type: 'entcommApplication/showModals', payload: 'advanceSearch' });
+  }
   function cancelFilter() {
     dispatch({ type: 'entcommApplication/showModals', payload: 'cancelFilter' });
   }
@@ -272,7 +272,8 @@ function EntcommList({
           >
             搜索
           </Search>
-          <Button onClick={cancelFilter} style={{ marginLeft: '10px', height: '31px' }}>过滤筛选</Button>
+          <Button onClick={cancelFilter} style={{ marginLeft: '10px', height: '31px' }}>筛选</Button>
+          <Button onClick={advanceSearch} style={{ marginLeft: '10px', height: '31px' }}>高级搜索</Button>
           <Icon type="setting" onClick={openSetHeader} style={{ fontSize: '20px', marginLeft: '10px', cursor: 'pointer', color: '#9ba1ad', position: 'relative', top: '2px' }} />
         </Toolbar.Right>
       </Toolbar>
@@ -318,7 +319,7 @@ function EntcommList({
       <TransferModal />
       <RecordDetailModal onExtraToolbarClick={extraToolbarClickHandler} onExtraBtnClick={extraButtonClickHandler} />
       <RecordEditModal />
-      {/* <AdvanceSearchModal /> */}
+      <AdvanceSearchModal />
       <DynamicLoadFilterModal
         keyName="entcommApplication"
         title="筛选条件"
