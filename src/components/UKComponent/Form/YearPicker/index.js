@@ -4,6 +4,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { Icon } from 'antd';
+import { is } from 'immutable';
 import styles from './index.less';//这个文件自己选择一个温暖的地方放
 
 class YearPicker extends Component {
@@ -17,8 +18,8 @@ class YearPicker extends Component {
   }
 
   componentWillMount() {
-    let { defaultValue } = this.props;
-    this.setState({ selectedyear: defaultValue });
+    let { value } = this.props;
+    this.setState({ selectedyear: value });
   }
 
   componentDidMount() {
@@ -26,22 +27,50 @@ class YearPicker extends Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('click', this.documentClick);
+    document.removeEventListener('click', this.documentClick);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    let { value } = nextProps;
+    this.setState({ selectedyear: value });
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    const thisProps = this.props || {};
+    const thisState = this.state || {};
+
+    if (Object.keys(thisProps).length !== Object.keys(nextProps).length || Object.keys(thisState).length !== Object.keys(nextState).length) {
+      return true;
+    }
+
+    for (const key in nextProps) {
+      if (!is(thisProps[key], nextProps[key])) {
+        //console.log('createJSEngineProxy_props:' + key);
+        return true;
+      }
+    }
+
+    for (const key in nextState) {
+      if (thisState[key] !== nextState[key] || !is(thisState[key], nextState[key])) {
+        //console.log('state:' + key);
+        return true;
+      }
+    }
+
+    return false;
   }
 
   documentClick = (e) => {
     const { isShow } = this.state;
     let clsName = e.target.className;
-    if (
-      clsName.indexOf('calendar') === -1 && e.target.tagName !== 'BUTTON' && isShow
-    ) {
+    if (clsName.indexOf('calendar') === -1 && e.target.tagName !== 'BUTTON' && isShow) {
       this.hide();
     }
   }
 
   //初始化数据处理
   initData = (operand, defaultValue) => {
-    let currentValue = defaultValue;
+    let currentValue = defaultValue * 1;
     if (!defaultValue) {
       currentValue = new Date().getFullYear();
     }

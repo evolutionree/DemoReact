@@ -768,7 +768,7 @@ class RelTable extends Component {
             {
               this.props.batch ? <Button onClick={this.batchAddData} style={{ marginRight: '15px' }}>批量</Button> : null
             }
-            <Button onClick={this.delRow} type="danger">删除</Button>
+            <Button key={new Date().getTime()} onClick={this.delRow} type="danger">删除</Button>
           </div>}
           <div className={styles.tableContent}>
             <div className={classnames(styles.fixTopWrap, { [styles.fixTopWrapHidden]: this.parseValue().length === 0 })} ref={ref => this.fixTopWrapRef = ref}>

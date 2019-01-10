@@ -62,7 +62,7 @@ class InputComponent extends Component {
       case 9:
         return <MonthPicker value={this.props.value ? moment(this.props.value, monthFormat) : null} style={{ width: '120px' }} onChange={(date) => { this.props.onChange(date && date.format(monthFormat)) }} format={monthFormat} />;
       case 10:
-        return <YearPicker defaultValue={this.props.value} onChange={this.props.onChange} />;
+        return <YearPicker value={this.props.value} onChange={this.props.onChange} />;
       default:
         return <div>searchBar未识别</div>;
     }
