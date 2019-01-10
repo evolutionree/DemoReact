@@ -244,8 +244,16 @@ class DynamicFormBase extends Component {
 
     this.props.fields.forEach(field => {
       const newField = { ...field };
-      if (newField.controltype === 8 && newField.limitingDate && typeof newField.limitingDate === 'string') {
-        newField.dateStartValue = newField.limitingDate;
+      if (newField.fieldconfig && newField.fieldconfig.limitDate) {
+        if (newField.fieldconfig.limitDate === 'now') {
+          const date = new Date();
+          const year = date.getFullYear();
+          const month = date.getMonth() + 1;
+          const day = date.getDate();
+          newField.dateStartValue = `${year}-${month}-${day}`;
+        } else {
+          newField.dateStartValue = newField.fieldconfig.limitDate;
+        }
       }
       if (newField.controltype === 20) {
         lastGroup = {
