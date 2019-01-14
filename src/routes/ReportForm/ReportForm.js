@@ -470,7 +470,7 @@ class ReportForm extends React.Component {
 
 
     let newSerchValue = {};
-    if (JSON.stringify(this.state.serchValue) === '{}' && data) { //初始化页面时，查询条件全部满足
+    if (JSON.stringify(this.state.serchValue) === '{}' && data instanceof Array && data.length) { //初始化页面时，查询条件全部满足
       for (let i = 0; i < mapFilterItems.length; i++) {
         newSerchValue[mapFilterItems[i].paramname] = currentParamsValue(mapFilterItems[i].data).join();
       }
