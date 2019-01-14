@@ -34,6 +34,7 @@ class LoginPageContainer extends Component {
   }
 
   componentDidMount() {
+    localStorage.removeItem('defaultPathType');
     this.fetchAuthCompany();
   }
 

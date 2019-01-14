@@ -507,3 +507,28 @@ export function uuid() { //生成uuid
   let uuid = s.join('');
   return uuid;
 }
+
+export function getDefaultPath(data) {
+  let defaultPath = '';
+  let findFirstPath = true;
+
+  let menuData = data;
+  function loop(menus) {
+    for (let i = 0; i < menus.length; i++) {
+      if (menus[i].children && menus[i].children.length > 0) {
+        loop(menus[i].children);
+      } else {
+        if (menus[i].isDefaultPage * 1 === 1) {
+          defaultPath = menus[i].path;
+          break;
+        }
+        if (findFirstPath && menus[i].path) {
+          defaultPath = menus[i].path;
+          findFirstPath = false;
+        }
+      }
+    }
+  }
+  loop(menuData);
+  return defaultPath;
+}
