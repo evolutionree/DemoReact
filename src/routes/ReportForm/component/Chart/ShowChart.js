@@ -473,7 +473,7 @@ function ShowChart({
         },
         axisLine: {
           show: true,
-          onZero: false,
+          onZero: true,
           lineStyle: optionSet.axisLineLineStyle
         },
         ...optionSet.asisLineAndasisLabel,
