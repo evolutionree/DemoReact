@@ -285,32 +285,36 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
 
     // 给指定字段设置id值，目前只支持文本输入框、字典
     setValue = (fieldName, value, decimalLength) => {
-      try {
-        let val = value;
-        if (decimalLength !== undefined && this.getFieldControlType(fieldName) === 7) {
-          val = +val;
-          if (isNaN(val)) {
-            val = 0;
-          } else {
-            val = +(val.toFixed(2));
+      setTimeout(() => {
+        try {
+          let val = value;
+          if (decimalLength !== undefined && this.getFieldControlType(fieldName) === 7) {
+            val = +val;
+            if (isNaN(val)) {
+              val = 0;
+            } else {
+              val = +(val.toFixed(2));
+            }
           }
+          this.getFieldComponentInstance(fieldName) && this.getFieldComponentInstance(fieldName).setValue(val, decimalLength, fieldName);
+        } catch (e) {
+          console.error(e);
+          // this.props.form.setFields({ [fieldName]: { value } });
+          // this.props.form.setFieldsValue({ [fieldName]: value });
         }
-        this.getFieldComponentInstance(fieldName) && this.getFieldComponentInstance(fieldName).setValue(val, decimalLength, fieldName);
-      } catch (e) {
-        console.error(e);
-        // this.props.form.setFields({ [fieldName]: { value } });
-        // this.props.form.setFieldsValue({ [fieldName]: value });
-      }
+      }, 0);
     };
 
     // 给指定字段设置显示值，支持字典、选人、树形控件
     setValueByName = (fieldName, value) => {
-      try {
-        const inst = this.getFieldComponentInstance(fieldName);
-        inst.setValueByName(value);
-      } catch (e) {
-        console.error(e);
-      }
+      setTimeout(() => {
+        try {
+          const inst = this.getFieldComponentInstance(fieldName);
+          inst.setValueByName(value);
+        } catch (e) {
+          console.error(e);
+        }
+      }, 0);
     };
 
     getTableRowCount = fieldName => {
