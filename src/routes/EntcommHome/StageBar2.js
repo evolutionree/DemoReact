@@ -113,9 +113,10 @@ class StageBar extends Component {
       this.setState({
         entityTypeId: oppinfoset[0].typeid || oppinfoset[0].entityid
       });
-    } else if (dynamicentityset && dynamicentityset[0] && dynamicentityset[0].typeid) {
+    }
+    if (dynamicentityset && dynamicentityset[0] && dynamicentityset[0].typeid) {
       this.setState({
-        entityTypeId: dynamicentityset[0].typeid
+        dynamicEntityTypeId: dynamicentityset[0].typeid
       });
     }
 
@@ -804,7 +805,7 @@ class StageBar extends Component {
                 horizontal
                 ref={form => this.customForm = form}
                 entityId={this.props.entityId}
-                entityTypeId={this.state.entityTypeId}
+                entityTypeId={this.state.dynamicEntityTypeId}
                 fields={customFields}
                 value={customFieldsData}
                 refEntityData={this.props.recordDetail}
