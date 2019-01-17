@@ -562,7 +562,7 @@ export default {
         }
       });
     },
-    *saveFlowDesign(action, { select, put, call }) {
+    *saveFlowDesign({ payload: flowNodePosition }, { select, put, call }) {
       const { flowId, flowSteps, flowPaths } = yield select(state => state.workflowDesign);
       if (flowSteps.some(step => !step.rawNode)) {
         message.error('请配置节点审批人');
@@ -586,7 +586,8 @@ export default {
             ruleconfig,
             columnconfig,
             auditsucc,
-            nodeevent: funcname
+            nodeevent: funcname,
+            position: flowNodePosition[id]
           };
         });
         const lines = flowPaths.map(path => ({
