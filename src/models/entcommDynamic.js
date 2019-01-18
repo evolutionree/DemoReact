@@ -106,10 +106,6 @@ export default {
       const searchData = JSON.stringify({ [simpleSearchKey]: keyword || undefined });
       yield put({ type: 'search', payload: { searchData, isAdvanceQuery: 0 } });
     },
-    *advanceSearch({ payload }, { select, call, put }) {
-      const searchData = JSON.stringify(payload);
-      yield put({ type: 'search', payload: { searchData, isAdvanceQuery: 1 } });
-    },
     *cancelFilter({ payload }, { put }) {
       yield put({ type: 'search', payload: { ColumnFilter: payload } });
       yield put({ type: 'putState', payload: { ColumnFilter: payload } });

@@ -10,7 +10,6 @@ import Search from '../../components/Search';
 import DynamicTable from '../../components/DynamicTable/index';
 import DynamicDetailModal from './DynamicDetailModal';
 import connectPermission from '../../models/connectPermission';
-import AdvanceSearchModal from './AdvanceSearchModal';
 import DynamicLoadFilterModal from '../../components/DynamicLoadFilterModal';
 import ExportModal from './ExportModal';
 
@@ -41,9 +40,6 @@ function entcommDynamic({
       type: 'entcommDynamic/showModals',
       payload: 'export'
     });
-  }
-  function advanceSearch() {
-    dispatch({ type: 'entcommDynamic/showModals', payload: 'advanceSearch' });
   }
   function cancelFilter() {
     dispatch({ type: 'entcommDynamic/showModals', payload: 'cancelFilter' });
@@ -100,7 +96,6 @@ function entcommDynamic({
             搜索
           </Search>
           <Button onClick={cancelFilter} style={{ marginLeft: '10px', height: '31px' }}>筛选</Button>
-          <Button onClick={advanceSearch} style={{ marginLeft: '10px', height: '31px' }}>高级搜索</Button>
           <Icon type="setting" onClick={openSetHeader} style={{ fontSize: '20px', marginLeft: '10px', cursor: 'pointer', color: '#9ba1ad', position: 'relative', top: '2px' }} />
         </Toolbar.Right>
       </Toolbar>
@@ -127,7 +122,6 @@ function entcommDynamic({
           <a href="javascript:;" style={titleStyle} title={text} onClick={() => { showDetail(record); }}>{text}</a>
         )}
       />
-      <AdvanceSearchModal />
       <DynamicLoadFilterModal
         keyName="entcommDynamic"
         title="筛选条件"
