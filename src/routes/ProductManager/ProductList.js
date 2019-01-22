@@ -7,9 +7,19 @@ import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import styles from './styles.less';
 import ProductFormModal from './ProductFormModal';
+import EntcommDetailModal from '../../components/EntcommDetailModal';
 import { downloadFile } from '../../utils/ukUtil';
 
 const Option = Select.Option;
+
+const productEntityId = '59cf141c-4d74-44da-bca8-3ccf8582a1f2';
+const titleStyle = {
+  display: 'inline-block',
+  maxWidth: '340px',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap'
+};
 
 function getSeriesPath(current, allSeries) {
   const path = [];
@@ -36,7 +46,11 @@ function ProductList({
   importData,
   checkFunc,
   currentUser,
-  selectSeries
+  selectSeries,
+  showDetail,
+  showDetailId,
+  showModals,
+  closeModal
 }) {
   function exportData() {
     const params = JSON.stringify(_.mapValues({
@@ -96,7 +110,6 @@ function ProductList({
       </Toolbar>
 
       <DynamicTable
-        ignoreRecName
         rowKey="recid"
         protocol={listProtocol}
         entityId="59cf141c-4d74-44da-bca8-3ccf8582a1f2"
@@ -113,8 +126,17 @@ function ProductList({
           onShowSizeChange: (page, size) => { search('pageSize', size); }
         }}
         fixedHeader={false}
+        renderLinkField={(text, field, record, props) => (
+          <a href="javascript:;" style={titleStyle} title={text} onClick={showDetail.bind(this, record)}>{text}</a>
+        )}
       />
       <ProductFormModal />
+      <EntcommDetailModal visible={showModals === 'viewDetail'}
+                          title="产品详情"
+                          entityId={productEntityId}
+                          recordId={showDetailId}
+                          onOk={closeModal}
+                          onCancel={closeModal} />
     </div>
   );
 }
@@ -163,6 +185,12 @@ function mapDispatchToProps(dispatch) {
           showOperatorType: false
         }
       });
+    },
+    showDetail(record) {
+      dispatch({ type: 'productManager/putState', payload: { showModals: 'viewDetail', showDetailId: record.recid } });
+    },
+    closeModal() {
+      dispatch({ type: 'productManager/showModals', payload: '' });
     }
   };
 }
