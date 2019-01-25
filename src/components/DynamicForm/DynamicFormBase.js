@@ -176,7 +176,8 @@ class DynamicFormBase extends Component {
         validator(rule, value, callback) {
           const isEmptyArray = Array.isArray(value) && !value.length;
           const isEmptyAddress = field.controltype === 13 && !(value && value.address);
-          if (value === undefined || value === '' || value === null || isEmptyArray || isEmptyAddress) {
+          const isEmptyDataSource = field.controltype === 18 && JSON.stringify(value) === '{}';
+          if (value === undefined || value === '' || value === null || isEmptyArray || isEmptyAddress || isEmptyDataSource) {
             return callback('请输入' + field.displayname);
           }
           callback();
