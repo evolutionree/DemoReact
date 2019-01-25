@@ -3,6 +3,11 @@ import _ from 'lodash';
 import { query,queryTypes } from '../services/entity';
 import { getEntcommDetail, getEntcommAtivities, commentEntcommActivity, getActivityDetail, likeEntcommActivity, queryPlugins,dynamicRequest, extraToolbarClickSendData } from '../services/entcomm';
 
+const delay = (timeout) => {
+  return new Promise(resolve => {
+    setTimeout(resolve, timeout);
+  });
+}
 
 const confirmModal = (title, callback) => {
   Modal.confirm({
@@ -157,8 +162,10 @@ export default {
               ...plugins[pluginIndex].extradata
             };
             yield call(extraToolbarClickSendData, plugins[pluginIndex].routepath, params);
-            yield put({ type: 'init', payload: { entityId, recordId } });
             message.success('提交成功');
+            yield call(delay, 1000);
+            yield put({ type: 'init', payload: { entityId, recordId } });
+            yield put({ type: 'entcommHome/fetchRecordDetail' });
           } catch (e) {
             message.error(e.message || '提交失败');
           }
@@ -194,6 +201,7 @@ export default {
                 Status: plugins[pluginIndex].entity.extradata.status
               });
               message.success('提交成功');
+              yield call(delay, 1000);
               yield put({ type: 'init', payload: { entityId, recordId } });
               yield put({ type: 'entcommHome/fetchRecordDetail' });
             }
