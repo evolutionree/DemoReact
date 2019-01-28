@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { queryDepartmentData } from '../services/structure';
+import { queryDepartmentData, queryUsers } from '../services/structure';
 import { queryRegionData, queryDictionaries, queryProductTree, queryProductRaw } from '../services/basicdata';
 import { queryRoles } from '../services/role';
 import { getSeries } from "../services/products";
@@ -20,6 +20,7 @@ export default {
     roles: [],
     regionData: [],
     dictionaryData: {},
+    allUsers: [],
     products: [],
     productSerial: [],
     dataTimestamp: {}
@@ -40,6 +41,24 @@ export default {
         });
         yield put({ type: 'fetch' + key.replace(/^\S/, s => s.toUpperCase()) });
       }
+    },
+    *fetchAllUsers(action, { call, put }) {
+      const params = {
+        userName: '',
+        deptId: '7f74192d-b937-403f-ac2a-8be34714278b',
+        userPhone: '',
+        pageSize: 99999,
+        pageIndex: 1,
+        recStatus: 2
+      };
+      const { data: { pagedata } } = yield call(queryUsers, params);
+      yield put({
+        type: 'receiveData',
+        payload: {
+          data: pagedata,
+          key: 'allUsers'
+        }
+      });
     },
     *fetchDepartments(action, { call, put }) {
       const { data } = yield call(queryDepartmentData, { status: 0 });
