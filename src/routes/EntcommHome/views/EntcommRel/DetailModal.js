@@ -247,13 +247,14 @@ class DetailModal extends Component {
               excutingJSStatusChange={this.excutingJSStatusChange}
             />
           ) : (
-            <DynamicFormView
-              entityId={this.props.entityId}
-              entityTypeId={(this.props.detailData && this.props.detailData.rectype) || this.props.entityId}
-              fields={this.state.protocol}
-              value={this.state.detailData || {}}
-              cols={24}
-            />
+            this.props.visible ?
+              <DynamicFormView
+                entityId={this.props.entityId}
+                entityTypeId={(this.props.detailData && this.props.detailData.rectype) || this.props.entityId}
+                fields={this.state.protocol}
+                value={this.state.detailData || {}}
+                cols={24}
+              /> : null
           )}
         </Spin>
       </Modal>
