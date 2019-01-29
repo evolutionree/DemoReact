@@ -456,8 +456,8 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
         designateDataSourceByName: '',
         designateFilterDataSource: '',
         designateFilterDataSourceByName: '',
-        designateNodes: '',
-        designateFilterNodes: ''
+        designateNodes: [],
+        designateFilterNodes: []
       });
     };
 
