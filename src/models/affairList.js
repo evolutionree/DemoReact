@@ -1,5 +1,6 @@
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
+import moment from 'moment';
 import { getListData } from '../services/entcomm';
 import { queryMenus } from '../services/entity';
 
@@ -8,7 +9,10 @@ export default {
   state: {
     entityId: '00000000-0000-0000-0000-000000000001',
     menus: [],
-    queries: {},
+    queries: {
+      searchBegin: moment().format('YYYY-MM-DD'),
+      searchEnd: moment().add(1, 'd').format('YYYY-MM-DD')
+    },
     list: [],
     total: 0,
     currItems: [],
@@ -43,7 +47,7 @@ export default {
     },
     *queryList(action, { select, call, put, take }) {
       const { query } = yield select(({ routing }) => routing.locationBeforeTransitions);
-      let { menus, entityId } = yield select(({ affairList }) => affairList);
+      let { menus, entityId, queries: curParams } = yield select(({ affairList }) => affairList);
 
       if (!menus.length) {
         try {
@@ -70,13 +74,14 @@ export default {
           return;
         }
       }
-
+      
       const queries = {
         entityId,
         pageIndex: 1,
         pageSize: 10,
         menuId: menus[0].menuId,
         auditStatus: '-1',
+        ...curParams,
         ...query
       };
       queries.pageIndex = parseInt(queries.pageIndex);
@@ -157,7 +162,10 @@ export default {
       return {
         entityId: '00000000-0000-0000-0000-000000000001',
         menus: [],
-        queries: {},
+        queries: {
+          searchBegin: moment().format('YYYY-MM-DD'),
+          searchEnd: moment().add(1, 'd').format('YYYY-MM-DD')
+        },
         list: [],
         total: 0,
         currItems: [],
