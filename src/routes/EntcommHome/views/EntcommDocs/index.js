@@ -51,7 +51,8 @@ function EntcommDocs({
               application/xml-dtd,
               application/vnd.ms-excel,
               application/vnd.ms-powerpoint,
-              .csv,text/html,text/plain`
+              .csv,text/html,text/plain,
+              image/*`
             }>
             上传文档
          </UploadButton>
