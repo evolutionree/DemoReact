@@ -15,6 +15,8 @@ const { MonthPicker } = DatePicker;
 const dateFormat = 'YYYY-MM-DD';
 const monthFormat = 'YYYY-MM';
 
+const searchItemWidth = { minWidth: '200px', maxWidth: '300px' };
+
 class InputComponent extends Component {
   static propTypes = {
 
@@ -56,9 +58,9 @@ class InputComponent extends Component {
           sourceId: this.props.multichoosedatasource.datasource.sourceid
         }} onChange={(value) => { this.props.onChange(value) }} />
       case 7:
-        return <div style={{ width: '200px' }}><SelectProductBigData value={this.props.value} onChange={value => this.props.onChange(value) } {...this.props.multichoosedatasource} /></div>;
+        return <div style={searchItemWidth}><SelectProductBigData value={this.props.value} onChange={value => this.props.onChange(value) } {...this.props.multichoosedatasource} /></div>;
       case 8:
-        return <div style={{ width: '200px' }}><SelectProductSerial value={this.props.value} onChange={value => this.props.onChange(value) } {...this.props.multichoosedatasource} /></div>;
+        return <div style={searchItemWidth}><SelectProductSerial value={this.props.value} onChange={value => this.props.onChange(value) } {...this.props.multichoosedatasource} /></div>;
       case 9:
         return <MonthPicker value={this.props.value ? moment(this.props.value, monthFormat) : null} style={{ width: '120px' }} onChange={(date) => { this.props.onChange(date && date.format(monthFormat)) }} format={monthFormat} />;
       case 10:
