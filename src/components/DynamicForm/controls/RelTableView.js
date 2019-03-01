@@ -6,6 +6,11 @@ import { Table } from 'antd';
 import moment from 'moment';
 import { getGeneralProtocolForGrid } from '../../../services/entcomm';
 import DynamicFieldView from '../DynamicFieldView';
+import styles from './RelTable.less';
+
+const normalStyle = {
+  display: 'inline-block'
+};
 
 class RelTableView extends Component {
   static propTypes = {
@@ -92,9 +97,10 @@ class RelTableView extends Component {
   }
 
   render() {
+    const cellWidth = 100;
     const showFields = this.getShowFields();
     let columns = showFields.map((item, index) => {
-      return { title: item.displayname, width: 200, dataIndex: item.fieldname, key: item.fieldname, render: (text, record, rowIndex) => {
+      return { title: item.displayname, width: cellWidth, dataIndex: item.fieldname, key: item.fieldname, render: (text, record, rowIndex) => {
         // 先取 _name
         const text_name = record[item.fieldname + '_name'];
         // let cellText = text_name !== undefined ? text_name : text instanceof Object ? text.name : text;
@@ -103,16 +109,18 @@ class RelTableView extends Component {
         //   cellText = this.formatDate(text, item.formatstr);
         // }
         return (
-          <span>
+          <span style={{ ...normalStyle, width: cellWidth - 26 }}>
             <DynamicFieldView value={text} value_name={text_name} controlType={item.controltype} />
           </span>
         );
       }, fixed: showFields.length >= 6 ? (index < 1 ? 'left' : null) : null };
     })
 
-    const scroll = showFields.length >= 6 ? { x: showFields.length * 200, y: 400 } : { x: '100%' }
+    const scroll = showFields.length >= 6 ? { x: showFields.length * cellWidth, y: 400 } : { x: '100%' }
     return (
-      <Table rowKey="key" columns={columns} dataSource={this.parseValue()} pagination={false} scroll={{ ...scroll }} />
+      <div className={styles.tableView}>
+        <Table rowKey="key" columns={columns} dataSource={this.parseValue()} pagination={false} scroll={{ ...scroll }} />
+      </div>
     );
   }
 }

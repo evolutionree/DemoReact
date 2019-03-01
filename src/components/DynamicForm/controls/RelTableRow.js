@@ -15,13 +15,20 @@ class RelTableRow extends DynamicFormBase {
     //   'dynamic-form-field',
     //   'dynamic-form-field-' + field.controltype
     // ]);
+    let fieldType = '';
+    if ([8, 9, 1004, 1005, 1011].indexOf(field.controltype) > -1) { //日期
+      fieldType = 'dateForm';
+    } else if ([1, 6, 7, 10, 11, 12].indexOf(field.controltype) > -1) {
+      fieldType = 'textForm';
+    }
+
     return children => (
       <div
         key={field.fieldname}
         className={styles.td}
       >
         <Form.Item
-          className={styles.controlWrap}
+          className={classnames([styles.controlWrap, styles[fieldType]])}
           required={field.isrequire}
           labelCol={{ span: 0 }}
           wrapperCol={{ span: 24 }}

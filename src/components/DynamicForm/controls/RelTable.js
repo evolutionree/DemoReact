@@ -14,7 +14,7 @@ import RelTableBatchModal from '../RelTableBatchModal';
 import { getBackEndField_TO_FrontEnd } from '../../AppHeader/TemporaryStorage/formStorageUtils';
 import { queryEntityDetail } from '../../../services/entity';
 
-const TableMaxHeight = 400;
+const TableMaxHeight = document.body.clientHeight - 200;;
 
 class RelTable extends Component {
   static propTypes = {
@@ -699,7 +699,7 @@ class RelTable extends Component {
         const fixedLeftBody_Tds = fixedLeftBody[i].children[0].children;
         for (let j = 0; j < fixedLeftBody_Tds.length; j++) {
           fixedLeftBody_Tds[j].style.width = realHeader[j].getBoundingClientRect().width + 'px';
-          fixedLeftBody_Tds[j].children[0].style.width = realHeader[j].getBoundingClientRect().width - 21 + 'px';
+          fixedLeftBody_Tds[j].children[0].style.width = realHeader[j].getBoundingClientRect().width - 6 + 'px';
         }
       }
 
