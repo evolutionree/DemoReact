@@ -375,7 +375,7 @@ class EntcommAddModal extends Component {
             visible={showFormModal}
             onCancel={this.onFormModalCancel}
             onOk={this.onFormModalConfirm}
-            width={document.body.clientWidth > 1400 ? 1200 : 800}
+            width={document.body.clientWidth * 0.95}
             wrapClassName="DynamicFormModal"
             footer={[
               entityModelType === 0 ? <Checkbox key={entityId} onChange={this.checkboxChange} checked={entityFormDoneLink}>新增后跳转到页签</Checkbox> : null,

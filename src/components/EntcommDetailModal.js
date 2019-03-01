@@ -83,7 +83,7 @@ class EntcommDetailModal extends Component {
         onCancel={this.props.onCancel}
         onOk={this.props.onOk}
         footer={footer}
-        width={document.body.clientWidth > 1400 ? 1200 : 800}
+        width={document.body.clientWidth * 0.95}
         wrapClassName="DynamicFormModal"
         key={this.state.key}
       >

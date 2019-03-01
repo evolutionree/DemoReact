@@ -130,7 +130,7 @@ class SeriesFormModal extends Component {
         onCancel={this.props.cancel}
         onOk={this.submitForm}
         confirmLoading={this.props.modalPending || this.state.excutingJSLoading}
-        width={document.body.clientWidth > 1400 ? 1200 : 800}
+        width={document.body.clientWidth * 0.95}
       >
         <DynamicFormComponent
           ref={form => this.form = form}

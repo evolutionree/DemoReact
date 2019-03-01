@@ -241,7 +241,7 @@ class EntcommCopyModal extends Component {
           onCancel={this.onFormModalCancel}
           onOk={this.onFormModalConfirm}
           confirmLoading={confirmLoading || excutingJSLoading}
-          width={document.body.clientWidth > 1400 ? 1200 : 800}
+          width={document.body.clientWidth * 0.95}
           wrapClassName="DynamicFormModal"
         >
           {this.state.fetchDataSucced && <DynamicFormAdd

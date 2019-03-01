@@ -390,14 +390,22 @@ class DynamicFormBase extends Component {
     } else if (this.props.cols) {
       colNum = this.props.cols;
     } else {
-      colNum = document.body.clientWidth > 1400 ? 8 : 12;
+      if (document.body.clientWidth > 1500) {
+        colNum = 6;
+      } else if (document.body.clientWidth > 1100) {
+        colNum = 8;
+      } else {
+        colNum = 12;
+      }
     }
 
     const fieldControl = this.renderFieldControl(field);
 
     let className = '';
     if (this.getFormLayout() === 'horizontal' && !this.props.cols) { //TODO： 如果表单单元项 lable 和 formItem是横向布局， 有的单元项会占一行，导致lable的宽跟其他表单项对不齐  so...
-      if (document.body.clientWidth > 1400) {
+      if (document.body.clientWidth > 1500) {
+        className = colNum === 24 ? 'fourCol_onlylineFormItem' : '';
+      } else if (document.body.clientWidth > 1100) {
         className = colNum === 24 ? 'threeCol_onlylineFormItem' : '';
       } else {
         className = colNum === 24 ? 'twoCol_onlylineFormItem' : '';
