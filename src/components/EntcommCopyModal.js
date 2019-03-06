@@ -10,7 +10,7 @@ class EntcommCopyModal extends Component {
   static propTypes = {
     visible: PropTypes.bool.isRequired,
     entityTypes: PropTypes.array.isRequired,
-    onDone:PropTypes.func.isRequired,
+    onDone: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
     currentUser: PropTypes.object,
     copyData: PropTypes.object
@@ -40,11 +40,11 @@ class EntcommCopyModal extends Component {
       const { entityTypes } = nextProps;
       // 实体只有一个类型时，跳过类型选择
       console.log(nextProps)
-        this.setState({
-          showFormModal: true,
-          selectedEntityType: nextProps.copyData.rectype
-        });
-        this.fetchProtocol(nextProps.copyData.rectype);
+      this.setState({
+        showFormModal: true,
+        selectedEntityType: nextProps.copyData.rectype
+      });
+      this.fetchProtocol(nextProps.copyData.rectype);
     } else if (isClosing) {
       this.resetState();
     }
@@ -52,7 +52,7 @@ class EntcommCopyModal extends Component {
 
   onFormModalCancel = () => {
 
-      this.props.onCancel();
+    this.props.onCancel();
   };
 
 
@@ -65,12 +65,12 @@ class EntcommCopyModal extends Component {
         typeid: this.state.selectedEntityType,
         fieldData: values
       };
-      if(this.state.commonid){//客户引用 新增
-        params.extraData = {commonid:this.state.commonid};
+      if (this.state.commonid) {//客户引用 新增
+        params.extraData = { commonid: this.state.commonid };
       }
       this.setState({ confirmLoading: true });
       addEntcomm(params).then(result => {
-        this.setState({ confirmLoading: false });``
+        this.setState({ confirmLoading: false }); ``
         message.success('新增成功');
         this.props.onDone();
       }).catch(e => {
@@ -123,12 +123,12 @@ class EntcommCopyModal extends Component {
 
       const formData = genEditData(this.props.copyData, protocolFields)
       //基础的数据重新获取
-/*      const baseFormData = generateDefaultFormData(protocolFields);
-      const baseFormDataFields = Object.keys(baseFormData);
-        baseFormDataFields.map((item) => {
-            formData[item] = baseFormData[item]
-          }
-        );*/
+      /*      const baseFormData = generateDefaultFormData(protocolFields);
+            const baseFormDataFields = Object.keys(baseFormData);
+              baseFormDataFields.map((item) => {
+                  formData[item] = baseFormData[item]
+                }
+              );*/
       if (protocolFields.some(field => field.fieldname === 'recmanager')) {
         const { currentUser } = this.props;
         formData.recmanager = currentUser && currentUser.userid;
@@ -143,63 +143,63 @@ class EntcommCopyModal extends Component {
     });
   };
 
-/*  fetchDetailAndProtocol = (entityId, recordId) => {
-    let detailData = {};
-    let typeId = entityId;
-    getEntcommDetail({
-      entityId,
-      recId: recordId,
-      needPower: 1 // TODO 跑权限
-    }).then(result => {
-      let { detail } = result.data;
-      if (detail instanceof Array) {
-        detail = detail[0];
-      }
-      detailData = detail;
-      if (detail.rectype) {
-        typeId = detail.rectype;
-      }
-      return getGeneralProtocol({
-        typeId,
-        OperateType: 1
-      });
-    }).then(result => {
-      const protocol = result.data;
-      this.setState({
-        typeId,
-        protocol,
-        detailData,
-        formData: genEditData(detailData, protocol)
-      });
-    }).catch(err => {
-      message.error('获取协议或数据失败');
-    });
-    // fix 表格控件，加typeid
-    function genEditData(recordDetail, protocol) {
-      const retData = { ...recordDetail };
-      protocol.forEach(field => {
-        const { controltype, fieldname, fieldconfig } = field;
-        if (controltype === 24 && retData[fieldname]) {
-          retData[fieldname] = retData[fieldname].map(item => {
-            return {
-              TypeId: fieldconfig.entityId,
-              FieldData: item
-            };
-          });
+  /*  fetchDetailAndProtocol = (entityId, recordId) => {
+      let detailData = {};
+      let typeId = entityId;
+      getEntcommDetail({
+        entityId,
+        recId: recordId,
+        needPower: 1 // TODO 跑权限
+      }).then(result => {
+        let { detail } = result.data;
+        if (detail instanceof Array) {
+          detail = detail[0];
         }
+        detailData = detail;
+        if (detail.rectype) {
+          typeId = detail.rectype;
+        }
+        return getGeneralProtocol({
+          typeId,
+          OperateType: 1
+        });
+      }).then(result => {
+        const protocol = result.data;
+        this.setState({
+          typeId,
+          protocol,
+          detailData,
+          formData: genEditData(detailData, protocol)
+        });
+      }).catch(err => {
+        message.error('获取协议或数据失败');
       });
-      return retData;
-    }
-  };
-*/
-  setExtraData= (type, value) => {
+      // fix 表格控件，加typeid
+      function genEditData(recordDetail, protocol) {
+        const retData = { ...recordDetail };
+        protocol.forEach(field => {
+          const { controltype, fieldname, fieldconfig } = field;
+          if (controltype === 24 && retData[fieldname]) {
+            retData[fieldname] = retData[fieldname].map(item => {
+              return {
+                TypeId: fieldconfig.entityId,
+                FieldData: item
+              };
+            });
+          }
+        });
+        return retData;
+      }
+    };
+  */
+  setExtraData = (type, value) => {
     this.setState({
       commonid: value
     })
   };
   setFieldsConfig = (formData) => { //客户引用时 需要对部分字段(引用后填充值得字段)做禁用处理
     let protocolFields = this.state.protocolFields;
-    for (let i = 0 ; i < protocolFields.length ; i++) {
+    for (let i = 0; i < protocolFields.length; i++) {
       for (let key in formData) {
         if (protocolFields[i].fieldname === key) {
           protocolFields[i].fieldconfig.isReadOnly = 1;
@@ -207,7 +207,7 @@ class EntcommCopyModal extends Component {
       }
     }
     this.setState({
-      protocolFields : protocolFields
+      protocolFields: protocolFields
     })
   }
 
@@ -245,6 +245,7 @@ class EntcommCopyModal extends Component {
           wrapClassName="DynamicFormModal"
         >
           {this.state.fetchDataSucced && <DynamicFormAdd
+            origin="EntcommCopyModal"
             entityId={this.props.entityId}
             entityTypeId={selectedEntityType}
             fields={protocolFields}

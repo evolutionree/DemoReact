@@ -1,5 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import * as _ from 'lodash';
+import { is } from 'immutable';
 import { encryptPasswordSync } from '../../services/authentication';
 
 function equalUndefined(object, other) {
@@ -17,14 +18,23 @@ export default function createFormErrorsStore(WrappedFormComponent, isTable) {
         innerFormValue: this.getInnerFormValue({}, props.value || {})
       };
     }
+
     componentWillReceiveProps(nextProps) {
       const value = this.props.value;
       const nextValue = nextProps.value;
+      const { innerFormValue: stateValue } = this.state;
       if (_.isEqual(value, nextValue)) return;
 
       const innerFormValue = this.getInnerFormValue(value, nextValue);
+      
+      for (const key in innerFormValue) {
+        if (stateValue[key] && is(stateValue[key].value, innerFormValue[key].value)) {
+          return;
+        }
+      }
       this.setState({ innerFormValue });
     }
+
     getInnerFormValue = (value, nextValue) => {
       const innerFormValue = this.state ? { ...this.state.innerFormValue } : {};
       const keys = _.union(Object.keys(value), Object.keys(nextValue));
@@ -34,7 +44,8 @@ export default function createFormErrorsStore(WrappedFormComponent, isTable) {
         }
       });
       return innerFormValue;
-    };
+    }
+
     processRetValues = values => {
       const result = _.cloneDeep(values);
       const { fields } = this.props;
@@ -46,7 +57,8 @@ export default function createFormErrorsStore(WrappedFormComponent, isTable) {
         }
       });
       return result;
-    };
+    }
+
     validateFields = (...args) => {
       let opts = {};
       let callback;
@@ -95,7 +107,8 @@ export default function createFormErrorsStore(WrappedFormComponent, isTable) {
         // }
       });
       // }
-    };
+    }
+
     handleFormValueChange = formValue => {
       const removeUndefinedProps = obj => {
         if (!obj) return obj;
@@ -113,7 +126,8 @@ export default function createFormErrorsStore(WrappedFormComponent, isTable) {
           this.props.onChange(values);
         }
       });
-    };
+    }
+
     render() {
       const { value, onChange, excutingJSStatusChange, ...restProps } = this.props;
       return (

@@ -23,7 +23,7 @@ class DynamicField extends React.Component {
     fieldLabel: PropTypes.string,
     startValue: PropTypes.string,
     fieldId: PropTypes.string,
-    allowadd: PropTypes.Bool,
+    allowadd: PropTypes.bool,
     jsEngine: PropTypes.object
   };
   static defaultProps = {
@@ -77,6 +77,8 @@ class DynamicField extends React.Component {
       quoteHandler: this.props.quoteHandler,
       ref: instRef => { this.instRef = instRef; },
       jsEngine: this.props.jsEngine,
+      origin: this.props.origin,
+      OriginCopyAddForm: this.props.OriginCopyAddForm,
       ...this.props.config
     };
     let ControlComponent = controlMap[this.props.controlType];

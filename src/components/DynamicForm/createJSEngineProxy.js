@@ -62,7 +62,8 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     constructor(props) {
       super(props);
       this.state = {
-        fields: props.fields
+        fields: props.fields,
+        isFirst: true
       };
       this.setJS(props);
     }
@@ -161,16 +162,20 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     setGlobalJS = (JS) => {
+      const { OriginCopyAddForm, origin } = this.props;
+      const { isFirst } = this.state;
       if (this.props.cacheId) { //暂存表单 不走全局JS
         return;
       }
       let globalJS = '';
       const data = JS;
-      if (data) {
+      if (data && Object.keys(data).length) {
         let ftype = this.props.mode || formType;
         switch (ftype) {
           case FormTypes.ADD:
-            globalJS = data.newload;
+            //复制新增的时候  取 copyload 全局JS
+            globalJS = (OriginCopyAddForm || origin === 'EntcommCopyModal') ? (isFirst ? data.copyload : data.newload) : data.newload;
+            this.setState({ isFirst: false });
             break;
           case FormTypes.EDIT:
             globalJS = data.editload;

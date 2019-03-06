@@ -631,6 +631,7 @@ class RelTable extends Component {
           batchAddInfo_fieldname={batchAddInfo.field && batchAddInfo.field.fieldname}
           batchAddInfo_fieldid={batchAddInfo.field && batchAddInfo.field.fieldid}
           reloadTable={this.reloadTableRow}
+          OriginCopyAddForm={this.props.OriginCopyAddForm}
         />
       );
     });

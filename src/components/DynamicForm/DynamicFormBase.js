@@ -447,7 +447,7 @@ class DynamicFormBase extends Component {
 
   renderFieldControl = field => {
     const { entityTypeId, entityId, value } = this.props;
-    let { fieldconfig, fieldid, fieldname, displayname, dateStartValue, controltype, allowadd } = field;
+    let { fieldconfig, fieldid, fieldname, displayname, dateStartValue, controltype, allowadd = false } = field;
 
     const value_name = value[fieldname + '_name'] && value[fieldname + '_name'].value;
     if (fieldconfig && fieldconfig.isReadOnly !== 1 && (fieldconfig.isReadOnlyJS === 0 || fieldconfig.isReadOnlyJS === 1)) {
@@ -477,6 +477,7 @@ class DynamicFormBase extends Component {
         onFocus={this.onFieldFocus.bind(this, fieldname)}
         quoteHandler={this.handleQuote}
         jsEngine={this.props.jsEngine}
+        OriginCopyAddForm={this.props.origin === 'EntcommCopyModal'}
       />
     );
   };
