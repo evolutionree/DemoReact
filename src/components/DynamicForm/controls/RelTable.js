@@ -14,7 +14,7 @@ import RelTableBatchModal from '../RelTableBatchModal';
 import { getBackEndField_TO_FrontEnd } from '../../AppHeader/TemporaryStorage/formStorageUtils';
 import { queryEntityDetail } from '../../../services/entity';
 
-const TableMaxHeight = document.body.clientHeight - 200;;
+const TableMaxHeight = 500;
 
 class RelTable extends Component {
   static propTypes = {
