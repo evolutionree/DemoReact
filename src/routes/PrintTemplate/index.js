@@ -8,6 +8,7 @@ import Search from '../../components/Search';
 import Toolbar from '../../components/Toolbar';
 import PrintTemplateForm from './PrintTemplateForm';
 import TemplateRuleModal from './TemplateRuleModal';
+import UCodeModal from './UCodeModal';
 
 const Column = Table.Column;
 const Option = Select.Option;
@@ -42,6 +43,7 @@ class PrintTemplate extends Component {
       edit,
       del,
       openTemplateRule,
+      openUCode,
       toggleStatus
     } = this.props;
     const selectedEntity = _.find(entities, ['entityid', queries.entityId]);
@@ -82,7 +84,8 @@ class PrintTemplate extends Component {
                       show: () => currentItems[0].recstatus === 1 },
                     { label: '启用', handler: toggleStatus, single: true,
                       show: () => currentItems[0].recstatus === 0 },
-                    { label: '适用范围', handler: openTemplateRule }
+                    { label: '适用范围', handler: openTemplateRule },
+                    { label: 'U-Code', handler: openUCode }
                   ]}
                 >
                   <Select value={queries.recState} onChange={search.bind(null, 'recState')} style={{ width: '80px' }}>
@@ -118,6 +121,7 @@ class PrintTemplate extends Component {
         </div>
         <PrintTemplateForm />
         <TemplateRuleModal />
+        <UCodeModal />
       </Page>
     );
   }
@@ -159,6 +163,9 @@ export default connect(
       },
       openTemplateRule() {
         dispatch({ type: 'printTemplate/showModals', payload: 'templateRule' });
+      },
+      openUCode() {
+        dispatch({ type: 'printTemplate/showModals', payload: 'UCodeModal' });
       }
     };
   }

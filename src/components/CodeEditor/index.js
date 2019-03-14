@@ -41,6 +41,7 @@ class CodeEditor extends Component {
   componentDidMount() {
     const options = {
       lineNumbers: true,
+      autofocus: true,
       mode: 'javascript',
       gutters: ['CodeMirror-lint-markers'],
       lint: true,

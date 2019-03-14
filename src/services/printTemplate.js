@@ -113,3 +113,16 @@ export async function printEntity(params) {
     body: JSON.stringify(params)
   });
 }
+
+/**
+ * 配置js保存接口
+ * @param params
+ * { recid, ucode }
+ */
+export async function saveConfigJS(params) {
+  return request('api/printform/updateucode', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+

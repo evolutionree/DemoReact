@@ -13,22 +13,22 @@ import classnames from 'classnames';
 const FormItem = Form.Item;
 
 function DicPage({
-                     form: {
-                       getFieldDecorator,
-                       validateFields,
-                       resetFields
-                     },
-                   dispatch,
-                   dicTypes, //所有字典类型
-                   navList,  //字典类型的父级
-                   currentActiveId, //当前选择的字典类型的父级
-                   dicdata, //字典值列表
-                   currentDicType, //当前字典类型
-                   extConfig, //字典类型的扩展字段
-                   currentEditRowIndex, //哪一行在进行编辑操作
-                   handleSubmit, //新增字典值
-                   changeTypeHandler //切换显示字典类型的父级
-                   }) {
+  form: {
+    getFieldDecorator,
+    validateFields,
+    resetFields
+  },
+  dispatch,
+  dicTypes, //所有字典类型
+  navList,  //字典类型的父级
+  currentActiveId, //当前选择的字典类型的父级
+  dicdata, //字典值列表
+  currentDicType, //当前字典类型
+  extConfig, //字典类型的扩展字段
+  currentEditRowIndex, //哪一行在进行编辑操作
+  handleSubmit, //新增字典值
+  changeTypeHandler //切换显示字典类型的父级
+}) {
   const addParams = (e) => {
     e.preventDefault();
     validateFields((err, fieldsValue) => {
@@ -56,7 +56,7 @@ function DicPage({
       onOk: () => {
         dispatch({ type: 'dic/del', payload: rowData.dicid });
       },
-      onCancel() {}
+      onCancel() { }
     });
   }
 
@@ -64,7 +64,7 @@ function DicPage({
     dispatch({ type: 'dic/orderby', payload: list });
   }
 
-  let span = 8;
+  let span = 6;
   if (extConfig && extConfig instanceof Object) {
     let extConfigLength = Object.keys(extConfig).length;
     span = parseInt(24 / (3 + extConfigLength));
@@ -73,6 +73,11 @@ function DicPage({
     {
       key: 'recorder',
       name: '序号',
+      span: span
+    },
+    {
+      key: 'dataid',
+      name: '字典ID',
       span: span
     },
     {
@@ -87,14 +92,14 @@ function DicPage({
   ];
   if (extConfig && extConfig instanceof Object) {
     for (let key in extConfig) {
-        column.push({
-          key: key,
-          name: extConfig[key],
-          span: span,
-          render: (text, rowData, rowIndex) => {
-            return text;
-          }
-        });
+      column.push({
+        key: key,
+        name: extConfig[key],
+        span: span,
+        render: (text, rowData, rowIndex) => {
+          return text;
+        }
+      });
     }
   }
 
@@ -164,9 +169,9 @@ function DicPage({
       <div style={{ paddingLeft: currentActiveId ? '258px' : 0 }}>
         {
           currentActiveId ? <DragList dataSource={dicdata[currentActiveId]}
-                                      column={column}
-                                      onSortEnd={listSortEnd}
-                                      delayDragColumn={['operate']} /> : <DragList dataSource={dicdata} column={column} onSortEnd={listSortEnd} delayDragColumn={['operate']} />
+            column={column}
+            onSortEnd={listSortEnd}
+            delayDragColumn={['operate']} /> : <DragList dataSource={dicdata} column={column} onSortEnd={listSortEnd} delayDragColumn={['operate']} />
         }
       </div>
       <FormModal />

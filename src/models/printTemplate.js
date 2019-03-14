@@ -1,7 +1,10 @@
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
 import { query as queryEntities } from '../services/entity';
-import { queryPrintTemplates, addPrintTemplates, updatePrintTemplates, togglePrintTemplatesStatus, deletePrintTemplates } from '../services/printTemplate';
+import {
+  queryPrintTemplates, addPrintTemplates, updatePrintTemplates,
+  togglePrintTemplatesStatus, deletePrintTemplates, saveConfigJS
+} from '../services/printTemplate';
 
 export default {
   namespace: 'printTemplate',
@@ -54,7 +57,7 @@ export default {
       yield put({ type: 'putState', payload: { entitySearchKey: searchKey } });
       yield put({ type: 'queryEntities' });
     },
-    *selectEntity({ payload: entityId }, { put, select }) {
+    *selectEntity({ payload: entityId }, { put }) {
       yield put({ type: 'search', payload: { entityId: entityId } });
     },
     *search({ payload }, { select, put }) {
@@ -87,7 +90,7 @@ export default {
         message.error(e.message || '获取列表数据失败');
       }
     },
-    *save({ payload: data }, { select, call, put }) {
+    *save({ payload: data }, { call, put }) {
       yield put({ type: 'putState', payload: { modalPending: true } });
       try {
         if (data.recid) {
@@ -128,6 +131,21 @@ export default {
         yield put({ type: 'queryList' });
       } catch (e) {
         message.error(e.message || '操作失败');
+      }
+    },
+    *saveconfigJS({ payload: { recid, ucode } }, { put, call }) {
+      yield put({ type: 'modalPending', payload: true });
+      console.log(recid, ucode)
+      try {
+        const params = { recid, ucode };
+        yield call(saveConfigJS, params);
+        message.success('保存成功');
+        yield put({ type: 'modalPending', payload: false });
+        yield put({ type: 'showModals', payload: '' });
+        yield put({ type: 'queryList' });
+      } catch (e) {
+        message.error(e.message || '保存失败');
+        yield put({ type: 'modalPending', payload: false });
       }
     }
   },
