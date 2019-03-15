@@ -54,7 +54,7 @@ export async function getFunctionbutton(params) {
  * @param params url
  * @returns {Promise.<Object>}
  */
-export async function dynamicRequest(url,params) {
+export async function dynamicRequest(url, params) {
   return request(url, {
     method: 'post',
     body: JSON.stringify(params)

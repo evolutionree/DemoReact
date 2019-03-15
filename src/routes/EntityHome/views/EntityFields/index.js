@@ -1,9 +1,10 @@
 import React from 'react';
 import { connect } from 'dva';
 import _ from 'lodash';
-import { Button, Table, Dropdown, Menu, Icon, Popconfirm, Modal } from 'antd';
+import { Button, Table, Icon, Popconfirm, Tooltip } from 'antd';
+import { copyNode } from '../../../../utils';
 import Toolbar from '../../../../components/Toolbar';
-import IntlText from '../../../../components/UKComponent/Form/IntlText';
+import IntlEdittableCell from '../../../../components/UKComponent/Form/IntlEdittableCell';
 import FieldFormModal from './FieldFormModal';
 import { fieldModels } from '../../controlTypes';
 import FieldSortModal from './FieldSortModal';
@@ -64,22 +65,6 @@ function EntityFields({
   modalPending,
   formValues
 }) {
-  function handleMenuClick(record, event) {
-    if (event.key === '1') {
-      dispatch({ type: 'entityFields/edit', payload: record });
-    } else if (event.key === '2') {
-      dispatch({ type: 'entityFields/editExpandJS', payload: { record } });
-    } else if (event.key === '3') {
-      dispatch({ type: 'entityFields/editExpandJS', payload: { record, type: 'filter' } });
-    } else if (event.key === '4') {
-      Modal.confirm({
-        title: '您确定删除该记录吗？',
-        onOk() {
-          dispatch({ type: 'entityFields/del', payload: record.fieldid });
-        }
-      });
-    }
-  }
   function handleAdd() {
     dispatch({ type: 'entityFields/add' });
   }
@@ -127,75 +112,128 @@ function EntityFields({
   function setCheckRepeatFields() {
     dispatch({ type: 'entityFields/showModals', payload: 'checkRepeatConfig' });
   }
+  function editConfigJS(record, type) {
+    const params = { record, type };
+    dispatch({ type: 'entityFields/editExpandJS', payload: params });
+  }
+  function editField(record) {
+    dispatch({ type: 'entityFields/edit', payload: record });
+  }
+  function delField(record) {
+    dispatch({ type: 'entityFields/del', payload: record.fieldid });
+  }
+
+  const flag = <span>[<Icon type="check" />]</span>;
+
   const columns = [
-    { title: '序号',
+    {
+      title: '序号',
       dataIndex: 'row_number',
       width: 60,
-      key: 'row_number' },
-    { title: '字段名称',
-      dataIndex: 'fieldlabel',
-      width: 160,
-      key: 'fieldlabel',
-      render: (text, record) => <IntlText value={text} value_lang={record.fieldlabel_lang} />
+      key: 'row_number',
+      render: (text, record) => (
+        <div>
+          {copyNode(record.fieldid, 'fieldid')}
+          {text}
+        </div>
+      )
     },
-    { title: '显示名称',
+    {
+      title: '显示名称',
       dataIndex: 'displayname',
-      width: 160,
+      width: 280,
       key: 'displayname',
-      render: (text, record) => <IntlText value={text} value_lang={record.displayname_lang} /> },
-    { title: '格式',
+      render: (text, record) => {
+        return (
+          <IntlEdittableCell
+            placeholder="显示名称"
+            fieldname="displayname"
+            record={record}
+            api="/api/EntityPro/updateentityfieldname"
+            maxLength={20}
+          />
+        );
+      }
+    },
+    {
+      title: '格式',
       dataIndex: 'controltype',
       key: 'controltype',
-      width: 100,
-      render: val => getCtrlNameByType(val) },
-    { title: '字段类型',
+      width: 120,
+      render: val => getCtrlNameByType(val)
+    },
+    {
+      title: '字段类型',
       dataIndex: 'fieldtype',
       width: 100,
       key: 'fieldtype',
-      render: val => (['系统字段', '默认字段', '自定义字段'][val]) },
-    { title: '字段列名',
+      render: val => (['系统字段', '默认字段', '自定义字段'][val])
+    },
+    {
+      title: '字段列名',
       dataIndex: 'fieldname',
-      key: 'fieldname' },
-    { title: '状态',
+      key: 'fieldname'
+    },
+    {
+      title: '状态',
       dataIndex: 'recstatus',
       width: 80,
       key: 'recstatus',
-      render: val => (['禁用', '启用'][val]) },
-    { title: '配置JS',
+      render: val => (['禁用', '启用'][val])
+    },
+    {
+      title: '配置JS',
       dataIndex: 'expandjs',
       key: 'expandjs',
-      width: 70,
-      render: (val) => {
-        return val ? <Icon type="check" /> : null;
-      } },
-    { title: '过滤JS',
+      width: 80,
+      render: (val, record) => {
+        return (
+          <div>
+            <a href="javascript:;" onClick={editConfigJS.bind(this, record)}>编辑</a> &nbsp;
+            {val ? flag : null}
+          </div>
+        );
+      }
+    },
+    {
+      title: '过滤JS',
       dataIndex: 'filterjs',
       key: 'filterjs',
-      width: 70,
-      render: (val) => {
-        return val ? <Icon type="check" /> : null;
-      } },
-    { title: '操作',
-      key: 'operation',
-      width: 100,
+      width: 80,
       render: (val, record) => {
-        const menu = (
-          <Menu onClick={(e) => handleMenuClick(record, e)}>
-            <Menu.Item key="1">编辑</Menu.Item>
-            {record.controltype !== 20 && <Menu.Item key="2">配置脚本</Menu.Item>}
-            {record.controltype !== 20 && <Menu.Item key="3">配置过滤脚本</Menu.Item>}
-            {record.fieldtype === 2 && <Menu.Item key="4">删除</Menu.Item>}
-          </Menu>
-        );
         return (
-          <Dropdown overlay={menu}>
-            <Button size="default" type="default" style={{ border: 'none' }}>
-              <Icon style={{ marginRight: 2 }} type="bars" />
-              <Icon type="down" />
-            </Button>
-          </Dropdown>
+          <div>
+            <a href="javascript:;" onClick={editConfigJS.bind(this, record, 'filter')}>编辑</a> &nbsp;
+            {val ? flag : null}
+          </div>
         );
-      } }
+      }
+    },
+    {
+      title: '操作',
+      key: 'operation',
+      width: 90,
+      render: (val, record) => {
+        return (
+          <div>
+            <a href="javascript:;" onClick={editField.bind(this, record)}>编辑</a>
+            {
+              record.fieldtype === 2 &&
+              <span>
+                &nbsp;<span style={{ opacity: 0.4 }}>|</span>&nbsp;
+                <Popconfirm
+                  placement="left"
+                  title="您确定删除该记录吗？"
+                  onConfirm={delField.bind(this, record)}
+                >
+                  <a href="javascript:;">删除</a>
+                </Popconfirm>
+              </span>
+            }
+          </div>
+        );
+      }
+    }
   ];
 
   const btns = showBtns(entityType);

@@ -54,14 +54,6 @@ function FieldForm({ form, isEdit, entityFields, entityId }) {
           </Select>
         )}
       </FormItem>
-      <FormItem label="字段名称" key="fieldLabel">
-        {getFieldDecorator('fieldlabel_lang', {
-          rules: [
-            { required: true, message: '关联对象显示字段' },
-            { validator: IntlInputRequireValidator }
-          ]
-        })(<IntlInput placeholder="字段名称" maxLength={20} />)}
-      </FormItem>
       <FormItem label="显示名称" key="displayName">
         {getFieldDecorator('displayname_lang', {
 

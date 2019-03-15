@@ -3,7 +3,7 @@ import { routerRedux } from 'dva/router';
 import { query as queryEntities } from '../services/entity';
 import {
   queryPrintTemplates, addPrintTemplates, updatePrintTemplates,
-  togglePrintTemplatesStatus, deletePrintTemplates, saveConfigJS
+  togglePrintTemplatesStatus, deletePrintTemplates, saveConfigJS, haspaaspermission
 } from '../services/printTemplate';
 
 export default {
@@ -16,13 +16,15 @@ export default {
     entitySearchKey: '',
     entities: [],
     showModals: '',
-    modalPending: false
+    modalPending: false,
+    Haspaaspermission: false
   },
   subscriptions: {
     setup({ dispatch, history }) {
       return history.listen(location => {
         if (location.pathname === '/print-template') {
           dispatch({ type: 'queryList' });
+          dispatch({ type: 'Haspaaspermission' });
         } else {
           dispatch({ type: 'resetState' });
         }
@@ -38,7 +40,8 @@ export default {
           pageSize: 999,
           status: 1,
           entityName: entitySearchKey || '',
-          typeId: -1
+          typeId: -1,
+          typeids: '0,1'
         };
         const { data } = yield call(queryEntities, params);
         const entities = data.pagedata.filter(item => item.modeltype === 0 || item.modeltype === 2);
@@ -135,7 +138,7 @@ export default {
     },
     *saveconfigJS({ payload: { recid, ucode } }, { put, call }) {
       yield put({ type: 'modalPending', payload: true });
-      console.log(recid, ucode)
+
       try {
         const params = { recid, ucode };
         yield call(saveConfigJS, params);
@@ -143,6 +146,16 @@ export default {
         yield put({ type: 'modalPending', payload: false });
         yield put({ type: 'showModals', payload: '' });
         yield put({ type: 'queryList' });
+      } catch (e) {
+        message.error(e.message || '保存失败');
+        yield put({ type: 'modalPending', payload: false });
+      }
+    },
+    *Haspaaspermission(_, { put, call }) {
+      try {
+        const params = {};
+        const { data: Haspaaspermission } = yield call(haspaaspermission, params);
+        yield put({ type: 'putState', payload: { Haspaaspermission } });
       } catch (e) {
         message.error(e.message || '保存失败');
         yield put({ type: 'modalPending', payload: false });

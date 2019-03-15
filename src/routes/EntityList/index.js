@@ -2,8 +2,8 @@ import React from 'react';
 import { connect } from 'dva';
 import { routerRedux, Link } from 'dva/router';
 import _ from 'lodash';
-import { Select, Button, Table, Dropdown, Tooltip, Icon, Modal, message } from 'antd';
-import copy from 'copy-to-clipboard';
+import { Select, Button, Table, Dropdown, Tooltip, Icon, Modal } from 'antd';
+import { copyNode } from '../../utils';
 import Page from '../../components/Page';
 import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
@@ -71,11 +71,6 @@ function EntityList({
     dispatch({ type: 'entityList/showModals', payload: 'import' });
   }
 
-  function copyAction(text) {
-    copy(text);
-    message.success(`已复制 [${text}] 到剪切板`);
-  }
-
   // function handleAdd() {
   //   dispatch({ type: 'entityList/add' });
   // }
@@ -98,13 +93,7 @@ function EntityList({
       render: (text, record) => {
         const renderIntlText = <IntlText value={text} value_lang={record.entityname_lang} />;
         const node = (<div style={{ minWidth: 56 }}>
-          <Tooltip title="点击复制entityid">
-            <Icon
-              type="copy"
-              style={{ cursor: 'pointer', marginRight: 5 }}
-              onClick={copyAction.bind(this, record.entityid)}
-            />
-          </Tooltip>
+          {copyNode(record.entityid, 'entityid')}
           {
             checkFunc('EntityDetail')
               ? <Link to={`/entity-config/${record.entityid}/${record.modeltype}`}>{renderIntlText}</Link>
@@ -114,7 +103,7 @@ function EntityList({
         return node;
       }
     },
-    { title: '实体表', key: 'entitytable', width: 250 },
+    { title: '实体表', key: 'entitytable', width: 250, render: text => <div>{copyNode(text, '实体表名')} {text}</div> },
     { title: '实体类型', key: 'modeltype', width: 80, render: text => tooltipElements(getTypeName(text), 80, '实体类型') },
     { title: '关联实体', key: 'relentityname', width: 180 },
     // { title: '状态', key: 'recstatus', width: 110, render: text => ['停用', '启用'][text] },

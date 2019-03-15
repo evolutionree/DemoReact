@@ -1,10 +1,14 @@
+import React from 'react';
 import draftToHtml from 'draftjs-to-html';
+import { Modal, message, Tooltip, Icon } from 'antd';
+import * as _ from 'lodash';
 import moment from 'moment';
+import copy from 'copy-to-clipboard';
 import htmlToDraft from 'html-to-draftjs';
 import { convertToRaw, EditorState, ContentState } from 'draft-js';
+
 import { photoCompress } from './photoCompress';
-import * as _ from 'lodash';
-import { Modal } from 'antd';
+
 const confirm = Modal.confirm;
 export function checkIsDev() {
   let uke_dev = window.uke_dev;
@@ -44,6 +48,28 @@ export function convertHtmlToEditorState(html) {
 }
 export function convertEditorStateToHtml(editorState) {
   return draftToHtml(convertToRaw(editorState.getCurrentContent()));
+}
+
+/**
+ * 复制到剪贴板
+ * @param text
+ * @returns {*}
+ */
+export function copyAction(text) {
+  copy(text);
+  message.success(`已复制 [${text}] 到剪切板`);
+}
+
+export function copyNode(text, name) {
+  return (
+    <Tooltip title={`点击复制${name}`}>
+      <Icon
+        type="copy"
+        style={{ cursor: 'pointer', marginRight: 5 }}
+        onClick={() => copyAction(text)}
+      />
+    </Tooltip>
+  );
 }
 
 /**
@@ -218,7 +244,7 @@ export function customertransformArrayToTree(array, idKey = 'id') {
  */
 export function GetArgsFromHref(sArgName) {
   let sHref = window.location;
-  let args = sHref.toString().split( "?" );
+  let args = sHref.toString().split("?");
   let retval = '';
   if (args[0] == sHref) /*参数为空*/ {
     return retval;
@@ -266,22 +292,22 @@ function filterTreeByPathSearch(treeData, pathSearches) {
       let childrenConPaths = [];
 
       // if (node.recstatus !== 0) {
-        conPaths.forEach(item => {
-          const { path: conPath, includeSubNode = false } = item;
-          if (_.isEqual(nodePath, conPath)) { // ['广东省', '广州市'] equal ['广东省', '广州市']
-            show = true;
-            selectable = true;
-            if (!includeSubNode) {
-              showChildren = false;
-              forceShowChildren = false;
-            } else {
-              forceShowChildren = true;
-            }
-          } else if (startWith(conPath, nodePath)) {
-            childrenConPaths.push(item);
-            show = true;
+      conPaths.forEach(item => {
+        const { path: conPath, includeSubNode = false } = item;
+        if (_.isEqual(nodePath, conPath)) { // ['广东省', '广州市'] equal ['广东省', '广州市']
+          show = true;
+          selectable = true;
+          if (!includeSubNode) {
+            showChildren = false;
+            forceShowChildren = false;
+          } else {
+            forceShowChildren = true;
           }
-        });
+        } else if (startWith(conPath, nodePath)) {
+          childrenConPaths.push(item);
+          show = true;
+        }
+      });
       // }
 
       if (show) {
@@ -461,7 +487,7 @@ export function uploadImg(uploadObj, onSuccess, isProvideCompress = true) { //is
 
   function photoCompressAjax() {
     if (uploadObj.file.size / 1024 > 600) { //大于600/1024 M，进行压缩上传
-      photoCompress(uploadObj.file, function(imgBlob) {
+      photoCompress(uploadObj.file, function (imgBlob) {
         AjaxFileData(imgBlob);
       });
     } else {

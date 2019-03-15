@@ -1,15 +1,14 @@
 /**
  * Created by 0291 on 2018/7/16.
  */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
 import { Input, Icon } from 'antd';
-import { connect } from 'dva';
 import classnames from 'classnames';
 import MD5 from 'md5';
 import { translateMap } from '../util/BaiduTranslate';
 import styles from './IntlInput.less';
 
-let langlist = JSON.parse(window.localStorage.getItem('langlist')) || [];
+const langlist = JSON.parse(window.localStorage.getItem('langlist')) || [];
 
 const CN = 'CN';
 
@@ -30,8 +29,8 @@ class IntlInput extends Component {
     this.state = {
       panelVisible: false,
       currentLocale: langlist[0] && langlist[0].key,
-      value: this.transformValue(this.props.value),
-      inputValue: this.transformValue(this.props.value)[langlist[0] && langlist[0].key] || ''
+      value: this.transformValue(props.value),
+      inputValue: this.transformValue(props.value)[langlist[0] && langlist[0].key] || ''
     };
   }
 
@@ -63,8 +62,8 @@ class IntlInput extends Component {
   }
 
   validator = (rule, value, callback) => {
-    let langlist = JSON.parse(window.localStorage.getItem('langlist'));
-    langlist instanceof Array && langlist.map(item => {
+    const relanglist = JSON.parse(window.localStorage.getItem('langlist'));
+    relanglist instanceof Array && relanglist.forEach(item => {
       if (!(value && value[item.key])) {
         callback(item.dispaly + '必填');
       }
@@ -73,7 +72,7 @@ class IntlInput extends Component {
   }
 
   transformValue = (value) => { //兼容 国际化开发前的 数据
-    return typeof value === 'string' ? { cn: value } : value ? value : {};
+    return typeof value === 'string' ? { cn: value } : value || {};
   }
 
   focus = () => {
@@ -102,14 +101,15 @@ class IntlInput extends Component {
         [this.state.currentLocale]: e.target.value
       },
       inputValue: e.target.value,
-      panelVisible: this.state.value ? false : true
+      panelVisible: !this.state.value
     });
   }
 
   translateCNToOtherLang = (text, translate_lang, fromLang, toLang) => {
-    if (!text) {
-      return;
-    }
+    const { onChange } = this.props;
+
+    if (!text) return;
+
     const appid = '20180727000189469';
     const key = 'lTvPvTz1SzUqP1Lmjeoo';
     const salt = (new Date()).getTime();
@@ -134,11 +134,11 @@ class IntlInput extends Component {
       success: (result) => { //[{src: "中国", dst: "China"}]
         const data = result.trans_result;
         if (data) {
-          let val = {
+          const val = {
             ...this.state.value,
             [translate_lang]: data instanceof Array && data[0].dst
           };
-          this.props.onChange && this.props.onChange(val);
+          if (onChange) onChange(val);
         } else {
           console.error('翻译出错，错误码：' + result.error_code + '|' + result.error_msg);
         }
@@ -150,36 +150,40 @@ class IntlInput extends Component {
   }
 
   inputBlur = (e) => {
-    for (let i = 0; i < langlist.length; i++) { //翻译其他 语言
+    const { onChange } = this.props;
+    for (let i = 0; i < langlist.length; i += 1) { //翻译其他 语言
       const translate_lang = langlist[i].key;
       if (translateMap[translate_lang.toLocaleUpperCase()] && !this.state.value[translate_lang]) { //要翻译的语言版本 值还为空的时候 允许自动翻译
         this.translateCNToOtherLang(e.target.value, translate_lang, translateMap[this.state.currentLocale.toUpperCase()], translateMap[translate_lang.toLocaleUpperCase()]);
       }
     }
 
-    let val = {
+    const val = {
       ...this.state.value,
       [this.state.currentLocale]: e.target.value
     };
-    this.props.onChange && this.props.onChange(val);
+    if (onChange) onChange(val);
   }
 
   render() {
+    const { onPressEnter, placeholder, disabled, maxLength, className } = this.props;
+
     return (
-      <div className={classnames(styles.wrap, this.props.className)} id="dropdownPanel">
+      <div className={classnames(styles.wrap, className)} id="dropdownPanel">
         <Input onChange={this.inputChange}
-               onBlur={this.inputBlur}
-               ref={ref => this.inputRef = ref}
-               value={this.state.inputValue}
-               maxLength={this.state.currentLocale.toUpperCase() === CN ? this.props.maxLength : null}
-               placeholder={this.props.placeholder}
-               disabled={this.props.disabled}
-               addonAfter={
-                 <div onClick={this.openPanel} className={styles.inputAddoAfter}>
-                   {this.state.currentLocale.toUpperCase()}
-                   <Icon type="down" style={{ transform: this.state.panelVisible ? 'scale(0.75) rotate(180deg)' : 'scale(0.75) rotate(0deg)' }} />
-                 </div>
-               } />
+          onBlur={this.inputBlur}
+          onPressEnter={onPressEnter}
+          ref={ref => this.inputRef = ref}
+          value={this.state.inputValue}
+          maxLength={this.state.currentLocale.toUpperCase() === CN ? maxLength : null}
+          placeholder={placeholder}
+          disabled={disabled}
+          addonAfter={
+            <div onClick={this.openPanel} className={styles.inputAddoAfter}>
+              {this.state.currentLocale.toUpperCase()}
+              <Icon type="down" style={{ transform: this.state.panelVisible ? 'scale(0.75) rotate(180deg)' : 'scale(0.75) rotate(0deg)' }} />
+            </div>
+          } />
         <div className={classnames(styles.dropdownPanel, { [styles.visible]: this.state.panelVisible })}>
           <ul>
             {

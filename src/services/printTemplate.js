@@ -126,3 +126,15 @@ export async function saveConfigJS(params) {
   });
 }
 
+/**
+ * 校验ucode按钮权限接口
+ * @param params
+ * {}
+ */
+export async function haspaaspermission(params) {
+  return request('api/account/haspaaspermission', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+

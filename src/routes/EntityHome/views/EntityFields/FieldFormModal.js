@@ -127,17 +127,15 @@ class FieldFormModal extends Component {
         message.error('加密文本不支持扫描功能，请检查');
         return;
       }
-      let newValues = {};
-      for (let key in values) { //把dataSource_开头的的key值 替换成【dataSource】(表单中有部分字段是动态切换的 出现了字段名一样的数据 所有加_以区分 不然ant design会报错，说校验规则变为undefined 具体原因不详)
+      const newValues = {};
+      for (const key in values) { //把dataSource_开头的的key值 替换成【dataSource】(表单中有部分字段是动态切换的 出现了字段名一样的数据 所有加_以区分 不然ant design会报错，说校验规则变为undefined 具体原因不详)
         let newKey = key;
         if (/^dataSource_/.test(key)) newKey = 'dataSource';
         newValues[newKey] = values[key];
-        if (/^displayname_lang$/.test(newKey) && newValues[newKey]) {
-          Object.keys(newValues[newKey]).some(item => (newValues[newKey][item] === '')) &&
-            (newValues[newKey] = { ...newValues.fieldlabel_lang });
+        if (/^displayname_lang$/.test(newKey)) {
+          newValues.fieldlabel_lang = newValues[newKey]; // 传参时需要有 fieldlabel_lang 字段
         }
       }
-
       const newVal = processFormValues(newValues, editingRecord, isEdit);
       this.props.onOk(newVal, () => { });
     });

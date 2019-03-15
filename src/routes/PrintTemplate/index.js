@@ -44,7 +44,8 @@ class PrintTemplate extends Component {
       del,
       openTemplateRule,
       openUCode,
-      toggleStatus
+      toggleStatus,
+      Haspaaspermission
     } = this.props;
     const selectedEntity = _.find(entities, ['entityid', queries.entityId]);
     return (
@@ -85,7 +86,7 @@ class PrintTemplate extends Component {
                     { label: '启用', handler: toggleStatus, single: true,
                       show: () => currentItems[0].recstatus === 0 },
                     { label: '适用范围', handler: openTemplateRule },
-                    { label: 'U-Code', handler: openUCode }
+                    { label: 'U-Code', handler: openUCode, show: () => Haspaaspermission }
                   ]}
                 >
                   <Select value={queries.recState} onChange={search.bind(null, 'recState')} style={{ width: '80px' }}>
