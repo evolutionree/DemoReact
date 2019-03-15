@@ -657,30 +657,20 @@ class RelTable extends Component {
       //列表的固定表头的列
       const fixedTopHeader = this.fixTopTableRef.children[0].children[0].children;
 
-      this.fixTopTableRef.style.width = this.relTableRef.getBoundingClientRect().width + 'px';
       //顶部固定表格的列宽 需与真实表格保持一致
-      for (let i = 0; i < realHeader.length; i++) {
-        let realHeader_thWidth = realHeader[i].getBoundingClientRect().width;
-        let fixedTopHeader_thWidth = fixedTopHeader[i].getBoundingClientRect().width;
-
-        let realHeader_thHeight = realHeader[i].getBoundingClientRect().height;
-        let fixedTopHeader_thHeight = fixedTopHeader[i].getBoundingClientRect().height;
-        if (realHeader_thWidth !== fixedTopHeader_thWidth || realHeader_thHeight !== fixedTopHeader_thHeight) {
-          fixedTopHeader[i].style.width = realHeader_thWidth + 'px';
-          fixedTopHeader[i].style.height = realHeader_thHeight + 'px';
+      setTimeout(() => {
+        for (let i = 0; i < realHeader.length; i++) {
+          let realHeader_thWidth = realHeader[i].getBoundingClientRect().width;
+          let fixedTopHeader_thWidth = fixedTopHeader[i].getBoundingClientRect().width;
+          let realHeader_thHeight = realHeader[i].getBoundingClientRect().height;
+          let fixedTopHeader_thHeight = fixedTopHeader[i].getBoundingClientRect().height;
+          if (realHeader_thWidth !== fixedTopHeader_thWidth || realHeader_thHeight !== fixedTopHeader_thHeight) {
+            fixedTopHeader[i].style.maxWidth = realHeader_thWidth + 'px';
+            fixedTopHeader[i].style.width = realHeader_thWidth + 'px';
+            fixedTopHeader[i].style.height = realHeader_thHeight + 'px';
+          }
         }
-      }
-
-      //是否存在横 纵向滚动条
-      const vertical = this.hasScrolled(this.relTableWrapRef);
-      const horizontal = this.hasScrolled(this.relTableWrapRef, 'horizontal');
-
-      let scrollWidth = 0;
-      if (vertical) {
-        scrollWidth = this.getScrollWidth();
-      }
-      this.fixTopWrapRef.style.width = `calc(100% - ${scrollWidth}px)`;
-      this.fixTopWrapRef.style.height = this.relTableWrapRef.children[0].children[0].getBoundingClientRect().height + 1 + 'px';
+      }, 300)
 
       //列表的原始表头的行
       const realBody = this.relTableRef.children;
@@ -712,12 +702,25 @@ class RelTable extends Component {
       }
       this.fixLeftWrapRef.style.width = fixedWidth + 'px';
 
+      //是否存在横 纵向滚动条
+      const vertical = this.hasScrolled(this.relTableWrapRef);
+      const horizontal = this.hasScrolled(this.relTableWrapRef, 'horizontal');
+
+      let scrollWidth = 0;
+      if (vertical) {
+        scrollWidth = this.getScrollWidth();
+      }
+
       let scrollHeight = 0;
       if (horizontal) {
         scrollHeight = this.getScrollWidth();
       }
       this.fixLeftWrapRef.style.height = this.relTableWrapRef.getBoundingClientRect().height - scrollHeight + 'px';
       this.fixLeftWrapRef.style.maxHeight = TableMaxHeight - scrollHeight + 'px';
+
+      this.fixTopWrapRef.style.width = `calc(100% - ${scrollWidth}px)`;
+      this.fixTopWrapRef.style.height = this.relTableWrapRef.children[0].children[0].getBoundingClientRect().height + 1 + 'px';
+      this.fixTopTableRef.style.width = this.relTableRef.getBoundingClientRect().width + 'px';
     } catch (e) {
       console.error(e);
     }
