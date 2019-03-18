@@ -24,7 +24,6 @@ export default {
       return history.listen(location => {
         if (location.pathname === '/print-template') {
           dispatch({ type: 'queryList' });
-          dispatch({ type: 'Haspaaspermission' });
         } else {
           dispatch({ type: 'resetState' });
         }
@@ -34,6 +33,8 @@ export default {
   effects: {
     *queryEntities({ payload: selectEntityId }, { select, call, put }) {
       try {
+        yield put({ type: 'Haspaaspermission' });
+
         const { entitySearchKey } = yield select(state => state.printTemplate);
         const params = {
           pageIndex: 1,
@@ -157,7 +158,7 @@ export default {
         const { data: Haspaaspermission } = yield call(haspaaspermission, params);
         yield put({ type: 'putState', payload: { Haspaaspermission } });
       } catch (e) {
-        message.error(e.message || '保存失败');
+        message.error(e.message || '请求失败');
         yield put({ type: 'modalPending', payload: false });
       }
     }
