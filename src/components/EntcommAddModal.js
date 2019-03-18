@@ -79,9 +79,10 @@ class EntcommAddModal extends Component {
         });
         this.fetchProtocol(nextProps.entityTypeId);
       } else if (!entityTypes || entityTypes.length === 1) { // 实体只有一个类型时，跳过类型选择
+        const selectedEntityType = Array.isArray(entityTypes) && entityTypes.length === 1 ? entityTypes[0].categoryid : entityId;
         this.setState({
           showFormModal: true,
-          selectedEntityType: entityId
+          selectedEntityType: selectedEntityType
         });
         this.fetchProtocol(entityId);
       } else if (entityTypes.length > 1) {
