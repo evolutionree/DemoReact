@@ -146,7 +146,7 @@ export default {
       try {
         const admin = /admin/.test(location.pathname);
         const paas = /paas/.test(location.pathname);
-        const type = admin ? 1 : (paas ? 1 : 0);
+        const type = admin ? 1 : (paas ? 2 : 0);
 
         const result = yield call(getGlobalMenus, type);
 
