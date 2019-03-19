@@ -266,7 +266,7 @@ class WorkflowDesign extends Component {
   };
 
   submit = () => {
-    let flowNodePosition = {};
+    const flowNodePosition = {};
     const flowNodes = this.flowNodeWrap.children;
     for (let i = 0; i < flowNodes.length; i++) {
       const flowNodeId = flowNodes[i].id.replace('workflow-', '');
@@ -320,14 +320,14 @@ class WorkflowDesign extends Component {
           <FlowBranchConditionModal />
         </FlowContainer>
         {!flowSteps.length &&
-        <Button onClick={this.props.newFlow} style={{ position: 'absolute', right: '130px', top: '30px' }}>
+        <Button onClick={this.props.newFlow} style={{ position: 'absolute', right: '130px', top: '30px', zIndex: 1 }}>
           生成
         </Button>}
         {!!flowSteps.length &&
-        <Button onClick={this.props.createNode} style={{ position: 'absolute', right: '130px', top: '30px' }}>
+        <Button onClick={this.props.createNode} style={{ position: 'absolute', right: '130px', top: '30px', zIndex: 1 }}>
           添加节点
         </Button>}
-        <Button onClick={this.submit} style={{ position: 'absolute', right: '50px', top: '30px' }}>保存</Button>
+        <Button onClick={this.submit} style={{ position: 'absolute', right: '50px', top: '30px', zIndex: 1 }}>保存</Button>
       </div>
     );
   }
