@@ -1,6 +1,5 @@
 import React from 'react';
 import { Checkbox, Form } from 'antd';
-import _ from 'lodash';
 import classnames from 'classnames';
 import DynamicFormBase from '../DynamicFormBase2';
 import createJSEngineProxy from '../createJSEngineProxy';
