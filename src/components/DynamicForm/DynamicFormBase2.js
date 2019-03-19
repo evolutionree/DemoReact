@@ -409,7 +409,7 @@ class DynamicFormBase extends Component {
 
   renderFieldControl = field => {
     const { entityTypeId, entityId, value } = this.props;
-    let { fieldconfig, fieldid, fieldname, displayname, dateStartValue, controltype } = field;
+    let { fieldconfig, fieldid, fieldname, displayname, dateStartValue, controltype, allowadd } = field;
     const value_name = value[fieldname + '_name'] && value[fieldname + '_name'].value;
     if (fieldconfig && fieldconfig.isReadOnly !== 1 && (fieldconfig.isReadOnlyJS === 0 || fieldconfig.isReadOnlyJS === 1)) {
       fieldconfig = {
@@ -430,6 +430,7 @@ class DynamicFormBase extends Component {
         ref={this.onFieldControlRef.bind(this, fieldname)}
         controlType={controltype}
         fieldId={fieldid}
+        allowadd={allowadd}
         config={fieldconfig}
         value_name={value_name}
         fieldLabel={displayname}
