@@ -1,5 +1,6 @@
 import React from 'react';
 import { Checkbox, Form } from 'antd';
+import _ from 'lodash';
 import classnames from 'classnames';
 import DynamicFormBase from '../DynamicFormBase2';
 import createJSEngineProxy from '../createJSEngineProxy';
@@ -22,10 +23,11 @@ class RelTableRow extends DynamicFormBase {
       fieldType = 'textForm';
     }
 
+    const visible = this.props.fixedColumn ? this.props.fixedColumn === field.fieldid ? true : false : true;
     return children => (
       <div
         key={field.fieldname}
-        className={styles.td}
+        className={classnames(styles.td, { [styles.hidden]: !visible })}
       >
         <Form.Item
           className={classnames([styles.controlWrap, styles[fieldType]])}

@@ -54,7 +54,6 @@ class RelTable extends Component {
   componentDidMount() {
     this.props.entityId && this.queryFields(this.props.entityId, this.props);
     this.fetchGlobalJS(this.props.entityId);
-    document.body.addEventListener('keydown', this.onKeyDownHandler, false);
 
     this.setAlignTableWidthAndHeight();
     let timer = null;
@@ -85,13 +84,7 @@ class RelTable extends Component {
   }
 
   componentWillUnmount() {
-    document.body.removeEventListener('keydown', this.onKeyDownHandler, false);
-  }
 
-  onKeyDownHandler = (e) => { //不允许Tab键 切换 表格中的表单项
-    if (event.keyCode === 9) {
-      e.preventDefault();
-    }
   }
 
   componentWillReceiveProps(nextProps) {
