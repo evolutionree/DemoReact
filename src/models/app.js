@@ -149,7 +149,7 @@ export default {
       };
       yield call(loginout, params);
       yield call(logout);
-      // location.href = '/login.html';
+      location.href = '/login.html';
     },
     *fetchGlobalMenus(action, { call, put }) {
       try {
