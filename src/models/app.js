@@ -50,7 +50,7 @@ export default {
         dispatch({ type: 'fetchYearWeekData' });
         dispatch({ type: 'initRsaPublicKey' });
 
-        dispatch({ type: 'querylangs' })
+        dispatch({ type: 'querylangs' });
       }
     },
     // session过期，退出登录
@@ -144,7 +144,10 @@ export default {
     },
     *fetchGlobalMenus(action, { call, put }) {
       try {
-        const type = /admin/.test(location.pathname) ? 1 : 0;
+        const admin = /admin/.test(location.pathname);
+        const paas = /paas/.test(location.pathname);
+        const type = admin ? 1 : (paas ? 1 : 0);
+
         const result = yield call(getGlobalMenus, type);
 
         if (localStorage.getItem('defaultPathType') != type) {

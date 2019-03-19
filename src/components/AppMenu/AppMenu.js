@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import Sider from './Sider';
 import IntlText from '../UKComponent/Form/IntlText';
 import { uuid } from '../../utils';
+import styles from './styles.less';
 
 const { SubMenu, Item } = Menu;
 
@@ -26,7 +27,7 @@ function renderLink({ name, name_lang, icon, path }) {
   const iconEl = icon ? <Icon type={icon} /> : '';
   const textEl = <IntlText value={name} value_lang={name_lang} />;
   return !path ? <span>{iconEl} {textEl}</span>
-                : <Link to={path}>{iconEl} {textEl}</Link>;
+    : <Link to={path}>{iconEl} {textEl}</Link>;
 }
 function mapLocationToMenuKeys(location, menus) {
   let locationNew = location.pathname;
@@ -83,29 +84,51 @@ function walkNodes(nodes, prediction, cb) {
 const AppMenu = ({ location, menus, siderFold, permissionLevel }) => {
   const { openKeys, selectedKeys } = mapLocationToMenuKeys(location, menus);
   let bottomMenu = null;
+  const admin = /admin/.test(window.location.pathname);
+  const paas = /paas/.test(window.location.pathname);
+
   if (permissionLevel === 3) {
-    const meta = /admin/.test(window.location.pathname)
-      ? { href: '/', title: 'CRM', icon: 'team' }
-      : { href: '/admin.html', title: '设置', icon: 'setting' };
+    let meta = [];
+    if (admin) {
+      meta = [
+        { href: '/', title: 'CRM', icon: 'team' },
+        { href: '/paas.html', title: 'PaaS', icon: 'fork' }
+      ];
+    } else if (paas) {
+      meta = [
+        { href: '/', title: 'CRM', icon: 'team' },
+        { href: '/admin.html', title: '系统管理' }
+      ];
+    } else {
+      meta = [
+        { href: '/admin.html', title: '系统管理' },
+        { href: '/paas.html', title: 'PaaS', icon: 'fork' }
+      ];
+    }
+
     bottomMenu = (
-      <Menu theme="dark">
-        <Item style={{ paddingLeft: '24px' }}>
-          <a href={meta.href}>
-            <Icon type={meta.icon} />
-            {' '}
-            <span>{meta.title}</span>
-          </a>
-        </Item>
-      </Menu>
+      <div className={styles.bottomMenu}>
+        {
+          meta.map((item, index) => (
+            <a key={index} href={item.href}>
+              <div>
+                <Icon type={item.icon} />
+                {item.title}
+              </div>
+            </a>
+          ))
+        }
+      </div>
     );
   }
+
   return (
     <Sider fold={siderFold} fixBottom={bottomMenu}>
       <Menu mode={siderFold ? 'vertical' : 'inline'}
-            theme="dark"
-            key={siderFold ? '' : uuid()}
-            defaultOpenKeys={openKeys}
-            defaultSelectedKeys={selectedKeys}>
+        theme="dark"
+        key={siderFold ? '' : uuid()}
+        defaultOpenKeys={openKeys}
+        defaultSelectedKeys={selectedKeys}>
         {renderMenus(menus)}
       </Menu>
     </Sider>

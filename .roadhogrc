@@ -2,6 +2,7 @@
   "entry": [
     "src/index.js",
     "src/admin-index.js",
+    "src/paas-index.js",
     "src/login.js",
     "src/mobile-apps/mobile-report/mobile-app-report.js",
     "src/mobile-apps/mobile-report/reportIndex.js"
