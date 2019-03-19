@@ -22,6 +22,7 @@ class DynamicField extends React.Component {
     }),
     fieldLabel: PropTypes.string,
     fieldId: PropTypes.string,
+    allowadd: PropTypes.Bool,
     jsEngine: PropTypes.object
   };
   static defaultProps = {
@@ -67,6 +68,7 @@ class DynamicField extends React.Component {
       value: this.props.value,
       value_name: this.props.value_name,
       fieldId: this.props.fieldId,
+      allowadd: this.props.allowadd,
       onChange: this.props.onChange,
       onChangeWithName: this.props.onChangeWithName,
       onFocus: this.props.onFocus,
