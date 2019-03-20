@@ -51,7 +51,7 @@ function DepartmentFormModal({
           initialValue: '',
           rules: [{ required: true, message: '请输入部门名称' }]
         })(
-          <Input placeholder="部门名称" maxLength={50} />
+          <Input placeholder="部门名称" maxLength="50" />
         )}
       </FormItem>
       <FormItem label="上级部门">

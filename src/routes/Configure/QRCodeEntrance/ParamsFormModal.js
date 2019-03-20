@@ -66,12 +66,12 @@ class ParamsFormModal extends Component {
   }
 
   onOk = () => {
-    const { form, showModals, editingRecord } = this.props;
+    const { form, showModals, editingRecord, update } = this.props;
 
     form.validateFields((err, values) => {
       if (err) return;
 
-      let {
+      const {
         checktype,
         uscriptparam,
         checkremark,
@@ -89,7 +89,7 @@ class ParamsFormModal extends Component {
         }
       };
 
-      this.props.update && this.props.update(submitData);
+      update && update(submitData);
     });
   };
 
@@ -97,10 +97,16 @@ class ParamsFormModal extends Component {
     const { visible } = this.props;
     const { getFieldDecorator } = this.props.form;
 
-    const checktype = [{ value: 1, name: '字符串匹配' }, { value: 2, name: '正则表达式' },
-      { value: 3, name: 'UScript' }, { value: 4, name: '实体查询' },
-      { value: 5, name: '数据库脚本' }, { value: 6, name: '数据库函数' },
-      { value: 7, name: '内部服务' }]
+    const checktype = [
+      { value: '1', name: '字符串匹配' },
+      { value: '2', name: '正则表达式' },
+      { value: '3', name: 'UScript' },
+      { value: '4', name: '实体查询' },
+      { value: '5', name: '数据库脚本' },
+      { value: '6', name: '数据库函数' },
+      { value: '7', name: '内部服务' }
+    ];
+
     return (
       <Modal
         visible={visible}
@@ -114,8 +120,8 @@ class ParamsFormModal extends Component {
       >
         <Form>
           <FormItem label="匹配规则类型">
-            {getFieldDecorator('checktype', { //1=字符串匹配，2=正则表达式，3是UScript，4=实体查询，5=数据库脚本6=数据库函数7=内部服务
-              initialValue: 3,
+            {getFieldDecorator('checktype', { // 1=字符串匹配，2=正则表达式，3是UScript，4=实体查询，5=数据库脚本6=数据库函数7=内部服务
+              initialValue: '3',
               rules: [{ required: true, message: '请选择匹配规则类型' }]
             })(
               <Select onChange={this.checkTypeChange}>
@@ -143,7 +149,7 @@ class ParamsFormModal extends Component {
                   <li>2、必须有return语句，且必须为布尔类型(true/false)</li>
                 </ul>
               </div>}>
-                 <Icon type="info-circle" style={{ fontSize: '16px', marginLeft: '4px', color: '#797979' }} />
+                <Icon type="info-circle" style={{ fontSize: '16px', marginLeft: '4px', color: '#797979' }} />
               </Tooltip>
             </span>
           }>

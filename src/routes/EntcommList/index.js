@@ -292,7 +292,7 @@ function EntcommList({
       <AdvanceSearchModal />
       <AllocateModal />
       <DynamicModal />
-      <ExportModal currentUser={currentUser} />
+      <ExportModal userId={currentUser.userid} />
       <DataTransferModal />
       <EntcommRepeatViewModal visible={/repeatview/.test(showModals)}
         entityId={entityId}
@@ -304,7 +304,7 @@ function EntcommList({
 
 export default connect(
   state => {
-    return { ...state.entcommList, currentUser: state.app.user.userid };
+    return { ...state.entcommList, currentUser: state.app.user };
   },
   dispatch => {
     return {

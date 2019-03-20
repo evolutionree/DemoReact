@@ -15,7 +15,7 @@ class PluginAddModal extends Component {
     recordId: PropTypes.string,
     currPlugin: PropTypes.shape({
       //normal 普通动态实体， flow 填表单+提交审批,audit 提交审批,transform 单据转换按钮,upatebutton更新事件按钮 ,copybutton 复制按钮
-      type: PropTypes.oneOf(['normal', 'flow', 'audit','transform','upatebutton','copybutton', 'FunctionButton']).isRequired,
+      type: PropTypes.oneOf(['normal', 'flow', 'audit', 'transform', 'upatebutton', 'copybutton', 'FunctionButton']).isRequired,
       entity: PropTypes.object,
       flowid: PropTypes.string,
       name: PropTypes.string,
@@ -32,16 +32,16 @@ class PluginAddModal extends Component {
     super(props);
     this.state = {
       caseId: '',
-      dstEntityId:'',
-      routePath:'',
-      buttoncode:'',
+      dstEntityId: '',
+      routePath: '',
+      buttoncode: '',
       initAddFormData: null,
       showAddModal: false,
-      showCopyModal:false,
+      showCopyModal: false,
       showDetailModal: false,
       showTransferModal: false,
       showFlowCaseModal: false,
-      copyData:null,
+      copyData: null,
       dataModel: undefined
     };
   }
@@ -50,7 +50,7 @@ class PluginAddModal extends Component {
     const isOpening = !this.props.visible && nextProps.visible;
     const isClosing = this.props.visible && !nextProps.visible;
     if (isOpening) {
-      const { currPlugin,entityId,recordId} = nextProps;
+      const { currPlugin, entityId, recordId } = nextProps;
       if (!currPlugin) return;
       if (currPlugin.type === 'normal' || currPlugin.type === 'flow') {
         this.setState({
@@ -64,30 +64,30 @@ class PluginAddModal extends Component {
             });
           });
         }
-      }else if (currPlugin.type === 'transform'){
-        let dstEntityId='';
-        if(currPlugin.entity.extradata)
-          dstEntityId=currPlugin.entity.extradata.dstentityid;
+      } else if (currPlugin.type === 'transform') {
+        let dstEntityId = '';
+        if (currPlugin.entity.extradata)
+          dstEntityId = currPlugin.entity.extradata.dstentityid;
         this.setState({
           showTransferModal: true,
-          routePath:currPlugin.entity.routepath,
-          buttoncode:currPlugin.entity.buttoncode,
-          dstEntityId:dstEntityId
+          routePath: currPlugin.entity.routepath,
+          buttoncode: currPlugin.entity.buttoncode,
+          dstEntityId: dstEntityId
         });
-      }else if (currPlugin.type === 'copybutton'){
-          this.fetchCopyFormData(entityId, recordId).then(detailData => {
-            this.setState({
-              showCopyModal:true,
-              copyData:detailData
-            });
+      } else if (currPlugin.type === 'copybutton') {
+        this.fetchCopyFormData(entityId, recordId).then(detailData => {
+          this.setState({
+            showCopyModal: true,
+            copyData: detailData
           });
-      }else if (currPlugin.type === 'upatebutton'){
+        });
+      } else if (currPlugin.type === 'upatebutton') {
         this.props.cancel();
-      }else if (currPlugin.type === 'CallService'){
+      } else if (currPlugin.type === 'CallService') {
         this.props.cancel();
-      }else if (currPlugin.type === 'FunctionButton'){
+      } else if (currPlugin.type === 'FunctionButton') {
         this.props.cancel();
-      }else {
+      } else {
         this.setState({
           showDetailModal: true
         });
@@ -95,16 +95,16 @@ class PluginAddModal extends Component {
     } else if (isClosing) {
       this.setState({
         caseId: '',
-        dstEntityId:'',
-        routePath:'',
-        buttoncode:'',
+        dstEntityId: '',
+        routePath: '',
+        buttoncode: '',
         initAddFormData: null,
         showAddModal: false,
         showCopyModal: false,
         showDetailModal: false,
         showTransferModal: false,
         showFlowCaseModal: false,
-        copyData:null,
+        copyData: null,
         dataModel: undefined
       });
     }
@@ -127,7 +127,7 @@ class PluginAddModal extends Component {
   };
 
   onAddDone = (result) => {
-    const { entityId,recordId } = this.props;
+    const { entityId, recordId } = this.props;
     if (this.props.currPlugin.type === 'normal') {
       this.props.auditDone(entityId, recordId);
       this.props.done();
@@ -182,8 +182,8 @@ class PluginAddModal extends Component {
 
   render() {
     const self = this;
-    const { currPlugin, cancel, done, recordId ,entityTypes} = this.props;
-    const { buttoncode,showCopyModal,showAddModal, showDetailModal, showTransferModal,showFlowCaseModal, caseId,dstEntityId,routePath,copyData} = this.state;
+    const { currPlugin, cancel, done, recordId, entityTypes } = this.props;
+    const { buttoncode, showCopyModal, showAddModal, showDetailModal, showTransferModal, showFlowCaseModal, caseId, dstEntityId, routePath, copyData } = this.state;
     const entityId = currPlugin && currPlugin.entity && currPlugin.entity.entityid;
     const entityName = currPlugin && currPlugin.entity && currPlugin.entity.entityname;
     const flowId = currPlugin && currPlugin.flowid;
@@ -245,10 +245,10 @@ class PluginAddModal extends Component {
           onDone={this.props.done}
         />
         {/*<WorkflowCaseModal*/}
-          {/*visible={showFlowCaseModal}*/}
-          {/*caseId={caseId}*/}
-          {/*onCancel={cancel}*/}
-          {/*onDone={this.props.done}*/}
+        {/*visible={showFlowCaseModal}*/}
+        {/*caseId={caseId}*/}
+        {/*onCancel={cancel}*/}
+        {/*onDone={this.props.done}*/}
         {/*/>*/}
         <WorkflowCaseForAddModal
           visible={showFlowCaseModal}
@@ -284,7 +284,7 @@ export default connect(
         dispatch({ type: 'entcommActivities/pluginAddDone' });
       },
       auditDone(entityId, recordId) {
-        dispatch({ type: 'entcommActivities/init',payload: {entityId, recordId} });
+        dispatch({ type: 'entcommActivities/init', payload: { entityId, recordId } });
         dispatch({ type: 'entcommHome/fetchRecordDetail' });
       },
       refreshPlugins() {

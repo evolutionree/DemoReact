@@ -25,7 +25,7 @@ class CodeEditor extends Component {
   };
   static defaultProps = {
     style: {},
-    value: '',
+    // value: '',
     onChange: () => {},
     readOnly: false
   };

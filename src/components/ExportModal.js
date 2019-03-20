@@ -12,14 +12,14 @@ const FormItem = Form.Item;
 const Option = Select.Option;
 
 // const params = JSON.stringify({ ...queries, pageIndex: 1, pageSize: 65535 });
-// window.open(`/api/excel/exportdata?TemplateType=1&DynamicQuery=${params}&UserId=${currentUser}`);
+// window.open(`/api/excel/exportdata?TemplateType=1&DynamicQuery=${params}&UserId=${userId}`);
 class ExportModal extends React.Component {
   static propTypes = {
     visible: React.PropTypes.bool,
     onOk: React.PropTypes.func,
     onCancel: React.PropTypes.func,
     entityId: React.PropTypes.string.isRequired,
-    currentUser: React.PropTypes.number.isRequired,
+    userId: React.PropTypes.number.isRequired,
     protocol: React.PropTypes.array.isRequired
   };
   static defaultProps = {
@@ -38,7 +38,7 @@ class ExportModal extends React.Component {
   }
 
   handleOk = () => {
-    const { form, queries, currentUser, entityId } = this.props;
+    const { form, queries, userId, entityId } = this.props;
     const params = { ...queries, pageIndex: 1, pageSize: 655535 };
     form.validateFields((err, values) => {
       if (err) return;
@@ -49,7 +49,7 @@ class ExportModal extends React.Component {
         method: 'post', body: JSON.stringify({
           TemplateType: 1,
           DynamicQuery: JSON.stringify(params),
-          UserId: currentUser,
+          UserId: userId,
           entityId,
           ...values
         })

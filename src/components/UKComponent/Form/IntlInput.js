@@ -21,9 +21,6 @@ class IntlInput extends Component {
     placeholder: React.PropTypes.string,
     disabled: React.PropTypes.bool
   };
-  static defaultProps = {
-    value: {}
-  };
   constructor(props) {
     super(props);
     this.state = {
@@ -175,7 +172,7 @@ class IntlInput extends Component {
           onPressEnter={onPressEnter}
           ref={ref => this.inputRef = ref}
           value={this.state.inputValue}
-          maxLength={this.state.currentLocale.toUpperCase() === CN ? maxLength : null}
+          maxLength={this.state.currentLocale.toUpperCase() === CN ? `${maxLength}` : null}
           placeholder={placeholder}
           disabled={disabled}
           addonAfter={

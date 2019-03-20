@@ -68,14 +68,14 @@ function UserFormModal({
           {getFieldDecorator('accountname', {
             rules: [{ required: true, message: '请输入帐号' }]
           })(
-            <Input placeholder="请输入帐号" maxLength={20} />
+            <Input placeholder="请输入帐号" maxLength="20" />
           )}
         </FormItem>
         <FormItem label="姓名">
           {getFieldDecorator('username', {
             rules: [{ required: true, message: '请输入姓名' }]
           })(
-            <Input placeholder="请输入姓名" maxLength={50} />
+            <Input placeholder="请输入姓名" maxLength="50" />
           )}
         </FormItem>
         <FormItem label="手机号码">
@@ -85,7 +85,7 @@ function UserFormModal({
               { pattern: /^\d*$/, message: '请输入数字' }
             ]
           })(
-            <Input placeholder="请输入手机号码" maxLength={11} />
+            <Input placeholder="请输入手机号码" maxLength="11" />
           )}
         </FormItem>
         <FormItem label="性别">
@@ -122,14 +122,14 @@ function UserFormModal({
           {getFieldDecorator('userjob', {
             initialValue: ''
           })(
-            <Input placeholder="请输入职位" maxLength={20} />
+            <Input placeholder="请输入职位" maxLength="20" />
           )}
         </FormItem>
         <FormItem label="工号">
           {getFieldDecorator('workcode', {
             initialValue: ''
           })(
-            <Input placeholder="请输入工号" maxLength={50} />
+            <Input placeholder="请输入工号" maxLength="50" />
           )}
         </FormItem>
         <FormItem label="固话">
@@ -168,7 +168,7 @@ function UserFormModal({
           {getFieldDecorator('remark', {
             initialValue: ''
           })(
-            <Input placeholder="请输入备注" maxLength={100} />
+            <Input placeholder="请输入备注" maxLength="100" />
           )}
         </FormItem>
         <FormItem label="状态" style={{ display: isEdit ? 'none' : 'block' }}>

@@ -71,10 +71,10 @@ class RoleFormModal extends Component {
     ));
     return (
       <Modal title={isEdit ? '编辑角色' : '新建角色'}
-             visible={/edit|add/.test(showModals)}
-             onOk={handleSubmit}
-             onCancel={handleCancel}
-             confirmLoading={savePending}>
+        visible={/edit|add/.test(showModals)}
+        onOk={handleSubmit}
+        onCancel={handleCancel}
+        confirmLoading={savePending}>
         <Form>
           <FormItem label="角色名称">
             {decorate('rolename_lang', {
@@ -88,7 +88,7 @@ class RoleFormModal extends Component {
                 }
               }]
             })(
-              <IntlInput placeholder="请输入角色名称" maxLength={50} ref={ref => this.intlInputRef = ref} />
+              <IntlInput placeholder="请输入角色名称" maxLength="50" ref={ref => this.intlInputRef = ref} />
             )}
           </FormItem>
           <FormItem label="角色分类">
@@ -102,10 +102,10 @@ class RoleFormModal extends Component {
             )}
           </FormItem>
           <FormItem label="角色描述">
-            {decorate('roleremark',{
+            {decorate('roleremark', {
               initialValue: ''
             })(
-              <Input type="textarea" maxLength={200} />
+              <Input type="textarea" maxLength="200" />
             )}
           </FormItem>
         </Form>

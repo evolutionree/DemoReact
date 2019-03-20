@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Checkbox, Select, Input } from 'antd';
+import { Form, Select, Input } from 'antd';
 import _ from 'lodash';
 import FormItemFactory from './FormItemFactory';
 import AjaxSelect from '../../../EntityList/AjaxRelObjSelect';
@@ -35,9 +35,9 @@ function getDynamicFormItems(ctrlType, form, entityFields, entityId, isEdit) {
 function FieldForm({ form, isEdit, entityFields, entityId }) {
   function _resetFields() {
     resetFields();
-    setFieldsValue({ fieldName: getRandomLetters(6) });
+    // setFieldsValue({ fieldName: getRandomLetters(6) });
   }
-  const { getFieldDecorator, getFieldsValue, resetFields, setFieldsValue } = form;
+  const { getFieldDecorator, getFieldsValue, resetFields } = form;
   const { controlType = '1' } = getFieldsValue(['controlType']);
   const dynamicFormItems = getDynamicFormItems(controlType, form, entityFields, entityId, isEdit);
   const isSystemControl = (controlType * 1 >= 1000 || controlType * 1 === 30);
@@ -56,8 +56,7 @@ function FieldForm({ form, isEdit, entityFields, entityId }) {
       </FormItem>
       <FormItem label="显示名称" key="displayName">
         {getFieldDecorator('displayname_lang', {
-
-        })(<IntlInput placeholder="显示名称" maxLength={20} />)}
+        })(<IntlInput placeholder="显示名称" maxLength="20" />)}
       </FormItem>
       {
         controlType * 1 === 30 ? getFieldDecorator('relentityid', {
@@ -95,7 +94,7 @@ function FieldForm({ form, isEdit, entityFields, entityId }) {
             { pattern: /^[a-zA-Z0-9]+$/, message: '只可输入大小写字母，数字' }
           ]
         })(
-          <Input placeholder="字段表列名" disabled={isEdit} maxLength={50} />
+          <Input placeholder="字段表列名" disabled={isEdit} maxLength="50" />
         )}
       </FormItem>
     </Form>

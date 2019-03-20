@@ -316,7 +316,7 @@ function EntcommList({
       <RecordEditModal />
       <AdvanceSearchModal />
       <DynamicModal />
-      <ExportModal currentUser={currentUser} />
+      <ExportModal userId={currentUser.userid} />
       <EntcommTransferModal
         visible={/changeForm/.test(showModals)}
         dstEntityId={funBtnInfo && funBtnInfo.extradata.dstentityid}
@@ -345,7 +345,7 @@ function EntcommList({
 
 export default connect(
   state => {
-    return { ...state.entcommApplication, currentUser: state.app.user.userid };
+    return { ...state.entcommApplication, currentUser: state.app.user };
   },
   dispatch => {
     return {

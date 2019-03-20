@@ -125,13 +125,13 @@ function EntcommList({
       />
       <AdvanceSearchModal />
       <DynamicDetailModal />
-      <ExportModal currentUser={currentUser} />
+      <ExportModal userId={currentUser.userid} />
     </Page>
   );
 }
 
 export default connect(
   state => {
-    return { ...state.entcommDynamic, currentUser: state.app.user.userid };
+    return { ...state.entcommDynamic, currentUser: state.app.user };
   }
 )(connectPermission(props => props.entityId, EntcommList));

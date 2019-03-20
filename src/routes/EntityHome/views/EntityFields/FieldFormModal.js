@@ -110,9 +110,9 @@ class FieldFormModal extends Component {
         }, val => ({ value: val })), 1000);
       } else {
         form.resetFields();
-        form.setFields({
-          fieldName: { value: getRandomLetters(6) }
-        });
+        // form.setFields({
+        //   fieldName: { value: getRandomLetters(6) }
+        // });
       }
     }
   }

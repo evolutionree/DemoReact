@@ -86,7 +86,7 @@ class ReminderFormModal extends Component {
                 validator: IntlInputRequireValidator
               }]
             })(
-              <IntlInput placeholder="请输入提醒名称" maxLength={20} />
+              <IntlInput placeholder="请输入提醒名称" maxLength="20" />
             )}
           </FormItem>
           <FormItem label="关联实体">
@@ -118,7 +118,7 @@ class ReminderFormModal extends Component {
             {form.getFieldDecorator('remark', {
               rules: [{ max: 200, message: '最大长度为200个字符' }]
             })(
-              <Input type="textarea" placeholder="请输入备注信息" maxLength={200} />
+              <Input type="textarea" placeholder="请输入备注信息" maxLength="200" />
             )}
           </FormItem>
         </Form>

@@ -62,10 +62,10 @@ class VocationFormModal extends Component {
 
     return (
       <Modal title={isEdit ? '编辑职能' : '新建职能'}
-             visible={/edit|add/.test(showModals)}
-             onOk={handleSubmit}
-             onCancel={handleCancel}
-             confirmLoading={savePending}>
+        visible={/edit|add/.test(showModals)}
+        onOk={handleSubmit}
+        onCancel={handleCancel}
+        confirmLoading={savePending}>
         <Form>
           <FormItem label="职能名称">
             {decorate('vocationname_lang', {
@@ -74,15 +74,15 @@ class VocationFormModal extends Component {
                 validator: IntlInputRequireValidator
               }]
             })(
-              <IntlInput placeholder="请输入职能名称" maxLength={50} />
+              <IntlInput placeholder="请输入职能名称" maxLength="50" />
             )}
           </FormItem>
 
           <FormItem label="职能描述">
-            {decorate('description',{
+            {decorate('description', {
               initialValue: ''
             })(
-              <Input type="textarea" maxLength={200} />
+              <Input type="textarea" maxLength="200" />
             )}
           </FormItem>
         </Form>

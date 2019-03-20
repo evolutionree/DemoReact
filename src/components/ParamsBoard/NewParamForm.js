@@ -33,42 +33,38 @@ function NewParamForm({
     });
   }
   return (
-    <Form inline onSubmit={handleSubmit}>
-      {toolbarNode ? <FormItem>
-        {toolbarNode}
-      </FormItem> : null}
-      {showAdd && fields.map(field => {
-        return field.intl ? <FormItem key={field.key + '_lang'}>
-          {getFieldDecorator(field.key + '_lang', {
-            initialValue: '',
-            validateTrigger: 'onChange',
-            rules: [{
-              validator: IntlInputRequireValidator
-            }]
-          })(
-            <IntlInput placeholder={`请输入${field.name}`} maxLength={field.maxLength} />
-          )}
-        </FormItem> : <FormItem key={field.key}>
-          {getFieldDecorator(field.key, {
-            initialValue: '',
-            validateTrigger: 'onChange',
-            rules: [{ required: true, message: `${field.name}不能为空` }]
-          })(
-            <Input placeholder={`请输入${field.name}`} maxLength={field.maxLength} />
-          )}
-          {/*<Input*/}
-          {/*placeholder={`请输入${field.name}`}*/}
-          {/*{...getFieldProps(field.key, {*/}
-          {/*initialValue: '',*/}
-          {/*validateTrigger: 'onChange',*/}
-          {/*rules: [{ required: true, message: `${field.name}不能为空` }]*/}
-          {/*})}*/}
-          {/*/>*/}
-        </FormItem>;
-      })}
-      {showAdd && <FormItem>
-        <Button type="primary" htmlType="submit" loading={btnLoading}>添加</Button>
-      </FormItem>}
+    <Form layout="inline" onSubmit={handleSubmit}>
+      {toolbarNode ? <FormItem>{toolbarNode}</FormItem> : null}
+      {
+        showAdd && fields.map(field => {
+          return field.intl ?
+            <FormItem key={field.key + '_lang'}>
+              {getFieldDecorator(field.key + '_lang', {
+                initialValue: '',
+                validateTrigger: 'onChange',
+                rules: [{
+                  validator: IntlInputRequireValidator
+                }]
+              })(
+                <IntlInput placeholder={`请输入${field.name}`} maxLength={field.maxLength + ''} />
+              )}
+            </FormItem> :
+            <FormItem key={field.key}>
+              {getFieldDecorator(field.key, {
+                initialValue: '',
+                validateTrigger: 'onChange',
+                rules: [{ required: true, message: `${field.name}不能为空` }]
+              })(
+                <Input placeholder={`请输入${field.name}`} maxLength={field.maxLength + ''} />
+              )}
+            </FormItem>;
+        })
+      }
+      {
+        showAdd && <FormItem>
+          <Button type="primary" htmlType="submit" loading={btnLoading}>添加</Button>
+        </FormItem>
+      }
     </Form>
   );
 }

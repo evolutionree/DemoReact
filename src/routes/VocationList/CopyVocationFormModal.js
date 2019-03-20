@@ -55,25 +55,25 @@ class CopyVocationFormModal extends Component {
 
     return (
       <Modal title="复制职能"
-             visible={/copy/.test(showModals)}
-             onOk={handleSubmit}
-             onCancel={handleCancel}
-             confirmLoading={savePending}>
+        visible={/copy/.test(showModals)}
+        onOk={handleSubmit}
+        onCancel={handleCancel}
+        confirmLoading={savePending}>
         <Form>
           <FormItem label="职能名称">
             {decorate('vocationname', {
               initialValue: '',
               rules: [{ required: true, message: '请输入职能名称' }]
             })(
-              <Input placeholder="请输入职能名称" maxLength={50} />
+              <Input placeholder="请输入职能名称" maxLength="50" />
             )}
           </FormItem>
 
           <FormItem label="职能描述">
-            {decorate('description',{
+            {decorate('description', {
               initialValue: ''
             })(
-              <Input type="textarea" maxLength={200} />
+              <Input type="textarea" maxLength="200" />
             )}
           </FormItem>
         </Form>

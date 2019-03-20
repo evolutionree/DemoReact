@@ -65,17 +65,17 @@ class CopyRoleFormModal extends Component {
 
     return (
       <Modal title="复制角色并创建"
-             visible={/copy/.test(showModals)}
-             onOk={handleSubmit}
-             onCancel={handleCancel}
-             confirmLoading={savePending}>
+        visible={/copy/.test(showModals)}
+        onOk={handleSubmit}
+        onCancel={handleCancel}
+        confirmLoading={savePending}>
         <Form>
           <FormItem label="角色名称">
             {decorate('rolename', {
               initialValue: '',
               rules: [{ required: true, message: '请输入角色名称' }]
             })(
-              <Input placeholder="请输入角色名称" maxLength={50} />
+              <Input placeholder="请输入角色名称" maxLength="50" />
             )}
           </FormItem>
           <FormItem label="角色分类">
@@ -89,10 +89,10 @@ class CopyRoleFormModal extends Component {
             )}
           </FormItem>
           <FormItem label="角色描述">
-            {decorate('roleremark',{
+            {decorate('roleremark', {
               initialValue: ''
             })(
-              <Input type="textarea" maxLength={200} />
+              <Input type="textarea" maxLength="200" />
             )}
           </FormItem>
         </Form>

@@ -136,10 +136,10 @@ class EntityFormModal extends Component {
 
     return (
       <Modal title={isEdit ? '编辑实体' : '新增实体'}
-             visible={/edit|add/.test(showModals)}
-             onOk={this.handleOk}
-             confirmLoading={modalPending}
-             onCancel={onCancel}>
+        visible={/edit|add/.test(showModals)}
+        onOk={this.handleOk}
+        confirmLoading={modalPending}
+        onCancel={onCancel}>
         <Form horizontal>
           <FormItem label="实体名称">
             {getFieldDecorator('entityname_lang', {//<Input placeholder="实体名称" maxLength={50} />   rules: [{ required: true, message: '请输入实体名称' }],
@@ -148,7 +148,7 @@ class EntityFormModal extends Component {
                 { validator: this.entitynameRequireValidator }
               ]
             })(
-              <IntlInput maxLength={50} />
+              <IntlInput maxLength="50" />
             )}
           </FormItem>
           <FormItem label="实体表名">
@@ -159,7 +159,7 @@ class EntityFormModal extends Component {
                 { pattern: /^[_a-z]*$/, message: '只能输入小写字母或下划线' }
               ]
             })(
-              <Input placeholder="表名，例如 crm_plu_customer" disabled={isEdit} maxLength={50} />
+              <Input placeholder="表名，例如 crm_plu_customer" disabled={isEdit} maxLength="50" />
             )}
           </FormItem>
           <FormItem label="实体类型">
@@ -207,7 +207,7 @@ class EntityFormModal extends Component {
             {getFieldDecorator('remark', {
               initialValue: ''
             })(
-              <Input placeholder="实体描述" type="textarea" maxLength={200} />
+              <Input placeholder="实体描述" type="textarea" maxLength="200" />
             )}
           </FormItem>
           {typeid !== '1' && <FormItem label="请选择图标">

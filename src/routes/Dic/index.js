@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Form, Button, Input, Select, Modal } from 'antd';
+import { Form, Button, Select, Modal } from 'antd';
+import classnames from 'classnames';
 import Page from '../../components/Page';
 import DragList from '../../components/UKComponent/Data/DragList';
 import IntlInput from '../../components/UKComponent/Form/IntlInput';
@@ -8,7 +9,6 @@ import IntlText from '../../components/UKComponent/Form/IntlText';
 import { IntlInputRequireValidator } from '../../utils/validator';
 import FormModal from './FormModal';
 import styles from './index.less';
-import classnames from 'classnames';
 
 const FormItem = Form.Item;
 
@@ -116,17 +116,16 @@ function DicPage({
         </div>
       );
     }
-  })
-
+  });
 
   return (
-    <Page title='字典参数' >
+    <Page title="字典参数" >
       <div className={styles.Header}>
         <Select
           showSearch
           style={{ width: 200, float: 'left' }}
           onChange={search}
-          value={currentDicType}
+          value={currentDicType + ''}
         >
           {
             dicTypes instanceof Array && dicTypes.map((item, index) => {
@@ -145,7 +144,7 @@ function DicPage({
                   { validator: IntlInputRequireValidator }
                 ]
               })(
-                <IntlInput placeholder='请输入字典值' maxLength="30" className={styles.intlInput} />
+                <IntlInput placeholder="请输入字典值" maxLength="30" className={styles.intlInput} />
               )}
             </FormItem>
             <FormItem>
