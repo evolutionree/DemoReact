@@ -34,7 +34,7 @@ export default {
             });
             dispatch({
               type: 'querySalesStage',
-              payload: { }
+              payload: {}
             });
           } else {
             dispatch({
@@ -51,9 +51,14 @@ export default {
       const { businessTypeActiveId } = yield select(state => state.saleStage);
       try {
         const { data } = yield call(queryTypes, queries);
+        const categoryid = (Array.isArray(data.entitytypepros) && data.entitytypepros.length && data.entitytypepros[0].categoryid) || '';
+
         yield put({
           type: 'querySuccess',
-          payload: { businessType: data.entitytypepros, businessTypeActiveId: businessTypeActiveId ? businessTypeActiveId : data.entitytypepros[0].categoryid }
+          payload: {
+            businessType: data.entitytypepros,
+            businessTypeActiveId: businessTypeActiveId || categoryid
+          }
         });
         yield put({ type: 'querySalesStage', payload: {} });
       } catch (e) {

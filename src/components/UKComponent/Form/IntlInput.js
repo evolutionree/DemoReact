@@ -21,6 +21,9 @@ class IntlInput extends Component {
     placeholder: React.PropTypes.string,
     disabled: React.PropTypes.bool
   };
+  static defaultProps = {
+    // value: {}
+  };
   constructor(props) {
     super(props);
     this.state = {

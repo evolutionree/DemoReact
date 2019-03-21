@@ -23,33 +23,33 @@ let fields = [{
   link: true,
   maxLength: 10,
   intl: true
-},{
+}, {
   key: 'winrate',
   name: 'winrate'
 }];
 
 function SaleStage({
-                        form: {
-                          getFieldDecorator,
-                          validateFields,
-                          resetFields
-                        },
-                        handleSubmit,
-                        changeTypeHandler,
-                        higthGradeChangeHandler,
-                        paramsClickHandler,
-                        orderbysalesstage,
-                         onSwitch,
-                         onDel,
-                        onUpdate,
+  form: {
+    getFieldDecorator,
+    validateFields,
+    resetFields
+  },
+  handleSubmit,
+  changeTypeHandler,
+  higthGradeChangeHandler,
+  paramsClickHandler,
+  orderbysalesstage,
+  onSwitch,
+  onDel,
+  onUpdate,
 
-                        btnLoading,
-                        businessType,
-                        businessTypeActiveId,
-                        highsetting,
-                        salesstage,
-                        checkFunc
-                   }) {
+  btnLoading,
+  businessType,
+  businessTypeActiveId,
+  highsetting,
+  salesstage,
+  checkFunc
+}) {
 
   fields[0].link = highsetting === 1 && checkFunc('SalesstageSettingEdit');
   const addParams = (e) => {
@@ -69,7 +69,7 @@ function SaleStage({
       return stageList.salesstageid;
     });
     let x, y;
-    if ( type === 'up') {
+    if (type === 'up') {
       x = index - 1;
       y = index;
     } else {
@@ -125,7 +125,7 @@ function SaleStage({
                 initialValue: '',
                 validateTrigger: 'onChange',
                 rules: [{ required: true, message: '赢率不能为空' },
-                  { pattern: new RegExp(/^[1-9][0-9]{0,1}$/), message: '请输入1-99的整数' }]
+                { pattern: new RegExp(/^[1-9][0-9]{0,1}$/), message: '请输入1-99的整数' }]
               })(
                 <Input placeholder='请输入赢率' style={{ width: 130 }} />
               )}
@@ -155,7 +155,7 @@ function SaleStage({
           showEdit={() => checkFunc('SalesstageSettingEdit')}
           showSwitch={() => checkFunc('SalesstageSettingDisabled')}
           showOrder={() => checkFunc('SalesstageSettingOrder')}
-      />
+        />
         <ul className={styles.list}>
           {
             hasOrderSaleStage.map((item, index) => {
@@ -165,7 +165,7 @@ function SaleStage({
                   {
                     fields.map((field) => {
                       return (
-                        <div  key={field.key} className={styles.text}><span>{item[field.key]}</span></div>
+                        <div key={field.key} className={styles.text}><span>{item[field.key]}</span></div>
                       )
                     })
                   }
@@ -195,7 +195,7 @@ export default connect(
         dispatch({ type: 'saleStage/higthGradeChange', payload: e.target.checked });
       },
       paramsClickHandler(businessTypeActiveId, item) {
-        hashHistory.push('/salestage/detail?busintypeid='+ businessTypeActiveId + '&salesstageid=' + item.salesstageid );
+        hashHistory.push('/salestage/detail?busintypeid=' + businessTypeActiveId + '&salesstageid=' + item.salesstageid);
       },
       orderbysalesstage(params) {
         dispatch({ type: 'saleStage/orderBySalesStage', payload: params });
