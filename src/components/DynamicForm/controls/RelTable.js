@@ -57,7 +57,7 @@ class RelTable extends Component {
 
     this.setAlignTableWidthAndHeight();
     let timer = null;
-    if (this.relTableRef) { //监听节点变化  动态计算编辑器的高度
+    if (this.tabWrapRef) { //监听节点变化  动态计算编辑器的高度
       const MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
       if (MutationObserver) {
         const observer = new MutationObserver((mutations) => {
@@ -71,7 +71,7 @@ class RelTable extends Component {
           });
         });
         //主要监听节点变化
-        observer.observe(this.relTableRef, {
+        observer.observe(this.tabWrapRef, {
           attributes: true,
           childList: true,
           subtree: true,
@@ -650,21 +650,6 @@ class RelTable extends Component {
       //列表的固定表头的列
       const fixedTopHeader = this.fixTopTableRef.children[0].children[0].children;
 
-      //顶部固定表格的列宽 需与真实表格保持一致
-      setTimeout(() => {
-        for (let i = 0; i < realHeader.length; i++) {
-          let realHeader_thWidth = realHeader[i].getBoundingClientRect().width;
-          let fixedTopHeader_thWidth = fixedTopHeader[i].getBoundingClientRect().width;
-          let realHeader_thHeight = realHeader[i].getBoundingClientRect().height;
-          let fixedTopHeader_thHeight = fixedTopHeader[i].getBoundingClientRect().height;
-          if (realHeader_thWidth !== fixedTopHeader_thWidth || realHeader_thHeight !== fixedTopHeader_thHeight) {
-            fixedTopHeader[i].style.maxWidth = realHeader_thWidth + 'px';
-            fixedTopHeader[i].style.width = realHeader_thWidth + 'px';
-            fixedTopHeader[i].style.height = realHeader_thHeight + 'px';
-          }
-        }
-      }, 300)
-
       //列表的原始表头的行
       const realBody = this.relTableRef.children;
       //列表的左固定表的行
@@ -714,6 +699,20 @@ class RelTable extends Component {
       this.fixTopWrapRef.style.width = `calc(100% - ${scrollWidth}px)`;
       this.fixTopWrapRef.style.height = this.relTableWrapRef.children[0].children[0].getBoundingClientRect().height + 1 + 'px';
       this.fixTopTableRef.style.width = this.relTableRef.getBoundingClientRect().width + 'px';
+
+
+      //顶部固定表格的列宽 需与真实表格保持一致
+      for (let i = 0; i < realHeader.length; i++) {
+        let realHeader_thWidth = realHeader[i].getBoundingClientRect().width;
+        let fixedTopHeader_thWidth = fixedTopHeader[i].getBoundingClientRect().width;
+        let realHeader_thHeight = realHeader[i].getBoundingClientRect().height;
+        let fixedTopHeader_thHeight = fixedTopHeader[i].getBoundingClientRect().height;
+        if (realHeader_thWidth !== fixedTopHeader_thWidth || realHeader_thHeight !== fixedTopHeader_thHeight) {
+          fixedTopHeader[i].style.maxWidth = realHeader_thWidth + 'px';
+          fixedTopHeader[i].style.width = realHeader_thWidth + 'px';
+          fixedTopHeader[i].style.height = realHeader_thHeight + 'px';
+        }
+      }
     } catch (e) {
       console.error(e);
     }
@@ -766,7 +765,7 @@ class RelTable extends Component {
             }
             <Button key={new Date().getTime()} onClick={this.delRow} type="danger">删除</Button>
           </div>}
-          <div className={styles.tableContent}>
+          <div className={styles.tableContent} ref={ref => this.tabWrapRef = ref}>
             <div className={classnames(styles.fixTopWrap, { [styles.fixTopWrapHidden]: this.parseValue().length === 0 })} ref={ref => this.fixTopWrapRef = ref}>
               <div className={classnames([styles.table, styles.fixTopTable])} ref={ref => this.fixTopTableRef = ref}>
                 {this.renderTableHeader()}
