@@ -103,11 +103,13 @@ class FieldFormModal extends Component {
         }
 
         form.resetFields();
-        form.setFields(_.mapValues({
-          ...editingRecord,
-          ...newFieldConfig,
-          fieldConfig: undefined
-        }, val => ({ value: val })), 1000);
+        setTimeout(() => { //表单的组件 会从中切换卸载  所以晚点设值
+          form.setFields(_.mapValues({
+            ...editingRecord,
+            ...newFieldConfig,
+            fieldConfig: undefined
+          }, val => ({ value: val })));
+        }, 0);
       } else {
         form.resetFields();
         form.setFields({
