@@ -6,6 +6,7 @@ import _ from 'lodash';
 import { getDeviceHeaders } from '../../../utils/request';
 import { formatFileSize } from '../../../utils';
 import styles from './Attachment.less';
+import { downloadFile } from '../../../utils/ukUtil';
 
 const parseValue = (value) => {
   if (!value) return [];
@@ -197,7 +198,9 @@ Attachment.View = ({ value, dispatch }) => {
       {files.length ? <ul>
         {files.map(file => (
           <li key={file.fileid}>
-              <a href={`/api/fileservice/download?fileid=${file.fileid}`}>
+              <a onClick={() => {
+                downloadFile(`/api/fileservice/download?fileid=${file.fileid}`);
+              }}>
                 <Icon type="download" className={styles.icon} />
               </a>
               <span onClick={() => {
