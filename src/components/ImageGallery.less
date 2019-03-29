@@ -1,27 +1,106 @@
-.wrapper {
-  :global {
-    .ant-modal-body {
-      padding-left: 36px;
-      padding-right: 36px;
+.modal{
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  width: 90%;
+  height: 90%;
+  background: rgba(0, 0, 0, 0.84);
+  border-radius: 10px;
+  z-index: 99999;
+  overflow: hidden;
+  transform: translate(-50%, -50%);
+  display: none;
+  &.visible{
+    display: block;
+  }
+
+  .content {
+    width: 100%;
+    height: 100%;
+    padding: 0 100px;
+    position: relative;
+
+    :global{
+      .anticon-close{
+        position: absolute;
+        right: 0px;
+        top: 0px;
+        color: #fff;
+        font-size: 20px;
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        line-height: 40px;
+        cursor: pointer;
+
+        &:hover{
+          color: lightgrey;
+        }
+      }
     }
-    .ant-carousel {
-      background-color: #d7d7d7;
+  }
+
+  .imgholder {
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+    min-height: 100px;
+
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      margin: auto;
+      position: absolute;
+      transition: scale 200ms;
+      &:hover{
+        cursor: pointer;
+      }
     }
+  }
+
+  .toolbar{
+    position: relative;
+    bottom: 40px;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+
+    >i{
+      width: 40px;
+      height: 40px;
+      color: #fff;
+      font-size: 24px;
+      margin: 0 20px;
+      cursor: pointer;
+    }
+  }
+
+  :global{
     .ant-carousel .slick-slide {
-        //text-align: center;
-        ////height: 160px;
-        ////line-height: 130px;
-        //background: #506b9e;
-        //color: #fff;
-        //overflow: hidden;
+      text-align: center;
+      height: 160px;
+      line-height: 130px;
+      color: #fff;
+      overflow: hidden;
       min-height: 550px;
     }
+    .slick-list{
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%)!important;
+    }
+
     .slick-arrow.slick-prev {
-      left: -34px;
+      left: -70px;
       z-index: 2;
     }
     .slick-arrow.slick-next {
-      right: -22px;
+      right: -65px;
       z-index: 2;
     }
     .slick-arrow .anticon {
@@ -31,28 +110,5 @@
         color: #666;
       }
     }
-  }
-}
-.content {
-
-}
-.imgholder {
-  position: relative;
-  overflow: hidden;
-  height: 100%;
-  min-height: 100px;
-  text-align: center;
-  line-height: 550px;
-
-  img {
-    //display: block;
-    //position: relative;
-    max-width: 100%;
-    max-height: 100%;
-    ////margin-top: 50%;
-    //margin-left: 50%;
-    //transform: translate(-50%, 0);
-    display: inline-block!important;
-    vertical-align: middle;
   }
 }
