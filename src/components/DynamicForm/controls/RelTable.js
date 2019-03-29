@@ -514,8 +514,8 @@ class RelTable extends Component {
         if (field) {
           newFieldItem.fieldconfig = {
             ...item.fieldconfig,
-            isReadOnlyJS: field.fieldconfig.isReadOnlyJS || item.fieldconfig.isReadOnlyJS,
-            isRequiredJS: field.fieldconfig.isRequiredJS || item.fieldconfig.isRequiredJS,
+            isReadOnlyJS: field.fieldconfig.isReadOnlyJS,
+            isRequiredJS: field.fieldconfig.isRequiredJS,
             isVisibleJS: field.fieldconfig.isVisibleJS === 0 ? 0 : undefined
           };
         }
