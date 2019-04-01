@@ -3,9 +3,15 @@
  */
 import React, { Component, PropTypes } from 'react';
 import { Table } from 'antd';
+import { connect } from 'dva';
 import moment from 'moment';
 import { getGeneralProtocolForGrid } from '../../../services/entcomm';
 import DynamicFieldView from '../DynamicFieldView';
+import styles from './RelTable.less';
+
+const normalStyle = {
+  display: 'inline-block'
+};
 
 class RelTableView extends Component {
   static propTypes = {
@@ -23,18 +29,31 @@ class RelTableView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      fields: []
+      fields: [],
+      width: document.body.clientWidth
     };
   }
 
   componentDidMount() {
     this.props.entityId && this.queryFields(this.props.entityId);
+    window.addEventListener('resize', this.onWindowResize);
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.entityId !== nextProps.entityId) {
       this.queryFields(nextProps.entityId);
     }
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onWindowResize);
+  }
+
+  onWindowResize = (e) => {
+    this.setState({
+      height: document.body.clientHeight,
+      width: document.body.clientWidth
+    });
   }
 
   parseValue = () => {
@@ -92,9 +111,10 @@ class RelTableView extends Component {
   }
 
   render() {
+    const cellWidth = 125;
     const showFields = this.getShowFields();
     let columns = showFields.map((item, index) => {
-      return { title: item.displayname, width: 200, dataIndex: item.fieldname, key: item.fieldname, render: (text, record, rowIndex) => {
+      return { title: item.displayname, width: cellWidth, dataIndex: item.fieldname, key: item.fieldname, render: (text, record, rowIndex) => {
         // 先取 _name
         const text_name = record[item.fieldname + '_name'];
         // let cellText = text_name !== undefined ? text_name : text instanceof Object ? text.name : text;
@@ -103,18 +123,32 @@ class RelTableView extends Component {
         //   cellText = this.formatDate(text, item.formatstr);
         // }
         return (
-          <span>
+          <span style={{ ...normalStyle, width: cellWidth - 16 }}>
             <DynamicFieldView value={text} value_name={text_name} controlType={item.controltype} />
           </span>
         );
       }, fixed: showFields.length >= 6 ? (index < 1 ? 'left' : null) : null };
     })
 
-    const scroll = showFields.length >= 6 ? { x: showFields.length * 200, y: 400 } : { x: '100%' }
+    const scroll = showFields.length >= 6 ? { x: showFields.length * cellWidth, y: 400 } : { x: '100%' };
+
+    let width = this.state.width - (this.props.siderFold ? 61 : 200); //系统左侧 200px显示菜单(未折叠  折叠61)
+    width = width < 1080 ? 1080 : width; // 系统设置了最小宽度
+    if ((width - 52) > showFields.length * cellWidth) { //如果表格没有横向滚动条，则不需要对列固定  -52:计算出表格真实占用的宽度
+      columns = columns.map((item) => {
+        item.fixed = false;
+        return item;
+      });
+    }
+
     return (
-      <Table rowKey="key" columns={columns} dataSource={this.parseValue()} pagination={false} scroll={{ ...scroll }} />
+      <div className={styles.tableView}>
+        <Table rowKey="key" columns={columns} dataSource={this.parseValue()} pagination={false} scroll={{ ...scroll }} />
+      </div>
     );
   }
 }
 
-export default RelTableView;
+export default connect(
+  state => state.app
+)(RelTableView);
