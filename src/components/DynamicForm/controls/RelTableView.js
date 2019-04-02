@@ -10,6 +10,9 @@ import DynamicFieldView from '../DynamicFieldView';
 import styles from './RelTable.less';
 
 const normalStyle = {
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
   display: 'inline-block'
 };
 
@@ -123,7 +126,7 @@ class RelTableView extends Component {
         //   cellText = this.formatDate(text, item.formatstr);
         // }
         return (
-          <span style={{ ...normalStyle, width: cellWidth - 16 }}>
+          <span style={{ ...normalStyle, width: cellWidth - 26 }} className={styles.tableCell}>
             <DynamicFieldView value={text} value_name={text_name} controlType={item.controltype} />
           </span>
         );
