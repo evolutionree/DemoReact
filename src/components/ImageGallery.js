@@ -26,14 +26,14 @@ class ImageGallery extends React.Component {
   }
 
   componentDidMount() {
-    document.addEventListener('mousemove', this.handleMouseMove, false);
-    document.addEventListener('mouseup', this.handleMouseUp, false);
+    this.wrap.addEventListener('mousemove', this.handleMouseMove, false);
+    this.wrap.addEventListener('mouseup', this.handleMouseUp, false);
     this.wrap.addEventListener('mousewheel', this.scrollHanler, false);
   }
 
   componentWillUnmount() {
-    document.removeEventListener('mousemove', this.handleMouseMove, false);
-    document.removeEventListener('mouseup', this.handleMouseUp, false);
+    this.wrap.removeEventListener('mousemove', this.handleMouseMove, false);
+    this.wrap.removeEventListener('mouseup', this.handleMouseUp, false);
     this.wrap.removeEventListener(' mousewheel', this.scrollHanler, false);
   }
 
