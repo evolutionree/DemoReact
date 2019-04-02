@@ -145,9 +145,7 @@ class RelTableView extends Component {
     }
 
     return (
-      <div className={styles.tableView}>
-        <Table rowKey="key" columns={columns} dataSource={this.parseValue()} pagination={false} scroll={{ ...scroll }} />
-      </div>
+      <Table rowKey="key" columns={columns} dataSource={this.parseValue()} pagination={false} scroll={{ ...scroll }} />
     );
   }
 }

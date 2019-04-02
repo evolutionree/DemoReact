@@ -2,14 +2,15 @@
  * Created by 0291 on 2017/7/14.
  */
 import React from 'react';
-import { Layout, Dropdown, Menu, Icon, Badge, Spin, Modal, message, Button } from 'antd';
+import { Layout, Dropdown, Menu, Icon, Spin, Modal, message, Button } from 'antd';
 import { connect } from 'dva';
 import { Link, routerRedux } from 'dva/router';
-import styles from './MessageList.less';
 import request from '../../utils/request';
 import { disableReminder } from '../../services/reminder';
 import { checkHasPermission } from '../../services/entcomm';
 import classnames from 'classnames';
+import BadgeIcon from './BadgeIcon';
+import styles from './MessageList.less';
 
 const clientHeight = document.body.offsetHeight && document.documentElement.clientHeight;
 // const menuData=[{key:-1, text:'全部'}, {key:0, text:'系统通知'} ,{key:1, text:'实体操作消息'},
@@ -282,15 +283,19 @@ class MessageList extends React.Component {
     );
 
     return (
-      <div style={{ marginRight: '10px' }}>
-        <Badge count={this.state.unReadCount}>
-          <Icon type='bell' title="系统通知" style={{ fontSize: 24, cursor: 'pointer' }} onClick={this.toggleList.bind(this)} />
-        </Badge>
+      <div>
+        <BadgeIcon
+          textBool={false}
+          IconType="bell"
+          title="系统通知"
+          onClick={this.toggleList.bind(this)}
+          count={this.state.unReadCount}
+        />
         <div id="message-panel" className={styles.listContent}
-             style={{ right: this.state.visible ? 0 : "-440px", height: this.state.clientHeight - 60 }}
-             onClick={(e) => {
-               e.nativeEvent.stopImmediatePropagation()
-             }}>
+          style={{ right: this.state.visible ? 0 : "-440px", height: this.state.clientHeight - 60 }}
+          onClick={(e) => {
+            e.nativeEvent.stopImmediatePropagation()
+          }}>
           <div className={styles.header}>
             <Dropdown overlay={menu}>
               <a>
@@ -320,7 +325,7 @@ class MessageList extends React.Component {
                       <ul>
                         <li>
                           <span className={styles.msgtitle}
-                                title={msgtitle}>{msgstyletype === msgTypes.IMPORT_RESULT ? `${msgparam.data.TaskName}导入完成` : msgtitle}</span>
+                            title={msgtitle}>{msgstyletype === msgTypes.IMPORT_RESULT ? `${msgparam.data.TaskName}导入完成` : msgtitle}</span>
                           <span className={styles.timeinfo}>{item.reccreated.toString().split(' ')[0]}</span>
                         </li>
                         {msgstyletype === msgTypes.IMPORT_RESULT && <li title={'导入结果：' + this.isRenderMsgProgress(item)}>
@@ -332,9 +337,9 @@ class MessageList extends React.Component {
                         </li>}
                       </ul>
                       {msgstyletype === msgTypes.IMPORT_RESULT &&
-                      <a className={styles.download} href={`/api/fileservice/download?fileid=${msgparam.data.ResultFileId}`}>下载</a>}
+                        <a className={styles.download} href={`/api/fileservice/download?fileid=${msgparam.data.ResultFileId}`}>下载</a>}
                       {((msgstyletype === msgTypes.TASK || msgstyletype === 8) && msgparam && msgparam.reminderid)
-                      && <a className={styles.download} onClick={this.openReminderConfig.bind(this, item)}>提醒设置</a>}
+                        && <a className={styles.download} onClick={this.openReminderConfig.bind(this, item)}>提醒设置</a>}
                     </li>
                   );
                 })
@@ -353,9 +358,9 @@ class MessageList extends React.Component {
             onCancel={this.closeReminderConfig.bind(this)}
             footer={[
               <Button key="ok" loading={this.state.modalBtnLoading}
-                      onClick={this.setReminderDisabled.bind(this, false)}>提醒</Button>,
+                onClick={this.setReminderDisabled.bind(this, false)}>提醒</Button>,
               <Button key="cancel" loading={this.state.modalBtnLoading}
-                      onClick={this.setReminderDisabled.bind(this, true)}>不提醒</Button>
+                onClick={this.setReminderDisabled.bind(this, true)}>不提醒</Button>
             ]}
           >
             <div className={styles.modalContent}>

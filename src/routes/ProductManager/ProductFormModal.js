@@ -28,7 +28,8 @@ class SeriesFormModal extends Component {
     super(props);
     this.state = {
       protocolFields: [],
-      formData: {}
+      formData: {},
+      excutingJSLoading: false
     };
   }
 
@@ -44,7 +45,7 @@ class SeriesFormModal extends Component {
         ]).then(([protocolFields, detailData]) => {
           this.setState({
             protocolFields,
-            formData: detailData
+            formData: this.getEditData(protocolFields, detailData)
           });
         });
       } else {
@@ -60,6 +61,23 @@ class SeriesFormModal extends Component {
     }
   }
 
+  // fix 表格控件，加typeid
+  getEditData = (editProtocol, detail) => {
+    const retData = _.cloneDeep(detail);
+    editProtocol.forEach(field => {
+      const { controltype, fieldname, fieldconfig } = field;
+      if (controltype === 24 && retData[fieldname]) {
+        retData[fieldname] = retData[fieldname].map(item => {
+          return {
+            TypeId: fieldconfig.entityId,
+            FieldData: item
+          };
+        });
+      }
+    });
+    return retData;
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
     if (!this.props.visible && !nextProps.visible) return false;
     return true;
@@ -68,7 +86,8 @@ class SeriesFormModal extends Component {
   resetState = () => {
     this.setState({
       protocolFields: [],
-      formData: {}
+      formData: {},
+      excutingJSLoading: false
     });
   };
 
@@ -96,6 +115,12 @@ class SeriesFormModal extends Component {
     });
   };
 
+  excutingJSStatusChange = (status) => {
+    this.setState({
+      excutingJSLoading: status
+    });
+  }
+
   render() {
     const DynamicFormComponent = this.props.isEdit ? DynamicFormEdit : DynamicFormAdd;
     return (
@@ -104,8 +129,8 @@ class SeriesFormModal extends Component {
         visible={this.props.visible}
         onCancel={this.props.cancel}
         onOk={this.submitForm}
-        confirmLoading={this.props.modalPending}
-        width={document.body.clientWidth > 1400 ? 1200 : 800}
+        confirmLoading={this.props.modalPending || this.state.excutingJSLoading}
+        width={document.body.clientWidth * 0.95}
       >
         <DynamicFormComponent
           ref={form => this.form = form}
@@ -114,6 +139,7 @@ class SeriesFormModal extends Component {
           fields={this.state.protocolFields}
           value={this.state.formData}
           onChange={formData => this.setState({ formData })}
+          excutingJSStatusChange={this.excutingJSStatusChange}
         />
       </Modal>
     );

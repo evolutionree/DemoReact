@@ -59,14 +59,22 @@ class DynamicFormView extends React.Component {
       } else if (cols) {
         colNum = cols;
       } else {
-        colNum = document.body.clientWidth > 1400 ? 8 : 12;
+        if (document.body.clientWidth > 1500) {
+          colNum = 6;
+        } else if (document.body.clientWidth > 1100) {
+          colNum = 8;
+        } else {
+          colNum = 12;
+        }
       }
 
       //TODO: 表单查看 项 用样式区分label和值项
       let className = formItemWrap_hasNoBackground_field.indexOf(field.controltype) > -1 ? '' : 'hasBackground';
       //this.props.cols 暂时数据源 也是用本组件  然后每单元项一列显示
       if (this.getFormLayout() === 'horizontal' && !cols) { //TODO： 如果表单单元项 lable 和 formItem是横向布局， 有的单元项会占一行，导致lable的宽跟其他表单项对不齐  so...
-        if (document.body.clientWidth > 1400) {
+        if (document.body.clientWidth > 1500) {
+          className = colNum === 24 ? ('fourCol_onlylineFormItem ' + className) : className;
+        } else if (document.body.clientWidth > 1100) {
           className = colNum === 24 ? ('threeCol_onlylineFormItem ' + className) : className;
         } else {
           className = colNum === 24 ? ('twoCol_onlylineFormItem ' + className) : className;

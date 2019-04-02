@@ -42,16 +42,20 @@ body {
     }
 
     .ant-form-item { //保持表单 在有校验不通过的时候  表单能对齐
-      margin-bottom: 18px;
+      margin-bottom: 18px!important;
     }
 
     .ant-form-item-with-help{ //保持表单 在有校验不通过的时候  表单能对齐
-      margin-bottom: 0px;
+      margin-bottom: 0px!important;
     }
 
     .ant-form-item-label{
       padding-right: 8px;
       padding-left: 8px;
+    }
+
+    .ant-form-item-control-wrapper{
+      //min-height: 50px;
     }
 
     .ant-form-item-label label {
@@ -60,6 +64,15 @@ body {
 
     .ant-form-item-label label:after {
       margin: 0;
+    }
+
+    .fourCol_onlylineFormItem{
+      .ant-form-item-label{
+        width: ~"calc(6.25% - 5px)";
+      }
+      .ant-form-item-control-wrapper{
+        width: ~"calc(93.75% + 5px)";
+      }
     }
 
     .threeCol_onlylineFormItem {

@@ -11,7 +11,8 @@ export default {
     editData: {},
     editForm: null,
     editProtocol: [],
-    permission: true
+    permission: true,
+    excutingJSLoading: false
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -164,7 +165,8 @@ export default {
         editData: {},
         editForm: null,
         editProtocol: [],
-        permission: true
+        permission: true,
+        excutingJSLoading: false
       };
     }
   }

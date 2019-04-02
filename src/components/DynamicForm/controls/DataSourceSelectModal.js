@@ -126,7 +126,7 @@ class DataSourceSelectModal extends Component {
     });
   }
 
-  fetchList = (props = this.props) => {
+  fetchList = () => {
     this.setState({ loading: true });
     const params = {
       sourceId: props.sourceId,
@@ -163,12 +163,6 @@ class DataSourceSelectModal extends Component {
       const list = result.data.page;
       const total = result.data.pagecount[0].total;
       this.setState({ loading: false, list, total });
-
-      if (!props.multiple && this.state.currentSelected.length) {
-        if (list.every(item => item.id !== this.state.currentSelected[0].id)) {
-          this.setState({ currentSelected: [] });
-        }
-      }
     }, err => {
       this.setState({ loading: false });
       message.error(err.message || '加载数据失败');

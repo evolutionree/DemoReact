@@ -1,17 +1,39 @@
-.SelectListWrap{
-  :global{
-    .ant-checkbox-group-item{
-      display: block;
-      margin-left: 0
+.SelectListWrap, .Wrap, .MulSelectListWrap {
+  :global {
+    .ant-checkbox-group-item, .ant-radio-wrapper {
+      margin-left: 0;
     }
-
-    .ant-checkbox-group{
+    .ant-checkbox-group, .ant-radio-group{
       label {
-        width: 160px;//有一个固定的宽度
+        width: 160px;
         white-space: nowrap;//不允许换行
         overflow: hidden;//超出宽度不显示
         text-overflow: ellipsis;//规定当文本溢出包含元素时显示省略号。
       }
     }
   }
+}
+
+.SelectListWrap {
+  :global {
+    .ant-checkbox-group-item, .ant-radio-wrapper {
+      display: block;
+    }
+  }
+}
+
+.Wrap {
+  :global {
+    .ant-checkbox-group, .ant-radio-group {
+      label {
+        width: 110px;
+      }
+    }
+  }
+}
+
+.MulSelectListWrap {
+  max-height: 210px;
+  overflow: hidden;
+  overflow-y: auto;
 }

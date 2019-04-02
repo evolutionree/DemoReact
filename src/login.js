@@ -38,6 +38,7 @@ class LoginPageContainer extends Component {
   }
 
   componentDidMount() {
+    localStorage.removeItem('defaultPathType');
     this.fetchAuthCompany();
     if (backendOrigin && dingdingUrlCode) {
       apploginwithdingtalk({ code: dingdingUrlCode }).then(result => { //考虑是否需要走权限

@@ -58,7 +58,6 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     globalJSLoading = false;
     globalJSExecuted = false;
     excuteId = 0;
-    isExcutingJS = false;
 
     constructor(props) {
       super(props);
@@ -147,7 +146,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     setJS = props => {
       const fieldExpandJS = {};
       const fieldExpandFilterJS = {};
-      props.fields instanceof Array && props.fields.forEach(field => {
+      Array.isArray(props.fields) && props.fields.forEach(field => {
         if (field && field.expandjs) {
           fieldExpandJS[field.fieldname] = field.expandjs;
         }
@@ -178,7 +177,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
         }
       }
       this.globalJS = globalJS;
-      if (this.props.fields.length) {
+      if (this.props.fields && this.props.fields.length) {
         setTimeout(() => {
           this.excuteJS(this.globalJS, 'global');
         }, 0);
@@ -457,8 +456,8 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
         designateDataSourceByName: '',
         designateFilterDataSource: '',
         designateFilterDataSourceByName: '',
-        designateNodes: '',
-        designateFilterNodes: ''
+        designateNodes: [],
+        designateFilterNodes: []
       });
     };
 
@@ -662,14 +661,19 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     handleFieldValueChange = (fieldName) => {
-      const expandJS = this.fieldExpandJS[fieldName];
-      if (expandJS) {
-        if (this.globalJSLoading) {
-          console.warn('global js 未加载完成，将不触发此次js脚本：', fieldName);
-          return;
+      this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(true);
+      setTimeout(() => {
+        const expandJS = this.fieldExpandJS[fieldName];
+        if (expandJS) {
+          if (this.globalJSLoading) {
+            console.warn('global js 未加载完成，将不触发此次js脚本：', fieldName);
+            this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(false);
+            return;
+          }
+          this.excuteJS(expandJS, `field value change__${fieldName}`);
         }
-        this.excuteJS(expandJS, `field value change__${fieldName}`);
-      }
+        this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(false);
+      }, 0);
 
       // clearInterval(this.expandJstimer);
       // const expandJS = this.fieldExpandJS[fieldName];
@@ -686,29 +690,32 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     handleFieldControlFocus = (fieldName) => {
-      const filterJS = this.fieldExpandFilterJS[fieldName];
-      if (filterJS) {
-        if (this.globalJSLoading) {
-          console.warn('global js 未加载完成，将不触发此次js脚本：', fieldName);
-          return;
+      this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(true);
+      setTimeout(() => {
+        const filterJS = this.fieldExpandFilterJS[fieldName];
+        if (filterJS) {
+          if (this.globalJSLoading) {
+            console.warn('global js 未加载完成，将不触发此次js脚本：', fieldName);
+            this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(false);
+            return;
+          }
+          this.excuteJS(filterJS, `field focused__${fieldName}`);
         }
-        this.excuteJS(filterJS, `field focused__${fieldName}`);
-      }
+        this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(false);
+      }, 0);
     };
 
     excuteJS = (js, logTitle) => {
       if (!js) return;
       try {
         this.excuteId += 1;
-        this.isExcutingJS = true;
         console.info(
           `[${logTitle}]excuteJS: ${js && js.replace('/n', '').slice(1, 40)}...`
         );
         // eval(this.getDefCode() + filterJS);
         eval('var app = this;' + js);
-        this.isExcutingJS = false;
       } catch (e) {
-        this.isExcutingJS = false;
+        this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(false);
         console.error(e);
       }
     };

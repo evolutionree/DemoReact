@@ -31,7 +31,8 @@ class DetailModal extends Component {
       editData: {},
       editProtocol: [],
       loading: false,
-      tabInfoFieldName: ''
+      tabInfoFieldName: '',
+      excutingJSLoading: false
     };
   }
 
@@ -141,6 +142,9 @@ class DetailModal extends Component {
   };
 
   saveEdit = () => {
+    if (this.state.excutingJSLoading) {
+      return message.error('表单还在计算中,请稍后操作...');
+    }
     this.editForm.validateFields((err, values) => {
       if (err) {
         return message.error('请检查表单');
@@ -214,6 +218,12 @@ class DetailModal extends Component {
     );
   };
 
+  excutingJSStatusChange = (status) => {
+    this.setState({
+      excutingJSLoading: status
+    });
+  }
+
   render() {
     return (
       <Modal
@@ -234,15 +244,17 @@ class DetailModal extends Component {
               onChange={this.onEditDataChange}
               ref={ref => this.editForm = ref}
               cols={24}
+              excutingJSStatusChange={this.excutingJSStatusChange}
             />
           ) : (
-            <DynamicFormView
-              entityId={this.props.entityId}
-              entityTypeId={(this.props.detailData && this.props.detailData.rectype) || this.props.entityId}
-              fields={this.state.protocol}
-              value={this.state.detailData || {}}
-              cols={24}
-            />
+            this.props.visible ?
+              <DynamicFormView
+                entityId={this.props.entityId}
+                entityTypeId={(this.props.detailData && this.props.detailData.rectype) || this.props.entityId}
+                fields={this.state.protocol}
+                value={this.state.detailData || {}}
+                cols={24}
+              /> : null
           )}
         </Spin>
       </Modal>

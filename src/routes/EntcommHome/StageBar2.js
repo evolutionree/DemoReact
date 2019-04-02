@@ -34,7 +34,8 @@ class StageBar extends Component {
         customFieldsData: {},
         rawInfo: null
       },
-      flowModalVisible: false // 控制审批弹窗是否可见
+      flowModalVisible: false, // 控制审批弹窗是否可见
+      excutingJSLoading: false
     };
   }
 
@@ -112,9 +113,10 @@ class StageBar extends Component {
       this.setState({
         entityTypeId: oppinfoset[0].typeid || oppinfoset[0].entityid
       });
-    } else if (dynamicentityset && dynamicentityset[0] && dynamicentityset[0].typeid) {
+    }
+    if (dynamicentityset && dynamicentityset[0] && dynamicentityset[0].typeid) {
       this.setState({
-        entityTypeId: dynamicentityset[0].typeid
+        dynamicEntityTypeId: dynamicentityset[0].typeid
       });
     }
 
@@ -670,7 +672,7 @@ class StageBar extends Component {
     protocol.forEach(field => {
       const { controltype, fieldname, fieldconfig } = field;
       if (controltype === 24 && retData[fieldname]) {
-        retData[fieldname] = retData[fieldname] instanceof Array && retData[fieldname].map(item => {
+        retData[fieldname] = retData[fieldname].map(item => {
           return {
             TypeId: fieldconfig.entityId,
             FieldData: item
@@ -681,15 +683,23 @@ class StageBar extends Component {
     return retData;
   }
 
+  excutingJSStatusChange = (status) => {
+    this.setState({
+      excutingJSLoading: status
+    });
+  }
+
   renderStageDetail = () => {
-    const { showingStageId } = this.state;
+    const { showingStageId, excutingJSLoading } = this.state;
     if (!showingStageId) return null;
 
     const currentStageId = this.getRecordCurrentStage();
     const stageIndex = this.compareStageIndex(this.state.showingStageId, currentStageId);
     const showingStageName = this.getStageName(this.state.showingStageId);
     if (this.state.highSetting === 0 && showingStageName !== '赢单' && showingStageName !== '输单') {
-      if (stageIndex === 0) return null;
+      const currentStageId = this.getRecordCurrentStage();
+      const isShowingCurrent = this.compareStageIndex(this.state.showingStageId, currentStageId) === 0;
+      if (isShowingCurrent) return null;
     }
 
     const {
@@ -783,6 +793,7 @@ class StageBar extends Component {
                 onChange={val => this.setState({
                   showingStageDetail: { ...this.state.showingStageDetail, entityFieldsData: val }
                 })}
+                excutingJSStatusChange={this.excutingJSStatusChange}
               />
             </div>
           </div>
@@ -796,30 +807,31 @@ class StageBar extends Component {
                 horizontal
                 ref={form => this.customForm = form}
                 entityId={this.props.entityId}
-                entityTypeId={this.state.entityTypeId}
+                entityTypeId={this.state.dynamicEntityTypeId}
                 fields={customFields}
                 value={customFieldsData}
                 refEntityData={this.props.recordDetail}
                 onChange={val => this.setState({
                   showingStageDetail: { ...this.state.showingStageDetail, customFieldsData: val }
                 })}
+                excutingJSStatusChange={this.excutingJSStatusChange}
               />
             </div>
           </div>
         }
-        {this.renderSubmitButton()}
+        {this.renderSubmitButton(excutingJSLoading)}
       </div>
     );
   };
 
-  renderSubmitButton = () => {
+  renderSubmitButton = (excutingJSLoading) => {
     const currentStageId = this.getRecordCurrentStage();
     const { showingStageId } = this.state;
     const showingStageName = this.getStageName(showingStageId);
     if (showingStageName !== '赢单' && showingStageName !== '输单') {
       const result = this.compareStageIndex(showingStageId, currentStageId);
       if (result === 0) {
-        return <Button onClick={this.saveStageDetail}>保存</Button>;
+        return <Button loading={excutingJSLoading} onClick={this.saveStageDetail}>保存</Button>;
       } else if (result < 0) {
         return <Button onClick={() => { this.backToStage(showingStageId); }}>回退到此阶段</Button>;
       } else {

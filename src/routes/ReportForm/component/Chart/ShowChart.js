@@ -473,7 +473,7 @@ function ShowChart({
         },
         axisLine: {
           show: true,
-          onZero: false,
+          onZero: true,
           lineStyle: optionSet.axisLineLineStyle
         },
         ...optionSet.asisLineAndasisLabel,
@@ -490,6 +490,7 @@ function ShowChart({
           nameTextStyle: {
             color: '#9b9b9b'
           },
+          minInterval: item.minInterval ? 1 : 0,
           //坐标轴刻度标签
           axisLabel: {
             formatter: item.formatstr ? item.formatstr : null,
@@ -542,6 +543,7 @@ function ShowChart({
         return {
           name: item.seriesname,
           type: item.chartype,
+          barCategoryGap: '35%',
           stack: item.stack, //数据堆叠，同个类目轴上系列配置相同的stack值可以堆叠放置
           smooth: false, //是否平滑曲线显示。
           showAllSymbol: false,

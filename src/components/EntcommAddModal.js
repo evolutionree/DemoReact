@@ -51,7 +51,8 @@ class EntcommAddModal extends Component {
       key: new Date().getTime(), // 每次打开弹窗时，都重新渲染
       commonid: '',
       entityFormDoneLink: entityFormDoneLink[this.props.entityId] !== false,
-      fetchProtocolLoading: false
+      fetchProtocolLoading: false,
+      excutingJSLoading: false
     };
   }
 
@@ -78,9 +79,10 @@ class EntcommAddModal extends Component {
         });
         this.fetchProtocol(nextProps.entityTypeId);
       } else if (!entityTypes || entityTypes.length === 1) { // 实体只有一个类型时，跳过类型选择
+        const selectedEntityType = Array.isArray(entityTypes) && entityTypes.length === 1 ? entityTypes[0].categoryid : entityId;
         this.setState({
           showFormModal: true,
-          selectedEntityType: entityId
+          selectedEntityType: selectedEntityType
         });
         this.fetchProtocol(entityId);
       } else if (entityTypes.length > 1) {
@@ -114,7 +116,8 @@ class EntcommAddModal extends Component {
       storageLoading: false,
       dataModel: undefined,
       key: new Date().getTime(),
-      commonid: ''
+      commonid: '',
+      excutingJSLoading: false
     });
   };
 
@@ -328,6 +331,12 @@ class EntcommAddModal extends Component {
     });
   }
 
+  excutingJSStatusChange = (status) => {
+    this.setState({
+      excutingJSLoading: status
+    });
+  }
+
   render() {
     const { entityTypes, footer, refRecord, entityId } = this.props;
     const {
@@ -340,7 +349,8 @@ class EntcommAddModal extends Component {
       storageLoading,
       entityFormDoneLink,
       fetchProtocolLoading,
-      entityModelType
+      entityModelType,
+      excutingJSLoading
     } = this.state;
 
     return (
@@ -366,13 +376,13 @@ class EntcommAddModal extends Component {
             visible={showFormModal}
             onCancel={this.onFormModalCancel}
             onOk={this.onFormModalConfirm}
-            width={document.body.clientWidth > 1400 ? 1200 : 800}
+            width={document.body.clientWidth * 0.95}
             wrapClassName="DynamicFormModal"
             footer={[
               entityModelType === 0 ? <Checkbox key={entityId} onChange={this.checkboxChange} checked={entityFormDoneLink}>新增后跳转到页签</Checkbox> : null,
               <Button key="back" type="default" onClick={this.onFormModalCancel}>取消</Button>,
-              <Button key="storage" loading={storageLoading} onClick={this.onFormModalStorage}>暂存</Button>,
-              <Button key="submit" loading={confirmLoading} onClick={this.onFormModalConfirm}>提交</Button>
+              <Button key="storage" loading={storageLoading || excutingJSLoading} onClick={this.onFormModalStorage}>暂存</Button>,
+              <Button key="submit" loading={confirmLoading || excutingJSLoading} onClick={this.onFormModalConfirm}>提交</Button>
             ]}
           >
             <Spin spinning={fetchProtocolLoading}>
@@ -387,6 +397,7 @@ class EntcommAddModal extends Component {
                 ref={form => { this.form = form; }}
                 setExtraData={this.setExtraData}
                 setFieldsConfig={this.setFieldsConfig}
+                excutingJSStatusChange={this.excutingJSStatusChange}
               />
             </Spin>
           </Modal> : null

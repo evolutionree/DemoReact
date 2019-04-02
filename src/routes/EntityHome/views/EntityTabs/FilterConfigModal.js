@@ -18,14 +18,41 @@ class FilterConfigModal extends Component {
     super(props);
     this.state = {
       ruleList: this.transformData(props.rule).ruleList,
-      ruleSet: this.transformData(props.rule).ruleSet
+      ruleSet: this.transformData(props.rule).ruleSet,
+      entityFieldData: []
     };
   }
 
+  componentDidMount() {
+    this.fetchFields(this.props.relEntityId);
+  }
+
   componentWillReceiveProps(nextProps) {
+    if (this.props.relEntityId !== nextProps.relEntityId) {
+      this.fetchFields(nextProps.relEntityId);
+    }
     this.setState({
       ruleList: this.transformData(nextProps.rule).ruleList,
       ruleSet: this.transformData(nextProps.rule).ruleSet
+    });
+  }
+
+  fetchFields(entityId) {
+    queryFields(entityId).then(result => {
+      const entityFieldData = result.data.entityfieldpros;
+      this.setState({
+        entityFieldData: entityFieldData.map(item => ({
+          controlType: item.controltype,
+          fieldId: item.fieldid,
+          fieldLabel: item.fieldlabel,
+          fieldConfig: item.fieldconfig,
+          recStatus: item.recstatus,
+          fieldName: item.fieldname,
+          displayName: item.displayname
+        }))
+      });
+    }).catch(e => {
+      console.error(e.message);
     });
   }
 
@@ -38,20 +65,20 @@ class FilterConfigModal extends Component {
   }
 
   handleSubmit = () => {
-    const { entityId, entityFieldData, recid } = this.props;
-    const { ruleList, ruleSet } = this.state;
+    const { recid, relEntityId } = this.props;
+    const { entityFieldData, ruleList, ruleSet } = this.state;
     const result = this.filterConfigBoard.validate();
     if (!result) return;
     this.props.ruleChange && this.props.ruleChange({
-      entityid: entityId,
+      entityid: relEntityId,
       pageid: recid,
       rule: {
-        entityid: entityId,
+        entityid: relEntityId,
         rulename: '',
         rulesql: '',
         ruleid: recid
       },
-      ruleitems: ruleListToItems(ruleList, entityFieldData, entityId),
+      ruleitems: ruleListToItems(ruleList, entityFieldData, relEntityId),
       ruleset: {
         ruleset: ruleSet,
         ruleformat: '',
@@ -73,8 +100,8 @@ class FilterConfigModal extends Component {
   }
 
   render() {
-    const { entityId, entityFieldData } = this.props;
-    const { ruleList, ruleSet } = this.state;
+    const { relEntityId } = this.props;
+    const { entityFieldData, ruleList, ruleSet } = this.state;
     return (
       <Modal
         visible={this.props.visible}
@@ -83,7 +110,7 @@ class FilterConfigModal extends Component {
         onCancel={this.props.close}
       >
         <FilterConfigBoard
-          entityId={entityId}
+          entityId={relEntityId}
           ref={filterConfigBoard => { this.filterConfigBoard = filterConfigBoard; }}
           allFields={entityFieldData}
           title1="第一步：定义数据规则"
@@ -99,10 +126,9 @@ class FilterConfigModal extends Component {
 
 export default connect(
   state => {
-    const { entityId, entityFieldData } = state.entityTabs;
+    const { entityId } = state.entityTabs;
     return {
-      entityId,
-      entityFieldData
+      entityId
     };
   },
   dispatch => {

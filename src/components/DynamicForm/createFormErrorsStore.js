@@ -115,7 +115,7 @@ export default function createFormErrorsStore(WrappedFormComponent, isTable) {
       });
     };
     render() {
-      const { value, onChange, ...restProps } = this.props;
+      const { value, onChange, excutingJSStatusChange, ...restProps } = this.props;
       return (
         <WrappedFormComponent
           {...restProps}
@@ -123,6 +123,7 @@ export default function createFormErrorsStore(WrappedFormComponent, isTable) {
           wrappedComponentRef={(inst) => this.formRef = inst}
           value={this.state.innerFormValue}
           onChange={this.handleFormValueChange}
+          excutingJSStatusChange={excutingJSStatusChange}
         />
       );
     }

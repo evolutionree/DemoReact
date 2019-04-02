@@ -28,7 +28,8 @@ class EntcommCopyModal extends Component {
       confirmLoading: false,
       fetchDataSucced: false,
       key: new Date().getTime(), // 每次打开弹窗时，都重新渲染
-      commonid: ""
+      commonid: "",
+      excutingJSLoading: false
     };
   }
 
@@ -89,7 +90,8 @@ class EntcommCopyModal extends Component {
       formData: {}, // 表单数据
       fetchDataSucced: false,
       confirmLoading: false,
-      key: new Date().getTime()
+      key: new Date().getTime(),
+      excutingJSLoading: false
     });
   };
 
@@ -209,6 +211,12 @@ class EntcommCopyModal extends Component {
     })
   }
 
+  excutingJSStatusChange = (status) => {
+    this.setState({
+      excutingJSLoading: status
+    });
+  }
+
   render() {
     const { entityTypes } = this.props;
     const {
@@ -217,7 +225,8 @@ class EntcommCopyModal extends Component {
       selectedEntityType,
       protocolFields,
       formData,
-      confirmLoading
+      confirmLoading,
+      excutingJSLoading
     } = this.state;
 
     const hasTable = protocolFields.some(field => {
@@ -231,8 +240,8 @@ class EntcommCopyModal extends Component {
           visible={showFormModal}
           onCancel={this.onFormModalCancel}
           onOk={this.onFormModalConfirm}
-          confirmLoading={confirmLoading}
-          width={document.body.clientWidth > 1400 ? 1200 : 800}
+          confirmLoading={confirmLoading || excutingJSLoading}
+          width={document.body.clientWidth * 0.95}
           wrapClassName="DynamicFormModal"
         >
           {this.state.fetchDataSucced && <DynamicFormAdd
@@ -244,6 +253,7 @@ class EntcommCopyModal extends Component {
             ref={form => { this.form = form; }}
             setExtraData={this.setExtraData}
             setFieldsConfig={this.setFieldsConfig}
+            excutingJSStatusChange={this.excutingJSStatusChange}
           />}
           {/*{JSON.stringify(this.state.formData)}*/}
         </Modal>

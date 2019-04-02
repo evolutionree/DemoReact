@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import { Modal, Select, message } from 'antd';
+import { Modal, Button, message } from 'antd';
 import { DynamicFormEdit } from './DynamicForm';
 import { getGeneralProtocol, getEntcommDetail, editEntcomm } from '../services/entcomm';
 
@@ -23,7 +23,8 @@ class EntcommEditModal extends Component {
       detailData: {}, // 记录详情
       formData: {}, // 表单数据
       confirmLoading: false,
-      key: new Date().getTime() // 每次打开弹窗时，都重新渲染
+      key: new Date().getTime(), // 每次打开弹窗时，都重新渲染
+      excutingJSLoading: false
     };
   }
 
@@ -117,13 +118,20 @@ class EntcommEditModal extends Component {
     this.setState({
       protocol: [],
       formData: {},
-      key: new Date().getTime()
+      key: new Date().getTime(),
+      excutingJSLoading: false
     });
   };
 
+  excutingJSStatusChange = (status) => {
+    this.setState({
+      excutingJSLoading: status
+    });
+  }
+
   render() {
     const { visible, footer, entityId } = this.props;
-    const { typeId, protocol, formData, confirmLoading } = this.state;
+    const { typeId, protocol, formData, confirmLoading, excutingJSLoading } = this.state;
 
     const hasTable = protocol.some(field => {
       return (field.controltype === 24 && field.fieldconfig.isVisible === 1)
@@ -137,9 +145,13 @@ class EntcommEditModal extends Component {
         onCancel={this.props.cancel}
         onOk={this.handleSubmit}
         confirmLoading={confirmLoading}
-        width={document.body.clientWidth > 1400 ? 1200 : 800}
+        width={document.body.clientWidth * 0.95}
         wrapClassName="DynamicFormModal"
         key={this.state.key}
+        footer={[
+          <Button key="back" type="default" onClick={this.props.cancel}>取消</Button>,
+          <Button key="submit" loading={confirmLoading || excutingJSLoading} onClick={this.handleSubmit}>提交</Button>
+        ]}
       >
         <DynamicFormEdit
           entityId={entityId}
@@ -148,6 +160,7 @@ class EntcommEditModal extends Component {
           value={formData}
           onChange={val => { this.setState({ formData: val }); }}
           ref={form => { this.form = form; }}
+          excutingJSStatusChange={this.excutingJSStatusChange}
         />
       </Modal>
     );

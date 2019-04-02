@@ -1,5 +1,6 @@
 import React from 'react';
-import { Form, Select, Input, Radio, Checkbox, message } from 'antd';
+import { Form, Select, Input, Radio, Checkbox, message, DatePicker, Button } from 'antd';
+import moment from 'moment';
 import RelBusDataSource from './RelBusDataSource';
 import { getIntlText } from '../../../../components/UKComponent/Form/IntlText';
 import { queryDicTypes, queryDicOptions } from '../../../../services/dictionary';
@@ -9,6 +10,14 @@ import { query as queryEntity, queryFields, getreffieldsbyfield } from '../../..
 const FormItem = Form.Item;
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
+
+function toMomentFormat(format) {
+  const defaultFormat = 'YYYY-MM-DD HH:mm:ss';
+  if (!format) return defaultFormat;
+  return format.replace(/y/g, 'Y')
+    .replace(/d/g, 'D')
+    .replace(/h/g, 'H');
+}
 
 class DefaultValueDate extends React.Component {
   static propTypes = {};
@@ -29,6 +38,38 @@ class DefaultValueDate extends React.Component {
     const checked = value === 'now';
     return (
       <Checkbox checked={checked} onChange={this.handleChange}>当前</Checkbox>
+    );
+  }
+}
+
+class LimitValueDate extends React.Component {
+  static propTypes = {};
+  static defaultProps = {};
+
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
+  handleChange = event => {
+    if (event && Object.prototype.hasOwnProperty.call(event, 'target')) {
+      const val = event.target.checked ? 'now' : '';
+      this.props.onChange(val);
+    } else {
+      this.props.onChange(event && event.format('YYYY-MM-DD'));
+    }
+  };
+
+  render() {
+    const { value } = this.props;
+    const checked = value === 'now';
+    const mFormat = toMomentFormat('YYYY-MM-DD');
+    const date = value ? moment(moment(value, 'YYYY-MM-DD').format(mFormat), mFormat) : undefined;
+    return (
+      <div style={{ display: 'flex' }}>
+        <Checkbox checked={checked} onChange={this.handleChange}>当前</Checkbox>
+        <div>{!checked ? <DatePicker value={date} onChange={this.handleChange} /> : null}</div>
+      </div>
     );
   }
 }
@@ -655,7 +696,7 @@ class BatchFieldSelect extends React.Component {
   fetchOptions = (originEntity) => {
     queryFields(originEntity).then(result => {
       const options = result.data.entityfieldpros
-      // 单选、数据源、选人、产品可供选择(且都是单选)
+        // 单选、数据源、选人、产品可供选择(且都是单选)
         .filter(item => {
           if (item.fieldconfig.multiple !== 1 && [3, 18, 25, 28, 1002, 1003, 1006].indexOf(item.controltype) !== -1) {
             return item;
@@ -810,9 +851,9 @@ export default class FormItemFactory {
       <FormItem label="文案配置" key="switchinfo">
         {this.getFieldDecorator('switchinfo', {
           rules: [{ required: true, message: '请完成文案配置' },
-            {
-              validator: this.switchValueRequire
-            }]
+          {
+            validator: this.switchValueRequire
+          }]
         })(<SwitchSet />)}
       </FormItem>
     );
@@ -954,6 +995,17 @@ export default class FormItemFactory {
           initialValue: ctrlType === 8 ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss',
           rules: [{ required: true, message: '请输入显示格式' }]
         })(<Input placeholder="显示格式" />)}
+      </FormItem>
+    );
+  }
+
+  createLimitDate() {
+    return (
+      <FormItem label="设置限制日期(不选则不限制)" key="limitDate">
+        {this.getFieldDecorator('limitDate', {
+          initialValue: '',
+          rules: [{ message: '请选择限制日期' }]
+        })(<LimitValueDate />)}
       </FormItem>
     );
   }

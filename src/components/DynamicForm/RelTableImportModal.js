@@ -147,13 +147,13 @@ class RelTableImportModal extends Component {
     return (
       <div key={this.state.key}>
         <Modal title="导入"
-               width={589}
-               visible={this.props.visible}
-               onCancel={this.onImpModalCancel}
-               footer={[
-                 <Button key="back" onClick={this.onImpModalCancel}>关    闭</Button>,
-                 <Button key="submit" disabled={!this.state.pessionImport} onClick={this.onImpModalConfirm}>开始导入</Button>
-               ]}
+          width={589}
+          visible={this.props.visible}
+          onCancel={this.onImpModalCancel}
+          footer={[
+            <Button key="back" onClick={this.onImpModalCancel}>关    闭</Button>,
+            <Button key="submit" disabled={!this.state.pessionImport} onClick={this.onImpModalConfirm}>开始导入</Button>
+          ]}
         >
           <div className={styles.importMain}>
             <Row className={styles.row}>
@@ -177,6 +177,7 @@ class RelTableImportModal extends Component {
             </Row>
             <Row className={styles.row}>
               <Upload
+                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
                 className={styles.uploadButton}
                 name="data"
                 data={this.getUploadParams}

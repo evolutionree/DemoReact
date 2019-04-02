@@ -14,7 +14,7 @@ import RelTableBatchModal from '../RelTableBatchModal';
 import { getBackEndField_TO_FrontEnd } from '../../AppHeader/TemporaryStorage/formStorageUtils';
 import { queryEntityDetail } from '../../../services/entity';
 
-const TableMaxHeight = 400;
+const TableMaxHeight = 500;
 
 class RelTable extends Component {
   static propTypes = {
@@ -54,11 +54,10 @@ class RelTable extends Component {
   componentDidMount() {
     this.props.entityId && this.queryFields(this.props.entityId, this.props);
     this.fetchGlobalJS(this.props.entityId);
-    document.body.addEventListener('keydown', this.onKeyDownHandler, false);
 
     this.setAlignTableWidthAndHeight();
     let timer = null;
-    if (this.relTableRef) { //监听节点变化  动态计算编辑器的高度
+    if (this.tabWrapRef) { //监听节点变化  动态计算编辑器的高度
       const MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
       if (MutationObserver) {
         const observer = new MutationObserver((mutations) => {
@@ -72,7 +71,7 @@ class RelTable extends Component {
           });
         });
         //主要监听节点变化
-        observer.observe(this.relTableRef, {
+        observer.observe(this.tabWrapRef, {
           attributes: true,
           childList: true,
           subtree: true,
@@ -85,13 +84,7 @@ class RelTable extends Component {
   }
 
   componentWillUnmount() {
-    document.body.removeEventListener('keydown', this.onKeyDownHandler, false);
-  }
 
-  onKeyDownHandler = (e) => { //不允许Tab键 切换 表格中的表单项
-    if (event.keyCode === 9) {
-      e.preventDefault();
-    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -657,31 +650,6 @@ class RelTable extends Component {
       //列表的固定表头的列
       const fixedTopHeader = this.fixTopTableRef.children[0].children[0].children;
 
-      this.fixTopTableRef.style.width = this.relTableRef.getBoundingClientRect().width + 'px';
-      //顶部固定表格的列宽 需与真实表格保持一致
-      for (let i = 0; i < realHeader.length; i++) {
-        let realHeader_thWidth = realHeader[i].getBoundingClientRect().width;
-        let fixedTopHeader_thWidth = fixedTopHeader[i].getBoundingClientRect().width;
-
-        let realHeader_thHeight = realHeader[i].getBoundingClientRect().height;
-        let fixedTopHeader_thHeight = fixedTopHeader[i].getBoundingClientRect().height;
-        if (realHeader_thWidth !== fixedTopHeader_thWidth || realHeader_thHeight !== fixedTopHeader_thHeight) {
-          fixedTopHeader[i].style.width = realHeader_thWidth + 'px';
-          fixedTopHeader[i].style.height = realHeader_thHeight + 'px';
-        }
-      }
-
-      //是否存在横 纵向滚动条
-      const vertical = this.hasScrolled(this.relTableWrapRef);
-      const horizontal = this.hasScrolled(this.relTableWrapRef, 'horizontal');
-
-      let scrollWidth = 0;
-      if (vertical) {
-        scrollWidth = this.getScrollWidth();
-      }
-      this.fixTopWrapRef.style.width = `calc(100% - ${scrollWidth}px)`;
-      this.fixTopWrapRef.style.height = this.relTableWrapRef.children[0].children[0].getBoundingClientRect().height + 1 + 'px';
-
       //列表的原始表头的行
       const realBody = this.relTableRef.children;
       //列表的左固定表的行
@@ -699,7 +667,7 @@ class RelTable extends Component {
         const fixedLeftBody_Tds = fixedLeftBody[i].children[0].children;
         for (let j = 0; j < fixedLeftBody_Tds.length; j++) {
           fixedLeftBody_Tds[j].style.width = realHeader[j].getBoundingClientRect().width + 'px';
-          fixedLeftBody_Tds[j].children[0].style.width = realHeader[j].getBoundingClientRect().width - 21 + 'px';
+          fixedLeftBody_Tds[j].children[0].style.width = realHeader[j].getBoundingClientRect().width - 6 + 'px';
         }
       }
 
@@ -712,12 +680,39 @@ class RelTable extends Component {
       }
       this.fixLeftWrapRef.style.width = fixedWidth + 'px';
 
+      //是否存在横 纵向滚动条
+      const vertical = this.hasScrolled(this.relTableWrapRef);
+      const horizontal = this.hasScrolled(this.relTableWrapRef, 'horizontal');
+
+      let scrollWidth = 0;
+      if (vertical) {
+        scrollWidth = this.getScrollWidth();
+      }
+
       let scrollHeight = 0;
       if (horizontal) {
         scrollHeight = this.getScrollWidth();
       }
       this.fixLeftWrapRef.style.height = this.relTableWrapRef.getBoundingClientRect().height - scrollHeight + 'px';
       this.fixLeftWrapRef.style.maxHeight = TableMaxHeight - scrollHeight + 'px';
+
+      this.fixTopWrapRef.style.width = `calc(100% - ${scrollWidth}px)`;
+      this.fixTopWrapRef.style.height = this.relTableWrapRef.children[0].children[0].getBoundingClientRect().height + 1 + 'px';
+      this.fixTopTableRef.style.width = this.relTableRef.getBoundingClientRect().width + 'px';
+
+
+      //顶部固定表格的列宽 需与真实表格保持一致
+      for (let i = 0; i < realHeader.length; i++) {
+        let realHeader_thWidth = realHeader[i].getBoundingClientRect().width;
+        let fixedTopHeader_thWidth = fixedTopHeader[i].getBoundingClientRect().width;
+        let realHeader_thHeight = realHeader[i].getBoundingClientRect().height;
+        let fixedTopHeader_thHeight = fixedTopHeader[i].getBoundingClientRect().height;
+        if (realHeader_thWidth !== fixedTopHeader_thWidth || realHeader_thHeight !== fixedTopHeader_thHeight) {
+          fixedTopHeader[i].style.maxWidth = realHeader_thWidth + 'px';
+          fixedTopHeader[i].style.width = realHeader_thWidth + 'px';
+          fixedTopHeader[i].style.height = realHeader_thHeight + 'px';
+        }
+      }
     } catch (e) {
       console.error(e);
     }
@@ -768,9 +763,9 @@ class RelTable extends Component {
             {
               this.props.batch ? <Button onClick={this.batchAddData} style={{ marginRight: '15px' }}>批量</Button> : null
             }
-            <Button onClick={this.delRow} type="danger">删除</Button>
+            <Button key={new Date().getTime()} onClick={this.delRow} type="danger">删除</Button>
           </div>}
-          <div className={styles.tableContent}>
+          <div className={styles.tableContent} ref={ref => this.tabWrapRef = ref}>
             <div className={classnames(styles.fixTopWrap, { [styles.fixTopWrapHidden]: this.parseValue().length === 0 })} ref={ref => this.fixTopWrapRef = ref}>
               <div className={classnames([styles.table, styles.fixTopTable])} ref={ref => this.fixTopTableRef = ref}>
                 {this.renderTableHeader()}

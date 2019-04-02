@@ -176,7 +176,8 @@ class DynamicFormBase extends Component {
         validator(rule, value, callback) {
           const isEmptyArray = Array.isArray(value) && !value.length;
           const isEmptyAddress = field.controltype === 13 && !(value && value.address);
-          if (value === undefined || value === '' || value === null || isEmptyArray || isEmptyAddress) {
+          const isEmptyDataSource = field.controltype === 18 && JSON.stringify(value) === '{}';
+          if (value === undefined || value === '' || value === null || isEmptyArray || isEmptyAddress || isEmptyDataSource) {
             return callback('请输入' + field.displayname);
           }
           callback();
@@ -207,7 +208,7 @@ class DynamicFormBase extends Component {
     if (field.controltype === 12) {
       rules.push({
         validator(rule, value, callback) {
-          if (value && !/^(\(\d{3,4}\)|\d{3,4}-|\s)?\d{7,14}$/.test(value)) {
+          if (value && !/^[0-9\-]{1,}$/.test(value)) {
             return callback('请输入正确的电话号码');
           }
           callback();
@@ -243,19 +244,30 @@ class DynamicFormBase extends Component {
     }];
 
     let lastGroup = groups[0];
-
     this.props.fields.forEach(field => {
-      if (field.controltype === 20 ) {
+      const newField = { ...field };
+      if (newField.fieldconfig && newField.fieldconfig.limitDate) {
+        if (newField.fieldconfig.limitDate === 'now') {
+          const date = new Date();
+          const year = date.getFullYear();
+          const month = date.getMonth() + 1;
+          const day = date.getDate();
+          newField.dateStartValue = `${year}-${month}-${day}`;
+        } else {
+          newField.dateStartValue = newField.fieldconfig.limitDate;
+        }
+      }
+      if (newField.controltype === 20) {
         lastGroup = {
-          title: field.displayname,
-          foldable: field.fieldconfig.foldable === 1,
+          title: newField.displayname,
+          foldable: newField.fieldconfig.foldable === 1,
           fields: [],
-          isVisible: field.fieldconfig.isVisible === 1
+          isVisible: newField.fieldconfig.isVisible === 1
         };
         groups.push(lastGroup);
         return;
       }
-      lastGroup.fields.push(field);
+      lastGroup.fields.push(newField);
     });
     return groups;
   };
@@ -378,14 +390,22 @@ class DynamicFormBase extends Component {
     } else if (this.props.cols) {
       colNum = this.props.cols;
     } else {
-      colNum = document.body.clientWidth > 1400 ? 8 : 12;
+      if (document.body.clientWidth > 1500) {
+        colNum = 6;
+      } else if (document.body.clientWidth > 1100) {
+        colNum = 8;
+      } else {
+        colNum = 12;
+      }
     }
 
     const fieldControl = this.renderFieldControl(field);
 
     let className = '';
     if (this.getFormLayout() === 'horizontal' && !this.props.cols) { //TODO： 如果表单单元项 lable 和 formItem是横向布局， 有的单元项会占一行，导致lable的宽跟其他表单项对不齐  so...
-      if (document.body.clientWidth > 1400) {
+      if (document.body.clientWidth > 1500) {
+        className = colNum === 24 ? 'fourCol_onlylineFormItem' : '';
+      } else if (document.body.clientWidth > 1100) {
         className = colNum === 24 ? 'threeCol_onlylineFormItem' : '';
       } else {
         className = colNum === 24 ? 'twoCol_onlylineFormItem' : '';
@@ -427,7 +447,7 @@ class DynamicFormBase extends Component {
 
   renderFieldControl = field => {
     const { entityTypeId, entityId, value } = this.props;
-    let { fieldconfig, fieldid, fieldname, displayname, controltype, allowadd } = field;
+    let { fieldconfig, fieldid, fieldname, displayname, dateStartValue, controltype, allowadd } = field;
 
     const value_name = value[fieldname + '_name'] && value[fieldname + '_name'].value;
     if (fieldconfig && fieldconfig.isReadOnly !== 1 && (fieldconfig.isReadOnlyJS === 0 || fieldconfig.isReadOnlyJS === 1)) {
@@ -453,6 +473,7 @@ class DynamicFormBase extends Component {
         config={fieldconfig}
         value_name={value_name}
         fieldLabel={displayname}
+        startValue={dateStartValue}
         onFocus={this.onFieldFocus.bind(this, fieldname)}
         quoteHandler={this.handleQuote}
         jsEngine={this.props.jsEngine}

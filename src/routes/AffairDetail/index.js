@@ -128,6 +128,13 @@ class AffairDetail extends Component {
     return node && node.nodeinfo.nodestate !== 2 && (selectedOperate === 1 || selectedOperate === 4)
               && !(node.nodeinfo.nodetype === 1 && node.nodeinfo.needsuccauditcount > 1);
   };
+
+  excutingJSStatusChange = (status) => {
+    this.setState({
+      excutingJSLoading: status
+    });
+  }
+
   render() {
     const {
       currentUser,
@@ -220,6 +227,8 @@ class AffairDetail extends Component {
                   value={columnConfigForms[item.entityId] || {}}
                   onChange={value => putState({ columnConfigForms: { ...columnConfigForms, [item.entityId]: value } })}
                   ref={inst => this.columnConfigFormInstance[item.entityId] = inst}
+                  formOrigin="affair"
+                  excutingJSStatusChange={this.excutingJSStatusChange}
                 />
               ))}
             </div>}
@@ -244,7 +253,7 @@ class AffairDetail extends Component {
                 {selectedNextNode && selectedNextNode.nodeinfo.flowtype === 0 && (
                   <Button onClick={this.props.closeFlow}>关闭流程</Button>
                 )}
-                <Button onClick={this.onSubmitPreAudit} loading={this.props.submitBtnLoading}>下一步</Button>
+                <Button onClick={this.onSubmitPreAudit} loading={this.props.submitBtnLoading || this.state.excutingJSLoading}>下一步</Button>
               </div>
             </div>
           </div>

@@ -14,6 +14,7 @@ import {
 } from '../services/authentication';
 import { getGlobalMenus } from '../services/webmenus';
 import { clearServerCache, queryYearWeekData } from '../services/basicdata';
+import { getDefaultPath } from "../utils";
 
 const KEY_SIDER_FOLD = 'uke100_siderFold';
 let logoutInfoBool = false;
@@ -30,7 +31,7 @@ export default {
     imageGallery: {},
     mapModal: {},
     noMinWidth: false,
-
+    redirectPath: '/',
     langlist: [],
     currentLocale: '' //系统设置默认语言【简体中文】
   },
@@ -40,7 +41,6 @@ export default {
       const { token, permissionLevel } = getLocalAuthentication();
       dispatch({ type: 'authCompany' });
       if (!token) {
-        localStorage.removeItem('defaultPathType');
         location.href = '/login.html';
         // dispatch(routerRedux.push({ pathname: '/login' }));
       } else {
@@ -50,7 +50,7 @@ export default {
         dispatch({ type: 'fetchYearWeekData' });
         dispatch({ type: 'initRsaPublicKey' });
 
-        dispatch({ type: 'querylangs' });
+        dispatch({ type: 'querylangs' })
       }
     },
     // session过期，退出登录
@@ -133,52 +133,28 @@ export default {
     },
     *relogout(_, { call }) {
       yield call(logout);
-      localStorage.removeItem('defaultPathType');
       setTimeout(() => (location.href = '/login.html'), 500);
     },
     *logout(action, { call }) {
       yield call(logout);
       // yield put(routerRedux.push({ pathname: '/login' }));
       location.href = '/login.html';
-      localStorage.removeItem('defaultPathType');
     },
     *fetchGlobalMenus(action, { call, put }) {
       try {
-        const admin = /admin/.test(location.pathname);
-        const paas = /paas/.test(location.pathname);
-        const type = admin ? 1 : (paas ? 1 : 0);
-
+        const type = /admin/.test(location.pathname) ? 1 : 0;
         const result = yield call(getGlobalMenus, type);
 
-        if (localStorage.getItem('defaultPathType') != type) {
-          let defaultPath = '';
-          let findFirstPath = true;
-          function getDefaultPath(menus) {
-            for (let i = 0; i < menus.length; i++) {
-              if (menus[i].children && menus[i].children.length > 0) {
-                getDefaultPath(menus[i].children);
-              } else {
-                if (menus[i].isDefaultPage * 1 === 1) {
-                  defaultPath = menus[i].path;
-                  break;
-                }
-                if (findFirstPath && menus[i].path) {
-                  defaultPath = menus[i].path;
-                  findFirstPath = false;
-                }
-              }
-            }
-            return defaultPath;
-          }
+        const redirectPath = getDefaultPath(result.data);
+        yield put({ type: 'putState', payload: { redirectPath } });
 
-          const firstPagePath = getDefaultPath(result.data);
-          if (firstPagePath) {
-            hashHistory.push(firstPagePath);
+        if (localStorage.getItem('defaultPathType') != type) {
+          if (redirectPath) {
+            hashHistory.push(redirectPath);
           } else {
             hashHistory.push('/nopermission');
           }
         }
-
         localStorage.setItem('defaultPathType', type);
         yield put({ type: 'putState', payload: { menus: result.data } });
       } catch (e) {

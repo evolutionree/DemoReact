@@ -7,6 +7,7 @@ import styles from './SelectUser.less';
 import { queryUsers } from '../../../services/structure';
 import { Icon, Select } from "antd";
 import ImgCardList from '../../ImgCardList';
+import connectBasicData from '../../../models/connectBasicData';
 
 const Option = Select.Option;
 
@@ -32,38 +33,20 @@ class UserSelect extends React.Component {
     this.state = {
       modalVisible: false,
       userNameMap: {},
-      allUsers: [],
+      allUsers: this.props.allUsers,
       options: [],
       searchKey: ''
     };
-    if (props.value) {
-      const users = this.toUserArray(props.value, props.value_name);
-      this.state.userNameMap = {
-        ...this.toUserMap(users)
-      };
-    }
 
-    if (this.props.view && this.props.multiple && this.props.isCommonForm) { //查看页（显示头像）
-      this.fetchUserList();
-    } else if(this.props.view) { //只查看文字
-
-    } else {
-      this.fetchUserList();
-    }
+    this.setUserNameMap(props);
 
     this.setValue = this.ensureDataReady(this.setValue);
     this.setValueByName = this.ensureDataReady(this.setValueByName);
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.value_name && nextProps.value_name !== this.props.value_name) {
-      const users = this.toUserArray(nextProps.value, nextProps.value_name);
-      this.setState({
-        userNameMap: {
-          ...this.state.userNameMap,
-          ...this.toUserMap(users)
-        }
-      });
+    if (!Object.keys(this.state.userNameMap).length) {
+      this.setUserNameMap(nextProps);
     }
   }
 
@@ -92,29 +75,42 @@ class UserSelect extends React.Component {
     return false;
   }
 
-  fetchUserList = () => {
-    const params = {
-      userName: '',
-      deptId: '7f74192d-b937-403f-ac2a-8be34714278b',
-      userPhone: '',
-      pageSize: 9999,
-      pageIndex: 1,
-      recStatus: 2
-    };
-    queryUsers(params).then(result => {
-      const allUsers = result.data.pagedata;
-      const userNameMap = {};
-      allUsers.forEach(u => {
-        userNameMap[u.userid] = u.username;
-      });
-      this.setState({
-        allUsers,
-        userNameMap: {
-          ...this.state.userNameMap,
-          ...userNameMap
-        }
-      }, this.setDataReady);
+  setUserNameMap = (props) => {
+    const allUsers = props.allUsers || [];
+    const userNameMap = {};
+    allUsers.forEach(u => {
+      userNameMap[u.userid] = u.username;
     });
+    this.setState({
+      allUsers,
+      userNameMap
+    }, this.setDataReady);
+  }
+
+  fetchUserList = () => {
+    //TODO: 改用从基础数据获取
+    // const params = {
+    //   userName: '',
+    //   deptId: '7f74192d-b937-403f-ac2a-8be34714278b',
+    //   userPhone: '',
+    //   pageSize: 9999,
+    //   pageIndex: 1,
+    //   recStatus: 2
+    // };
+    // queryUsers(params).then(result => {
+    //   const allUsers = result.data.pagedata;
+    //   const userNameMap = {};
+    //   allUsers.forEach(u => {
+    //     userNameMap[u.userid] = u.username;
+    //   });
+    //   this.setState({
+    //     allUsers,
+    //     userNameMap: {
+    //       ...this.state.userNameMap,
+    //       ...userNameMap
+    //     }
+    //   }, this.setDataReady);
+    // });
   };
 
   setDataReady = () => {
@@ -137,7 +133,6 @@ class UserSelect extends React.Component {
       this.props.onChange('', true);
       return;
     }
-
     const arrVal = (val + '').split(',');
     const matchIds = arrVal.filter(id => {
       return this.state.allUsers.some(user => user.userid + '' === id);
@@ -172,12 +167,6 @@ class UserSelect extends React.Component {
 
   handleOk = (users) => {
     this.hideModal();
-    this.setState({
-      userNameMap: {
-        ...this.state.userNameMap,
-        ...this.toUserMap(users)
-      }
-    });
     const userIds = users.map(u => u.id).join(',');
     this.props.onChange(userIds);
     if (this.props.onChangeWithName) {
@@ -200,29 +189,6 @@ class UserSelect extends React.Component {
 
   handleRemove = (item) => {
     this.props.onChange(this.props.value.filter(i => i !== item));
-  };
-
-  toUserArray = (value, value_name) => {
-    if (typeof value === 'number') value += '';
-    if (!value) return [];
-    const users = [];
-    const arrUserId = value.split(',');
-    const arrUserName = value_name ? value_name.split(',') : [];
-    arrUserId.forEach((userId, index) => {
-      users.push({
-        id: +userId,
-        name: arrUserName.length > index ? arrUserName[index] : ''
-      });
-    });
-    return users;
-  };
-
-  toUserMap = userArray => {
-    const userNameMap = {};
-    userArray.forEach(({ id, name }) => {
-      userNameMap[id] = name;
-    });
-    return userNameMap;
   };
 
   parseValue = () => {
@@ -328,7 +294,6 @@ class UserSelect extends React.Component {
     const { text, users } = this.parseValue();
     const value = users.map(item => item.id + '');
     options = _.uniqBy(_.concat(users, options), 'id');
-
     if (searchKey === '' && users.length) {
       options = options.filter(item => {
         return value.indexOf(item.id + '') > -1;
@@ -404,4 +369,4 @@ UserSelect.View = (props) => {
   );
 };
 
-export default UserSelect;
+export default connectBasicData('allUsers', UserSelect);

@@ -243,17 +243,29 @@ class DynamicFormBase extends Component {
     let lastGroup = groups[0];
 
     this.props.fields.forEach(field => {
-      if (field.controltype === 20 ) {
+      const newField = { ...field };
+      if (newField.fieldconfig && newField.fieldconfig.limitDate) {
+        if (newField.fieldconfig.limitDate === 'now') {
+          const date = new Date();
+          const year = date.getFullYear();
+          const month = date.getMonth() + 1;
+          const day = date.getDate();
+          newField.dateStartValue = `${year}-${month}-${day}`;
+        } else {
+          newField.dateStartValue = newField.fieldconfig.limitDate;
+        }
+      }
+      if (newField.controltype === 20) {
         lastGroup = {
-          title: field.displayname,
-          foldable: field.fieldconfig.foldable === 1,
+          title: newField.displayname,
+          foldable: newField.fieldconfig.foldable === 1,
           fields: [],
-          isVisible: field.fieldconfig.isVisible === 1
+          isVisible: newField.fieldconfig.isVisible === 1
         };
         groups.push(lastGroup);
         return;
       }
-      lastGroup.fields.push(field);
+      lastGroup.fields.push(newField);
     });
     return groups;
   };
@@ -397,7 +409,7 @@ class DynamicFormBase extends Component {
 
   renderFieldControl = field => {
     const { entityTypeId, entityId, value } = this.props;
-    let { fieldconfig, fieldid, fieldname, displayname, controltype, allowadd } = field;
+    let { fieldconfig, fieldid, fieldname, displayname, dateStartValue, controltype, allowadd } = field;
     const value_name = value[fieldname + '_name'] && value[fieldname + '_name'].value;
     if (fieldconfig && fieldconfig.isReadOnly !== 1 && (fieldconfig.isReadOnlyJS === 0 || fieldconfig.isReadOnlyJS === 1)) {
       fieldconfig = {
@@ -422,6 +434,7 @@ class DynamicFormBase extends Component {
         config={fieldconfig}
         value_name={value_name}
         fieldLabel={displayname}
+        startValue={dateStartValue}
         onFocus={this.onFieldFocus.bind(this, fieldname)}
         quoteHandler={this.handleQuote}
         jsEngine={this.props.jsEngine}

@@ -29,7 +29,7 @@ class AssignRoleModal extends Component {
       // 初始化已分配角色
       const { currentItems } = nextProps;
       if (currentItems.length > 1) {
-        this.setState({ currRoles: [] });
+        this.setState({ currRoles: [], curVocations: [] });
       } else if (currentItems[0].roleid) {
         const roleIds = currentItems[0].roleid.split(',');
         const roleNames = currentItems[0].rolename.split(',');

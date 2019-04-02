@@ -103,11 +103,13 @@ class FieldFormModal extends Component {
         }
 
         form.resetFields();
-        form.setFields(_.mapValues({
-          ...editingRecord,
-          ...newFieldConfig,
-          fieldConfig: undefined
-        }, val => ({ value: val })), 1000);
+        setTimeout(() => { //表单的组件 会从中切换卸载  所以晚点设值
+          form.setFields(_.mapValues({
+            ...editingRecord,
+            ...newFieldConfig,
+            fieldConfig: undefined
+          }, val => ({ value: val })));
+        }, 0);
       } else {
         form.resetFields();
         // form.setFields({
@@ -127,17 +129,19 @@ class FieldFormModal extends Component {
         message.error('加密文本不支持扫描功能，请检查');
         return;
       }
-      const newValues = {};
-      for (const key in values) { //把dataSource_开头的的key值 替换成【dataSource】(表单中有部分字段是动态切换的 出现了字段名一样的数据 所有加_以区分 不然ant design会报错，说校验规则变为undefined 具体原因不详)
+      let newValues = {};
+      for (let key in values) { //把dataSource_开头的的key值 替换成【dataSource】(表单中有部分字段是动态切换的 出现了字段名一样的数据 所有加_以区分 不然ant design会报错，说校验规则变为undefined 具体原因不详)
         let newKey = key;
         if (/^dataSource_/.test(key)) newKey = 'dataSource';
         newValues[newKey] = values[key];
-        if (/^displayname_lang$/.test(newKey)) {
-          newValues.fieldlabel_lang = newValues[newKey]; // 传参时需要有 fieldlabel_lang 字段
+        if (/^displayname_lang$/.test(newKey) && newValues[newKey]) {
+          Object.keys(newValues[newKey]).some(item => (newValues[newKey][item] === '')) &&
+            (newValues[newKey] = { ...newValues.fieldlabel_lang });
         }
       }
+
       const newVal = processFormValues(newValues, editingRecord, isEdit);
-      this.props.onOk(newVal, () => { });
+      this.props.onOk(newVal, () => {});
     });
   };
 

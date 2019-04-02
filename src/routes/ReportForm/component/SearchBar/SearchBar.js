@@ -48,7 +48,7 @@ class SearchBarWrap extends React.Component {
   getFields() {
     const { getFieldDecorator } = this.props.form;
     const children = [];
-    this.props.model.map((item, index) => {
+    this.props.model.filter(searchItem => searchItem.multichoosedata.isvisible !== false).map((item, index) => {
       let multiple = 0;
       if (item.ctrltype === 3) {  // ctrltype === 3 表示用户/团队 选择项
         if (item.multichoosedata.relatectrlindex === 0) { //不关联其他组件

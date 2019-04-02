@@ -37,7 +37,8 @@ class Attachment_ extends Component {
     ]),
     onChange: PropTypes.func.isRequired,
     limit: PropTypes.number,
-    isReadOnly: PropTypes.oneOf([0, 1])
+    isReadOnly: PropTypes.oneOf([0, 1]),
+    accept: PropTypes.string
   };
   static defaultProps = {
     limit: 3
@@ -150,12 +151,15 @@ class Attachment_ extends Component {
   };
 
   render() {
+    const { accept } = this.props;
     const fileList = this.getFileList();
     const readOnly = this.props.isReadOnly === 1;
     const overLimit = fileList.length >= this.props.limit;
+
     return (
       <div className={styles.wrap}>
         <Upload
+          accept={accept || ''}
           name="data"
           action="/api/fileservice/upload"
           data={this.getUploadParams}

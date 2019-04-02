@@ -1,0 +1,34 @@
+.badgeStyle {
+  text-align: center;
+  transition: all ease-in-out 300ms;
+  cursor: pointer;
+  .iconStyle {
+    div {
+      min-width: 60px;
+      max-width: 70px;
+      overflow: hidden;
+      text-overflow:ellipsis;
+      white-space: nowrap;
+    }
+  }
+  :global {
+    .ant-badge-count {
+      left: 42px;
+    }
+  }
+  &:hover {
+    color: #3398db;
+  }
+}
+
+.badgeStyle1 {
+  margin-right: 10px;
+  :global {
+    .ant-badge-count {
+      left: 20px;
+    }
+  }
+  &:hover {
+    color: #3398db;
+  }
+}

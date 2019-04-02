@@ -16,10 +16,20 @@ class DateTime extends Component {
   setValue = val => {
     this.props.onChange(val, true);
   };
+
+  disabledEndDate = (endValue) => {
+    const { startValue, format } = this.props;
+    const mFormat = toMomentFormat(format);
+    const start = startValue ? moment(moment(startValue, 'YYYY-MM-DD').format(mFormat), mFormat) : undefined;
+    if (!endValue || !start) return false;
+    return endValue.valueOf() <= start.valueOf();
+  }
+
   onDateChange = (date, dateString) => {
     // this.props.onChange(dateString);
     this.props.onChange(date && date.format('YYYY-MM-DD HH:mm:ss'));
   };
+
   render() {
     const { value, isReadOnly, format } = this.props;
     const mFormat = toMomentFormat(format);
@@ -27,6 +37,7 @@ class DateTime extends Component {
     const date = value ? moment(moment(value, 'YYYY-MM-DD HH:mm:ss').format(mFormat), mFormat) : undefined;
     return (
       <DatePicker
+        disabledDate={this.disabledEndDate}
         showTime
         style={{ width: '100%', height: '32px' }}
         value={date}

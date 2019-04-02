@@ -16,7 +16,7 @@ import styles from './styles.less';
 function formatDate(text, fmt) {
   if (!text) return text;
   if (!fmt) return text;
-  return moment(text, 'YYYY-MM-DD HH:mm:ss').format(fmt.replace(/y/g, 'Y').replace(/d/g, 'D'));
+  return moment(text, 'YYYY-MM-DD HH:mm:ss').format(fmt.replace(/y/g, 'Y').replace(/d/g, 'D').replace(/h/g, 'H'));
 }
 
 const has_No_Filter_Field = [15, 20, 22];

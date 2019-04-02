@@ -2,14 +2,15 @@
  * Created by 0291 on 2018/8/21.
  */
 import React, { PropTypes, Component } from 'react';
-import { Icon, message, Spin } from 'antd';
+import { message, Spin } from 'antd';
 import classnames from 'classnames';
-import styles from './index.less';
 import { gettemporarylist, deletetemporarylist } from '../../../services/structure';
 import { queryWorkflow } from '../../../services/entcomm';
 import { queryEntityDetail } from '../../../services/entity';
 import EntcommAddModal from '../../../components/EntcommAddModal';
 import { BackEndData_to_frontEndData } from './formStorageUtils';
+import BadgeIcon from '../BadgeIcon';
+import styles from './index.less';
 
 class TemporaryStorage extends Component {
   constructor(props) {
@@ -141,12 +142,14 @@ class TemporaryStorage extends Component {
     return (
       <div>
         <div id="TemporaryStorageWrap">
-          <Icon
-            type="inbox"
+          <BadgeIcon
+            textBool={false}
+            IconType="inbox"
             title="暂存列表"
-            style={{ fontSize: 26, cursor: 'pointer', verticalAlign: 'middle', marginRight: '10px' }}
+            IconSize={26}
             onClick={this.togglePanelVisible}
           />
+
           <div className={classnames(styles.panelWrap, { [styles.panelVisible]: this.state.panelVisible })}>
             <div className={styles.header}>暂存列表</div>
             <div className={styles.body}>

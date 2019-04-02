@@ -108,6 +108,7 @@ export function createNormalInput(type, options) {
             ref={ref => this.inputRef = ref}
             type={inputType}
             value={val}
+            title={val}
             onChange={this.onInputChange}
             onBlur={this.onInputBlur}
             disabled={isReadOnly === 1}

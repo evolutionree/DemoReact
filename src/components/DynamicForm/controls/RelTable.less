@@ -56,12 +56,22 @@
 
     .controlWrap {
       min-width: 180px;
-      margin-bottom: 0;
+      margin-bottom: 0!important;
 
       :global{
         .ant-form-explain{
           display: none;
         }
+        .ant-form-item-control-wrapper{
+          min-height: 0;
+        }
+      }
+
+      &.dateForm{
+        min-width: 110px;
+      }
+      &.textForm{
+        min-width: 80px;
       }
     }
   }
@@ -71,7 +81,7 @@
     text-align: left;
     color: rgba(0,0,0,.85);
 
-    padding: 10px;
+    padding: 2px;
     font-weight: 400;
     background-color: #fff;
     white-space: nowrap;
@@ -79,11 +89,14 @@
   }
 
   .tr > .td {
-    padding: 10px;
+    padding: 2px;
     border-right: 1px solid #e9e9e9;
     word-break: break-all;
     border-bottom: 1px solid #e9e9e9;
     transition: all .3s;
+    &.hidden{
+      visibility: hidden;
+    }
   }
   & > div:nth-child(2n) .td {
     background-color: #f9f9f9;
@@ -146,3 +159,12 @@
   }
 }
 
+
+.tableView{
+  :global {
+    .ant-table-thead > tr > th,
+    .ant-table-tbody > tr > td {
+      white-space: normal!important;
+    }
+  }
+}

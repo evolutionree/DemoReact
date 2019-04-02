@@ -7,7 +7,7 @@ import SelectDepartment from '../../../../components/DynamicForm/controls/Select
 import { message, Input } from 'antd';
 import { connect } from 'dva';
 
-
+const searchItemWidth = { minWidth: '200px', maxWidth: '300px' };
 class ModalSelect extends Component {
   static propTypes = {
 
@@ -46,13 +46,13 @@ class ModalSelect extends Component {
     switch (this.props.modalType) {
       case '1': // 按团队
         return (
-          <div style={{ width: 200 }}>
+          <div style={searchItemWidth}>
             <SelectDepartment onChange={(userIds) => { this.props.onChange(userIds) }} value={this.state.value} multiple={this.props.multiple} />
           </div>
         );
       case '2': // 按个人
         return (
-          <div style={{ width: 150 }}>
+          <div style={searchItemWidth}>
             <SelectUser onChange={(userIds) => { this.props.onChange(userIds) }} placeholder="请选择人员" value={this.state.value} multiple={this.props.multiple} />
           </div>
         );

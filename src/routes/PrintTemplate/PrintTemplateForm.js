@@ -1,9 +1,10 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Button, Form, Icon, Input, Modal, Radio, Select, Upload, message } from 'antd';
+import { Button, Form, Icon, Input, Modal, Select, Upload, message } from 'antd';
 import * as _ from 'lodash';
 import { getDeviceHeaders } from '../../utils/request';
-import CodeEditor from '../../components/CodeEditor/index'
+import CodeEditor from '../../components/CodeEditor/index';
+import { downloadFile } from '../../utils/ukUtil';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -76,6 +77,10 @@ class PrintTemplateForm extends Component {
       filename: file.name
     };
   };
+
+  onDownloadFile = (file) => {
+    downloadFile(`/api/fileservice/read?fileid=${file.fileid}`);
+  }
 
   beforeUpload = file => {
     if (file.size > 1024 * 1024 * 100) {
@@ -237,6 +242,7 @@ class PrintTemplateForm extends Component {
                 accept=".xlsx,.docx"
                 data={this.getUploadParams}
                 beforeUpload={this.beforeUpload}
+                onPreview={this.onDownloadFile}
                 headers={{
                   ...getDeviceHeaders(),
                   Authorization: 'Bearer ' + this.props.token

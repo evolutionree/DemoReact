@@ -18,7 +18,9 @@ function EntcommInfo({
     onEditDataChange,
     editFormRef,
     permission,
-    entityId
+    entityId,
+                       onExcutingJSStatusChange,
+                       excutingJSLoading
   }) {
   if (!permission) {
     return (
@@ -44,7 +46,7 @@ function EntcommInfo({
     return (
       <div className={styles.container}>
         <div className={styles.btnrow}>
-          <Button onClick={saveEdit} style={{ marginRight: '10px' }}>保存</Button>
+          <Button onClick={saveEdit} loading={excutingJSLoading} style={{ marginRight: '10px' }}>保存</Button>
           <Button type="default" onClick={cancelEdit}>取消</Button>
         </div>
         <div style={{ maxHeight: document.documentElement.clientHeight - 270 }} className={classnames(styles.formBody, 'entcomminfoBody')}>
@@ -55,6 +57,7 @@ function EntcommInfo({
             value={editData}
             onChange={onEditDataChange}
             ref={editFormRef}
+            excutingJSStatusChange={onExcutingJSStatusChange}
           />
         </div>
       </div>
@@ -102,6 +105,9 @@ export default connect(
       },
       editFormRef(editForm) {
         dispatch({ type: 'entcommInfo/putState', payload: { editForm } });
+      },
+      onExcutingJSStatusChange(status) {
+        dispatch({ type: 'entcommInfo/putState', payload: { excutingJSLoading: status } });
       }
     };
   }

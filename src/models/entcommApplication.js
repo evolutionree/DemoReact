@@ -55,6 +55,7 @@ export default {
       }
       yield put({ type: 'resetState' });
       yield put({ type: 'entityId', payload: entityId });
+      sessionStorage.setItem('seachQuery', '');
       try {
         // 获取实体信息
         const { data } = yield call(queryEntityDetail, entityId);
@@ -120,12 +121,19 @@ export default {
     *search({ payload }, { select, put }) {
       const location = yield select(({ routing }) => routing.locationBeforeTransitions);
       const { pathname, query } = location;
+      let newMergeParams = { ...payload };
+      if (payload.hasOwnProperty('ColumnFilter')) {
+        const ColumnFilter = JSON.stringify(payload.ColumnFilter);
+        newMergeParams = { ColumnFilter };
+        sessionStorage.setItem('seachQuery', ColumnFilter);
+      }
+
       yield put(routerRedux.push({
         pathname,
         query: {
           ...query,
           pageIndex: 1,
-          ...payload
+          ...newMergeParams
         }
       }));
     },
@@ -144,15 +152,27 @@ export default {
         }
       });
     },
-    *advanceSearch({ payload }, { select, call, put }) {
-      const searchData = JSON.stringify(payload);
-      yield put({ type: 'search', payload: { searchData, isAdvanceQuery: 1 } });
+    *cancelFilter({ payload }, { put }) {
+      yield put({ type: 'search', payload: { ColumnFilter: payload } });
+      yield put({ type: 'putState', payload: { ColumnFilter: payload } });
     },
     *queryList(action, { select, call, put }) {
       const location = yield select(({ routing }) => routing.locationBeforeTransitions);
-      const { query } = location;
+      let { query } = location;
       const { menus, entityId, ColumnFilter } = yield select(({ entcommApplication }) => entcommApplication);
+      const seachQuery = sessionStorage.getItem('seachQuery');
       if (!entityId || !menus.length) return;
+      if (!ColumnFilter && query.ColumnFilter) {
+        let filterParams = null;
+        if (seachQuery && seachQuery !== '{}') {
+          filterParams = JSON.parse(seachQuery);
+        } else {
+          filterParams = JSON.parse(query.ColumnFilter);
+        }
+        query = { ...query, ColumnFilter: filterParams };
+        yield put({ type: 'putState', payload: { ColumnFilter: query.ColumnFilter } });
+      }
+
       const queries = {
         entityId,
         pageIndex: 1,
@@ -162,15 +182,11 @@ export default {
         isAdvanceQuery: 0,
         ...query
       };
-      queries.pageIndex = parseInt(queries.pageIndex);
-      queries.pageSize = parseInt(queries.pageSize);
-      queries.isAdvanceQuery = parseInt(queries.isAdvanceQuery);
-      if (queries.searchData) {
-        queries.searchData = JSON.parse(queries.searchData);
-      }
-      if (ColumnFilter) {
-        queries.ColumnFilter = ColumnFilter;
-      }
+      queries.pageIndex = parseInt(queries.pageIndex, 10);
+      queries.pageSize = parseInt(queries.pageSize, 10);
+      queries.isAdvanceQuery = parseInt(queries.isAdvanceQuery, 10);
+      if (queries.searchData) queries.searchData = JSON.parse(queries.searchData);
+      if (ColumnFilter) queries.ColumnFilter = ColumnFilter;
       yield put({ type: 'putState', payload: { sortFieldAndOrder: queries.searchOrder } }); //其他查询条件 发生改变  排序保持不变
       yield put({ type: 'queries', payload: queries });
       try {
@@ -212,11 +228,11 @@ export default {
 
       const functionbutton = payload.filter(item => _.indexOf(item.displayposition, 0) > -1);
 
-      const extraButtonData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => item.buttoncode === 'ShowModals');
+      const extraButtonData = Array.isArray(functionbutton) && functionbutton.filter(item => item.buttoncode === 'ShowModals');
       const buttoncode = ['CallService', 'CallService_showModal', 'PrintEntity', 'EntityDataOpenH5'];
-      const extraToolbarData = functionbutton && functionbutton instanceof Array && functionbutton.filter(item => buttoncode.indexOf(item.buttoncode) > -1);
+      const extraToolbarData = Array.isArray(functionbutton) && functionbutton.filter(item => buttoncode.indexOf(item.buttoncode) > -1);
 
-      functionbutton instanceof Array && functionbutton.map(item => {
+      Array.isArray(functionbutton) && functionbutton.map(item => {
         //转化表单是通过functionButton对象里extradata.type==='transform'匹配显示在页面的   对，这里的规则确实恶心 我也没办法啊啊啊啊啊啊啊啊啊啊啊啊啊  搞不懂  0_0
         const extradataType = ['transform', 'copybutton'];
         if (extradataType.indexOf(item.extradata && item.extradata.type) > -1) {

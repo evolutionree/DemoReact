@@ -3,7 +3,6 @@
  */
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Icon, Badge } from 'antd';
 import classnames from 'classnames';
 import Search from './Component/Search';
 import Tabs from './Component/Tabs';
@@ -13,6 +12,7 @@ import ContextMenuPanel from './Component/ContextMenuPanel';
 import ViewPicture from '../../UKComponent/DataDisplay/ViewPicture';
 import _ from 'lodash';
 import moment from 'moment';
+import BadgeIcon from '../BadgeIcon';
 import styles from './index.less';
 
 class WebIMPanel extends Component {
@@ -166,16 +166,15 @@ class WebIMPanel extends Component {
     }
 
     return (
-      <div style={{ marginRight: '10px' }}>
+      <div>
         <div id="webIM">
-          <Badge count={total_spotMsgCount}>
-            <Icon
-              type="contacts"
-              title="通讯录"
-              style={{ fontSize: 24, cursor: 'pointer', verticalAlign: 'middle' }}
-              onClick={this.togglePanelVisible}
-            />
-          </Badge>
+          <BadgeIcon
+            textBool={false}
+            IconType="contacts"
+            title="通讯录"
+            onClick={this.togglePanelVisible}
+            count={total_spotMsgCount}
+          />
           <div className={classnames(styles.panelWrap, { [styles.panelVisible]: this.state.panelVisible })}>
             <ul className={styles.header}>
               <li>

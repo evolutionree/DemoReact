@@ -161,6 +161,7 @@ class SelectCombine extends React.Component {
         <FilterConfigModal visible={this.state.filterconfigModalVisible}
                            rule={itemValue.entityrule}
                            recid={itemValue.recid}
+                           relEntityId={itemValue.relentityid}
                            ruleChange={this.ruleChangeHandler}
                            close={() => { this.setState({ filterconfigModalVisible: false }) }} />
       </div>

@@ -35,7 +35,23 @@ function UserList({
           { label: '删除', handler: del, show: checkFunc('FileDelete') }
         ]}
       >
-        {checkFunc('FileUpload') && <UploadButton onUpload={onUpload}>上传文档</UploadButton>}
+        {
+          checkFunc('FileUpload') &&
+          <UploadButton
+            onUpload={onUpload}
+            accept={
+              `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
+              .doc,.docx,application/pdf,
+              application/vnd.ms-works,
+              application/msword,
+              application/xml-dtd,
+              application/vnd.ms-excel,
+              application/vnd.ms-powerpoint,
+              .csv,text/html,text/plain`
+            }>
+            上传文档
+         </UploadButton>
+        }
 
         <Toolbar.Right>
           <Search

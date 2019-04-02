@@ -193,6 +193,7 @@ class ImportModal extends Component {
             </Row>}
             <Row className={styles.row}>
               <Upload
+                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
                 className={styles.uploadButton}
                 name="data"
                 data={this.getUploadParams}

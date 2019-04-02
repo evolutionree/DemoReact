@@ -55,7 +55,7 @@ class LocaleSelect extends Component {
     return (
       <Dropdown overlay={menu} placement="bottomCenter">
         <div style={{ paddingRight: '10px' }}>
-          <span style={{ padding: '2px', border: '1px solid #4A4A4A', borderRadius: '5px', position: 'relative', top: '3px', cursor: 'pointer' }}>{currentLocaleObj && currentLocaleObj.key.toUpperCase()}</span>
+          <span style={{ padding: '1px', border: '1px solid #4A4A4A', borderRadius: '5px', position: 'relative', top: '1px', cursor: 'pointer' }}>{currentLocaleObj && currentLocaleObj.key.toUpperCase()}</span>
         </div>
       </Dropdown>
     );

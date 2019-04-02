@@ -40,7 +40,8 @@ class EntcommTransferModal extends Component {
       title: '新增',
       key: new Date().getTime(), // 每次打开弹窗时，都重新渲染
       commonid: '',
-      funccode: ''//发送消息用
+      funccode: '', //发送消息用
+      excutingJSLoading: false
     };
   }
 
@@ -268,7 +269,8 @@ class EntcommTransferModal extends Component {
       title: '新增',
       key: new Date().getTime(),
       commonid: '',
-      funccode: ''//发送消息用
+      funccode: '', //发送消息用
+      excutingJSLoading: false
     });
   };
 
@@ -291,6 +293,12 @@ class EntcommTransferModal extends Component {
     })
   }
 
+  excutingJSStatusChange = (status) => {
+    this.setState({
+      excutingJSLoading: status
+    });
+  }
+
   render() {
     const { entityId } = this.props;
     const {
@@ -305,7 +313,8 @@ class EntcommTransferModal extends Component {
       selectedEntityRule,
       dstEntityId,
       title,
-      confirmLoading
+      confirmLoading,
+      excutingJSLoading
     } = this.state;
 
     const hasTable = protocol.some(field => {
@@ -336,8 +345,8 @@ class EntcommTransferModal extends Component {
         visible={showFormModal}
         onCancel={this.props.onCancel}
         onOk={this.handleSubmit}
-        confirmLoading={confirmLoading}
-        width={document.body.clientWidth > 1400 ? 1200 : 800}
+        confirmLoading={confirmLoading || excutingJSLoading}
+        width={document.body.clientWidth * 0.95}
       >
         <DynamicFormComponent
           key={ selectedEntityType|| dstEntityId}
@@ -348,6 +357,7 @@ class EntcommTransferModal extends Component {
           ref={form => { this.form = form; }}
           setExtraData={this.setExtraData}
           setFieldsConfig={this.setFieldsConfig}
+          excutingJSStatusChange={this.excutingJSStatusChange}
         />
       </Modal>
       </div>

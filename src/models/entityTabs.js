@@ -22,7 +22,7 @@ export default {
     configentityList: [],
     currentItem: null,
     modalPending: false,
-    entityFieldData: [] //页签统计配置 设置统计过滤条件  所有可选字段
+    entityFieldData: [] //页签统计配置 设置统计过滤条件  所有可选字段  2018-10-25 改写成FilterConfigMoal组件里请求
   },
   subscriptions: {
     setup({ dispatch, history }) {
