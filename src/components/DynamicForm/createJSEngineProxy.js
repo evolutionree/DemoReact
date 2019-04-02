@@ -82,9 +82,11 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
 
       this.setState({ fields: nextProps.fields }, () => {
         if (this.globalJS && !this.globalJSExecuted && nextProps.fields.length) {
-          setTimeout(() => {
-            this.excuteJS(this.globalJS, 'global');
-          }, 0);
+          if (!this.props.cacheId) { //暂存表单 不走全局JS
+            setTimeout(() => {
+              this.excuteJS(this.globalJS, 'global');
+            }, 0);
+          }
           this.globalJSExecuted = true;
         }
       });
@@ -159,6 +161,9 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     setGlobalJS = (JS) => {
+      if (this.props.cacheId) { //暂存表单 不走全局JS
+        return;
+      }
       let globalJS = '';
       const data = JS;
       if (data) {
