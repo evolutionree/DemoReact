@@ -154,6 +154,7 @@ class EntityFormModal extends Component {
           <FormItem label="实体表名">
             {getFieldDecorator('entitytable', {
               initialValue: '',
+              normalize: (value) => (value ? value.trim() : value),
               rules: [
                 { required: true, message: '请输入表名' },
                 { pattern: /^[_a-z]*$/, message: '只能输入小写字母或下划线' }

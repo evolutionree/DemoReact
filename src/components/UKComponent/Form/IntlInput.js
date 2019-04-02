@@ -95,12 +95,13 @@ class IntlInput extends Component {
   }
 
   inputChange = (e) => {
+    const value = e.target.value ? e.target.value.trim() : e.target.value;
     this.setState({
       value: {
         ...this.state.value,
-        [this.state.currentLocale]: e.target.value
+        [this.state.currentLocale]: value
       },
-      inputValue: e.target.value,
+      inputValue: value,
       panelVisible: !this.state.value
     });
   }

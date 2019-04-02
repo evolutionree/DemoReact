@@ -89,6 +89,7 @@ function FieldForm({ form, isEdit, entityFields, entityId }) {
 
       <FormItem label="字段表列名">
         {getFieldDecorator('fieldName', {
+          normalize: (value) => (value ? value.trim() : value),
           rules: [
             { required: true, message: '请输入字段表列名' },
             { pattern: /^[a-zA-Z0-9]+$/, message: '只可输入大小写字母，数字' }
