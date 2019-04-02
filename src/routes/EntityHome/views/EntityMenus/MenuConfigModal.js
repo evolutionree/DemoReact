@@ -76,9 +76,9 @@ class MenuConfigModal extends React.Component {
     return queryMenuRule(menuId).then(result => {
       const data = result.data[0];
       this.setState({
-        menuName: data.menuname_lang || data.menuname,
-        ruleList: this.itemsToRuleList(data.ruleitems),
-        ruleSet: data.ruleset.ruleset,
+        menuName: data && (data.menuname_lang || data.menuname),
+        ruleList: this.itemsToRuleList(data && data.ruleitems),
+        ruleSet: data && data.ruleset.ruleset,
         rawRuleInfo: _.cloneDeep(data)
       });
     });
@@ -122,7 +122,9 @@ class MenuConfigModal extends React.Component {
     }
    */
   onConfirm = () => {
-    const { ruleList, ruleSet, menuName } = this.state;
+    const { entityId, isEdit, currentItem, submit } = this.props;
+    const { ruleList, ruleSet, menuName, rawRuleInfo } = this.state;
+
     if (!menuName) {
       message.error('请输入筛选项名称');
       return;
@@ -135,7 +137,7 @@ class MenuConfigModal extends React.Component {
     if (!result) return;
     const params = {
       typeid: 1,
-      entityid: this.props.entityId,
+      entityid: entityId,
       menuname_lang: menuName,
       rulename_lang: menuName,
       ruleitems: ruleList.map(this.toRuleItem),
@@ -145,11 +147,11 @@ class MenuConfigModal extends React.Component {
         ruleformat: ''
       }
     };
-    if (this.props.isEdit) {
-      params.ruleid = this.state.rawRuleInfo.ruleid;
-      params.id = this.props.currentItem.menuid;
+    if (isEdit) {
+      params.ruleid = rawRuleInfo && rawRuleInfo.ruleid;
+      params.id = currentItem.menuid;
     }
-    this.props.submit(params);
+    submit(params);
   };
 
   toRuleItem = (rule, index) => {
@@ -177,7 +179,7 @@ class MenuConfigModal extends React.Component {
 
   itemsToRuleList = (items) => {
     const ruleList = [];
-    items.forEach(item => {
+    Array.isArray(items) && items.forEach(item => {
       if (item.ruletype === undefined) return;
       if (item.ruletype !== 2 && (!item.fieldid || !item.operate || !item.ruledata)) return;
       if (item.ruletype === 2 && !item.ruledata) return;

@@ -120,7 +120,7 @@ export default {
         dataSourceName,
         sqlContent,
         mobViewConfig,
-        columnsDataSource: JSON.parse(columns) || []
+        columnsDataSource: (columns && JSON.parse(columns)) || []
       };
     },
     sqlContent(state, { payload: sqlContent }) {

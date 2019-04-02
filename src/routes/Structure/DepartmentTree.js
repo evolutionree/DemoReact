@@ -50,9 +50,10 @@ class DepartmentTree extends React.Component {
   };
 
   handleSelect = (selectedKeys, event) => {
+    const { onChange } = this.props;
     const { selectedNodes } = event;
-    const value = selectedNodes[0].key;
-    this.props.onChange(value, this.getNodeById(value));
+    const value = (Array.isArray(selectedNodes) && selectedNodes.length) ? selectedNodes[0].key : null;
+    if (value) onChange(value, this.getNodeById(value));
   };
 
   renderTreeNodes(data) {

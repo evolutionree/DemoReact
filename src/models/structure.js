@@ -160,9 +160,9 @@ export default {
       }
     },
     *orderDept({ payload: dir }, { select, call, put }) {
-      const { queries: { deptId }, departments } = yield select(state => state.structure);
+      const { queries: { deptId }, departments, showDisabledDepts } = yield select(state => state.structure);
       const currentDept = _.find(departments, ['deptid', deptId]);
-      const brotherDepts = departments.filter(dept => dept.ancestor === currentDept.ancestor);
+      const brotherDepts = departments.filter(dept => (dept.ancestor === currentDept.ancestor && (showDisabledDepts ? dept.recstatus === 1 : true)));
       const currIndex = _.findIndex(brotherDepts, ['deptid', deptId]);
       const targetDept = brotherDepts[dir === 1 ? currIndex + 1 : currIndex - 1];
       if (targetDept) {
@@ -176,6 +176,8 @@ export default {
         } catch (e) {
           message.error(e.message || '操作失败');
         }
+      } else {
+        message.info('已到达当前层级的顶（底）层，无法移动。');
       }
     },
     *fetchDepartments(actions, { select, call, put }) {
