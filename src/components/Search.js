@@ -26,7 +26,7 @@ class Search extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     const value = nextProps.value;
-    this.setState({ innerVal: value ? value : '' });
+    this.setState({ innerVal: value || '' });
   }
 
   handleSearch = () => {
@@ -48,19 +48,19 @@ class Search extends React.Component {
 
   render() {
     const { placeholder, maxLength, width, label, mode, style } = this.props;
-    return mode === 'button' ? (
-      <div className={styles.search} style={width ? { width, ...style } : { ...style }}>
-        <Input value={this.state.innerVal}
-               onChange={this.handleInput}
-               onKeyDown={this.handleInputKeyDown}
-               maxLength={maxLength && maxLength + ''}
-               placeholder={placeholder} />
-        <Button onClick={this.handleSearch}>
-          {label || '搜索'}
-        </Button>
-      </div>
-    ) : (
-      <div style={{ display: 'inline-block', verticalAlign: 'middle', width: width || '160px', ...style }}>
+    return mode === 'button' ?
+      (<div className={styles.search} style={width ? { width, ...style } : { ...style }}>
+        <Input
+          value={this.state.innerVal}
+          onChange={this.handleInput}
+          onKeyDown={this.handleInputKeyDown}
+          maxLength={maxLength && maxLength + ''}
+          placeholder={placeholder}
+        />
+        <Button onClick={this.handleSearch}>{label || '搜索'}</Button>
+      </div>)
+      :
+      (<div style={{ display: 'inline-block', verticalAlign: 'middle', width: width || '160px', ...style }}>
         <Input.Search
           value={this.state.innerVal}
           onChange={this.handleInput}
@@ -68,8 +68,7 @@ class Search extends React.Component {
           placeholder={placeholder}
           onSearch={this.handleSearch}
         />
-      </div>
-    );
+      </div>);
   }
 }
 

@@ -558,3 +558,16 @@ export function getDefaultPath(data) {
   loop(menuData);
   return defaultPath;
 }
+
+export function heighLightKeyWord(text, keyword) {
+  const index = text.indexOf(keyword);
+  const beforeStr = text.substr(0, index);
+  const afterStr = text.substr(index + keyword.length);
+  return index > -1 ? (
+    <span>
+      {beforeStr}
+      <span style={{ color: '#f50' }}>{keyword}</span>
+      {afterStr}
+    </span>
+  ) : <span>{text}</span>;
+}

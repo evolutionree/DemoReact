@@ -1,5 +1,4 @@
 import { message } from 'antd';
-import _ from 'lodash';
 import { queryFields, query as queryEntities, saveEntityQueryRule } from '../services/entity';
 import { queryRoleRule } from '../services/role';
 import { ruleListToItems } from '../components/FilterConfigBoard';

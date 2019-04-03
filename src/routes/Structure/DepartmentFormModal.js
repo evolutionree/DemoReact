@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'dva';
 import { Modal, Form, Input, Select } from 'antd';
 import _ from 'lodash';
+import DicTypeSelect from '../../components/DicTypeSelect';
 import DepartmentSelect from '../../components/DepartmentSelect';
 import ensureOpenNewModal from './ensureOpenNewModal';
 
@@ -54,36 +55,62 @@ function DepartmentFormModal({
           <Input placeholder="部门名称" maxLength="50" />
         )}
       </FormItem>
+
+      <FormItem label="部门编码">
+        {getFieldDecorator('deptcode', {
+          initialValue: '',
+          rules: [{ required: true, message: '请输入部门编码' }]
+        })(
+          <Input placeholder="部门编码" maxLength="50" />
+        )}
+      </FormItem>
+
+      <FormItem label="部门级别">
+        {getFieldDecorator('oglevel', {
+          initialValue: '',
+          rules: [{ required: true, message: '请选择部门级别' }]
+        })(
+          <DicTypeSelect />
+        )}
+      </FormItem>
+
       <FormItem label="上级部门">
         {getFieldDecorator('pdeptid', {
           rules: [
             { required: true, message: '请选择上级部门' },
-            { validator: (rule, val, callback) => {
-              if (isEdit && val === currentDept.deptid) {
-                callback('不能选择当前部门');
-              } else {
-                callback();
+            {
+              validator: (rule, val, callback) => {
+                if (isEdit && val === currentDept.deptid) {
+                  callback('不能选择当前部门');
+                } else {
+                  callback();
+                }
               }
-            } }
+            }
           ]
         })(
-          <DepartmentSelect disabled={(isEdit && currentDept) ? currentDept.nodepath === 0 : false} designateFilterNodes={designateFilterNodes} placeholder="上级部门" width="100%" />
+          <DepartmentSelect
+            disabled={(isEdit && currentDept) ? currentDept.nodepath === 0 : false}
+            designateFilterNodes={designateFilterNodes}
+            placeholder="上级部门"
+            width="100%"
+          />
         )}
       </FormItem>
       {/*<FormItem label="团队级别">*/}
-        {/*{getFieldDecorator('oglevel', {*/}
-          {/*// initialValue: ''*/}
-          {/*rules: [{ required: true, message: '请选择团队级别' }]*/}
-        {/*})(*/}
-          {/*<Select placeholder="团队级别">*/}
-            {/*<Option value="0">顶级(如集团)</Option>*/}
-            {/*<Option value="1">分公司</Option>*/}
-            {/*<Option value="2">事业群</Option>*/}
-            {/*<Option value="3">3事业部</Option>*/}
-            {/*<Option value="4">分管区域</Option>*/}
-            {/*<Option value="5">部门</Option>*/}
-          {/*</Select>*/}
-        {/*)}*/}
+      {/*{getFieldDecorator('oglevel', {*/}
+      {/*// initialValue: ''*/}
+      {/*rules: [{ required: true, message: '请选择团队级别' }]*/}
+      {/*})(*/}
+      {/*<Select placeholder="团队级别">*/}
+      {/*<Option value="0">顶级(如集团)</Option>*/}
+      {/*<Option value="1">分公司</Option>*/}
+      {/*<Option value="2">事业群</Option>*/}
+      {/*<Option value="3">3事业部</Option>*/}
+      {/*<Option value="4">分管区域</Option>*/}
+      {/*<Option value="5">部门</Option>*/}
+      {/*</Select>*/}
+      {/*)}*/}
       {/*</FormItem>*/}
     </Modal>
   );
@@ -121,11 +148,15 @@ export default connect(
     if (isEdit) {
       fields = {
         deptname: currentDept.deptname,
+        deptcode: currentDept.deptcode,
+        oglevel: currentDept.oglevel,
         pdeptid: currentDept.ancestor
       };
     } else {
       fields = {
         deptname: '',
+        deptcode: '',
+        oglevel: '',
         pdeptid: currentDept.deptid
       };
     }

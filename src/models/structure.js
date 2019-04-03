@@ -68,11 +68,12 @@ export default {
   effects: {
     *init({ payload }, { call, put }) {
       // 获取考勤组数据源
-      const { data: { page: attenceGroupDataSource } } = yield call(queryDataSourceData, {
-        sourceId: 'b241f8e1-2e9d-4a22-9b6a-3e4c93f1de01',
-        keyword: '', pageSize: 1000, pageIndex: 1, queryData: []
-      });
-      yield put({ type: 'putState', payload: { attenceGroupDataSource } });
+      // const response = yield call(queryDataSourceData, {
+      //   sourceId: 'b241f8e1-2e9d-4a22-9b6a-3e4c93f1de01',
+      //   keyword: '', pageSize: 1000, pageIndex: 1, queryData: []
+      // });
+      // const attenceGroupDataSource = response.data && response.data.page;
+      // if (attenceGroupDataSource) yield put({ type: 'putState', payload: { attenceGroupDataSource } });
     },
     *search({ payload }, { select, put }) {
       const location = yield select(({ routing }) => routing.locationBeforeTransitions);

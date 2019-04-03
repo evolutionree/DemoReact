@@ -1,8 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'dva';
-import { Row, Col, Button } from 'antd';
+import { Button } from 'antd';
 import EntitySelect from './EntitySelect';
 import FilterConfigBoard, { parseRuleDetail, ruleListToItems } from '../../../../components/FilterConfigBoard';
+import { getIntlText } from '../../../../components/UKComponent/Form/IntlText';
+import styles from './styles.less';
+
+const height = document.body.offsetHeight - (60 + 48 + 36 + 68); // 184 为其他组件占的总高度
 
 class RoleRule extends Component {
   static propTypes = {
@@ -23,7 +27,9 @@ class RoleRule extends Component {
     const { ruleList, ruleSet } = parseRuleDetail(props.ruleDetail);
     this.state = {
       ruleList,
-      ruleSet
+      ruleSet,
+      keyword: '',
+      entities: props.entities
     };
   }
 
@@ -35,6 +41,7 @@ class RoleRule extends Component {
         ruleSet
       });
     }
+    this.setState({ entities: nextProps.entities });
   }
 
   parseRuleDetail = ruleDetail => {
@@ -81,42 +88,54 @@ class RoleRule extends Component {
     });
   };
 
-  render() {
-    const { entities, currEntity, fields } = this.props;
-    const { ruleList, ruleSet } = this.state;
+  onSearch = (keyword) => {
+    const { entities: PropList } = this.props;
+    const { entities: list } = this.state;
 
-    const btnStyle = {
-      position: 'absolute',
-      right: '10px',
-      top: '10px'
-    };
+    const entities = !keyword ? PropList : list.filter(item => getIntlText('entityname', item).includes(keyword));
+    this.setState({ keyword, entities });
+  }
+
+  render() {
+    const { currEntity, fields } = this.props;
+    const { ruleList, ruleSet, keyword, entities } = this.state;
 
     return (
-      <div>
-        <Row gutter={10}>
-          <Col span={6}>
-            <EntitySelect
-              value={currEntity}
-              entities={entities}
-              onChange={this.selectEntity}
-            />
-          </Col>
-          <Col span={18}>
-            <div>数据权限规则</div>
-            {this.props.checkFunc('RoleAuthEdit') && <Button onClick={this.saveRule} style={btnStyle}>保存</Button>}
-            <FilterConfigBoard
-              entityId={currEntity}
-              ref={filterConfigBoard => { this.filterConfigBoard = filterConfigBoard; }}
-              allFields={fields}
-              title1="第一步：定义规则"
-              title2="第二步：定义集合规则"
-              ruleList={ruleList}
-              ruleSet={ruleSet}
-              onRulesChange={val => this.setState({ ruleList: val })}
-              onRuleSetChange={val => this.setState({ ruleSet: val })}
-            />
-          </Col>
-        </Row>
+      <div className={styles.inner}>
+        <div className={styles.left}>
+          <div className={styles.box}>
+            <div className={styles.leftContent}>
+              <div className={styles.subtitle}>目录</div>
+              <EntitySelect
+                height={height}
+                keyword={keyword}
+                onSearch={this.onSearch}
+                value={currEntity}
+                entities={entities}
+                onChange={this.selectEntity}
+              />
+            </div>
+          </div>
+        </div>
+        <div className={styles.right}>
+          <div className={styles.box}>
+            <div className={styles.rightContent} style={{ height, overflowY: 'auto' }}>
+              <div className={styles.subtitle}>数据权限规则</div>
+              {this.props.checkFunc('RoleAuthEdit') && <Button onClick={this.saveRule} className={styles.btnStyle}>保存</Button>}
+              <FilterConfigBoard
+                entityId={currEntity}
+                ref={filterConfigBoard => { this.filterConfigBoard = filterConfigBoard; }}
+                allFields={fields}
+                title1="第一步：定义规则"
+                title2="第二步：定义集合规则"
+                ruleList={ruleList}
+                ruleSet={ruleSet}
+                onRulesChange={val => this.setState({ ruleList: val })}
+                onRuleSetChange={val => this.setState({ ruleSet: val })}
+              />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
