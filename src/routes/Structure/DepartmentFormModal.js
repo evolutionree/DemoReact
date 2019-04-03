@@ -141,7 +141,7 @@ export default connect(
       fields = {
         deptname: '',
         deptcode: '',
-        oglevel: '',
+        oglevel: undefined,
         pdeptid: currentDept.deptid
       };
     }
