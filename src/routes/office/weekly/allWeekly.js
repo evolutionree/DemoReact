@@ -3,22 +3,32 @@
  */
 import React from 'react';
 import { connect } from 'dva';
-import { Select, Button, Modal, DatePicker } from 'antd';
-const { RangePicker } = DatePicker;
-import Page from '../../../components/Page';
-import LinkTab from '../../../components/LinkTab';
+import moment from 'moment';
+import { Button, DatePicker } from 'antd';
+// import LinkTab from '../../../components/LinkTab';
 import DynamicTable from '../../../components/DynamicTable/index';
 import Toolbar from '../../../components/Toolbar';
 import Search from '../../../components/Search';
 import SelectDepartment from '../../../components/DynamicForm/controls/SelectDepartment';
-import moment from 'moment';
+import ExportModal from './component/ExportModal';
 
-function AllWeekly({ checkFunc, addWeekly, searchAllWeeklyList, tableProtocol, allWeeklyList, tableTotal, tableCurrentPage, tablePageSize, changePage, changePageSize, changeParams, allWeeklySearchData }) {
+const { RangePicker } = DatePicker;
+
+function AllWeekly({
+  checkFunc, addWeekly, searchAllWeeklyList,
+  tableProtocol, allWeeklyList, tableTotal,
+  tableCurrentPage, tablePageSize, changePage,
+  changePageSize, changeParams, allWeeklySearchData,
+  exportData, currentUser
+}) {
   const onChange = (date, dateString) => {
     changeParams('date', allWeeklySearchData, dateString);
   };
   function getDate() {
     return [allWeeklySearchData.fromdate ? moment(allWeeklySearchData.fromdate, 'YYYY-MM-DD') : null, allWeeklySearchData.todate ? moment(allWeeklySearchData.todate, 'YYYY-MM-DD') : null];
+  }
+  function shouldShowExport() {
+    return checkFunc('EntityDataExport');
   }
 
   return (
@@ -27,6 +37,7 @@ function AllWeekly({ checkFunc, addWeekly, searchAllWeeklyList, tableProtocol, a
         {
           checkFunc('EntityDataAdd') ? <Button type="primary" icon="edit" onClick={addWeekly} style={{ marginRight: '20px' }}>写周计划</Button> : null
         }
+        {<Button onClick={exportData}>导出</Button>}
         <Toolbar.Right>
           <div style={{ display: 'inline-block', width: 220 }}>
             <RangePicker onChange={onChange} value={getDate()} />
@@ -45,7 +56,7 @@ function AllWeekly({ checkFunc, addWeekly, searchAllWeeklyList, tableProtocol, a
         </Toolbar.Right>
       </Toolbar>
       <DynamicTable
-        entityId='0b81d536-3817-4cbc-b882-bc3e935db845'
+        entityId="0b81d536-3817-4cbc-b882-bc3e935db845"
         protocol={tableProtocol}
         rowKey="recid"
         linkUrl={(text, field, record) => {
@@ -61,12 +72,18 @@ function AllWeekly({ checkFunc, addWeekly, searchAllWeeklyList, tableProtocol, a
           onShowSizeChange: changePageSize
         }}
       />
+      <ExportModal userId={currentUser} />
     </div>
   );
 }
 
 export default connect(
-  state => state.weekly,
+  state => {
+    return ({
+      ...state.weekly,
+      currentUser: state.app.user.userid
+    });
+  },
   dispatch => {
     return {
       addWeekly() {
@@ -94,15 +111,18 @@ export default connect(
         dispatch({ type: 'weekly/putState', payload: { allWeeklySearchData: newParams } });
       },
       searchAllWeeklyList(value) {
-        dispatch({ type: 'weekly/updataTable', payload: { } });
+        dispatch({ type: 'weekly/updataTable', payload: {} });
       },
       changePage(page) {
         dispatch({ type: 'weekly/putState', payload: { tableCurrentPage: page } });
-        dispatch({ type: 'weekly/updataTable', payload: { } });
+        dispatch({ type: 'weekly/updataTable', payload: {} });
       },
       changePageSize(currentPage, size) {
         dispatch({ type: 'weekly/putState', payload: { tablePageSize: size, tableCurrentPage: 1 } });
-        dispatch({ type: 'weekly/updataTable', payload: { } });
+        dispatch({ type: 'weekly/updataTable', payload: {} });
+      },
+      exportData() {
+        dispatch({ type: 'weekly/showModals', payload: 'export' });
       }
     };
   }

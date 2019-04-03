@@ -42,9 +42,8 @@ class ExportModal extends React.Component {
     const params = { ...queries, pageIndex: 1, pageSize: 655535 };
     form.validateFields((err, values) => {
       if (err) return;
-      this.setState({
-        loading: true
-      })
+      this.setState({ loading: true });
+
       request('/api/excel/exportdata', {
         method: 'post', body: JSON.stringify({
           TemplateType: 1,
@@ -54,16 +53,12 @@ class ExportModal extends React.Component {
           ...values
         })
       }).then(result => {
-        this.setState({
-          loading: false
-        })
+        this.setState({ loading: false });
         this.closeModal();
         const fileid = result.data;
         downloadFile('api/ReportEngine/export2file?fileid=' + fileid);
       }).catch((e) => {
-        this.setState({
-          loading: false
-        })
+        this.setState({ loading: false });
         console.error(e);
         message.error(e.message);
       });

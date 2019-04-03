@@ -7,8 +7,6 @@ import { getListDetailData, addcomments, selectdynamicabstract } from '../servic
 import { queryYearWeekData } from '../services/basicdata';
 import { getDateStr, getTimeStamp } from '../utils/index.js';
 
-const daily_entityId = '601cb738-a829-4a7b-a3d9-f8914a5d90f2';
-
 export default {
   namespace: 'daily',
   state: {
@@ -29,7 +27,13 @@ export default {
     route: '',
     allDailySearchData: {},
     allDailyDetailList: null,
-    allDailyDetailListProtocal: [] //日报详情对应显示的字段定义
+    allDailyDetailListProtocal: [], //日报详情对应显示的字段定义
+    queries: {
+      entityId: '601cb738-a829-4a7b-a3d9-f8914a5d90f2',
+      keyword: '',
+      isAdvanceQuery: 0
+    },
+    daily_entityId: '601cb738-a829-4a7b-a3d9-f8914a5d90f2'
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -57,7 +61,7 @@ export default {
   },
   effects: {
     *init({ payload: routeType }, { select, put, call }) {
-      let { allDailySearchData } = yield select(state => state.daily);
+      let { allDailySearchData, daily_entityId } = yield select(state => state.daily);
       const menuIdObj = {
         mydaily: '7512cba4-8103-41d7-b180-a83326eb1e23',
         receivedaily: 'dc059a58-14c3-4c83-aa72-3189dafcbacd',
@@ -98,6 +102,7 @@ export default {
       }
     },
     *queryList({ payload: { routeType, params } }, { select, put, call }) {
+      const { daily_entityId } = yield select(state => state.daily);
       try {
         if (routeType === 'mydaily') {
           const { pagecount, pagedata } = yield call(getListDetailData, params, daily_entityId);
@@ -147,7 +152,8 @@ export default {
       }
     },
 
-    *loadMore({ payload: { routeType, pageCount } }, { put, call }) {
+    *loadMore({ payload: { routeType, pageCount } }, { put, call, select }) {
+      const { daily_entityId } = yield select(state => state.daily);
       const menuIdObj = {
         mydaily: '7512cba4-8103-41d7-b180-a83326eb1e23',
         receivedaily: 'dc059a58-14c3-4c83-aa72-3189dafcbacd'
@@ -168,7 +174,7 @@ export default {
 
 
     *updataTable({ payload }, { select, put, call }) {
-      let { tableCurrentPage, tablePageSize, allDailySearchData } = yield select(state => state.daily);
+      let { tableCurrentPage, tablePageSize, allDailySearchData, daily_entityId } = yield select(state => state.daily);
       const params = {
         viewType: 0,
         searchOrder: '',
@@ -197,7 +203,8 @@ export default {
       }
     },
 
-    *queryReceiveDailyDetail({ payload: recid }, { put, call }) {
+    *queryReceiveDailyDetail({ payload: recid }, { put, call, select }) {
+      const { daily_entityId } = yield select(state => state.daily);
       try {
         const params = {
           EntityId: daily_entityId,
@@ -211,7 +218,8 @@ export default {
       }
     },
 
-    *queryAllDailyDetail({ payload: recid }, { put, call }) {
+    *queryAllDailyDetail({ payload: recid }, { put, call, select }) {
+      const { daily_entityId } = yield select(state => state.daily);
       try {
         const params = {
           EntityId: daily_entityId,
@@ -225,7 +233,8 @@ export default {
       }
     },
 
-    *queryAllDailyDetailProtocol(action, { put, call }) {
+    *queryAllDailyDetailProtocol(action, { put, call, select }) {
+      const { daily_entityId } = yield select(state => state.daily);
       const { data: allDailyDetailListProtocal } = yield call(getGeneralProtocol, {
         typeid: daily_entityId,
         operatetype: 2
@@ -234,13 +243,13 @@ export default {
     }
   },
   reducers: {
-    putState(state, { payload: payload }) {
+    putState(state, { payload }) {
       return {
         ...state,
         ...payload
       };
     },
-    showModals(state, { payload: payload }) {
+    showModals(state, { payload }) {
       return {
         ...state,
         showModals: payload

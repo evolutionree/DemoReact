@@ -3,11 +3,11 @@
  */
 import { Form } from 'antd';
 import { connect } from 'dva';
-import ExportModal from '../../components/ExportModal';
+import ExportModal from '../../../../components/ExportModal';
 
 export default connect(
   state => {
-    const { showModals, entityId, protocol, queries } = state.entcommList;
+    const { showModals, entityId, tableProtocol: protocol, queries } = state.weekly;
     return {
       visible: /export/.test(showModals),
       entityId,
@@ -18,7 +18,7 @@ export default connect(
   dispatch => {
     return {
       onCancel() {
-        dispatch({ type: 'entcommList/showModals', payload: '' });
+        dispatch({ type: 'weekly/showModals', payload: '' });
       }
     };
   }

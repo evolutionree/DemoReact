@@ -12,6 +12,7 @@ import { GetArgsFromHref, getDateStr } from '../utils/index.js';
 export default {
   namespace: 'weekly',
   state: {
+    entityId: '0b81d536-3817-4cbc-b882-bc3e935db845',
     myWeeklistData: [], //我的周报List
     myWeekTotalPage: 0,
     myWeekCurrentPage: 1,
@@ -34,7 +35,12 @@ export default {
       todate: getDateStr(0)
     },
     allWeeklyDetailList: null,
-    current_AllWeekly_Detail_WeekLable: ''
+    current_AllWeekly_Detail_WeekLable: '',
+    queries: {
+      entityId: '0b81d536-3817-4cbc-b882-bc3e935db845',
+      keyword: '',
+      isAdvanceQuery: 0
+    }
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -64,7 +70,7 @@ export default {
   },
   effects: {
     *init({ payload: routeType }, { select, put, call }) {
-      let { allWeeklySearchData } = yield select(state => state.weekly);
+      let { entityId, allWeeklySearchData } = yield select(state => state.weekly);
       const menuIdObj = {
         myweekly: '94baca95-e125-4ff1-a59c-ef6ba0180158',
         receiveweekly: '8731fee2-2d9f-4c01-8e5f-803c853380a9',
@@ -73,9 +79,9 @@ export default {
 
 
       const initParams = {
-        "viewType":0,
+        "viewType": 0,
         "searchOrder": "",
-        "entityId": "0b81d536-3817-4cbc-b882-bc3e935db845",
+        "entityId": entityId,
         "pageIndex": 1,
         "pageSize": 10,
         "menuId": menuIdObj[routeType],
@@ -85,7 +91,7 @@ export default {
       const allWeeklyInitParams = {
         "viewType": 0,
         "searchOrder": "",
-        "entityId": "0b81d536-3817-4cbc-b882-bc3e935db845",
+        "entityId": entityId,
         "pageIndex": 1,
         "pageSize": 10,
         "menuId": "0ad557e0-c709-447e-bf85-89455ec9ae1b",
@@ -163,7 +169,8 @@ export default {
           const listData = yield call(getTableListData, params);
           yield put({
             type: 'putState',
-            payload: { allWeeklyList: listData.data.pagedata, tableTotal: listData.data.pagecount[0].total, tableCurrentPage: params.pageIndex, tablePageSize: params.pageSize } });
+            payload: { allWeeklyList: listData.data.pagedata, tableTotal: listData.data.pagecount[0].total, tableCurrentPage: params.pageIndex, tablePageSize: params.pageSize }
+          });
         }
       } catch (e) {
         console.error(e.message);
@@ -171,7 +178,8 @@ export default {
       }
     },
 
-    *loadMore({ payload: { routeType, pageCount } }, { put, call }) {
+    *loadMore({ payload: { routeType, pageCount } }, { put, call, select }) {
+      const { entityId } = yield select(state => state.weekly);
       const menuIdObj = {
         myweekly: '94baca95-e125-4ff1-a59c-ef6ba0180158',
         receiveweekly: '8731fee2-2d9f-4c01-8e5f-803c853380a9',
@@ -179,9 +187,9 @@ export default {
       };
 
       const params = {
-        "viewType":0,
+        "viewType": 0,
         "searchOrder": "",
-        "entityId": "0b81d536-3817-4cbc-b882-bc3e935db845",
+        "entityId": entityId,
         "pageIndex": pageCount,
         "pageSize": 10,
         "menuId": menuIdObj[routeType],
@@ -193,11 +201,11 @@ export default {
 
 
     *updataTable({ payload }, { select, put, call }) {
-      let { tableCurrentPage, tablePageSize, allWeeklySearchData } = yield select(state => state.weekly);
+      let { entityId, tableCurrentPage, tablePageSize, allWeeklySearchData } = yield select(state => state.weekly);
       const params = {
         "viewType": 0,
         "searchOrder": "",
-        "entityId": "0b81d536-3817-4cbc-b882-bc3e935db845",
+        "entityId": entityId,
         "pageIndex": tableCurrentPage,
         "pageSize": tablePageSize,
         "menuId": "0ad557e0-c709-447e-bf85-89455ec9ae1b",
@@ -284,13 +292,13 @@ export default {
     }
   },
   reducers: {
-    putState(state, { payload: payload }) {
+    putState(state, { payload }) {
       return {
         ...state,
         ...payload
       };
     },
-    showModals(state, { payload: payload }) {
+    showModals(state, { payload }) {
       return {
         ...state,
         showModals: payload

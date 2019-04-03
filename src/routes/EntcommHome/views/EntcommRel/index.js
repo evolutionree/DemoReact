@@ -13,9 +13,9 @@ import TransferModal from './TransferModal';
 import MerageModal from './MerageModal';
 import AllocateModal from './AllocateModal';
 import DynamicModal from './DynamicModal';
+import ExportModal from './ExportModal';
 import connectPermission from '../../../../models/connectPermission';
 import DeptTree from '../DeptTree';
-import { downloadFile } from '../../../../utils/ukUtil';
 
 const deptEntityId = 'd51aca76-a168-48c7-aa14-eb69ca407050';
 function EntcommRel({
@@ -48,9 +48,18 @@ function EntcommRel({
     dispatch({ type: 'entcommRel/showModals', payload: 'merage' });
   }
 
+  function importData() {
+    dispatch({
+      type: 'task/impModals',
+      payload: { templateType: 1, templateKey: tabInfo.relentityid }
+    });
+  }
+
   function exportData() {
-    const params = JSON.stringify({ ...queries, pageIndex: 1, pageSize: 65535 });
-    downloadFile(`/api/excel/exportdata?TemplateType=1&DynamicQuery=${params}&UserId=${currentUser}`);
+    dispatch({
+      type: 'entcommRel/showModals',
+      payload: 'export'
+    });
   }
 
   function shouldShowExport() {
@@ -277,6 +286,7 @@ function EntcommRel({
       }
       <TransferModal />
       <MerageModal />
+      <ExportModal userId={currentUser} />
       <AllocateModal />
       <DynamicModal />
       <DetailModal />
@@ -289,6 +299,7 @@ export default connect(
   state => {
     const { relTabs } = state.entcommHome;
     const { relId, relEntityId } = state.entcommRel;
+    const currentUser = state.app.user.userid;
     let tabInfo = {};
     if (relTabs.length && relId && relEntityId) {
       tabInfo = _.find(relTabs, item => {
@@ -298,7 +309,7 @@ export default connect(
     return {
       ...state.entcommRel,
       tabInfo,
-      currentUser: state.app.user.userid
+      currentUser
     };
   },
   dispatch => {
