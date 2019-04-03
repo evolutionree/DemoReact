@@ -61,7 +61,7 @@ class DataSourceSelectModal extends Component {
         currentSelected: [...nextProps.selected],
         selectedRows: [...nextProps.selected], //因为antd 表格前的checkbox控件选择时，第二个参数只会记录当前页的选中的值，所有需要记录所有分页的选中的数据
         pageIndex: 1
-      }, this.fetchList.bind(nextProps));
+      }, this.fetchList.bind(this, nextProps));
     }
   }
 
@@ -91,7 +91,7 @@ class DataSourceSelectModal extends Component {
   }
 
   queryDatasourceEntityAndPession = (props) => {
-    const sourceId = props.sourceId
+    const sourceId = props.sourceId;
     if (sourceId) {
       queryDatasourceInfo(sourceId).then(result => { //获取数据源关联实体
         const entityId = result.data.entityid;
@@ -121,12 +121,10 @@ class DataSourceSelectModal extends Component {
       this.setState({
         entityTypes
       });
-    }, err => {
-
-    });
+    }, err => { });
   }
 
-  fetchList = () => {
+  fetchList = (props = this.props) => {
     this.setState({ loading: true });
     const params = {
       sourceId: props.sourceId,
@@ -148,17 +146,21 @@ class DataSourceSelectModal extends Component {
     queryDataSourceData(params).then(result => {
       if (result.data.dsconfig) {
         const columnsConfig = result.data.dsconfig[0] && result.data.dsconfig[0].columns;
-        const columns = JSON.parse(columnsConfig);
-        const tableColumns = columns instanceof Array && columns.map(item => {
-          return {
-            key: item.fieldname,
-            dataIndex: item.fieldname,
-            title: item.displayname
-          };
-        })
-        this.setState({
-          columns: tableColumns
-        });
+        if (columnsConfig) {
+          const columns = JSON.parse(columnsConfig);
+          const tableColumns = columns instanceof Array && columns.map(item => {
+            return {
+              key: item.fieldname,
+              dataIndex: item.fieldname,
+              title: item.displayname
+            };
+          });
+          this.setState({
+            columns: tableColumns
+          });
+        } else {
+          message.error('缺少必要字段');
+        }
       }
       const list = result.data.page;
       const total = result.data.pagecount[0].total;
@@ -284,28 +286,28 @@ class DataSourceSelectModal extends Component {
           <TabPane tab="可选" key="1">
             <Spin spinning={this.state.loading}>
               <Table columns={this.state.columns}
-                     dataSource={list}
-                     onRowDoubleClick={this.tableRowDoubleClick}
-                     pagination={{
-                       total: this.state.total,
-                       pageSize: 10,
-                       current: this.state.pageIndex,
-                       showSizeChanger: false
-                     }}
-                     onChange={this.handleTableChange}
-                     rowSelection={{
-                       type: multiple ? 'checkbox' : 'radio',
-                       selectedRowKeys: currentSelected.map(item => item.id),
-                       onChange: (keys, items) => this.onSelectItems(keys, items)
-                     }}
-                     rowKey="id" />
+                dataSource={list}
+                onRowDoubleClick={this.tableRowDoubleClick}
+                pagination={{
+                  total: this.state.total,
+                  pageSize: 10,
+                  current: this.state.pageIndex,
+                  showSizeChanger: false
+                }}
+                onChange={this.handleTableChange}
+                rowSelection={{
+                  type: multiple ? 'checkbox' : 'radio',
+                  selectedRowKeys: currentSelected.map(item => item.id),
+                  onChange: (keys, items) => this.onSelectItems(keys, items)
+                }}
+                rowKey="id" />
             </Spin>
           </TabPane>
           <TabPane tab="已选" key="2">
             <Table columns={alreadyColumns}
-                   dataSource={filterSelectedItems}
-                   pagination={false}
-                   rowKey="id" />
+              dataSource={filterSelectedItems}
+              pagination={false}
+              rowKey="id" />
           </TabPane>
         </Tabs>
         <EntcommAddModal
