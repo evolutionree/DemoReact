@@ -25,7 +25,7 @@ class DicTypeSelect extends React.Component {
 
   handleChange = (value) => {
     const { onChange } = this.props;
-    if (onChange) onChange(value + '');
+    if (onChange) onChange(value);
   };
 
   render() {
@@ -37,7 +37,7 @@ class DicTypeSelect extends React.Component {
         showSearch={showSearch || true}
         style={{ width }}
         placeholder={placeholder}
-        defaultValue={value + ''}
+        value={value}
         onChange={this.handleChange}
         {...rest}
       >

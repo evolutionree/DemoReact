@@ -97,21 +97,6 @@ function DepartmentFormModal({
           />
         )}
       </FormItem>
-      {/*<FormItem label="团队级别">*/}
-      {/*{getFieldDecorator('oglevel', {*/}
-      {/*// initialValue: ''*/}
-      {/*rules: [{ required: true, message: '请选择团队级别' }]*/}
-      {/*})(*/}
-      {/*<Select placeholder="团队级别">*/}
-      {/*<Option value="0">顶级(如集团)</Option>*/}
-      {/*<Option value="1">分公司</Option>*/}
-      {/*<Option value="2">事业群</Option>*/}
-      {/*<Option value="3">3事业部</Option>*/}
-      {/*<Option value="4">分管区域</Option>*/}
-      {/*<Option value="5">部门</Option>*/}
-      {/*</Select>*/}
-      {/*)}*/}
-      {/*</FormItem>*/}
     </Modal>
   );
 }
@@ -149,7 +134,7 @@ export default connect(
       fields = {
         deptname: currentDept.deptname,
         deptcode: currentDept.deptcode,
-        oglevel: currentDept.oglevel,
+        oglevel: currentDept.oglevel + '',
         pdeptid: currentDept.ancestor
       };
     } else {
