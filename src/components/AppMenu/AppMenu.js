@@ -15,26 +15,25 @@ const paasBgColor = '#006f7b';
 const adminSelectedColor = '#5a7700';
 const paasSelectedColor = '#5a7700';
 
+function getSiseMenuColor(admin, paas, selected) {
+  return (admin || paas) ? {
+    backgroundColor: `${
+      admin ? (selected ? adminSelectedColor : adminBgColor) :
+        (selected ? paasSelectedColor : paasBgColor)}`
+  } : undefined;
+}
+
 function renderMenus(menus, admin, paas) {
   const paths = window.location.hash.match(matchReg);
   return menus.map((menu) => {
     if (menu.children && menu.children.length > 0) {
       return (
-        <SubMenu key={menu.id} title={renderLink(menu)} style={(admin || paas) ? { backgroundColor: `${admin ? adminBgColor : paasBgColor}` } : undefined}>
+        <SubMenu key={menu.id} title={renderLink(menu)} style={getSiseMenuColor(admin, paas)}>
           {renderMenus(menu.children, admin, paas)}
         </SubMenu>
       );
     } else {
-      let resultAdminColor = '';
-      let resultPassColor = '';
-      if (paths && paths[0] === menu.path) {
-        resultAdminColor = adminSelectedColor;
-        resultPassColor = paasSelectedColor;
-      } else {
-        resultAdminColor = adminBgColor;
-        resultPassColor = paasBgColor;
-      }
-      return <Item key={menu.id} style={(admin || paas) ? { backgroundColor: `${admin ? resultAdminColor : resultPassColor}` } : undefined} >{renderLink(menu)}</Item>;
+      return <Item key={menu.id} style={getSiseMenuColor(admin, paas, (paths && paths[0] === menu.path))}>{renderLink(menu)}</Item>;
     }
   });
 }
@@ -138,10 +137,10 @@ const AppMenu = ({ location, menus, siderFold, permissionLevel }) => {
   }
 
   return (
-    <Sider fold={siderFold} fixBottom={bottomMenu} style={(admin || paas) ? { backgroundColor: `${admin ? adminBgColor : paasBgColor}` } : undefined}>
+    <Sider fold={siderFold} fixBottom={bottomMenu} style={getSiseMenuColor(admin, paas)}>
       <Menu mode={siderFold ? 'vertical' : 'inline'}
         theme="dark"
-        style={(admin || paas) ? { backgroundColor: `${admin ? adminBgColor : paasBgColor}` } : undefined}
+        style={getSiseMenuColor(admin, paas)}
         key={siderFold ? '' : uuid()}
         defaultOpenKeys={openKeys}
         defaultSelectedKeys={selectedKeys}>
