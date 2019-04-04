@@ -37,8 +37,8 @@ function EntityTabs({
                 <Icon title="上移" type="arrow-up" onClick={onUpCilck.bind(null, index)} style={index === 0 ? { visibility: 'hidden' } : null} />
                 <Icon title="下移" type="arrow-down" onClick={onDownCilck.bind(null, index)} style={index === lastIndex ? { visibility: 'hidden' } : null} />
                 <Icon title="编辑" type="edit" onClick={edit.bind(null, record)} />
-                <Icon title="修改可见规则" type="tool" onClick={rule.bind(null, record)} />
-                {!record.entitytaburl && <Icon title="设置计数规则" type="setting" onClick={setCountRule.bind(null, record.relid)} />}
+                <Icon title="设置可见规则" type="tool" onClick={rule.bind(null, record)} />
+                {!record.entitytaburl && <Icon title="设置统计规则" type="setting" onClick={setCountRule.bind(null, record.relid)} />}
                 {!record.entitytaburl && <Icon title="删除" type="delete" onClick={onDel.bind(null, record.relid)} />}
               </div>
             )}

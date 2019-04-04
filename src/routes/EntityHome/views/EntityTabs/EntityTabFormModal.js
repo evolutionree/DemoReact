@@ -79,12 +79,12 @@ class EntityTabFormModal extends Component {
         delete saveData.fieldid;
         delete saveData.relentityid;
       }
-/*      if (this.props.isEdit && this.props.currentItem.entitytaburl) {
-        saveData.icon = this.props.currentItem.icon;
-      } else {
-        const matchField = _.find(this.state.entityFields, ['fieldid', values.fieldid]);
-        saveData.icon = matchField ? matchField.icons : '';
-      }*/
+      /*      if (this.props.isEdit && this.props.currentItem.entitytaburl) {
+              saveData.icon = this.props.currentItem.icon;
+            } else {
+              const matchField = _.find(this.state.entityFields, ['fieldid', values.fieldid]);
+              saveData.icon = matchField ? matchField.icons : '';
+            }*/
       this.props.save(saveData);
     });
   };
@@ -147,12 +147,12 @@ class EntityTabFormModal extends Component {
             {form.getFieldDecorator('srctitle', {
               rules: [{ required: showDataSrcFields, message: '请输入数据源标题' }]
             })(
-              <Input placeholder="请输入数据源标题" maxLength = "50" />
+              <Input placeholder="请输入数据源标题" maxLength="50" />
             )}
           </FormItem>
           <FormItem label="数据脚本" style={showDataSrcFields ? null : { display: 'none' }}>
             {form.getFieldDecorator('srcsql', {
-              rules: [{ required: showDataSrcFields, message: '请输入数据脚本' } ]
+              rules: [{ required: showDataSrcFields, message: '请输入数据脚本' }]
             })(
               <Input.TextArea rows={10} placeholder="请输入数据脚本" maxLength="2000" />
             )}
