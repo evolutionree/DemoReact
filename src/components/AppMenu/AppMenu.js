@@ -27,14 +27,14 @@ function renderMenus(menus, admin, paas) {
     } else {
       let resultAdminColor = '';
       let resultPassColor = '';
-      if(paths && paths[0] === menu.path ) {
+      if (paths && paths[0] === menu.path) {
         resultAdminColor = adminSelectedColor;
         resultPassColor = paasSelectedColor;
-      }else{
+      } else {
         resultAdminColor = adminBgColor;
         resultPassColor = paasBgColor;
       }
-      return <Item key={menu.id}  style={ (admin || paas) ? { backgroundColor: `${admin ? resultAdminColor : resultPassColor}` } : undefined} >{renderLink(menu)}</Item>;
+      return <Item key={menu.id} style={(admin || paas) ? { backgroundColor: `${admin ? resultAdminColor : resultPassColor}` } : undefined} >{renderLink(menu)}</Item>;
     }
   });
 }
