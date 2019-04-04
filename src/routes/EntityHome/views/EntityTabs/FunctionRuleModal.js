@@ -132,14 +132,15 @@ class FunctionRuleModal extends Component {
       ruleitems: ruleListToItems(ruleList, fields, entityid)
     };
     this.setState({ confirmLoading: true });
-    saveFunctionRule(params).then(result => {
-      this.setState({ confirmLoading: false });
-      message.success('保存成功');
-      this.props.close();
-    }, error => {
-      this.setState({ confirmLoading: false });
-      message.error(error.message || '保存失败');
-    });
+    message.success('假装保存成功');
+    // saveFunctionRule(params).then(result => {
+    //   this.setState({ confirmLoading: false });
+    //   message.success('保存成功');
+    //   this.props.close();
+    // }, error => {
+    //   this.setState({ confirmLoading: false });
+    //   message.error(error.message || '保存失败');
+    // });
   };
 
   render() {
