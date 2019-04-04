@@ -9,17 +9,32 @@ import { uuid } from '../../utils';
 import styles from './styles.less';
 
 const { SubMenu, Item } = Menu;
+const matchReg = /(?=\/)([^&]+)(?=\?)/gi;
+const adminBgColor = '#04366b';
+const paasBgColor = '#006f7b';
+const adminSelectedColor = '#5a7700';
+const paasSelectedColor = '#5a7700';
 
-function renderMenus(menus) {
+function renderMenus(menus, admin, paas) {
+  const paths = window.location.hash.match(matchReg);
   return menus.map((menu) => {
     if (menu.children && menu.children.length > 0) {
       return (
-        <SubMenu key={menu.id} title={renderLink(menu)}>
-          {renderMenus(menu.children)}
+        <SubMenu key={menu.id} title={renderLink(menu)} style={(admin || paas) ? { backgroundColor: `${admin ? adminBgColor : paasBgColor}` } : undefined}>
+          {renderMenus(menu.children, admin, paas)}
         </SubMenu>
       );
     } else {
-      return <Item key={menu.id}>{renderLink(menu)}</Item>;
+      let resultAdminColor = '';
+      let resultPassColor = '';
+      if(paths && paths[0] === menu.path ) {
+        resultAdminColor = adminSelectedColor;
+        resultPassColor = paasSelectedColor;
+      }else{
+        resultAdminColor = adminBgColor;
+        resultPassColor = paasBgColor;
+      }
+      return <Item key={menu.id}  style={ (admin || paas) ? { backgroundColor: `${admin ? resultAdminColor : resultPassColor}` } : undefined} >{renderLink(menu)}</Item>;
     }
   });
 }
@@ -123,13 +138,14 @@ const AppMenu = ({ location, menus, siderFold, permissionLevel }) => {
   }
 
   return (
-    <Sider fold={siderFold} fixBottom={bottomMenu}>
+    <Sider fold={siderFold} fixBottom={bottomMenu} style={(admin || paas) ? { backgroundColor: `${admin ? adminBgColor : paasBgColor}` } : undefined}>
       <Menu mode={siderFold ? 'vertical' : 'inline'}
         theme="dark"
+        style={(admin || paas) ? { backgroundColor: `${admin ? adminBgColor : paasBgColor}` } : undefined}
         key={siderFold ? '' : uuid()}
         defaultOpenKeys={openKeys}
         defaultSelectedKeys={selectedKeys}>
-        {renderMenus(menus)}
+        {renderMenus(menus, admin, paas)}
       </Menu>
     </Sider>
   );
