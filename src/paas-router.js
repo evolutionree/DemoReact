@@ -1,6 +1,6 @@
 /* eslint-disable import/no-dynamic-require */
 import React from 'react';
-import { Router, Route, IndexRoute, Redirect, IndexRedirect } from 'dva/router';
+import { Router, Route, IndexRedirect } from 'dva/router';
 
 import connectPermission from './models/connectPermission';
 
@@ -31,8 +31,6 @@ import DicTypePage from './routes/DicType';
 import WorkflowList from './routes/WorkflowList';
 import WorkflowHome from './routes/WorkflowHome';
 import WorkflowDesign from './routes/WorkflowHome/views/WorkflowDesign';
-
-import ProductManager from './routes/ProductManager';
 
 import SystemNotifications from './routes/SystemNotifications';
 
@@ -78,7 +76,8 @@ import BackFillRule from './routes/BusinessInquire/config/BackFillRule';
 
 const appRoutes = [
   { path: 'entity', comp: EntityList, entid: '00000000-0000-0000-0000-000000000010', model: require('./models/entityList') },
-  { path: 'entity-config/:id/:type',
+  {
+    path: 'entity-config/:id/:type',
     comp: EntityHome,
     entid: '00000000-0000-0000-0000-000000000010',
     model: require('./models/entityHome'),
@@ -95,7 +94,8 @@ const appRoutes = [
       { path: 'buttons', comp: EntityButtons, model: require('./models/entityButtons') },
       { path: 'pages', comp: EntityPages, model: require('./models/entityPages') },
       { path: 'scripts', comp: EntityScripts, model: require('./models/entityScripts') }
-    ] },
+    ]
+  },
   { path: 'data-source', comp: DSourceList, entid: '00000000-0000-0000-0000-000000000011', model: require('./models/dSourceList') },
   { path: 'dsource/:id', comp: DataSourceHome, entid: '00000000-0000-0000-0000-000000000011', model: require('./models/dSourceHome') },
 
@@ -103,13 +103,14 @@ const appRoutes = [
   { path: 'dictype', comp: DicTypePage, entid: '00000000-0000-0000-0000-000000000012', model: require('./models/dictype') },
 
   { path: 'workflow', comp: WorkflowList, model: require('./models/workflowList') },
-  { path: 'workflow/:id',
+  {
+    path: 'workflow/:id',
     comp: WorkflowHome,
     model: require('./models/workflowHome'),
     children: [
       { path: 'design', comp: WorkflowDesign, model: require('./models/workflowDesign') }
-    ] },
-  { path: 'products', comp: ProductManager, entid: '33240d14-a543-4357-b696-c8cc77f82f7c', model: require('./models/productManager') },
+    ]
+  },
   { path: 'systemnotifications', comp: SystemNotifications, model: require('./models/systemNotifications') },
   { path: 'salestage', comp: SaleStage, entid: '00000000-0000-0000-0000-000000000017', model: require('./models/saleStage') },
   { path: 'salestage/detail', comp: SaleStageDetailSet, entid: '00000000-0000-0000-0000-000000000017', model: require('./models/saleStageDetailSet') },
@@ -121,7 +122,8 @@ const appRoutes = [
   { path: 'collector/:id/:name', comp: CollectorDetail, model: require('./models/collectorDetail') },
   { path: 'entcomm-list/:id', comp: EntcommList, model: require('./models/entcommList') },
   { path: 'entcomm-application/:id', comp: EntcommApplication, model: require('./models/entcommApplication') },
-  { path: 'entcomm/:entityId/:recordId',
+  {
+    path: 'entcomm/:entityId/:recordId',
     comp: EntcommHome,
     model: require('./models/entcommHome'),
     children: [
@@ -131,7 +133,8 @@ const appRoutes = [
       { path: 'receivepay', comp: ContractReceivePay, model: require('./models/contractReceivePay') },
       { path: 'relationtree', comp: CustomerRelationTree, model: require('./models/customerRelationTree') },
       { path: 'rel/:relId/:relEntityId', comp: EntcommRel, model: require('./models/entcommRel') }
-    ] },
+    ]
+  },
   { path: 'dbmanager', comp: DbManager, model: require('./models/dbmanager') },
   { path: 'mailrecovery', comp: MailRecovery, model: require('./models/mailRecovery') },
   { path: 'ukqrtzmanager', comp: UkqrtzManager, model: require('./models/ukqrtzmanager') },

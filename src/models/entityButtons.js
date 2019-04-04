@@ -51,7 +51,7 @@ export default {
             buttons: data
           }
         });
-        if (data.length) {
+        if (Array.isArray(data) && data.length) {
           const newSelected = (persistSelect && _.find(data, ['id', selectedButton]))
             ? selectedButton
             : data[0].id;

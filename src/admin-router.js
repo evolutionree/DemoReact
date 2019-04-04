@@ -1,6 +1,6 @@
 /* eslint-disable import/no-dynamic-require */
 import React from 'react';
-import { Router, Route, IndexRoute, Redirect, IndexRedirect } from 'dva/router';
+import { Router, Route, IndexRedirect } from 'dva/router';
 
 import connectPermission from './models/connectPermission';
 
@@ -9,6 +9,8 @@ import NoFoundPage from './routes/NoFoundPage';
 import NoPermission from './routes/NoPermission';
 
 import Structure from './routes/Structure';
+
+import ProductManager from './routes/ProductManager';
 
 import RoleGroups from './routes/RoleGroupList';
 import RoleList from './routes/RoleList';
@@ -31,21 +33,26 @@ const appRoutes = [
   { path: 'structure', comp: Structure, entid: '3d77dfd2-60bb-4552-bb69-1c3e73cf4095', model: require('./models/structure') },
   { path: 'role-groups', comp: RoleGroups, entid: '00000000-0000-0000-0000-000000000012', model: require('./models/roleGroups') },
   { path: 'roles', comp: RoleList, entid: '00000000-0000-0000-0000-000000000012', model: require('./models/roleList') },
-  { path: 'role/:id/:type/:name',
+  {
+    path: 'role/:id/:type/:name',
     comp: RoleHome,
     entid: '00000000-0000-0000-0000-000000000012',
     children: [
       { path: 'rule', comp: RoleRule, model: require('./models/roleRule') },
       { path: 'users', comp: RoleUsers, model: require('./models/roleUsers') }
-    ] },
+    ]
+  },
+  { path: 'products', comp: ProductManager, entid: '33240d14-a543-4357-b696-c8cc77f82f7c', model: require('./models/productManager') },
   { path: 'vocations', comp: VocationList, entid: '00000000-0000-0000-0000-000000000012', model: require('./models/vocationList') },
-  { path: 'vocation/:id/:name',
+  {
+    path: 'vocation/:id/:name',
     comp: VocationHome,
     entid: '00000000-0000-0000-0000-000000000012',
     children: [
       { path: 'rule', comp: VocationRule, model: require('./models/vocationRule') },
       { path: 'users', comp: VocationUsers, model: require('./models/vocationUsers') }
-    ] },
+    ]
+  },
   { path: 'operate-log', comp: OperateLog },
   { path: 'licenseinfo', comp: LicenseInfo, model: require('./models/licenseInfo') },
 
