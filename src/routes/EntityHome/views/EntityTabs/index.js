@@ -34,12 +34,12 @@ function EntityTabs({
             title="操作"
             render={(text, record, index) => (
               <div className={styles.controls}>
-                <Icon type="arrow-up" onClick={onUpCilck.bind(null, index)} style={index === 0 ? { visibility: 'hidden' } : null} />
-                <Icon type="arrow-down" onClick={onDownCilck.bind(null, index)} style={index === lastIndex ? { visibility: 'hidden' } : null} />
-                <Icon type="edit" onClick={edit.bind(null, record)} />
-                <Icon type="tool" onClick={rule.bind(null, record)} />
-                {!record.entitytaburl && <Icon type="setting" onClick={setCountRule.bind(null, record.relid)} />}
-                {!record.entitytaburl && <Icon type="delete" onClick={onDel.bind(null, record.relid)} />}
+                <Icon title="上移" type="arrow-up" onClick={onUpCilck.bind(null, index)} style={index === 0 ? { visibility: 'hidden' } : null} />
+                <Icon title="下移" type="arrow-down" onClick={onDownCilck.bind(null, index)} style={index === lastIndex ? { visibility: 'hidden' } : null} />
+                <Icon title="编辑" type="edit" onClick={edit.bind(null, record)} />
+                <Icon title="修改可见规则" type="tool" onClick={rule.bind(null, record)} />
+                {!record.entitytaburl && <Icon title="设置计数规则" type="setting" onClick={setCountRule.bind(null, record.relid)} />}
+                {!record.entitytaburl && <Icon title="删除" type="delete" onClick={onDel.bind(null, record.relid)} />}
               </div>
             )}
           />

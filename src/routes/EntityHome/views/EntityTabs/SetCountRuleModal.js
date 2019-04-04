@@ -139,7 +139,7 @@ export default connect(
     const { entityTabs } = state;
     const { showModals, entityList, RelId } = entityTabs;
     return {
-      visible: /setcountrule/.test(showModals),
+      visible: /^setcountrule$/.test(showModals),
       entityList,
       RelId
     };

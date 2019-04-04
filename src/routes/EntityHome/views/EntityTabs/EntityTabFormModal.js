@@ -176,8 +176,8 @@ export default connect(
     const { entityTabs } = state;
     const { showModals, currentItem, entityList, entityId, modalPending } = entityTabs;
     return {
-      visible: /add|edit/.test(showModals),
-      isEdit: /edit/.test(showModals),
+      visible: /^(add|edit)$/.test(showModals),
+      isEdit: /^edit$/.test(showModals),
       currentItem,
       entityList,
       entityId,

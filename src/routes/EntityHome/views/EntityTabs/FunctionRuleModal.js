@@ -194,7 +194,7 @@ export default connect(
     return {
       roleid, // vocationId
       currFunction,
-      visible: /rule/.test(showModals)
+      visible: /^rule$/.test(showModals)
     };
   },
   dispatch => {
