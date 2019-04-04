@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import IntlText from '../../../../components/UKComponent/Form/IntlText';
 import EntityTabFormModal from './EntityTabFormModal';
 import SetCountRuleModal from './SetCountRuleModal';
+import FunctionRuleModal from './FunctionRuleModal';
 import styles from './EntityTabs.less';
 
 const Column = Table.Column;
@@ -11,6 +12,7 @@ const Column = Table.Column;
 function EntityTabs({
   edit,
   add,
+  rule,
   tablist,
   onUpCilck,
   onDownCilck,
@@ -35,6 +37,7 @@ function EntityTabs({
                 <Icon type="arrow-up" onClick={onUpCilck.bind(null, index)} style={index === 0 ? { visibility: 'hidden' } : null} />
                 <Icon type="arrow-down" onClick={onDownCilck.bind(null, index)} style={index === lastIndex ? { visibility: 'hidden' } : null} />
                 <Icon type="edit" onClick={edit.bind(null, record)} />
+                <Icon type="tool" onClick={rule.bind(null, record)} />
                 {!record.entitytaburl && <Icon type="setting" onClick={setCountRule.bind(null, record.relid)} />}
                 {!record.entitytaburl && <Icon type="delete" onClick={onDel.bind(null, record.relid)} />}
               </div>
@@ -44,6 +47,7 @@ function EntityTabs({
       </div>
       <EntityTabFormModal />
       <SetCountRuleModal />
+      <FunctionRuleModal />
     </div>
   );
 }
@@ -56,6 +60,9 @@ function mapDispatchToProps(dispatch) {
     },
     edit: (item) => {
       dispatch({ type: 'entityTabs/edit', payload: item });
+    },
+    rule: (item) => {
+      dispatch({ type: 'entityTabs/rule', payload: item });
     },
     onUpCilck: (index) => {
       dispatch({ type: 'entityTabs/up', payload: index });

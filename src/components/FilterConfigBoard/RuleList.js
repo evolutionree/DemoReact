@@ -141,7 +141,6 @@ class RuleList extends Component {
 
   addNewRule = newRule => {
     const newRuleList = [...this.props.rules, { ...newRule, ts: new Date().getTime() + getRandomLetters(6) }];
-    console.log(newRuleList);
     this.props.onChange(newRuleList);
   };
 

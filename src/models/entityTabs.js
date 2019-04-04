@@ -220,6 +220,13 @@ export default {
         showModals: 'edit'
       };
     },
+    rule(state, { payload: record }) {
+      return {
+        ...state,
+        currentItem: record,
+        showModals: 'rule'
+      };
+    },
     showModals(state, { payload }) {
       if (!payload) {
         return {
