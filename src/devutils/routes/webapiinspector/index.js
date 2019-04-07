@@ -59,11 +59,14 @@ ApiResponseChange=(value) =>{
     this.setState({CurrentSelectedItem:{...CurrentSelectedItem ,responsesample:value.target.value}});
 }
 ParameterNameChange=(record,value) =>{
+    const { CurrentSelectedItem } = this.state;
     record.parametercnname = value.target.value;
     this.setState({CurrentSelectedItem:{ ...CurrentSelectedItem }});
 }
 ParameterDescriptionChange=(record,value) =>{
+    const { CurrentSelectedItem } = this.state;
     record.description = value.target.value;
+    console.log(record);
     this.setState({CurrentSelectedItem:{ ...CurrentSelectedItem }});
 }
 SaveAction = () =>{
@@ -162,7 +165,7 @@ SaveAction = () =>{
                         :
                         (
                             <Table
-                                    rowKey="parametername"
+                                    rowKey = {(record)=>(CurrentSelectedItem.fullpath+'_' + record.parametername)}
                                     pagination={false}
                                     dataSource={CurrentSelectedItem.parameters}
                                 >
@@ -188,8 +191,9 @@ SaveAction = () =>{
                                     <Column title="备注" key="description" dataIndex="description"  
                                             render={(text, record) => (
                                                     <Input type="textarea" style={ {"display" : "inline-block"} } 
-                                                    defaultValue={ record.description} 
-                                                    onchange = {this.ParameterDescriptionChange.bind(this,record)}/>
+                                                        defaultValue={ record.description} 
+                                                        onChange = {this.ParameterDescriptionChange.bind(this,record)}
+                                                    />
                                             )}
                                             
                                     />
