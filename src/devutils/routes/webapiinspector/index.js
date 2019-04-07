@@ -109,9 +109,12 @@ SaveAction = () =>{
                         searchkey == undefined 
                         || searchkey === '' 
                         || (api.apiname!= undefined && api.apiname != null && api.apiname.includes(searchkey))
+                        || (api.morename!= undefined && api.morename != null && api.morename.includes(searchkey))
                         || (api.fullpath.includes(searchkey))
                         || (api.selfdescription != undefined && api.selfdescription !=null 
                                     && api.selfdescription.includes(searchkey))
+                        || (api.moredescription != undefined && api.moredescription !=null 
+                                                && api.moredescription.includes(searchkey))
                                     );
                     }).map(api => (
                       <Menu.Item key={api.fullpath}>{
