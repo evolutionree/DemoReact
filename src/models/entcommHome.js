@@ -65,7 +65,7 @@ export default {
           payload: { entityName: entityproinfo[0].entityname }
         });
 
-        const { data: { reltablist } } = yield call(queryTabs, entityId);
+        const { data: { reltablist } } = yield call(queryTabs, { entityId, recid: recordId });
         yield put({
           type: 'putState',
           payload: { relTabs: reltablist }

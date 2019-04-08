@@ -40,12 +40,12 @@ function LoginPage({ login, pending, authCompany, rememberedPwd, loginError, mod
                 {loginError && <Alert message={`登录出错：${loginError}`} type="error" style={{ margin: '-10px 30px 10px' }} />}
               </Col>
               <Col span={9}>
-                {/*<div className={styles.qrcode}>*/}
-                  {/*<p>打开手机，扫描二维码下载</p>*/}
-                  {/*/!*<img src="/qrcode.png" alt="二维码" />*!/*/}
-                  {/*<QRCodeUk size={160} fgColor="#666" />*/}
-                {/*</div>*/}
-                <div className={styles.qrcode} id="login_container"></div>
+                <div className={styles.qrcode}>
+                  <p>打开手机，扫描二维码下载</p>
+                  {/* /!*<img src="/qrcode.png" alt="二维码" />*!/ */}
+                  <QRCodeUk size={160} fgColor="#666" />
+                </div>
+                {/* <div className={styles.qrcode} id="login_container"></div> */}
               </Col>
             </Row>
           )

@@ -49,7 +49,7 @@ export default {
       const { query } = yield select(({ routing }) => routing.locationBeforeTransitions);
       let { menus, entityId, recordId } = yield select(({ entcommAffair }) => entcommAffair);
 
-      const { data: { reltablist: relTabs } } = yield call(queryTabs, entityId);
+      const { data: { reltablist: relTabs } } = yield call(queryTabs, { entityId, recid: recordId });
       let currentTabInfo = _.find(relTabs, item => item.entitytaburl === 'affairlist');
       const rootEntityId = '00000000-0000-0000-0000-000000000001';
       if (!menus.length) {

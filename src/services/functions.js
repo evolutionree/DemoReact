@@ -138,3 +138,57 @@ export async function queryPermission(entityid) {
     body: JSON.stringify({ entityid })
   });
 }
+
+/**
+ * {  
+	"RelTabId": "46c74054-af12-474e-8e33-1dbd752e962f",
+	"entityid": "f9db9d79-e94b-4678-a5cc-aa6e281c1246",
+	"rule": {
+		"ruleid": "bd5843a4-ca92-4bd8-a4f8-b0f31fbefb3e",
+		"entityid": "f9db9d79-e94b-4678-a5cc-aa6e281c1246",
+		"rulename": "",
+		"rulesql": ""
+	},
+	"ruleset": {
+		"ruleset": "",
+		"userid": 0,
+		"ruleformat": ""
+	},
+	"ruleitems": [{
+		"itemid": "c20c221d-af67-4183-a606-6f33b20a2d5b",
+		"itemname": "规则1",
+		"entityid": "f9db9d79-e94b-4678-a5cc-aa6e281c1246",
+		"fieldid": "00000000-0000-0000-0000-000000000000",
+		"operate": "",
+		"ruledata": "{\"dataVal\":\"1=2\"}",
+		"ruletype": 2,
+		"usetype": 0,
+		"relation": {
+			"itemid": "c20c221d-af67-4183-a606-6f33b20a2d5b",
+			"userid": 0,
+			"rolesub": 1,
+			"paramindex": 1
+		}
+	}]
+}
+ */
+export async function savereltabrule(params) {
+  return request('/api/vocation/savereltabrule', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
+ { 
+	"EntityId": "f9db9d79-e94b-4678-a5cc-aa6e281c1246",
+	"RelTabId": "46c74054-af12-474e-8e33-1dbd752e962f"
+  }
+ */
+export async function getreltabrule(params) {
+  return request('/api/vocation/getreltabrule', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+

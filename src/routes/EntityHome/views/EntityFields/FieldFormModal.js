@@ -27,6 +27,7 @@ function processFormValues(values, editingRecord) {
   let {
     fieldId,
     controlType,
+    modeType,
     fieldlabel_lang,
     displayname_lang,
     recStatus,
@@ -48,7 +49,8 @@ function processFormValues(values, editingRecord) {
   const extraFieldConfig = genExtraFieldConfig(controlType);
   const fieldConfigJSON = JSON.stringify({
     ...fieldConfig,
-    ...extraFieldConfig
+    ...extraFieldConfig,
+    choicemode: modeType === 1 ? modeType : 0
   });
 
   const retValues = {

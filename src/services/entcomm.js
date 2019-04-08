@@ -486,13 +486,12 @@ export async function queryPlugins({ entityid, recid }) {
 
 /**
  * 获取页签tab
- * @param entityid
- * @returns {Promise.<Object>}
+ * { entityId, recid }
  */
-export async function queryTabs(entityid) {
+export async function queryTabs(params) {
   return request('/api/dynamicentity/queryreltablistbyrole', {
     method: 'post',
-    body: JSON.stringify({ entityid })
+    body: JSON.stringify(params)
   });
 }
 
