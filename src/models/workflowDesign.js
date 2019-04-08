@@ -101,8 +101,8 @@ function parseFlowJSON(data) {
   const flowSteps = data.nodes.map(item => ({
     id: item.nodeid,
     name: item.nodename,
-    x: item.x,
-    y: item.y,
+    x: item.nodeconfig && item.nodeconfig.positionX || item.x,
+    y: item.nodeconfig && item.nodeconfig.positionY || item.y,
     rawNode: item
   }));
   const flowPaths = data.lines.map(item => ({
@@ -587,7 +587,7 @@ export default {
             columnconfig,
             auditsucc,
             nodeevent: funcname,
-            position: flowNodePosition[id]
+            nodeconfig: flowNodePosition[id]
           };
         });
         const lines = flowPaths.map(path => ({
