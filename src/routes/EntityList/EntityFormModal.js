@@ -76,7 +76,7 @@ class EntityFormModal extends Component {
     const isEdit = /edit/.test(this.props.showModals);
     this.props.form.validateFields((err, values) => {
       if (err) return;
-
+      const { setreference } = values;
       let data;
 
       if (isEdit) {
@@ -84,7 +84,8 @@ class EntityFormModal extends Component {
           icons: '00000000-0000-0000-0000-100000000001', // TODO 服务端允许icons为null
           ...values,
           entityid: this.props.editingRecord.entityid,
-          typeid: parseInt(values.typeid, 10)
+          typeid: parseInt(values.typeid, 10),
+          entityConfig: { DisableRef: setreference }
         };
         if (!data.relentityid) {
           data.relentityid = '00000000-0000-0000-0000-000000000000';
@@ -94,7 +95,8 @@ class EntityFormModal extends Component {
           icons: '00000000-0000-0000-0000-100000000001', // TODO 服务端允许icons为null
           ...values,
           typeid: parseInt(values.typeid, 10),
-          styles: ''
+          styles: '',
+          entityConfig: { DisableRef: setreference === '1' ? setreference : '0' }
         };
       }
 
@@ -122,6 +124,7 @@ class EntityFormModal extends Component {
     const {
       showModals,
       entityTypes,
+      editingRecord,
       form: {
         getFieldDecorator,
         getFieldValue
@@ -133,6 +136,7 @@ class EntityFormModal extends Component {
     const typeid = getFieldValue('typeid');
     const relentityid = getFieldValue('relentityid');
     const isEdit = /edit/.test(showModals);
+    const entityId = editingRecord && editingRecord.entityid;
 
     return (
       <Modal title={isEdit ? '编辑实体' : '新增实体'}
@@ -175,6 +179,35 @@ class EntityFormModal extends Component {
               </Select>
             )}
           </FormItem>
+          {
+            entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ?
+              <div>
+                <FormItem label="引用设置">
+                  {getFieldDecorator('setreference', {
+                    normalize: (value) => (value === '1' ? value : '0'),
+                    initialValue: '0',
+                    rules: [{ required: true, message: '请选择实体类型' }]
+                  })(
+                    <Select>
+                      <Option value={'0'}>启用引用</Option>
+                      <Option value={'1'}>关闭引用</Option>
+                    </Select>
+                  )}
+                </FormItem>
+                {/* <FormItem label="新增提示">
+                {getFieldDecorator('typeid', {
+                  initialValue: '0',
+                  rules: [{ required: true, message: '请选择实体类型' }]
+                })(
+                  <Select disabled={isEdit}>
+                    {entityTypes.map(
+                      ({ id, label }) => <Option value={id} key={id}>{label}</Option>
+                    )}
+                  </Select>
+                )}
+              </FormItem> */}
+              </div> : null
+          }
           {/* 简单实体可选，动态嵌套必选，独立没得选 */}
           {typeid !== '0' ? <FormItem label="关联实体">
             {getFieldDecorator('relentityid', {

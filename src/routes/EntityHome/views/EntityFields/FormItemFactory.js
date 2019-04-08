@@ -1074,6 +1074,23 @@ export default class FormItemFactory {
     );
   }
 
+  createModeType() {
+    return (
+      <FormItem label="模式选择" key="modeType">
+        {this.getFieldDecorator('modeType', {
+          normalize: (value) => (value === 1 ? value : 0),
+          initialValue: 0,
+          rules: [{ required: true, message: '请选择模式' }]
+        })(
+          <RadioGroup>
+            <Radio value={0}>正常</Radio>
+            <Radio value={1}>高级</Radio>
+          </RadioGroup>
+        )}
+      </FormItem>
+    );
+  }
+
   createAllowAdd() {
     return (
       <FormItem label="是否允许快速新增" key="allowAdd">
