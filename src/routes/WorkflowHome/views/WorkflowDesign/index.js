@@ -197,6 +197,7 @@ class WorkflowDesign extends Component {
 
   onContainerReady = (elemContainer) => {
     const jspInstance = jsPlumb.getInstance({ ...this.getJspConfig(), Container: elemContainer });
+
     jspInstance.bind('click', (connInfo, originalEvent) => {
       // debugger
     });
@@ -264,14 +265,27 @@ class WorkflowDesign extends Component {
     // debugger;
   };
 
+  submit = () => {
+    let flowNodePosition = {};
+    const flowNodes = this.flowNodeWrap.children;
+    for (let i = 0; i < flowNodes.length; i++) {
+      const flowNodeId = flowNodes[i].id.replace('workflow-', '');
+      flowNodePosition[flowNodeId] = {
+        positionX: flowNodes[i].offsetLeft,
+        positionY: flowNodes[i].offsetTop
+      };
+    }
+    this.props.save(flowNodePosition);
+  }
+
   render() {
     const { flowSteps, flowPaths } = this.props;
     const { jspInstance } = this.state;
     return (
-      <div style={{ position: 'relative' }} onClick={this.onClickContainer}>
+      <div id="flowPanel" style={{ position: 'relative' }} onClick={this.onClickContainer}>
         <FlowContainer onDomReady={this.onContainerReady}>
           {jspInstance ? (
-            <div>
+            <div ref={ref => this.flowNodeWrap = ref}>
               {flowSteps.map(({ id, x, y, name, rawNode = {} }) => {
                 const cls = classnames({
                   'flow-node-start': rawNode.steptypeid === 0,
@@ -313,7 +327,7 @@ class WorkflowDesign extends Component {
         <Button onClick={this.props.createNode} style={{ position: 'absolute', right: '130px', top: '30px' }}>
           添加节点
         </Button>}
-        <Button onClick={this.props.save} style={{ position: 'absolute', right: '50px', top: '30px' }}>保存</Button>
+        <Button onClick={this.submit} style={{ position: 'absolute', right: '50px', top: '30px' }}>保存</Button>
       </div>
     );
   }
@@ -323,8 +337,8 @@ export default connect(
   state => state.workflowDesign,
   dispatch => {
     return {
-      save() {
-        dispatch({ type: 'workflowDesign/saveFlowDesign' });
+      save(flowNodePosition) {
+        dispatch({ type: 'workflowDesign/saveFlowDesign', payload: flowNodePosition });
       },
       newFlow() {
         dispatch({ type: 'workflowDesign/generateFlowJSON' });

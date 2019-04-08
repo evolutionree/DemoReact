@@ -12,7 +12,7 @@ class FlowConnection extends Component {
     this.connection = jspInstance.connect({
       source: `${from}`,
       target: `${to}`,
-      anchor: ['Right', 'Left'],
+      anchor: 'Continuous', //['Right', 'Left']
       // detachable: false
     });
     this.connection.bind('click', (conn, originEvent) => {

@@ -205,12 +205,18 @@ class FlowNode extends Component {
       );
     }
 
+
     return (
       <div className={styles.REVIEW}>
         {this.renderTitle()}
-        <div className={styles.body} onClick={this.props.openStepModal}>
-          {this.renderBody()}
-        </div>
+        {
+          !nodeData || !nodeData.steptypeid || !nodeData.ruleconfig ? <div className={styles.body} onClick={this.props.openStepModal}>
+            <div style={{ border: '1px dashed red' }}>点击这里配置审批人</div>
+          </div> : null
+        }
+        {/*<div className={styles.body} onClick={this.props.openStepModal}>*/}
+          {/*{this.renderBody()}*/}
+        {/*</div>*/}
       </div>
     );
   }
