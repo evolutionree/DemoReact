@@ -76,10 +76,10 @@ function DSourceFormModal({
 
   return (
     <Modal title={isEdit ? '编辑数据源' : '新增数据源'}
-           visible={/edit|add/.test(showModals)}
-           onOk={handleSubmit}
-           onCancel={handleCancel}
-           confirmLoading={savePending}>
+      visible={/edit|add/.test(showModals)}
+      onOk={handleSubmit}
+      onCancel={handleCancel}
+      confirmLoading={savePending}>
       <Form>
         <FormItem label="数据源名称">
           {decorate('datasourcename_lang', {
@@ -145,7 +145,7 @@ function DSourceFormModal({
 export default Form.create({
   mapPropsToFields: (props) => {
     const { currentRecords, showModals } = props;
-    if (/add/.test(showModals)) return {};
+    if (showModals === '') return {};
     const tmp = _.pick(currentRecords[0], ['dataSourceName', 'recStatus', 'remark']);
     return _.mapValues(currentRecords[0], val => ({ value: val }));
   }
