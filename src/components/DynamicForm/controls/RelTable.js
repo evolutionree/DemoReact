@@ -32,7 +32,7 @@ class RelTable extends Component {
   static defaultProps = {
     mode: 'ADD',
     value: [],
-    onFocus: () => {}
+    onFocus: () => { }
   };
 
   arrFormInstance = [];
@@ -53,7 +53,6 @@ class RelTable extends Component {
 
   componentDidMount() {
     this.props.entityId && this.queryFields(this.props.entityId, this.props);
-    this.fetchGlobalJS(this.props.entityId);
 
     this.setAlignTableWidthAndHeight();
     let timer = null;
@@ -66,7 +65,7 @@ class RelTable extends Component {
             this.setAlignTableWidthAndHeight();
           }, 150);
 
-          mutations.forEach(function(mutation) {
+          mutations.forEach(function (mutation) {
             //console.log(mutation);
           });
         });
@@ -90,7 +89,6 @@ class RelTable extends Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.entityId !== nextProps.entityId) {
       this.queryFields(nextProps.entityId, nextProps);
-      this.fetchGlobalJS(nextProps.entityId);
     }
   }
 
@@ -196,7 +194,7 @@ class RelTable extends Component {
   }
 
   parseValue = () => {
-    let { value } = this.props;
+    const { value } = this.props;
     if (!value) return [];
     if (!Array.isArray(value)) return [];
     return value;
@@ -248,6 +246,7 @@ class RelTable extends Component {
       if (props.sheetfield) { //暂存数据需要做处理
         this.setInitRowFieldConfig(this.getInitTableRowFields(result.data), props.sheetfield);
       }
+      this.fetchGlobalJS(props.entityId);
     }).catch(e => {
       console.error(e.message);
       this.setState({
@@ -295,7 +294,7 @@ class RelTable extends Component {
     const { entityId, onChange } = this.props;
     const newRow = {
       TypeId: entityId,
-      FieldData: generateDefaultFormData(this.state.tableFields)
+      FieldData: { ...generateDefaultFormData(this.state.tableFields), isNotCopyJs: true }
     };
     onChange([...this.parseValue(), newRow]);
     this.setState({
@@ -631,7 +630,7 @@ class RelTable extends Component {
           batchAddInfo_fieldname={batchAddInfo.field && batchAddInfo.field.fieldname}
           batchAddInfo_fieldid={batchAddInfo.field && batchAddInfo.field.fieldid}
           reloadTable={this.reloadTableRow}
-          OriginCopyAddForm={this.props.OriginCopyAddForm}
+          OriginCopyAddForm={item.FieldData.isNotCopyJs ? false : this.props.OriginCopyAddForm}
         />
       );
     });
@@ -793,16 +792,16 @@ class RelTable extends Component {
           {/*</div>}*/}
         </div>
         <RelTableImportModal visible={this.state.importVisible}
-                             entityId={this.props.entityId}
-                             entityTypeId={this.props.entityTypeId}
-                             mainEntityId={this.props.mainEntityId}
-                             cancel={() => { this.setState({ importVisible: false }); }}
-                             onOk={this.addImportData}
+          entityId={this.props.entityId}
+          entityTypeId={this.props.entityTypeId}
+          mainEntityId={this.props.mainEntityId}
+          cancel={() => { this.setState({ importVisible: false }); }}
+          onOk={this.addImportData}
         />
         <RelTableBatchModal visible={/batchAdd/.test(this.state.showModals)}
-                            protocl={_.find(this.state.tableFields, item => item.fieldname === this.props.batchAddField)}
-                            onCancel={() => { this.setState({ showModals: false }); }}
-                            onConfirm={this.batchAdd} />
+          protocl={_.find(this.state.tableFields, item => item.fieldname === this.props.batchAddField)}
+          onCancel={() => { this.setState({ showModals: false }); }}
+          onConfirm={this.batchAdd} />
       </div>
     );
   }

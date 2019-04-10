@@ -5,7 +5,7 @@ import { Modal } from 'antd';
 import { getAuthedHeaders } from '../../utils/request';
 import { queryEntityDetail } from '../../services/entity';
 import { getLocalAuthentication } from '../../services/authentication';
-import {uuid} from "../../utils";
+import { uuid } from "../../utils";
 
 function debugMsg(type, msg) {
   Modal.info({
@@ -62,8 +62,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     constructor(props) {
       super(props);
       this.state = {
-        fields: props.fields,
-        isFirst: true
+        fields: props.fields
       };
       this.setJS(props);
     }
@@ -163,7 +162,6 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
 
     setGlobalJS = (JS) => {
       const { OriginCopyAddForm, origin } = this.props;
-      const { isFirst } = this.state;
       if (this.props.cacheId) { //暂存表单 不走全局JS
         return;
       }
@@ -174,8 +172,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
         switch (ftype) {
           case FormTypes.ADD:
             //复制新增的时候  取 copyload 全局JS
-            globalJS = (OriginCopyAddForm || origin === 'EntcommCopyModal') ? (isFirst ? data.copyload : data.newload) : data.newload;
-            this.setState({ isFirst: false });
+            globalJS = (OriginCopyAddForm || origin === 'EntcommCopyModal') ? data.copyload : data.newload;
             break;
           case FormTypes.EDIT:
             globalJS = data.editload;
@@ -671,14 +668,20 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     handleFieldValueChange = (fieldName) => {
-      const expandJS = this.fieldExpandJS[fieldName];
-      if (expandJS) {
-        if (this.globalJSLoading) {
-          console.warn('global js 未加载完成，将不触发此次js脚本：', fieldName);
-          return;
+      this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(true);
+      setTimeout(() => {
+        const expandJS = this.fieldExpandJS[fieldName];
+        if (expandJS) {
+          if (this.globalJSLoading) {
+            console.warn('global js 未加载完成，将不触发此次js脚本：', fieldName);
+            this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(false);
+            return;
+          }
+          this.excuteJS(expandJS, `field value change__${fieldName}`);
         }
-        this.excuteJS(expandJS, `field value change__${fieldName}`);
-      }
+        this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(false);
+      }, 0);
+
 
       // clearInterval(this.expandJstimer);
       // const expandJS = this.fieldExpandJS[fieldName];
@@ -695,14 +698,19 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     handleFieldControlFocus = (fieldName) => {
-      const filterJS = this.fieldExpandFilterJS[fieldName];
-      if (filterJS) {
-        if (this.globalJSLoading) {
-          console.warn('global js 未加载完成，将不触发此次js脚本：', fieldName);
-          return;
+      this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(true);
+      setTimeout(() => {
+        const filterJS = this.fieldExpandFilterJS[fieldName];
+        if (filterJS) {
+          if (this.globalJSLoading) {
+            console.warn('global js 未加载完成，将不触发此次js脚本：', fieldName);
+            this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(false);
+            return;
+          }
+          this.excuteJS(filterJS, `field focused__${fieldName}`);
         }
-        this.excuteJS(filterJS, `field focused__${fieldName}`);
-      }
+        this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(false);
+      }, 0);
     };
 
     excuteJS = (js, logTitle) => {

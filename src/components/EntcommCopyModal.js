@@ -39,7 +39,6 @@ class EntcommCopyModal extends Component {
     if (isOpening) {
       const { entityTypes } = nextProps;
       // 实体只有一个类型时，跳过类型选择
-      console.log(nextProps)
       this.setState({
         showFormModal: true,
         selectedEntityType: nextProps.copyData.rectype
@@ -121,7 +120,7 @@ class EntcommCopyModal extends Component {
       }
 
 
-      const formData = genEditData(this.props.copyData, protocolFields)
+      const formData = genEditData(this.props.copyData, protocolFields);
       //基础的数据重新获取
       /*      const baseFormData = generateDefaultFormData(protocolFields);
             const baseFormDataFields = Object.keys(baseFormData);

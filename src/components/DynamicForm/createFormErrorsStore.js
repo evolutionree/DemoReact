@@ -26,12 +26,16 @@ export default function createFormErrorsStore(WrappedFormComponent, isTable) {
       if (_.isEqual(value, nextValue)) return;
 
       const innerFormValue = this.getInnerFormValue(value, nextValue);
-      
+      let isChanged = false;
+
       for (const key in innerFormValue) {
-        if (stateValue[key] && is(stateValue[key].value, innerFormValue[key].value)) {
-          return;
+        if (stateValue[key] && !is(stateValue[key].value, innerFormValue[key].value)) {
+          isChanged = true;
+          break;
         }
       }
+      if (Object.keys(stateValue).length !== Object.keys(innerFormValue).length) isChanged = true;
+      if (isChanged === false) return;
       this.setState({ innerFormValue });
     }
 
