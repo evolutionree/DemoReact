@@ -28,7 +28,6 @@ export default {
     sortFieldAndOrder: null, //当前排序的字段及排序顺序
     ColumnFilter: null, //字段查询
     selectedFlowObj: null, //审批流
-
     funBtnInfo: null, //当前点击的functionButton 的信息
     copyData: null
   },

@@ -34,7 +34,7 @@ export async function queryV2(params) {
 }
 
 /**
- * 查询实体详情
+ * 查询实体详情  实体类型
  * @param entityId
  * @returns {Promise.<Object>}
  */

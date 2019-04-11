@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import _ from 'lodash';
 import { routerRedux } from 'dva/router';
-import { getGeneralListProtocol, getListData, delEntcomm, transferEntcomm, getFunctionbutton, extraToolbarClickSendData, getEntcommDetail, transferdata } from '../services/entcomm';
+import { getGeneralListProtocol, getListData, delEntcomm, transferEntcomm, getFunctionbutton, extraToolbarClickSendData, getEntcommDetail, transferdata, queryWorkflow } from '../services/entcomm';
 import { queryMenus, queryEntityDetail, queryTypes, queryListFilter, getlistschemebyentity } from '../services/entity';
 
 export default {
@@ -28,6 +28,7 @@ export default {
     dynamicModalData: {},
     sortFieldAndOrder: null, //当前排序的字段及排序顺序
     ColumnFilter: null, //字段查询
+    selectedFlowObj: null, //审批流
     schemelist: []
   },
   subscriptions: {
@@ -58,6 +59,10 @@ export default {
         // 获取实体信息
         const { data } = yield call(queryEntityDetail, entityId);
         yield put({ type: 'entityName', payload: data.entityproinfo[0].entityname });
+
+        //获取审批信息
+        const { data: selectedFlowObj } = yield call(queryWorkflow, entityId);
+        yield put({ type: 'putState', payload: { selectedFlowObj } });
 
         // 获取实体类型
         const { data: { entitytypepros: entityTypes } } = yield call(queryTypes, { entityId });
@@ -420,6 +425,7 @@ export default {
         dynamicModalData: {},
         sortFieldAndOrder: null, //当前排序的字段及排序顺序
         ColumnFilter: null, //字段查询
+        selectedFlowObj: null,  //审批流
         schemelist: []
       };
     }

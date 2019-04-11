@@ -3,7 +3,7 @@ import { connect } from 'dva';
 import { Modal, Form, Input, Select, Radio, Checkbox, InputNumber, message } from 'antd';
 import IntlInput from '../../components/UKComponent/Form/IntlInput';
 import { getIntlText } from '../../components/UKComponent/Form/IntlText';
-import { query as queryEntities } from '../../services/entity';
+import { query as queryEntities, queryEntityDetail } from '../../services/entity';
 import { IntlInputRequireValidator } from '../../utils/validator';
 
 const FormItem = Form.Item;
@@ -21,7 +21,8 @@ class WorkflowFormModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      entities: []
+      entities: [],
+      controlEntranceFlow: false
     };
   }
 
@@ -33,10 +34,15 @@ class WorkflowFormModal extends Component {
       this.fetchRelEntities();
 
       if (editingRecord) {
+        const { config, ...values } = editingRecord;
         form.setFieldsValue({
-          ...editingRecord,
+          ...values,
+          ...config,
           expireflag: editingRecord.expireday > 0
         });
+        if ([0, 2].includes(parseInt(editingRecord.entitymodeltype, 10))) {
+          this.setState({ controlEntranceFlow: true });
+        }
       } else {
         form.resetFields();
       }
@@ -67,6 +73,19 @@ class WorkflowFormModal extends Component {
     }
   };
 
+  onChangeEntity = entityid => {
+    if (entityid) {
+      queryEntityDetail(entityid)
+        .then(res => {
+          const { data } = res;
+          if (data) {
+            const controlEntranceFlow = [0, 2].includes(parseInt(data.entityproinfo[0].modeltype, 10)); // 0 2 独立实体 简单实体
+            this.setState({ controlEntranceFlow });
+          }
+        }).catch(e => console.error(e));
+    }
+  }
+
   // checkExpireDay = (rule, value, callback) => {
   //   const expireflag = this.props.form.getFieldValue('expireflag');
   //   const expireday = this.props.form.getFieldValue('expireday');
@@ -90,9 +109,11 @@ class WorkflowFormModal extends Component {
           return;
         }
       }
+      const { entrance, ...rest } = values;
       this.props.confirm({
         resetflag: 1,
-        ...values,
+        ...rest,
+        config: { entrance: entrance || 0 },
         expireflag: undefined,
         flowid: editingRecord ? editingRecord.flowid : undefined
       });
@@ -102,6 +123,8 @@ class WorkflowFormModal extends Component {
   render() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
     const isEdit = !!this.props.editingRecord;
+    const { controlEntranceFlow } = this.state;
+
     return (
       <Modal
         visible={this.props.visible}
@@ -155,9 +178,24 @@ class WorkflowFormModal extends Component {
               </Radio.Group>
             )}
           </FormItem>
+          {
+            controlEntranceFlow ?
+              <FormItem label="是否入口工作流">
+                {getFieldDecorator('entrance', {
+                  initialValue: 0,
+                  rules: [{ required: true, message: '请选择是否入口工作流程' }]
+                })(
+                  <Radio.Group>
+                    <Radio value={1}>是</Radio>
+                    <Radio value={0}>否</Radio>
+                  </Radio.Group>
+                )}
+              </FormItem> : null
+          }
           <FormItem label="关联实体">
             {getFieldDecorator('entityid', {
-              rules: [{ required: true, message: '请选择关联实体' }]
+              rules: [{ required: true, message: '请选择关联实体' }],
+              onChange: this.onChangeEntity
             })(
               <Select placeholder="请选择关联实体" disabled={isEdit}>
                 {this.state.entities.map(entity => (
