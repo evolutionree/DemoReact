@@ -105,21 +105,21 @@ function UserList({
           },
           { label: '转换团队', handler: changeDept, single: true, show: checkFunc('DepartmentChange') },
           { label: '重置密码', handler: revertPassword, single: false, show: checkFunc('ReconvertPwd') },
-          {
-            label: '取消设为领导', handler: toggleSetLeader, single: true,
-            show: () => checkFunc('SetLeader') && !!currentItems[0].isleader
-          },
-          {
-            label: '设为领导', handler: toggleSetLeader, single: true,
-            show: () => checkFunc('SetLeader') && !currentItems[0].isleader
-          },
-          {
-            label: '绑定考勤组', handler: bindAttence, single: false,
-            show: () => checkFunc('SetLeader')
-          },
-          { label: '密码失效', handler: setPwdValid, single: false },
-          { label: '注销设备', handler: setForceLogout, single: false },
-          { label: '一键转移数据', handler: transferData, single: false }
+          // {
+          //   label: '取消设为领导', handler: toggleSetLeader, single: true,
+          //   show: () => checkFunc('SetLeader') && !!currentItems[0].isleader
+          // }
+          // {
+          //   label: '设为领导', handler: toggleSetLeader, single: true,
+          //   show: () => checkFunc('SetLeader') && !currentItems[0].isleader
+          // },
+          // {
+          //   label: '绑定考勤组', handler: bindAttence, single: false,
+          //   show: () => checkFunc('SetLeader')
+          // },
+          // { label: '密码失效', handler: setPwdValid, single: false },
+          // { label: '注销设备', handler: setForceLogout, single: false },
+          // { label: '一键转移数据', handler: transferData, single: false }
         ]}
       >
         {/*<SelectRole value={queries.roleId} onChange={search.bind(null, 'roleId')} style={{ width: '160px' }} />*/}
