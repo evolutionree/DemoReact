@@ -161,21 +161,21 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     setGlobalJS = (JS) => {
-      const { OriginCopyAddForm, origin } = this.props;
+      const { mode, origin, OriginCopyAddForm, fields } = this.props;
       if (this.props.cacheId) { //暂存表单 不走全局JS
         return;
       }
       let globalJS = '';
       const data = JS;
       if (data && Object.keys(data).length) {
-        let ftype = this.props.mode || formType;
+        const ftype = mode || formType;
         switch (ftype) {
           case FormTypes.ADD:
-            //复制新增的时候  取 copyload 全局JS
-            globalJS = (OriginCopyAddForm || origin === 'EntcommCopyModal') ? data.copyload : data.newload;
+            //复制新增的时候  取copyload 全局JS
+            globalJS = (origin === 'EntcommCopyModal' || OriginCopyAddForm) ? data.copyload : data.newload;
             break;
           case FormTypes.EDIT:
-            globalJS = data.editload;
+            globalJS = OriginCopyAddForm ? data.editload : (typeof OriginCopyAddForm !== 'boolean' ? data.editload : data.newload);
             break;
           case FormTypes.DETAIL:
             globalJS = data.checkload;
@@ -184,7 +184,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
         }
       }
       this.globalJS = globalJS;
-      if (this.props.fields && this.props.fields.length) {
+      if (fields && fields.length) {
         setTimeout(() => {
           this.excuteJS(this.globalJS, 'global');
         }, 0);

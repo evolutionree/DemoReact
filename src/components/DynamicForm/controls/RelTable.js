@@ -630,7 +630,7 @@ class RelTable extends Component {
           batchAddInfo_fieldname={batchAddInfo.field && batchAddInfo.field.fieldname}
           batchAddInfo_fieldid={batchAddInfo.field && batchAddInfo.field.fieldid}
           reloadTable={this.reloadTableRow}
-          OriginCopyAddForm={item.FieldData.isNotCopyJs ? false : this.props.OriginCopyAddForm}
+          OriginCopyAddForm={!item.FieldData.isNotCopyJs}
         />
       );
     });
