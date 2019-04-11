@@ -105,12 +105,10 @@ class InputAddress extends Component {
     if (address && lat && lon) {
       centerPoint = new BMap.Point(lon, lat);
       markerPoint = centerPoint;
+    } else if (address) {
+      this.handleSearch(address);
     } else {
-      if (address) {
-        this.handleSearch(address);
-      } else {
-        centerPoint = new BMap.Point(116.404, 39.915); // 默认地址
-      }
+      centerPoint = new BMap.Point(116.404, 39.915); // 默认地址
     }
 
     map.centerAndZoom(centerPoint, 16); // 初始化地图，设置中心点和地图级别
@@ -254,7 +252,7 @@ class InputAddress extends Component {
           onOk={this.confirmModal}
         >
           <Search value={this.state.keyword} onSearch={this.handleSearch} placeholder="输入地名搜索" />
-          <span style={{ paddingLeft:'10px', color:'#999' }}>注：鼠标右键标注地址</span>
+          <span style={{ paddingLeft: '10px', color: '#999' }}>注：鼠标右键标注地址</span>
           <div
             style={{ height: '400px', marginTop: '10px' }}
             ref={elem => { this.mapContainer = elem; }}
@@ -270,7 +268,7 @@ class InputAddress extends Component {
 InputAddress.View = ({ value, dispatch }) => {
   if (!value || !value.address) return <span style={{ color: '#999999' }}>(空)</span>;
   return (
-    <div style={{ height: 26 }}>
+    <div>
       <span style={{ verticalAlign: 'middle' }}>{value.address}</span>
       <img
         style={{ verticalAlign: 'middle', marginLeft: '5px', cursor: 'pointer' }}

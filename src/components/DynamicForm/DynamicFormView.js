@@ -49,7 +49,8 @@ class DynamicFormView extends React.Component {
 
   renderFields = fields => {
     const { value, entityId, entityTypeId, cols } = this.props;
-    return fields.filter(field => field.controltype !== 30).map(field => {
+    // filter筛选条件加上不显示的判断
+    return fields.filter(field => field.controltype !== 30 || !(field.fieldconfig.isVisible !== 1 || field.fieldconfig.isVisibleJS === 0)).map(field => {
       const { fieldname, displayname, controltype, fieldconfig } = field;
       const layout = this.getFormItemLayout(field.fieldname);
 
@@ -58,14 +59,12 @@ class DynamicFormView extends React.Component {
         colNum = 24;
       } else if (cols) {
         colNum = cols;
+      } else if (document.body.clientWidth > 1500) {
+        colNum = 6;
+      } else if (document.body.clientWidth > 1100) {
+        colNum = 8;
       } else {
-        if (document.body.clientWidth > 1500) {
-          colNum = 6;
-        } else if (document.body.clientWidth > 1100) {
-          colNum = 8;
-        } else {
-          colNum = 12;
-        }
+        colNum = 12;
       }
 
       //TODO: 表单查看 项 用样式区分label和值项
@@ -81,11 +80,11 @@ class DynamicFormView extends React.Component {
         }
       }
 
-      return (
+      return [colNum, (
         <Col span={colNum}
              key={field.fieldname}
              className={className}
-             style={(fieldconfig.isVisible !== 1 || field.fieldconfig.isVisibleJS === 0) ? { display: 'none' } : { padding: '0 10px' }} >
+             style={{ padding: '0 10px' }} >
           <FormItem
             key={fieldname}
             colon={false}
@@ -103,9 +102,38 @@ class DynamicFormView extends React.Component {
             />
           </FormItem>
         </Col>
-      );
+      )];
     });
   };
+
+  // 由于每一项内容长度不一样，导致每个col的高度可能不一致
+  // 根据colNum拆分一行有多少个Col，再插入Row
+  slinceFileds = (fields) => {
+    const fieldsArr = this.renderFields(fields);
+    const resultFields = [];
+    let item = []; // 作为缓存每一项的列表
+    for (let i = 0; i < fieldsArr.length; i++) {
+      const [colNum, col] = fieldsArr[i];
+      if (colNum === 24) {
+        if (item.length) {
+          resultFields.push(item);
+          item = [];
+        } else {
+          item = [col];
+          resultFields.push(item);
+          item = [];
+        }
+      } else if (item.length < (24 / colNum)) {
+        item.push(col);
+      } else {
+        resultFields.push(item);
+        item = [col];
+      }
+    }
+    if (item.length) resultFields.push(item); // 把最后缓存的一项放进去
+
+    return resultFields.map((row, i) => <Row key={`row${i}`}>{row}</Row>);
+  }
   render() {
     const { fields: allFields } = this.props;
 
@@ -134,10 +162,10 @@ class DynamicFormView extends React.Component {
     return (
       <Form className={styles.dyformview}>
         <Row gutter={24} style={{ margin: 0 }}>
-          {this.renderFields(noGroupFields)}
+          {this.slinceFileds(noGroupFields)}
           {groups.map(group => (
             <FoldableGroup key={group.title} title={group.title} isVisible={group.isVisible} foldable={group.foldable} theme="light">
-              {this.renderFields(group.fields)}
+              {this.slinceFileds(group.fields)}
             </FoldableGroup>
           ))}
         </Row>
