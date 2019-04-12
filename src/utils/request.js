@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { getLocalAuthentication } from '../services/authentication';
 import { browser, os } from './ua';
+import { getBrowserUUID } from './ukUtil';
 
 function getAccessToken() {
   const { token } = getLocalAuthentication();
@@ -23,6 +24,7 @@ export function getDeviceHeaders() {
   let currentLocale = window.localStorage.getItem('currentLocale') || '';
   return {
     Device: 'WEB',
+    DeviceId: getBrowserUUID(),
     Vernum: '2.0.0',
     Language: currentLocale,
     Sysmark: `${os.name} ${os.version}, ${browser.name} ${browser.version}`
