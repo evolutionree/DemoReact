@@ -29,7 +29,7 @@ class EntcommAddModal extends Component {
     processProtocol: PropTypes.func,
     isAddCase: PropTypes.bool,
     entityTypeId: PropTypes.string, //暂存表单时  默认选中当前暂存表单的 实体类型
-    cacheId: PropTypes.string, //新增 暂存表单数据时  需要带上暂存id
+    cacheId: PropTypes.string //新增 暂存表单数据时  需要带上暂存id
   };
   static defaultProps = {
     entityTypeId: '',
@@ -80,12 +80,12 @@ class EntcommAddModal extends Component {
         });
         this.fetchProtocol(nextProps.entityTypeId);
       } else if (!entityTypes || entityTypes.length === 1) { // 实体只有一个类型时，跳过类型选择
-        const selectedEntityType = Array.isArray(entityTypes) && entityTypes.length === 1 ? entityTypes[0].categoryid : entityId;
+        const selectedEntityType = Array.isArray(entityTypes) ? entityTypes[0].categoryid : entityId;
         this.setState({
           showFormModal: true,
           selectedEntityType: selectedEntityType
         });
-        this.fetchProtocol(entityId);
+        this.fetchProtocol(selectedEntityType);
       } else if (entityTypes.length > 1) {
         this.setState({
           showTypeModal: true,

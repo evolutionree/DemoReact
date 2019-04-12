@@ -67,7 +67,7 @@ function DicPage({
   let span = 6;
   if (extConfig && extConfig instanceof Object) {
     let extConfigLength = Object.keys(extConfig).length;
-    span = parseInt(24 / (3 + extConfigLength));
+    span = parseInt(24 / (4 + extConfigLength));
   }
   const column = [
     {
@@ -129,7 +129,7 @@ function DicPage({
         >
           {
             dicTypes instanceof Array && dicTypes.map((item, index) => {
-              return <Option value={item.dictypeid} key={index}>{item.dictypename}</Option>;
+              return <Option value={item.dictypeid + ''} key={index}>{item.dictypename}</Option>;
             })
           }
         </Select>
