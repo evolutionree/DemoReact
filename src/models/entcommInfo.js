@@ -1,6 +1,8 @@
 import { message } from 'antd';
 import _ from 'lodash';
-import { getGeneralProtocol, editEntcomm } from '../services/entcomm';
+import { getGeneralProtocol, editEntcomm, queryWorkflow } from '../services/entcomm';
+import { queryTypes } from '../services/entity';
+
 
 export default {
   namespace: 'entcommInfo',
@@ -12,7 +14,10 @@ export default {
     editForm: null,
     editProtocol: [],
     permission: true,
-    excutingJSLoading: false
+    excutingJSLoading: false,
+    selectedFlowObj: null, //审批流
+    showModal: '',
+    entityTypes: []
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -23,7 +28,7 @@ export default {
           const entityId = match[1];
           const recordId = match[2];
           dispatch({ type: 'putState', payload: { entityId, recordId } });
-          dispatch({ type: 'init' });
+          dispatch({ type: 'init', payload: { entityId, recordId } });
         } else {
           dispatch({ type: 'resetState' });
         }
@@ -31,7 +36,15 @@ export default {
     }
   },
   effects: {
-    *init(action, { select, put, take }) {
+    *init({ payload: { entityId } }, { select, put, take, call }) {
+      //获取审批信息
+      const { data: selectedFlowObj } = yield call(queryWorkflow, entityId);
+      yield put({ type: 'putState', payload: { selectedFlowObj } });
+
+      // 获取实体类型
+      const { data: { entitytypepros: entityTypes } } = yield call(queryTypes, { entityId });
+      yield put({ type: 'putState', payload: { entityTypes } });
+
       // 确保主页拿到详情数据后，再去拿详情协议
       const { recordDetail: { rectype } } = yield select(state => state.entcommHome);
       if (rectype) {
@@ -114,7 +127,6 @@ export default {
         });
         return retData;
       }
-
     },
     *cancelEdit(action, { put }) {
       yield put({
@@ -149,6 +161,15 @@ export default {
       } catch (e) {
         message.error(e.message || '保存失败');
       }
+    },
+    *handleExamine({ payload }, { select, put, call }) {
+      const { editForm } = yield select(state => state.entcommInfo);
+      try {
+        const values = yield cps(editForm.validateFields);
+        yield put({ type: 'postEdit', payload: values });
+      } catch (e) {
+        message.error('请检查表单');
+      }
     }
   },
   reducers: {
@@ -166,7 +187,10 @@ export default {
         editForm: null,
         editProtocol: [],
         permission: true,
-        excutingJSLoading: false
+        excutingJSLoading: false,
+        selectedFlowObj: null, //审批流
+        showModal: '',
+        entityTypes: []
       };
     }
   }

@@ -36,7 +36,7 @@ export function autoAddCaseItem (isAddCase, dataModel) {
 class WorkflowCaseForAddModal extends Component {
   static propTypes = {
     form: PropTypes.object,
-    visible: PropTypes.bool,
+    visible: PropTypes.any,
     isAddCase: PropTypes.bool,
     dataModel: PropTypes.object,
     onCancel: PropTypes.func.isRequired,
@@ -55,7 +55,8 @@ class WorkflowCaseForAddModal extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const isOpening = !this.props.visible && nextProps.visible;
+    const { editPage } = nextProps;
+    const isOpening = !this.props.visible && nextProps.visible && (editPage ? /^WorkflowCaseForAddModal$/.test(nextProps.visible) : true);
     const isClosing = this.props.visible && !nextProps.visible;
     if (isOpening) {
       const { isAddCase, dataModel } = nextProps;

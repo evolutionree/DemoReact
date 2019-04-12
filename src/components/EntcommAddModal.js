@@ -6,6 +6,7 @@ import { hashHistory } from 'dva/router';
 import { DynamicFormAdd, generateDefaultFormData } from './DynamicForm';
 import { getGeneralProtocol, addEntcomm, temporarysave } from '../services/entcomm';
 import { queryEntityDetail } from '../services/entity';
+import { preAddCase } from '../services/workflow';
 import { WorkflowCaseForAddModal } from "./WorkflowCaseModal";
 import { frontEndData_to_BackEndData } from '../components/AppHeader/TemporaryStorage/formStorageUtils';
 import uuid from 'uuid';
@@ -200,6 +201,10 @@ class EntcommAddModal extends Component {
       this.onFormModalConfirmAddCase();
       return;
     }
+    this.onSubmitForm();
+  };
+
+  onSubmitForm = () => {
     this.form.validateFields((err, values) => {
       if (err) {
         return message.error('请检查表单');
@@ -207,7 +212,7 @@ class EntcommAddModal extends Component {
       const params = {
         cacheid: this.props.cacheId,
         typeid: this.state.selectedEntityType,
-        // flowid: this.props.flow ? this.props.flow.flowid : undefined,
+        flowid: this.props.flow ? this.props.flow.flowid : undefined,
         relentityid: this.props.refEntity,
         relrecid: this.props.refRecord,
         fielddata: values,
@@ -233,16 +238,14 @@ class EntcommAddModal extends Component {
         message.error(e.message || '新增失败');
       });
     });
-  };
+  }
 
   onFormModalConfirmAddCase = () => {
+    const { isAddCase } = this.props;
     this.form.validateFields((err, values) => {
-      if (err) {
-        return message.error('请检查表单');
-      }
-
+      if (err) return message.error('请检查表单');
       let dataModel;
-      if (this.props.isAddCase) {
+      if (isAddCase) {
         dataModel = {
           cacheid: this.props.cacheId,
           entityid: this.state.selectedEntityType,
@@ -263,12 +266,23 @@ class EntcommAddModal extends Component {
           extradata: this.props.extraData
         };
       }
-      this.setState({ dataModel, showWorkflowCaseModal: true, showFormModal: true });
+      const params = isAddCase ? { datatype: 1, casemodel: dataModel } : { datatype: 0, entitymodel: dataModel };
+      // 预提交
+      preAddCase(params).then(result => {
+        const { approvers } = result.data;
+        if (approvers.length === 1) {
+          this.setState({ dataModel, showWorkflowCaseModal: true, showFormModal: true });
+        } else {
+          this.onSubmitForm();
+        }
+      });
     });
   };
+
   onWorkflowCaseCancel = () => {
     this.setState({ showWorkflowCaseModal: false, showFormModal: true });
   };
+
   onWorkflowCaseDone = (result) => {
     this.props.done(result);
   };
@@ -301,7 +315,7 @@ class EntcommAddModal extends Component {
     });
   };
 
-  setExtraData= (type, value) => {
+  setExtraData = (type, value) => {
     this.setState({
       commonid: value
     });

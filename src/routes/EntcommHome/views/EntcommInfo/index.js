@@ -1,11 +1,14 @@
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'dva';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
+import { preAddCase } from '../../../../services/workflow';
 import { DynamicFormEdit, DynamicFormView } from '../../../../components/DynamicForm';
+import { WorkflowCaseForAddModal } from '../../../../components/WorkflowCaseModal';
 import styles from './styles.less';
 
-function EntcommInfo({
+function EntcommInfo(props) {
+  const {
     checkFunc,
     editing,
     detailData,
@@ -19,9 +22,23 @@ function EntcommInfo({
     editFormRef,
     permission,
     entityId,
-                       onExcutingJSStatusChange,
-                       excutingJSLoading
-  }) {
+    onExcutingJSStatusChange,
+    selectedFlowObj,
+    excutingJSLoading,
+    toggleShowModal,
+    showModal,
+    dataModel,
+    editForm,
+    cacheId,
+    entityTypes,
+    extradata,
+    refEntity,
+    refRecord
+  } = props;
+
+  const flow = selectedFlowObj;
+  let fields = editProtocol;
+
   if (!permission) {
     return (
       <div className={styles.container}>
@@ -29,9 +46,47 @@ function EntcommInfo({
       </div>
     );
   }
-  function transferEditProtocol(editData, editProtocol) { //部分字段 禁用
-    var protocol = editProtocol.map((item, index) => {
-      if(("," + editData.commmon_fields.toString() + ",").indexOf("," + item.fieldname + ",") > -1){
+
+  function onSubmitEdit() {
+    if (editForm) {
+      if (flow && flow.flowid) {
+        editForm.validateFields((err, values) => {
+          if (err) return message.error('请检查表单');
+
+          if (!entityTypes || entityTypes.length === 1) {
+            const selectedEntityType = Array.isArray(entityTypes) && entityTypes.length === 1 ? entityTypes[0].categoryid : entityId;
+            const newDataModel = {
+              cacheid: cacheId,
+              typeid: selectedEntityType,
+              flowid: flow.flowid,
+              relentityid: refEntity,
+              relrecid: refRecord,
+              fielddata: values,
+              extradata: extradata
+            };
+            const params = {
+              datatype: 0,
+              entitymodel: newDataModel
+            };
+            preAddCase(params).then(res => {
+              const { approvers } = res.data;
+              if (approvers.length === 1) {
+                toggleShowModal('WorkflowCaseForAddModal');
+              } else {
+                saveEdit();
+              }
+            });
+          }
+        });
+        return;
+      }
+      saveEdit();
+    }
+  }
+
+  function transferEditProtocol(editDatas, eProtocol) { //部分字段 禁用
+    const protocol = eProtocol.map(item => {
+      if ((',' + editDatas.commmon_fields.toString() + ',').indexOf(',' + item.fieldname + ',') > -1) {
         item.fieldconfig.isReadOnly = 1;
       }
       return item;
@@ -40,24 +95,31 @@ function EntcommInfo({
   }
 
   if (editing) {
-    if(editData.hasOwnProperty("commmon_fields") && editData.commmon_fields != null) {
-      editProtocol = transferEditProtocol(editData, editProtocol);
+    if (Object.prototype.hasOwnProperty.call(editData, 'commmon_fields') && editData.commmon_fields != null) {
+      fields = transferEditProtocol(editData, fields);
     }
     return (
       <div className={styles.container}>
         <div className={styles.btnrow}>
-          <Button onClick={saveEdit} loading={excutingJSLoading} style={{ marginRight: '10px' }}>保存</Button>
+          <Button onClick={onSubmitEdit} loading={excutingJSLoading} style={{ marginRight: '10px' }}>保存</Button>
           <Button type="default" onClick={cancelEdit}>取消</Button>
         </div>
         <div style={{ maxHeight: document.documentElement.clientHeight - 270 }} className={classnames(styles.formBody, 'entcomminfoBody')}>
           <DynamicFormEdit
             entityId={entityId}
             entityTypeId={editData && editData.rectype}
-            fields={editProtocol}
+            fields={fields}
             value={editData}
             onChange={onEditDataChange}
             ref={editFormRef}
             excutingJSStatusChange={onExcutingJSStatusChange}
+          />
+          <WorkflowCaseForAddModal
+            visible={showModal}
+            editPage
+            dataModel={dataModel}
+            onCancel={() => toggleShowModal('')}
+            onDone={() => toggleShowModal('')}
           />
         </div>
       </div>
@@ -99,6 +161,9 @@ export default connect(
       },
       saveEdit() {
         dispatch({ type: 'entcommInfo/saveEdit' });
+      },
+      toggleShowModal(action) {
+        dispatch({ type: 'entcommInfo/putState', payload: { showModal: action } });
       },
       onEditDataChange(editData) {
         dispatch({ type: 'entcommInfo/putState', payload: { editData } });
