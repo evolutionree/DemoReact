@@ -26,7 +26,7 @@ class CustomFormItem extends FormItem {
           'has-success': validateStatus === 'success',
           'has-warning': validateStatus === 'warning',
           'custom-has-error': validateStatus === 'error',
-          'is-validating': validateStatus === 'validating',
+          'is-validating': validateStatus === 'validating'
         },
       );
     }
@@ -114,7 +114,7 @@ class DynamicFormBase extends Component {
   }
 
   getRelObjectConfig = (fields) => {
-    let RelObjectConfig = [];
+    const RelObjectConfig = [];
     this.processFields(fields).map(item => {
       if (item.controltype === 31) {  //引用对象 的相关配置先存起来 对相关项进行监听
         RelObjectConfig.push(item);
@@ -122,7 +122,7 @@ class DynamicFormBase extends Component {
     });
 
     //TODO: 整理 共用一个来源对象的引用字段 集合在一起  减少网络请求次数
-    let relObject = {};
+    const relObject = {};
     RelObjectConfig.map(item => {
       const { controlField } = item.fieldconfig;
       if (relObject[controlField]) {
@@ -369,6 +369,46 @@ class DynamicFormBase extends Component {
     });
   };
 
+  // 由于每一项内容长度不一样，导致每个col的高度可能不一致
+  // 根据colNum拆分一行有多少个Col，再插入Row
+  slinceFileds = (fields) => {
+    const fieldsArr = this.renderFields(fields);
+    const resultFields = [];
+    let item = []; // 作为缓存每一项的列表
+    let isFullPush = false;
+    for (let i = 0; i < fieldsArr.length; i++) {
+      const [colNum, col] = fieldsArr[i];
+      if (colNum === 24) {
+        if (isFullPush) {
+          resultFields.push(item);
+          resultFields.push([col]);
+          item = [];
+          isFullPush = false;
+        } else if (item.length) {
+          // console.log('--pre24push--', item);
+          resultFields.push(item);
+          item = [];
+        } else {
+          item = [col];
+          // console.log('--is24push--', item);
+          resultFields.push(item);
+          item = [];
+        }
+      } else if (item.length < (24 / colNum)) {
+        item.push(col);
+      } else {
+        // console.log('--full push--', item);
+        resultFields.push(item);
+        item = [col];
+        isFullPush = true;
+      }
+    }
+    
+    if (item.length) resultFields.push(item); // 把最后缓存的一项放进去
+    
+    return resultFields.map((row, i) => <Row key={`row${i}`}>{row}</Row>);
+  }
+
   renderFields = fields => {
     return this.processFields(fields).map(this.renderField);
   };
@@ -389,14 +429,12 @@ class DynamicFormBase extends Component {
       colNum = 24;
     } else if (this.props.cols) {
       colNum = this.props.cols;
+    } else if (document.body.clientWidth > 1500) {
+      colNum = 6;
+    } else if (document.body.clientWidth > 1100) {
+      colNum = 8;
     } else {
-      if (document.body.clientWidth > 1500) {
-        colNum = 6;
-      } else if (document.body.clientWidth > 1100) {
-        colNum = 8;
-      } else {
-        colNum = 12;
-      }
+      colNum = 12;
     }
 
     const fieldControl = this.renderFieldControl(field);
@@ -412,14 +450,14 @@ class DynamicFormBase extends Component {
       }
     }
 
-    return (
+    return [colNum, (
       <Col span={colNum}
            key={field.fieldname}
            className={className}
            style={{ padding: '0 10px' }}>
         {this.renderFieldControlWrapper(field, colNum)(fieldControl)}
       </Col>
-    );
+    )];
   };
 
   renderFieldControlWrapper = (field, colNum) => {
@@ -487,10 +525,10 @@ class DynamicFormBase extends Component {
     return (
       <Form layout={this.getFormLayout()}>
         <Row gutter={24}>
-          {this.renderFields(fieldsGroup[0].fields)}
+          {this.slinceFileds(fieldsGroup[0].fields)}
           {fieldsGroup.slice(1).map(group => (
             <FoldableGroup key={group.title} title={group.title} isVisible={group.isVisible} foldable={group.foldable}>
-              {this.renderFields(group.fields)}
+              {this.slinceFileds(group.fields)}
             </FoldableGroup>
           ))}
         </Row>

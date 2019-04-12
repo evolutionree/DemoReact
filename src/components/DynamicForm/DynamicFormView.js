@@ -112,22 +112,32 @@ class DynamicFormView extends React.Component {
     const fieldsArr = this.renderFields(fields);
     const resultFields = [];
     let item = []; // 作为缓存每一项的列表
+    let isFullPush = false;
     for (let i = 0; i < fieldsArr.length; i++) {
       const [colNum, col] = fieldsArr[i];
       if (colNum === 24) {
-        if (item.length) {
+        if (isFullPush) {
+          resultFields.push(item);
+          resultFields.push([col]);
+          item = [];
+          isFullPush = false;
+        } else if (item.length) {
+          // console.log('--pre24push--', item);
           resultFields.push(item);
           item = [];
         } else {
           item = [col];
+          // console.log('--is24push--', item);
           resultFields.push(item);
           item = [];
         }
       } else if (item.length < (24 / colNum)) {
         item.push(col);
       } else {
+        // console.log('--full push--', item);
         resultFields.push(item);
         item = [col];
+        isFullPush = true;
       }
     }
     if (item.length) resultFields.push(item); // 把最后缓存的一项放进去
