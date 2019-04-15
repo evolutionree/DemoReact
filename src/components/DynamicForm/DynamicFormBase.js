@@ -10,6 +10,43 @@ import { getEntcommDetail } from '../../services/entcomm';
 const FormItem = Form.Item;
 const onlylineField = [2, 5, 15, 22, 23, 24];
 
+export function getSlinceFileds(fieldsArr) { // fieldsArr: [[colNum, col], ...]
+  const resultFields = [];
+  let item = []; // 作为缓存每一项的列表
+  let isFullPush = false;
+  for (let i = 0; i < fieldsArr.length; i++) {
+    const [colNum, col] = fieldsArr[i];
+    if (colNum === 24) {
+      if (isFullPush) {
+        resultFields.push(item);
+        resultFields.push([col]);
+        item = [];
+        isFullPush = false;
+      } else if (item.length) { // 当前项为24，先push缓存的item，再push当前项
+        // console.log('--pre24push--', item);
+        resultFields.push(item);
+        resultFields.push([col]);
+        item = [];
+      } else {  // 直接push当前项
+        // console.log('--is24push--', item);
+        resultFields.push([col]);
+        item = [];
+      }
+    } else if (item.length < (24 / colNum)) { // 缓存
+      item.push(col);
+    } else { // 缓存列表已满，先push缓存的item，在添加标志给下一项为24的判断使用
+      // console.log('--full push--', item);
+      resultFields.push(item);
+      item = [col];
+      isFullPush = true;
+    }
+  }
+  
+  if (item.length) resultFields.push(item); // 把最后缓存的一项放进去
+  
+  return resultFields.map((row, i) => <Row key={`row${i}`}>{row}</Row>);
+}
+
 class CustomFormItem extends FormItem {
   renderValidateWrapper(c1, c2, c3) {
     let classes = '';
@@ -373,40 +410,8 @@ class DynamicFormBase extends Component {
   // 根据colNum拆分一行有多少个Col，再插入Row
   slinceFileds = (fields) => {
     const fieldsArr = this.renderFields(fields);
-    const resultFields = [];
-    let item = []; // 作为缓存每一项的列表
-    let isFullPush = false;
-    for (let i = 0; i < fieldsArr.length; i++) {
-      const [colNum, col] = fieldsArr[i];
-      if (colNum === 24) {
-        if (isFullPush) {
-          resultFields.push(item);
-          resultFields.push([col]);
-          item = [];
-          isFullPush = false;
-        } else if (item.length) {
-          // console.log('--pre24push--', item);
-          resultFields.push(item);
-          item = [];
-        } else {
-          item = [col];
-          // console.log('--is24push--', item);
-          resultFields.push(item);
-          item = [];
-        }
-      } else if (item.length < (24 / colNum)) {
-        item.push(col);
-      } else {
-        // console.log('--full push--', item);
-        resultFields.push(item);
-        item = [col];
-        isFullPush = true;
-      }
-    }
-    
-    if (item.length) resultFields.push(item); // 把最后缓存的一项放进去
-    
-    return resultFields.map((row, i) => <Row key={`row${i}`}>{row}</Row>);
+    const resultFields = getSlinceFileds(fieldsArr); 
+    return resultFields;
   }
 
   renderFields = fields => {

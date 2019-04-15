@@ -5,6 +5,7 @@ import FoldableGroup from './FoldableGroup';
 import DynamicFieldView from './DynamicFieldView';
 import IntlText from '../UKComponent/Form/IntlText';
 import styles from './styles.less';
+import { getSlinceFileds } from './DynamicFormBase';
 
 const FormItem = Form.Item;
 const onlylineField = [2, 5, 15, 22, 23, 24];
@@ -108,41 +109,10 @@ class DynamicFormView extends React.Component {
 
   // 由于每一项内容长度不一样，导致每个col的高度可能不一致
   // 根据colNum拆分一行有多少个Col，再插入Row
-  slinceFileds = (fields) => {
+  slinceFileds = (fields) => { 
     const fieldsArr = this.renderFields(fields);
-    const resultFields = [];
-    let item = []; // 作为缓存每一项的列表
-    let isFullPush = false;
-    for (let i = 0; i < fieldsArr.length; i++) {
-      const [colNum, col] = fieldsArr[i];
-      if (colNum === 24) {
-        if (isFullPush) {
-          resultFields.push(item);
-          resultFields.push([col]);
-          item = [];
-          isFullPush = false;
-        } else if (item.length) {
-          // console.log('--pre24push--', item);
-          resultFields.push(item);
-          item = [];
-        } else {
-          item = [col];
-          // console.log('--is24push--', item);
-          resultFields.push(item);
-          item = [];
-        }
-      } else if (item.length < (24 / colNum)) {
-        item.push(col);
-      } else {
-        // console.log('--full push--', item);
-        resultFields.push(item);
-        item = [col];
-        isFullPush = true;
-      }
-    }
-    if (item.length) resultFields.push(item); // 把最后缓存的一项放进去
-
-    return resultFields.map((row, i) => <Row key={`row${i}`}>{row}</Row>);
+    const resultFields = getSlinceFileds(fieldsArr); 
+    return resultFields;
   }
   render() {
     const { fields: allFields } = this.props;
