@@ -2,7 +2,6 @@ import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'dva';
 import { Button, message } from 'antd';
-import { preAddCase } from '../../../../services/workflow';
 import { DynamicFormEdit, DynamicFormView } from '../../../../components/DynamicForm';
 import { WorkflowCaseForAddModal } from '../../../../components/WorkflowCaseModal';
 import styles from './styles.less';
@@ -23,20 +22,23 @@ function EntcommInfo(props) {
     permission,
     entityId,
     onExcutingJSStatusChange,
-    selectedFlowObj,
     excutingJSLoading,
     toggleShowModal,
     showModal,
     dataModel,
-    editForm,
     cacheId,
     entityTypes,
-    extradata,
+    selectedFlowObj,
     refEntity,
-    refRecord
+    editForm,
+    refRecord,
+    extradata,
+    setDataModel,
+    flowid,
+    onDone
   } = props;
 
-  const flow = selectedFlowObj;
+  const flow = selectedFlowObj || {};
   let fields = editProtocol;
 
   if (!permission) {
@@ -49,12 +51,12 @@ function EntcommInfo(props) {
 
   function onSubmitEdit() {
     if (editForm) {
-      if (flow && flow.flowid) {
+      if (flowid) {
         editForm.validateFields((err, values) => {
           if (err) return message.error('请检查表单');
 
           if (!entityTypes || entityTypes.length === 1) {
-            const selectedEntityType = Array.isArray(entityTypes) && entityTypes.length === 1 ? entityTypes[0].categoryid : entityId;
+            const selectedEntityType = Array.isArray(entityTypes) ? entityTypes[0].categoryid : entityId;
             const newDataModel = {
               cacheid: cacheId,
               typeid: selectedEntityType,
@@ -64,23 +66,13 @@ function EntcommInfo(props) {
               fielddata: values,
               extradata: extradata
             };
-            const params = {
-              datatype: 0,
-              entitymodel: newDataModel
-            };
-            preAddCase(params).then(res => {
-              const { approvers } = res.data;
-              if (approvers.length === 1) {
-                toggleShowModal('WorkflowCaseForAddModal');
-              } else {
-                saveEdit();
-              }
-            });
+            setDataModel(newDataModel);
+            toggleShowModal('WorkflowCaseForAddModal');
           }
         });
-        return;
+      } else {
+        saveEdit();
       }
-      saveEdit();
     }
   }
 
@@ -119,7 +111,7 @@ function EntcommInfo(props) {
             editPage
             dataModel={dataModel}
             onCancel={() => toggleShowModal('')}
-            onDone={() => toggleShowModal('')}
+            onDone={onDone}
           />
         </div>
       </div>
@@ -165,6 +157,9 @@ export default connect(
       toggleShowModal(action) {
         dispatch({ type: 'entcommInfo/putState', payload: { showModal: action } });
       },
+      setDataModel(dataModel) {
+        dispatch({ type: 'entcommInfo/putState', payload: { dataModel } });
+      },
       onEditDataChange(editData) {
         dispatch({ type: 'entcommInfo/putState', payload: { editData } });
       },
@@ -173,6 +168,13 @@ export default connect(
       },
       onExcutingJSStatusChange(status) {
         dispatch({ type: 'entcommInfo/putState', payload: { excutingJSLoading: status } });
+      },
+      onDone(result) {
+        dispatch({ type: 'entcommInfo/putState', payload: { showModal: '' } });
+        if (result) {
+          dispatch({ type: 'entcommInfo/cancelEdit' });
+          dispatch({ type: 'entcommHome/fetchRecordDetail' });
+        }
       }
     };
   }

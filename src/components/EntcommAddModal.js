@@ -17,6 +17,7 @@ class EntcommAddModal extends Component {
     entityId: PropTypes.string,
     entityTypes: PropTypes.array, // 可以不传，跳过实体类型选择
     entityName: PropTypes.string,
+    flowid: PropTypes.string,
     modalTitle: PropTypes.string,
     cancel: PropTypes.func.isRequired,
     done: PropTypes.func, // 完成提交表单后的回调函数
@@ -197,11 +198,7 @@ class EntcommAddModal extends Component {
   }
 
   onFormModalConfirm = () => {
-    if (this.props.flow && this.props.flow.flowid) {
-      this.onFormModalConfirmAddCase();
-      return;
-    }
-    this.onSubmitForm();
+    return this.props.flowid ? this.onFormModalConfirmAddCase() : this.onSubmitForm();
   };
 
   onSubmitForm = () => {
@@ -266,16 +263,7 @@ class EntcommAddModal extends Component {
           extradata: this.props.extraData
         };
       }
-      const params = isAddCase ? { datatype: 1, casemodel: dataModel } : { datatype: 0, entitymodel: dataModel };
-      // 预提交
-      preAddCase(params).then(result => {
-        const { approvers } = result.data;
-        if (approvers.length === 1) {
-          this.setState({ dataModel, showWorkflowCaseModal: true, showFormModal: true });
-        } else {
-          this.onSubmitForm();
-        }
-      });
+      this.setState({ dataModel, showWorkflowCaseModal: true, showFormModal: true });
     });
   };
 

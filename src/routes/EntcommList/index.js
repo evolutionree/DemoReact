@@ -26,6 +26,7 @@ function EntcommList({
   checkFunc,
   dispatch,
   entityName,
+  flowid,
   menus,
   protocol,
   queries,
@@ -284,6 +285,7 @@ function EntcommList({
         entityName={entityName}
         entityTypes={entityTypes}
         flow={selectedFlowObj}
+        flowid={flowid}
         cancel={onAddModalCanel}
         done={onAddModalDone}
         pageType="entcommList"

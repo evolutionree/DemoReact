@@ -25,6 +25,7 @@ function EntcommList({
   checkFunc,
   dispatch,
   entityName,
+  flowid,
   menus,
   protocol,
   queries,
@@ -175,7 +176,7 @@ function EntcommList({
     return checkFunc('EntityDataExport');
   }
   function handleTableChange(pagination, filters, sorter) {
-    const searchOrder = sorter.field ? (sorter.field + (sorter.order === 'ascend' ? ' asc' : ' desc')) : ''
+    const searchOrder = sorter.field ? (sorter.field + (sorter.order === 'ascend' ? ' asc' : ' desc')) : '';
     search({
       pageIndex: pagination.current,
       pageSize: pagination.pageSize,
@@ -308,6 +309,7 @@ function EntcommList({
         entityName={entityName}
         entityTypes={entityTypes}
         flow={selectedFlowObj}
+        flowid={flowid}
         cancel={onAddModalCanel}
         done={onAddModalDone}
       />

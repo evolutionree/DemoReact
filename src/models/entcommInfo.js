@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import _ from 'lodash';
 import { getGeneralProtocol, editEntcomm, queryWorkflow } from '../services/entcomm';
-import { queryTypes } from '../services/entity';
+import { queryTypes, queryEntityDetail } from '../services/entity';
 
 
 export default {
@@ -17,7 +17,9 @@ export default {
     excutingJSLoading: false,
     selectedFlowObj: null, //审批流
     showModal: '',
-    entityTypes: []
+    entityTypes: [],
+    flowid: '',
+    dataModel: {}
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -37,6 +39,16 @@ export default {
   },
   effects: {
     *init({ payload: { entityId } }, { select, put, take, call }) {
+      // 获取实体信息
+      const { data } = yield call(queryEntityDetail, entityId);
+      if (Array.isArray(data.entityproinfo) && data.entityproinfo.length) {
+        yield put({
+          type: 'putState', payload: {
+            flowid: data.entityproinfo[0].flowid || ''
+          }
+        });
+      }
+
       //获取审批信息
       const { data: selectedFlowObj } = yield call(queryWorkflow, entityId);
       yield put({ type: 'putState', payload: { selectedFlowObj } });
@@ -190,7 +202,9 @@ export default {
         excutingJSLoading: false,
         selectedFlowObj: null, //审批流
         showModal: '',
-        entityTypes: []
+        entityTypes: [],
+        flowid: '',
+        dataModel: {}
       };
     }
   }

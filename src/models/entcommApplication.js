@@ -9,6 +9,7 @@ export default {
   state: {
     entityId: '',
     entityName: '',
+    flowid: '',
     importUrl: '',
     importTemplate: '',
     entityTypes: [],
@@ -58,7 +59,15 @@ export default {
       try {
         // 获取实体信息
         const { data } = yield call(queryEntityDetail, entityId);
-        yield put({ type: 'entityName', payload: data.entityproinfo[0].entityname });
+        if (Array.isArray(data.entityproinfo) && data.entityproinfo.length) {
+          yield put({
+            type: 'putState', payload: {
+              entityName: data.entityproinfo[0].entityname,
+              flowid: data.entityproinfo[0].flowid || ''
+            }
+          });
+        }
+
 
         //获取审批信息
         const { data: selectedFlowObj } = yield call(queryWorkflow, entityId);
@@ -355,9 +364,6 @@ export default {
     }
   },
   reducers: {
-    entityName(state, { payload: entityName }) {
-      return { ...state, entityName };
-    },
     entityTypes(state, { payload: entityTypes }) {
       return {
         ...state,
@@ -427,6 +433,7 @@ export default {
         importUrl: '',
         importTemplate: '',
         entityName: '',
+        flowid: '',
         entityTypes: [],
         menus: [],
         protocol: [],
