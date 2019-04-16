@@ -56,6 +56,7 @@ function FieldForm({ form, isEdit, entityFields, entityId }) {
       </FormItem>
       <FormItem label="显示名称" key="displayName">
         {getFieldDecorator('displayname_lang', {
+          rules: [{ required: true, message: '请输入显示名称' }]
         })(<IntlInput placeholder="显示名称" maxLength="20" />)}
       </FormItem>
       {
