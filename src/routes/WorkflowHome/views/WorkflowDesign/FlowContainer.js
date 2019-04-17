@@ -1,6 +1,8 @@
 import React, { PropTypes, Component } from 'react';
 import styles from './styles.less';
 
+const minHeight = document.body.clientHeight - (60 + 36 + 48 + 20);
+
 class FlowContainer extends Component {
   // shouldComponentUpdate() {
   //   return false;
@@ -52,6 +54,7 @@ class FlowContainer extends Component {
     return (
       <div
         className={styles.flowcontainer}
+        style={{ minHeight }}
         id={`jsp-container-${this.props.scope}`}
         ref={this.props.onDomReady}
       >
