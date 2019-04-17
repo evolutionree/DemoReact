@@ -59,6 +59,9 @@ class EntityFormModal extends Component {
 
     if (isOpening) {
       const { showModals, editingRecord, form } = nextProps;
+      const { servicesjson } = editingRecord;
+      const { entityConfig } = servicesjson;
+      const setreference = entityConfig ? (JSON.parse(entityConfig).DisableRef + '') : '0';
 
       if (!/edit/.test(showModals)) {
         form.resetFields();
@@ -66,6 +69,7 @@ class EntityFormModal extends Component {
         form.setFields(_.mapValues({
           icons: '',
           ...editingRecord,
+          setreference,
           typeid: editingRecord.modeltype + ''
         }, val => ({ value: val })));
       }
@@ -85,7 +89,9 @@ class EntityFormModal extends Component {
           ...values,
           entityid: this.props.editingRecord.entityid,
           typeid: parseInt(values.typeid, 10),
-          entityConfig: { DisableRef: setreference }
+          servicesjson: {
+            entityConfig: JSON.stringify({ DisableRef: setreference })
+          }
         };
         if (!data.relentityid) {
           data.relentityid = '00000000-0000-0000-0000-000000000000';
@@ -96,7 +102,9 @@ class EntityFormModal extends Component {
           ...values,
           typeid: parseInt(values.typeid, 10),
           styles: '',
-          entityConfig: { DisableRef: setreference === '1' ? setreference : '0' }
+          servicesjson: {
+            entityConfig: JSON.stringify({ DisableRef: setreference === '1' ? setreference : '0' })
+          }
         };
       }
 

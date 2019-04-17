@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { is } from 'immutable';
+import _ from 'lodash';
 import { Modal, Input, message } from 'antd';
+import { queryEntityDetail } from '../../../services/entity';
 import { searchcustomerrepeat } from '../../../services/datasource';
 import styles from './InputCustomerRecName.less';
 
@@ -15,7 +17,7 @@ const entityInfo = {
     entityName: '销售线索',
     showQuote: false
   }
-}
+};
 
 class InputCustomerRecName extends Component {
   constructor(props) {
@@ -23,8 +25,11 @@ class InputCustomerRecName extends Component {
     this.state = {
       inputValue: props.value,
       repeatCustomData: [],
-      listHide: true
+      listHide: true,
+      setreference: '0' // 0 启用
     };
+    this.onInputChange = this.onInputChange.bind(this);
+    this.querycustomerrepeat = _.debounce(this.querycustomerrepeat, 500);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -60,10 +65,25 @@ class InputCustomerRecName extends Component {
 
   componentDidMount() {
     document.body.addEventListener('click', this.clickOutsideClose, false);
+    this.getEntityDetail();
   }
 
   componentWillUnmount() {
     document.body.removeEventListener('click', this.clickOutsideClose);
+  }
+
+  getEntityDetail = () => {
+    const { entityId } = this.props;
+    if (entityId) {
+      queryEntityDetail(entityId).then(res => {
+        const { data } = res;
+        if (typeof data === 'object' && Array.isArray(data.entityproinfo) && data.entityproinfo.length && data.entityproinfo[0].servicesjson) {
+          const servicesjson = data.entityproinfo[0].servicesjson;
+          const setreference = servicesjson.entityConfig && JSON.parse(servicesjson.entityConfig).DisableRef;
+          this.setState({ setreference });
+        }
+      });
+    }
   }
 
   clickOutsideClose = (event) => {
@@ -75,7 +95,7 @@ class InputCustomerRecName extends Component {
     });
   };
 
-  onInputChange(event) {
+  onInputChange = (event) => {
     this.setState({ inputValue: event.target.value, listHide: false });
     this.querycustomerrepeat(event.target.value);
   }
@@ -86,27 +106,22 @@ class InputCustomerRecName extends Component {
     });
   }
 
-  onInputBlur(event) {
+  onInputBlur = () => {
 
   }
 
   querycustomerrepeat = (val) => {
     this.props.onChange(val);
     //客户新增， 客户名称键入后，需要查重引用
-    if (val == '') {
-      return
-    } else {
+    if (val !== '') {
       searchcustomerrepeat({
         EntityId: this.getEntityInfo().entityId, //客户资料实体ID
         CheckName: val,
         Exact: 0,
         SearchData: {}
       }).then(result => {
-        let repeatCustomData;
-        repeatCustomData = result.data instanceof Array ? result.data : [];
-        this.setState({
-          repeatCustomData: repeatCustomData
-        })
+        const repeatCustomData = result.data instanceof Array ? result.data : [];
+        this.setState({ repeatCustomData });
       }, err => {
         message.error(err.message || '请求失败');
       });
@@ -134,14 +149,19 @@ class InputCustomerRecName extends Component {
     });
   }
 
+  setInput = (text) => {
+
+  }
+
   render() {
-    const listHide = this.state.listHide || this.state.repeatCustomData.length === 0
+    const { setreference } = this.state;
+    const listHide = this.state.listHide || this.state.repeatCustomData.length === 0;
     return (
       <div className={styles.InputCustomerRecNameWrap} id="InputCustomerRecNameWrap">
         <Input
           type={this.props.type}
           value={this.state.inputValue}
-          onChange={this.onInputChange.bind(this)}
+          onChange={this.onInputChange}
           onFocus={this.onInputFocus}
           onBlur={this.onInputBlur.bind(this)}
           disabled={this.props.isReadOnly === 1}
@@ -156,24 +176,24 @@ class InputCustomerRecName extends Component {
                 <ul key={item.recid}>
                   <li>
                     <span className={styles.spanLeft} title={item.recname}>{item.recname}</span>
-                    {this.getEntityInfo().showQuote && <span className={styles.spanRight} onClick={this.quoteCustomer.bind(this, item)}>引用</span>}
+                    {this.getEntityInfo().showQuote && setreference === '1' && <span className={styles.spanRight} onClick={this.quoteCustomer.bind(this, item)}>引用</span>}
                   </li>
                 </ul>
-              )
+              );
             })
           }
         </div>
       </div>
-    )
+    );
   }
 
 }
 
 InputCustomerRecName.propTypes = {
   quoteHandler: React.PropTypes.func.isRequired
-}
+};
 
-InputCustomerRecName.defaultProps = {}
+InputCustomerRecName.defaultProps = {};
 
 
 export default InputCustomerRecName;
