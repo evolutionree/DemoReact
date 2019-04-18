@@ -20,7 +20,7 @@ function ModifyPwdModal({
     validateFields((err, values) => {
       if (err) return;
       modifyPwd(_.pick(values, ['orginpwd', 'accountpwd']));
-    })
+    });
   }
   function handelCancel() {
     resetFields();
@@ -103,12 +103,12 @@ function ModifyPwdModal({
 function mapDispatchToProps(dispatch) {
   return {
     modifyPwd: data => {
-      dispatch({ type: 'app/modifyPassword', payload: data })
+      dispatch({ type: 'app/modifyPassword', payload: data });
     },
     cancel: () => {
-      dispatch({ type: 'app/showModals', payload: '' })
+      dispatch({ type: 'app/showModals', payload: '' });
     }
-  }
+  };
 }
 export default connect(
   state => state.app,
