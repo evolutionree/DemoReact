@@ -3,6 +3,12 @@ import { getLocalAuthentication } from '../services/authentication';
 import { browser, os } from './ua';
 import { getBrowserUUID } from './ukUtil';
 
+let DeviceId = sessionStorage.getItem('uke_DeviceId');
+if (!DeviceId) {
+  DeviceId = getBrowserUUID();
+  sessionStorage.setItem('uke_DeviceId', DeviceId);
+}
+
 function getAccessToken() {
   const { token } = getLocalAuthentication();
   return token;
@@ -24,7 +30,7 @@ export function getDeviceHeaders() {
   let currentLocale = window.localStorage.getItem('currentLocale') || '';
   return {
     Device: 'WEB',
-    DeviceId: getBrowserUUID(),
+    DeviceId,
     Vernum: '2.0.0',
     Language: currentLocale,
     Sysmark: `${os.name} ${os.version}, ${browser.name} ${browser.version}`
@@ -51,7 +57,7 @@ export default function request(url, options) {
     'Content-Type': 'application/json',
     ...getDeviceHeaders()
   };
-  if (!/login/.test(url) && !/account\/getpublickey/.test(url)) {
+  if (!/login$/.test(url) && !/account\/getpublickey/.test(url)) {
     defaultHeaders.Authorization = `Bearer ${getAccessToken()}`;
   }
 
