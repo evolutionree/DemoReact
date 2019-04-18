@@ -75,7 +75,7 @@ class Statisticsconfig extends Component {
       const _list = Object.values(values).map((anafuncid, index) => {
         return ({
           groupname: groupObj.groupmark || '',
-          anafuncid: anafuncid || '',
+          anafuncid: anafuncid || null,
           recorder: index,
           groupname_lang: JSON.stringify(groupObj.groupmark_lang ? groupObj.groupmark_lang : { cn: '', en: '', tw: '' })
         });

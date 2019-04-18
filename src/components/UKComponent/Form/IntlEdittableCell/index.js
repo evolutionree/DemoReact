@@ -82,7 +82,7 @@ class IntlEdittableCell extends Component {
 
   onChangeItem = (e) => {
     const { record, onChange } = this.props;
-    if (onChange) onChange(record, e);
+    if (!record.active && onChange) onChange(record, e);
   }
 
   render() {
