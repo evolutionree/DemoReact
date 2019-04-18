@@ -61,6 +61,7 @@ class FlowNode extends Component {
   };
 
   renderTitle = () => {
+    const { openStepModal } = this.props;
     const dropdownMenu = (
       <Menu onClick={this.onMenuClick}>
         <Menu.Item key="1">添加下级节点</Menu.Item>
@@ -77,21 +78,33 @@ class FlowNode extends Component {
               size="small"
               value={this.state.editingValue}
               onChange={this.onInputChange}
-             />
+            />
           </div>
           <div className={styles.controls}>
-            <Icon type="check" onClick={this.onEditSave} />
-            <Icon type="close" onClick={this.onEditCancel} />
+            <Icon type="check" onClick={e => {
+              e.stopPropagation();
+              this.onEditSave(e);
+            }} />
+            <Icon type="close" onClick={e => {
+              e.stopPropagation();
+              this.onEditCancel(e);
+            }} />
           </div>
         </div>
       );
     } else {
       return (
-        <div className={styles.title}>
+        <div className={styles.title} onDoubleClick={openStepModal}>
           <div className={styles.content} title={this.props.title}>{this.props.title}</div>
           <div className={styles.controls}>
-            <Icon type="edit" onClick={this.onEditOpen} />
-            <Icon type="delete" onClick={this.props.delStep} />
+            <Icon type="edit" onClick={e => {
+              e.stopPropagation();
+              this.onEditOpen(e);
+            }} />
+            <Icon type="delete" onClick={e => {
+              e.stopPropagation();
+              this.props.delStep(e);
+            }} />
             {false && <Dropdown overlay={dropdownMenu}>
               <Icon type="plus" />
             </Dropdown>}
@@ -175,7 +188,7 @@ class FlowNode extends Component {
   };
 
   render() {
-    const { id, title, nodeData } = this.props;
+    const { id, title, nodeData, openStepModal } = this.props;
 
     if (/__helper/.test(id)) {
       return this.renderHelperNode();
@@ -189,7 +202,7 @@ class FlowNode extends Component {
       return (
         <div className={styles.START} style={styl}>
           {title}
-          <Icon type="setting" onClick={this.props.openStepModal} style={{ marginLeft: '3px', cursor: 'pointer' }} />
+          <Icon type="setting" onClick={openStepModal} style={{ marginLeft: '3px', cursor: 'pointer' }} />
         </div>
       );
     }
@@ -209,13 +222,13 @@ class FlowNode extends Component {
     return (
       <div className={styles.REVIEW}>
         {this.renderTitle()}
-        {
+        {/* {
           !nodeData || !nodeData.steptypeid || !nodeData.ruleconfig ? <div className={styles.body} onClick={this.props.openStepModal}>
             <div style={{ border: '1px dashed red' }}>点击这里配置审批人</div>
           </div> : null
-        }
+        } */}
         {/*<div className={styles.body} onClick={this.props.openStepModal}>*/}
-          {/*{this.renderBody()}*/}
+        {/*{this.renderBody()}*/}
         {/*</div>*/}
       </div>
     );
