@@ -42,6 +42,17 @@ export async function querylanglist() {
 }
 
 /**
+ * 用户登出
+ * @returns {Promise.<Array>}
+ */
+export async function loginout(params) {
+  return request('api/account/loginout', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+/**
  * 重置密码
  * @param userid
  * @returns {Promise.<Object>}

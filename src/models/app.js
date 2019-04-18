@@ -2,7 +2,7 @@ import { message, Modal } from 'antd';
 import { routerRedux, hashHistory } from 'dva/router';
 import storage from '../utils/storage';
 import { subscribe as subscribeRequest } from '../utils/request';
-import { queryUserInfo, querylanglist } from '../services/structure';
+import { queryUserInfo, querylanglist, loginout } from '../services/structure';
 
 import {
   modifyPassword,
@@ -132,13 +132,24 @@ export default {
       }
     },
     *relogout(_, { call }) {
+      const { token, deviceid } = getLocalAuthentication();
+      const params = {
+        Token: token,
+        DeviceId: deviceid
+      };
+      yield call(loginout, params);
       yield call(logout);
       setTimeout(() => (location.href = '/login.html'), 500);
     },
     *logout(action, { call }) {
+      const { token, deviceid } = getLocalAuthentication();
+      const params = {
+        Token: token,
+        DeviceId: deviceid
+      };
+      yield call(loginout, params);
       yield call(logout);
-      // yield put(routerRedux.push({ pathname: '/login' }));
-      location.href = '/login.html';
+      // location.href = '/login.html';
     },
     *fetchGlobalMenus(action, { call, put }) {
       try {

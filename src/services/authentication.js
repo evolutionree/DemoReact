@@ -145,6 +145,7 @@ export function getLocalAuthentication() {
   const token = Cookie.get(TOKEN_KEY);
   const user = Cookie.get(USER_KEY);
   const permissionLevel = +(Cookie.get(PERMISSION_KEY) || 3);
+  const deviceid = sessionStorage.getItem('uke_DeviceId');
 
   // 解决串号问题
   if (lastToken && lastToken !== token) {
@@ -152,7 +153,7 @@ export function getLocalAuthentication() {
   }
   lastToken = token;
 
-  return { token, user, permissionLevel };
+  return { deviceid, token, user, permissionLevel };
 }
 
 /**
