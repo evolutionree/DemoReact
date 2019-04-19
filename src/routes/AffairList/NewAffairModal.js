@@ -147,6 +147,7 @@ class NewAffairModal extends Component {
           entityName={selectedFlowObj ? selectedFlowObj.flowname : ''}
           entityTypes={entityTypes}
           flow={selectedFlowObj}
+          approval
           cancel={this.onStep2Cancel}
           done={this.onStep2Done}
         />

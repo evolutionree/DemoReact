@@ -9,7 +9,6 @@ export default {
   state: {
     entityId: '',
     entityName: '',
-    flowid: '',
     importUrl: '',
     importTemplate: '',
     entityTypes: [],
@@ -62,8 +61,7 @@ export default {
         if (Array.isArray(data.entityproinfo) && data.entityproinfo.length) {
           yield put({
             type: 'putState', payload: {
-              entityName: data.entityproinfo[0].entityname,
-              flowid: data.entityproinfo[0].flowid || ''
+              entityName: data.entityproinfo[0].entityname
             }
           });
         }
@@ -433,7 +431,6 @@ export default {
         importUrl: '',
         importTemplate: '',
         entityName: '',
-        flowid: '',
         entityTypes: [],
         menus: [],
         protocol: [],

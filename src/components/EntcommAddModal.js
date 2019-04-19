@@ -17,7 +17,6 @@ class EntcommAddModal extends Component {
     entityId: PropTypes.string,
     entityTypes: PropTypes.array, // 可以不传，跳过实体类型选择
     entityName: PropTypes.string,
-    flowid: PropTypes.string,
     modalTitle: PropTypes.string,
     cancel: PropTypes.func.isRequired,
     done: PropTypes.func, // 完成提交表单后的回调函数
@@ -101,7 +100,8 @@ class EntcommAddModal extends Component {
   queryEntityinfo = (entityId) => {
     queryEntityDetail(entityId).then(data => {
       this.setState({
-        entityModelType: data.data.entityproinfo[0].modeltype
+        entityModelType: data.data.entityproinfo[0].modeltype,
+        flowid: data.data.entityproinfo[0].flowid
       });
     });
   }
@@ -198,7 +198,15 @@ class EntcommAddModal extends Component {
   }
 
   onFormModalConfirm = () => {
-    return this.props.flowid ? this.onFormModalConfirmAddCase() : this.onSubmitForm();
+    const { flow, approval } = this.props;
+    const { flowid } = this.state;
+    if (flowid) {
+      this.onFormModalConfirmAddCase(flowid);
+    } else if (flow && flow.flowid && approval) {
+      this.onFormModalConfirmAddCase();
+    } else {
+      this.onSubmitForm();
+    }
   };
 
   onSubmitForm = () => {
@@ -237,7 +245,7 @@ class EntcommAddModal extends Component {
     });
   }
 
-  onFormModalConfirmAddCase = () => {
+  onFormModalConfirmAddCase = (flowid) => {
     const { isAddCase } = this.props;
     this.form.validateFields((err, values) => {
       if (err) return message.error('请检查表单');
@@ -246,7 +254,7 @@ class EntcommAddModal extends Component {
         dataModel = {
           cacheid: this.props.cacheId,
           entityid: this.state.selectedEntityType,
-          flowid: this.props.flow.flowid,
+          flowid: flowid || this.props.flow.flowid,
           recid: this.props.recId,
           relentityid: this.props.refEntity,
           relrecid: this.props.refRecord,
@@ -256,7 +264,7 @@ class EntcommAddModal extends Component {
         dataModel = {
           cacheid: this.props.cacheId, //暂存的表单数据  重新提交 需要传cacheid
           typeid: this.state.selectedEntityType,
-          flowid: this.props.flow.flowid,
+          flowid: flowid || this.props.flow.flowid,
           relentityid: this.props.refEntity,
           relrecid: this.props.refRecord,
           fielddata: values,

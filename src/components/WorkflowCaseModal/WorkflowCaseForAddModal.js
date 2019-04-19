@@ -136,6 +136,7 @@ class WorkflowCaseForAddModal extends Component {
         onCancel={this.props.onCancel}
         onOk={this.onOk}
         footer={footer}
+        zIndex={1001}
       >
         <WorkflowCaseForm
           ref={ref => this.form = ref}

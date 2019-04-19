@@ -25,7 +25,6 @@ function EntcommList({
   checkFunc,
   dispatch,
   entityName,
-  flowid,
   menus,
   protocol,
   queries,
@@ -304,12 +303,11 @@ function EntcommList({
         )}
       />
       <EntcommAddModal
-        visible={/add/.test(showModals)}
+        visible={/add$/.test(showModals)}
         entityId={entityId}
         entityName={entityName}
         entityTypes={entityTypes}
         flow={selectedFlowObj}
-        flowid={flowid}
         cancel={onAddModalCanel}
         done={onAddModalDone}
       />

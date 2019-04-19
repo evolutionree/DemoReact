@@ -60,8 +60,7 @@ class EntityFormModal extends Component {
     if (isOpening) {
       const { showModals, editingRecord, form } = nextProps;
       const { servicesjson } = editingRecord;
-      const { entityConfig } = servicesjson;
-      const setreference = entityConfig ? (JSON.parse(entityConfig).DisableRef + '') : '0';
+      const setreference = servicesjson && servicesjson.entityConfig ? (JSON.parse(servicesjson.entityConfig).DisableRef + '') : '0';
 
       if (!/edit/.test(showModals)) {
         form.resetFields();
