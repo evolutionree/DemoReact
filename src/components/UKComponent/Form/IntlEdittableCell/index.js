@@ -18,6 +18,14 @@ class IntlEdittableCell extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { record } = nextProps;
+    this.setState({
+      text: record.displayname,
+      value: record.displayname_lang
+    });
+  }
+
   handleChange = (value) => this.setState({ value });
 
   check = () => {
