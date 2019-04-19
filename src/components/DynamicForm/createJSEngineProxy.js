@@ -465,14 +465,19 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     setVisible = (fieldName, isVisible) => {
-      if (this.props.origin === 'RelTableRow') { //TODO: 表格里的表单执行js 则setVisible 替换为 setReadOnly
+      const { form, origin } = this.props;
+      if (origin === 'RelTableRow') { //TODO: 表格里的表单执行js 则setVisible 替换为 setReadOnly
         this.setFieldConfig(fieldName, { isReadOnlyJS: isVisible ? 0 : 1 });
       } else {
         this.setFieldConfig(fieldName, { isVisibleJS: isVisible ? 1 : 0 });
       }
       if (!isVisible) {
         // this.setValue(fieldName, undefined);
-        this.props.form && this.props.form.setFieldsValue({ [fieldName]: '' });
+        if (form) {
+          const { isFieldTouched } = form;
+          const isFieldBool = isFieldTouched(fieldName);
+          isFieldBool && form.setFieldsValue({ [fieldName]: '' });
+        }
       }
     };
 
