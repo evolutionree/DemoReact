@@ -501,15 +501,12 @@ class RelTable extends Component {
   };
 
   updateTableRowFields = (tableFields) => {
-    console.log(tableFields)
     const { tableRowFields } = this.state;
     //console.log(tableRowFields)
     const newTableRowFields = tableRowFields.map(rowFields => {
       return rowFields.map(item => {
         const newFieldItem = _.cloneDeep(item);
         const field = _.find(tableFields, ['fieldname', item.fieldname]);
-        console.log(field)
-        console.log(field.isVisibleJS)
         if (field) {
           newFieldItem.fieldconfig = {
             ...item.fieldconfig,
@@ -752,6 +749,8 @@ class RelTable extends Component {
   }
 
   render() {
+    console.log(this.state.tableFields, this.props.batchAddField)
+    console.log(_.find(this.state.tableFields, item => item.fieldname === this.props.batchAddField))
     return (
       <div>
         <div className={styles.relTable}>
@@ -798,7 +797,9 @@ class RelTable extends Component {
           cancel={() => { this.setState({ importVisible: false }); }}
           onOk={this.addImportData}
         />
-        <RelTableBatchModal visible={/batchAdd/.test(this.state.showModals)}
+        <RelTableBatchModal
+          // form={this.props.form}
+          visible={/^batchAdd$/.test(this.state.showModals)}
           protocl={_.find(this.state.tableFields, item => item.fieldname === this.props.batchAddField)}
           onCancel={() => { this.setState({ showModals: false }); }}
           onConfirm={this.batchAdd} />

@@ -146,6 +146,7 @@ function EntityFields({
       render: (text, record) => {
         return (
           <IntlEdittableCell
+            entityId={entityId}
             placeholder="显示名称"
             fieldname="displayname"
             record={record}

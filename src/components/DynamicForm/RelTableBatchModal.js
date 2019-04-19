@@ -34,7 +34,7 @@ class RelTableBatchModal extends Component {
     const isOpening = !this.props.visible && nextProps.visible;
     const isClosing = this.props.visible && !nextProps.visible;
     if (isOpening) {
-      this.props.form.resetFields();
+      if (this.props.protocl) this.props.form.resetFields();
     } else if (isClosing) {
       this.resetState();
     }
@@ -78,18 +78,18 @@ class RelTableBatchModal extends Component {
 
   render() {
     const { form, protocl } = this.props;
-    const { getFieldDecorator } = form;
-    if (protocl) {
+    if (protocl && form) {
+      const { getFieldDecorator } = form;
       let { fieldconfig, fieldid, fieldname, displayname, controltype } = protocl;
       if (controltype === 3) { //表格批量新增的是字典控件的数据时  弹出窗是才有多选 下拉让 用户添加
         controltype = 4;
       }
       return (
         <Modal title="批量新增"
-               width={589}
-               visible={this.props.visible}
-               onCancel={this.onCancel}
-               onOk={this.onConfirm} >
+          width={589}
+          visible={this.props.visible}
+          onCancel={this.onCancel}
+          onOk={this.onConfirm} >
           <FormItem
             {...formItemLayout}
             label={displayname}
@@ -115,6 +115,5 @@ class RelTableBatchModal extends Component {
     }
   }
 }
-
 
 export default connect()(Form.create()(RelTableBatchModal));

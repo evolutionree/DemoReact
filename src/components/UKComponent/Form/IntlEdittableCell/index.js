@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { Icon, message } from 'antd';
+import { connect } from 'dva';
 import _ from 'lodash';
 import IntlInput from '../IntlInput';
 import IntlText from '../IntlText';
 import { dynamicRequest } from '../../../../services/entcomm';
 import styles from './index.less';
 
-export default class IntlEdittableCell extends Component {
+class IntlEdittableCell extends Component {
   constructor(props) {
     super(props);
     const { record } = props;
@@ -29,7 +30,7 @@ export default class IntlEdittableCell extends Component {
   edit = () => this.setState({ editable: true });
 
   submitValue = (api) => {
-    const { record: { fieldid, displayname_lang } } = this.props;
+    const { record: { fieldid, displayname_lang }, dispatch } = this.props;
     const { value } = this.state;
 
     if (!api) {
@@ -43,6 +44,7 @@ export default class IntlEdittableCell extends Component {
     .then(res => {
       const { error_msg } = res;
       message.success(error_msg || '修改成功');
+      dispatch({ type: 'entityFields/query' });
     }).catch(e => {
       message.error(e.message || '修改失败');
     });
@@ -81,3 +83,5 @@ export default class IntlEdittableCell extends Component {
     );
   }
 }
+
+export default connect(() => {}, dispatch => ({ dispatch }))(IntlEdittableCell);
