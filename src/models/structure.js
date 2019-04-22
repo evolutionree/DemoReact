@@ -14,7 +14,9 @@ import {
   setLeader,
   updateDeptStatus,
   passwordvalid,
-  forcelogout
+  forcelogout,
+  getLoginInfoList,
+  forceDeviceLogout
 } from '../services/structure';
 import { registerUser } from '../services/authentication';
 import { queryDataSourceData } from '../services/datasource';
@@ -51,7 +53,8 @@ export default {
     showModals: '',
     modalPending: false,
     showDisabledDepts: false,
-    attenceGroupDataSource: []
+    attenceGroupDataSource: [],
+    liginInfoList: []
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -254,7 +257,7 @@ export default {
     },
     *revertPassword({ payload: params }, { select, call, put }) {
       const { currentItems } = yield select(state => state.structure);
-      const user = currentItems.map(u => u.userid).join(',')
+      const user = currentItems.map(u => u.userid).join(',');
       try {
         yield call(batchhRevertPassword, user, params.accountpwd);
         message.success('重置密码成功');
@@ -303,7 +306,7 @@ export default {
       const { currentItems } = yield select(state => state.structure);
       const UserSelect = currentItems.map(item => {
         return { name: item.accountname, id: item.accountid };
-      })
+      });
       try {
         yield call(addgroupuser, {
           DeptSelect: [],
@@ -344,6 +347,25 @@ export default {
         yield put({ type: 'queryList' });
       } catch (e) {
         console.error(e);
+        message.error(e.message || '注销设备失败');
+      }
+    },
+    *getLoginInfoList({ payload, msg }, { call, put }) {
+      try {
+        const data = yield call(getLoginInfoList, payload);
+        yield put({ type: 'putState', payload: { liginInfoList: data.data } });
+        if (msg) message.success(msg);
+      } catch (e) {
+        message.error(e.message || '获取用户登录信息失败');
+      }
+    },
+    *forceDeviceLogout({ payload }, { call, put }) {
+      try {
+        const data = yield call(forceDeviceLogout, payload);
+        
+        //刷新列表
+        yield put({ type: 'getLoginInfoList', payload: payload[0].UserId, msg: data.data });
+      } catch (e) {
         message.error(e.message || '注销设备失败');
       }
     }

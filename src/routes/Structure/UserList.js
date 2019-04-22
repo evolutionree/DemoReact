@@ -6,6 +6,7 @@ import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import styles from './Structure.less';
 import ChangeDeptModal from './ChangeDeptModal';
+import LoginInfoModal from './LoginInfoModal';
 // import SelectRole from "../../components/SelectRole";
 import BindAttence from './BindAttence';
 import TransferData from './TransferDataModal/TransferData';
@@ -38,7 +39,8 @@ function UserList({
   bindAttence,
   setPwdValid,
   setForceLogout,
-  transferData
+  transferData,
+  getLoginInfo
 }) {
   function exportData() {
     const params = JSON.stringify(_.mapValues({ ...queries, pageIndex: 1, pageSize: 65535 }, val => val + ''));
@@ -90,7 +92,7 @@ function UserList({
   return (
     <div className={styles.rightContent}>
       <div className={styles.subtitle}>{currentDept && currentDept.deptname}</div>
-      <Toolbar
+      <Toolbar 
         selectedCount={isDisabledDept ? 0 : currentItems.length}
         actions={[
           { label: '编辑', handler: edit, single: true, show: checkFunc('UserEdit') },
@@ -108,7 +110,7 @@ function UserList({
           // {
           //   label: '取消设为领导', handler: toggleSetLeader, single: true,
           //   show: () => checkFunc('SetLeader') && !!currentItems[0].isleader
-          // }
+          // },
           // {
           //   label: '设为领导', handler: toggleSetLeader, single: true,
           //   show: () => checkFunc('SetLeader') && !currentItems[0].isleader
@@ -119,7 +121,8 @@ function UserList({
           // },
           // { label: '密码失效', handler: setPwdValid, single: false },
           // { label: '注销设备', handler: setForceLogout, single: false },
-          // { label: '一键转移数据', handler: transferData, single: false }
+          // { label: '一键转移数据', handler: transferData, single: false },
+          { label: '登录信息', handler: getLoginInfo, single: true }
         ]}
       >
         {/*<SelectRole value={queries.roleId} onChange={search.bind(null, 'roleId')} style={{ width: '160px' }} />*/}
@@ -160,6 +163,7 @@ function UserList({
       <ChangeDeptModal />
       <BindAttence />
       <TransferData />
+      <LoginInfoModal />
     </div>
   );
 }
@@ -218,6 +222,9 @@ export default connect(
       },
       transferData: () => {
         dispatch({ type: 'structure/showModals', payload: 'transferData' });
+      },
+      getLoginInfo: () => {
+        dispatch({ type: 'structure/showModals', payload: 'loginInfo' });
       },
       importData: () => {
         dispatch({
