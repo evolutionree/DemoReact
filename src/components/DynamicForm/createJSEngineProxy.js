@@ -473,10 +473,12 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       }
       if (!isVisible) {
         // this.setValue(fieldName, undefined);
-        if (form) {
-          const { isFieldTouched } = form;
-          const isFieldBool = isFieldTouched(fieldName);
-          isFieldBool && form.setFieldsValue({ [fieldName]: '' });
+        if (Array.isArray(fieldName)) {
+          const obj = {};
+          fieldName.forEach(item => obj[item] = '');
+          form.setFieldsValue(obj);
+        } else {
+          form.setFieldsValue({ [fieldName]: '' });
         }
       }
     };
@@ -612,13 +614,27 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       // });
       // this.setState({ fields: newFields });
 
-      const field = this.getFieldByName(fieldName);
-      if (field) {
-        field.fieldconfig = {
-          ...field.fieldconfig,
-          ...config
-        };
+
+      if (Array.isArray(fieldName)) {
+        this.props.fields.forEach(item => {
+          if (fieldName.includes(item.fieldName)) {
+            const field = item;
+            field.fieldconfig = {
+              ...field.fieldconfig,
+              ...config
+            };
+          }
+        });
+      } else {
+        const field = this.getFieldByName(fieldName);
+        if (field) {
+          field.fieldconfig = {
+            ...field.fieldconfig,
+            ...config
+          };
+        }
       }
+
       //TODO： 表格重新渲染
       this.props.reloadTable && this.props.reloadTable(this.props.rowIndex, uuid());
       this.setState({ fields: [...this.state.fields] });

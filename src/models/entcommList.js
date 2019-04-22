@@ -303,9 +303,8 @@ export default {
     },
     *extraToolbarClick({ payload: item }, { select, call, put }) {
       const { currItems } = yield select(state => state.entcommList);
-      let params = {};
-      params = {
-        Recids: currItems.map(item => item.recid),
+      const params = {
+        Recids: Array.isArray(currItems) ? currItems.map(o => o.recid) : [],
         ...item.extradata
       };
       try {
