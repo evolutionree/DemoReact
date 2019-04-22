@@ -66,8 +66,8 @@ class DynamicFormBase extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      fieldsDecorator: this.generateFieldsDecorators(this.processFields(props.fields)),
-      RelObjectConfig: this.getRelObjectConfig(this.processFields(props.fields)), //引用对象集合
+      fieldsDecorator: this.generateFieldsDecorators(props.fields),
+      RelObjectConfig: this.getRelObjectConfig(props.fields), //引用对象集合
       entcommDetail: {}
     };
   }
@@ -75,8 +75,8 @@ class DynamicFormBase extends Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.fields !== nextProps.fields) {
       this.setState({
-        fieldsDecorator: this.generateFieldsDecorators(this.processFields(nextProps.fields)),
-        RelObjectConfig: this.getRelObjectConfig(this.processFields(nextProps.fields))
+        fieldsDecorator: this.generateFieldsDecorators(nextProps.fields),
+        RelObjectConfig: this.getRelObjectConfig(nextProps.fields)
       });
     }
   }

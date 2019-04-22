@@ -471,14 +471,17 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       } else {
         this.setFieldConfig(fieldName, { isVisibleJS: isVisible ? 1 : 0 });
       }
-      if (!isVisible) {
+      if (!isVisible && form) {
+        const { isFieldTouched } = form;
         // this.setValue(fieldName, undefined);
         if (Array.isArray(fieldName)) {
           const obj = {};
-          fieldName.forEach(item => obj[item] = '');
+          fieldName.forEach(item => {
+            if (isFieldTouched(fieldName)) obj[item] = '';
+          });
           form.setFieldsValue(obj);
         } else {
-          form.setFieldsValue({ [fieldName]: '' });
+          isFieldTouched(fieldName) && form.setFieldsValue({ [fieldName]: '' });
         }
       }
     };
@@ -614,9 +617,10 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       // });
       // this.setState({ fields: newFields });
 
+      const { fields } = this.state;
 
       if (Array.isArray(fieldName)) {
-        this.props.fields.forEach(item => {
+        fields.forEach(item => {
           if (fieldName.includes(item.fieldName)) {
             const field = item;
             field.fieldconfig = {
@@ -626,7 +630,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
           }
         });
       } else {
-        const field = this.getFieldByName(fieldName);
+        const field = fields.find(item => item.fieldName === fieldName);
         if (field) {
           field.fieldconfig = {
             ...field.fieldconfig,
@@ -637,11 +641,11 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
 
       //TODO： 表格重新渲染
       this.props.reloadTable && this.props.reloadTable(this.props.rowIndex, uuid());
-      this.setState({ fields: [...this.state.fields] });
+      this.setState({ fields });
     };
 
     getFieldByName = (fieldName) => {
-      return _.find(this.props.fields, ['fieldname', fieldName]);
+      return this.state.fields.find(item => item.fieldName === fieldName);
     };
 
     getFieldControlType = fieldName => {
