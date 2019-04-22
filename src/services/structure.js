@@ -504,7 +504,6 @@ export async function updategroupName(params) {
 }
 
 
-
 /**
  * 查询暂存列表
  * {
@@ -531,5 +530,37 @@ export async function deletetemporarylist(CacheIds) {
   return request('api/dynamicentity/deletetemporarylist', {
     method: 'post',
     body: JSON.stringify({ CacheIds })
+  });
+}
+
+/**
+ * 获取用户登录信息
+ * {
+ "UserId" : “fsdfasdfasfdsadfsafsa”
+}
+ * @returns {Promise.<Object>}
+ */
+export async function getLoginInfoList(UserId) {
+  return request('api/SystemStatistic/userlogininfo', {
+    method: 'post',
+    body: JSON.stringify({ UserId })
+  });
+}
+
+/**
+ * 获取用户登录信息
+ * [
+  {
+    UserId:1,
+    ForceType:3,
+    DeviceId:'xxxxxx'
+  }
+]
+ * @returns {Promise.<Object>}
+ */
+export async function forceDeviceLogout(params) {
+  return request('api/account/forcelogout', {
+    method: 'post',
+    body: JSON.stringify(params)
   });
 }
