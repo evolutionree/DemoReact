@@ -149,6 +149,7 @@ class UserSelectModal extends React.Component {
         onOk={this.handleOk}
         onCancel={onCancel}
         wrapClassName={limit !== 1 ? 'ant-modal-custom-large' : ''}
+        zIndex={1002}
       >
         <Toolbar>
           {!isSearchLocal && <DepartmentSelect value={this.state.deptId} onChange={this.onDeptChange} width="200px" />}
