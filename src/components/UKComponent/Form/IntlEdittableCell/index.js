@@ -92,4 +92,4 @@ class IntlEdittableCell extends Component {
   }
 }
 
-export default connect(() => {}, dispatch => ({ dispatch }))(IntlEdittableCell);
+export default connect(() => ({}), dispatch => ({ dispatch }))(IntlEdittableCell);
