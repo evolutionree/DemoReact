@@ -50,30 +50,31 @@ function EntcommInfo(props) {
   }
 
   function onSubmitEdit() {
-    if (editForm) {
-      if (flowid) {
-        editForm.validateFields((err, values) => {
-          if (err) return message.error('请检查表单');
+    saveEdit();
+    // if (editForm) {
+    //   if (flowid) {
+    //     editForm.validateFields((err, values) => {
+    //       if (err) return message.error('请检查表单');
 
-          if (!entityTypes || entityTypes.length === 1) {
-            const selectedEntityType = Array.isArray(entityTypes) ? entityTypes[0].categoryid : entityId;
-            const newDataModel = {
-              cacheid: cacheId,
-              typeid: selectedEntityType,
-              flowid: flow.flowid,
-              relentityid: refEntity,
-              relrecid: refRecord,
-              fielddata: values,
-              extradata: extradata
-            };
-            setDataModel(newDataModel);
-            toggleShowModal('WorkflowCaseForAddModal');
-          }
-        });
-      } else {
-        saveEdit();
-      }
-    }
+    //       if (!entityTypes || entityTypes.length === 1) {
+    //         const selectedEntityType = Array.isArray(entityTypes) ? entityTypes[0].categoryid : entityId;
+    //         const newDataModel = {
+    //           cacheid: cacheId,
+    //           typeid: selectedEntityType,
+    //           flowid: flow.flowid,
+    //           relentityid: refEntity,
+    //           relrecid: refRecord,
+    //           fielddata: values,
+    //           extradata: extradata
+    //         };
+    //         setDataModel(newDataModel);
+    //         toggleShowModal('WorkflowCaseForAddModal');
+    //       }
+    //     });
+    //   } else {
+    //     saveEdit();
+    //   }
+    // }
   }
 
   function transferEditProtocol(editDatas, eProtocol) { //部分字段 禁用
@@ -106,13 +107,13 @@ function EntcommInfo(props) {
             ref={editFormRef}
             excutingJSStatusChange={onExcutingJSStatusChange}
           />
-          <WorkflowCaseForAddModal
-            visible={showModal}
+          {/* <WorkflowCaseForAddModal
+            visible={showModal} 
             editPage
             dataModel={dataModel}
             onCancel={() => toggleShowModal('')}
             onDone={onDone}
-          />
+          /> */}
         </div>
       </div>
     );
