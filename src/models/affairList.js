@@ -58,7 +58,7 @@ export default {
           // 获取权限数据后再往下走
           const { permissionFuncs } = yield select(state => state.permission);
           let funcs = permissionFuncs[entityId];
-          if (!funcs) {
+          if (!funcs || funcs.length) {
             while (true) {
               const result = yield take('permission/receivePermissionFunc');
               funcs = result.payload && result.payload.entityId === entityId && result.payload.permissionData;
@@ -79,13 +79,13 @@ export default {
         entityId,
         pageIndex: 1,
         pageSize: 10,
-        menuId: menus[0].menuId,
+        menuId: menus.length ? menus[0].menuId : '',
         auditStatus: '-1',
         ...curParams,
         ...query
       };
-      queries.pageIndex = parseInt(queries.pageIndex);
-      queries.pageSize = parseInt(queries.pageSize);
+      queries.pageIndex = parseInt(queries.pageIndex, 10);
+      queries.pageSize = parseInt(queries.pageSize, 10);
       yield put({ type: 'queries', payload: queries });
       try {
         const params = {
@@ -121,7 +121,7 @@ export default {
           type: 'queryListSuccess',
           payload: {
             list: data.pagedata,
-            total: data.pagecount[0].total
+            total: Array.isArray(data.pagecount) && data.pagecount.length && data.pagecount[0].total
           }
         });
       } catch (e) {
