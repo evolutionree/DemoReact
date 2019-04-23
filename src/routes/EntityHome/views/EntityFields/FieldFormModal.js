@@ -170,4 +170,4 @@ class FieldFormModal extends Component {
   }
 }
 
-export default Form.create()(FieldFormModal);
+export default Form.create({})(FieldFormModal);
