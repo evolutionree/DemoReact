@@ -645,7 +645,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     getFieldByName = (fieldName) => {
-      return this.state.fields.find(item => item.fieldName === fieldName);
+      return this.state.fields.find(item => item.fieldname === fieldName);
     };
 
     getFieldControlType = fieldName => {
