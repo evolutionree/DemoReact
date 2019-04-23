@@ -418,6 +418,7 @@ class EntcommAddModal extends Component {
           dataModel={this.state.dataModel}
           onCancel={this.onWorkflowCaseCancel}
           onDone={this.onWorkflowCaseDone}
+          zIndex={1001}
         />
       </div>
     );

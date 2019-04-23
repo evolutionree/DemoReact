@@ -96,6 +96,7 @@ class CaseUserSelect extends React.Component {
           onOk={this.handleOk}
           onCancel={this.hideModal}
           isSearchLocal={!this.props.isFreeUser}
+          zIndex={1002}
         />
       </div>
     );

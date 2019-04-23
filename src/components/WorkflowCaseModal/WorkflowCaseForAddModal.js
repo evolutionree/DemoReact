@@ -124,6 +124,7 @@ class WorkflowCaseForAddModal extends Component {
   };
 
   render() {
+    const { zIndex = 1000 } = this.props;
     const { nodeinfo = {} } = this.state.nodeData || {};
     const footer = [
       <Button key="cancel" onClick={this.props.onCancel}>取消</Button>,
@@ -136,7 +137,7 @@ class WorkflowCaseForAddModal extends Component {
         onCancel={this.props.onCancel}
         onOk={this.onOk}
         footer={footer}
-        zIndex={1001}
+        zIndex={zIndex}
       >
         <WorkflowCaseForm
           ref={ref => this.form = ref}
