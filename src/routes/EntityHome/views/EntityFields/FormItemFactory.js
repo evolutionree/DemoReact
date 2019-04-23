@@ -902,8 +902,8 @@ export default class FormItemFactory {
         );
       default:
         return (
-          <FormItem label="默认值" key="defaultValue">
-            {this.getFieldDecorator('defaultValue')(
+          <FormItem label="默认值" key="defaultValueNormal">
+            {this.getFieldDecorator('defaultValueNormal')(
               <Input placeholder="默认值" />
             )}
           </FormItem>
