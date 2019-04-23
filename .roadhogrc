@@ -16,7 +16,8 @@
       ],
       "proxy": {
         "/api": {
-          "target": "http://172.16.0.183",
+          // "target": "http://172.16.0.183",
+          "target": "http://172.16.0.185:1501",
           "changeOrigin": true
         }
       },
