@@ -1,8 +1,8 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Modal, Form, Input, Radio, message } from 'antd';
 import _ from 'lodash';
-import InputTextarea from "../../components/DynamicForm/controls/InputTextarea";
+import InputTextarea from '../../components/DynamicForm/controls/InputTextarea';
 
 const FormItem = Form.Item;
 
@@ -53,12 +53,11 @@ class QrtzFormModal extends Component {
       } else {
         this.props.add(params);
       }
-
     });
   };
 
   render() {
-    const { visible,isEdit, cancel, form } = this.props;
+    const { visible, isEdit, cancel, form } = this.props;
     return (
       <Modal
         visible={visible}
@@ -129,7 +128,7 @@ export default connect(
       update(formData) {
         dispatch({ type: 'ukqrtzmanager/update', payload: formData });
       },
-      add(formData){
+      add(formData) {
         dispatch({ type: 'ukqrtzmanager/add', payload: formData });
       }
     };

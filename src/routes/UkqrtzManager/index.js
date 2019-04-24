@@ -12,21 +12,22 @@ import QrtzInstancesFormModal from './QrtzInstancesFormModal';
 const Column = Table.Column;
 
 
-function UkqrtzManager({
-                         queries,
-                         search,
-                         total,
-                         triggerList,
-                         currItems,
-                         selectItems,
-                         add,
-                         edit,
-                         showInstances,
-                          stopTrigger,
-                        startTrigger
-                         }) {
+function UkqrtzManager(props) {
+  const {
+    queries,
+    search,
+    total,
+    triggerList,
+    currItems,
+    selectItems,
+    add,
+    edit,
+    showInstances,
+    stopTrigger,
+    startTrigger
+  } = props;
   return (
-    <Page title="调度事务定义"  >
+    <Page title="调度事务定义">
       <Toolbar
         selectedCount={currItems.length}
         actions={[
@@ -58,9 +59,9 @@ function UkqrtzManager({
         <Column title="动作类型" key="actiontype" dataIndex="actiontype" />
         <Column title="动作命令" key="actioncmd" dataIndex="actioncmd" />
 
-        <Column title="执行参数" key="actionparameters" dataIndex="actionparameters"  render={v => JSON.stringify(v) }/>
-        <Column title="当前状态" key="recstatus" dataIndex="recstatus"  render={v => ["停用",'启用','已删除'][v] }/>
-        <Column title="是否运行中" key="inbusy" dataIndex="inbusy"  render={v => ['空闲中','运行中'][v] }/>
+        <Column title="执行参数" key="actionparameters" dataIndex="actionparameters" render={v => JSON.stringify(v)} />
+        <Column title="当前状态" key="recstatus" dataIndex="recstatus" render={v => ["停用", '启用', '已删除'][v]} />
+        <Column title="是否运行中" key="inbusy" dataIndex="inbusy" render={v => ['空闲中', '运行中'][v]} />
         <Column title="运行服务器" key="runningserver" dataIndex="runningserver" />
         <Column title="本次开始运行时间" key="startruntime" dataIndex="startruntime" />
         <Column title="本次运行结束时间" key="endruntime" dataIndex="endruntime" />

@@ -37,15 +37,16 @@ export default {
     *queryTriggerList(action, { select, put, call }) {
       try {
         let { queries } = yield select(state => state.ukqrtzmanager);
-        const result = yield call(listTriggers, { ...queries, SearchNormalStatus:1,SearchStopStatus:1,SearchDeletedStatus:1 });
+        const result = yield call(listTriggers, { ...queries, SearchNormalStatus: 1, SearchStopStatus: 1, SearchDeletedStatus: 1 });
         const triggerList = result.data.datalist;
         yield put({
           type: 'putState',
           payload: {
             triggerList: triggerList,
-            total:  result.data.pageinfo.totalcount,
+            total: result.data.pageinfo.totalcount,
             currItems: []
-          }});
+          }
+        });
       } catch (e) {
         message.error(e.message || '获取数据失败');
       }
@@ -64,15 +65,15 @@ export default {
         yield put({ type: 'putState', payload: { modalPending: true } });
         yield call(addTrigger, params);
         message.success('保存成功');
-        yield put({ type: 'showModals', payload: '' });
+        yield put({ type: 'putState', payload: { showModals: '' } });
         if (params.recid) {
           yield put({ type: 'queryTriggerList' });
         } else {
           yield put({ type: 'queryTriggerList' });
         }
       } catch (e) {
+        yield put({ type: 'putState', payload: { showModals: '' } });
         message.error(e.message || '保存失败');
-        yield put({ type: 'showModals', payload: '' });
       }
     },
     *update({ payload: params }, { put, call }) {
@@ -91,7 +92,7 @@ export default {
         yield put({ type: 'showInfoModals', payload: '' });
       }
     },
-    *startTrigger({ payload: params }, { put, select, call }){
+    *startTrigger({ payload: params }, { put, select, call }) {
       try {
         let { currItems } = yield select(state => state.ukqrtzmanager);
         const params1 = {
@@ -102,11 +103,11 @@ export default {
         yield put({ type: 'queryTriggerList' });
         yield put({ type: 'resetState' });
       } catch (e) {
-        message.error(e.message||'启动失败');
+        message.error(e.message || '启动失败');
         yield put({ type: 'queryTriggerList' });
       }
     },
-    *stopTrigger({ payload: params }, { put, select, call }){
+    *stopTrigger({ payload: params }, { put, select, call }) {
       try {
         let { currItems } = yield select(state => state.ukqrtzmanager);
         const params1 = {
@@ -117,28 +118,29 @@ export default {
         yield put({ type: 'queryTriggerList' });
         yield put({ type: 'resetState' });
       } catch (e) {
-        message.error(e.message||'启动失败');
+        message.error(e.message || '启动失败');
         yield put({ type: 'queryTriggerList' });
       }
     },
-    *showInstances({ payload }, { select, put, call }){
+    *showInstances({ payload }, { select, put, call }) {
 
       try {
         let { instqueries, currItems } = yield select(state => state.ukqrtzmanager);
-        const result = yield call(listTriggerInstances, { ...instqueries, triggerid:currItems[0].recid,pageIndex:1,pageSize:10 });
+        const result = yield call(listTriggerInstances, { ...instqueries, triggerid: currItems[0].recid, pageIndex: 1, pageSize: 10 });
         const instanceList = result.data.datalist;
         yield put({
           type: 'putState',
           payload: {
             instanceList: instanceList,
-            instancetotal:  result.data.pageinfo.totalcount
-          }});
+            instancetotal: result.data.pageinfo.totalcount
+          }
+        });
         yield put({ type: 'showInfoModals', payload: 'instances' });
       } catch (e) {
         message.error(e.message || '获取数据失败');
       }
     },
-    *searchinstances({ payload }, { select, put, call }){
+    *searchinstances({ payload }, { select, put, call }) {
       let { instqueries } = yield select(state => state.ukqrtzmanager);
       const newQueries = {
         ...instqueries,
@@ -150,22 +152,23 @@ export default {
     *queryInstanceList(action, { select, put, call }) {
       try {
         let { instqueries, currItems } = yield select(state => state.ukqrtzmanager);
-        const result = yield call(listTriggerInstances, { ...instqueries, triggerid:currItems[0].recid });
+        const result = yield call(listTriggerInstances, { ...instqueries, triggerid: currItems[0].recid });
         const instanceList = result.data.datalist;
         yield put({
           type: 'putState',
           payload: {
             instanceList: instanceList,
-            instancetotal:  result.data.pageinfo.totalcount
-          }});
+            instancetotal: result.data.pageinfo.totalcount
+          }
+        });
         yield put({ type: 'showInfoModals', payload: 'instances' });
       } catch (e) {
         message.error(e.message || '获取数据失败');
       }
-    },
+    }
   },
   reducers: {
-    putState(state, { payload: payload }) {
+    putState(state, { payload }) {
       return {
         ...state,
         ...payload

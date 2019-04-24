@@ -45,12 +45,10 @@ function IntlText(props) { //JSX提供两种方式写法
 }
 
 export function getIntlText(name, value) { //js写法
-  if (value === null || value === undefined) {
-    return '';
-  }
+  if (value === null || value === undefined) return '';
   const currentLocale = window.localStorage.getItem('currentLocale') || '';
   const value_lang = value && value[name + '_lang'];
-  let text = value_lang ? value_lang : value[name];
+  let text = value_lang || value[name];
   if (text === null || text === undefined) {
     text = '';
   } else if (text instanceof Object) { //当前存在国际化数据
