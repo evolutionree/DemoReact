@@ -35,13 +35,15 @@ class WorkflowFormModal extends Component {
 
       if (editingRecord) {
         const { config, ...values } = editingRecord;
-        form.setFieldsValue({
-          ...values,
-          ...config,
-          expireflag: editingRecord.expireday > 0
-        });
+
         if ([0, 2].includes(parseInt(editingRecord.entitymodeltype, 10))) {
-          this.setState({ controlEntranceFlow: true });
+          this.setState({ controlEntranceFlow: true }, () => {
+            form.setFieldsValue({
+              ...values,
+              ...config,
+              expireflag: editingRecord.expireday > 0
+            });
+          });
         }
       } else {
         form.resetFields();
