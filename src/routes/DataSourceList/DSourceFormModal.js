@@ -18,6 +18,7 @@ class EntitySelect extends React.Component {
     };
     this.fetchEntityList();
   }
+
   fetchEntityList = () => {
     const params = {
       entityname: '',
@@ -34,6 +35,7 @@ class EntitySelect extends React.Component {
       message.error('获取实体失败');
     });
   };
+
   render() {
     const { value, onChange, ...rest } = this.props;
     return (
@@ -54,7 +56,6 @@ function DSourceFormModal({
   onOk,
   onCancel
 }) {
-
   function handleSubmit(data) {
     form.validateFields((err, values) => {
       if (err) return;
@@ -82,8 +83,9 @@ function DSourceFormModal({
       confirmLoading={savePending}>
       <Form>
         <FormItem label="数据源名称">
-          {decorate('datasourcename_lang', {
+          {decorate('datasrcname_lang', {
             initialValue: '',
+            normalize: (value) => (getIntlText('datasrcname_lang', value)),
             rules: [{ required: true, message: '请输入数据源名称' }]
           })(
             <IntlInput placeholder="请输入数据源名称" />
@@ -145,8 +147,9 @@ function DSourceFormModal({
 export default Form.create({
   mapPropsToFields: (props) => {
     const { currentRecords, showModals } = props;
+    const currentRecord = currentRecords[0];
     if (showModals === '') return {};
-    const tmp = _.pick(currentRecords[0], ['dataSourceName', 'recStatus', 'remark']);
-    return _.mapValues(currentRecords[0], val => ({ value: val }));
+    // const tmp = _.pick(currentRecords[0], ['dataSourceName', 'recStatus', 'remark']);
+    return _.mapValues(currentRecord, val => ({ value: val }));
   }
 })(DSourceFormModal);
