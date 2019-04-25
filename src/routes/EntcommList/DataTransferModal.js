@@ -42,32 +42,35 @@ class DataTransferModal extends React.Component {
 
   handleOk = () => {
     this.props.form.validateFields({ force: true }, (err, values) => {
-      console.log(err)
+      console.log(err);
       if (err) {
         return message.error('请检查表单');
       }
       const selectSchemeObj = _.find(this.props.schemelist, (item, index) => index === values.fieldid);
-
-      let submitData = {
-        ouserid: values.ouserid,
-        newuserid: values.newuserid,
-        fieldid: selectSchemeObj.fieldid,
-        schemeid: selectSchemeObj.schemeid,
-        entityid: this.props.entityId
-      };
-      if (this.props.currItems.length > 0) { //选择某几行数据后 通过点击 【转移】按钮  弹出的窗口
-        submitData.recids = this.props.currItems.map(item => item.recid).join(',');
-      } else { //列表上方的【转移】Button点击  弹出的窗口
-        let listQueryParams = {
-          viewType: 0,
-          searchOrder: '',
-          ...this.props.queries
+      const ouserid = values.ouserid;
+      const newuserid = values.newuserid;
+      if (ouserid || newuserid) {
+        let submitData = {
+          ouserid: values.ouserid,
+          newuserid: values.newuserid,
+          fieldid: selectSchemeObj.fieldid,
+          schemeid: selectSchemeObj.schemeid,
+          entityid: this.props.entityId
         };
-        delete listQueryParams.keyword;
-        submitData.datafilter = listQueryParams;
-      }
+        if (this.props.currItems.length > 0) { //选择某几行数据后 通过点击 【转移】按钮  弹出的窗口
+          submitData.recids = this.props.currItems.map(item => item.recid).join(',');
+        } else { //列表上方的【转移】Button点击  弹出的窗口
+          let listQueryParams = {
+            viewType: 0,
+            searchOrder: '',
+            ...this.props.queries
+          };
+          delete listQueryParams.keyword;
+          submitData.datafilter = listQueryParams;
+        }
 
-      this.props.onOk && this.props.onOk(submitData);
+        this.props.onOk && this.props.onOk(submitData);
+      }
     });
   };
 
@@ -75,6 +78,8 @@ class DataTransferModal extends React.Component {
     const { visible, onCancel, modalPending, entityName, schemelist, currItems } = this.props;
     const { getFieldDecorator, getFieldValue } = this.props.form;
     const selectSchemeObj = _.find(schemelist, (item, index) => index === getFieldValue('fieldid'));
+    const ismultifield = selectSchemeObj && selectSchemeObj.ismultifield;
+
     return (
       <Modal
         title={'转移' + entityName}
@@ -113,16 +118,16 @@ class DataTransferModal extends React.Component {
             )}
           </FormItem>
           {
-            selectSchemeObj && selectSchemeObj.ismultifield ? <FormItem
+            ismultifield ? <FormItem
               label="选择旧的用户"
             >
               {getFieldDecorator('ouserid', {
                 initialValue: '',
                 rules: [{
-                  required: true, message: '请选择旧的用户'
+                  required: !(ismultifield === 1), message: '请选择旧的用户'
                 }]
               })(
-                <SelectUser />
+                <SelectUser multiple={ismultifield} />
               )}
             </FormItem> : null
           }
@@ -132,10 +137,10 @@ class DataTransferModal extends React.Component {
             {getFieldDecorator('newuserid', {
               initialValue: '',
               rules: [{
-                required: true, message: '请选择新的用户'
+                required: !(ismultifield === 1), message: '请选择新的用户'
               }]
             })(
-              <SelectUser />
+              <SelectUser multiple={ismultifield} />
             )}
           </FormItem>
         </Form>
