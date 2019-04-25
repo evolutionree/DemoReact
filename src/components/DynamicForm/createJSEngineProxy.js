@@ -290,24 +290,37 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       }
     };
 
+    handleNumberValue = (fieldName, value, decimalLength) => {
+      let val = value;
+      if (decimalLength !== undefined && this.getFieldControlType(fieldName) === 7) {
+        val = +val;
+        if (isNaN(val)) {
+          val = 0;
+        } else {
+          val = +(val.toFixed(2));
+        }
+      }
+      return val;
+    }
+
     // 给指定字段设置id值，目前只支持文本输入框、字典
     setValue = (fieldName, value, decimalLength) => {
       try {
-        let val = value;
-        if (decimalLength !== undefined && this.getFieldControlType(fieldName) === 7) {
-          val = +val;
-          if (isNaN(val)) {
-            val = 0;
-          } else {
-            val = +(val.toFixed(2));
-          }
+        const val = this.handleNumberValue(fieldName, value, decimalLength);
+        if (fieldName && typeof fieldName === 'object') {
+          Object.keys(fieldName).forEach(keyName => {
+            const currentValue = this.handleNumberValue(keyName, fieldName[keyName], decimalLength);
+            this.getFieldComponentInstance(keyName) && this.getFieldComponentInstance(keyName).setValue(currentValue, decimalLength, keyName);
+          });
+        } else {
+          this.getFieldComponentInstance(fieldName) && this.getFieldComponentInstance(fieldName).setValue(val, decimalLength, fieldName);
         }
-        this.getFieldComponentInstance(fieldName) && this.getFieldComponentInstance(fieldName).setValue(val, decimalLength, fieldName);
       } catch (e) {
         console.error(e);
         // this.props.form.setFields({ [fieldName]: { value } });
         // this.props.form.setFieldsValue({ [fieldName]: value });
       }
+      this.getFieldComponentInstance(fieldName) && this.getFieldComponentInstance(fieldName).setValue(val, decimalLength, fieldName);
     };
 
     // 给指定字段设置显示值，支持字典、选人、树形控件
@@ -471,18 +484,25 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       } else {
         this.setFieldConfig(fieldName, { isVisibleJS: isVisible ? 1 : 0 });
       }
+
       if (!isVisible && form) {
         const { isFieldTouched } = form;
+        const obj = {};
         // this.setValue(fieldName, undefined);
+
         if (Array.isArray(fieldName)) {
-          const obj = {};
-          fieldName.forEach(item => {
-            if (isFieldTouched(fieldName)) obj[item] = '';
+          fieldName.forEach(field => {
+            if (isFieldTouched(field)) obj[field] = '';
           });
-          form.setFieldsValue(obj);
-        } else {
-          isFieldTouched(fieldName) && form.setFieldsValue({ [fieldName]: '' });
+        } else if (fieldName && typeof fieldName === 'object') {
+          Object.keys(fieldName).forEach(field => {
+            if (isFieldTouched(field)) obj[field] = '';
+          });
+        } else if (isFieldTouched(fieldName)) {
+          form.setFieldsValue({ [fieldName]: '' });
         }
+
+        if (Object.keys(obj).length) form.setFieldsValue(obj);
       }
     };
 
@@ -604,33 +624,30 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     setFieldConfig = (fieldName, config) => {
-      // const field = this.getFieldByName(fieldName);
-      // const newFields = this.props.fields.map(item => {
-      //   const newItem = item;
-      //   if (field && item.fieldid === field.fieldid) {
-      //     newItem.fieldconfig = {
-      //       ...item.fieldconfig,
-      //       ...config
-      //     };
-      //   }
-      //   return newItem;
-      // });
-      // this.setState({ fields: newFields });
+      const { fields: fieldArr } = this.state;
+      const fields = [...fieldArr];
 
-      const { fields } = this.state;
-
-      if (Array.isArray(fieldName)) {
+      if ((fieldName && typeof fieldName === 'object') || Array.isArray(fieldName)) {
         fields.forEach(item => {
-          if (fieldName.includes(item.fieldName)) {
-            const field = item;
+          const field = item;
+          if (Array.isArray(fieldName) && fieldName.includes(field.fieldname)) {
             field.fieldconfig = {
               ...field.fieldconfig,
               ...config
             };
+          } else {
+            Object.keys(fieldName).forEach(keyName => {
+              if (field.fieldname === keyName) {
+                field.fieldconfig = {
+                  ...field.fieldconfig,
+                  ...config
+                };
+              }
+            });
           }
         });
       } else {
-        const field = fields.find(item => item.fieldName === fieldName);
+        const field = fields.find(item => item.fieldname === fieldName);
         if (field) {
           field.fieldconfig = {
             ...field.fieldconfig,
