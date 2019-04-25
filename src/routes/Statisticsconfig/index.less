@@ -1,0 +1,50 @@
+.wrap {
+  display: flex;
+  position: relative;
+}
+
+.box {
+  border: 1px solid #cccccc;
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  align-self: flex-start;
+  .row {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #cccccc;
+    .chiid {
+      padding: 8px 12px;
+      text-align: center;
+    }
+    & .chiid:first-child {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 54px;
+      border-right: 1px solid #cccccc;
+    }
+    & .chiid:last-child {
+      flex: 1;
+    }
+  }
+  & .row:last-child {
+    border-bottom: 0;
+  }
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  border: 1px solid #cccccc;
+  border-radius: 0 0 6px 6px;
+  &:hover {
+    color: #3398db;
+    border-style: dashed;
+    border-color: #3398db;
+  }
+}
+

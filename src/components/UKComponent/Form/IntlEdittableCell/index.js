@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Icon, message } from 'antd';
 import { connect } from 'dva';
 import _ from 'lodash';
+import classNames from 'classnames';
 import IntlInput from '../IntlInput';
 import IntlText from '../IntlText';
 import { dynamicRequest } from '../../../../services/entcomm';
@@ -35,7 +36,12 @@ class IntlEdittableCell extends Component {
     this.submitValue(api);
   }
 
-  edit = () => this.setState({ editable: true });
+  edit = (e) => {
+    const { callback } = this.props;
+    e.stopPropagation();
+    if (callback) callback(this);
+    this.setState({ editable: true });
+  }
 
   submitValue = (api) => {
     const { record: { fieldid, displayname_lang }, dispatch } = this.props;
@@ -52,17 +58,27 @@ class IntlEdittableCell extends Component {
     .then(res => {
       const { error_msg } = res;
       message.success(error_msg || '修改成功');
-      dispatch({ type: 'entityFields/query' });
+      if (true) dispatch({ type: 'entityFields/query' });
     }).catch(e => {
       message.error(e.message || '修改失败');
     });
   }
 
+  onChangeItem = (e) => {
+    const { record, onChange } = this.props;
+    if (onChange) onChange(record, e);
+  }
+
   render() {
+    const { className, active, style } = this.props;
     const { text, value, editable } = this.state;
+    const wrap = classNames({
+      [styles.editableCell]: true,
+      [editable ? active : className]: true
+    });
 
     return (
-      <div className={styles.editableCell}>
+      <div className={wrap} style={style}>
         {
           editable ?
             <div className={styles.editableCellInputWrapper}>
@@ -78,7 +94,7 @@ class IntlEdittableCell extends Component {
               />
             </div>
             :
-            <div className={styles.editableCellTextWrapper}>
+            <div className={styles.editableCellTextWrapper} onClick={this.onChangeItem}>
               <IntlText value={text} value_lang={value} />
               <Icon
                 type="edit"
