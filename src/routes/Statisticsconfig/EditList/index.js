@@ -24,8 +24,7 @@ class EditList extends Component {
     const list = this.addId(props.list);
     this.state = {
       list,
-      cacheList: list,
-      editState: []
+      cacheList: list
     };
   }
 
@@ -61,7 +60,8 @@ class EditList extends Component {
   }
 
   onChangeItem = (record, e) => {
-    console.log(record);
+    const { onChange } = this.props;
+    if (onChange) onChange(record, e);
   }
 
   callback = self => {
@@ -71,7 +71,7 @@ class EditList extends Component {
 
   render() {
     const { width = 250, height = 200, title = '标题', tips = '提示信息' } = this.props;
-    const { list, editState } = this.state;
+    const { list } = this.state;
     return (
       <div className={styles.wrap} style={{ width }}>
         <div className={styles.header}>
