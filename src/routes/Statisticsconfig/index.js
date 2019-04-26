@@ -34,11 +34,19 @@ class Statisticsconfig extends Component {
   }
 
   handleSelectChange = (value, index) => {
-    const { isReadOnlys } = this.state;
-    const newReadOnlys = isReadOnlys.map((item, idx) => ((index > idx && value !== '') ? 1 : 0));
-
+    const { isReadOnlys: _list } = this.state;
+    const min = 0;
+    for (const k in _list) {
+      if (k === min) break;
+      if (value !== '') {
+        if (k < index) _list[k] = 1;
+      } else {
+        _list[index - 1] = 0;
+        break;
+      }
+    }
     console.log(value);
-    this.setState({ isReadOnlys: newReadOnlys });
+    this.setState({ isReadOnlys: _list });
   }
 
   onSubmit = () => {
