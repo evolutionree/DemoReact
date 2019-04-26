@@ -30,21 +30,18 @@ class WorkflowFormModal extends Component {
     const isOpening = !this.props.visible && nextProps.visible;
     if (isOpening) {
       const { form, editingRecord } = nextProps;
-      form.resetFields();
       this.fetchRelEntities();
 
       if (editingRecord) {
         const { config, ...values } = editingRecord;
 
-        if ([0, 2].includes(parseInt(editingRecord.entitymodeltype, 10))) {
-          this.setState({ controlEntranceFlow: true }, () => {
-            form.setFieldsValue({
-              ...values,
-              ...config,
-              expireflag: editingRecord.expireday > 0
-            });
+        this.setState({ controlEntranceFlow: true }, () => {
+          form.setFieldsValue({
+            ...values,
+            ...config,
+            expireflag: editingRecord.expireday > 0
           });
-        }
+        });
       } else {
         form.resetFields();
       }
@@ -71,7 +68,7 @@ class WorkflowFormModal extends Component {
   onExpireFlagChange = event => {
     const checked = event.target.checked;
     if (!checked) {
-      this.props.form.setFieldsValue({ expireday: 0 })
+      this.props.form.setFieldsValue({ expireday: 0 });
     }
   };
 
@@ -97,6 +94,12 @@ class WorkflowFormModal extends Component {
   //   }
   //   callback();
   // };
+  
+  onCancel = () => {
+    const { form: { resetFields }, cancel } = this.props;
+    resetFields();
+    cancel();
+  }
 
   onOk = () => {
     const { form, editingRecord } = this.props;
@@ -131,7 +134,7 @@ class WorkflowFormModal extends Component {
       <Modal
         visible={this.props.visible}
         title={isEdit ? '编辑审批流程' : '新增审批流程'}
-        onCancel={this.props.cancel}
+        onCancel={this.onCancel}
         onOk={this.onOk}
         confirmLoading={this.props.modalPending}
       >
@@ -254,4 +257,4 @@ export default connect(
       }
     };
   }
-)(Form.create()(WorkflowFormModal));
+)(Form.create({})(WorkflowFormModal));
