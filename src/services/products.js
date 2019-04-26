@@ -188,3 +188,20 @@ export async function getProductdetail(params) {
     body: JSON.stringify(params)
   });
 }
+
+/**
+ * 转换产品所属产品系列
+ * @param params
+ * {
+ *  "fieldData":{ "productsetid": "edaf215f-e959-40e1-bd8a-423c9406d96c"},
+ *  "recId":"3a9ad417-7dd8-4f7c-910b-6db105d771e5",
+ *  "typeId":"59cf141c-4d74-44da-bca8-3ccf8582a1f2"
+ * }
+ * @returns {Promise.<Object>}
+ */
+export async function transfer(params) {
+  return request('/api/products/changeproductset', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
