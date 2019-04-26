@@ -168,7 +168,7 @@ function EntityFields({
       dataIndex: 'fieldtype',
       width: 100,
       key: 'fieldtype',
-      render: val => (['系统字段', '默认字段', '自定义字段'][val])
+      render: val => (['系统字段', '默认字段', '自定义字段', '虚拟字段'][val])
     },
     {
       title: '字段列名',

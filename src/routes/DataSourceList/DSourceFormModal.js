@@ -74,11 +74,15 @@ class DSourceFormModal extends Component {
     const { form: { validateFields }, onOk, currentRecords } = this.props;
     validateFields((err, values) => {
       if (err) return;
+      const currentRecord = currentRecords[0];
+      const { datasourcename_lang, ...rest } = values;
+
       onOk({
         srctype: 0,
         // entityid: '',
-        ...currentRecords[0],
-        ...values
+        ...currentRecord,
+        ...rest,
+        datasourcename_lang
       });
     });
   }
@@ -103,7 +107,7 @@ class DSourceFormModal extends Component {
         confirmLoading={savePending}>
         <Form>
           <FormItem label="数据源名称">
-            {decorate('datasrcname_lang', {
+            {decorate('datasourcename_lang', {
               initialValue: '',
               rules: [{ required: true, message: '请输入数据源名称' }]
             })(
