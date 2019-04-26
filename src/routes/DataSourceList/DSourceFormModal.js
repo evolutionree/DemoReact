@@ -57,7 +57,7 @@ class DSourceFormModal extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { showModals: oldVisible } = this.props;
-    const { currentRecords, resetFields, showModals: newVisible } = nextProps;
+    const { currentRecords, form: { resetFields }, showModals: newVisible } = nextProps;
     const open = newVisible && !oldVisible;
     if (open) {
       if (newVisible === 'edit') {
