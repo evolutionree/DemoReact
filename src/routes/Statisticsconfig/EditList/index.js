@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Icon, message, Tooltip } from 'antd';
+import classNames from 'classnames';
 import IntlEdittableCell from '../../../components/UKComponent/Form/IntlEdittableCell';
 import styles from './index.less';
 
@@ -21,7 +22,7 @@ const NodeChildren = (props) => {
 class EditList extends Component {
   constructor(props) {
     super(props);
-    const list = this.addId(props.list);
+    const list = this.addFields(props.list);
     this.state = {
       list,
       cacheList: list
@@ -38,12 +39,12 @@ class EditList extends Component {
   componentWillReceiveProps(nextProps) {
     const thisProps = this.props;
     if (nextProps.list.length !== thisProps.list.length) {
-      const list = this.addId(nextProps.list);
+      const list = this.addFields(nextProps.list);
       this.setState({ list, cacheList: list });
     }
   }
 
-  addId = list => (list.map((item, id) => ({ ...item, id })));
+  addFields = list => (list.map((item, id) => ({ ...item, id, acitve: false })));
 
   add = () => {
     const { list } = this.state;
@@ -61,7 +62,10 @@ class EditList extends Component {
 
   onChangeItem = (record, e) => {
     const { onChange } = this.props;
+    const { list } = this.state;
     if (onChange) onChange(record, e);
+    const newList = [...list].map(item => ({ ...item, active: !!(item.id === record.id) }));
+    this.setState({ list: newList });
   }
 
   callback = self => {
@@ -90,12 +94,13 @@ class EditList extends Component {
             {
               list.length ? list.map(item => (
                 <NodeChildren
+                  isEdit
                   key={item.id}
                   record={item}
+                  active={item.active}
                   className={styles.children}
-                  active={styles.childrenActive}
+                  hoverStyle={styles.childrenActive}
                   onChange={this.onChangeItem}
-                  isEdit
                   callback={this.callback}
                 />
               )) : null

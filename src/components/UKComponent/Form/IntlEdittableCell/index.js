@@ -55,13 +55,13 @@ class IntlEdittableCell extends Component {
 
     const params = { fieldid, displayname_lang: value };
     dynamicRequest(api, params)
-    .then(res => {
-      const { error_msg } = res;
-      message.success(error_msg || '修改成功');
-      if (true) dispatch({ type: 'entityFields/query' });
-    }).catch(e => {
-      message.error(e.message || '修改失败');
-    });
+      .then(res => {
+        const { error_msg } = res;
+        message.success(error_msg || '修改成功');
+        if (true) dispatch({ type: 'entityFields/query' });
+      }).catch(e => {
+        message.error(e.message || '修改失败');
+      });
   }
 
   onChangeItem = (e) => {
@@ -70,11 +70,12 @@ class IntlEdittableCell extends Component {
   }
 
   render() {
-    const { className, active, style } = this.props;
+    const { className, active, hoverStyle, style } = this.props;
     const { text, value, editable } = this.state;
     const wrap = classNames({
       [styles.editableCell]: true,
-      [editable ? active : className]: true
+      [editable ? hoverStyle : className]: true,
+      [styles.activeStyle]: active
     });
 
     return (
