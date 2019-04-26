@@ -21,7 +21,15 @@ function Statisticsfunc(props) {
   }
   function handleDel() {
     Modal.confirm({
-      title: '确定要删除选定的数据源吗？',
+      title: '确定要删除吗？',
+      onOk() {
+        dispatch({ type: 'statisticsfunc/del', payload: currentRecords[0] });
+      }
+    });
+  }
+  function handleSwitch() {
+    Modal.confirm({
+      title: '确定要停用吗？',
       onOk() {
         dispatch({ type: 'statisticsfunc/del', payload: currentRecords[0] });
       }
@@ -88,24 +96,17 @@ function Statisticsfunc(props) {
   const tableWidth = columns.reduce((sum, current) => sum + current.width, 0) + 62;
 
   return (
-    <Page title="数据源配置">
+    <Page title="统计函数定义">
       <Toolbar
         selectedCount={currentRecords.length}
         actions={[
           { label: '编辑', single: true, handler: handleEdit, show: () => true },
+          { label: `${true ? '停用' : '启用'}`, single: true, handler: handleSwitch },
           { label: '删除', single: true, handler: handleDel }
         ]}
       >
         <div style={{ float: 'left' }}>
           <Button onClick={handleAdd}>新增</Button>
-          <Switch
-            style={{ marginLeft: 10 }}
-            defaultChecked
-            value={recStatus}
-            onChange={search.bind(null, 'recStatus')}
-            checkedChildren="启用"
-            unCheckedChildren="禁用"
-          />
         </div>
         <Toolbar.Right>
           {/* <Search

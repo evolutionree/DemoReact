@@ -75,7 +75,7 @@ class IntlEdittableCell extends Component {
     const wrap = classNames({
       [styles.editableCell]: true,
       [editable ? hoverStyle : className]: true,
-      [styles.activeStyle]: active
+      [styles.activeStyle]: active && !editable
     });
 
     return (

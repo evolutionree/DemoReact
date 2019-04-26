@@ -66,8 +66,9 @@ class Statisticsconfig extends Component {
     return (
       <Page title="统计界面配置">
         <div className={styles.wrap}>
-          <div style={{ marginRight: 20 }}>
+          <div style={{ marginRight: 20, height: '100%' }}>
             <EditList
+              title="分组名称"
               tips='支持变量"{NOW}"'
               list={groupList}
               onChange={this.onChangeItem}

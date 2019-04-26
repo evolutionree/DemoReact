@@ -30,7 +30,6 @@ class EditList extends Component {
   }
 
   previousCell = null;
-  listDom = null;
 
   componentDidMount() {
 
@@ -56,16 +55,21 @@ class EditList extends Component {
   }
 
   restList = () => {
-    message.success('列表已重置');
-    this.setState({ list: this.state.cacheList });
+    const { list } = this.state;
+    if (list.length) {
+      message.success('列表已重置');
+      this.setState({ list: this.state.cacheList });
+    }
   }
 
   onChangeItem = (record, e) => {
     const { onChange } = this.props;
     const { list } = this.state;
-    if (onChange) onChange(record, e);
-    const newList = [...list].map(item => ({ ...item, active: !!(item.id === record.id) }));
-    this.setState({ list: newList });
+    if (record) {
+      if (onChange) onChange(record, e);
+      const newList = [...list].map(item => ({ ...item, active: !!(item.id === record.id) }));
+      this.setState({ list: newList });
+    }
   }
 
   callback = self => {
@@ -74,10 +78,10 @@ class EditList extends Component {
   };
 
   render() {
-    const { width = 250, height = 200, title = '标题', tips = '提示信息' } = this.props;
+    const { width = 250, height = '100%', title = '标题', tips = '提示信息' } = this.props;
     const { list } = this.state;
     return (
-      <div className={styles.wrap} style={{ width }}>
+      <div className={styles.wrap} style={{ width, height }}>
         <div className={styles.header}>
           <div>
             <span>{title}</span> <small>共{list.length}条</small>
@@ -90,7 +94,7 @@ class EditList extends Component {
           </div>
         </div>
         <div className={styles.wrapList}>
-          <div className={styles.list} style={{ height }} ref={node => this.listDom = node}>
+          <div className={styles.list}>
             {
               list.length ? list.map(item => (
                 <NodeChildren
@@ -103,7 +107,9 @@ class EditList extends Component {
                   onChange={this.onChangeItem}
                   callback={this.callback}
                 />
-              )) : null
+              )) : (<div style={{ textAlign: 'center', transform: 'translateX(-5px)', color: '#c5c5c5' }}>
+                <Icon type="frown-o" /> 暂无数据
+              </div>)
             }
           </div>
         </div>

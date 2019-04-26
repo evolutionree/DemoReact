@@ -110,7 +110,6 @@ class StatisticsFormModal extends Component {
           <FormItem label="统计项名称">
             {decorate('datasrcname_lang', {
               initialValue: '',
-              normalize: (value) => (getIntlText('datasrcname_lang', value)),
               rules: [{ required: true, message: '请输入统计项名称' }]
             })(
               <IntlInput placeholder="请输入统计项名称" />
