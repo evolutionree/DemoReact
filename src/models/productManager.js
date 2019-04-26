@@ -1,7 +1,7 @@
 import { routerRedux } from 'dva/router';
 import { message } from 'antd';
 import _ from 'lodash';
-import { getSeries, getProducts, enableProductSerial, delSeries, delProduct, addSeries, updateSeries, enableProduct, addProduct, updateProduct } from '../services/products';
+import { getSeries, getProducts, enableProductSerial, delSeries, delProduct, addSeries, updateSeries, enableProduct, addProduct, updateProduct, transfer } from '../services/products';
 import { getGeneralProtocol, addEntcomm, editEntcomm } from '../services/entcomm';
 
 const ProductEntityId = '59cf141c-4d74-44da-bca8-3ccf8582a1f2';
@@ -133,10 +133,10 @@ export default {
           seriesCode,
           ProductsetId: productSeriesId
         } : {
-            seriesName,
-            seriesCode,
-            TopSeriesId: productSeriesId
-          };
+          seriesName,
+          seriesCode,
+          TopSeriesId: productSeriesId
+        };
         yield call(isEdit ? updateSeries : addSeries, params);
         yield put({ type: 'showModals', payload: '' });
         message.success('保存成功');
@@ -223,6 +223,17 @@ export default {
       yield put({ type: 'querySeries' });
       if (showDisabledSeries && recstatus === 0) {
         yield put({ type: 'search', payload: { productSeriesId: getRootSeriesId(series) } });
+      }
+    },
+    *transfer({ onSuccess, payload }, { put, call }) {
+      try {
+        yield call(transfer, payload);
+        message.success('转换成功');
+        yield put({ type: 'queryList' });
+        onSuccess();
+      } catch (e) {
+        onSuccess();
+        message.error(e.message || '转换失败');
       }
     }
   },

@@ -6,6 +6,7 @@ import DynamicTable from '../../components/DynamicTable';
 import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import styles from './styles.less';
+import TransferProductModal from './TransferProductModal';
 import ProductFormModal from './ProductFormModal';
 import EntcommDetailModal from '../../components/EntcommDetailModal';
 import { downloadFile } from '../../utils/ukUtil';
@@ -24,7 +25,7 @@ const titleStyle = {
 function getSeriesPath(current, allSeries) {
   const path = [];
   let parentSeries = current;
-  while (!!parentSeries) {
+  while (parentSeries) {
     path.unshift(parentSeries);
     parentSeries = _.find(allSeries, ['productsetid', parentSeries.pproductsetid]);
   }
@@ -41,6 +42,7 @@ function ProductList({
   search,
   add,
   edit,
+  transfer,
   enable,
   selectItems,
   importData,
@@ -89,7 +91,8 @@ function ProductList({
         actions={[
           { label: '编辑', handler: edit, single: true, show: checkFunc('ProductEdit') },
           { label: '启用', handler: () => enable(1), show: checkFunc('ProductDelete') && currentItems.some(i => !i.recstatus) },
-          { label: '停用', handler: () => enable(0), show: checkFunc('ProductDelete') && currentItems.some(i => !!i.recstatus) }
+          { label: '停用', handler: () => enable(0), show: checkFunc('ProductDelete') && currentItems.some(i => !!i.recstatus) },
+          { label: '转换产品系列', handler: transfer, single: true }
         ]}
       >
         <Select value={queries.recStatus + ''} onChange={search.bind(null, 'recStatus')}>
@@ -130,6 +133,7 @@ function ProductList({
           <a href="javascript:;" style={titleStyle} title={text} onClick={showDetail.bind(this, record)}>{text}</a>
         )}
       />
+      <TransferProductModal />
       <ProductFormModal />
       <EntcommDetailModal visible={showModals === 'viewDetail'}
                           title="产品详情"
@@ -191,6 +195,9 @@ function mapDispatchToProps(dispatch) {
     },
     closeModal() {
       dispatch({ type: 'productManager/showModals', payload: '' });
+    },
+    transfer() {
+      dispatch({ type: 'productManager/showModals', payload: 'transfer' });
     }
   };
 }
