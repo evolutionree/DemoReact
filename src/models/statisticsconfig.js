@@ -13,7 +13,9 @@ export default {
       const params = {
 
       };
-      const res = yield call(getvertionmsglist, params);
+      const resGroup = yield call(getvertionmsglist, params);
+      const resList = yield call(getvertionmsglist, params);
+
       yield put({ type: 'putState', payload: { groupList: [] } });
     },
     *UpdateList({ payload }, { call, put }) {
