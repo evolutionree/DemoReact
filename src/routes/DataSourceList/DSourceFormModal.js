@@ -1,16 +1,17 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Modal, Form, Input, Select, message, Radio } from 'antd';
 import SelectNumber from '../../components/SelectNumber';
 import IntlInput from '../../components/UKComponent/Form/IntlInput';
 import { getIntlText } from '../../components/UKComponent/Form/IntlText';
 import { query as queryEntityList } from '../../services/entity';
+import { extend } from 'dayjs';
 
 const _ = require('lodash');
 
 const FormItem = Form.Item;
 const Option = Select.Option;
 
-class EntitySelect extends React.Component {
+class EntitySelect extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -48,16 +49,30 @@ class EntitySelect extends React.Component {
   }
 }
 
-function DSourceFormModal({
-  form,
-  showModals,
-  currentRecords,
-  savePending,
-  onOk,
-  onCancel
-}) {
-  function handleSubmit(data) {
-    form.validateFields((err, values) => {
+class DSourceFormModal extends Component {
+
+  componentDidMount() {
+
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { showModals: oldVisible } = this.props;
+    const { currentRecords, resetFields, showModals: newVisible } = nextProps;
+    const open = newVisible && !oldVisible;
+    if (open) {
+      if (newVisible === 'edit') {
+        const currentRecord = currentRecords[0];
+        const { form: { setFieldsValue } } = this.props;
+        setFieldsValue({ ...currentRecord });
+      } else {
+        resetFields();
+      }
+    }
+  }
+
+  handleSubmit = () => {
+    const { form: { validateFields }, onOk, currentRecords } = this.props;
+    validateFields((err, values) => {
       if (err) return;
       onOk({
         srctype: 0,
@@ -67,89 +82,94 @@ function DSourceFormModal({
       });
     });
   }
-  function handleCancel() {
-    form.resetFields();
+
+  handleCancel = () => {
+    const { form: { resetFields }, onCancel } = this.props;
+    resetFields();
     onCancel();
   }
 
-  const isEdit = /edit/.test(showModals);
-  const { getFieldDecorator: decorate } = form;
+  render() {
+    const { form, showModals, savePending } = this.props;
 
-  return (
-    <Modal title={isEdit ? '编辑数据源' : '新增数据源'}
-      visible={/edit|add/.test(showModals)}
-      onOk={handleSubmit}
-      onCancel={handleCancel}
-      confirmLoading={savePending}>
-      <Form>
-        <FormItem label="数据源名称">
-          {decorate('datasrcname_lang', {
-            initialValue: '',
-            normalize: (value) => (getIntlText('datasrcname_lang', value)),
-            rules: [{ required: true, message: '请输入数据源名称' }]
-          })(
-            <IntlInput placeholder="请输入数据源名称" />
-          )}
-        </FormItem>
-        <FormItem label="状态">
-          {decorate('recstatus', {
-            initialValue: 1,
-            rules: [{ required: true, message: '请选择状态' }]
-          })(
-            <SelectNumber>
-              <Option value="1">启用</Option>
-              <Option value="0">停用</Option>
-            </SelectNumber>
-          )}
-        </FormItem>
-        <FormItem label="关联实体">
-          {decorate('entityid', {
-            initialValue: '',
-            rules: [{ required: true, message: '请选择关联实体' }]
-          })(
-            <EntitySelect />
-          )}
-        </FormItem>
-        <FormItem label="是否接入数据权限控制">
-          {decorate('isrelatepower', {
-            initialValue: 0,
-            rules: [{ required: true, message: '请选择是否接入数据权限控制' }]
-          })(
-            <Radio.Group>
-              <Radio value={1}>是</Radio>
-              <Radio value={0}>否</Radio>
-            </Radio.Group>
-          )}
-        </FormItem>
-        <FormItem label="脚本类型">
-          {decorate('ispro', {
-            initialValue: 0,
-            rules: [{ required: true, message: '请选择脚本类型' }]
-          })(
-            <Radio.Group>
-              <Radio value={0}>函数</Radio>
-              <Radio value={1}>sql语句</Radio>
-            </Radio.Group>
-          )}
-        </FormItem>
-        <FormItem label="描述">
-          {decorate('srcmark', {
-            initialValue: ''
-          })(
-            <Input type="textarea" />
-          )}
-        </FormItem>
-      </Form>
-    </Modal>
-  );
+    const isEdit = /edit/.test(showModals);
+    const { getFieldDecorator: decorate } = form;
+
+    return (
+      <Modal title={isEdit ? '编辑数据源' : '新增数据源'}
+        visible={/edit|add/.test(showModals)}
+        onOk={this.handleSubmit}
+        onCancel={this.handleCancel}
+        confirmLoading={savePending}>
+        <Form>
+          <FormItem label="数据源名称">
+            {decorate('datasrcname_lang', {
+              initialValue: '',
+              rules: [{ required: true, message: '请输入数据源名称' }]
+            })(
+              <IntlInput placeholder="请输入数据源名称" />
+            )}
+          </FormItem>
+          <FormItem label="状态">
+            {decorate('recstatus', {
+              initialValue: 1,
+              rules: [{ required: true, message: '请选择状态' }]
+            })(
+              <SelectNumber>
+                <Option value="1">启用</Option>
+                <Option value="0">停用</Option>
+              </SelectNumber>
+            )}
+          </FormItem>
+          <FormItem label="关联实体">
+            {decorate('entityid', {
+              initialValue: '',
+              rules: [{ required: true, message: '请选择关联实体' }]
+            })(
+              <EntitySelect />
+            )}
+          </FormItem>
+          <FormItem label="是否接入数据权限控制">
+            {decorate('isrelatepower', {
+              initialValue: 0,
+              rules: [{ required: true, message: '请选择是否接入数据权限控制' }]
+            })(
+              <Radio.Group>
+                <Radio value={1}>是</Radio>
+                <Radio value={0}>否</Radio>
+              </Radio.Group>
+            )}
+          </FormItem>
+          <FormItem label="脚本类型">
+            {decorate('ispro', {
+              initialValue: 0,
+              rules: [{ required: true, message: '请选择脚本类型' }]
+            })(
+              <Radio.Group>
+                <Radio value={0}>函数</Radio>
+                <Radio value={1}>sql语句</Radio>
+              </Radio.Group>
+            )}
+          </FormItem>
+          <FormItem label="描述">
+            {decorate('srcmark', {
+              initialValue: ''
+            })(
+              <Input type="textarea" />
+            )}
+          </FormItem>
+        </Form>
+      </Modal>
+    );
+  }
 }
 
 export default Form.create({
-  mapPropsToFields: (props) => {
-    const { currentRecords, showModals } = props;
-    const currentRecord = currentRecords[0];
-    if (showModals === '') return {};
-    // const tmp = _.pick(currentRecords[0], ['dataSourceName', 'recStatus', 'remark']);
-    return _.mapValues(currentRecord, val => ({ value: val }));
-  }
+  // mapPropsToFields: (props) => {
+  //   const { currentRecords, showModals } = props;
+  //   const currentRecord = currentRecords[0];
+  //   if (showModals === '') return {};
+  //   // const tmp = _.pick(currentRecords[0], ['dataSourceName', 'recStatus', 'remark']);
+  //   return _.mapValues(currentRecord, val => ({ value: val }));
+  // }
 })(DSourceFormModal);
