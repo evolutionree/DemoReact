@@ -65,14 +65,14 @@ export default {
         yield put({ type: 'putState', payload: { modalPending: true } });
         yield call(addTrigger, params);
         message.success('保存成功');
-        yield put({ type: 'putState', payload: { showModals: '' } });
+        yield put({ type: 'putState', payload: { showInfoModals: '' } });
         if (params.recid) {
           yield put({ type: 'queryTriggerList' });
         } else {
           yield put({ type: 'queryTriggerList' });
         }
       } catch (e) {
-        yield put({ type: 'putState', payload: { showModals: '' } });
+        yield put({ type: 'putState', payload: { showInfoModals: '' } });
         message.error(e.message || '保存失败');
       }
     },

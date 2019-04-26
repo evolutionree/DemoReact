@@ -137,13 +137,15 @@ class FieldFormModal extends Component {
         if (/^dataSource_/.test(key)) newKey = 'dataSource';
         newValues[newKey] = values[key];
         if (/^displayname_lang$/.test(newKey) && newValues[newKey]) {
-          Object.keys(newValues[newKey]).some(item => (newValues[newKey][item] === '')) &&
-            (newValues[newKey] = { ...newValues.fieldlabel_lang });
+          if (Object.keys(newValues[newKey]).some(item => (newValues[newKey][item] === ''))) {
+            newValues[newKey] = { ...newValues.fieldlabel_lang };
+          }
+          newValues.fieldlabel_lang = { ...newValues[newKey] };
         }
       }
 
       const newVal = processFormValues(newValues, editingRecord, isEdit);
-      this.props.onOk(newVal, () => {});
+      this.props.onOk(newVal, () => { });
     });
   };
 
