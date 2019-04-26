@@ -41,3 +41,10 @@ export async function listTriggerInstances(params) {
     body: JSON.stringify(params)
   });
 }
+
+export async function stopInstances(params) {
+  return request('/api/qrtz/stopinstance', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}

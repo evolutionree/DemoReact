@@ -2,7 +2,7 @@
  * Created by 0291 on 2017/12/7.
  */
 import { message } from 'antd';
-import { listTriggers, addTrigger, updateTrigger, changeTriggerStatus, listTriggerInstances } from "../services/ukqrtz";
+import { listTriggers, addTrigger, updateTrigger, changeTriggerStatus, listTriggerInstances, stopInstances } from '../services/ukqrtz';
 
 export default {
   namespace: 'ukqrtzmanager',
@@ -36,7 +36,7 @@ export default {
     },
     *queryTriggerList(action, { select, put, call }) {
       try {
-        let { queries } = yield select(state => state.ukqrtzmanager);
+        const { queries } = yield select(state => state.ukqrtzmanager);
         const result = yield call(listTriggers, { ...queries, SearchNormalStatus: 1, SearchStopStatus: 1, SearchDeletedStatus: 1 });
         const triggerList = result.data.datalist;
         yield put({
@@ -52,7 +52,7 @@ export default {
       }
     },
     *search({ payload }, { select, put, call }) {
-      let { queries } = yield select(state => state.ukqrtzmanager);
+      const { queries } = yield select(state => state.ukqrtzmanager);
       const newQueries = {
         ...queries,
         ...payload
@@ -94,7 +94,7 @@ export default {
     },
     *startTrigger({ payload: params }, { put, select, call }) {
       try {
-        let { currItems } = yield select(state => state.ukqrtzmanager);
+        const { currItems } = yield select(state => state.ukqrtzmanager);
         const params1 = {
           RecId: currItems[0].recid,
           Status: 1
@@ -109,7 +109,7 @@ export default {
     },
     *stopTrigger({ payload: params }, { put, select, call }) {
       try {
-        let { currItems } = yield select(state => state.ukqrtzmanager);
+        const { currItems } = yield select(state => state.ukqrtzmanager);
         const params1 = {
           RecId: currItems[0].recid,
           Status: 0
@@ -123,9 +123,8 @@ export default {
       }
     },
     *showInstances({ payload }, { select, put, call }) {
-
       try {
-        let { instqueries, currItems } = yield select(state => state.ukqrtzmanager);
+        const { instqueries, currItems } = yield select(state => state.ukqrtzmanager);
         const result = yield call(listTriggerInstances, { ...instqueries, triggerid: currItems[0].recid, pageIndex: 1, pageSize: 10 });
         const instanceList = result.data.datalist;
         yield put({
@@ -140,8 +139,18 @@ export default {
         message.error(e.message || '获取数据失败');
       }
     },
+    *stopInstances({ payload }, { select, call, put }) {
+      const { currItems } = yield select(state => state.ukqrtzmanager);
+      try {
+        yield call(stopInstances, { RecId: currItems[0].recid });
+        message.success('终止实例成功');
+        yield put({ type: 'queryTriggerList' });
+      } catch (e) {
+        message.error(e.message || '终止实例失败');
+      }
+    },
     *searchinstances({ payload }, { select, put, call }) {
-      let { instqueries } = yield select(state => state.ukqrtzmanager);
+      const { instqueries } = yield select(state => state.ukqrtzmanager);
       const newQueries = {
         ...instqueries,
         ...payload
@@ -151,7 +160,7 @@ export default {
     },
     *queryInstanceList(action, { select, put, call }) {
       try {
-        let { instqueries, currItems } = yield select(state => state.ukqrtzmanager);
+        const { instqueries, currItems } = yield select(state => state.ukqrtzmanager);
         const result = yield call(listTriggerInstances, { ...instqueries, triggerid: currItems[0].recid });
         const instanceList = result.data.datalist;
         yield put({

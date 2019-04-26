@@ -9,6 +9,7 @@ import Page from '../../components/Page';
 import Toolbar from '../../components/Toolbar';
 import QrtzFormModal from './QrtzFormModal';
 import QrtzInstancesFormModal from './QrtzInstancesFormModal';
+
 const Column = Table.Column;
 
 
@@ -23,6 +24,7 @@ function UkqrtzManager(props) {
     add,
     edit,
     showInstances,
+    stopInstances,
     stopTrigger,
     startTrigger
   } = props;
@@ -34,7 +36,8 @@ function UkqrtzManager(props) {
           { label: '编辑', handler: edit, single: true },
           { label: '停用', handler: stopTrigger, single: true, show: currItems && currItems.length > 0 && currItems[0].recstatus === 1 },
           { label: '启用', handler: startTrigger, single: true, show: currItems && currItems.length > 0 && currItems[0].recstatus === 0 },
-          { label: '查看实例', handler: showInstances, single: true }
+          { label: '查看实例', handler: showInstances, single: true },
+          { label: '终止实例', handler: stopInstances, single: true, show: currItems && currItems.length > 0 && currItems[0].recstatus === 1 }
         ]}
       >
         <Button onClick={add}>新增</Button>
@@ -60,7 +63,7 @@ function UkqrtzManager(props) {
         <Column title="动作命令" key="actioncmd" dataIndex="actioncmd" />
 
         <Column title="执行参数" key="actionparameters" dataIndex="actionparameters" render={v => JSON.stringify(v)} />
-        <Column title="当前状态" key="recstatus" dataIndex="recstatus" render={v => ["停用", '启用', '已删除'][v]} />
+        <Column title="当前状态" key="recstatus" dataIndex="recstatus" render={v => ['停用', '启用', '已删除'][v]} />
         <Column title="是否运行中" key="inbusy" dataIndex="inbusy" render={v => ['空闲中', '运行中'][v]} />
         <Column title="运行服务器" key="runningserver" dataIndex="runningserver" />
         <Column title="本次开始运行时间" key="startruntime" dataIndex="startruntime" />
@@ -97,6 +100,9 @@ export default connect(
       },
       showInstances() {
         dispatch({ type: 'ukqrtzmanager/showInstances', payload: 'instances' });
+      },
+      stopInstances() {
+        dispatch({ type: 'ukqrtzmanager/stopInstances' });
       }
     };
   }
