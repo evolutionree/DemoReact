@@ -107,14 +107,14 @@ function UserList({
           },
           { label: '转换团队', handler: changeDept, single: true, show: checkFunc('DepartmentChange') },
           { label: '重置密码', handler: revertPassword, single: false, show: checkFunc('ReconvertPwd') },
-          // {
-          //   label: '取消设为领导', handler: toggleSetLeader, single: true,
-          //   show: () => checkFunc('SetLeader') && !!currentItems[0].isleader
-          // },
-          // {
-          //   label: '设为领导', handler: toggleSetLeader, single: true,
-          //   show: () => checkFunc('SetLeader') && !currentItems[0].isleader
-          // },
+          {
+            label: '取消设为领导', handler: toggleSetLeader, single: true,
+            show: () => checkFunc('SetLeader') && !!currentItems[0].isleader
+          },
+          {
+            label: '设为领导', handler: toggleSetLeader, single: true,
+            show: () => checkFunc('SetLeader') && !currentItems[0].isleader
+          },
           // {
           //   label: '绑定考勤组', handler: bindAttence, single: false,
           //   show: () => checkFunc('SetLeader')
