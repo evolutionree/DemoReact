@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { routerRedux } from 'dva/router';
-import { queryList, save, update, del } from '../services/datasource';
+import { getstatistics, addstatistics, updatestatistics, deletestatistics, disabledstatistics } from '../services/statistics';
 import { getCorrectPager } from '../utils/common';
 
 export default {
@@ -43,12 +43,11 @@ export default {
     *query({ payload: queries }, { call, put }) {
       yield put({ type: 'queryRequest', payload: queries });
       try {
-        const result = yield call(queryList, queries);
+        const result = yield call(getstatistics, queries);
         yield put({
           type: 'querySuccess',
           payload: {
-            list: result.data.pagedata,
-            total: result.data.pagecount[0].total
+            list: result.data
           }
         });
       } catch (e) {
@@ -61,7 +60,7 @@ export default {
       const { showModals } = yield select(state => state.statisticsfunc);
       const isEdit = /edit/.test(showModals);
       try {
-        yield call(isEdit ? update : save, params);
+        yield call(isEdit ? updatestatistics : addstatistics, params);
         yield put({ type: 'hideModal' });
         message.success('保存成功');
 
@@ -74,13 +73,30 @@ export default {
         message.error(e.message || '保存失败');
       }
     },
-    *del({ payload: record }, { call, put }) {
+    *del({ payload: records }, { call, put }) {
       try {
-        yield call(del, record.datasourceid);
+        const params = {
+          AnaFuncIds: Array.isArray(records) ? records.map(o => o.anafuncid) : []
+        };
+        yield call(deletestatistics, params);
         message.success('删除成功');
         yield put({ type: 'refreshPage', payload: false });
       } catch (e) {
         message.error(e.message || '删除失败');
+      }
+    },
+    *use({ payload }, { call, put }) {
+      const { currentRecords, isUse } = payload;
+      try {
+        const params = {
+          currentRecords: currentRecords.map(o => o.anafuncid),
+          recstatus: isUse ? 1 : 0
+        };
+        yield call(disabledstatistics, params);
+        message.success('操作成功');
+        yield put({ type: 'refreshPage', payload: false });
+      } catch (e) {
+        message.error(e.message || '操作失败');
       }
     },
     *refreshPage({ payload: resetQuery }, { select, put }) {
@@ -89,7 +105,7 @@ export default {
         ({ routing }) => routing.locationBeforeTransitions
       );
       yield put(routerRedux.replace({
-        pathname: '/data-source',
+        pathname: '/statisticsfunc',
         query: resetQuery ? undefined : query
       }));
     }

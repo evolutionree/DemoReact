@@ -19,13 +19,7 @@ class Statisticsconfig extends Component {
 
   componentDidMount() {
     const { dispatch } = this.props;
-
-    // new Promise((resolve) => {
-    //   dispatch({ type: `${NAMESPACE}/Init`, payload: { resolve } })
-    //     .then(res => {
-
-    //     });
-    // });
+    dispatch({ type: `${NAMESPACE}/Init` });
   }
 
   onChangeItem = (record, e) => {
@@ -41,11 +35,19 @@ class Statisticsconfig extends Component {
       if (value !== '') {
         if (k < index) _list[k] = 1;
       } else {
-        _list[index - 1] = 0;
-        break;
+        setTimeout(() => { // 获取改变后的value值
+          const { form: { validateFields } } = this.props;
+          validateFields((err, values) => {
+            if (err) return;
+            for (const idx in values) {
+              if (idx - 1 < index) _list[idx - 1] = Object.values(values)[idx] === '' ? 0 : 1;
+            }
+            this.setState({ isReadOnlys: _list });
+          });
+        }, 0);
+        return;
       }
     }
-    console.log(value);
     this.setState({ isReadOnlys: _list });
   }
 
@@ -61,7 +63,7 @@ class Statisticsconfig extends Component {
 
   render() {
     const { groupList, form: { getFieldDecorator } } = this.props;
-    const { isReadOnlys, list = [{ id: 1, name: 1 }, { id: 2, name: 2 }, { id: 3, name: 3 }] } = this.state;
+    const { isReadOnlys, list = [{ id: '1', name: 1 }, { id: '2', name: 2 }, { id: '3', name: 3 }] } = this.state;
 
     return (
       <Page title="统计界面配置">
@@ -70,7 +72,7 @@ class Statisticsconfig extends Component {
             <EditList
               title="分组名称"
               tips='支持变量"{NOW}"'
-              list={groupList}
+              list={groupList.map(o => ({ ...o, name: o.groupmark }))}
               onChange={this.onChangeItem}
             />
           </div>
@@ -83,7 +85,7 @@ class Statisticsconfig extends Component {
               {
                 Array.isArray(list) && list.map((item, index) => {
                   return (
-                    <div className={styles.row}>
+                    <div key={index} className={styles.row}>
                       <div className={styles.chiid}>{item.id}</div>
                       <div className={styles.chiid}>
                         {
@@ -103,7 +105,7 @@ class Statisticsconfig extends Component {
                             >
                               <Option value="">请选择</Option>
                               {
-                                list.map(obj => (<Option key={obj.id} value={obj.id}>{obj.name}</Option>))
+                                list.map(obj => (<Option key={obj.id} value={obj.id + ''}>{obj.name}</Option>))
                               }
                             </Select>
                           )

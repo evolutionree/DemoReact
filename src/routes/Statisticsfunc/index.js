@@ -27,11 +27,11 @@ function Statisticsfunc(props) {
       }
     });
   }
-  function handleSwitch() {
+  function handleSwitch(isUse) {
     Modal.confirm({
-      title: '确定要停用吗？',
+      title: `确认要${isUse ? '启用' : '停用'}吗？`,
       onOk() {
-        dispatch({ type: 'statisticsfunc/del', payload: currentRecords[0] });
+        dispatch({ type: 'statisticsfunc/use', payload: { currentRecords, isUse } });
       }
     });
   }
@@ -58,7 +58,7 @@ function Statisticsfunc(props) {
     checkFunc
   } = props;
 
-  const { pageIndex, pageSize, dataSourceName, recStatus } = queries;
+  const { pageIndex, pageSize } = queries;
 
   const tooltipElements = (text, width) => (
     <div
@@ -71,13 +71,13 @@ function Statisticsfunc(props) {
   );
 
   const LoopList = [
-    { title: '统计项名称', key: 'username', width: 80, render: text => getIntlText(text) },
-    { title: '统计函数', key: 'accountname', width: 110 },
-    { title: '是否进入列表', key: 'workcode', width: 90 },
-    { title: '列表函数', key: 'deptname', width: 110 },
-    { title: '是否跳入实体', key: 'pdeptname', width: 160 },
-    { title: '实体名称', key: 'rolename', width: 110 },
-    { title: '状态', key: 'vocationname' }
+    { title: '统计项名称', key: 'anafuncname', width: 80, render: (text, record) => getIntlText('anafuncname', record) },
+    { title: '统计函数', key: 'countfunc', width: 160 },
+    { title: '是否进入列表', key: 'allowinto_name' },
+    { title: '列表函数', key: 'morefunc', width: 160 },
+    { title: '是否跳入实体', key: 'moreflag_name' },
+    { title: '实体名称', key: 'entityname' },
+    { title: '状态', key: 'moreflag' }
   ];
 
   const renderList = (colList) => (
@@ -95,14 +95,16 @@ function Statisticsfunc(props) {
   const columns = renderList(LoopList);
   const tableWidth = columns.reduce((sum, current) => sum + current.width, 0) + 62;
 
+  const isUse = Array.isArray(currentRecords) && currentRecords.length === 1 && currentRecords[0].recstatus;
+
   return (
     <Page title="统计函数定义">
       <Toolbar
         selectedCount={currentRecords.length}
         actions={[
           { label: '编辑', single: true, handler: handleEdit, show: () => true },
-          { label: `${true ? '停用' : '启用'}`, single: true, handler: handleSwitch },
-          { label: '删除', single: true, handler: handleDel }
+          { label: `${isUse ? '启用' : '停用'}`, single: true, handler: () => handleSwitch(isUse) },
+          { label: '删除', handler: handleDel }
         ]}
       >
         <div style={{ float: 'left' }}>
@@ -119,12 +121,12 @@ function Statisticsfunc(props) {
       </Toolbar>
 
       <Table
-        rowKey="datasourceid"
+        rowKey="anafuncid"
         scroll={{ x: `${tableWidth}px` }}
         columns={columns}
         dataSource={list}
         rowSelection={{
-          selectedRowKeys: currentRecords.map(item => item.datasourceid),
+          selectedRowKeys: currentRecords.map(item => item.anafuncid),
           onChange: (keys, items) => { handleSelectRecords(items); }
         }}
         pagination={{
