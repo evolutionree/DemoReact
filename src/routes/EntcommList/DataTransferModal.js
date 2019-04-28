@@ -140,7 +140,7 @@ class DataTransferModal extends React.Component {
                 required: !(ismultifield === 1), message: '请选择新的用户'
               }]
             })(
-              <SelectUser multiple={ismultifield} />
+              <SelectUser />
             )}
           </FormItem>
         </Form>
