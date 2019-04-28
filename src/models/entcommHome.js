@@ -53,12 +53,9 @@ export default {
 
       if (entityId !== lastEntityId || recordId !== lastRecordId) {
         yield put({ type: 'resetState' });
-      }
+        yield put({ type: 'putState', payload: { entityId, recordId } });
 
-      yield put({ type: 'putState', payload: { entityId, recordId } });
-
-      // 获取实体信息
-      if (entityId !== lastEntityId) {
+        // 获取实体信息
         const { data: { entityproinfo } } = yield call(queryEntityDetail, entityId);
         yield put({
           type: 'putState',
@@ -70,10 +67,8 @@ export default {
           type: 'putState',
           payload: { relTabs: reltablist }
         });
-      }
 
-      // 获取记录详情
-      if (recordId !== lastRecordId) {
+        // 获取记录详情
         try {
           const params = {
             entityId,
