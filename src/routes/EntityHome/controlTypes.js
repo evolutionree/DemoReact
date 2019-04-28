@@ -14,7 +14,7 @@
 export const fieldModels = [
   { name: '文本', value: 1, requires: ['maxLength', 'defaultValue', 'encrypted', 'scanner'] }, // TODO 加defaultValue
   { name: '提示文本', value: 2, requires: ['tipContent', 'tipColor'] },
-  { name: '单选', value: 3, requires: ['dataSource', 'modeType', 'defaultValue'] },
+  { name: '单选', value: 3, requires: ['dataSource', 'choicemode', 'defaultValue'] },
   { name: '多选', value: 4, requires: ['dataSource'] },
   { name: '大文本', value: 5, requires: ['defaultValue'] },
   { name: '整数文本', value: 6, requires: ['maxLength', 'defaultValue', 'separator'] },

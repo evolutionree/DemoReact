@@ -27,7 +27,7 @@ function processFormValues(values, editingRecord) {
   let {
     fieldId,
     controlType,
-    modeType,
+    choicemode,
     fieldlabel_lang,
     displayname_lang,
     recStatus,
@@ -50,7 +50,7 @@ function processFormValues(values, editingRecord) {
   const fieldConfigJSON = JSON.stringify({
     ...fieldConfig,
     ...extraFieldConfig,
-    choicemode: modeType === 1 ? modeType : 0
+    choicemode
   });
 
   const retValues = {
@@ -104,19 +104,11 @@ class FieldFormModal extends Component {
           newFieldConfig[newKey] = fieldConfig[key];
         }
 
-        form.resetFields();
-        setTimeout(() => { //表单的组件 会从中切换卸载  所以晚点设值
-          form.setFields(_.mapValues({
-            ...editingRecord,
-            ...newFieldConfig,
-            fieldConfig: undefined
-          }, val => ({ value: val })));
-        }, 0);
-      } else {
-        form.resetFields();
-        // form.setFields({
-        //   fieldName: { value: getRandomLetters(6) }
-        // });
+        form.setFields(_.mapValues({
+          ...editingRecord,
+          ...newFieldConfig,
+          fieldConfig: undefined
+        }, val => ({ value: val })));
       }
     }
   }
@@ -150,7 +142,9 @@ class FieldFormModal extends Component {
   };
 
   handleCancel = () => {
-    this.props.onCancel();
+    const { form: { resetFields }, onCancel } = this.props;
+    resetFields();
+    onCancel();
   };
 
   render() {

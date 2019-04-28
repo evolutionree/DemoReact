@@ -1074,10 +1074,10 @@ export default class FormItemFactory {
     );
   }
 
-  createModeType() {
+  createChoicemode() {
     return (
-      <FormItem label="模式选择" key="modeType">
-        {this.getFieldDecorator('modeType', {
+      <FormItem label="模式选择" key="choicemode">
+        {this.getFieldDecorator('choicemode', {
           normalize: (value) => (value === 1 ? value : 0),
           initialValue: 0,
           rules: [{ required: true, message: '请选择模式' }]
