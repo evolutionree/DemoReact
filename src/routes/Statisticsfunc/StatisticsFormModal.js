@@ -63,26 +63,27 @@ class TipsInput extends Component {
   }
 }
 
-class StatisticsFormModal extends Component {
-  state = {
-    intoListChecked: false,
-    intoEntityChecked: false
+class SelectCheckbox extends Component {
+  render() {
+    const { value, onChange, children } = this.props;
+    return (
+      <Checkbox
+        checked={!!value}
+        onChange={onChange}
+      >
+        {children}
+      </Checkbox>
+    );
   }
+}
+
+class StatisticsFormModal extends Component {
 
   handleSubmit = () => {
-    const { form, onOk, currentRecords } = this.props;
+    const { form, onOk } = this.props;
     form.validateFields((err, values) => {
       if (err) return;
-      const { allowinto, moreflag, anafuncname_lang, ...rest } = values;
-      const params = {
-        ...currentRecords[0],
-        ...rest,
-        anafuncname: anafuncname_lang.cn,
-        anafuncname_lang: JSON.stringify(anafuncname_lang),
-        allowinto: allowinto ? 1 : 0,
-        moreflag: moreflag ? 1 : 0
-      };
-      onOk(params);
+      onOk(values);
     });
   }
 
@@ -92,16 +93,11 @@ class StatisticsFormModal extends Component {
     onCancel();
   }
 
-  onChangeIntoListChecked = e => this.setState({ intoListChecked: e.target.checked });
-
-  onChangeIntoEntityChecked = e => this.setState({ intoEntityChecked: e.target.checked });
-
   render() {
     const { form, showModals, savePending } = this.props;
-    const { intoListChecked, intoEntityChecked } = this.state;
-
+    const { getFieldDecorator, getFieldsValue } = form;
     const isEdit = /edit/.test(showModals);
-    const { getFieldDecorator: decorate } = form;
+    const { allowinto, moreflag } = getFieldsValue(['moreflag', 'allowinto']);
 
     return (
       <Modal
@@ -112,7 +108,7 @@ class StatisticsFormModal extends Component {
         confirmLoading={savePending}>
         <Form>
           <FormItem label="统计项名称">
-            {decorate('anafuncname_lang', {
+            {getFieldDecorator('anafuncname_lang', {
               initialValue: '',
               rules: [{ required: true, message: '请输入统计项名称' }]
             })(
@@ -120,7 +116,7 @@ class StatisticsFormModal extends Component {
             )}
           </FormItem>
           <FormItem label="统计函数">
-            {decorate('countfunc', {
+            {getFieldDecorator('countfunc', {
               initialValue: '',
               rules: [{ required: true, message: '请填写统计函数' }]
             })(
@@ -131,23 +127,19 @@ class StatisticsFormModal extends Component {
             )}
           </FormItem>
           <FormItem label="">
-            {decorate('moreflag', {
-              initialValue: '',
-              rules: [{ required: true, message: '是否可进入列表' }]
-            })(
-              <Checkbox
-                checked={intoListChecked}
+            {getFieldDecorator('allowinto')(
+              <SelectCheckbox
                 onChange={this.onChangeIntoListChecked}
               >
                 可进入列表
-            </Checkbox>
+              </SelectCheckbox>
             )}
           </FormItem>
           {
-            intoListChecked ? (
+            allowinto ? (
               <div>
                 <FormItem label="列表函数">
-                  {decorate('morefunc', {
+                  {getFieldDecorator('morefunc', {
                     initialValue: '',
                     rules: [{ required: true, message: '请填写列表函数' }]
                   })(
@@ -158,27 +150,21 @@ class StatisticsFormModal extends Component {
                   )}
                 </FormItem>
                 <FormItem label="">
-                  {decorate('allowinto', {
-                    initialValue: '',
-                    rules: [{ required: true, message: '是否可进入列表' }]
-                  })(
-                    <Checkbox
-                      checked={intoEntityChecked}
-                      onChange={this.onChangeIntoEntityChecked}
-                    >
+                  {getFieldDecorator('moreflag')(
+                    <SelectCheckbox>
                       可跳入实体
-                    </Checkbox>
+                    </SelectCheckbox>
                   )}
                 </FormItem>
                 {
-                  intoEntityChecked && <FormItem label="关联实体">
-                    {decorate('entityid', {
+                  moreflag ? <FormItem label="关联实体">
+                    {getFieldDecorator('entityid', {
                       initialValue: '',
                       rules: [{ required: true, message: '请选择关联实体' }]
                     })(
                       <EntitySelect />
                     )}
-                  </FormItem>
+                  </FormItem> : null
                 }
               </div>
             ) : null
@@ -190,6 +176,13 @@ class StatisticsFormModal extends Component {
 }
 
 export default Form.create({
+  onValuesChange: (props, values) => {
+    const { onChange, currentRecords } = props;
+    onChange([{
+      ...currentRecords[0],
+      ...values
+    }]);
+  },
   mapPropsToFields: (props) => {
     const { currentRecords, showModals } = props;
     const currentRecord = currentRecords[0];

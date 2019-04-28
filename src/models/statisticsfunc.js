@@ -55,11 +55,21 @@ export default {
         message.error(e.message || '获取数据失败');
       }
     },
-    *save({ payload: params }, { select, call, put }) {
-      yield put({ type: 'savePending' });
-      const { showModals } = yield select(state => state.statisticsfunc);
+    *save({ payload: values }, { select, call, put }) {
+      const { showModals, currentRecords } = yield select(state => state.statisticsfunc);
       const isEdit = /edit/.test(showModals);
+
       try {
+        yield put({ type: 'savePending' });
+        const { allowinto, moreflag, anafuncname_lang, ...rest } = values;
+        const params = {
+          ...currentRecords[0],
+          ...rest,
+          anafuncname: anafuncname_lang.cn,
+          anafuncname_lang: JSON.stringify(anafuncname_lang),
+          allowinto: allowinto ? 1 : 0,
+          moreflag: moreflag ? 1 : 0
+        };
         yield call(isEdit ? updatestatistics : addstatistics, params);
         yield put({ type: 'hideModal' });
         message.success('保存成功');

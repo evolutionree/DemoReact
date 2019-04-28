@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
-import { Button, Table, Modal, Switch } from 'antd';
+import { Button, Table, Modal, Tooltip } from 'antd';
 import Page from '../../components/Page';
 import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
@@ -45,7 +45,7 @@ function Statisticsfunc(props) {
     dispatch({ type: 'statisticsfunc/hideModal' });
   }
   function handleSelectRecords(records) {
-    dispatch({ type: 'statisticsfunc/currentRecords', payload: records })
+    dispatch({ type: 'statisticsfunc/currentRecords', payload: records });
   }
 
   const {
@@ -55,26 +55,30 @@ function Statisticsfunc(props) {
     list,
     currentRecords,
     total,
+    showModals,
+    savePending,
     checkFunc
   } = props;
 
   const { pageIndex, pageSize } = queries;
 
   const tooltipElements = (text, width) => (
-    <div
-      className={`${text}`.length > 5 ? styles.hide : ''}
-      title={`${text}`}
-      style={{ maxWidth: `${width - 21}px` }}
-    >
-      {text}
-    </div>
+    <Tooltip title={text}>
+      <div
+        className={`${text}`.length > 5 ? styles.hide : ''}
+        title={`${text}`}
+        style={{ maxWidth: `${width - 21}px` }}
+      >
+        {text}
+      </div>
+    </Tooltip>
   );
 
   const LoopList = [
     { title: '统计项名称', key: 'anafuncname', width: 80, render: (text, record) => getIntlText('anafuncname', record) },
-    { title: '统计函数', key: 'countfunc', width: 160 },
+    { title: '统计函数', key: 'countfunc', width: 300 },
     { title: '是否进入列表', key: 'allowinto_name' },
-    { title: '列表函数', key: 'morefunc', width: 160 },
+    { title: '列表函数', key: 'morefunc', width: 300 },
     { title: '是否跳入实体', key: 'moreflag_name' },
     { title: '实体名称', key: 'entityname' },
     { title: '状态', key: 'moreflag' }
@@ -138,7 +142,14 @@ function Statisticsfunc(props) {
         }}
       />
 
-      <StatisticsFormModal {...props} onOk={handleSave} onCancel={handleCancel} />
+      <StatisticsFormModal
+        currentRecords={currentRecords}
+        showModals={showModals}
+        onChange={handleSelectRecords}
+        onOk={handleSave}
+        onCancel={handleCancel}
+        savePending={savePending}
+      />
     </Page>
   );
 }
