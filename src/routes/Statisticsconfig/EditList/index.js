@@ -43,7 +43,7 @@ class EditList extends Component {
     }
   }
 
-  addFields = list => (list.map((item, id) => ({ ...item, id, acitve: false })));
+  addFields = list => (list.map((item, id) => ({ ...item, id, active: false })));
 
   add = () => {
     const { list } = this.state;

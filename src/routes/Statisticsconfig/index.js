@@ -62,7 +62,7 @@ class Statisticsconfig extends Component {
   }
 
   render() {
-    const { groupList, form: { getFieldDecorator } } = this.props;
+    const { groupList, selectList, form: { getFieldDecorator } } = this.props;
     const { isReadOnlys, list = [{ id: '1', name: 1 }, { id: '2', name: 2 }, { id: '3', name: 3 }] } = this.state;
 
     return (
@@ -105,7 +105,7 @@ class Statisticsconfig extends Component {
                             >
                               <Option value="">请选择</Option>
                               {
-                                list.map(obj => (<Option key={obj.id} value={obj.id + ''}>{obj.name}</Option>))
+                                selectList.map(obj => (<Option key={obj.anafuncid} value={obj.anafuncid + ''}>{obj.anafuncname}</Option>))
                               }
                             </Select>
                           )

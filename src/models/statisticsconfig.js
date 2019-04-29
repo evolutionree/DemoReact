@@ -1,9 +1,10 @@
-import { getstatisticsdata, getstatisticsdetaildata } from '../services/statistics';
+import { getstatisticsdata, getstatisticsdetaildata, getstatistics } from '../services/statistics';
 
 export default {
   namespace: 'statisticsconfig',
   state: {
-    groupList: []
+    groupList: [],
+    selectList: []
   },
   subscriptions: {
 
@@ -17,13 +18,19 @@ export default {
       const dParams = {
         AnaFuncName: '{NOW}当月统计'
       };
-      const resList = yield call(getstatisticsdetaildata, dParams);
+      const { data: resList } = yield call(getstatisticsdetaildata, dParams);
 
-      yield put({ type: 'putState', payload: { groupList, resList } });
+      const { data: selectList } = yield call(getstatistics, {});
+
+      yield put({ type: 'putState', payload: { groupList, resList, selectList } });
     },
     *UpdateList({ payload }, { call, put }) {
       const { record } = payload;
-      console.log(record);
+      const dParams = {
+        AnaFuncName: record.groupmark
+      };
+      const { data: resList } = yield call(getstatisticsdetaildata, dParams);
+      yield put({ type: 'putState', payload: { resList } });
     }
   },
   reducers: {

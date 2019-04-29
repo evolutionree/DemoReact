@@ -38,7 +38,7 @@ class IntlEdittableCell extends Component {
 
   edit = (e) => {
     const { callback } = this.props;
-    e.stopPropagation();
+    // e.stopPropagation();
     if (callback) callback(this);
     this.setState({ editable: true });
   }
