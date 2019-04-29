@@ -26,13 +26,12 @@ class ParamsFormModal extends Component {
   componentWillReceiveProps(nextProps) {
     const isOpening = !this.props.visible && nextProps.visible;
     if (isOpening) {
-      const { form, editingRecord } = nextProps;
+      const { form: { getFieldsValue, setFieldsValue }, editingRecord } = nextProps;
       if (editingRecord) {
-        form.setFieldsValue({
-          ...editingRecord
-        });
-      } else {
-        form.resetFields();
+        const keys = getFieldsValue();
+        const result = {};
+        Object.keys(keys).forEach(field => (result[field] = editingRecord[field] || ''));
+        setFieldsValue(result);
       }
     }
   }
@@ -93,6 +92,12 @@ class ParamsFormModal extends Component {
     });
   };
 
+  onCancel = (e) => {
+    const { form: { resetFields }, cancel } = this.props;
+    resetFields();
+    cancel(e);
+  }
+
   render() {
     const { visible } = this.props;
     const { getFieldDecorator } = this.props.form;
@@ -111,11 +116,11 @@ class ParamsFormModal extends Component {
       <Modal
         visible={visible}
         title={'更新匹配参数'}
-        onCancel={this.props.cancel}
+        onCancel={this.onCancel}
         footer={[
-          <Button onClick={this.props.cancel}>取消</Button>,
-          <Button onClick={this.openChildModal} disabled>测试</Button>,
-          <Button onClick={this.onOk}>保存</Button>
+          <Button key="0" onClick={this.onCancel}>取消</Button>,
+          <Button key="1" onClick={this.openChildModal} disabled>测试</Button>,
+          <Button key="2" onClick={this.onOk}>保存</Button>
         ]}
       >
         <Form>
@@ -127,7 +132,7 @@ class ParamsFormModal extends Component {
               <Select onChange={this.checkTypeChange}>
                 {
                   checktype.map(item => {
-                    return <Option value={item.value} key={item.value}>{item.name}</Option>;
+                    return <Option key={item.value} value={item.value}>{item.name}</Option>;
                   })
                 }
               </Select>

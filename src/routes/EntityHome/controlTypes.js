@@ -11,7 +11,7 @@
 // 1011 活动时间
 // 1012 实体名称
 
-export const fieldModels = [
+export const fieldModels = [ 
   { name: '文本', value: 1, requires: ['maxLength', 'defaultValue', 'encrypted', 'scanner'] }, // TODO 加defaultValue
   { name: '提示文本', value: 2, requires: ['tipContent', 'tipColor'] },
   { name: '单选', value: 3, requires: ['dataSource', 'choicemode', 'defaultValue'] },
