@@ -6,8 +6,6 @@ import { Icon } from 'antd';
 import _ from 'lodash';
 import styles from './Page.less';
 
-const contentHeight = document.body.clientHeight - 128;
-
 class Page extends Component {
   static propTypes = {
     title: PropTypes.node,
@@ -90,7 +88,7 @@ class Page extends Component {
         </div>
         {fixedTop || ''}
         <div className={styles.content} style={contentWrapStyle}>
-          <div className={contentStyleFree ? '' : styles.contentInner} style={{ ...contentStyle, height: contentHeight }}>
+          <div className={contentStyleFree ? '' : styles.contentInner} style={contentStyle}>
             {children}
           </div>
         </div>
