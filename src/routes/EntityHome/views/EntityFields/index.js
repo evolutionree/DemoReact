@@ -65,6 +65,7 @@ function EntityFields({
   modalPending,
   formValues
 }) {
+
   function handleAdd() {
     dispatch({ type: 'entityFields/add' });
   }
@@ -122,6 +123,9 @@ function EntityFields({
   function delField(record) {
     dispatch({ type: 'entityFields/del', payload: record.fieldid });
   }
+  function callback(node) {
+    dispatch({ type: 'entityFields/nodeCell', payload: node });
+  }
 
   const flag = <span>[<Icon type="check" />]</span>;
 
@@ -152,6 +156,7 @@ function EntityFields({
             record={record}
             api="/api/EntityPro/updateentityfieldname"
             maxLength={20}
+            callback={callback}
           />
         );
       }

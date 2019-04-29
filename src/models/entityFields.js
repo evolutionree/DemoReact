@@ -19,7 +19,8 @@ export default {
     list: [],
     showModals: '',
     editingRecord: null,
-    modalPending: false
+    modalPending: false,
+    nodeCell: null
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -180,6 +181,11 @@ export default {
         message.error(e.message || '保存失败');
         yield put({ type: 'modalPending', payload: false });
       }
+    },
+    *nodeCell({ payload }, { put, select }) {
+      const { nodeCell } = yield select(state => state.entityFields);
+      if (nodeCell) nodeCell.check();
+      yield put({ type: 'updateNodeCell', payload })
     }
   },
 
@@ -248,13 +254,17 @@ export default {
     modalPending(state, { payload: pending }) {
       return { ...state, modalPending: pending };
     },
+    updateNodeCell(state, { payload: nodeCell }) {
+      return { ...state, nodeCell };
+    },
     resetState() {
       return {
         entityId: null,
         list: [],
         showModals: '',
         editingRecord: null,
-        modalPending: false
+        modalPending: false,
+        nodeCell: null
       };
     }
   }
