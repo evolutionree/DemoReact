@@ -27,8 +27,10 @@ function DepartmentFormModal({
   function handleOk() {
     validateFields((err, values) => {
       if (err) return;
+      const { oglevel, ...rest } = values;
       const data = {
-        ...values
+        oglevel: parseInt(oglevel, 10) || null,
+        ...rest
       };
       if (isEdit) {
         data.deptid = currentDept.deptid;
