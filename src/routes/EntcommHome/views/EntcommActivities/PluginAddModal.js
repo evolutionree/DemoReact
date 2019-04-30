@@ -194,6 +194,7 @@ class PluginAddModal extends Component {
     return (
       <div>
         <EntcommAddModal
+          approval
           modalTitle={modalTitle}
           visible={showAddModal}
           entityId={entityId}

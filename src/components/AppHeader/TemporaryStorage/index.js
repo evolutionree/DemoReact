@@ -185,6 +185,7 @@ class TemporaryStorage extends Component {
           refEntity={addModalInfo.relateentityid}
           entityTypeId={addModalInfo.typeid} //TODO: 暂存数据 已经确定了实体类型
           cacheId={addModalInfo.cacheid}
+          approval
           flow={workFlow}
           initFormData={addModalInfo.datajson && addModalInfo.datajson.expandfields}
           extradata={addModalInfo.datajson && addModalInfo.datajson.extraData}

@@ -133,6 +133,7 @@ class StageFlowModal extends Component {
           entityId={entityId}
           entityName={entityName}
           refRecord={recordId}
+          approval
           flow={flowId ? { flowid: flowId } : undefined}
           cancel={() => {
             self.props.cancel();

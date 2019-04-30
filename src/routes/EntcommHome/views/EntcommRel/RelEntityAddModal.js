@@ -198,6 +198,7 @@ class RelEntityAddModal extends Component {
           refEntity={undefined && this.props.entityId}
           initFormData={this.props.relEntityFromInitData}
           entityTypes={this.props.entityTypes}
+          approval
           flow={this.props.selectedFlowObj}
           cancel={this.handleAddNewCancel}
           done={this.props.onAddDone}
