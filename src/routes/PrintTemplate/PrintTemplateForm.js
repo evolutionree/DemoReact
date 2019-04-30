@@ -27,14 +27,14 @@ class PrintTemplateForm extends Component {
     if (isOpening) {
       const { form, editingRecord } = nextProps;
       if (editingRecord) {
-        form.setFields(_.mapValues(editingRecord, (value, key) => {
+        const result = _.mapValues(editingRecord, (value, key) => {
           if (key === 'templatetype' || key === 'datasourcetype') {
             return { value: (value || value === 0) ? (value + '') : undefined };
           } else if (key === 'fileid') {
             const _val = value ? [{
               uid: value,
               fileid: value,
-              name: value + '',
+              name: editingRecord.templatename || (value + ''),
               status: 'done',
               isInitValue: true
             }] : [];
@@ -42,7 +42,8 @@ class PrintTemplateForm extends Component {
           } else {
             return { value: value };
           }
-        }));
+        });
+        form.setFields(result);
         this.setState({
           jsCode: editingRecord.extjs || '',
           jsCodeEditing: editingRecord.extjs || ''
@@ -215,7 +216,7 @@ class PrintTemplateForm extends Component {
             )}
           </FormItem>
           {/*<FormItem label="数据源JS" {...formItemLayout}>*/}
-            {/*<Button onClick={this.openJsEdit}>编辑JS</Button>*/}
+          {/*<Button onClick={this.openJsEdit}>编辑JS</Button>*/}
           {/*</FormItem>*/}
           <FormItem label="模板类型" {...formItemLayout}>
             {getFieldDecorator('templatetype', {
@@ -306,4 +307,4 @@ export default connect(
       }
     };
   }
-)(Form.create()(PrintTemplateForm));
+)(Form.create({})(PrintTemplateForm));
