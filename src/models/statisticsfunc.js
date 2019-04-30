@@ -99,8 +99,8 @@ export default {
       const { currentRecords, isUse } = payload;
       try {
         const params = {
-          currentRecords: currentRecords.map(o => o.anafuncid),
-          recstatus: isUse ? 1 : 0
+          AnaFuncIds: currentRecords.map(o => o.anafuncid),
+          recstatus: isUse ? 0 : 1
         };
         yield call(disabledstatistics, params);
         message.success('操作成功');

@@ -14,7 +14,8 @@ const NAMESPACE = 'statisticsconfig';
 
 class Statisticsconfig extends Component {
   state = {
-    isReadOnlys: [0, 0, 0]
+    isReadOnlys: [0, 0, 0],
+    resList: []
   }
 
   componentDidMount() {
@@ -22,9 +23,25 @@ class Statisticsconfig extends Component {
     dispatch({ type: `${NAMESPACE}/Init` });
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { form: { getFieldsValue, setFieldsValue }, resList } = nextProps;
+    const { resList: oldResList } = this.state;
+
+    for (const item in resList) {
+      if (resList[item] !== oldResList[item]) {
+        this.setState({ resList }, () => {
+          const keys = getFieldsValue();
+          const result = {};
+          Object.keys(keys).forEach((field, index) => (result[field] = resList[index].anafuncid));
+          setFieldsValue(result);
+        });
+      }
+    }
+  }
+
   onChangeItem = (record, e) => {
     const { updateList } = this.props;
-    updateList(record);
+    updateList(record, e);
   }
 
   handleSelectChange = (value, index) => {
@@ -52,24 +69,39 @@ class Statisticsconfig extends Component {
   }
 
   onSubmit = () => {
-    const { form: { validateFields }, submit } = this.props;
+    const { form: { validateFields }, submit, groupObj } = this.props;
     validateFields((err, values) => {
       if (err) return;
-      const params = {};
+      const _list = Object.values(values).map((anafuncid, index) => {
+        return ({
+          groupname: groupObj.groupmark || '',
+          anafuncid: anafuncid || '',
+          recorder: index,
+          groupname_lang: JSON.stringify(groupObj.groupmark_lang ? groupObj.groupmark_lang : { cn: '', en: '', tw: '' })
+        });
+      });
+
+      if (_list.every(item => !item.anafuncid)) {
+        message.warn('请至少需要选择一个统计项');
+        return;
+      }
+
+      const params = { data: _list };
+
       submit(params);
     });
-    message.success('提交成功');
   }
 
   render() {
-    const { groupList, selectList, form: { getFieldDecorator } } = this.props;
-    const { isReadOnlys, list = [{ id: '1', name: 1 }, { id: '2', name: 2 }, { id: '3', name: 3 }] } = this.state;
+    const { groupList, selectList, resList, form: { getFieldDecorator, getFieldsValue } } = this.props;
+    const { isReadOnlys } = this.state;
 
     return (
       <Page title="统计界面配置">
         <div className={styles.wrap}>
           <div style={{ marginRight: 20, height: '100%' }}>
             <EditList
+              getFieldsValue={getFieldsValue}
               title="分组名称"
               tips='支持变量"{NOW}"'
               list={groupList.map(o => ({ ...o, name: o.groupmark }))}
@@ -83,13 +115,13 @@ class Statisticsconfig extends Component {
                 <div className={styles.chiid}>统计项</div>
               </div>
               {
-                Array.isArray(list) && list.map((item, index) => {
+                Array.isArray(resList) && resList.map((item, index) => {
                   return (
                     <div key={index} className={styles.row}>
-                      <div className={styles.chiid}>{item.id}</div>
+                      <div className={styles.chiid}>{index + 1}</div>
                       <div className={styles.chiid}>
                         {
-                          getFieldDecorator(item.name + '', {
+                          getFieldDecorator(index + '', {
                             initialValue: ''
                           })(
                             <Select
@@ -131,8 +163,8 @@ class Statisticsconfig extends Component {
 export default connect(
   state => state[NAMESPACE],
   dispatch => ({
-    updateList(record) {
-      dispatch({ type: `${NAMESPACE}/UpdateList`, payload: { record } });
+    updateList(record, e) {
+      dispatch({ type: `${NAMESPACE}/UpdateList`, payload: { record, logic: e } });
     },
     submit(params) {
       dispatch({ type: `${NAMESPACE}/Submit`, payload: { params } });

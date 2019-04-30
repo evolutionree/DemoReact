@@ -43,12 +43,21 @@ class EditList extends Component {
     }
   }
 
-  addFields = list => (list.map((item, id) => ({ ...item, id, active: false })));
+  addFields = list => (list.map((item, id) => ({
+    ...item,
+    id,
+    active: false,
+    displayname: item.groupmark || undefined,
+    displayname_lang: item.groupmark_lang || null
+  })));
 
   add = () => {
     const { list } = this.state;
     const newRow = {
-      id: list.length
+      id: list.length,
+      active: false,
+      displayname: undefined,
+      displayname_lang: null
     };
     const newList = [...list, newRow];
     this.setState({ list: newList });
@@ -78,10 +87,10 @@ class EditList extends Component {
   };
 
   render() {
-    const { width = 250, height = '100%', title = '标题', tips = '提示信息' } = this.props;
+    const { width = 250, height = '100%', title = '标题', tips = '提示信息', getFieldsValue } = this.props;
     const { list } = this.state;
     return (
-      <div className={styles.wrap} style={{ width, height }}>
+      <div className={styles.wrap} style={{ width, height, minHeight: 300 }}>
         <div className={styles.header}>
           <div>
             <span>{title}</span> <small>共{list.length}条</small>
@@ -100,6 +109,9 @@ class EditList extends Component {
                 <NodeChildren
                   isEdit
                   key={item.id}
+                  getFieldsValue={getFieldsValue}
+                  api="/api/StatisticsSetting/updatestatisticsgroupsetting"
+                  otherParams={{ groupname: item.displayname || '', newgroupname: '' }}
                   record={item}
                   active={item.active}
                   className={styles.children}

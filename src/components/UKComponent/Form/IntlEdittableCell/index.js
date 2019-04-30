@@ -20,45 +20,61 @@ class IntlEdittableCell extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    const { record: oldRecord } = this.props;
     const { record } = nextProps;
-    this.setState({
-      text: record.displayname,
-      value: record.displayname_lang
-    });
+    for (const key in record.displayname_lang) {
+      if (oldRecord.displayname_lang[key] !== record.displayname_lang[key]) {
+        this.setState({
+          text: record.displayname,
+          value: record.displayname_lang
+        });
+      }
+    }
   }
 
   handleChange = (value) => this.setState({ value });
 
   check = () => {
-    const { onChange, api } = this.props;
+    const { api } = this.props;
     this.setState({ editable: false });
-    if (onChange) onChange(this.state.value);
     this.submitValue(api);
   }
 
   edit = (e) => {
     const { callback } = this.props;
-    // e.stopPropagation();
+    e.stopPropagation();
     if (callback) callback(this);
     this.setState({ editable: true });
   }
 
   submitValue = (api) => {
-    const { record: { fieldid, displayname_lang }, dispatch } = this.props;
+    const { record: { fieldid, displayname_lang }, dispatch, otherParams, onChange, getFieldsValue } = this.props;
     const { value } = this.state;
 
     if (!api) {
       message.warn('IntlEdittableCell缺少api属性');
       return;
     }
-    if (_.isEqual(displayname_lang, value)) return;
 
-    const params = { fieldid, displayname_lang: value };
+    if (_.isEqual(displayname_lang, value)) return;
+    
+    if (Object.values(getFieldsValue()).every(val => !val)) {
+      if (onChange) onChange(value, 'byValue');
+      return;
+    }
+
+    if (onChange) onChange(value);
+
+    const params = otherParams ? {
+      ...otherParams,
+      newgroupname: value
+    } : { fieldid, displayname_lang: value };
+
     dynamicRequest(api, params)
       .then(res => {
         const { error_msg } = res;
         message.success(error_msg || '修改成功');
-        if (true) dispatch({ type: 'entityFields/query' });
+        if (!otherParams) dispatch({ type: 'entityFields/query' });
       }).catch(e => {
         message.error(e.message || '修改失败');
       });
@@ -79,7 +95,7 @@ class IntlEdittableCell extends Component {
     });
 
     return (
-      <div className={wrap} style={style}>
+      <div className={wrap} style={style} onClick={this.onChangeItem}>
         {
           editable ?
             <div className={styles.editableCellInputWrapper}>
@@ -95,7 +111,7 @@ class IntlEdittableCell extends Component {
               />
             </div>
             :
-            <div className={styles.editableCellTextWrapper} onClick={this.onChangeItem}>
+            <div className={styles.editableCellTextWrapper}>
               <IntlText value={text} value_lang={value} />
               <Icon
                 type="edit"

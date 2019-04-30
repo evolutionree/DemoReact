@@ -6,7 +6,7 @@ import { connect } from 'dva';
 
 function IntlText2({ value, value_lang, currentLocale }) {
   const emptyText = <span style={{ color: '#999999' }}>(空)</span>;
-  let text = value_lang ? value_lang : value;
+  let text = value_lang || value;
   if (text === null || text === undefined) {
     text = emptyText;
   } else if (text instanceof Object) {

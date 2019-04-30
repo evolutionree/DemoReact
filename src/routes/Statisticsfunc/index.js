@@ -4,7 +4,6 @@ import { routerRedux } from 'dva/router';
 import { Button, Table, Modal, Tooltip } from 'antd';
 import Page from '../../components/Page';
 import Toolbar from '../../components/Toolbar';
-import Search from '../../components/Search';
 import { getIntlText } from '../../components/UKComponent/Form/IntlText';
 import StatisticsFormModal from './StatisticsFormModal';
 import styles from './index.less';
@@ -23,13 +22,13 @@ function Statisticsfunc(props) {
     Modal.confirm({
       title: '确定要删除吗？',
       onOk() {
-        dispatch({ type: 'statisticsfunc/del', payload: currentRecords[0] });
+        dispatch({ type: 'statisticsfunc/del', payload: currentRecords });
       }
     });
   }
   function handleSwitch(isUse) {
     Modal.confirm({
-      title: `确认要${isUse ? '启用' : '停用'}吗？`,
+      title: `确认要${isUse ? '停用' : '启用'}吗？`,
       onOk() {
         dispatch({ type: 'statisticsfunc/use', payload: { currentRecords, isUse } });
       }
@@ -56,8 +55,7 @@ function Statisticsfunc(props) {
     currentRecords,
     total,
     showModals,
-    savePending,
-    checkFunc
+    savePending
   } = props;
 
   const { pageIndex, pageSize } = queries;
@@ -81,7 +79,7 @@ function Statisticsfunc(props) {
     { title: '列表函数', key: 'morefunc', width: 300 },
     { title: '是否跳入实体', key: 'moreflag_name' },
     { title: '实体名称', key: 'entityname' },
-    { title: '状态', key: 'moreflag' }
+    { title: '状态', key: 'recstatus', render: text => ['停用', '启用'][text] }
   ];
 
   const renderList = (colList) => (
@@ -99,7 +97,7 @@ function Statisticsfunc(props) {
   const columns = renderList(LoopList);
   const tableWidth = columns.reduce((sum, current) => sum + current.width, 0) + 62;
 
-  const isUse = Array.isArray(currentRecords) && currentRecords.length === 1 && currentRecords[0].recstatus;
+  const isUse = Array.isArray(currentRecords) && currentRecords.length === 1 && currentRecords[0].recstatus === 1;
 
   return (
     <Page title="统计函数定义">
@@ -107,21 +105,13 @@ function Statisticsfunc(props) {
         selectedCount={currentRecords.length}
         actions={[
           { label: '编辑', single: true, handler: handleEdit, show: () => true },
-          { label: `${isUse ? '启用' : '停用'}`, single: true, handler: () => handleSwitch(isUse) },
+          { label: `${isUse ? '停用' : '启用'}`, single: true, handler: () => handleSwitch(isUse) },
           { label: '删除', handler: handleDel }
         ]}
       >
         <div style={{ float: 'left' }}>
           <Button onClick={handleAdd}>新增</Button>
         </div>
-        <Toolbar.Right>
-          {/* <Search
-            label="搜索"
-            value={dataSourceName}
-            placeholder="输入数据源名称搜索"
-            onSearch={search.bind(null, 'dataSourceName')}
-          /> */}
-        </Toolbar.Right>
       </Toolbar>
 
       <Table
