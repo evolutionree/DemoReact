@@ -14,7 +14,7 @@ const NAMESPACE = 'statisticsconfig';
 
 class Statisticsconfig extends Component {
   state = {
-    isReadOnlys: [0, 0, 0],
+    isReadOnlys: [0, 1, 1],
     resList: []
   }
 
