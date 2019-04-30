@@ -16,26 +16,30 @@ export default {
   effects: {
     *Init(_, { call, put, select }) {
       const { cacheList } = yield select(state => state.statisticsconfig);
-      const gParams = {
-        AnaFuncName: ''
-      };
-      const { data: groupList } = yield call(getstatisticsdata, gParams);
-      const dParams = {
-        GroupName: Array.isArray(groupList) && groupList[0].groupmark
-      };
-      const { data: resList } = yield call(getstatisticsdetaildata, dParams);
+      try {
+        const gParams = {
+          AnaFuncName: ''
+        };
+        const { data: groupList } = yield call(getstatisticsdata, gParams);
+        const dParams = {
+          GroupName: Array.isArray(groupList) && groupList[0].groupmark
+        };
+        const { data: resList } = yield call(getstatisticsdetaildata, dParams);
 
-      const { data: selectList } = yield call(getstatistics, {});
+        const { data: selectList } = yield call(getstatistics, {});
 
-      yield put({
-        type: 'putState',
-        payload: {
-          groupList,
-          resList: resList.length ? resList : [...cacheList],
-          selectList,
-          groupObj: Array.isArray(groupList) && groupList[0]
-        }
-      });
+        yield put({
+          type: 'putState',
+          payload: {
+            groupList,
+            resList: resList.length ? resList : [...cacheList],
+            selectList,
+            groupObj: Array.isArray(groupList) && groupList[0]
+          }
+        });
+      } catch (e) {
+        message.error(e);
+      }
     },
     *UpdateList({ payload }, { call, put, select }) {
       const { cacheList } = yield select(state => state.statisticsconfig);
@@ -49,23 +53,33 @@ export default {
         return;
       }
 
-      const dParams = {
-        GroupName: record.groupmark
-      };
-      const { data: resList } = yield call(getstatisticsdetaildata, dParams);
+      try {
+        const dParams = {
+          GroupName: record.groupmark
+        };
 
-      yield put({
-        type: 'putState',
-        payload: {
-          resList: resList.length ? resList : [...cacheList],
-          groupObj: record
-        }
-      });
+        const { data: resList } = yield call(getstatisticsdetaildata, dParams);
+
+        yield put({
+          type: 'putState',
+          payload: {
+            resList: resList.length ? resList : [...cacheList],
+            groupObj: record
+          }
+        });
+      } catch (e) {
+        message.error(e);
+      }
     },
-    *Submit({ payload }, { call }) {
-      const { params } = payload;
-      const { error_msg } = yield call(savestatisticsgroupsumsetting, params);
-      message.success(error_msg || '提交成功');
+    *Submit({ payload }, { put, call }) {
+      try {
+        const { params } = payload;
+        const { error_msg } = yield call(savestatisticsgroupsumsetting, params);
+        message.success(error_msg || '提交成功');
+        yield put({ type: 'Init' });
+      } catch (e) {
+        message.error(e || '提交成功');
+      }
     }
   },
   reducers: {

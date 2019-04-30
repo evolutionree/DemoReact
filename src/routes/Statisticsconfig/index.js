@@ -29,7 +29,7 @@ class Statisticsconfig extends Component {
 
     for (const item in resList) {
       if (resList[item] !== oldResList[item]) {
-        this.setState({ resList }, () => {
+        this.setState({ resList, isReadOnlys: resList[0].anafuncid ? [1, 1, 0] : [0, 1, 1] }, () => {
           const keys = getFieldsValue();
           const result = {};
           Object.keys(keys).forEach((field, index) => (result[field] = resList[index].anafuncid));
@@ -46,11 +46,11 @@ class Statisticsconfig extends Component {
 
   handleSelectChange = (value, index) => {
     const { isReadOnlys: _list } = this.state;
-    const min = 0;
+
     for (const k in _list) {
-      if (k === min) break;
       if (value !== '') {
         if (k < index) _list[k] = 1;
+        if (k * 1 === index + 1) _list[k] = 0;
       } else {
         setTimeout(() => { // 获取改变后的value值
           const { form: { validateFields } } = this.props;
@@ -58,6 +58,7 @@ class Statisticsconfig extends Component {
             if (err) return;
             for (const idx in values) {
               if (idx - 1 < index) _list[idx - 1] = Object.values(values)[idx] === '' ? 0 : 1;
+              if (idx * 1 === index + 1) _list[idx] = 1;
             }
             this.setState({ isReadOnlys: _list });
           });
