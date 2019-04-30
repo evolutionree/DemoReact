@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
-import { Button, Table, Modal, Tooltip } from 'antd';
+import { Button, Table, Modal, Tooltip, Switch } from 'antd';
 import Page from '../../components/Page';
 import Toolbar from '../../components/Toolbar';
 import { getIntlText } from '../../components/UKComponent/Form/IntlText';
@@ -46,6 +46,9 @@ function Statisticsfunc(props) {
   function handleSelectRecords(records) {
     dispatch({ type: 'statisticsfunc/currentRecords', payload: records });
   }
+  function disable() {
+    dispatch({ type: 'statisticsfunc/disable' });
+  }
 
   const {
     dispatch,
@@ -55,13 +58,14 @@ function Statisticsfunc(props) {
     currentRecords,
     total,
     showModals,
-    savePending
+    savePending,
+    checked
   } = props;
 
   const { pageIndex, pageSize } = queries;
 
   const tooltipElements = (text, width) => (
-    <Tooltip title={text}>
+    <Tooltip title={text} overlayClassName={styles.tooltip}>
       <div
         className={`${text}`.length > 5 ? styles.hide : ''}
         title={`${text}`}
@@ -73,7 +77,7 @@ function Statisticsfunc(props) {
   );
 
   const LoopList = [
-    { title: '统计项名称', key: 'anafuncname', width: 80, render: (text, record) => getIntlText('anafuncname', record) },
+    { title: '统计项名称', key: 'anafuncname', width: 100, render: (text, record) => getIntlText('anafuncname', record) },
     { title: '统计函数', key: 'countfunc', width: 300 },
     { title: '是否进入列表', key: 'allowinto_name' },
     { title: '列表函数', key: 'morefunc', width: 300 },
@@ -109,8 +113,15 @@ function Statisticsfunc(props) {
           { label: '删除', handler: handleDel }
         ]}
       >
-        <div style={{ float: 'left' }}>
+        <div style={{ float: 'left', display: 'flex', alignItems: 'center' }} >
           <Button onClick={handleAdd}>新增</Button>
+          <Switch
+            style={{ marginLeft: 10 }}
+            checked={checked}
+            checkedChildren="启用"
+            unCheckedChildren="禁用"
+            onChange={disable}
+          />
         </div>
       </Toolbar>
 

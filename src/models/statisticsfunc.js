@@ -8,11 +8,13 @@ export default {
   state: {
     queries: {},
     list: [],
+    cacheList: [],
     total: null,
     currentRecords: [],
     showModals: '',
     savePending: false,
-    errMsg: ''
+    errMsg: '',
+    checked: true
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -40,14 +42,16 @@ export default {
         payload: corrected
       });
     },
-    *query({ payload: queries }, { call, put }) {
+    *query({ payload: queries }, { call, put, select }) {
+      const { checked } = yield select(state => state.statisticsfunc);
       yield put({ type: 'queryRequest', payload: queries });
       try {
         const result = yield call(getstatistics, queries);
         yield put({
-          type: 'querySuccess',
+          type: 'putState',
           payload: {
-            list: result.data
+            list: result.data.filter(item => !!item.recstatus === checked),
+            cacheList: result.data
           }
         });
       } catch (e) {
@@ -118,9 +122,20 @@ export default {
         pathname: '/statisticsfunc',
         query: resetQuery ? undefined : query
       }));
+    },
+    *disable(_, { put, select }) {
+      const { checked, cacheList } = yield select(state => state.statisticsfunc);
+      const result = cacheList.filter(item => checked === (!item.recstatus));
+      yield put({ type: 'putState', payload: { checked: !checked, list: result } });
     }
   },
   reducers: {
+    putState(state, { payload }) {
+      return {
+        ...state,
+        ...payload
+      };
+    },
     queryRequest(state, { payload: queries }) {
       return {
         ...state,

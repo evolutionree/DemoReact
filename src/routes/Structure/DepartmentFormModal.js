@@ -136,7 +136,7 @@ export default connect(
       fields = {
         deptname: currentDept.deptname,
         deptcode: currentDept.deptcode,
-        oglevel: currentDept.oglevel || undefined,
+        oglevel: (currentDept.oglevel + '') || undefined,
         pdeptid: currentDept.ancestor
       };
     } else {
