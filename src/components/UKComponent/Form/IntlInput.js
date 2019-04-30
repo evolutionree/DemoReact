@@ -3,6 +3,7 @@
  */
 import React, { Component } from 'react';
 import { Input, Icon } from 'antd';
+import * as _ from 'lodash';
 import classnames from 'classnames';
 import MD5 from 'md5';
 import { translateMap } from '../util/BaiduTranslate';
@@ -32,6 +33,7 @@ class IntlInput extends Component {
       value: this.transformValue(props.value),
       inputValue: this.transformValue(props.value)[langlist[0] && langlist[0].key] || ''
     };
+    this.translateLang = _.debounce(this.translateLang, 500);
   }
 
   componentDidMount() {
@@ -103,10 +105,11 @@ class IntlInput extends Component {
       },
       inputValue: value,
       panelVisible: !this.state.value
-    });
+    }, () => this.translateLang(this.state.value, this.state.currentLocale));
   }
 
   translateCNToOtherLang = (text, translate_lang, fromLang, toLang) => {
+    console.log(text, translate_lang, fromLang, toLang)
     const { onChange } = this.props;
 
     if (!text) return;
@@ -150,14 +153,20 @@ class IntlInput extends Component {
     });
   }
 
-  inputBlur = (e) => {
-    const { onChange } = this.props;
+  translateLang = (e, currentLocale) => {
     for (let i = 0; i < langlist.length; i += 1) { //翻译其他 语言
       const translate_lang = langlist[i].key;
-      if (translateMap[translate_lang.toLocaleUpperCase()] && !this.state.value[translate_lang]) { //要翻译的语言版本 值还为空的时候 允许自动翻译
-        this.translateCNToOtherLang(e.target.value, translate_lang, translateMap[this.state.currentLocale.toUpperCase()], translateMap[translate_lang.toLocaleUpperCase()]);
+      if (translateMap[translate_lang.toLocaleUpperCase()] && (e.cn || (e.target && e.target.value))) { //要翻译的语言版本 值还为空的时候 允许自动翻译
+        this.translateCNToOtherLang(e.cn || e.target.value, translate_lang, translateMap[currentLocale.toUpperCase()], translateMap[translate_lang.toLocaleUpperCase()]);
       }
     }
+  }
+
+  inputBlur = (e) => {
+    const { onChange } = this.props;
+    const { currentLocale } = this.state;
+
+    this.translateLang(e, currentLocale);
 
     const val = {
       ...this.state.value,
