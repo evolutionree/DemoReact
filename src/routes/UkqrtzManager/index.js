@@ -62,6 +62,8 @@ function UkqrtzManager(props) {
         <Column title="动作类型" key="actiontype" dataIndex="actiontype" />
         <Column title="动作命令" key="actioncmd" dataIndex="actioncmd" />
 
+        <Column title="事务类型" key="triggertype" dataIndex="triggertype" render={v => ['通用', '系统'][v]} />
+        <Column title="事务子类型" key="triggerchildtype" dataIndex="triggerchildtype" render={v => ['通用', '回收', '提醒', '工作流超时'][v]} />
         <Column title="执行参数" key="actionparameters" dataIndex="actionparameters" render={v => JSON.stringify(v)} />
         <Column title="当前状态" key="recstatus" dataIndex="recstatus" render={v => ['停用', '启用', '已删除'][v]} />
         <Column title="是否运行中" key="inbusy" dataIndex="inbusy" render={v => ['空闲中', '运行中'][v]} />
