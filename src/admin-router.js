@@ -10,6 +10,11 @@ import NoPermission from './routes/NoPermission';
 
 import Structure from './routes/Structure';
 
+import ReportRelation from './routes/ReportRelation';
+import ReportRelationMain from './routes/ReportRelation/ReportRelationMain';
+import ReportRelationDetail from './routes/ReportRelation/ReportRelationDetail';
+
+
 import ProductManager from './routes/ProductManager';
 
 import RoleGroups from './routes/RoleGroupList';
@@ -31,6 +36,15 @@ import PasswordStrategy from './routes/Configure/passwordStrategy';
 
 const appRoutes = [
   { path: 'structure', comp: Structure, entid: '3d77dfd2-60bb-4552-bb69-1c3e73cf4095', model: require('./models/structure') },
+  { 
+    path: 'reportrelation', 
+    comp: ReportRelation,
+    model: require('./models/reportrelation'),
+    children: [
+      { path: 'main', comp: ReportRelationMain },
+      { path: 'detail', comp: ReportRelationDetail }
+    ]
+  },
   { path: 'role-groups', comp: RoleGroups, entid: '00000000-0000-0000-0000-000000000012', model: require('./models/roleGroups') },
   { path: 'roles', comp: RoleList, entid: '00000000-0000-0000-0000-000000000012', model: require('./models/roleList') },
   {
