@@ -81,14 +81,12 @@ class Statisticsconfig extends Component {
         });
       });
 
-      if (_list.every(item => !item.anafuncid)) {
-        message.warn('请至少需要选择一个统计项');
-        return;
+      if (_list.every(item => !item.anafuncid) || _list.every(item => item.anafuncid)) {
+        const params = { data: _list };
+        submit(params);
+      } else {
+        message.warn('请全选（或全不选）统计项');
       }
-
-      const params = { data: _list };
-
-      submit(params);
     });
   }
 
