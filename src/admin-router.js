@@ -37,7 +37,7 @@ import PasswordStrategy from './routes/Configure/passwordStrategy';
 const appRoutes = [
   { path: 'structure', comp: Structure, entid: '3d77dfd2-60bb-4552-bb69-1c3e73cf4095', model: require('./models/structure') },
   { 
-    path: 'reportrelation', 
+    path: 'reportrelation',
     comp: ReportRelation,
     model: require('./models/reportrelation'),
     children: [
