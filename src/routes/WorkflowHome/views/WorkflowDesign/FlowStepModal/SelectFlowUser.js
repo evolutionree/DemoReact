@@ -89,6 +89,9 @@ class SelectFlowUser extends Component {
     this.state = {
       allRoles: []
     };
+  }
+
+  componentDidMount() {
     this.fetchAllRoles();
   }
 
@@ -128,36 +131,60 @@ class SelectFlowUser extends Component {
     });
   };
 
+  onSelectChange = (e) => {
+    console.log(e);
+  }
+
   render() {
-    const { type, data } = this.props.value;
+    const { entities, value: { type, data } } = this.props;
+
     const radioStyle = {
       display: 'block',
       marginRight: '700px'
     };
+
     let userFields = [];
-    const { entities } = this.props;
     if (entities && entities[0]) {
       userFields = entities[0].fields.filter(field => [25, 1002, 1003, 1006].indexOf(field.controltype) !== -1);
     }
+
     return (
       <div className={styles.selectFlowUser}>
         <Radio.Group onChange={this.onRadioChange} style={{ width: '100%' }}>
+          {/* type 1 */}
           <Radio style={radioStyle} checked={_.includes([1], type)} value={[1]}>让用户自己选择审批人</Radio>
+
+          {/* type 2 */}
           <Radio style={radioStyle} checked={_.includes([2], type)} value={[2]}>
             指定审批人
           </Radio>
-          <SelectUser
-            placeholder="请选择审批人"
-            value={type === 2 ? data.userid : ''}
-            value_name={type === 2 ? data.username : ''}
-            onChange={() => {}}
-            onChangeWithName={({ value, value_name }) => {
-              this.onDataChange({ userid: value, username: value_name });
-            }}
-            isReadOnly={type === 2 ? 0 : 1}
-            multiple={1}
-            style={{ width: '260px' }}
-          />
+          <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+            <SelectUser
+              placeholder="请选择审批人"
+              style={{ width: '260px', height: 'inherit' }}
+              value={type === 2 ? data.userid : ''}
+              value_name={type === 2 ? data.username : ''}
+              onChange={() => { }}
+              onChangeWithName={({ value, value_name }) => {
+                this.onDataChange({ userid: value, username: value_name });
+              }}
+              isReadOnly={type === 2 ? 0 : 1}
+              multiple={1}
+            />
+            <Select
+              style={{ width: '135px' }}
+              value={type === 2 ? data.leader : ''}
+              onChange={this.onSelectChange}
+              disabled={type !== 2}
+              placeholder="请选择是否领导"
+            >
+              <Option value="">请选择是否领导</Option>
+              <Option value="1">是</Option>
+              <Option value="0">否</Option>
+            </Select>
+          </div>
+
+          {/* type 4 */}
           <Radio style={radioStyle} checked={_.includes([4], type)} value={[4]}>
             指定审批人的角色
           </Radio>
@@ -179,9 +206,11 @@ class SelectFlowUser extends Component {
             isReadOnly={type === 4 ? 0 : 1}
             allRoles={this.state.allRoles}
           />
+
           {/*5 指定审批人所在团队(特定)*/}
           {/*8 当前审批人所在团队(非下级)*/}
-          {/*11 当前审批人所在团队的上级团队(非下级)	*/}
+          {/*11 当前审批人所在团队的上级团队(非下级)*/}
+          {/* type 5 */}
           <Radio style={radioStyle} checked={_.includes([5, 8, 801, 802, 11, 111, 112], type)} value={[5, 8, 801, 802, 11, 111, 112]}>
             指定审批人所在团队
           </Radio>
@@ -213,9 +242,11 @@ class SelectFlowUser extends Component {
             onChange={(fieldname, fieldlabel) => this.onDataChange({ fieldname, fieldlabel })}
             fields={userFields}
           />}
-          {/* 6	指定审批人所在团队及角色(特定)
-              9	当前审批人所在团队及角色(非下级)
-              10	当前审批人所在团队的上级团队及角色(非下级)	 */}
+
+          {/* 6 指定审批人所在团队及角色(特定)
+              9 当前审批人所在团队及角色(非下级)
+              10 当前审批人所在团队的上级团队及角色(非下级) */}
+          {/* type 6 */}
           <Radio style={radioStyle} checked={_.includes([6, 9, 901, 902, 10, 101, 102], type)} value={[6, 9, 901, 902, 10, 101, 102]}>
             指定审批人所在团队及角色
           </Radio>
@@ -265,6 +296,8 @@ class SelectFlowUser extends Component {
             isReadOnly={_.includes([6, 9, 901, 902, 10, 101, 102], type) ? 0 : 1}
             allRoles={this.state.allRoles}
           />
+
+          {/* type 7 */}
           <Radio style={radioStyle} checked={_.includes([7], type)} value={[7]}>流程发起人</Radio>
         </Radio.Group>
       </div>
