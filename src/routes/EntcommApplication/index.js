@@ -307,7 +307,6 @@ function EntcommList({
         entityId={entityId}
         entityName={entityName}
         entityTypes={entityTypes}
-        approval
         flow={selectedFlowObj}
         cancel={onAddModalCanel}
         done={onAddModalDone}
