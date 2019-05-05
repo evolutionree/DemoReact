@@ -101,14 +101,14 @@ class FlowStepModal extends Component {
           </FormItem>
           <FormItem label="NodeEvent">
             {getFieldDecorator('funcname')(
-              <Input maxLength={200} placeholder="关联函数名" />
+              <Input maxLength="200" placeholder="关联函数名" />
             )}
           </FormItem>
         </Form>}
         {this.props.visible && (steptypeid === -1 || steptypeid === 0) && <Form>
           <FormItem label="NodeEvent">
             {getFieldDecorator('funcname')(
-              <Input maxLength={200} placeholder="关联函数名" />
+              <Input maxLength="200" placeholder="关联函数名" />
             )}
           </FormItem>
         </Form>}
