@@ -1,145 +1,165 @@
-import React from 'react';
-import { routerRedux } from 'dva/router';
-import { Button, Table, Modal, Tooltip } from 'antd';
+import React, { Component } from 'react';
+import { connect } from 'dva';
+import { Link } from 'dva/router';
+import { Button, Modal } from 'antd';
 import Toolbar from '../../../components/Toolbar';
 import Search from '../../../components/Search';
-import { getIntlText } from '../../../components/UKComponent/Form/IntlText';
-import StatisticsFormModal from '../StatisticsFormModal';
+import ConfigTable from '../../../components/ConfigTable';
+import FormModal from './FormModal';
 import styles from '../index.less';
 
-function ReportRelationMain(props) {
-  function search(key, val) {
-    const query = typeof key === 'object'
-      ? { ...queries, pageIndex: 1, ...key }
-      : { ...queries, pageIndex: 1, [key]: val };
-    dispatch(routerRedux.push({ pathname, query }));
+const SPACENAME = 'reportrelation';
+
+class ReportRelationMain extends Component {
+  state = {
+    OptionList: []
   }
-  function handleEdit() {
-    dispatch({ type: 'reportrelation/showModals', payload: 'edit' });
-  }
-  function handleDel() {
-    Modal.confirm({
-      title: '确定要删除吗？',
-      onOk() {
-        dispatch({ type: 'reportrelation/del', payload: currentRecords });
-      }
+
+  fecthFormData = (recid) => {
+    const { dispatch } = this.props;
+    const { OptionList } = this.state;
+    const fields = {};
+    OptionList.forEach(item => (fields[item.fieldname] = ''));
+    new Promise((resolve) => {
+      dispatch({ type: `${SPACENAME}/FecthAllFormData`, payload: { recid, fields, resolve } });
+    }).then(res => {
+      // callback behavior
     });
   }
-  function handleSwitch(isUse) {
-    Modal.confirm({
-      title: `确认要${isUse ? '停用' : '启用'}吗？`,
-      onOk() {
-        dispatch({ type: 'reportrelation/use', payload: { currentRecords, isUse } });
+
+
+  add = () => {
+    const { showModals, toggleModal } = this.props;
+    toggleModal(showModals, 'FormModal', 'add');
+    this.fecthFormData();
+  }
+
+  edit = () => {
+    const { showModals, toggleModal, selectedRows } = this.props;
+    const { reportrelationid } = selectedRows[0];
+    toggleModal(showModals, 'FormModal', 'edit');
+    this.fecthFormData(reportrelationid);
+  }
+
+
+  componentDidMount() {
+    const { onInit } = this.props;
+    if (onInit) onInit();
+  }
+
+  handleSelectRecords = () => {
+
+  }
+
+  handleCancel = (model, e, params) => {
+    const { showModals, toggleModal, selectedRows, onSelectRow } = this.props;
+
+    if (selectedRows.length) {
+      if (params) {
+        const newSelectedRows = [{ ...selectedRows[0], ...params }];
+        onSelectRow(newSelectedRows);
       }
-    });
-  }
-  function handleAdd() {
-    dispatch({ type: 'reportrelation/showModals', payload: 'add' });
-  }
-  function handleSave(data) {
-    dispatch({ type: 'reportrelation/save', payload: data });
-  }
-  function handleCancel() {
-    dispatch({ type: 'reportrelation/hideModal' });
-  }
-  function handleSelectRecords(records) {
-    dispatch({ type: 'reportrelation/currentRecords', payload: records });
+    }
+
+    toggleModal(showModals, model, '');
   }
 
-  const {
-    dispatch,
-    location: { pathname },
-    queries,
-    list,
-    currentRecords,
-    total,
-    showModals,
-    savePending
-  } = props;
 
-  const { pageIndex, pageSize } = queries;
+  render() {
+    const {
+      list,
+      selectedRows,
+      initParams,
+      onSeach,
+      onSelectRow,
+      showModals,
+      dispatch,
+      fetchDataLoading,
+      confirmLoading
+    } = this.props;
 
-  const tooltipElements = (text, width) => (
-    <Tooltip title={text}>
-      <div
-        className={`${text}`.length > 5 ? styles.hide : ''}
-        title={`${text}`}
-        style={{ maxWidth: `${width - 21}px` }}
-      >
-        {text}
+    return (
+      <div>
+        <Toolbar
+          selectedCount={selectedRows.length}
+          actions={[
+            { label: '编辑', single: true, handler: this.edit, show: () => true },
+            { label: '删除', handler: () => { } }
+          ]}
+        >
+          <div style={{ float: 'left' }}>
+            <Button onClick={this.add}>新增</Button>
+          </div>
+          <Toolbar.Right>
+            <Search
+              placeholder="输入超级赛亚人可变身"
+              onChange={() => {}}
+              onSearch={() => {}}
+            />
+          </Toolbar.Right>
+        </Toolbar>
+
+        <ConfigTable
+          rowKey="reportrelationid"
+          rowSelect
+          spacename={SPACENAME}
+          onSeach={onSeach}
+          initParams={initParams}
+          dataSource={list}
+          CBSelectRow={data => onSelectRow(data)}
+          columns={[
+            {
+              title: '汇报关系名称',
+              key: 'reportrelationname',
+              width: 200,
+              render: (text, record) => <Link to={`/${SPACENAME}/detail/${record.reportrelationid}`}>{text}</Link>,
+              sorter: true
+            },
+            { title: '描述', key: 'reportremark', width: 300, sorter: true }
+          ]}
+        />
+
+        <FormModal
+          spacename={SPACENAME}
+          dispatch={dispatch}
+          fetch={{
+            add: 'api/ReportRelation/addreportrelation',
+            edit: 'api/ReportRelation/updatereportrelation'
+          }}
+          selectedRows={selectedRows}
+          visible={showModals.FormModal}
+          onChange={this.handleSelectRecords}
+          cancel={() => this.handleCancel('FormModal')}
+          fetchDataLoading={fetchDataLoading.FormModal}
+          confirmLoading={confirmLoading.FormModal}
+        />
       </div>
-    </Tooltip>
-  );
-
-  const LoopList = [
-    { title: '统计项名称', key: 'anafuncname', width: 80, render: (text, record) => getIntlText('anafuncname', record) },
-    { title: '统计函数', key: 'countfunc', width: 300 }
-  ];
-
-  const renderList = (colList) => (
-    colList.map(item => {
-      return {
-        ...item,
-        dataIndex: item.key,
-        width: item.width || 100,
-        fixed: item.fixed || false,
-        render: item.render ? item.render : (text => tooltipElements(text, item.width || 100)),
-        children: item.children ? renderList(item.children) : false
-      };
-    })
-  );
-  const columns = renderList(LoopList);
-  const tableWidth = columns.reduce((sum, current) => sum + current.width, 0) + 62;
-
-  const isUse = Array.isArray(currentRecords) && currentRecords.length === 1 && currentRecords[0].recstatus === 1;
-
-  return (
-    <div>
-      <Toolbar
-        selectedCount={currentRecords.length}
-        actions={[
-          { label: '编辑', single: true, handler: handleEdit, show: () => true },
-          { label: `${isUse ? '停用' : '启用'}`, single: true, handler: () => handleSwitch(isUse) },
-          { label: '删除', handler: handleDel }
-        ]}
-      >
-        <div style={{ float: 'left' }}>
-          <Button onClick={handleAdd}>新增</Button>
-        </div>
-        <Toolbar.Right>
-          <Search />
-        </Toolbar.Right>
-      </Toolbar>
-
-      <Table
-        rowKey="anafuncid"
-        scroll={{ x: `${tableWidth}px` }}
-        columns={columns}
-        dataSource={list}
-        rowSelection={{
-          selectedRowKeys: currentRecords.map(item => item.anafuncid),
-          onChange: (keys, items) => { handleSelectRecords(items); }
-        }}
-        pagination={{
-          pageSize,
-          total,
-          current: pageIndex,
-          onChange: search.bind(null, 'pageIndex'),
-          onShowSizeChange: (curr, size) => { search('pageSize', size); }
-        }}
-      />
-
-      <StatisticsFormModal
-        currentRecords={currentRecords}
-        showModals={showModals}
-        onChange={handleSelectRecords}
-        onOk={handleSave}
-        onCancel={handleCancel}
-        savePending={savePending}
-      />
-    </div>
-  );
+    );
+  }
 }
 
-export default ReportRelationMain;
+export default connect(
+  state => ({
+    ...state[SPACENAME],
+    SPACENAME: SPACENAME
+  }),
+  dispatch => ({
+    onInit() {
+      dispatch({ type: `${SPACENAME}/Init` });
+    },
+    toggleModal(showModals, modal, action) {
+      dispatch({ type: `${SPACENAME}/showModals`, payload: { ...showModals, [modal]: (action === undefined ? modal : action) } });
+    },
+    onDel(params) {
+      dispatch({ type: `${SPACENAME}/Del`, payload: params });
+    },
+    onSeach(params) {
+      dispatch({ type: `${SPACENAME}/Search`, payload: params });
+    },
+    onSelectRow(selectedRows) {
+      dispatch({ type: `${SPACENAME}/putState`, payload: { selectedRows } });
+    },
+    dispatch
+  })
+)(ReportRelationMain);
 

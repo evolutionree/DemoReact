@@ -1,165 +1,168 @@
 import { message } from 'antd';
-import { routerRedux } from 'dva/router';
-import { getstatistics, addstatistics, updatestatistics, deletestatistics, disabledstatistics } from '../services/statistics';
-import { getCorrectPager } from '../utils/common';
+import { getreportrelation, getreportreldetail } from '../services/reportrelation';
+import { setSessionItem, getCacheData } from '../utils/newStorage';
+
+const NAMESPACE = 'reportrelation';
+const judgement = (value, valueList = [undefined, null, '']) => valueList.includes(value);
 
 export default {
-  namespace: 'reportrelation',
+  namespace: NAMESPACE,
   state: {
+    roles: [],
+    departments: [],
     queries: {},
     list: [],
+    selectedRows: [],
     total: null,
-    currentRecords: [],
-    showModals: '',
-    savePending: false,
-    errMsg: ''
-  },
-  subscriptions: {
-    setup({ dispatch, history }) {
-      return history.listen(location => {
-        if (location.pathname === '/reportrelation') {
-          dispatch({
-            type: 'search',
-            payload: location.query
-          });
-        }
-      });
+    recid: '',
+    showDisabledDepts: false,
+    attenceGroupDataSource: [],
+    confirmLoading: {
+      FormModal: false
+    },
+    fetchDataLoading: {
+      FormModal: false
+    },
+    showModals: {
+      FormModal: ''
+    },
+    defaultParams: {
+      pageIndex: 1,
+      pageSize: 100000,
+      searchOrder: '',
+      columnFilter: null //字段查询
+    },
+    initParams: {
+      pageIndex: 1,
+      pageSize: 100000,
+      searchOrder: '',
+      columnFilter: null //字段查询
+    },
+    formInfo: {
+      fieldData: {},
+      baseversion: [],
+      platformdepend: [],
+      productdepend: [],
+      industrydepend: [],
+      projectdepend: []
     }
   },
   effects: {
-    *search({ payload: queries }, { select, call, put }) {
-      const { total } = yield select(state => state.reportrelation);
-      const { pageIndex, pageSize } = getCorrectPager({ ...queries, total });
-      let { dataSourceName = '', recStatus = 1 } = queries;
-      dataSourceName = dataSourceName.slice(0, 20);
-      recStatus = parseInt(recStatus);
-
-      const corrected = { pageIndex, pageSize, dataSourceName, recStatus };
-      yield put({
-        type: 'query',
-        payload: corrected
-      });
+    *Init({ payload }, { put }) {
+      yield put({ type: 'QueryList', payload });
     },
-    *query({ payload: queries }, { call, put }) {
-      yield put({ type: 'queryRequest', payload: queries });
+    *Search({ payload }, { put }) {
+      yield put({ type: 'setListParams', payload });
+      yield put({ type: 'QueryList' });
+    },
+    *QueryList({ payload }, { select, put, call }) {
+      const { initParams } = yield select(state => state[NAMESPACE]);
+      const params = { ...(payload || initParams) };
+      console.log(params);
+
       try {
-        const result = yield call(getstatistics, queries);
-        yield put({
-          type: 'querySuccess',
-          payload: {
-            list: result.data
-          }
-        });
+        const { data } = yield call(getreportrelation, {});
+        yield put({ type: 'putState', payload: { list: data } });
       } catch (e) {
-        console.error(e);
-        message.error(e.message || '获取数据失败');
+        message.error(e.message || '获取列表失败');
       }
     },
-    *save({ payload: values }, { select, call, put }) {
-      const { showModals, currentRecords } = yield select(state => state.reportrelation);
-      const isEdit = /edit/.test(showModals);
-
+    *Del({ payload }, { put, call }) {
+      const params = { recids: payload };
       try {
-        yield put({ type: 'savePending' });
-        const { allowinto, moreflag, anafuncname_lang, ...rest } = values;
-        const params = {
-          ...currentRecords[0],
-          ...rest,
-          anafuncname: anafuncname_lang.cn,
-          anafuncname_lang: JSON.stringify(anafuncname_lang),
-          allowinto: allowinto ? 1 : 0,
-          moreflag: moreflag ? 1 : 0
-        };
-        yield call(isEdit ? updatestatistics : addstatistics, params);
-        yield put({ type: 'hideModal' });
-        message.success('保存成功');
-
-        yield put({
-          type: 'refreshPage',
-          payload: !isEdit
-        });
-      } catch (e) {
-        yield put({ type: 'savePending', payload: false });
-        message.error(e.message || '保存失败');
-      }
-    },
-    *del({ payload: records }, { call, put }) {
-      try {
-        const params = {
-          AnaFuncIds: Array.isArray(records) ? records.map(o => o.anafuncid) : []
-        };
-        yield call(deletestatistics, params);
-        message.success('删除成功');
-        yield put({ type: 'refreshPage', payload: false });
+        // const { error_msg } = yield call(deleteversionrecord, params);
+        // message.success(error_msg || '删除成功！');
+        yield put({ type: 'QueryList' });
       } catch (e) {
         message.error(e.message || '删除失败');
       }
     },
-    *use({ payload }, { call, put }) {
-      const { currentRecords, isUse } = payload;
+    // *SubmitForm({ payload }, { select, call, put }) {
+    //   const { confirmLoading, recid } = yield select(state => state[NAMESPACE]);
+    //   const { params, resolve, isEdit } = payload;
+    //   try {
+    //     yield put({ type: 'handelLoading', payload: { ...confirmLoading, FormModal: true } });
+
+    //     const checkedParam = (value) => (!judgement(value) ? value * 1 : null);
+    //     const resultParams = {
+    //       versionname: params.versionname || null,
+    //       versionnum: params.versionnum || null,
+    //       versiontype: checkedParam(params.versiontype),
+    //       baseversion: params.baseversion || null,
+    //       remark: params.remark || null,
+    //       platformdepend: params.platformdepend || null,
+    //       productdepend: params.productdepend || null,
+    //       industrydepend: params.industrydepend || null,
+    //       projectdepend: params.projectdepend || null,
+    //       recid: recid || null,
+    //       persistenceversion: null
+    //     };
+    //     const response = yield call((!isEdit ? addversionrecord : updateversionrecord), resultParams);
+    //     if (resolve) resolve(response);
+    //     yield put({ type: 'QueryList' });
+    //     yield put({ type: 'handelLoading', payload: { ...confirmLoading, FormModal: false } });
+    //   } catch (e) {
+    //     yield put({ type: 'handelLoading', payload: { ...confirmLoading, FormModal: false } });
+    //     message.error(e.message);
+    //   }
+    // },
+    *FecthAllFormData({ payload }, { select, call, put }) {
+      const { fetchDataLoading } = yield select(state => state[NAMESPACE]);
+      const { recid, resolve } = payload;
+
       try {
-        const params = {
-          AnaFuncIds: currentRecords.map(o => o.anafuncid),
-          recstatus: isUse ? 0 : 1
-        };
-        yield call(disabledstatistics, params);
-        message.success('操作成功');
-        yield put({ type: 'refreshPage', payload: false });
+        if (recid) { // 编辑
+          yield put({
+            type: 'putState',
+            payload: { fetchDataLoading: { ...fetchDataLoading, FormModal: true } }
+          });
+
+          const { data: list } = yield call(getreportrelation, {});
+
+          yield put({
+            type: 'putState',
+            payload: {
+              list,
+              fetchDataLoading: { ...fetchDataLoading, FormModal: false }
+            }
+          });
+        }
+
+
+        if (resolve) resolve({});
       } catch (e) {
-        message.error(e.message || '操作失败');
+        yield put({
+          type: 'putState',
+          payload: { fetchDataLoading: { ...fetchDataLoading, FormModal: false } }
+        });
+        message.error(e.message);
       }
-    },
-    *refreshPage({ payload: resetQuery }, { select, put }) {
-      // dangerLocation
-      const { query } = yield select(
-        ({ routing }) => routing.locationBeforeTransitions
-      );
-      yield put(routerRedux.replace({
-        pathname: '/reportrelation',
-        query: resetQuery ? undefined : query
-      }));
     }
   },
   reducers: {
-    queryRequest(state, { payload: queries }) {
+    putState(state, { payload: stateAssignment }) {
       return {
         ...state,
-        queries
+        ...stateAssignment
       };
     },
-    querySuccess(state, { payload }) {
-      const { list, total } = payload;
+    setListParams(state, { payload }) {
+      const key = `${NAMESPACE}_Params`;
+      const cacheKey = `cache${NAMESPACE}_Params`;
+      const cacheData = getCacheData(cacheKey, state.initParams);
+
+      setSessionItem(cacheKey, cacheData);
+      setSessionItem(key, payload);
       return {
         ...state,
-        list,
-        total,
-        currentRecords: []
+        initParams: payload
       };
     },
-    savePending(state, { payload }) {
-      return {
-        ...state,
-        savePending: payload !== undefined ? payload : true
-      };
+    handelLoading(state, { payload }) {
+      return { ...state, confirmLoading: payload };
     },
-    showModals(state, { payload: showModals }) {
-      return {
-        ...state,
-        showModals
-      };
-    },
-    hideModal(state) {
-      return {
-        ...state,
-        showModals: '',
-        savePending: false
-      };
-    },
-    currentRecords(state, { payload: records }) {
-      return {
-        ...state,
-        currentRecords: records
-      };
+    showModals(state, { payload }) {
+      return { ...state, showModals: payload };
     }
   }
 };
