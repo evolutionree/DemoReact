@@ -41,6 +41,7 @@ class DicTypeSelect extends React.Component {
         onChange={this.handleChange}
         {...rest}
       >
+        <Option disabled value="0">未选择</Option>
         {
           Object.keys(dictionaryData).length ? Array.isArray(dictionaryData[154]) &&
             dictionaryData[154].map(item => {
