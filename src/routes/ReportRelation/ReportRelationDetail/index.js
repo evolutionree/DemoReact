@@ -9,7 +9,7 @@ import ConfigTable from '../../../components/ConfigTable';
 import FormModal from './FormModal';
 import styles from '../index.less';
 
-const SPACENAME = 'reportrelation';
+const SPACENAME = 'reportrelationdetail';
 
 class ReportRelationDetail extends Component {
   state = {
@@ -103,7 +103,7 @@ class ReportRelationDetail extends Component {
       fetchDataLoading, confirmLoading
     } = this.props;
 
-    const title = selectedRows.length ? selectedRows[0].reportrelationid : '';
+    const title = selectedRows.length ? selectedRows[0].aaaa : '';
     const { keyWord } = this.state;
 
     return (
@@ -140,12 +140,12 @@ class ReportRelationDetail extends Component {
           columns={[
             {
               title: '汇报人',
-              key: 'reportrelationname',
+              key: 'reportuser',
+              name: 'reportuser_name',
               width: 200,
-              render: (text, record) => <Link to={`/${SPACENAME}/detail/${record.reportrelationid}`}>{text}</Link>,
               sorter: true
             },
-            { title: '汇报上级', key: 'reportremark', width: 300, sorter: true }
+            { title: '汇报上级', key: 'reportleader', name: 'reportleader_name', width: 300, sorter: true }
           ]}
         />
 

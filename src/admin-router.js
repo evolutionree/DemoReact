@@ -39,10 +39,9 @@ const appRoutes = [
   { 
     path: 'reportrelation',
     comp: ReportRelation,
-    model: require('./models/reportrelation'),
     children: [
-      { path: 'main', comp: ReportRelationMain },
-      { path: 'detail/:id', comp: ReportRelationDetail }
+      { path: 'main', comp: ReportRelationMain, model: require('./models/reportrelation') },
+      { path: 'detail/:id', comp: ReportRelationDetail, model: require('./models/reportrelationdetail') }
     ]
   },
   { path: 'role-groups', comp: RoleGroups, entid: '00000000-0000-0000-0000-000000000012', model: require('./models/roleGroups') },
