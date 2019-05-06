@@ -1,89 +1,39 @@
 import React, { Component } from 'react';
-import { Modal, Form, Input, Select, message, Icon, Tooltip, Checkbox } from 'antd';
-import IntlInput from '../../../components/UKComponent/Form/IntlInput';
-import { getIntlText } from '../../../components/UKComponent/Form/IntlText';
-import { query as queryEntityList } from '../../../services/entity';
+import { Modal, Form, Input, message, Spin } from 'antd';
+// import IntlInput from '../../../components/UKComponent/Form/IntlInput';
+// import { getIntlText } from '../../../components/UKComponent/Form/IntlText';
+import { dynamicRequest } from '../../../services/common';
+import UserSelect from '../../../components/DynamicForm/controls/SelectUser';
 
 const _ = require('lodash');
 
 const TextArea = Input.TextArea;
 const FormItem = Form.Item;
-const Option = Select.Option;
-
-
-class EntitySelect extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      entityList: []
-    };
-    this.fetchEntityList();
-  }
-
-  fetchEntityList = () => {
-    const params = {
-      entityname: '',
-      typeid: -1,
-      pageindex: 1,
-      pagesize: 9999,
-      status: 1
-    };
-    queryEntityList(params).then(result => {
-      this.setState({
-        entityList: result.data.pagedata
-      });
-    }, err => {
-      message.error('获取实体失败');
-    });
-  };
-
-  render() {
-    const { value, onChange, ...rest } = this.props;
-    return (
-      <Select value={value} onChange={onChange} {...rest}>
-        {this.state.entityList.map(entity => (
-          <Option key={entity.entityid}>{getIntlText('entityname', entity)}</Option>
-        ))}
-      </Select>
-    );
-  }
-}
-
-class TipsInput extends Component {
-  render() {
-    const { value, onChange, placeholder, tips = '缺少tips属性' } = this.props;
-    return (
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Input placeholder={placeholder} value={value} onChange={onChange} />
-        <Tooltip title={tips} placement="right">
-          <Icon type="question-circle" style={{ marginLeft: 5 }} />
-        </Tooltip>
-      </div>
-    );
-  }
-}
-
-class SelectCheckbox extends Component {
-  render() {
-    const { value, onChange, children } = this.props;
-    return (
-      <Checkbox
-        checked={!!value}
-        onChange={onChange}
-      >
-        {children}
-      </Checkbox>
-    );
-  }
-}
 
 class FormModal extends Component {
 
   handleSubmit = () => {
-    const { form, onOk } = this.props;
+    const { form, onOk, api, spacename, dispatch, visible, selectedRows, fetch } = this.props;
+    const isEdit = /^edit$/.test(visible);
+
     form.validateFields((err, values) => {
       if (err) return;
-      onOk(values);
+      if (onOk) onOk(values);
+      if (api || fetch) {
+        const url = api || (isEdit ? fetch.edit : fetch.add);
+        const reportrelationid = isEdit ? selectedRows[0].reportrelationid : null;
+        const params = { ...values, reportrelationid };
+
+        dynamicRequest(url, params)
+          .then(res => {
+            if (res) {
+              const { error_msg } = res;
+              this.handleCancel();
+              if (dispatch) dispatch({ type: `${spacename}/QueryList` });
+              message.success(error_msg || '操作成功');
+            }
+          }).catch(e => message.error(e.message));
+      }
     });
   }
 
@@ -94,7 +44,7 @@ class FormModal extends Component {
   }
 
   render() {
-    const { form, visible, title, savePending } = this.props;
+    const { form, visible, title, confirmLoading, fetchDataLoading } = this.props;
     const { getFieldDecorator } = form;
     const isEdit = /^edit$/.test(visible);
 
@@ -104,22 +54,26 @@ class FormModal extends Component {
         visible={/edit|add/.test(visible)}
         onOk={this.handleSubmit}
         onCancel={this.handleCancel}
-        confirmLoading={savePending}>
-        <Form>
-          <FormItem label="汇报关系名称">
-            {getFieldDecorator('anafuncname_lang', {
-              initialValue: '',
-              rules: [{ required: true, message: '请输入汇报关系名称' }]
-            })(
-              <IntlInput placeholder="请输入汇报关系名称" />
-            )}
-          </FormItem>
-          <FormItem label="描述">
-            {getFieldDecorator('remark')(
-              <TextArea />
-            )}
-          </FormItem>
-        </Form>
+        confirmLoading={confirmLoading}
+      >
+        <Spin spinning={fetchDataLoading}>
+          <Form>
+            <FormItem label="汇报人">
+              {getFieldDecorator('reportrelationname', {
+                rules: [{ required: true, message: '请输入汇报关系名称' }]
+              })(
+                <UserSelect multiple={1} />
+              )}
+            </FormItem>
+            <FormItem label="汇报上级">
+              {getFieldDecorator('reportremark', {
+                rules: [{ required: true, message: '请输入汇报关系名称' }]
+              })(
+                <UserSelect multiple={1} />
+              )}
+            </FormItem>
+          </Form>
+        </Spin>
       </Modal>
     );
   }

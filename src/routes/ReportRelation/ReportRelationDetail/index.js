@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
-import { Button, Modal } from 'antd';
+import { Button } from 'antd';
+import Page from '../../../components/Page';
 import Toolbar from '../../../components/Toolbar';
 import Search from '../../../components/Search';
 import ConfigTable from '../../../components/ConfigTable';
@@ -10,9 +11,10 @@ import styles from '../index.less';
 
 const SPACENAME = 'reportrelation';
 
-class ReportRelationMain extends Component {
+class ReportRelationDetail extends Component {
   state = {
-    OptionList: []
+    OptionList: [],
+    keyWord: ''
   }
 
   fecthFormData = (recid) => {
@@ -27,12 +29,32 @@ class ReportRelationMain extends Component {
     });
   }
 
+  clearSelect = () => {
+    const { onSelectRow } = this.props;
+    this.setState({ selectedRowKeys: [], selectedRows: [] });
+    if (onSelectRow) onSelectRow([]);
+  }
 
   add = () => {
     const { showModals, toggleModal } = this.props;
     toggleModal(showModals, 'FormModal', 'add');
     this.fecthFormData();
   }
+
+  edit = () => {
+    const { showModals, toggleModal, selectedRows } = this.props;
+    const { reportrelationid } = selectedRows[0];
+    toggleModal(showModals, 'FormModal', 'edit');
+    this.fecthFormData(reportrelationid);
+  }
+
+  del = () => {
+    const { onDel } = this.props;
+    const { selectedRows } = this.state;
+    const params = selectedRows.map(item => item.recid);
+    this.clearSelect();
+    onDel(params);
+  };
 
   componentDidMount() {
     const { onInit } = this.props;
@@ -41,10 +63,6 @@ class ReportRelationMain extends Component {
 
   handleSelectRecords = () => {
 
-  }
-
-  handleSave = () => {
-    
   }
 
   handleCancel = (model, e, params) => {
@@ -60,38 +78,59 @@ class ReportRelationMain extends Component {
     toggleModal(showModals, model, '');
   }
 
+  onHandleSearchChange = val => {
+    this.setState({ keyWord: val });
+  }
+
+  onHandleSearch = val => {
+    const { onSeach, initParams } = this.props;
+    const params = {
+      ...initParams,
+      text: val
+    };
+    onSeach(params);
+  }
+
+  import = () => {
+    const { onImport } = this.props;
+    onImport();
+  }
 
   render() {
     const {
-      list,
-      selectedRows,
-      initParams,
-      onSeach,
-      onSelectRow,
-      showModals,
-      fetchDataLoading,
-      confirmLoading
+      list, selectedRows, initParams, onSeach,
+      onSelectRow, showModals, dispatch,
+      fetchDataLoading, confirmLoading
     } = this.props;
 
+    const title = selectedRows.length ? selectedRows[0].reportrelationid : '';
+    const { keyWord } = this.state;
+
     return (
-      <div>
+      <Page title={`汇报关系 - ${title}`}>
         <Toolbar
           selectedCount={selectedRows.length}
           actions={[
-            { label: '编辑', single: true, handler: () => { }, show: () => true },
-            { label: '删除', handler: () => { } }
+            { label: '编辑', single: true, handler: this.edit, show: () => true },
+            { label: '删除', handler: this.del }
           ]}
         >
           <div style={{ float: 'left' }}>
             <Button onClick={this.add}>新增</Button>
+            <Button onClick={this.import} style={{ marginLeft: 15 }}>导入</Button>
           </div>
           <Toolbar.Right>
-            <Search />
+            <Search
+              placeholder="输入超级赛亚人可变身"
+              value={keyWord}
+              onChange={this.onHandleSearchChange}
+              onSearch={this.onHandleSearch}
+            />
           </Toolbar.Right>
         </Toolbar>
 
-        {/* <ConfigTable
-          rowKey="recid"
+        <ConfigTable
+          rowKey="reportrelationid"
           rowSelect
           spacename={SPACENAME}
           onSeach={onSeach}
@@ -99,21 +138,33 @@ class ReportRelationMain extends Component {
           dataSource={list}
           CBSelectRow={data => onSelectRow(data)}
           columns={[
-            { title: '汇报关系名称', key: 'name', render: (text, record) => <Link to={`/${SPACENAME}/detail/${record.recid}`}>{text}</Link> },
-            { title: '描述', key: 'recid' }
+            {
+              title: '汇报人',
+              key: 'reportrelationname',
+              width: 200,
+              render: (text, record) => <Link to={`/${SPACENAME}/detail/${record.reportrelationid}`}>{text}</Link>,
+              sorter: true
+            },
+            { title: '汇报上级', key: 'reportremark', width: 300, sorter: true }
           ]}
-        /> */}
+        />
 
         <FormModal
+          title={title}
+          spacename={SPACENAME}
+          dispatch={dispatch}
+          fetch={{
+            add: 'api/ReportRelation/addreportrelation',
+            edit: 'api/ReportRelation/updatereportrelation'
+          }}
           selectedRows={selectedRows}
           visible={showModals.FormModal}
           onChange={this.handleSelectRecords}
-          onOk={this.handleSave}
           cancel={() => this.handleCancel('FormModal')}
           fetchDataLoading={fetchDataLoading.FormModal}
           confirmLoading={confirmLoading.FormModal}
         />
-      </div>
+      </Page>
     );
   }
 }
@@ -139,7 +190,13 @@ export default connect(
     onSelectRow(selectedRows) {
       dispatch({ type: `${SPACENAME}/putState`, payload: { selectedRows } });
     },
+    onImport() {
+      dispatch({
+        type: 'task/impModals',
+        payload: { templateType: 1, templateKey: '' }
+      });
+    },
     dispatch
   })
-)(ReportRelationMain);
+)(ReportRelationDetail);
 

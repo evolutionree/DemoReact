@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Link } from 'dva/router';
-import { Button, Modal } from 'antd';
+import { Button } from 'antd';
+import Page from '../../../components/Page';
 import Toolbar from '../../../components/Toolbar';
 import Search from '../../../components/Search';
 import ConfigTable from '../../../components/ConfigTable';
@@ -12,7 +13,8 @@ const SPACENAME = 'reportrelation';
 
 class ReportRelationMain extends Component {
   state = {
-    OptionList: []
+    OptionList: [],
+    keyWord: ''
   }
 
   fecthFormData = (recid) => {
@@ -27,6 +29,11 @@ class ReportRelationMain extends Component {
     });
   }
 
+  clearSelect = () => {
+    const { onSelectRow } = this.props;
+    this.setState({ selectedRowKeys: [], selectedRows: [] });
+    if (onSelectRow) onSelectRow([]);
+  }
 
   add = () => {
     const { showModals, toggleModal } = this.props;
@@ -41,6 +48,13 @@ class ReportRelationMain extends Component {
     this.fecthFormData(reportrelationid);
   }
 
+  del = () => {
+    const { onDel } = this.props;
+    const { selectedRows } = this.state;
+    const params = selectedRows.map(item => item.recid);
+    this.clearSelect();
+    onDel(params);
+  };
 
   componentDidMount() {
     const { onInit } = this.props;
@@ -64,27 +78,36 @@ class ReportRelationMain extends Component {
     toggleModal(showModals, model, '');
   }
 
+  onHandleSearchChange = val => {
+    this.setState({ keyWord: val });
+  }
+
+  onHandleSearch = val => {
+    const { onSeach, initParams } = this.props;
+    const params = {
+      ...initParams,
+      text: val
+    };
+    onSeach(params);
+  }
 
   render() {
     const {
-      list,
-      selectedRows,
-      initParams,
-      onSeach,
-      onSelectRow,
-      showModals,
-      dispatch,
-      fetchDataLoading,
-      confirmLoading
+      list, selectedRows, initParams, onSeach,
+      onSelectRow, showModals, dispatch,
+      fetchDataLoading, confirmLoading
     } = this.props;
 
+    const { keyWord } = this.state;
+    const title = '汇报关系';
+
     return (
-      <div>
+      <Page title={title}>
         <Toolbar
           selectedCount={selectedRows.length}
           actions={[
             { label: '编辑', single: true, handler: this.edit, show: () => true },
-            { label: '删除', handler: () => { } }
+            { label: '删除', handler: this.del }
           ]}
         >
           <div style={{ float: 'left' }}>
@@ -93,8 +116,9 @@ class ReportRelationMain extends Component {
           <Toolbar.Right>
             <Search
               placeholder="输入超级赛亚人可变身"
-              onChange={() => {}}
-              onSearch={() => {}}
+              value={keyWord}
+              onChange={this.onHandleSearchChange}
+              onSearch={this.onHandleSearch}
             />
           </Toolbar.Right>
         </Toolbar>
@@ -120,6 +144,7 @@ class ReportRelationMain extends Component {
         />
 
         <FormModal
+          title={title}
           spacename={SPACENAME}
           dispatch={dispatch}
           fetch={{
@@ -133,7 +158,7 @@ class ReportRelationMain extends Component {
           fetchDataLoading={fetchDataLoading.FormModal}
           confirmLoading={confirmLoading.FormModal}
         />
-      </div>
+      </Page>
     );
   }
 }

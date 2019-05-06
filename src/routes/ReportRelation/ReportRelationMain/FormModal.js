@@ -1,81 +1,13 @@
 import React, { Component } from 'react';
-import { Modal, Form, Input, Select, message, Icon, Tooltip, Checkbox, Spin } from 'antd';
+import { Modal, Form, Input, message, Spin } from 'antd';
 // import IntlInput from '../../../components/UKComponent/Form/IntlInput';
-import { getIntlText } from '../../../components/UKComponent/Form/IntlText';
+// import { getIntlText } from '../../../components/UKComponent/Form/IntlText';
 import { dynamicRequest } from '../../../services/common';
 
 const _ = require('lodash');
 
 const TextArea = Input.TextArea;
 const FormItem = Form.Item;
-const Option = Select.Option;
-
-
-class EntitySelect extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      entityList: []
-    };
-    this.fetchEntityList();
-  }
-
-  fetchEntityList = () => {
-    const params = {
-      entityname: '',
-      typeid: -1,
-      pageindex: 1,
-      pagesize: 9999,
-      status: 1
-    };
-    queryEntityList(params).then(result => {
-      this.setState({
-        entityList: result.data.pagedata
-      });
-    }, err => {
-      message.error('获取实体失败');
-    });
-  };
-
-  render() {
-    const { value, onChange, ...rest } = this.props;
-    return (
-      <Select value={value} onChange={onChange} {...rest}>
-        {this.state.entityList.map(entity => (
-          <Option key={entity.entityid}>{getIntlText('entityname', entity)}</Option>
-        ))}
-      </Select>
-    );
-  }
-}
-
-class TipsInput extends Component {
-  render() {
-    const { value, onChange, placeholder, tips = '缺少tips属性' } = this.props;
-    return (
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Input placeholder={placeholder} value={value} onChange={onChange} />
-        <Tooltip title={tips} placement="right">
-          <Icon type="question-circle" style={{ marginLeft: 5 }} />
-        </Tooltip>
-      </div>
-    );
-  }
-}
-
-class SelectCheckbox extends Component {
-  render() {
-    const { value, onChange, children } = this.props;
-    return (
-      <Checkbox
-        checked={!!value}
-        onChange={onChange}
-      >
-        {children}
-      </Checkbox>
-    );
-  }
-}
 
 class FormModal extends Component {
 

@@ -88,9 +88,12 @@ class ConfigTable extends Component {
     if (CBSelectRow) CBSelectRow(selectedRows);
   }
 
-  onSelectAllListChange = (selected, selectedRows) => {
-    const selectedRowKeys = selectedRows.map(o => o.recid);
-    this.setState({ selectedRowKeys, selectedRows });
+  onSelectAllListChange = async (selected, selectedRows) => {
+    const { rowKey } = this.props;
+    const selectedRowKeys = selectedRows.map(o => o[rowKey]);
+    await this.setStateAsync({ selectedRowKeys, selectedRows });
+    const { CBSelectRow } = this.props;
+    if (CBSelectRow) CBSelectRow(selectedRows);
   }
 
   render() {
