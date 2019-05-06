@@ -459,8 +459,9 @@ class DynamicTable extends Component {
   renderdSourceDetail = (text, field, record) => {
     const cellData = record[field.fieldname];
     let DataSourceRelEntityId = '';
-    if (field.fieldconfig && field.fieldconfig.DataSource) {
-      DataSourceRelEntityId = field.fieldconfig.DataSource.EntityId;
+    if (field.fieldconfig) {
+      if (field.fieldconfig.dataSource) DataSourceRelEntityId = field.fieldconfig.dataSource.EntityId;
+      if (field.fieldconfig.DataSource) DataSourceRelEntityId = field.fieldconfig.DataSource.EntityId;
     }
     const DataSourceDetailModalTitle = field.displayname;
     if (cellData && cellData instanceof Object) {
