@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Link } from 'dva/router';
+import { routerRedux } from 'dva/router';
 import { Button } from 'antd';
 import Page from '../../../components/Page';
 import Toolbar from '../../../components/Toolbar';
@@ -91,6 +91,12 @@ class ReportRelationMain extends Component {
     onSeach(params);
   }
 
+  jump = (text, record) => {
+    const { dispatch } = this.props;
+    dispatch(routerRedux.push({ pathname: `/${SPACENAME}detail/${record.reportrelationid}` }));
+    sessionStorage.setItem('reportrelationdetailtitle', text);
+  }
+
   render() {
     const {
       list, selectedRows, initParams, onSeach,
@@ -136,7 +142,7 @@ class ReportRelationMain extends Component {
               title: '汇报关系名称',
               key: 'reportrelationname',
               width: 200,
-              render: (text, record) => <Link to={`/${SPACENAME}/detail/${record.reportrelationid}`}>{text}</Link>,
+              render: (text, record) => <a href="javascript:;" onClick={this.jump.bind(this, text, record)}>{text}</a>,
               sorter: true
             },
             { title: '描述', key: 'reportremark', width: 300, sorter: true }

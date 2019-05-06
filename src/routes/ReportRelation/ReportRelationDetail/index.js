@@ -103,8 +103,9 @@ class ReportRelationDetail extends Component {
       fetchDataLoading, confirmLoading
     } = this.props;
 
-    const title = selectedRows.length ? selectedRows[0].aaaa : '';
     const { keyWord } = this.state;
+
+    const title = sessionStorage.getItem('reportrelationdetailtitle');
 
     return (
       <Page title={`汇报关系 - ${title}`}>
@@ -171,8 +172,7 @@ class ReportRelationDetail extends Component {
 
 export default connect(
   state => ({
-    ...state[SPACENAME],
-    SPACENAME: SPACENAME
+    ...state[SPACENAME]
   }),
   dispatch => ({
     onInit() {

@@ -3,7 +3,6 @@ import { getreportreldetail } from '../services/reportrelation';
 import { setSessionItem, getCacheData } from '../utils/newStorage';
 
 const NAMESPACE = 'reportrelationdetail';
-const judgement = (value, valueList = [undefined, null, '']) => valueList.includes(value);
 
 export default {
   namespace: NAMESPACE,
