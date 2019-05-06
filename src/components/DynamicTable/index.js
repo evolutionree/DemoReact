@@ -321,7 +321,7 @@ class DynamicTable extends Component {
       const recordDetail = res2.data.detail;
       const tableData = (recordDetail && recordDetail[field.fieldname]) || [];
       this.setState({
-        innerTableProtocol: protocol.filter(item => item.fieldconfig.isVisible === 1),
+        innerTableProtocol: protocol.filter(item => (item.fieldconfig.isVisible === 1 || item.fieldconfig.IsVisible)),
         innerTableRecords: tableData
       });
     });
@@ -332,7 +332,7 @@ class DynamicTable extends Component {
       if ((field.controltype === 31) || (field.controltype > 1000 && field.controltype !== 1012 && field.controltype !== 1006)) {
         return false;
       }
-      if (field.fieldconfig.isVisible !== 1) {
+      if (field.fieldconfig.isVisible !== 1 && !field.fieldconfig.IsVisible) {
         return false;
       } else if (field.fieldconfig.isVisibleJS === 0) {
         return false;
