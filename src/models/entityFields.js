@@ -184,8 +184,9 @@ export default {
     },
     *nodeCell({ payload }, { put, select }) {
       const { nodeCell } = yield select(state => state.entityFields);
+      if (nodeCell === payload) return;
       if (nodeCell) nodeCell.check();
-      yield put({ type: 'updateNodeCell', payload })
+      yield put({ type: 'updateNodeCell', payload });
     }
   },
 

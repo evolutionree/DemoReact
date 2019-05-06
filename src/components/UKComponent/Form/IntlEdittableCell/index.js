@@ -23,7 +23,7 @@ class IntlEdittableCell extends Component {
     const { record: oldRecord } = this.props;
     const { record } = nextProps;
     for (const key in record.displayname_lang) {
-      if (oldRecord.displayname_lang[key] !== record.displayname_lang[key]) {
+      if ((oldRecord.displayname_lang && oldRecord.displayname_lang[key]) !== (record.displayname_lang && record.displayname_lang[key])) {
         this.setState({
           text: record.displayname,
           value: record.displayname_lang
@@ -58,7 +58,7 @@ class IntlEdittableCell extends Component {
 
     if (_.isEqual(displayname_lang, value)) return;
     
-    if (Object.values(getFieldsValue()).every(val => !val)) {
+    if (getFieldsValue && Object.values(getFieldsValue()).every(val => !val)) {
       if (onChange) onChange(value, 'byValue');
       return;
     }
@@ -81,8 +81,8 @@ class IntlEdittableCell extends Component {
   }
 
   onChangeItem = (e) => {
-    const { record, onChange } = this.props;
-    if (!record.active && onChange) onChange(record, e);
+    const { record, onChange, otherParams } = this.props;
+    if (otherParams && !record.active && onChange) onChange(record, e);
   }
 
   render() {
