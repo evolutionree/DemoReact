@@ -14,20 +14,20 @@ import DynamicLoadFilterModal from '../../components/DynamicLoadFilterModal';
 import ExportModal from './ExportModal';
 
 function entcommDynamic({
-                       checkFunc,
-                       dispatch,
-                       entityName,
-                       protocol,
-                       queries,
-                       list,
-                       total,
-                       entityId,
-                       currentUser,
-                       simpleSearchKey,
-                       searchTips,
-                       sortFieldAndOrder,
-                       ColumnFilter
-                     }) {
+  checkFunc,
+  dispatch,
+  entityName,
+  protocol,
+  queries,
+  list,
+  total,
+  entityId,
+  currentUser,
+  simpleSearchKey,
+  searchTips,
+  sortFieldAndOrder,
+  ColumnFilter
+}) {
   function search(payload) {
     dispatch({ type: 'entcommDynamic/search', payload });
   }
@@ -61,7 +61,7 @@ function entcommDynamic({
       type: 'entcommDynamic/putState',
       payload: { ColumnFilter: filterData }
     });
-    dispatch({ type: 'entcommDynamic/search', payload: { } });
+    dispatch({ type: 'entcommDynamic/search', payload: {} });
   }
 
   let dynamicTableRef;
@@ -100,15 +100,15 @@ function entcommDynamic({
         </Toolbar.Right>
       </Toolbar>
       <DynamicTable
-        ref={(ref) => dynamicTableRef = ref }
-        sorter={true}
+        ref={(ref) => dynamicTableRef = ref}
+        sorter
         sortFieldAndOrder={sortFieldAndOrder}
         protocol={protocol}
         rowKey="recid"
         entityId={entityId}
         dataSource={list}
         total={total}
-        fixedHeader={true}
+        fixedHeader
         otherHeight={186} //页面表格元素除外的元素的总高度
         pagination={{
           total,
