@@ -2,17 +2,16 @@
  * Created by 0291 on 2017/6/29.
  */
 import React from 'react';
-import { connect } from 'dva';
 import _ from 'lodash';
 import DynamicFieldView from '../../../../components/DynamicForm/DynamicFieldView';
 import HeaderModel from './HeaderModel.js';
 import moment from 'moment';
 import { Link } from 'dva/router';
 import request from '../../../../utils/request';
-import { Modal, Button, Form, Input, Table, message, Spin } from 'antd';
+import { Button, Table, message } from 'antd';
 import { downloadFile } from '../../../../utils/ukUtil';
 import styles from '../../index.less';
-
+import EntcommDetailModal from '../../../../components/EntcommDetailModal';
 const rowKey = 'key';
 
 class DataGrid extends  React.Component {
@@ -28,7 +27,8 @@ class DataGrid extends  React.Component {
       columns: this.props.columns, //表頭
       loading: this.props.loading,
       url: this.props.url,
-      queryListParams: null
+      queryListParams: null,
+      modalInfo: { showModal: '', title: '', entityId: '', recordId: '' }
     };
   }
 
@@ -183,9 +183,43 @@ class DataGrid extends  React.Component {
     });
   }
 
+  openDetailModal = (eventInfo, record, text) => {
+    if (!text) {
+      message.info('暂无数据');
+      return;
+    }
+    const params = this.props.params;
+    switch (eventInfo.type) {
+      case 1:
+        this.setState({
+          modalInfo: {
+            title: eventInfo.title,
+            entityId: eventInfo.entityid,
+            recordId: record[eventInfo.recordid.replace(/#/g, '')],
+            showModal: 'entitydetail'
+          }
+        });
+        break;
+      case 2:
+        this.setState({
+          modalInfo: {
+            showModal: 'attendancedetail',
+            params: {
+              year: params['@searchyear'],
+              month: params['@searchmonth'],
+              day: eventInfo.recordid,
+              userid: record.userid
+            }
+          }
+        });
+    }
+  }
+
   getColumns(tableextinfo, datasourcename) {
     //DataGrid 列获取
     let columns = this.state.columns || [];
+    const params = this.state.params;
+    const _this = this;
 
     let columnsTotalWidth = 0;
     columns instanceof Array && columns.map((item) => {
@@ -274,7 +308,6 @@ class DataGrid extends  React.Component {
                     scheme = scheme.replace(keys[i], dataSourceKey instanceof Object ? getValue(dataSourceKey.id, index) : getValue(dataSourceKey, index));
                   }
                 }
-
                 return scheme;
               }
 
@@ -304,6 +337,9 @@ class DataGrid extends  React.Component {
             }, hederModelWidth);
           } else {
             return new HeaderModel(item.title, item.fieldname, (text, record, rowIndex) => {
+              if (item.colortype) {
+                style.color = ['#e82112', '#3398db'][record[item.colortype.replace(/#/g, '')]];
+              }
               // 先取 _name
               const text_name = record[item.fieldname + '_name'];
               let cellText = text_name !== undefined ? text_name : text instanceof Object ? text.name : text;
@@ -311,8 +347,15 @@ class DataGrid extends  React.Component {
               if ((item.controltype === 8 || item.controltype === 9) && item.formatstr) {
                 cellText = formatDate(text, item.formatstr);
               }
+
+              const eventProps = {};
+              if (item.events && item.events.type) {
+                eventProps.onClick = _this.openDetailModal.bind(this, item.events, record, cellText);
+                style.cursor = 'pointer';
+              }
+
               return (
-                <span style={style} title={cellText} className={styles.datagridTdWrap}>
+                <span style={style} title={cellText} className={styles.datagridTdWrap} {...eventProps}>
                   <DynamicFieldView value={cellText} value_name={cellText} controlType={item.controltype} />
                 </span>
               );
@@ -373,7 +416,17 @@ class DataGrid extends  React.Component {
     });
   }
 
+  closeModal = () => {
+    this.setState({
+      modalInfo: {
+        ...this.state.modalInfo,
+        showModal: ''
+      }
+    });
+  }
+
   render() {
+    const { modalInfo: { showModal, title, entityId, recordId, params } } = this.state;
     const key = this.props.rowKey ? this.props.rowKey : rowKey;
 
     const columns = this.getColumns(); //先执行 更新window.tableHasScrollX的值 后面代码设置scroll的值 需要用到
@@ -415,6 +468,12 @@ class DataGrid extends  React.Component {
           columns={columns}
           {...props}
         />
+        <EntcommDetailModal title={title}
+                            width={600}
+                            visible={showModal === 'entitydetail'}
+                            entityId={entityId}
+                            recordId={recordId}
+                            onCancel={this.closeModal} />
       </div>
     );
   }
