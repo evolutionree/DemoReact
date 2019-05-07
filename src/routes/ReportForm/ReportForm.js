@@ -62,6 +62,22 @@ class ReportForm extends React.Component {
     this.queryReportDefine(this.props.reportId);
   }
 
+  GetUrlParam = () => {
+    const url = this.props.location.search;
+    const thisParam = {};
+    // 判断是否存在请求的参数
+    if (url.indexOf('?') !== -1) {
+      const str = url.substr(1);
+      // 截取所有请求的参数，以数组方式保存
+      let strs = str.split('&');
+      for (let i = 0; i < strs.length; i++) {
+        thisParam[strs[i].split('=')[0]] = decodeURIComponent(strs[i].split('=')[1]);
+      }
+    }
+    // 返回改参数列表对象
+    return thisParam;
+  }
+
   queryReportDefine(reportId) {
     this.echartsInstance.registerMap('china', chinaJson);  //初始中国地图
     request('/api/ReportEngine/queryReportDefine', {
@@ -123,6 +139,13 @@ class ReportForm extends React.Component {
       }
     });
 
+    const extraParams = this.GetUrlParam();
+    if (extraParams && JSON.stringify(extraParams) !== '{}') {
+      for (let key in extraParams) {
+        defaultSerchValue[key] = extraParams[key];
+      }
+    }
+    
     let params = {};
     for (let key in defaultSerchValue) { //可能参数里包含多个子参数  需拆分
       if (key.indexOf(',') > -1) {

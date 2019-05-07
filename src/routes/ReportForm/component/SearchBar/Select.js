@@ -55,7 +55,7 @@ class SelectComponent extends Component {
   componentWillReceiveProps(nextProps) {
       this.props = nextProps;
       if(this.props.dataSourceType === 2 ) {
-        queryDataSource(this.props.dataSource.datasource);
+        this.queryDataSource(this.props.dataSource.datasource);
       } else {
         this.setState({
           dataSource: nextProps.dataSource.datalist
