@@ -46,8 +46,7 @@ class InputComponent extends Component {
       case 1:
         return <Input value={this.props.value} onChange={(e) => { this.props.onChange(e.target.value) }} />
       case 2:
-        return this.props.combodata.datasource.instid ? <Select value={this.props.value} url="/api/ReportEngine/queryData" params={this.props.combodata.datasource} onChange={this.changeHandler.bind(this)} />
-          : <Select value={this.props.value} dataSource={this.props.combodata.datalist} onChange={this.changeHandler.bind(this)} />;
+        return <Select value={this.props.value} dataSource={this.props.combodata} dataSourceType={this.props.combodata.datasourcetype} onChange={this.changeHandler.bind(this)} />;
       case 4:
         return <DatePicker value={this.props.value ? moment(this.props.value, dateFormat) : null} style={{ width: '120px' }} onChange={(date) => { this.props.onChange(date && date.format(dateFormat)) }} format={dateFormat} />;
       case 5:
