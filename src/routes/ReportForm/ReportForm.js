@@ -391,7 +391,6 @@ class ReportForm extends React.Component {
         [item.instid + 'loading']: false
       });
     }).catch((e) => {
-      console.error(e);
       message.error(e.message);
       this.setState({
         [item.instid]: [],

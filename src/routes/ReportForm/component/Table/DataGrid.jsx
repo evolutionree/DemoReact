@@ -175,7 +175,6 @@ class DataGrid extends  React.Component {
         pageSize
       });
     }).catch((e) => {
-      console.error(e);
       message.error(e.message);
       this.setState({
         loading: false
@@ -411,7 +410,6 @@ class DataGrid extends  React.Component {
       const fileid = result.data;
       downloadFile('api/ReportEngine/export2file?fileid=' + fileid, '_self');
     }).catch((e) => {
-      console.error(e);
       message.error(e.message);
     });
   }
