@@ -49,9 +49,8 @@ class ReportRelationMain extends Component {
   }
 
   del = () => {
-    const { onDel } = this.props;
-    const { selectedRows } = this.state;
-    const params = selectedRows.map(item => item.recid);
+    const { onDel, selectedRows } = this.props;
+    const params = selectedRows.map(item => item.reportrelationid);
     this.clearSelect();
     onDel(params);
   };
@@ -104,7 +103,7 @@ class ReportRelationMain extends Component {
     const {
       list, selectedRows, initParams, onSeach,
       onSelectRow, showModals, dispatch,
-      fetchDataLoading, confirmLoading
+      fetchDataLoading, confirmLoading, checkFunc
     } = this.props;
 
     const { keyWord } = this.state;
@@ -115,12 +114,12 @@ class ReportRelationMain extends Component {
         <Toolbar
           selectedCount={selectedRows.length}
           actions={[
-            { label: '编辑', single: true, handler: this.edit, show: () => true },
-            { label: '删除', handler: this.del }
+            { label: '编辑', single: true, handler: this.edit, show: checkFunc('Edit') },
+            { label: '删除', handler: this.del, show: checkFunc('Disabled') }
           ]}
         >
           <div style={{ float: 'left' }}>
-            <Button onClick={this.add}>新增</Button>
+            {checkFunc('Add') && <Button onClick={this.add}>新增</Button>}
           </div>
           <Toolbar.Right>
             <Search

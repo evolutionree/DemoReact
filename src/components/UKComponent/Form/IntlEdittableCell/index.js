@@ -13,8 +13,8 @@ class IntlEdittableCell extends Component {
     super(props);
     const { record } = props;
     this.state = {
-      text: record.displayname,
-      value: record.displayname_lang,
+      text: record.displayname || undefined,
+      value: record.displayname_lang || null,
       editable: false
     };
   }
@@ -25,8 +25,8 @@ class IntlEdittableCell extends Component {
     for (const key in record.displayname_lang) {
       if ((oldRecord.displayname_lang && oldRecord.displayname_lang[key]) !== (record.displayname_lang && record.displayname_lang[key])) {
         this.setState({
-          text: record.displayname,
-          value: record.displayname_lang
+          text: record.displayname || undefined,
+          value: record.displayname_lang || null
         });
       }
     }
@@ -44,49 +44,48 @@ class IntlEdittableCell extends Component {
 
   edit = (e) => {
     const { callback, onActive } = this.props;
-    // if (e) e.stopPropagation();
+    if (e) e.stopPropagation();
     if (callback) callback(this);
     this.setState({ editable: true });
     if (onActive) onActive(true);
   }
 
   submitValue = (api) => {
-    const { record: { fieldid, displayname_lang }, dispatch, otherParams, onChange, getFieldsValue } = this.props;
+    const { record: { fieldid, displayname_lang }, dispatch, other, onChange } = this.props;
     const { value } = this.state;
-
-    if (!api) {
-      message.warn('IntlEdittableCell缺少api属性');
-      return;
-    }
 
     if (_.isEqual(displayname_lang, value)) return;
 
-    const params = otherParams ? {
-      ...otherParams,
-      newgroupname: value && value.cn,
-      newgroupname_lang: JSON.stringify(value)
-    } : { fieldid, displayname_lang: value };
+    if (!other) {
+      if (!api) {
+        message.warn('IntlEdittableCell缺少api属性');
+        return;
+      }
+      const params = { fieldid, displayname_lang: value };
 
-    dynamicRequest(api, params)
-      .then(res => {
-        const { error_msg } = res;
-        message.success(error_msg || '修改成功');
-        if (!otherParams) dispatch({ type: 'entityFields/query' });
-        if (onChange) onChange(value);
-      }).catch(e => {
-        message.error(e.message || '修改失败');
-      });
+      dynamicRequest(api, params)
+        .then(res => {
+          const { error_msg } = res;
+          message.success(error_msg || '修改成功');
+          dispatch({ type: 'entityFields/query' });
+          if (onChange) onChange(value);
+        }).catch(e => {
+          message.error(e.message || '修改失败');
+        });
+    } else if (onChange) {
+      onChange(value);
+    }
   }
 
   onChangeItem = (e) => {
     if (this.state.editable) return;
-    const { onChange, otherParams } = this.props;
+    const { onChange, other } = this.props;
     const { value } = this.state;
-    if (otherParams && onChange) onChange(value, e);
+    if (other && onChange) onChange(value, e);
   }
 
   render() {
-    const { className, active, hoverStyle, style } = this.props;
+    const { className, active, hoverStyle, style, checkFunc } = this.props;
     const { text, value, editable } = this.state;
     const wrap = classNames({
       [styles.editableCell]: true,
@@ -113,11 +112,13 @@ class IntlEdittableCell extends Component {
             :
             <div className={styles.editableCellTextWrapper}>
               <IntlText value={text} value_lang={value} />
-              <Icon
-                type="edit"
-                className={styles.editableCellIcon}
-                onClick={this.edit}
-              />
+              {
+                (!checkFunc || checkFunc('EditGroupName')) ? <Icon
+                  type="edit"
+                  className={styles.editableCellIcon}
+                  onClick={this.edit}
+                /> : null
+              }
             </div>
         }
       </div>

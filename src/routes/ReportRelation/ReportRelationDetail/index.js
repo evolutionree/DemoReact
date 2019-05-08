@@ -43,15 +43,14 @@ class ReportRelationDetail extends Component {
 
   edit = () => {
     const { showModals, toggleModal, selectedRows } = this.props;
-    const { reportrelationid } = selectedRows[0];
+    const { reportreldetailid } = selectedRows[0];
     toggleModal(showModals, 'FormModal', 'edit');
-    this.fecthFormData(reportrelationid);
+    this.fecthFormData(reportreldetailid);
   }
 
   del = () => {
-    const { onDel } = this.props;
-    const { selectedRows } = this.state;
-    const params = selectedRows.map(item => item.recid);
+    const { onDel, selectedRows } = this.props;
+    const params = selectedRows.map(item => item.reportreldetailid);
     this.clearSelect();
     onDel(params);
   };
@@ -103,7 +102,7 @@ class ReportRelationDetail extends Component {
     const {
       list, selectedRows, initParams, onSeach,
       onSelectRow, showModals, dispatch,
-      fetchDataLoading, confirmLoading
+      fetchDataLoading, confirmLoading, checkFunc
     } = this.props;
 
     const { keyWord } = this.state;
@@ -115,13 +114,13 @@ class ReportRelationDetail extends Component {
         <Toolbar
           selectedCount={selectedRows.length}
           actions={[
-            { label: '编辑', single: true, handler: this.edit, show: () => true },
-            { label: '删除', handler: this.del }
+            { label: '编辑', single: true, handler: this.edit, show: checkFunc('EditDetail') },
+            { label: '删除', handler: this.del, show: checkFunc('DisabledDetail') }
           ]}
         >
           <div style={{ float: 'left' }}>
-            <Button onClick={this.add}>新增</Button>
-            <Button onClick={this.import} style={{ marginLeft: 15 }}>导入</Button>
+            {checkFunc('AddDetail') && <Button onClick={this.add}>新增</Button>}
+            {checkFunc('Import') && <Button onClick={this.import} style={{ marginLeft: 15 }}>导入</Button>}
           </div>
           <Toolbar.Right>
             <Search
@@ -134,7 +133,7 @@ class ReportRelationDetail extends Component {
         </Toolbar>
 
         <ConfigTable
-          rowKey="reportrelationid"
+          rowKey="reportreldetailid"
           rowSelect
           spacename={SPACENAME}
           onSeach={onSeach}

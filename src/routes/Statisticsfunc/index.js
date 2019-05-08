@@ -18,7 +18,8 @@ function Statisticsfunc(props) {
     total,
     showModals,
     savePending,
-    checked
+    checked,
+    checkFunc
   } = props;
 
   function search(key, val) {
@@ -106,13 +107,13 @@ function Statisticsfunc(props) {
       <Toolbar
         selectedCount={currentRecords.length}
         actions={[
-          { label: '编辑', single: true, handler: handleEdit, show: () => true },
-          { label: `${isUse ? '停用' : '启用'}`, handler: () => handleSwitch(isUse) },
-          { label: '删除', handler: handleDel }
+          { label: '编辑', single: true, handler: handleEdit, show: checkFunc('Edit') },
+          { label: `${isUse ? '停用' : '启用'}`, handler: () => handleSwitch(isUse), show: checkFunc('Disabled') },
+          { label: '删除', handler: handleDel, show: checkFunc('Delete') }
         ]}
       >
         <div style={{ float: 'left', display: 'flex', alignItems: 'center' }} >
-          <Button onClick={handleAdd}>新增</Button>
+          {checkFunc('Add') && <Button onClick={handleAdd}>新增</Button>}
           <Switch
             style={{ marginLeft: 10 }}
             checked={checked}

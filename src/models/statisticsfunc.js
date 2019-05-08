@@ -1,5 +1,4 @@
 import { message } from 'antd';
-import { routerRedux } from 'dva/router';
 import { getstatistics, addstatistics, updatestatistics, deletestatistics, disabledstatistics } from '../services/statistics';
 import { getCorrectPager } from '../utils/common';
 

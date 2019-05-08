@@ -1,5 +1,13 @@
 import { message } from 'antd';
-import { getstatisticsdata, getstatisticsdetaildata, getstatistics, savestatisticsgroupsumsetting } from '../services/statistics';
+import {
+  getstatisticsdata, getstatisticsdetaildata, getstatistics, savestatisticsgroupsumsetting,
+  updatestatisticsgroupsetting
+} from '../services/statistics';
+
+function resultResList(list, caches) {
+  const _list = [...list];
+  return _list.length < 3 ? resultResList([..._list, caches[_list.length]], caches) : _list.slice(0, 3);
+}
 
 export default {
   namespace: 'statisticsconfig',
@@ -7,41 +15,62 @@ export default {
     groupList: [],
     cacheGroupList: [],
     resList: [],
-    cacheList: [{ id: '0', anafuncid: '' }, { id: '1', anafuncid: '' }, { id: '2', anafuncid: '' }],
+    cacheList: [{ id: 0, anafuncid: '' }, { id: 1, anafuncid: '' }, { id: 2, anafuncid: '' }],
     selectList: [],
-    groupObj: {},
-    active: false
-  },
-  subscriptions: {
-
+    active: false,
+    record: {}
   },
   effects: {
-    *QueryList({ payload }, { call, put, select }) {
+    *Init(_, { call, put, select }) {
       const { cacheList } = yield select(state => state.statisticsconfig);
       try {
-        const gParams = { AnaFuncName: payload ? payload.groupname : '' };
-        const { data: groupList } = yield call(getstatisticsdata, gParams);
+        const params = { AnaFuncName: '' };
+        const { data: groupList } = yield call(getstatisticsdata, params);
+        const resultGroupList = groupList.map((o, id) => ({ ...o, id, displayname: o.groupmark, displayname_lang: o.groupmark_lang }));
 
-        const resultGroupList = groupList.map(o => ({ ...o, name: o.groupmark }));
-
-        const dParams = { GroupName: payload ? payload.groupname : resultGroupList.length && resultGroupList[0].groupmark };
-        const { data: resList } = yield call(getstatisticsdetaildata, dParams);
+        let resList = [];
+        if (resultGroupList.length && resultGroupList[0].groupmark) {
+          const dParams = {
+            GroupName: resultGroupList[0].groupmark
+          };
+          const { data: resData } = yield call(getstatisticsdetaildata, dParams);
+          resList = resData;
+        }
 
         const { data: selectList } = yield call(getstatistics, {});
-
-        const resultResList = (list) => {
-          const _list = [...list];
-          return _list.length < 3 ? resultResList([..._list, cacheList[_list.length]]) : _list.slice(0, 3);
-        };
 
         yield put({
           type: 'putState',
           payload: {
             groupList: resultGroupList,
             cacheGroupList: resultGroupList,
-            resList: resList.length ? resultResList(resList) : [...cacheList],
-            selectList,
-            groupObj: (Array.isArray(resultGroupList) && resultGroupList.length) ? resultGroupList[0] : {}
+            resList: resList.length ? resultResList(resList, cacheList) : [...cacheList],
+            selectList
+          }
+        });
+      } catch (e) {
+        message.error(e.message);
+      }
+    },
+    *QueryList({ payload }, { call, put, select }) {
+      const { cacheList } = yield select(state => state.statisticsconfig);
+      try {
+        const gParams = { AnaFuncName: payload ? payload.groupname : '' };
+        const { data: groupList } = yield call(getstatisticsdata, gParams);
+
+        const resultGroupList = groupList.map((o, id) => ({ ...o, id, displayname: o.groupmark, displayname_lang: o.groupmark_lang }));
+
+        const dParams = {
+          GroupName: (payload && payload.isdel !== 1) ? payload.groupname : (resultGroupList.length && resultGroupList[0].groupmark)
+        };
+        const { data: resList } = yield call(getstatisticsdetaildata, dParams);
+
+        yield put({
+          type: 'putState',
+          payload: {
+            groupList: resultGroupList,
+            cacheGroupList: resultGroupList,
+            resList: resList.length ? resultResList(resList, cacheList) : [...cacheList]
           }
         });
       } catch (e) {
@@ -49,44 +78,71 @@ export default {
       }
     },
     *UpdateList({ payload }, { call, put, select }) {
-      const { cacheList } = yield select(state => state.statisticsconfig);
-      const { record, value } = payload;
+      const { cacheList, cacheGroupList } = yield select(state => state.statisticsconfig);
+      const { record } = payload;
+      const isNew = !cacheGroupList.some(item => item.id === record.id);
 
       try {
-        const dParams = {
-          GroupName: value && value.cn
-        };
+        const GroupName = record ? record.displayname_lang && record.displayname_lang.cn : '';
+        const params = { GroupName };
 
-        const groupmark = record ? record.displayname_lang && record.displayname_lang.cn : '';
-        const groupmark_lang = record.displayname_lang || {};
-
-        const { data: resList } = yield call(getstatisticsdetaildata, dParams);
-
-        const resultResList = (data) => {
-          const _list = [...data];
-          return _list.length < 3 ? resultResList([..._list, cacheList[_list.length]]) : _list.slice(0, 3);
-        };
+        const { data: resList } = yield call(getstatisticsdetaildata, params);
 
         yield put({
           type: 'putState',
           payload: {
-            resList: resList.length ? resultResList(resList) : [...cacheList],
-            groupObj: { groupmark, groupmark_lang }
+            record,
+            resList: !isNew ? resultResList(resList, cacheList) : [...cacheList]
           }
         });
-
-        yield put({ type: 'QueryList', payload: { groupname: groupmark } });
       } catch (e) {
         message.error(e.message);
       }
     },
+    *SubmitData({ payload }, { put, call, select }) {
+      const { record, cacheGroupList } = yield select(state => state.statisticsconfig);
+      const { values } = payload;
+      const _list = Object.values(values).map((anafuncid, index) => {
+        return ({
+          groupname: record.groupmark || '',
+          groupname_lang: JSON.stringify(record.groupmark_lang),
+          anafuncid: anafuncid || null,
+          recorder: index
+        });
+      });
+      const isNew = !cacheGroupList.some(o => o.id === record.id);
+      const isdel = _list.every(o => !o.anafuncid) ? 1 : 0;
+
+      if (isNew && isdel) {
+        message.warn('检测到新分组，请先选择 [统计项] 再提交');
+        return;
+      } else if (!record.groupmark) {
+        message.warn('[分组名称] 不能为空！');
+        return;
+      }
+      const params = { data: _list, isdel };
+      const { error_msg } = yield call(savestatisticsgroupsumsetting, params);
+      message.success(error_msg || '提交成功');
+
+      yield put({ type: 'QueryList', payload: { groupname: record.groupmark, isdel: params.isdel } });
+    },
     *Submit({ payload }, { put, call, select }) {
-      const { groupObj } = yield select(state => state.statisticsconfig);
+      const { record, cacheGroupList } = yield select(state => state.statisticsconfig);
       try {
-        const { params } = payload;
-        const { error_msg } = yield call(savestatisticsgroupsumsetting, params);
-        message.success(error_msg || '提交成功');
-        yield put({ type: 'QueryList', payload: { groupname: groupObj.groupmark } });
+        for (const item of cacheGroupList) {
+          if (item.id === record.id && record.groupmark && item.groupmark !== record.groupmark) {
+            const nameParams = {
+              groupname: item.groupmark,
+              newgroupname: record.groupmark,
+              newgroupname_lang: record.groupmark_lang
+            };
+            yield call(updatestatisticsgroupsetting, nameParams);
+            yield put({ type: 'SubmitData', payload });
+            return;
+          }
+        }
+
+        yield put({ type: 'SubmitData', payload });
       } catch (e) {
         message.error(e.message || '提交失败');
       }

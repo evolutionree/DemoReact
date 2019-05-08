@@ -3,47 +3,24 @@ import { Button, Icon, message, Tooltip } from 'antd';
 import IntlEdittableCell from '../../../components/UKComponent/Form/IntlEdittableCell';
 import styles from './index.less';
 
-const NodeChildren = (props) => {
-  return (
-    <IntlEdittableCell
-      style={{ width: 'calc(100% - 10px)' }}
-      {...props}
-    />
-  );
-};
-
 class EditList extends Component {
   constructor(props) {
     super(props);
-    const list = this.addFields(props.list);
-    const cacheList = this.addFields(props.cacheList);
     this.state = {
-      list,
-      cacheList,
-      selectedItemId: ''
+      list: props.list,
+      selectedItemId: 0
     };
   }
 
   previousCell = null;
 
   componentWillReceiveProps(nextProps) {
-    const thisProps = this.props;
-    if (nextProps.list.length !== thisProps.list.length) {
-      const list = this.addFields(nextProps.list);
-      const cacheList = this.addFields(nextProps.cacheList);
-      this.setState({ list, cacheList });
-    }
+    const list = nextProps.list;
+    this.setState({ list });
   }
 
-  addFields = list => (list.map((item, id) => ({
-    ...item,
-    id,
-    active: id === 0 || false,
-    displayname: item.groupmark || undefined,
-    displayname_lang: item.groupmark_lang || null
-  })));
-
   add = () => {
+    const { addRow } = this.props;
     const { list } = this.state;
     const newRow = {
       id: list.length,
@@ -52,14 +29,17 @@ class EditList extends Component {
       displayname_lang: null
     };
     const newList = [...list, newRow];
-    this.setState({ list: newList });
+    this.setState({ selectedItemId: list.length });
+    if (addRow) addRow(newList);
   }
 
   restList = () => {
-    const { list, cacheList } = this.state;
+    const { restFunc } = this.props;
+    const { list } = this.state;
+
     if (list.length) {
       message.success('列表已重置');
-      this.setState({ list: cacheList });
+      if (restFunc) restFunc();
     }
   }
 
@@ -67,17 +47,22 @@ class EditList extends Component {
     const { onChange } = this.props;
     const { list, selectedItemId } = this.state;
 
-    const newList = [...list].map(item => ({ ...item, active: !!(item.id === record.id) }));
-    if ((onChange && e === undefined) || selectedItemId !== record.id) onChange(record, value, e);
-    this.setState({ list: newList, selectedItemId: record.id });
+    if (onChange) {
+      // let count = 0;
+      // list.forEach(item => {
+      //   if (item.groupmark === (value && value.cn)) count += 1;
+      // });
+      // if (value && count > 1) {
+      //   message.warn('存在相同组名称！');
+      //   return;
+      // }
 
-    let count = 0;
-    list.forEach(item => {
-      if (item.name === (value && value.cn)) count += 1;
-    });
-    if (value && count > 1) {
-      message.warn('存在相同组名称！');
+      if ((selectedItemId === record.id) && (!value || record.groupmark === value.cn)) {
+        return;
+      }
+      onChange(record, value, e);
     }
+    this.setState({ selectedItemId: record.id });
   }
 
   callback = self => {
@@ -88,8 +73,9 @@ class EditList extends Component {
   };
 
   render() {
-    const { width = 250, height = '100%', title = '标题', tips = '提示信息', getFieldsValue, onActive } = this.props;
-    const { list } = this.state;
+    const { width = 250, height = '100%', title = '标题', tips = '提示信息', getFieldsValue, onActive, checkFunc } = this.props;
+    const { list, selectedItemId } = this.state;
+
     return (
       <div className={styles.wrap} style={{ width, height, minHeight: 300 }}>
         <div className={styles.header}>
@@ -107,13 +93,14 @@ class EditList extends Component {
           <div className={styles.list}>
             {
               list.length ? list.map(item => (
-                <NodeChildren
+                <IntlEdittableCell
+                  style={{ width: 'calc(100% - 10px)' }}
                   key={item.id}
                   getFieldsValue={getFieldsValue}
-                  api="/api/StatisticsSetting/updatestatisticsgroupsetting"
-                  otherParams={{ groupname: item.displayname || '', newgroupname_lang: null, newgroupname: '' }}
+                  other
                   record={item}
-                  active={item.active}
+                  active={item.id === selectedItemId}
+                  checkFunc={checkFunc}
                   className={styles.children}
                   hoverStyle={styles.childrenActive}
                   onChange={this.onChangeItem.bind(this, item)}

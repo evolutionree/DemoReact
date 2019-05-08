@@ -112,3 +112,10 @@ export async function savestatisticsgroupsumsetting(params) {
     body: JSON.stringify(params)
   });
 }
+
+export async function updatestatisticsgroupsetting(params) {
+  return request('/api/StatisticsSetting/updatestatisticsgroupsetting', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}

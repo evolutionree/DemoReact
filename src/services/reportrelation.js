@@ -24,3 +24,30 @@ export async function getreportreldetail(params) {
     body: JSON.stringify(params)
   });
 }
+
+// {
+//   "ReportRelationIds":[
+//    "b0df3992-100a-4963-9c1d-0ff370b447e6"
+//    ],
+//    "recstatus":0
+//  }
+export async function deletereportrelation(params) {
+  return request('api/ReportRelation/deletereportrelation', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}
+
+// {
+//   "ReportRelationIds":[
+//    "b0df3992-100a-4963-9c1d-0ff370b447e6"
+//    ],
+//    "recstatus":0
+//  }
+export async function deletereportreldetail(params) {
+  return request('api/ReportRelation/deletereportreldetail', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}
+

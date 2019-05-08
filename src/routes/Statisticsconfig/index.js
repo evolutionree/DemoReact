@@ -4,7 +4,6 @@ import { Select, message, Popconfirm, Form, Button } from 'antd';
 import Page from '../../components/Page';
 import EditList from './EditList';
 import styles from './index.less';
-import { is } from 'immutable';
 
 const Option = Select.Option;
 
@@ -12,21 +11,20 @@ const NAMESPACE = 'statisticsconfig';
 
 class Statisticsconfig extends Component {
   state = {
-    isReadOnlys: [0, 1, 1],
-    resList: []
+    isReadOnlys: [0, 1, 1]
   }
 
   componentDidMount() {
     const { dispatch } = this.props;
-    dispatch({ type: `${NAMESPACE}/QueryList` });
+    dispatch({ type: `${NAMESPACE}/Init` });
   }
 
   componentWillReceiveProps(nextProps) {
     const { form: { getFieldsValue, setFieldsValue }, resList } = nextProps;
-    const { resList: oldResList } = this.state;
+    const { resList: oldResList } = this.props;
     let isSame = true;
     if (resList.length === oldResList.length) {
-      for (let i = 0; i < resList.length; i++) {
+      for (let i = 0; i < resList.length; i += 1) {
         if (resList[i] !== oldResList[i]) {
           isSame = false;
           break;
@@ -35,7 +33,7 @@ class Statisticsconfig extends Component {
     } else {
       isSame = false;
     }
-    if (isSame) return;
+    if (!resList.length || isSame) return;
 
     const arr = resList.map(i => 1);
 
@@ -56,15 +54,24 @@ class Statisticsconfig extends Component {
   }
 
   onChangeItem = (record, value, e) => {
-    const { updateList, dispatch } = this.props;
+    const { updateList, dispatch, groupList } = this.props;
     if (e === undefined) {
-      const groupObj = {
+      const newRecord = {
+        ...record,
         groupmark: value ? value.cn : '',
         groupmark_lang: value || {}
       };
-      dispatch({ type: `${NAMESPACE}/putState`, payload: { groupObj } });
+      const result = [...groupList].map(item => (item.id === record.id ? newRecord : item));
+
+      dispatch({
+        type: `${NAMESPACE}/putState`,
+        payload: {
+          groupList: result,
+          record: newRecord
+        }
+      });
     } else {
-      updateList(record, value, e);
+      updateList(record);
     }
   }
 
@@ -94,24 +101,14 @@ class Statisticsconfig extends Component {
   }
 
   onSubmit = () => {
-    const { form: { validateFields }, submit, groupObj } = this.props;
+    const { form: { validateFields }, submit, record } = this.props;
     validateFields((err, values) => {
       if (err) return;
-      if (!(groupObj && groupObj.groupmark_lang)) {
+      if (!(record && Object.keys(record).length)) {
         message.warn('请先填写分组名称！');
         return;
       }
-      const _list = Object.values(values).map((anafuncid, index) => {
-        return ({
-          groupname: groupObj.groupmark || '',
-          anafuncid: anafuncid || null,
-          recorder: index,
-          groupname_lang: JSON.stringify(groupObj.groupmark_lang)
-        });
-      });
-
-      const params = { data: _list, isdel: _list.every(o => !o.anafuncid) ? 1 : 0 };
-      submit(params);
+      submit(values);
     });
   }
 
@@ -120,9 +117,19 @@ class Statisticsconfig extends Component {
     if (Active) Active(active);
   }
 
+  addRow = (groupList) => {
+    const { dispatch, cacheList } = this.props;
+    dispatch({ type: `${NAMESPACE}/putState`, payload: { groupList, resList: cacheList } });
+  }
+
+  restFunc = () => {
+    const { dispatch, cacheGroupList } = this.props;
+    dispatch({ type: `${NAMESPACE}/putState`, payload: { groupList: cacheGroupList } });
+  }
+
   render() {
     const {
-      groupList, cacheGroupList, selectList, resList,
+      groupList, selectList, resList, checkFunc,
       form: { getFieldDecorator, getFieldsValue }, active: isAcitve
     } = this.props;
     const { isReadOnlys } = this.state;
@@ -136,7 +143,9 @@ class Statisticsconfig extends Component {
               tips='支持变量"{NOW}"'
               getFieldsValue={getFieldsValue}
               list={groupList}
-              cacheList={cacheGroupList}
+              addRow={this.addRow}
+              restFunc={this.restFunc}
+              checkFunc={checkFunc}
               onChange={this.onChangeItem}
               onActive={active => this.onActive(active)}
             />
@@ -161,7 +170,7 @@ class Statisticsconfig extends Component {
                               })(
                                 <Select
                                   showSearch
-                                  disabled={isReadOnlys[index]}
+                                  disabled={!checkFunc('EditCountRow') || isReadOnlys[index]}
                                   style={{ width: 300 }}
                                   placeholder="Select a person"
                                   optionFilterProp="children"
@@ -198,11 +207,11 @@ class Statisticsconfig extends Component {
 export default connect(
   state => state[NAMESPACE],
   dispatch => ({
-    updateList(record, value, e) {
-      dispatch({ type: `${NAMESPACE}/UpdateList`, payload: { record, value } });
+    updateList(record) {
+      dispatch({ type: `${NAMESPACE}/UpdateList`, payload: { record } });
     },
-    submit(params) {
-      dispatch({ type: `${NAMESPACE}/Submit`, payload: { params } });
+    submit(values) {
+      dispatch({ type: `${NAMESPACE}/Submit`, payload: { values } });
     },
     Active(active) {
       dispatch({ type: `${NAMESPACE}/putState`, payload: { active } });

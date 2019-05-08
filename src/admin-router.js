@@ -36,8 +36,8 @@ import PasswordStrategy from './routes/Configure/passwordStrategy';
 
 const appRoutes = [
   { path: 'structure', comp: Structure, entid: '3d77dfd2-60bb-4552-bb69-1c3e73cf4095', model: require('./models/structure') },
-  { path: 'reportrelation', comp: ReportRelationMain, model: require('./models/reportrelation') },
-  { path: 'reportrelationdetail/:id', comp: ReportRelationDetail, model: require('./models/reportrelationdetail') },
+  { path: 'reportrelation', comp: ReportRelationMain, entid: '00000000-0000-0000-0000-000000000100', model: require('./models/reportrelation') },
+  { path: 'reportrelationdetail/:id', comp: ReportRelationDetail, entid: '00000000-0000-0000-0000-000000000100', model: require('./models/reportrelationdetail') },
   { path: 'role-groups', comp: RoleGroups, entid: '00000000-0000-0000-0000-000000000012', model: require('./models/roleGroups') },
   { path: 'roles', comp: RoleList, entid: '00000000-0000-0000-0000-000000000012', model: require('./models/roleList') },
   {

@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { getreportrelation } from '../services/reportrelation';
+import { getreportrelation, deletereportrelation } from '../services/reportrelation';
 import { setSessionItem, getCacheData } from '../utils/newStorage';
 
 const NAMESPACE = 'reportrelation';
@@ -25,15 +25,9 @@ export default {
     showModals: {
       FormModal: ''
     },
-    defaultParams: {
-      pageIndex: 1,
-      pageSize: 100000,
-      searchOrder: '',
-      columnFilter: null //字段查询
-    },
     initParams: {
       pageIndex: 1,
-      pageSize: 100000,
+      pageSize: 10000,
       searchOrder: '',
       columnFilter: null //字段查询
     },
@@ -68,10 +62,13 @@ export default {
       }
     },
     *Del({ payload }, { put, call }) {
-      const params = { recids: payload };
+      const params = {
+        ReportRelationIds: payload,
+        recstatus: 0
+      };
       try {
-        // const { error_msg } = yield call(deleteversionrecord, params);
-        // message.success(error_msg || '删除成功！');
+        const { error_msg } = yield call(deletereportrelation, params);
+        message.success(error_msg || '删除成功！');
         yield put({ type: 'QueryList' });
       } catch (e) {
         message.error(e.message || '删除失败');

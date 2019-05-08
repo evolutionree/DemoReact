@@ -126,8 +126,8 @@ const appRoutes = [
   { path: 'collector/:id/:name', comp: CollectorDetail, model: require('./models/collectorDetail') },
   { path: 'entcomm-list/:id', comp: EntcommList, model: require('./models/entcommList') },
   { path: 'entcomm-application/:id', comp: EntcommApplication, model: require('./models/entcommApplication') },
-  { path: 'statisticsfunc', comp: Statisticsfunc, entid: '00000000-0000-0000-0000-000000000018', model: require('./models/statisticsfunc') },
-  { path: 'statisticsconfig', comp: Statisticsconfig, entid: '00000000-0000-0000-0000-000000000018', model: require('./models/statisticsconfig') },
+  { path: 'statisticsfunc', comp: Statisticsfunc, entid: '00000000-0000-0000-0000-000000000101', model: require('./models/statisticsfunc') },
+  { path: 'statisticsconfig', comp: Statisticsconfig, entid: '00000000-0000-0000-0000-000000000101', model: require('./models/statisticsconfig') },
   {
     path: 'entcomm/:entityId/:recordId',
     comp: EntcommHome,
