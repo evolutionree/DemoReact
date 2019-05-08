@@ -1,21 +1,14 @@
 import React, { Component } from 'react';
 import { Button, Icon, message, Tooltip } from 'antd';
-import classNames from 'classnames';
 import IntlEdittableCell from '../../../components/UKComponent/Form/IntlEdittableCell';
 import styles from './index.less';
 
 const NodeChildren = (props) => {
-  const { record = {}, onChange, api, isEdit, ...rest } = props;
   return (
-    isEdit ? (
-      <IntlEdittableCell
-        style={{ width: 'calc(100% - 10px)' }}
-        record={record}
-        onChange={onChange}
-        api={api}
-        {...rest}
-      />
-    ) : <div>{record ? record.displayname : ''}</div>
+    <IntlEdittableCell
+      style={{ width: 'calc(100% - 10px)' }}
+      {...props}
+    />
   );
 };
 
@@ -23,30 +16,29 @@ class EditList extends Component {
   constructor(props) {
     super(props);
     const list = this.addFields(props.list);
+    const cacheList = this.addFields(props.cacheList);
     this.state = {
       list,
-      cacheList: list
+      cacheList,
+      selectedItemId: ''
     };
   }
 
   previousCell = null;
 
-  componentDidMount() {
-
-  }
-
   componentWillReceiveProps(nextProps) {
     const thisProps = this.props;
     if (nextProps.list.length !== thisProps.list.length) {
       const list = this.addFields(nextProps.list);
-      this.setState({ list, cacheList: list });
+      const cacheList = this.addFields(nextProps.cacheList);
+      this.setState({ list, cacheList });
     }
   }
 
   addFields = list => (list.map((item, id) => ({
     ...item,
     id,
-    active: false,
+    active: id === 0 || false,
     displayname: item.groupmark || undefined,
     displayname_lang: item.groupmark_lang || null
   })));
@@ -64,30 +56,39 @@ class EditList extends Component {
   }
 
   restList = () => {
-    const { list } = this.state;
+    const { list, cacheList } = this.state;
     if (list.length) {
       message.success('列表已重置');
-      this.setState({ list: this.state.cacheList });
+      this.setState({ list: cacheList });
     }
   }
 
-  onChangeItem = (record, e) => {
+  onChangeItem = (record, value, e) => {
     const { onChange } = this.props;
-    const { list } = this.state;
-    if (record) {
-      if (onChange) onChange(record, e);
-      const newList = [...list].map(item => ({ ...item, active: !!(item.id === record.id) }));
-      this.setState({ list: newList });
+    const { list, selectedItemId } = this.state;
+
+    const newList = [...list].map(item => ({ ...item, active: !!(item.id === record.id) }));
+    if ((onChange && e === undefined) || selectedItemId !== record.id) onChange(record, value, e);
+    this.setState({ list: newList, selectedItemId: record.id });
+
+    let count = 0;
+    list.forEach(item => {
+      if (item.name === (value && value.cn)) count += 1;
+    });
+    if (value && count > 1) {
+      message.warn('存在相同组名称！');
     }
   }
 
   callback = self => {
-    if (this.previousCell) this.previousCell.check();
-    this.previousCell = self;
+    if (self !== this.previousCell) {
+      if (this.previousCell) this.previousCell.check();
+      this.previousCell = self;
+    }
   };
 
   render() {
-    const { width = 250, height = '100%', title = '标题', tips = '提示信息', getFieldsValue } = this.props;
+    const { width = 250, height = '100%', title = '标题', tips = '提示信息', getFieldsValue, onActive } = this.props;
     const { list } = this.state;
     return (
       <div className={styles.wrap} style={{ width, height, minHeight: 300 }}>
@@ -107,17 +108,17 @@ class EditList extends Component {
             {
               list.length ? list.map(item => (
                 <NodeChildren
-                  isEdit
                   key={item.id}
                   getFieldsValue={getFieldsValue}
                   api="/api/StatisticsSetting/updatestatisticsgroupsetting"
-                  otherParams={{ groupname: item.displayname || '', newgroupname: '' }}
+                  otherParams={{ groupname: item.displayname || '', newgroupname_lang: null, newgroupname: '' }}
                   record={item}
                   active={item.active}
                   className={styles.children}
                   hoverStyle={styles.childrenActive}
-                  onChange={this.onChangeItem}
+                  onChange={this.onChangeItem.bind(this, item)}
                   callback={this.callback}
+                  onActive={onActive && onActive}
                 />
               )) : (<div style={{ textAlign: 'center', transform: 'translateX(-5px)', color: '#c5c5c5' }}>
                 <Icon type="frown-o" /> 暂无数据

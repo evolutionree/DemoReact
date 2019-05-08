@@ -34,17 +34,20 @@ class IntlEdittableCell extends Component {
 
   handleChange = (value) => this.setState({ value });
 
-  check = () => {
-    const { api } = this.props;
+  check = (e) => {
+    const { api, onActive } = this.props;
+    if (e) e.stopPropagation();
+    if (onActive) onActive(false);
     this.setState({ editable: false });
     this.submitValue(api);
   }
 
   edit = (e) => {
-    const { callback } = this.props;
-    e.stopPropagation();
+    const { callback, onActive } = this.props;
+    // if (e) e.stopPropagation();
     if (callback) callback(this);
     this.setState({ editable: true });
+    if (onActive) onActive(true);
   }
 
   submitValue = (api) => {
@@ -57,17 +60,11 @@ class IntlEdittableCell extends Component {
     }
 
     if (_.isEqual(displayname_lang, value)) return;
-    
-    if (getFieldsValue && Object.values(getFieldsValue()).every(val => !val)) {
-      if (onChange) onChange(value, 'byValue');
-      return;
-    }
-
-    if (onChange) onChange(value);
 
     const params = otherParams ? {
       ...otherParams,
-      newgroupname: value
+      newgroupname: value && value.cn,
+      newgroupname_lang: JSON.stringify(value)
     } : { fieldid, displayname_lang: value };
 
     dynamicRequest(api, params)
@@ -75,14 +72,17 @@ class IntlEdittableCell extends Component {
         const { error_msg } = res;
         message.success(error_msg || '修改成功');
         if (!otherParams) dispatch({ type: 'entityFields/query' });
+        if (onChange) onChange(value);
       }).catch(e => {
         message.error(e.message || '修改失败');
       });
   }
 
   onChangeItem = (e) => {
-    const { record, onChange, otherParams } = this.props;
-    if (otherParams && !record.active && onChange) onChange(record, e);
+    if (this.state.editable) return;
+    const { onChange, otherParams } = this.props;
+    const { value } = this.state;
+    if (otherParams && onChange) onChange(value, e);
   }
 
   render() {

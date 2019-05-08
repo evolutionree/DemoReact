@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { routerRedux } from 'dva/router';
-import { Select, message, Popconfirm, Form } from 'antd';
+import { Select, message, Popconfirm, Form, Button } from 'antd';
 import Page from '../../components/Page';
-import { getIntlText } from '../../components/UKComponent/Form/IntlText';
 import EditList from './EditList';
 import styles from './index.less';
-import { resolve } from 'url';
+import { is } from 'immutable';
 
 const Option = Select.Option;
 
@@ -20,28 +18,54 @@ class Statisticsconfig extends Component {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    dispatch({ type: `${NAMESPACE}/Init` });
+    dispatch({ type: `${NAMESPACE}/QueryList` });
   }
 
   componentWillReceiveProps(nextProps) {
     const { form: { getFieldsValue, setFieldsValue }, resList } = nextProps;
     const { resList: oldResList } = this.state;
+    let isSame = true;
+    if (resList.length === oldResList.length) {
+      for (let i = 0; i < resList.length; i++) {
+        if (resList[i] !== oldResList[i]) {
+          isSame = false;
+          break;
+        }
+      }
+    } else {
+      isSame = false;
+    }
+    if (isSame) return;
+    const arr = resList.map(i => 1);
 
-    for (const item in resList) {
-      if (resList[item] !== oldResList[item]) {
-        this.setState({ resList, isReadOnlys: resList[0].anafuncid ? [1, 1, 0] : [0, 1, 1] }, () => {
-          const keys = getFieldsValue();
-          const result = {};
-          Object.keys(keys).forEach((field, index) => (result[field] = resList[index].anafuncid));
-          setFieldsValue(result);
-        });
+    for (let i = 0; i < resList.length; i++) {
+      if (!resList[i].anafuncid) {
+        arr[i] = 0;
+        arr[i - 1] = 0;
+        break;
       }
     }
+
+
+    this.setState({ resList, isReadOnlys: resList[0].anafuncid ? arr : [0, 1, 1] }, () => {
+      const keys = getFieldsValue();
+      const result = {};
+      Object.keys(keys).forEach((field, index) => (result[field] = resList[index].anafuncid));
+      setFieldsValue(result);
+    });
   }
 
-  onChangeItem = (record, e) => {
-    const { updateList } = this.props;
-    updateList(record, e);
+  onChangeItem = (record, value, e) => {
+    const { updateList, dispatch } = this.props;
+    if (e === undefined) {
+      const groupObj = {
+        groupmark: value ? value.cn : '',
+        groupmark_lang: value || {}
+      };
+      dispatch({ type: `${NAMESPACE}/putState`, payload: { groupObj } });
+    } else {
+      updateList(record, value, e);
+    }
   }
 
   handleSelectChange = (value, index) => {
@@ -73,26 +97,34 @@ class Statisticsconfig extends Component {
     const { form: { validateFields }, submit, groupObj } = this.props;
     validateFields((err, values) => {
       if (err) return;
+      if (!(groupObj && groupObj.groupmark_lang)) {
+        message.warn('请先填写分组名称！');
+        return;
+      }
       const _list = Object.values(values).map((anafuncid, index) => {
         return ({
           groupname: groupObj.groupmark || '',
           anafuncid: anafuncid || null,
           recorder: index,
-          groupname_lang: JSON.stringify(groupObj.groupmark_lang ? groupObj.groupmark_lang : { cn: '', en: '', tw: '' })
+          groupname_lang: JSON.stringify(groupObj.groupmark_lang)
         });
       });
 
-      if (_list.every(item => !item.anafuncid) || _list.every(item => item.anafuncid)) {
-        const params = { data: _list };
-        submit(params);
-      } else {
-        message.warn('请全选（或全不选）统计项');
-      }
+      const params = { data: _list, isdel: _list.every(o => !o.anafuncid) ? 1 : 0 };
+      submit(params);
     });
   }
 
+  onActive = active => {
+    const { Active } = this.props;
+    if (Active) Active(active);
+  }
+
   render() {
-    const { groupList, selectList, resList, form: { getFieldDecorator, getFieldsValue } } = this.props;
+    const {
+      groupList, cacheGroupList, selectList, resList,
+      form: { getFieldDecorator, getFieldsValue }, active: isAcitve
+    } = this.props;
     const { isReadOnlys } = this.state;
 
     return (
@@ -100,11 +132,13 @@ class Statisticsconfig extends Component {
         <div className={styles.wrap}>
           <div style={{ marginRight: 20, height: '100%' }}>
             <EditList
-              getFieldsValue={getFieldsValue}
               title="分组名称"
               tips='支持变量"{NOW}"'
-              list={groupList.map(o => ({ ...o, name: o.groupmark }))}
+              getFieldsValue={getFieldsValue}
+              list={groupList}
+              cacheList={cacheGroupList}
               onChange={this.onChangeItem}
+              onActive={active => this.onActive(active)}
             />
           </div>
           <div className={styles.right}>
@@ -114,6 +148,7 @@ class Statisticsconfig extends Component {
                 <div className={styles.chiid}>统计项</div>
               </div>
               {
+
                 Array.isArray(resList) && resList.map((item, index) => {
                   return (
                     <div key={index} className={styles.row}>
@@ -130,8 +165,6 @@ class Statisticsconfig extends Component {
                               placeholder="Select a person"
                               optionFilterProp="children"
                               onChange={(val) => this.handleSelectChange(val, index)}
-                              // onFocus={handleFocus}
-                              // onBlur={handleBlur}
                               filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                             >
                               <Option value="">请选择</Option>
@@ -147,10 +180,11 @@ class Statisticsconfig extends Component {
                 })
               }
             </div>
-            <Popconfirm title="确认提交?" onConfirm={this.onSubmit}>
-              <div title="点击提交" className={styles.footer}>
+
+            <Popconfirm title="确认提交?" onConfirm={!isAcitve ? this.onSubmit : () => { }}>
+              <Button disabled={isAcitve} title="点击提交" type="dashed" className={styles.footer}>
                 提交
-              </div>
+              </Button>
             </Popconfirm>
           </div>
         </div>
@@ -162,11 +196,14 @@ class Statisticsconfig extends Component {
 export default connect(
   state => state[NAMESPACE],
   dispatch => ({
-    updateList(record, e) {
-      dispatch({ type: `${NAMESPACE}/UpdateList`, payload: { record, logic: e } });
+    updateList(record, value, e) {
+      dispatch({ type: `${NAMESPACE}/UpdateList`, payload: { record, value } });
     },
     submit(params) {
       dispatch({ type: `${NAMESPACE}/Submit`, payload: { params } });
+    },
+    Active(active) {
+      dispatch({ type: `${NAMESPACE}/putState`, payload: { active } });
     },
     dispatch
   })

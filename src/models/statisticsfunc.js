@@ -51,7 +51,8 @@ export default {
           type: 'putState',
           payload: {
             list: result.data.filter(item => !!item.recstatus === checked),
-            cacheList: result.data
+            cacheList: result.data,
+            currentRecords: []
           }
         });
       } catch (e) {
@@ -77,11 +78,7 @@ export default {
         yield call(isEdit ? updatestatistics : addstatistics, params);
         yield put({ type: 'hideModal' });
         message.success('保存成功');
-
-        yield put({
-          type: 'refreshPage',
-          payload: !isEdit
-        });
+        yield put({ type: 'search' });
       } catch (e) {
         yield put({ type: 'savePending', payload: false });
         message.error(e.message || '保存失败');
@@ -94,7 +91,7 @@ export default {
         };
         yield call(deletestatistics, params);
         message.success('删除成功');
-        yield put({ type: 'refreshPage', payload: false });
+        yield put({ type: 'search' });
       } catch (e) {
         message.error(e.message || '删除失败');
       }
@@ -108,20 +105,10 @@ export default {
         };
         yield call(disabledstatistics, params);
         message.success('操作成功');
-        yield put({ type: 'refreshPage', payload: false });
+        yield put({ type: 'search' });
       } catch (e) {
         message.error(e.message || '操作失败');
       }
-    },
-    *refreshPage({ payload: resetQuery }, { select, put }) {
-      // dangerLocation
-      const { query } = yield select(
-        ({ routing }) => routing.locationBeforeTransitions
-      );
-      yield put(routerRedux.replace({
-        pathname: '/statisticsfunc',
-        query: resetQuery ? undefined : query
-      }));
     },
     *disable(_, { put, select }) {
       const { checked, cacheList } = yield select(state => state.statisticsfunc);

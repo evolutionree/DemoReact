@@ -5,80 +5,90 @@ export default {
   namespace: 'statisticsconfig',
   state: {
     groupList: [],
+    cacheGroupList: [],
     resList: [],
     cacheList: [{ id: '0', anafuncid: '' }, { id: '1', anafuncid: '' }, { id: '2', anafuncid: '' }],
     selectList: [],
-    groupObj: {}
+    groupObj: {},
+    active: false
   },
   subscriptions: {
 
   },
   effects: {
-    *Init(_, { call, put, select }) {
+    *QueryList({ payload }, { call, put, select }) {
       const { cacheList } = yield select(state => state.statisticsconfig);
       try {
-        const gParams = {
-          AnaFuncName: ''
-        };
+        const gParams = { AnaFuncName: payload ? payload.groupname : '' };
         const { data: groupList } = yield call(getstatisticsdata, gParams);
-        const dParams = {
-          GroupName: Array.isArray(groupList) && groupList[0].groupmark
-        };
+
+        const resultGroupList = groupList.map(o => ({ ...o, name: o.groupmark }));
+
+        const dParams = { GroupName: payload ? payload.groupname : resultGroupList.length && resultGroupList[0].groupmark };
         const { data: resList } = yield call(getstatisticsdetaildata, dParams);
 
         const { data: selectList } = yield call(getstatistics, {});
 
+        const resultResList = (list) => {
+          const _list = [...list];
+          return _list.length < 3 ? resultResList([..._list, cacheList[_list.length]]) : _list.slice(0, 3);
+        };
+
         yield put({
           type: 'putState',
           payload: {
-            groupList,
-            resList: resList.length ? resList : [...cacheList],
+            groupList: resultGroupList,
+            cacheGroupList: resultGroupList,
+            resList: resList.length ? resultResList(resList) : [...cacheList],
             selectList,
-            groupObj: Array.isArray(groupList) && groupList[0]
+            groupObj: (Array.isArray(resultGroupList) && resultGroupList.length) ? resultGroupList[0] : {}
           }
         });
       } catch (e) {
-        message.error(e);
+        message.error(e.message);
       }
     },
     *UpdateList({ payload }, { call, put, select }) {
       const { cacheList } = yield select(state => state.statisticsconfig);
-      const { record, logic } = payload;
-
-      if (logic === 'byValue') {
-        const groupmark = record ? record.cn : '';
-        const groupmark_lang = record || {};
-
-        yield put({ type: 'putState', payload: { groupObj: { groupmark, groupmark_lang } } });
-        return;
-      }
+      const { record, value } = payload;
 
       try {
         const dParams = {
-          GroupName: record.groupmark
+          GroupName: value && value.cn
         };
 
+        const groupmark = record ? record.displayname_lang && record.displayname_lang.cn : '';
+        const groupmark_lang = record.displayname_lang || {};
+
         const { data: resList } = yield call(getstatisticsdetaildata, dParams);
+
+        const resultResList = (data) => {
+          const _list = [...data];
+          return _list.length < 3 ? resultResList([..._list, cacheList[_list.length]]) : _list.slice(0, 3);
+        };
 
         yield put({
           type: 'putState',
           payload: {
-            resList: resList.length ? resList : [...cacheList],
-            groupObj: record
+            resList: resList.length ? resultResList(resList) : [...cacheList],
+            groupObj: { groupmark, groupmark_lang }
           }
         });
+
+        yield put({ type: 'QueryList', payload: { groupname: groupmark } });
       } catch (e) {
-        message.error(e);
+        message.error(e.message);
       }
     },
-    *Submit({ payload }, { put, call }) {
+    *Submit({ payload }, { put, call, select }) {
+      const { groupObj } = yield select(state => state.statisticsconfig);
       try {
         const { params } = payload;
         const { error_msg } = yield call(savestatisticsgroupsumsetting, params);
         message.success(error_msg || '提交成功');
-        yield put({ type: 'Init' });
+        yield put({ type: 'QueryList', payload: { groupname: groupObj.groupmark } });
       } catch (e) {
-        message.error(e || '提交成功');
+        message.error(e.message || '提交失败');
       }
     }
   },
