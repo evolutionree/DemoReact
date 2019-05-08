@@ -13,18 +13,21 @@
     display: flex;
     justify-content: space-between;
     border-bottom: 1px solid #cccccc;
-    .chiid {
+    .child {
       padding: 8px 12px;
       text-align: center;
     }
-    & .chiid:first-child {
+    & :not(:first-child) {
+      margin-bottom: -18px;
+    }
+    & .child:first-child {
       display: flex;
       align-items: center;
       justify-content: center;
       min-width: 54px;
       border-right: 1px solid #cccccc;
     }
-    & .chiid:last-child {
+    & .child:last-child {
       flex: 1;
     }
   }
@@ -50,3 +53,10 @@
   }
 }
 
+.child {
+  :global {
+    & .uke .ant-form-item {
+      margin-bottom: 0 !important;
+    }
+  }
+}

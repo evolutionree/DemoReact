@@ -9,6 +9,18 @@ import StatisticsFormModal from './StatisticsFormModal';
 import styles from './index.less';
 
 function Statisticsfunc(props) {
+  const {
+    dispatch,
+    location: { pathname },
+    queries,
+    list,
+    currentRecords,
+    total,
+    showModals,
+    savePending,
+    checked
+  } = props;
+
   function search(key, val) {
     const query = typeof key === 'object'
       ? { ...queries, pageIndex: 1, ...key }
@@ -37,11 +49,9 @@ function Statisticsfunc(props) {
   function handleAdd() {
     dispatch({ type: 'statisticsfunc/showModals', payload: 'add' });
   }
-  function handleSave(data) {
-    dispatch({ type: 'statisticsfunc/save', payload: data });
-  }
-  function handleCancel() {
-    dispatch({ type: 'statisticsfunc/hideModal' });
+
+  function handleCancel(isEdit) {
+    dispatch({ type: 'statisticsfunc/hideModal', payload: { currentRecords: isEdit ? currentRecords : [] } });
   }
   function handleSelectRecords(records) {
     dispatch({ type: 'statisticsfunc/currentRecords', payload: records });
@@ -49,18 +59,6 @@ function Statisticsfunc(props) {
   function disable() {
     dispatch({ type: 'statisticsfunc/disable' });
   }
-
-  const {
-    dispatch,
-    location: { pathname },
-    queries,
-    list,
-    currentRecords,
-    total,
-    showModals,
-    savePending,
-    checked
-  } = props;
 
   const { pageIndex, pageSize } = queries;
 
@@ -101,7 +99,7 @@ function Statisticsfunc(props) {
   const columns = renderList(LoopList);
   const tableWidth = columns.reduce((sum, current) => sum + current.width, 0) + 62;
 
-  const isUse = Array.isArray(currentRecords) && currentRecords.length === 1 && currentRecords[0].recstatus === 1;
+  const isUse = Array.isArray(currentRecords) && currentRecords.length && currentRecords[0].recstatus === 1;
 
   return (
     <Page title="统计函数定义">
@@ -109,7 +107,7 @@ function Statisticsfunc(props) {
         selectedCount={currentRecords.length}
         actions={[
           { label: '编辑', single: true, handler: handleEdit, show: () => true },
-          { label: `${isUse ? '停用' : '启用'}`, single: true, handler: () => handleSwitch(isUse) },
+          { label: `${isUse ? '停用' : '启用'}`, handler: () => handleSwitch(isUse) },
           { label: '删除', handler: handleDel }
         ]}
       >
@@ -144,10 +142,11 @@ function Statisticsfunc(props) {
       />
 
       <StatisticsFormModal
+        dispatch={dispatch}
+        spaceName="statisticsfunc"
         currentRecords={currentRecords}
         showModals={showModals}
         onChange={handleSelectRecords}
-        onOk={handleSave}
         onCancel={handleCancel}
         savePending={savePending}
       />

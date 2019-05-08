@@ -29,12 +29,12 @@ export default {
     }
   },
   effects: {
-    *search({ payload: queries }, { select, call, put }) {
+    *search({ payload: queries = {} }, { select, put }) {
       const { total } = yield select(state => state.statisticsfunc);
       const { pageIndex, pageSize } = getCorrectPager({ ...queries, total });
       let { dataSourceName = '', recStatus = 1 } = queries;
       dataSourceName = dataSourceName.slice(0, 20);
-      recStatus = parseInt(recStatus);
+      recStatus = parseInt(recStatus, 10);
 
       const corrected = { pageIndex, pageSize, dataSourceName, recStatus };
       yield put({
@@ -51,8 +51,7 @@ export default {
           type: 'putState',
           payload: {
             list: result.data.filter(item => !!item.recstatus === checked),
-            cacheList: result.data,
-            currentRecords: []
+            cacheList: result.data
           }
         });
       } catch (e) {
@@ -60,24 +59,24 @@ export default {
         message.error(e.message || '获取数据失败');
       }
     },
-    *save({ payload: values }, { select, call, put }) {
-      const { showModals, currentRecords } = yield select(state => state.statisticsfunc);
-      const isEdit = /edit/.test(showModals);
+    *save({ payload }, { select, call, put }) {
+      const { currentRecords } = yield select(state => state.statisticsfunc);
+      const { values, resolve, isEdit } = payload;
 
       try {
         yield put({ type: 'savePending' });
         const { allowinto, moreflag, anafuncname_lang, ...rest } = values;
+
         const params = {
-          ...currentRecords[0],
           ...rest,
+          anafuncid: currentRecords ? currentRecords[0].anafuncid : null,
           anafuncname: anafuncname_lang.cn,
           anafuncname_lang: JSON.stringify(anafuncname_lang),
           allowinto: allowinto ? 1 : 0,
           moreflag: moreflag ? 1 : 0
         };
-        yield call(isEdit ? updatestatistics : addstatistics, params);
-        yield put({ type: 'hideModal' });
-        message.success('保存成功');
+        const res = yield call(isEdit ? updatestatistics : addstatistics, params);
+        if (resolve) resolve(res);
         yield put({ type: 'search' });
       } catch (e) {
         yield put({ type: 'savePending', payload: false });
@@ -150,11 +149,13 @@ export default {
         showModals
       };
     },
-    hideModal(state) {
+    hideModal(state, { payload }) {
+      const { currentRecords } = payload;
       return {
         ...state,
         showModals: '',
-        savePending: false
+        savePending: false,
+        currentRecords
       };
     },
     currentRecords(state, { payload: records }) {

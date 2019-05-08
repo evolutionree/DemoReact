@@ -80,17 +80,29 @@ class SelectCheckbox extends Component {
 class StatisticsFormModal extends Component {
 
   handleSubmit = () => {
-    const { form, onOk } = this.props;
+    const { form, onOk, dispatch, spaceName, showModals } = this.props;
+    const isEdit = /edit/.test(showModals);
+
     form.validateFields((err, values) => {
       if (err) return;
-      onOk(values);
+      new Promise((resolve) => {
+        dispatch({ type: `${spaceName}/save`, payload: { values, resolve, isEdit } });
+      }).then(res => {
+        if (res) {
+          this.handleCancel();
+          message.success(res.error_msg || '操作成功');
+        }
+      }).catch(e => message.error(e.message || '操作失败'));
+
+      if (onOk) onOk(values);
     });
   }
 
   handleCancel = () => {
-    const { form, onCancel } = this.props;
+    const { form, onCancel, showModals } = this.props;
+    const isEdit = /edit/.test(showModals);
     form.resetFields();
-    onCancel();
+    onCancel(isEdit);
   }
 
   render() {

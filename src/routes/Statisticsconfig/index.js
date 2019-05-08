@@ -36,16 +36,16 @@ class Statisticsconfig extends Component {
       isSame = false;
     }
     if (isSame) return;
+
     const arr = resList.map(i => 1);
 
-    for (let i = 0; i < resList.length; i++) {
+    for (let i = 0; i < resList.length; i += 1) {
       if (!resList[i].anafuncid) {
         arr[i] = 0;
         arr[i - 1] = 0;
         break;
       }
     }
-
 
     this.setState({ resList, isReadOnlys: resList[0].anafuncid ? arr : [0, 1, 1] }, () => {
       const keys = getFieldsValue();
@@ -142,53 +142,55 @@ class Statisticsconfig extends Component {
             />
           </div>
           <div className={styles.right}>
-            <div className={styles.box}>
-              <div className={styles.row}>
-                <div className={styles.chiid}>序号</div>
-                <div className={styles.chiid}>统计项</div>
-              </div>
-              {
-
-                Array.isArray(resList) && resList.map((item, index) => {
-                  return (
-                    <div key={index} className={styles.row}>
-                      <div className={styles.chiid}>{index + 1}</div>
-                      <div className={styles.chiid}>
-                        {
-                          getFieldDecorator(index + '', {
-                            initialValue: ''
-                          })(
-                            <Select
-                              showSearch
-                              disabled={isReadOnlys[index]}
-                              style={{ width: 300 }}
-                              placeholder="Select a person"
-                              optionFilterProp="children"
-                              onChange={(val) => this.handleSelectChange(val, index)}
-                              filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                            >
-                              <Option value="">请选择</Option>
-                              {
-                                selectList.map(obj => (<Option key={obj.anafuncid} value={obj.anafuncid + ''}>{obj.anafuncname}</Option>))
-                              }
-                            </Select>
-                          )
-                        }
+            <Form>
+              <div className={styles.box}>
+                <div className={styles.row}>
+                  <div className={styles.child}>序号</div>
+                  <div className={styles.child}>统计项</div>
+                </div>
+                {
+                  Array.isArray(resList) && resList.map((item, index) => {
+                    return (
+                      <div key={index} className={styles.row}>
+                        <div className={styles.child}>{index + 1}</div>
+                        <div className={styles.child}>
+                          <Form.Item>
+                            {
+                              getFieldDecorator(index + '', {
+                                initialValue: ''
+                              })(
+                                <Select
+                                  showSearch
+                                  disabled={isReadOnlys[index]}
+                                  style={{ width: 300 }}
+                                  placeholder="Select a person"
+                                  optionFilterProp="children"
+                                  onChange={(val) => this.handleSelectChange(val, index)}
+                                  filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                                >
+                                  <Option value="">请选择</Option>
+                                  {
+                                    selectList.map(obj => (<Option key={obj.anafuncid} value={obj.anafuncid + ''}>{obj.anafuncname}</Option>))
+                                  }
+                                </Select>
+                              )
+                            }
+                          </Form.Item>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })
-              }
-            </div>
-
-            <Popconfirm title="确认提交?" onConfirm={!isAcitve ? this.onSubmit : () => { }}>
-              <Button disabled={isAcitve} title="点击提交" type="dashed" className={styles.footer}>
-                提交
+                    );
+                  })
+                }
+              </div>
+              <Popconfirm title="确认提交?" onConfirm={!isAcitve ? this.onSubmit : () => { }}>
+                <Button disabled={isAcitve} title="点击提交" type="dashed" className={styles.footer}>
+                  提交
               </Button>
-            </Popconfirm>
+              </Popconfirm>
+            </Form>
           </div>
         </div>
-      </Page>
+      </Page >
     );
   }
 }
