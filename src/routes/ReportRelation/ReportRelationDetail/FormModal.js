@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Form, Input, message, Spin } from 'antd';
+import { Modal, Form, message, Spin } from 'antd';
 // import IntlInput from '../../../components/UKComponent/Form/IntlInput';
 // import { getIntlText } from '../../../components/UKComponent/Form/IntlText';
 import { dynamicRequest } from '../../../services/common';
@@ -7,7 +7,6 @@ import UserSelect from '../../../components/DynamicForm/controls/SelectUser';
 
 const _ = require('lodash');
 
-const TextArea = Input.TextArea;
 const FormItem = Form.Item;
 
 class FormModal extends Component {
@@ -22,7 +21,8 @@ class FormModal extends Component {
       if (api || fetch) {
         const url = api || (isEdit ? fetch.edit : fetch.add);
         const reportrelationid = isEdit ? selectedRows[0].reportrelationid : null;
-        const params = { ...values, reportrelationid };
+        const reportreldetailid = isEdit ? selectedRows[0].reportreldetailid : null;
+        const params = { ...values, reportrelationid, reportreldetailid };
 
         dynamicRequest(url, params)
           .then(res => {
@@ -59,15 +59,15 @@ class FormModal extends Component {
         <Spin spinning={fetchDataLoading}>
           <Form>
             <FormItem label="汇报人">
-              {getFieldDecorator('reportrelationname', {
-                rules: [{ required: true, message: '请输入汇报关系名称' }]
+              {getFieldDecorator('reportuser', {
+                rules: [{ required: true, message: '请选择汇报人' }]
               })(
                 <UserSelect multiple={1} />
               )}
             </FormItem>
             <FormItem label="汇报上级">
-              {getFieldDecorator('reportremark', {
-                rules: [{ required: true, message: '请输入汇报关系名称' }]
+              {getFieldDecorator('reportleader', {
+                rules: [{ required: true, message: '请选择汇报上级' }]
               })(
                 <UserSelect multiple={1} />
               )}

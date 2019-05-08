@@ -1,9 +1,8 @@
 import { message } from 'antd';
-import { getreportrelation, getreportreldetail } from '../services/reportrelation';
+import { getreportrelation } from '../services/reportrelation';
 import { setSessionItem, getCacheData } from '../utils/newStorage';
 
 const NAMESPACE = 'reportrelation';
-const judgement = (value, valueList = [undefined, null, '']) => valueList.includes(value);
 
 export default {
   namespace: NAMESPACE,
@@ -61,7 +60,7 @@ export default {
       console.log(params);
 
       try {
-        const { data } = yield call(getreportrelation, {});
+        const { data } = yield call(getreportrelation, params);
         const list = data.datalist || [];
         yield put({ type: 'putState', payload: { list } });
       } catch (e) {

@@ -60,8 +60,9 @@ export default {
       console.log(params);
 
       try {
-        const { data } = yield call(getreportreldetail, {});
-        yield put({ type: 'putState', payload: { list: data } });
+        const { data } = yield call(getreportreldetail, params);
+        const list = data.datalist || [];
+        yield put({ type: 'putState', payload: { list } });
       } catch (e) {
         message.error(e.message || '获取列表失败');
       }
@@ -116,12 +117,13 @@ export default {
             payload: { fetchDataLoading: { ...fetchDataLoading, FormModal: true } }
           });
 
-          const { data: list } = yield call(getreportreldetail, {});
-
+          const { data } = yield call(getreportreldetail, {});
+          const list = data.datalist || [];
           yield put({
             type: 'putState',
             payload: {
               list,
+              selectedRows: list.filter(o => o.reportrelationid === recid),
               fetchDataLoading: { ...fetchDataLoading, FormModal: false }
             }
           });

@@ -86,7 +86,10 @@ class ReportRelationDetail extends Component {
     const { onSeach, initParams } = this.props;
     const params = {
       ...initParams,
-      text: val
+      columnFilter: {
+        ...initParams.columnFilter,
+        reportuser: val
+      }
     };
     onSeach(params);
   }
@@ -122,7 +125,7 @@ class ReportRelationDetail extends Component {
           </div>
           <Toolbar.Right>
             <Search
-              placeholder="输入超级赛亚人可变身"
+              placeholder="请输入汇报人"
               value={keyWord}
               onChange={this.onHandleSearchChange}
               onSearch={this.onHandleSearch}
@@ -155,8 +158,8 @@ class ReportRelationDetail extends Component {
           spacename={SPACENAME}
           dispatch={dispatch}
           fetch={{
-            add: 'api/ReportRelation/addreportrelation',
-            edit: 'api/ReportRelation/updatereportrelation'
+            add: 'api/ReportRelation/addreportreldetail',
+            edit: 'api/ReportRelation/updatereportreldetail'
           }}
           selectedRows={selectedRows}
           visible={showModals.FormModal}

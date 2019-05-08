@@ -86,7 +86,10 @@ class ReportRelationMain extends Component {
     const { onSeach, initParams } = this.props;
     const params = {
       ...initParams,
-      text: val
+      columnFilter: {
+        ...initParams.columnFilter,
+        reportrelationname: val
+      }
     };
     onSeach(params);
   }
@@ -121,7 +124,7 @@ class ReportRelationMain extends Component {
           </div>
           <Toolbar.Right>
             <Search
-              placeholder="输入超级赛亚人可变身"
+              placeholder="请输入汇报关系名称"
               value={keyWord}
               onChange={this.onHandleSearchChange}
               onSearch={this.onHandleSearch}
