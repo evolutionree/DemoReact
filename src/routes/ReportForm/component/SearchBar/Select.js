@@ -35,7 +35,6 @@ class SelectComponent extends Component {
   }
 
   queryDataSource(params) {
-    console.log('queryDataSource');
     const queryParams = {
       DataSourceId: params.datasourcedefineid ? params.datasourcedefineid : '',
       InstId: params.instid ? params.instid : '',
@@ -44,8 +43,6 @@ class SelectComponent extends Component {
     request('api/ReportEngine/queryData', {
       method: 'post', body: JSON.stringify(queryParams)
     }).then((getData) => {
-      console.log('getData');
-      console.log(getData.data.data );
       this.setState({
         dataSource: getData.data.data 
       });
@@ -68,7 +65,6 @@ class SelectComponent extends Component {
   }
 
   render() {
-    console.log(this.state.dataSource);
     return (
       <Select value={this.props.value} style={{ width: 120 }} onChange={this.selectHandler.bind(this)}>
         {
