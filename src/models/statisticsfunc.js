@@ -90,6 +90,7 @@ export default {
         };
         yield call(deletestatistics, params);
         message.success('删除成功');
+        yield put({ type: 'currentRecords', payload: [] });
         yield put({ type: 'search' });
       } catch (e) {
         message.error(e.message || '删除失败');
@@ -104,6 +105,7 @@ export default {
         };
         yield call(disabledstatistics, params);
         message.success('操作成功');
+        yield put({ type: 'currentRecords', payload: [] });
         yield put({ type: 'search' });
       } catch (e) {
         message.error(e.message || '操作失败');
