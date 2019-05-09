@@ -57,7 +57,7 @@ class ExportModal extends React.Component {
           })
         }).then(result => {
           this.setState({ loading: false });
-          const { rettype, fileid, message: ExportMessage } = result.data;
+          const { rettype, fileid, message: ExportMessage } = result.data; 
           if (rettype === 1) {
             if (fileid.indexOf('数据量较大') >= 0) {
               message.error(fileid);
@@ -66,7 +66,7 @@ class ExportModal extends React.Component {
             }
             this.closeModal();
           } else {
-            this.setState({ resultModalVisible: true, ExportMessage });
+            this.setState({ resultModalVisible: true, ExportMessage: ExportMessage || '请检查 /api/excel/exportdata 接口返回数据！' });
           }
         }).catch((e) => {
           this.setState({ loading: false });
