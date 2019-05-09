@@ -518,7 +518,6 @@ class RelTable extends Component {
         return newFieldItem;
       });
     });
-    console.log(newTableRowFields)
     this.setState({
       tableRowFields: newTableRowFields
     });
@@ -749,8 +748,6 @@ class RelTable extends Component {
   }
 
   render() {
-    console.log(this.state.tableFields, this.props.batchAddField)
-    console.log(_.find(this.state.tableFields, item => item.fieldname === this.props.batchAddField))
     return (
       <div>
         <div className={styles.relTable}>
