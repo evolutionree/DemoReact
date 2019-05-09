@@ -255,7 +255,7 @@ function EntityFields({
         {btns.dynamic && <Button onClick={setDynamicFields}>动态摘要配置</Button>}
         {btns.checkrepeat && <Button onClick={setCheckRepeatFields}>设置查重条件</Button>}
         {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={setCustomBasicConfig}>设置客户基础资料字段</Button> : null}
-        {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={setCustomMailConfig}>设置邮件客户信息字段</Button> : null}
+        {/* {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={setCustomMailConfig}>设置邮件客户信息字段</Button> : null} */}
       </Toolbar>
       <Table
         columns={columns}
