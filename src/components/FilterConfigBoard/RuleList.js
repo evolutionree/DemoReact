@@ -157,6 +157,7 @@ class RuleList extends Component {
         <Menu onClick={this.onAdd.bind(this)}>
           <Menu.Item key="10">实体变量</Menu.Item>
           <Menu.Item key="20">流程变量</Menu.Item>
+          <Menu.Item key="2">SQL设置</Menu.Item>
         </Menu>
       );
     }
