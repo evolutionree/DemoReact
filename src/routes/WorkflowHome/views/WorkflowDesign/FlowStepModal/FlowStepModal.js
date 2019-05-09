@@ -1,23 +1,71 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Form, Modal, Radio, InputNumber, Input } from 'antd';
+import { Form, Modal, Radio, InputNumber, Input, Tabs } from 'antd';
 import _ from 'lodash';
 import SelectFlowUser from './SelectFlowUser';
 import SelectFlowUserMultiple from './SelectFlowUserMultiple';
 import SelectStepFields from './SelectStepFields';
+import SelectUser from '../../../../../components/DynamicForm/controls/SelectUser';
+
+const TabPane = Tabs.TabPane;
+const FormItem = Form.Item;
+const TextArea = Input.TextArea;
+
+const radioStyle = {
+  display: 'block',
+  marginRight: '700px'
+};
 
 class SelectFlowUserAll extends Component {
   render() {
-    const { nodeType, value, onChange } = this.props;
-    return nodeType === 0 ? (
-      <SelectFlowUser value={value} onChange={onChange} entities={this.props.entities} />
-    ) : (
-      <SelectFlowUserMultiple value={value} onChange={onChange} />
+    const { value, onChange, entities, nodeType } = this.props;
+    return (
+      nodeType === 0 ?
+        <SelectFlowUser value={value} onChange={onChange} entities={entities} /> :
+        <SelectFlowUserMultiple value={value} onChange={onChange} />
     );
   }
 }
 
-const FormItem = Form.Item;
+const copys = [401]; // 指定抄送人
+const customCopy = [501]; // 自定义抄送人
+
+class SelectCopyUser extends Component {
+  render() {
+    const { value } = this.props;
+    const type = value ? value.type : 0;
+    const data = value ? value.data : {};
+
+    return (
+      <Radio.Group onChange={this.onRadioChange} style={{ width: '100%' }}>
+        {/* 401 */}
+        <Radio style={radioStyle} checked={_.includes(copys, type)} value={copys}>指定抄送人</Radio>
+        <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}>
+          <SelectUser
+            placeholder="请选择抄送人"
+            style={{ width: '260px', height: 'inherit' }}
+            value={_.includes(copys, type) ? data.copyid : ''}
+            value_name={_.includes(copys, type) ? data.copyname : ''}
+            onChangeWithName={({ val, value_name }) => {
+              this.onDataChange({ copyid: val, copyname: value_name });
+            }}
+            isReadOnly={_.includes(copys, type) ? 0 : 1}
+            multiple={1}
+          />
+        </div>
+
+        {/* 501 */}
+        <Radio style={radioStyle} checked={_.includes(customCopy, type)} value={customCopy}>自定义抄送人</Radio>
+        <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}>
+          <TextArea
+            disabled={!_.includes(customCopy, type)}
+            placeholder="输入需要执行的sql语句"
+          />
+        </div>
+      </Radio.Group>
+    )
+  }
+}
 
 class FlowStepModal extends Component {
   static propTypes = {};
@@ -47,11 +95,19 @@ class FlowStepModal extends Component {
   };
 
   render() {
-    const { form } = this.props;
+    const { form, flowEntities } = this.props;
     const { getFieldDecorator, getFieldValue } = form;
     const nodeType = getFieldValue('nodeType');
     const stepUser = form.getFieldValue('stepUser');
     const steptypeid = stepUser && stepUser.type;
+
+    const setApproveTitle = (
+      <div style={{ position: 'relative' }}>
+        <span style={{ color: 'red', position: 'absolute', left: -10, top: 0 }}>*</span>
+        设置审批人
+    </div>
+    );
+
     return (
       <Modal
         title={steptypeid === -1 || steptypeid === 0 ? '函数设置' : '审批人设置'}
@@ -60,58 +116,87 @@ class FlowStepModal extends Component {
         onOk={this.props.confirm}
         wrapClassName="ant-modal-custom-large"
       >
-        {this.props.visible && (steptypeid !== -1 && steptypeid !== 0) && <Form>
-          <FormItem label="审批节点类型">
-            {getFieldDecorator('nodeType', {
-              rules: [{ required: true, message: '请选择审批节点类型' }]
-            })(
-              <Radio.Group>
-                <Radio value={0}>顺序审批</Radio>
-                <Radio value={1}>会审</Radio>
-              </Radio.Group>
-            )}
-          </FormItem>
-          <FormItem label="设置审批人">
-            {getFieldDecorator('stepUser', {
-              rules: [{ required: true, message: '请设置审批人' }]
-            })(
-              <SelectFlowUserAll nodeType={nodeType} entities={this.props.flowEntities} />
-            )}
-          </FormItem>
-          {nodeType === 1 && <FormItem label="设置会审通过人数">
-            {getFieldDecorator('auditsucc', {
-              rules: [{ required: true, message: '设置会审通过人数' }]
-            })(
-              <InputNumber style={{ width: '100%' }} />
-            )}
-          </FormItem>}
-          {/*{nodeType === 1 && <FormItem label="设置审批人">*/}
-            {/*{getFieldDecorator('stepUser', {*/}
-              {/*rules: [{ required: true, message: '请设置审批人' }]*/}
-            {/*})(*/}
-              {/*<SelectFlowUserMultiple />*/}
-            {/*)}*/}
-          {/*</FormItem>}*/}
-          <FormItem label="设置可改字段">
-            {getFieldDecorator('stepFields', {
-              rules: [{ validator: this.stepFieldsValidator }]
-            })(
-              <SelectStepFields entities={this.props.flowEntities} />
-            )}
-          </FormItem>
-          <FormItem label="NodeEvent">
-            {getFieldDecorator('funcname')(
-              <Input maxLength="200" placeholder="关联函数名" />
-            )}
-          </FormItem>
-        </Form>}
-        {this.props.visible && (steptypeid === -1 || steptypeid === 0) && <Form>
-          <FormItem label="NodeEvent">
-            {getFieldDecorator('funcname')(
-              <Input maxLength="200" placeholder="关联函数名" />
-            )}
-          </FormItem>
-        </Form>}
+        {
+          this.props.visible && (steptypeid !== -1 && steptypeid !== 0) &&
+          <Form>
+            <FormItem label="审批节点类型">
+              {getFieldDecorator('nodeType', {
+                rules: [{ required: true, message: '请选择审批节点类型' }]
+              })(
+                <Radio.Group>
+                  <Radio value={0}>顺序审批</Radio>
+                  <Radio value={1}>会审</Radio>
+                </Radio.Group>
+              )}
+            </FormItem>
+
+            <Tabs defaultActiveKey="1" size="small">
+              <TabPane forceRender tab={setApproveTitle} key="1">
+                <FormItem label="">
+                  {
+                    getFieldDecorator('stepUser', {
+                      rules: [{ required: true, message: '请设置审批人' }]
+                    })(<SelectFlowUserAll nodeType={nodeType} entities={flowEntities} />)
+                  }
+                </FormItem>
+              </TabPane>
+              <TabPane forceRender tab="设置抄送人" key="2">
+                <FormItem label="">
+                  {getFieldDecorator('copyUser')(
+                    <SelectCopyUser entities={flowEntities} />
+                  )}
+                </FormItem>
+              </TabPane>
+            </Tabs>
+
+            {
+              nodeType === 1 &&
+              <FormItem label="设置会审通过人数">
+                {
+                  getFieldDecorator('auditsucc', {
+                    rules: [{ required: true, message: '设置会审通过人数' }]
+                  })(<InputNumber style={{ width: '100%' }} />)
+                }
+              </FormItem>
+            }
+
+            <FormItem label="设置可改字段">
+              {getFieldDecorator('stepFields', {
+                rules: [{ validator: this.stepFieldsValidator }]
+              })(
+                <SelectStepFields entities={flowEntities} />
+              )}
+            </FormItem>
+
+            <FormItem label="找不到审批人处理方式">
+              {getFieldDecorator('handle111111', {
+                rules: [{ required: true, message: '请选择处理方式' }]
+              })(
+                <Radio.Group>
+                  <Radio value={0}>显示全部人员</Radio>
+                  <Radio value={1}>跳过此节点</Radio>
+                  <Radio value={2}>暂停流程</Radio>
+                </Radio.Group>
+              )}
+            </FormItem>
+
+            <FormItem label="NodeEvent">
+              {getFieldDecorator('funcname')(
+                <Input maxLength="200" placeholder="关联函数名" />
+              )}
+            </FormItem>
+          </Form>
+        }
+        {
+          this.props.visible && (steptypeid === -1 || steptypeid === 0) &&
+          <Form>
+            <FormItem label="NodeEvent">
+              {getFieldDecorator('funcname')(
+                <Input maxLength="200" placeholder="关联函数名" />
+              )}
+            </FormItem>
+          </Form>
+        }
       </Modal>
     );
   }
