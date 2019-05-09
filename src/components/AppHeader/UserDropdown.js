@@ -33,7 +33,7 @@ function UserDropdown({ isLogin, user, dispatch }) {
 
   const menu = (
     <Menu onClick={handleMenuClick}>
-      <Menu.Item key="1" className={styles.menuItem}>用户反馈</Menu.Item>
+      {/* <Menu.Item key="1" className={styles.menuItem}>用户反馈</Menu.Item> */}
       <Menu.Item key="2" className={styles.menuItem}>修改头像</Menu.Item>
       <Menu.Item key="3" className={styles.menuItem}>修改密码</Menu.Item>
       <Menu.Item key="4" className={styles.menuItem}>清除缓存</Menu.Item>
