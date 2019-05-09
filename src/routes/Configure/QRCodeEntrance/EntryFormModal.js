@@ -27,22 +27,30 @@ class EntryFormModal extends Component {
     const isOpening = !this.props.visible && nextProps.visible;
     if (isOpening) {
       const { form, editingRecord } = nextProps;
+      const { getFieldsValue, setFieldsValue, resetFields } = form;
       if (editingRecord) {
-        form.setFieldsValue({
-          ...editingRecord
-        });
+        const keys = getFieldsValue();
+        const result = {};
+
+        for (const key in keys) {
+          if (editingRecord[key] !== undefined) {
+            result[key] = (editingRecord[key] + '') || '';
+          }
+        }
+
+        setFieldsValue(result);
       } else {
-        form.resetFields();
+        resetFields();
       }
     }
   }
 
   checkTypeChange = (value) => {
     const { form: { setFieldsValue } } = this.props;
-    if (value !== 3) {
+    if (value !== '3') {
       message.warning('目前只支持编辑【UScript】类型的匹配规则');
       setTimeout(() => {
-        setFieldsValue({ checktype: 3 });
+        setFieldsValue({ checktype: '3' });
       }, 100);
     }
   }
@@ -121,13 +129,13 @@ class EntryFormModal extends Component {
         <Form>
           <FormItem label="匹配规则类型">
             {getFieldDecorator('dealtype', { // 1=字符串匹配，2=正则表达式，3是UScript，4=实体查询，5=数据库脚本6=数据库函数7=内部服务
-              initialValue: 3,
+              initialValue: '3',
               rules: [{ required: true, message: '请选择匹配规则类型' }]
             })(
               <Select onChange={this.checkTypeChange}>
                 {
                   checktype.map(item => {
-                    return <Option value={item.value} key={item.value}>{item.name}</Option>;
+                    return <Option key={item.value} value={item.value}>{item.name}</Option>;
                   })
                 }
               </Select>

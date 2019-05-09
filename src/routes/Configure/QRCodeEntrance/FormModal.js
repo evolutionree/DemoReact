@@ -26,12 +26,20 @@ class FormModal extends Component {
     const isOpening = !this.props.visible && nextProps.visible;
     if (isOpening) {
       const { form, editingRecord } = nextProps;
+      const { getFieldsValue, setFieldsValue, resetFields } = form;
       if (editingRecord) {
-        form.setFieldsValue({
-          ...editingRecord
-        });
+        const keys = getFieldsValue();
+        const result = {};
+
+        for (const key in keys) {
+          if (editingRecord[key] !== undefined) {
+            result[key] = (editingRecord[key] + '') || '';
+          }
+        }
+
+        setFieldsValue(result);
       } else {
-        form.resetFields();
+        resetFields();
       }
     }
   }
@@ -114,4 +122,4 @@ export default connect(
       }
     };
   }
-)(Form.create()(FormModal));
+)(Form.create({})(FormModal));

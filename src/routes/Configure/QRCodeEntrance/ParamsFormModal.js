@@ -26,11 +26,18 @@ class ParamsFormModal extends Component {
   componentWillReceiveProps(nextProps) {
     const isOpening = !this.props.visible && nextProps.visible;
     if (isOpening) {
-      const { form: { getFieldsValue, setFieldsValue }, editingRecord } = nextProps;
+      const { form, editingRecord } = nextProps;
+      const { getFieldsValue, setFieldsValue } = form;
       if (editingRecord) {
         const keys = getFieldsValue();
         const result = {};
-        Object.keys(keys).forEach(field => (result[field] = editingRecord[field] || ''));
+
+        for (const key in keys) {
+          if (editingRecord[key] !== undefined) {
+            result[key] = (editingRecord[key] + '') || '';
+          }
+        }
+        
         setFieldsValue(result);
       }
     }
@@ -38,10 +45,10 @@ class ParamsFormModal extends Component {
 
   checkTypeChange = (value) => {
     const { form: { setFieldsValue } } = this.props;
-    if (value !== 3) {
+    if (value !== '3') {
       message.warning('目前只支持编辑【UScript】类型的匹配规则');
       setTimeout(() => {
-        setFieldsValue({ checktype: 3 });
+        setFieldsValue({ checktype: '3' });
       }, 100);
     }
   }
@@ -65,7 +72,7 @@ class ParamsFormModal extends Component {
   }
 
   onOk = () => {
-    const { form, showModals, editingRecord, update } = this.props;
+    const { form, editingRecord, update } = this.props;
 
     form.validateFields((err, values) => {
       if (err) return;
