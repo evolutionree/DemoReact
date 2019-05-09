@@ -15,8 +15,8 @@ class EditList extends Component {
   previousCell = null;
 
   componentWillReceiveProps(nextProps) {
-    const list = nextProps.list;
-    this.setState({ list });
+    const { list, record } = nextProps;
+    this.setState({ list, selectedItemId: record.id });
   }
 
   add = () => {
@@ -30,7 +30,7 @@ class EditList extends Component {
     };
     const newList = [...list, newRow];
     this.setState({ selectedItemId: list.length });
-    if (addRow) addRow(newList);
+    if (addRow) addRow(newList, newRow);
   }
 
   restList = () => {

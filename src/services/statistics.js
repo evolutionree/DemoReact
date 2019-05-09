@@ -113,6 +113,7 @@ export async function savestatisticsgroupsumsetting(params) {
   });
 }
 
+// {"groupname":"测试","newgroupname":"","newgroupname_lang":'{"cn":"","en":"Test boredom","tw":""}'}
 export async function updatestatisticsgroupsetting(params) {
   return request('/api/StatisticsSetting/updatestatisticsgroupsetting', {
     method: 'post',

@@ -43,6 +43,7 @@ class Statisticsconfig extends Component {
         arr[i - 1] = 0;
         break;
       }
+      if (i === resList.length - 1) arr[i] = 0;
     }
 
     this.setState({ resList, isReadOnlys: resList[0].anafuncid ? arr : [0, 1, 1] }, () => {
@@ -117,19 +118,20 @@ class Statisticsconfig extends Component {
     if (Active) Active(active);
   }
 
-  addRow = (groupList) => {
+  addRow = (groupList, record) => {
     const { dispatch, cacheList } = this.props;
-    dispatch({ type: `${NAMESPACE}/putState`, payload: { groupList, resList: cacheList } });
+    dispatch({ type: `${NAMESPACE}/putState`, payload: { record, groupList, resList: cacheList } });
   }
 
   restFunc = () => {
-    const { dispatch, cacheGroupList } = this.props;
+    const { dispatch, cacheGroupList, updateList } = this.props;
+    updateList(cacheGroupList[0]);
     dispatch({ type: `${NAMESPACE}/putState`, payload: { groupList: cacheGroupList } });
   }
 
   render() {
     const {
-      groupList, selectList, resList, checkFunc,
+      groupList, selectList, resList, checkFunc, record,
       form: { getFieldDecorator, getFieldsValue }, active: isAcitve
     } = this.props;
     const { isReadOnlys } = this.state;
@@ -143,6 +145,7 @@ class Statisticsconfig extends Component {
               tips='支持变量"{NOW}"'
               getFieldsValue={getFieldsValue}
               list={groupList}
+              record={record}
               addRow={this.addRow}
               restFunc={this.restFunc}
               checkFunc={checkFunc}

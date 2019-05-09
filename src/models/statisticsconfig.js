@@ -30,10 +30,10 @@ export default {
 
         let resList = [];
         if (resultGroupList.length && resultGroupList[0].groupmark) {
-          const dParams = {
+          const params1 = {
             GroupName: resultGroupList[0].groupmark
           };
-          const { data: resData } = yield call(getstatisticsdetaildata, dParams);
+          const { data: resData } = yield call(getstatisticsdetaildata, params1);
           resList = resData;
         }
 
@@ -45,7 +45,8 @@ export default {
             groupList: resultGroupList,
             cacheGroupList: resultGroupList,
             resList: resList.length ? resultResList(resList, cacheList) : [...cacheList],
-            selectList
+            selectList,
+            record: resultGroupList[0]
           }
         });
       } catch (e) {
@@ -54,23 +55,27 @@ export default {
     },
     *QueryList({ payload }, { call, put, select }) {
       const { cacheList } = yield select(state => state.statisticsconfig);
+      const { groupmark, isdel } = payload;
+
       try {
-        const gParams = { AnaFuncName: payload ? payload.groupname : '' };
-        const { data: groupList } = yield call(getstatisticsdata, gParams);
+        const params = { AnaFuncName: groupmark || '' };
+        const { data: groupList } = yield call(getstatisticsdata, params);
+        const len = groupList.length;
 
         const resultGroupList = groupList.map((o, id) => ({ ...o, id, displayname: o.groupmark, displayname_lang: o.groupmark_lang }));
+        const newRecord = resultGroupList[isdel !== 1 ? resultGroupList.findIndex(o => o.groupmark === groupmark) : (len - 1)] || { id: 0, groupmark: '' };
+        if (isdel === 1) newRecord.id = len - 1;
 
-        const dParams = {
-          GroupName: (payload && payload.isdel !== 1) ? payload.groupname : (resultGroupList.length && resultGroupList[0].groupmark)
-        };
-        const { data: resList } = yield call(getstatisticsdetaildata, dParams);
+        const params1 = { GroupName: isdel !== 1 ? groupmark : (len ? newRecord.groupmark : '') };
+        const { data: resList } = yield call(getstatisticsdetaildata, params1);
 
         yield put({
           type: 'putState',
           payload: {
             groupList: resultGroupList,
             cacheGroupList: resultGroupList,
-            resList: resList.length ? resultResList(resList, cacheList) : [...cacheList]
+            resList: resList.length ? resultResList(resList, cacheList) : [...cacheList],
+            record: newRecord
           }
         });
       } catch (e) {
@@ -124,7 +129,7 @@ export default {
       const { error_msg } = yield call(savestatisticsgroupsumsetting, params);
       message.success(error_msg || '提交成功');
 
-      yield put({ type: 'QueryList', payload: { groupname: record.groupmark, isdel: params.isdel } });
+      yield put({ type: 'QueryList', payload: { groupmark: record.groupmark, isdel: params.isdel } });
     },
     *Submit({ payload }, { put, call, select }) {
       const { record, cacheGroupList } = yield select(state => state.statisticsconfig);
@@ -134,7 +139,7 @@ export default {
             const nameParams = {
               groupname: item.groupmark,
               newgroupname: record.groupmark,
-              newgroupname_lang: record.groupmark_lang
+              newgroupname_lang: JSON.stringify(record.groupmark_lang)
             };
             yield call(updatestatisticsgroupsetting, nameParams);
             yield put({ type: 'SubmitData', payload });
