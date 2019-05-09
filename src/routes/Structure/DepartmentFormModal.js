@@ -60,8 +60,7 @@ function DepartmentFormModal({
 
       <FormItem label="部门编码">
         {getFieldDecorator('deptcode', {
-          initialValue: '',
-          rules: [{ required: true, message: '请输入部门编码' }]
+          initialValue: ''
         })(
           <Input placeholder="部门编码" maxLength="50" />
         )}
