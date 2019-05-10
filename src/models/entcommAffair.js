@@ -56,7 +56,7 @@ export default {
         try {
           // 获取下拉菜单
           const { data: { rulemenu } } = yield call(queryMenus, rootEntityId);
-          menus = rulemenu.sort((a, b) => a.recorder - b.recorder)
+          menus = rulemenu.filter(o => o.menuid !== '72e9b119-20e8-4b68-867c-643ae024afc1').sort((a, b) => a.recorder - b.recorder)
             .map(item => ({ menuName: item.menuname, menuId: item.menuid }));
           yield put({ type: 'menus', payload: menus });
         } catch (e) {

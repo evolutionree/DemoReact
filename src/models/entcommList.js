@@ -86,7 +86,7 @@ export default {
 
         // 获取下拉菜单
         const { data: { rulemenu } } = yield call(queryMenus, entityId);
-        let menus = rulemenu.sort((a, b) => a.recorder - b.recorder)
+        let menus = rulemenu.filter(o => o.menuid !== '72e9b119-20e8-4b68-867c-643ae024afc1').sort((a, b) => a.recorder - b.recorder)
           .map(item => ({ menuName: item.menuname, menuName_lang: item.menuname_lang, menuId: item.menuid }));
         // 获取权限数据后再往下走
         const { permissionFuncs } = yield select(state => state.permission);
