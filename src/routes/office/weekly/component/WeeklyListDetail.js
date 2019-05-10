@@ -105,18 +105,25 @@ class WeeklyListDetail extends Component {
             {
               this.props.dropMenu && this.props.dropMenu instanceof Array && this.props.dropMenu.length > 0 ?
                 <Dropdown overlay={menu} placement="bottomRight">
-                    <span style={{ float: 'right' }}>
-                      <Icon type="bars" />
-                      <Icon type="down" />
-                    </span>
+                  <span style={{ float: 'right' }}>
+                    <Icon type="bars" />
+                    <Icon type="down" />
+                  </span>
                 </Dropdown> : null
             }
           </div>
           <div>
             <DynamicTemplateView
-              fields={this.props.detailFields && this.props.detailFields.filter(field => field.fieldname !== 'viewusers' && field.fieldname !== 'copyusers' && field.fieldname !== 'reportdate')}
               value={this.props.detailValue}
-              entityId="0b81d536-3817-4cbc-b882-bc3e935db845" />
+              entityId="0b81d536-3817-4cbc-b882-bc3e935db845"
+              fields={
+                this.props.detailFields &&
+                this.props.detailFields.filter(field => (
+                  field.fieldname !== 'viewusers' &&
+                  field.fieldname !== 'copyusers' &&
+                  field.fieldname !== 'reportdate'
+                ))}
+            />
             <div className={Styles.users_name}>批阅人：{data.viewusers_name}</div>
             <div className={Styles.users_name}>抄送人：{data.copyusers_name}</div>
           </div>

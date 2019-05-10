@@ -34,7 +34,8 @@ function MyWeekly(props) {
           {
             value.map((item, index) => {
               const detailData = item.detail;
-              const detailFields = item.weektype === 0 ? receiveWeeklyDetailWeeklyProtocal && receiveWeeklyDetailWeeklyProtocal.filter(field => !!field.fieldname && field.fieldname !== 'reportdate') :
+              const detailFields = item.weektype === 0 ?
+                receiveWeeklyDetailWeeklyProtocal && receiveWeeklyDetailWeeklyProtocal.filter(field => !!field.fieldname && field.fieldname !== 'reportdate') :
                 receiveWeeklyDetailSummaryProtocal && receiveWeeklyDetailSummaryProtocal.filter(field => !!field.fieldname && field.fieldname !== 'reportdate');
               return (
                 <WeeklyListDetail
