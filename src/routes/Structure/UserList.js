@@ -122,7 +122,7 @@ function UserList({
           // { label: '密码失效', handler: setPwdValid, single: false },
           // { label: '注销设备', handler: setForceLogout, single: false },
           // { label: '一键转移数据', handler: transferData, single: false },
-          { label: '登录信息', handler: getLoginInfo, single: true }
+          // { label: '登录信息', handler: getLoginInfo, single: true }
         ]}
       >
         {/*<SelectRole value={queries.roleId} onChange={search.bind(null, 'roleId')} style={{ width: '160px' }} />*/}
