@@ -27,43 +27,50 @@ class SelectFlowUserAll extends Component {
   }
 }
 
-const copys = [401]; // 指定抄送人
-const customCopy = [501]; // 自定义抄送人
-
 class SelectCopyUser extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      type: 0
+    };
+  }
+ 
+  onRadioChange = (e) => {
+    console.log(e);
+    this.setState({ type: e.target.value });
+  }
+
   render() {
     const { value } = this.props;
-    const type = value ? value.type : 0;
-    const data = value ? value.data : {};
+    const { type } = this.state;
+    const copyid = value ? value.copyid : '';
+    const copyname = value ? value.copyname : '';
 
     return (
-      <Radio.Group onChange={this.onRadioChange} style={{ width: '100%' }}>
-        {/* 401 */}
-        <Radio style={radioStyle} checked={_.includes(copys, type)} value={copys}>指定抄送人</Radio>
+      <Radio.Group onChange={this.onRadioChange} value={type} style={{ width: '100%' }}>
+        <Radio style={radioStyle} value={0}>指定抄送人</Radio>
         <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}>
           <SelectUser
             placeholder="请选择抄送人"
             style={{ width: '260px', height: 'inherit' }}
-            value={_.includes(copys, type) ? data.copyid : ''}
-            value_name={_.includes(copys, type) ? data.copyname : ''}
+            value={type === 0 ? copyid : ''}
+            value_name={type === 0 ? copyname : ''}
             onChangeWithName={({ val, value_name }) => {
               this.onDataChange({ copyid: val, copyname: value_name });
             }}
-            isReadOnly={_.includes(copys, type) ? 0 : 1}
+            isReadOnly={type !== 0 ? 1 : 0}
             multiple={1}
           />
         </div>
-
-        {/* 501 */}
-        <Radio style={radioStyle} checked={_.includes(customCopy, type)} value={customCopy}>自定义抄送人</Radio>
+        <Radio style={radioStyle} value={1}>自定义抄送人</Radio>
         <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}>
           <TextArea
-            disabled={!_.includes(customCopy, type)}
+            disabled={type !== 1}
             placeholder="输入需要执行的sql语句"
           />
         </div>
       </Radio.Group>
-    )
+    );
   }
 }
 
@@ -170,6 +177,7 @@ class FlowStepModal extends Component {
 
             <FormItem label="找不到审批人处理方式">
               {getFieldDecorator('handle111111', {
+                initialValue: 0,
                 rules: [{ required: true, message: '请选择处理方式' }]
               })(
                 <Radio.Group>
