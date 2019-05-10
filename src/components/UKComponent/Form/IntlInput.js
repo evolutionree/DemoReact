@@ -33,7 +33,7 @@ class IntlInput extends Component {
       value: this.transformValue(props.value),
       inputValue: this.transformValue(props.value)[langlist[0] && langlist[0].key] || ''
     };
-    this.translateLang = _.debounce(this.translateLang, 500);
+    this.translateLang = _.debounce(this.translateLang, 800);
   }
 
   componentDidMount() {

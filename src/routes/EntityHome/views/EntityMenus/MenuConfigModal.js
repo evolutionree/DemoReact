@@ -133,6 +133,11 @@ class MenuConfigModal extends React.Component {
       message.error('请设置筛选规则');
       return;
     }
+    if (typeof menuName !== 'object' || Object.values(menuName).some(o => !o)) {
+      message.error('请补全筛选项名称');
+      return;
+    }
+
     const result = this.filterConfigBoard.validate();
     if (!result) return;
     const params = {
