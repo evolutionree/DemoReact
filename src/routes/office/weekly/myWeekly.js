@@ -9,9 +9,15 @@ import { groupBy } from './component/unit';
 import Styles from './weekly.less';
 
 
-function MyWeekly({ receiveWeeklyDetailWeeklyProtocal, receiveWeeklyDetailSummaryProtocal, myWeeklistData, comment, commentParent, myWeekTotalPage, myWeekCurrentPage, loadMoreHandler }) {
+function MyWeekly(props) {
+  const {
+    receiveWeeklyDetailWeeklyProtocal, receiveWeeklyDetailSummaryProtocal,
+    myWeeklistData, comment, commentParent, myWeekTotalPage,
+    myWeekCurrentPage, loadMoreHandler
+  } = props;
+
   function renderHtml() {
-    let html = [];
+    const html = [];
     _.forEach(groupBy(myWeeklistData), (value, key) => {
       let pessionSummary = true;
       for (let i = 0; i < value.length; i++) {
@@ -30,14 +36,18 @@ function MyWeekly({ receiveWeeklyDetailWeeklyProtocal, receiveWeeklyDetailSummar
               const detailData = item.detail;
               const detailFields = item.weektype === 0 ? receiveWeeklyDetailWeeklyProtocal && receiveWeeklyDetailWeeklyProtocal.filter(field => !!field.fieldname && field.fieldname !== 'reportdate') :
                 receiveWeeklyDetailSummaryProtocal && receiveWeeklyDetailSummaryProtocal.filter(field => !!field.fieldname && field.fieldname !== 'reportdate');
-              return <WeeklyListDetail dropMenu={pessionSummary ? ['详情', '编辑', '周总结'] : ['详情', '编辑']}
-                                       key={index}
-                                       data={item}
-                                       onCommentParent={commentParent.bind(this, item.detail instanceof Array && item.detail.length > 0 && item.detail[0].dynamicid)}
-                                       onComment={comment.bind(this, item.detail instanceof Array && item.detail.length > 0 && item.detail[0].dynamicid)}
-                                       detailFields={detailFields}
-                                       detailValue={item.tempdata}
-                                       commentList={detailData instanceof Array && detailData.length > 0 && detailData[0].commentlist && detailData[0].commentlist.detail} />;
+              return (
+                <WeeklyListDetail
+                  dropMenu={pessionSummary ? ['详情', '编辑', '周总结'] : ['详情', '编辑']}
+                  key={index}
+                  data={item}
+                  onCommentParent={commentParent.bind(this, item.detail instanceof Array && item.detail.length > 0 && item.detail[0].dynamicid)}
+                  onComment={comment.bind(this, item.detail instanceof Array && item.detail.length > 0 && item.detail[0].dynamicid)}
+                  detailFields={detailFields}
+                  detailValue={item.tempdata}
+                  commentList={detailData instanceof Array && detailData.length > 0 && detailData[0].commentlist && detailData[0].commentlist.detail}
+                />
+              );
             })
           }
         </div>
@@ -45,13 +55,13 @@ function MyWeekly({ receiveWeeklyDetailWeeklyProtocal, receiveWeeklyDetailSummar
     });
     return html;
   }
+
   return (
     <div>
-      {
-        myWeeklistData instanceof Array && myWeeklistData.length > 0 ? renderHtml() : null
-      }
-      {
-        myWeekCurrentPage === myWeekTotalPage ? <div className={Styles.loadInfo}>没有更多数据加载了哦</div> : <div className={Styles.loadMore} onClick={loadMoreHandler.bind(this, myWeekCurrentPage)}>点击加载更多...</div>
+      {myWeeklistData instanceof Array && myWeeklistData.length > 0 ? renderHtml() : null}
+      {myWeekCurrentPage === myWeekTotalPage ?
+        <div className={Styles.loadInfo}>没有更多数据加载了哦</div> :
+        <div className={Styles.loadMore} onClick={loadMoreHandler.bind(this, myWeekCurrentPage)}>点击加载更多...</div>
       }
     </div>
   );
