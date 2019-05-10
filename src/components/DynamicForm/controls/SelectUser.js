@@ -304,8 +304,8 @@ class UserSelect extends React.Component {
 
     if (this.props.view && this.props.multiple && this.props.isCommonForm) { //查看页
       return <ImgCardList.View
-                  dataSouce={this.state.allUsers}
-                  value={this.props.value} />;
+        dataSouce={this.state.allUsers}
+        value={this.props.value} />;
     } else if (this.props.view) {
       const emptyText = <span style={{ color: '#999999' }}>(空)</span>;
       const text = (this.props.value_name !== undefined && this.props.value_name !== '') ? this.props.value_name : this.props.value;
@@ -323,21 +323,23 @@ class UserSelect extends React.Component {
     return (
       <div className={cls} style={{ ...this.props.style }}>
         {
-          this.props.isCommonForm && this.props.multiple === 1 ? <ImgCardList
-                                                                          dataSouce={this.state.allUsers}
-                                                                          value={this.props.value}
-                                                                          isReadOnly={this.props.isReadOnly === 1}
-                                                                          addClick={this.showModal}
-                                                                          delUser={this.handleOk} /> :
+          this.props.isCommonForm && this.props.multiple === 1 ?
+            <ImgCardList
+              dataSouce={this.state.allUsers}
+              value={this.props.value}
+              isReadOnly={this.props.isReadOnly === 1}
+              addClick={this.showModal}
+              delUser={this.handleOk}
+            /> :
             <div className={styles.inputSelectWrap}>
               <Select onChange={this.selectChange.bind(this, options)}
-                      onSearch={this.queryOptions}
-                      placeholder={this.props.placeholder}
-                      disabled={this.props.isReadOnly === 1}
-                      mode={this.props.multiple === 1 ? 'multiple' : null}
-                      value={value}
-                      onFocus={this.selectFocus}
-                      allowClear
+                onSearch={this.queryOptions}
+                placeholder={this.props.placeholder}
+                disabled={this.props.isReadOnly === 1}
+                mode={this.props.multiple === 1 ? 'multiple' : null}
+                value={value}
+                onFocus={this.selectFocus}
+                allowClear
               >
                 {
                   options instanceof Array && options.map(item => {
@@ -365,7 +367,7 @@ class UserSelect extends React.Component {
 
 UserSelect.View = (props) => {
   return (
-    <UserSelect view={true} {...props} onChange={()=>{}} />
+    <UserSelect view={true} {...props} onChange={() => { }} />
   );
 };
 
