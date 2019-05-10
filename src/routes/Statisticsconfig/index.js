@@ -3,6 +3,7 @@ import { connect } from 'dva';
 import { Select, message, Popconfirm, Form, Button } from 'antd';
 import Page from '../../components/Page';
 import EditList from './EditList';
+import MobilePreview from './MobilePreview';
 import styles from './index.less';
 
 const Option = Select.Option;
@@ -154,7 +155,7 @@ class Statisticsconfig extends Component {
             />
           </div>
           <div className={styles.right}>
-            <Form>
+            <Form style={{ marginRight: 24 }}>
               <div className={styles.box}>
                 <div className={styles.row}>
                   <div className={styles.child}>序号</div>
@@ -200,6 +201,8 @@ class Statisticsconfig extends Component {
               </Button>
               </Popconfirm>
             </Form>
+         
+            {/* <MobilePreview /> */}
           </div>
         </div>
       </Page >
