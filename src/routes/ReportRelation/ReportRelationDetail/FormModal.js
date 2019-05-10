@@ -20,7 +20,12 @@ class FormModal extends Component {
       if (onOk) onOk(values);
       if (api || fetch) {
         const url = api || (isEdit ? fetch.edit : fetch.add);
-        const reportrelationid = isEdit ? selectedRows[0].reportrelationid : null;
+        const reportrelationId = sessionStorage.getItem('reportrelationid');
+        if (!reportrelationId) {
+          message.error('缺少 reportrelationid ！');
+          return;
+        }
+        const reportrelationid = isEdit ? selectedRows[0].reportrelationid : reportrelationId;
         const reportreldetailid = isEdit ? selectedRows[0].reportreldetailid : null;
         const params = { ...values, reportrelationid, reportreldetailid };
 
@@ -35,6 +40,19 @@ class FormModal extends Component {
           }).catch(e => message.error(e.message));
       }
     });
+  }
+
+  handleChange = (field, diffField, value) => {
+    const { form: { getFieldValue, setFieldsValue } } = this.props;
+    const diffFieldValue = getFieldValue(diffField);
+
+    if (value && diffFieldValue) {
+      const currentFieldValueArr = diffFieldValue.split(',') || [''];
+      const valueArr = value.split(',') || [''];
+      const result = [].filter.call(valueArr, val => !currentFieldValueArr.includes(val)).join();
+
+      setTimeout(() => setFieldsValue({ [field]: result }), 0);
+    }
   }
 
   handleCancel = () => {
@@ -62,14 +80,14 @@ class FormModal extends Component {
               {getFieldDecorator('reportuser', {
                 rules: [{ required: true, message: '请选择汇报人' }]
               })(
-                <UserSelect multiple={1} />
+                <UserSelect onChange={this.handleChange.bind(this, 'reportuser', 'reportleader')} multiple={1} />
               )}
             </FormItem>
             <FormItem label="汇报上级">
               {getFieldDecorator('reportleader', {
                 rules: [{ required: true, message: '请选择汇报上级' }]
               })(
-                <UserSelect multiple={1} />
+                <UserSelect onChange={this.handleChange.bind(this, 'reportleader', 'reportuser')} multiple={1} />
               )}
             </FormItem>
           </Form>

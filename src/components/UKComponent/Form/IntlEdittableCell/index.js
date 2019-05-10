@@ -113,7 +113,7 @@ class IntlEdittableCell extends Component {
             <div className={styles.editableCellTextWrapper}>
               <IntlText value={text} value_lang={value} />
               {
-                (!checkFunc || checkFunc('EditGroupName')) ? <Icon
+                (checkFunc || checkFunc('EditGroupName')) ? <Icon
                   type="edit"
                   className={styles.editableCellIcon}
                   onClick={this.edit}

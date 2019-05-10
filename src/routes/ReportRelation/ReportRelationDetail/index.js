@@ -60,8 +60,9 @@ class ReportRelationDetail extends Component {
     if (onInit) onInit();
   }
 
-  handleSelectRecords = () => {
-
+  handleSelectRecords = (selectedRows) => {
+    const { onSelectRow } = this.props;
+    if (onSelectRow) onSelectRow(selectedRows);
   }
 
   handleCancel = (model, e, params) => {
@@ -122,14 +123,14 @@ class ReportRelationDetail extends Component {
             {checkFunc('AddDetail') && <Button onClick={this.add}>新增</Button>}
             {checkFunc('Import') && <Button onClick={this.import} style={{ marginLeft: 15 }}>导入</Button>}
           </div>
-          <Toolbar.Right>
+          {/* <Toolbar.Right>
             <Search
               placeholder="请输入汇报人"
               value={keyWord}
               onChange={this.onHandleSearchChange}
               onSearch={this.onHandleSearch}
             />
-          </Toolbar.Right>
+          </Toolbar.Right> */}
         </Toolbar>
 
         <ConfigTable

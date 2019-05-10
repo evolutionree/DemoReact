@@ -8,6 +8,8 @@ import { getIntlText } from '../../components/UKComponent/Form/IntlText';
 import StatisticsFormModal from './StatisticsFormModal';
 import styles from './index.less';
 
+const SPACENAME = 'statisticsfunc';
+
 function Statisticsfunc(props) {
   const {
     dispatch,
@@ -28,37 +30,43 @@ function Statisticsfunc(props) {
       : { ...queries, pageIndex: 1, [key]: val };
     dispatch(routerRedux.push({ pathname, query }));
   }
+
   function handleEdit() {
-    dispatch({ type: 'statisticsfunc/showModals', payload: 'edit' });
+    dispatch({ type: `${SPACENAME}/showModals`, payload: 'edit' });
   }
+
   function handleDel() {
     Modal.confirm({
       title: '确定要删除吗？',
       onOk() {
-        dispatch({ type: 'statisticsfunc/del', payload: currentRecords });
+        dispatch({ type: `${SPACENAME}/del`, payload: currentRecords });
       }
     });
   }
+
   function handleSwitch(isUse) {
     Modal.confirm({
       title: `确认要${isUse ? '停用' : '启用'}吗？`,
       onOk() {
-        dispatch({ type: 'statisticsfunc/use', payload: { currentRecords, isUse } });
+        dispatch({ type: `${SPACENAME}/use`, payload: { currentRecords, isUse } });
       }
     });
   }
+
   function handleAdd() {
-    dispatch({ type: 'statisticsfunc/showModals', payload: 'add' });
+    dispatch({ type: `${SPACENAME}/showModals`, payload: 'add' });
   }
 
   function handleCancel(isEdit) {
-    dispatch({ type: 'statisticsfunc/hideModal', payload: { currentRecords: isEdit ? currentRecords : [] } });
+    dispatch({ type: `${SPACENAME}/hideModal`, payload: { currentRecords: isEdit ? currentRecords : [] } });
   }
+
   function handleSelectRecords(records) {
-    dispatch({ type: 'statisticsfunc/currentRecords', payload: records });
+    dispatch({ type: `${SPACENAME}/currentRecords`, payload: records });
   }
+
   function disable() {
-    dispatch({ type: 'statisticsfunc/disable' });
+    dispatch({ type: `${SPACENAME}/disable` });
   }
 
   const { pageIndex, pageSize } = queries;
@@ -112,15 +120,18 @@ function Statisticsfunc(props) {
           { label: '删除', handler: handleDel, show: checkFunc('Delete') }
         ]}
       >
-        <div style={{ float: 'left', display: 'flex', alignItems: 'center' }} >
+        <div style={{ float: 'left', display: 'flex', alignItems: 'center' }}>
           {checkFunc('Add') && <Button onClick={handleAdd}>新增</Button>}
-          <Switch
-            style={{ marginLeft: 10 }}
-            checked={checked}
-            checkedChildren="启用"
-            unCheckedChildren="禁用"
-            onChange={disable}
-          />
+          {
+            checkFunc('Disabled') &&
+            <Switch
+              style={{ marginLeft: 10 }}
+              checked={checked}
+              checkedChildren="启用"
+              unCheckedChildren="禁用"
+              onChange={disable}
+            />
+          }
         </div>
       </Toolbar>
 
@@ -144,7 +155,7 @@ function Statisticsfunc(props) {
 
       <StatisticsFormModal
         dispatch={dispatch}
-        spaceName="statisticsfunc"
+        spaceName={SPACENAME}
         currentRecords={currentRecords}
         showModals={showModals}
         onChange={handleSelectRecords}
@@ -155,5 +166,5 @@ function Statisticsfunc(props) {
   );
 }
 
-export default connect(state => state.statisticsfunc)(Statisticsfunc);
+export default connect(state => state[SPACENAME])(Statisticsfunc);
 

@@ -97,6 +97,7 @@ class ReportRelationMain extends Component {
     const { dispatch } = this.props;
     dispatch(routerRedux.push({ pathname: `/${SPACENAME}detail/${record.reportrelationid}` }));
     sessionStorage.setItem('reportrelationdetailtitle', text);
+    sessionStorage.setItem('reportrelationid', record.reportrelationid);
   }
 
   render() {
@@ -121,14 +122,14 @@ class ReportRelationMain extends Component {
           <div style={{ float: 'left' }}>
             {checkFunc('Add') && <Button onClick={this.add}>新增</Button>}
           </div>
-          <Toolbar.Right>
+          {/* <Toolbar.Right>
             <Search
               placeholder="请输入汇报关系名称"
               value={keyWord}
               onChange={this.onHandleSearchChange}
               onSearch={this.onHandleSearch}
             />
-          </Toolbar.Right>
+          </Toolbar.Right> */}
         </Toolbar>
 
         <ConfigTable

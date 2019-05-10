@@ -4,6 +4,7 @@ import IntlInput from '../../components/UKComponent/Form/IntlInput';
 import { getIntlText } from '../../components/UKComponent/Form/IntlText';
 import { query as queryEntityList } from '../../services/entity';
 import { funcitonStr, funcitonStr2 } from './tipStr';
+import styles from './index.less';
 
 const _ = require('lodash');
 
@@ -55,7 +56,7 @@ class TipsInput extends Component {
     return (
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <Input placeholder={placeholder} value={value} onChange={onChange} />
-        <Tooltip title={tips} placement="right">
+        <Tooltip title={tips} placement="right" overlayClassName={styles.tooltip}>
           <Icon type="question-circle" style={{ marginLeft: 5 }} />
         </Tooltip>
       </div>

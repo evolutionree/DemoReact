@@ -64,15 +64,19 @@ export default {
 
       try {
         yield put({ type: 'savePending' });
-        const { allowinto, moreflag, anafuncname_lang, ...rest } = values;
+        const { allowinto, moreflag, anafuncname_lang, morefunc, entityid, ...rest } = values;
+
+        const isAllowinto = allowinto ? 1 : 0;
 
         const params = {
           ...rest,
           anafuncid: currentRecords ? currentRecords[0].anafuncid : null,
           anafuncname: anafuncname_lang.cn,
           anafuncname_lang: JSON.stringify(anafuncname_lang),
-          allowinto: allowinto ? 1 : 0,
-          moreflag: moreflag ? 1 : 0
+          allowinto: isAllowinto,
+          moreflag: isAllowinto && moreflag ? 1 : 0,
+          morefunc: (isAllowinto && moreflag ? morefunc : null) || null,
+          entityid: isAllowinto && moreflag ? entityid : null
         };
         const res = yield call(isEdit ? updatestatistics : addstatistics, params);
         if (resolve) resolve(res);

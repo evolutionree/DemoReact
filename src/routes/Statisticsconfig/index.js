@@ -173,7 +173,7 @@ class Statisticsconfig extends Component {
                               })(
                                 <Select
                                   showSearch
-                                  disabled={!checkFunc('EditCountRow') || isReadOnlys[index]}
+                                  disabled={!checkFunc('EditCountRow') || !!isReadOnlys[index]}
                                   style={{ width: 300 }}
                                   placeholder="Select a person"
                                   optionFilterProp="children"
