@@ -89,7 +89,7 @@ function EntityList({
 
   const LoopList = [
     {
-      title: '实体名称', key: 'entityname',
+      title: '实体名称', key: 'entityname', width: 250,
       render: (text, record) => {
         const renderIntlText = <IntlText value={text} value_lang={record.entityname_lang} />;
         const node = (<div style={{ minWidth: 56 }}>
@@ -108,9 +108,7 @@ function EntityList({
     { title: '关联实体', key: 'relentityname', width: 180 },
     // { title: '状态', key: 'recstatus', width: 110, render: text => ['停用', '启用'][text] },
     // { title: '发布状态', key: 'pubstatus', width: 110 },
-    {
-      title: '描述', key: 'remark', width: 500, render: text => tooltipElements(text, 500, '描述')
-    }
+    { title: '描述', key: 'remark', render: text => tooltipElements(text, 500, '描述') }
   ];
 
   const tooltipElements = (text, width, title) => {
