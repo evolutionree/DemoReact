@@ -129,7 +129,13 @@ class InputCustomerRecName extends Component {
   }
 
   getEntityInfo = () => {
-    return entityInfo[this.props.fieldId] || {};
+    const { entityId } = this.props;
+    return {
+      entityId,
+      entityName: '客户',
+      showQuote: true
+    };
+    // return entityInfo[this.props.fieldId] || {};
   };
 
   quoteCustomer(formData) {

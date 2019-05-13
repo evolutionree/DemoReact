@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { createNormalInput } from './utils';
 import InputCustomerRecName from './InputCustomerRecName';
+import { queryFields } from '../../../services/entity';
 
-const custNameFieldId = '046ed3f6-8c81-41ab-baff-339c339eddf5'; //客户名称的fileldId
 const xiansuoNameFieldId = 'e61403f1-4511-49b9-a1c1-52a8cea855d1'; //线索名称的fileldId
 
 const Text = createNormalInput('text', {
@@ -12,13 +12,37 @@ const Text = createNormalInput('text', {
 });
 
 class InputRecName extends Component {
+  state = {
+    isCustomer: false
+  }
+
   setValue = val => {
     this.props.onChange(val, true);
   };
 
+  componentDidMount() {
+    const { entityId, fieldId } = this.props;
+    try {
+      queryFields(entityId)
+        .then(res => {
+          if (res.data) {
+            const { entityfieldpros } = res.data;
+            if (Array.isArray(entityfieldpros) && entityfieldpros.length) {
+              const recnameItem = entityfieldpros.find(item => item.fieldname === 'recname');
+              const isCustomer = recnameItem.fieldid === fieldId;
+              this.setState({ isCustomer });
+            }
+          }
+        });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   render() {
+    const { isCustomer } = this.state;
     //客户新增 与 其他模块的新增 有差异   客户新增的时候  客户名称键入后需要请求接口 查询重复引用
-    return (this.props.fieldId === custNameFieldId || this.props.fieldId === xiansuoNameFieldId) ?
+    return (isCustomer || this.props.fieldId === xiansuoNameFieldId) ?
       <InputCustomerRecName {...this.props} /> : React.createElement(Text, this.props);
   }
 }
