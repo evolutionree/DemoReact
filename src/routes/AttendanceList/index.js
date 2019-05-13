@@ -50,7 +50,7 @@ class AttendanceList extends React.Component {
     return {
       pageIndex: 1,
       pageSize: 10,
-      type: 1,
+      type: 0,
       searchName: '',
       deptId: '7f74192d-b937-403f-ac2a-8be34714278b',
       startDate: getCurrentMonthFirstDay(),
@@ -129,7 +129,7 @@ class AttendanceList extends React.Component {
     return (
       <Page title="考勤明细表">
         <Toolbar>
-          <Select
+          {/* <Select
             style={{ width: 120 }}
             value={queries.type + ''}
             onChange={this.search.bind(this, 'type')}
@@ -137,7 +137,7 @@ class AttendanceList extends React.Component {
             <Option value="0">全部</Option>
             <Option value="1">外勤</Option>
             <Option value="2">内勤</Option>
-          </Select>
+          </Select> */}
           <DepartmentSelect
             width="200px"
             value={queries.deptId}
