@@ -3,6 +3,7 @@ import { createNormalInput } from './utils';
 import InputCustomerRecName from './InputCustomerRecName';
 import { queryFields } from '../../../services/entity';
 
+const customerEntityId = 'f9db9d79-e94b-4678-a5cc-aa6e281c1246'; // 客户实体id
 const xiansuoNameFieldId = 'e61403f1-4511-49b9-a1c1-52a8cea855d1'; //线索名称的fileldId
 
 const Text = createNormalInput('text', {
@@ -22,20 +23,22 @@ class InputRecName extends Component {
 
   componentDidMount() {
     const { entityId, fieldId } = this.props;
-    try {
-      queryFields(entityId)
-        .then(res => {
-          if (res.data) {
-            const { entityfieldpros } = res.data;
-            if (Array.isArray(entityfieldpros) && entityfieldpros.length) {
-              const recnameItem = entityfieldpros.find(item => item.fieldname === 'recname');
-              const isCustomer = recnameItem.fieldid === fieldId;
-              this.setState({ isCustomer });
+    if (entityId === customerEntityId) {
+      try {
+        queryFields(entityId)
+          .then(res => {
+            if (res.data) {
+              const { entityfieldpros } = res.data;
+              if (Array.isArray(entityfieldpros) && entityfieldpros.length) {
+                const recnameItem = entityfieldpros.find(item => item.fieldname === 'recname');
+                const isCustomer = recnameItem.fieldid === fieldId;
+                this.setState({ isCustomer });
+              }
             }
-          }
-        });
-    } catch (e) {
-      console.error(e);
+          });
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
 

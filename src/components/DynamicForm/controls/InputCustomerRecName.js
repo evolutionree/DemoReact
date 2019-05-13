@@ -182,7 +182,7 @@ class InputCustomerRecName extends Component {
                 <ul key={item.recid}>
                   <li>
                     <span className={styles.spanLeft} title={item.recname}>{item.recname}</span>
-                    {this.getEntityInfo().showQuote && setreference === '1' && <span className={styles.spanRight} onClick={this.quoteCustomer.bind(this, item)}>引用</span>}
+                    {this.getEntityInfo().showQuote && setreference === '0' && <span className={styles.spanRight} onClick={this.quoteCustomer.bind(this, item)}>引用</span>}
                   </li>
                 </ul>
               );
