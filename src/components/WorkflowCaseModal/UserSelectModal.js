@@ -139,7 +139,7 @@ class UserSelectModal extends React.Component {
     const { visible, onCancel, limit, allUsers, filterUsers, isSearchLocal, zIndex = 1000 } = this.props;
     let { currentSelected, userList } = this.state;
     userList = userList.filter(u => {
-      return filterUsers.indexOf(u.userid) === -1;
+      return filterUsers.indexOf(u.userid) === -1 && !currentSelected.includes(u.userid);
     });
     const currentSelectedUsers = currentSelected.map(id => _.find(allUsers, ['userid', id]));
     return (
