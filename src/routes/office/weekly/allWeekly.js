@@ -27,6 +27,10 @@ function AllWeekly({
   function getDate() {
     return [allWeeklySearchData.fromdate ? moment(allWeeklySearchData.fromdate, 'YYYY-MM-DD') : null, allWeeklySearchData.todate ? moment(allWeeklySearchData.todate, 'YYYY-MM-DD') : null];
   }
+  function disabledDate(current) {
+    // Can not select days before today and today
+    return current && current > moment().endOf('day');
+  }
   function shouldShowExport() {
     return checkFunc('EntityDataExport');
   }
@@ -40,7 +44,7 @@ function AllWeekly({
         {shouldShowExport() && <Button onClick={exportData}>导出</Button>}
         <Toolbar.Right>
           <div style={{ display: 'inline-block', width: 220 }}>
-            <RangePicker onChange={onChange} value={getDate()} />
+            <RangePicker onChange={onChange} value={getDate()} disabledDate={disabledDate} />
           </div>
           <div style={{ width: 200, display: 'inline-block', margin: '0 10px' }}>
             <SelectDepartment onChange={changeParams.bind(this, 'dept', allWeeklySearchData)} value={allWeeklySearchData.dept} />
