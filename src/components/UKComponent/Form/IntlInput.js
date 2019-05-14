@@ -74,7 +74,7 @@ class IntlInput extends Component {
   }
 
   transformValue = (value) => { //兼容 国际化开发前的 数据
-    return typeof value === 'string' ? { cn: value } : value || {};
+    return typeof value === 'string' ? { cn: value } : (value || {});
   }
 
   focus = () => {
@@ -97,19 +97,19 @@ class IntlInput extends Component {
   }
 
   inputChange = (e) => {
+    const { value: stateValue, currentLocale } = this.state;
     const value = e.target.value ? e.target.value.trim() : e.target.value;
     this.setState({
       value: {
-        ...this.state.value,
-        [this.state.currentLocale]: value
+        ...stateValue,
+        [currentLocale]: value
       },
       inputValue: value,
-      panelVisible: !this.state.value
+      panelVisible: !stateValue
     }, () => this.translateLang(this.state.value, this.state.currentLocale));
   }
 
   translateCNToOtherLang = (text, translate_lang, fromLang, toLang) => {
-    console.log(text, translate_lang, fromLang, toLang)
     const { onChange } = this.props;
 
     if (!text) return;
@@ -164,44 +164,45 @@ class IntlInput extends Component {
 
   inputBlur = (e) => {
     const { onChange } = this.props;
-    const { currentLocale } = this.state;
-
-    this.translateLang(e, currentLocale);
+    const { currentLocale, value: stateValue } = this.state;
 
     const val = {
-      ...this.state.value,
-      [this.state.currentLocale]: e.target.value
+      ...stateValue,
+      [currentLocale]: e.target.value
     };
     if (onChange) onChange(val);
   }
 
   render() {
     const { onPressEnter, placeholder, disabled, maxLength, className } = this.props;
+    const { inputValue, currentLocale, panelVisible, value } = this.state;
 
     return (
       <div className={classnames(styles.wrap, className)} id="dropdownPanel">
-        <Input onChange={this.inputChange}
+        <Input
+          onChange={this.inputChange}
           onBlur={this.inputBlur}
           onPressEnter={onPressEnter}
           ref={ref => this.inputRef = ref}
-          value={this.state.inputValue}
-          maxLength={this.state.currentLocale.toUpperCase() === CN ? `${maxLength}` : null}
+          value={inputValue}
+          maxLength={currentLocale.toUpperCase() === CN ? `${maxLength}` : null}
           placeholder={placeholder}
           disabled={disabled}
           addonAfter={
             <div onClick={this.openPanel} className={styles.inputAddoAfter}>
-              {this.state.currentLocale.toUpperCase()}
-              <Icon type="down" style={{ transform: this.state.panelVisible ? 'scale(0.75) rotate(180deg)' : 'scale(0.75) rotate(0deg)' }} />
+              {currentLocale.toUpperCase()}
+              <Icon type="down" style={{ transform: panelVisible ? 'scale(0.75) rotate(180deg)' : 'scale(0.75) rotate(0deg)' }} />
             </div>
-          } />
-        <div className={classnames(styles.dropdownPanel, { [styles.visible]: this.state.panelVisible })}>
+          }
+        />
+        <div className={classnames(styles.dropdownPanel, { [styles.visible]: panelVisible })}>
           <ul>
             {
               langlist instanceof Array && langlist.map((item, index) => {
                 return (
                   <li onClick={this.onSelectLocale.bind(this, item)} key={index}>
-                    <span className={styles.valueWrap}>{this.state.value[item.key]}</span>
-                    <span className={classnames(styles.localName, { [styles.active]: this.state.currentLocale === item.key })}>{item.dispaly}</span>
+                    <span className={styles.valueWrap}>{value[item.key]}</span>
+                    <span className={classnames(styles.localName, { [styles.active]: currentLocale === item.key })}>{item.dispaly}</span>
                   </li>
                 );
               })
