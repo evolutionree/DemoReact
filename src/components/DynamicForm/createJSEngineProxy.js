@@ -486,19 +486,20 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       }
 
       if (!isVisible && form) {
-        const { isFieldTouched } = form;
+        const { getFieldsValue } = form;
         const obj = {};
+        const keys = getFieldsValue();
         // this.setValue(fieldName, undefined);
 
         if (Array.isArray(fieldName)) {
           fieldName.forEach(field => {
-            if (isFieldTouched(field)) obj[field] = '';
+            if (field in keys) obj[field] = '';
           });
         } else if (fieldName && typeof fieldName === 'object') {
           Object.keys(fieldName).forEach(field => {
-            if (isFieldTouched(field)) obj[field] = '';
+            if (field in keys) obj[field] = '';
           });
-        } else if (isFieldTouched(fieldName)) {
+        } else if (fieldName in keys) {
           form.setFieldsValue({ [fieldName]: '' });
         }
 
