@@ -146,7 +146,7 @@ class DynamicFormView extends React.Component {
           {this.renderFields(noGroupFields)}
           {groups.map(group => (
             <FoldableGroup key={group.title} title={group.title} isVisible={group.isVisible} foldable={group.foldable} theme="light">
-              {this.slinceFileds(group.fields)}
+              {this.renderFields(group.fields)}
             </FoldableGroup>
           ))}
         </Row>
