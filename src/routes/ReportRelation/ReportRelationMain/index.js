@@ -7,6 +7,7 @@ import Toolbar from '../../../components/Toolbar';
 import Search from '../../../components/Search';
 import ConfigTable from '../../../components/ConfigTable';
 import FormModal from './FormModal';
+import formConfig from './formConfig';
 
 const SPACENAME = 'reportrelation';
 
@@ -156,6 +157,7 @@ class ReportRelationMain extends Component {
           title={title}
           spacename={SPACENAME}
           dispatch={dispatch}
+          list={formConfig}
           fetch={{
             add: 'api/ReportRelation/addreportrelation',
             edit: 'api/ReportRelation/updatereportrelation'

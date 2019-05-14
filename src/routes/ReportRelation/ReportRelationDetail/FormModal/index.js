@@ -1,15 +1,21 @@
 import React, { Component } from 'react';
-import { Modal, Form, message, Spin } from 'antd';
-// import IntlInput from '../../../components/UKComponent/Form/IntlInput';
-// import { getIntlText } from '../../../components/UKComponent/Form/IntlText';
-import { dynamicRequest } from '../../../services/common';
-import UserSelect from '../../../components/DynamicForm/controls/SelectUser';
+import { Modal, Form, message, Spin, Row, Col } from 'antd';
+// import IntlInput from '../../../../components/UKComponent/Form/IntlInput';
+// import { getIntlText } from '../../../../components/UKComponent/Form/IntlText';
+import { dynamicRequest } from '../../../../services/common';
+import UserSelect from '../../../../components/DynamicForm/controls/SelectUser';
 
 const _ = require('lodash');
 
 const FormItem = Form.Item;
 
 class FormModal extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      list: props.list || {}
+    };
+  }
 
   handleSubmit = () => {
     const { form, onOk, api, spacename, dispatch, visible, selectedRows, fetch } = this.props;
@@ -61,9 +67,18 @@ class FormModal extends Component {
     if (cancel) cancel();
   }
 
+  formNode = (record) => {
+    const { bindArgument: arg } = record;
+    return {
+      UserSelect: <UserSelect onChange={this.handleChange.bind(this, arg[0], arg[1])} multiple={1} />
+    };
+  }
+
   render() {
-    const { form, visible, title, confirmLoading, fetchDataLoading } = this.props;
+    const { form, visible, title, confirmLoading, fetchDataLoading, justify = 'space-between' } = this.props;
     const { getFieldDecorator } = form;
+    const { list } = this.state;
+
     const isEdit = /^edit$/.test(visible);
 
     return (
@@ -76,20 +91,23 @@ class FormModal extends Component {
       >
         <Spin spinning={fetchDataLoading}>
           <Form>
-            <FormItem label="汇报人">
-              {getFieldDecorator('reportuser', {
-                rules: [{ required: true, message: '请选择汇报人' }]
-              })(
-                <UserSelect onChange={this.handleChange.bind(this, 'reportuser', 'reportleader')} multiple={1} />
-              )}
-            </FormItem>
-            <FormItem label="汇报上级">
-              {getFieldDecorator('reportleader', {
-                rules: [{ required: true, message: '请选择汇报上级' }]
-              })(
-                <UserSelect onChange={this.handleChange.bind(this, 'reportleader', 'reportuser')} multiple={1} />
-              )}
-            </FormItem>
+            <Row type="flex" justify={justify}>
+              {
+                list.length ? (
+                  list.map((item, index) => (
+                    this.formNode(item)[item.type] &&
+                    <Col key={index} span={item.span || 24}>
+                      <FormItem label={item.label} formItemLayout={item.formItemLayout}>
+                        {getFieldDecorator(item.fieldname, {
+                          initialValue: item.initialValue || '',
+                          rules: item.rules || [{ required: item.required || true, message: item.message || `缺少${item.label}` }]
+                        })(this.formNode(item)[item.type])}
+                      </FormItem>
+                    </Col>
+                  ))
+                ) : null
+              }
+            </Row>
           </Form>
         </Spin>
       </Modal>
@@ -99,11 +117,15 @@ class FormModal extends Component {
 
 export default Form.create({
   onValuesChange: (props, values) => {
-    const { onChange, selectedRows } = props;
-    onChange([{
-      ...(selectedRows ? selectedRows[0] : {}),
-      ...values
-    }]);
+    const { onChange, selectedRows, visible } = props;
+    const isEdit = /^edit$/.test(visible);
+
+    if (isEdit) {
+      onChange([{
+        ...(selectedRows && selectedRows.length === 1 ? selectedRows[0] : {}),
+        ...values
+      }]);
+    }
   },
   mapPropsToFields: (props) => {
     const { selectedRows, visible } = props;
