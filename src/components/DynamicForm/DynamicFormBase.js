@@ -41,9 +41,9 @@ export function getSlinceFileds(fieldsArr) { // fieldsArr: [[colNum, col], ...]
       isFullPush = true;
     }
   }
-  
+
   if (item.length) resultFields.push(item); // 把最后缓存的一项放进去
-  
+
   return resultFields.map((row, i) => <Row key={`row${i}`}>{row}</Row>);
 }
 
@@ -95,7 +95,7 @@ class DynamicFormBase extends Component {
     horizontal: false,
     fields: [],
     value: {},
-    onFieldControlFocus: () => {}
+    onFieldControlFocus: () => { }
   };
 
   usage = 0; // 0新增，1编辑，2高级搜索
@@ -410,7 +410,7 @@ class DynamicFormBase extends Component {
   // 根据colNum拆分一行有多少个Col，再插入Row
   slinceFileds = (fields) => {
     const fieldsArr = this.renderFields(fields);
-    const resultFields = getSlinceFileds(fieldsArr); 
+    const resultFields = getSlinceFileds(fieldsArr);
     return resultFields;
   }
 
@@ -421,13 +421,13 @@ class DynamicFormBase extends Component {
   renderField = field => {
     let colNum = 24;
     if (field.controltype === 30) { // 用于主页动态实体，传入当前recid
-      return ([colNum, (
+      return (
         <FormItem key={field.fieldname} style={{ display: 'none' }}>
           {this.props.form.getFieldDecorator(field.fieldname, {
             initialValue: this.props.refRecord
           })(<div>{this.props.refRecord}</div>)}
         </FormItem>
-      )]);
+      );
     }
 
     if (onlylineField.indexOf(field.controltype) > -1 || (field.controltype === 25 && field.fieldconfig.multiple === 1)) {
@@ -455,14 +455,14 @@ class DynamicFormBase extends Component {
       }
     }
 
-    return [colNum, (
+    return (
       <Col span={colNum}
-           key={field.fieldname}
-           className={className}
-           style={{ padding: '0 10px' }}>
+        key={field.fieldname}
+        className={className}
+        style={{ padding: '0 10px' }}>
         {this.renderFieldControlWrapper(field, colNum)(fieldControl)}
       </Col>
-    )];
+    );
   };
 
   renderFieldControlWrapper = (field, colNum) => {
@@ -530,10 +530,10 @@ class DynamicFormBase extends Component {
     return (
       <Form layout={this.getFormLayout()}>
         <Row gutter={24}>
-          {this.slinceFileds(fieldsGroup[0].fields)}
+          {this.renderFields(fieldsGroup[0].fields)}
           {fieldsGroup.slice(1).map(group => (
             <FoldableGroup key={group.title} title={group.title} isVisible={group.isVisible} foldable={group.foldable}>
-              {this.slinceFileds(group.fields)}
+              {this.renderFields(group.fields)}
             </FoldableGroup>
           ))}
         </Row>

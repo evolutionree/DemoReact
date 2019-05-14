@@ -81,11 +81,12 @@ class DynamicFormView extends React.Component {
         }
       }
 
-      return [colNum, (
+      return (
         <Col span={colNum}
-             key={field.fieldname}
-             className={className}
-             style={{ padding: '0 10px' }} >
+          key={field.fieldname}
+          className={className}
+          style={{ padding: '0 10px' }}
+        >
           <FormItem
             key={fieldname}
             colon={false}
@@ -103,15 +104,15 @@ class DynamicFormView extends React.Component {
             />
           </FormItem>
         </Col>
-      )];
+      );
     });
   };
 
   // 由于每一项内容长度不一样，导致每个col的高度可能不一致
   // 根据colNum拆分一行有多少个Col，再插入Row
-  slinceFileds = (fields) => { 
+  slinceFileds = (fields) => {
     const fieldsArr = this.renderFields(fields);
-    const resultFields = getSlinceFileds(fieldsArr); 
+    const resultFields = getSlinceFileds(fieldsArr);
     return resultFields;
   }
   render() {
@@ -142,7 +143,7 @@ class DynamicFormView extends React.Component {
     return (
       <Form className={styles.dyformview}>
         <Row gutter={24} style={{ margin: 0 }}>
-          {this.slinceFileds(noGroupFields)}
+          {this.renderFields(noGroupFields)}
           {groups.map(group => (
             <FoldableGroup key={group.title} title={group.title} isVisible={group.isVisible} foldable={group.foldable} theme="light">
               {this.slinceFileds(group.fields)}
