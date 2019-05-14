@@ -12,7 +12,8 @@ export default {
     isSavePending: false,
     menus: [],
     useType: 0, // 0 按分类设置，1 按职能设置
-    currentMenu: '' // 存的是id
+    currentMenu: '', // 存的是id
+    list: []
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -117,16 +118,16 @@ export default {
       return {
         ...state,
         menus,
-        currentMenu: menus[0].menuId
+        currentMenu: menus.length ? menus[0].menuId : ''
       };
     },
     // 获取到新的rule后，需要生成list供表格使用
     queryRulesSuccess(state, { payload: rules }) {
-      function generateCurrentList () {
+      function generateCurrentList() {
         const alreadyExistRules = _.cloneDeep(rules);
         const allEnabledFields = allFields.filter(item => item.recstatus === 1);
 
-        const allRules = allEnabledFields.map(function(field) {
+        const allRules = allEnabledFields.map((field) => {
           const id = field.fieldid;
 
           // 先检查rule是否已经有了，没有则init一个
@@ -195,7 +196,7 @@ export default {
           rules: subRules
         };
       }
-      function flattenRule (rule) {
+      function flattenRule(rule) {
         return rule.rules.reduce((retObj, rule) => {
           const opType = rule.operatetype;
           const usage = ['add', 'edit', 'detail', null, 'import', 'sync'][opType];

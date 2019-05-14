@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import { connect } from 'dva';
-import { Button, Menu, Col, Row, Spin, Radio } from 'antd';
+import { Button, Menu, Col, Row, Radio } from 'antd';
 import Toolbar from '../../../../components/Toolbar';
 import RuleTable from './RuleTable';
 
@@ -102,17 +102,16 @@ function EntityRules({
   }
   let layoutStyle;
   try {
-    layoutStyle = list[0].rules[0].viewrule.style || 0;
-    console.log('layoutstyle ' + layoutStyle)
-  } catch (e) {}
+    layoutStyle = (list.length && list[0].rules && list[0].rules[0].viewrule.style) || 0;
+  } catch (e) { console.error(e); }
 
   return (
     <div>
       <Toolbar>
         {showMenu && <Button type="default" style={useType === 0 ? btnAtiveStyles : {}}
-                             onClick={() => dispatch({ type: 'entityRules/selectUseType', payload: 0 })}>按类型设置</Button>}
+          onClick={() => dispatch({ type: 'entityRules/selectUseType', payload: 0 })}>按类型设置</Button>}
         {showMenu && <Button type="default" style={useType === 1 ? btnAtiveStyles : {}}
-                             onClick={() => dispatch({ type: 'entityRules/selectUseType', payload: 1 })}>按职能设置</Button>}
+          onClick={() => dispatch({ type: 'entityRules/selectUseType', payload: 1 })}>按职能设置</Button>}
         {useType === 0 && <span style={{ marginLeft: '30px' }}>样式选择：</span>}
         {useType === 0 && <Radio.Group value={layoutStyle} onChange={onStyleChange}>
           <Radio value={0}>横向</Radio>
@@ -126,7 +125,7 @@ function EntityRules({
       <Row gutter={10}>
         {showMenu && <Col span={4}>
           <Menu selectedKeys={[currentMenu]}
-                onSelect={handleMenuSelect}>
+            onSelect={handleMenuSelect}>
             {menus.map(menu => (
               <MenuItem key={menu.menuId}>{menu.menuName}</MenuItem>
             ))}
