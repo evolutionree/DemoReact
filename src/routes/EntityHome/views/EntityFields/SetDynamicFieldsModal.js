@@ -58,7 +58,7 @@ class SetDynamicFieldsModal extends React.Component {
     queryTypes({ entityId: this.props.entityId }).then(result => {
       if (result) {
         const { data } = result;
-        const entityTypeId = Array.isArray(data) && data.length && data.entitytypepros[0].categoryid;
+        const entityTypeId = data && Array.isArray(data.entitytypepros) && data.entitytypepros.length && data.entitytypepros[0].categoryid;
         this.setState({ entityTypeId });
       }
     });
@@ -159,4 +159,4 @@ export default connect(
       }
     }
   }
-)(Form.create()(SetDynamicFieldsModal));
+)(Form.create({})(SetDynamicFieldsModal));
