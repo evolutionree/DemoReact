@@ -81,7 +81,7 @@ export default Form.create({
   onValuesChange: (props, values) => {
     const { onChange, selectedRows } = props;
     onChange([{
-      ...(selectedRows ? selectedRows[0] : {}),
+      ...(selectedRows && selectedRows.length === 1 ? selectedRows[0] : {}),
       ...values
     }]);
   },

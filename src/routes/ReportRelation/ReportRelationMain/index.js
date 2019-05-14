@@ -7,7 +7,6 @@ import Toolbar from '../../../components/Toolbar';
 import Search from '../../../components/Search';
 import ConfigTable from '../../../components/ConfigTable';
 import FormModal from './FormModal';
-import styles from '../index.less';
 
 const SPACENAME = 'reportrelation';
 
@@ -109,6 +108,16 @@ class ReportRelationMain extends Component {
 
     const { keyWord } = this.state;
     const title = '汇报关系';
+    const columns = [
+      {
+        title: '汇报关系名称',
+        key: 'reportrelationname',
+        width: 200,
+        render: (text, record) => <a href="javascript:;" onClick={this.jump.bind(this, text, record)}>{text}</a>,
+        sorter: true
+      },
+      { title: '描述', key: 'reportremark', width: 300, sorter: true }
+    ];
 
     return (
       <Page title={title}>
@@ -140,16 +149,7 @@ class ReportRelationMain extends Component {
           initParams={initParams}
           dataSource={list}
           CBSelectRow={data => onSelectRow(data)}
-          columns={[
-            {
-              title: '汇报关系名称',
-              key: 'reportrelationname',
-              width: 200,
-              render: (text, record) => <a href="javascript:;" onClick={this.jump.bind(this, text, record)}>{text}</a>,
-              sorter: true
-            },
-            { title: '描述', key: 'reportremark', width: 300, sorter: true }
-          ]}
+          columns={columns}
         />
 
         <FormModal
@@ -173,10 +173,7 @@ class ReportRelationMain extends Component {
 }
 
 export default connect(
-  state => ({
-    ...state[SPACENAME],
-    SPACENAME: SPACENAME
-  }),
+  state => state[SPACENAME],
   dispatch => ({
     onInit() {
       dispatch({ type: `${SPACENAME}/Init` });

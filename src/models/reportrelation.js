@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { getreportrelation, deletereportrelation } from '../services/reportrelation';
+import { add, update, getreportrelation, deletereportrelation } from '../services/reportrelation';
 import { setSessionItem, getCacheData } from '../utils/newStorage';
 
 const NAMESPACE = 'reportrelation';
@@ -7,15 +7,8 @@ const NAMESPACE = 'reportrelation';
 export default {
   namespace: NAMESPACE,
   state: {
-    roles: [],
-    departments: [],
-    queries: {},
     list: [],
     selectedRows: [],
-    total: null,
-    recid: '',
-    showDisabledDepts: false,
-    attenceGroupDataSource: [],
     confirmLoading: {
       FormModal: false
     },
@@ -32,12 +25,7 @@ export default {
       columnFilter: null //字段查询
     },
     formInfo: {
-      fieldData: {},
-      baseversion: [],
-      platformdepend: [],
-      productdepend: [],
-      industrydepend: [],
-      projectdepend: []
+      fieldData: {}
     }
   },
   effects: {
@@ -74,35 +62,25 @@ export default {
         message.error(e.message || '删除失败');
       }
     },
-    // *SubmitForm({ payload }, { select, call, put }) {
-    //   const { confirmLoading, recid } = yield select(state => state[NAMESPACE]);
-    //   const { params, resolve, isEdit } = payload;
-    //   try {
-    //     yield put({ type: 'handelLoading', payload: { ...confirmLoading, FormModal: true } });
+    *SubmitForm({ payload }, { select, call, put }) {
+      const { confirmLoading, recid } = yield select(state => state[NAMESPACE]);
+      const { params, resolve, isEdit } = payload;
+      try {
+        yield put({ type: 'handelLoading', payload: { ...confirmLoading, FormModal: true } });
 
-    //     const checkedParam = (value) => (!judgement(value) ? value * 1 : null);
-    //     const resultParams = {
-    //       versionname: params.versionname || null,
-    //       versionnum: params.versionnum || null,
-    //       versiontype: checkedParam(params.versiontype),
-    //       baseversion: params.baseversion || null,
-    //       remark: params.remark || null,
-    //       platformdepend: params.platformdepend || null,
-    //       productdepend: params.productdepend || null,
-    //       industrydepend: params.industrydepend || null,
-    //       projectdepend: params.projectdepend || null,
-    //       recid: recid || null,
-    //       persistenceversion: null
-    //     };
-    //     const response = yield call((!isEdit ? addversionrecord : updateversionrecord), resultParams);
-    //     if (resolve) resolve(response);
-    //     yield put({ type: 'QueryList' });
-    //     yield put({ type: 'handelLoading', payload: { ...confirmLoading, FormModal: false } });
-    //   } catch (e) {
-    //     yield put({ type: 'handelLoading', payload: { ...confirmLoading, FormModal: false } });
-    //     message.error(e.message);
-    //   }
-    // },
+        const resultParams = {
+          ...params,
+          recid: recid || null
+        };
+        const response = yield call((!isEdit ? add : update), resultParams);
+        if (resolve) resolve(response);
+        yield put({ type: 'QueryList' });
+        yield put({ type: 'handelLoading', payload: { ...confirmLoading, FormModal: false } });
+      } catch (e) {
+        yield put({ type: 'handelLoading', payload: { ...confirmLoading, FormModal: false } });
+        message.error(e.message);
+      }
+    },
     *FecthAllFormData({ payload }, { select, call, put }) {
       const { fetchDataLoading } = yield select(state => state[NAMESPACE]);
       const { recid, resolve } = payload;
@@ -125,7 +103,6 @@ export default {
             }
           });
         }
-
 
         if (resolve) resolve({});
       } catch (e) {

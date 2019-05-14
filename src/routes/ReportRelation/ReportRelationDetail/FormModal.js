@@ -107,7 +107,7 @@ export default Form.create({
   },
   mapPropsToFields: (props) => {
     const { selectedRows, visible } = props;
-    const currentRecord = selectedRows ? selectedRows[0] : {};
+    const currentRecord = selectedRows && selectedRows.length === 1 ? selectedRows[0] : {};
     if (visible === '') return {};
     return _.mapValues(currentRecord, val => ({ value: val }));
   }

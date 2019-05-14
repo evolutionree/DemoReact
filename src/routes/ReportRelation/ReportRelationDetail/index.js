@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Link } from 'dva/router';
 import { Button } from 'antd';
 import Page from '../../../components/Page';
 import Toolbar from '../../../components/Toolbar';
 import Search from '../../../components/Search';
 import ConfigTable from '../../../components/ConfigTable';
 import FormModal from './FormModal';
-import styles from '../index.less';
 
 const SPACENAME = 'reportrelationdetail';
 
@@ -109,6 +107,16 @@ class ReportRelationDetail extends Component {
     const { keyWord } = this.state;
 
     const title = sessionStorage.getItem('reportrelationdetailtitle');
+    const columns = [
+      {
+        title: '汇报人',
+        key: 'reportuser',
+        name: 'reportuser_name',
+        width: 200,
+        sorter: true
+      },
+      { title: '汇报上级', key: 'reportleader', name: 'reportleader_name', width: 300, sorter: true }
+    ];
 
     return (
       <Page title={`汇报关系 - ${title}`}>
@@ -141,16 +149,7 @@ class ReportRelationDetail extends Component {
           initParams={initParams}
           dataSource={list}
           CBSelectRow={data => onSelectRow(data)}
-          columns={[
-            {
-              title: '汇报人',
-              key: 'reportuser',
-              name: 'reportuser_name',
-              width: 200,
-              sorter: true
-            },
-            { title: '汇报上级', key: 'reportleader', name: 'reportleader_name', width: 300, sorter: true }
-          ]}
+          columns={columns}
         />
 
         <FormModal
@@ -174,9 +173,7 @@ class ReportRelationDetail extends Component {
 }
 
 export default connect(
-  state => ({
-    ...state[SPACENAME]
-  }),
+  state => state[SPACENAME],
   dispatch => ({
     onInit() {
       dispatch({ type: `${SPACENAME}/Init` });
