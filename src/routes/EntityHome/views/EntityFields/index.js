@@ -69,8 +69,8 @@ function EntityFields({
   function handleAdd() {
     dispatch({ type: 'entityFields/add' });
   }
-  function handleFormSubmit(data, callback) {
-    dispatch({ type: 'entityFields/save', payload: { data, callback } });
+  function handleFormSubmit(data, cb) {
+    dispatch({ type: 'entityFields/save', payload: { data, callback: cb } });
   }
   function handleFormCancel() {
     dispatch({ type: 'entityFields/hideModal', payload: '' });
