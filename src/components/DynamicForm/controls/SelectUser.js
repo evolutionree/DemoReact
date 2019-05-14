@@ -2,12 +2,12 @@ import React, { PropTypes } from 'react';
 import classnames from 'classnames';
 import _ from 'lodash';
 import { is } from 'immutable';
+import { Icon, Select } from 'antd';
 import UserSelectModal from './UserSelectModal';
-import styles from './SelectUser.less';
 import { queryUsers } from '../../../services/structure';
-import { Icon, Select } from "antd";
 import ImgCardList from '../../ImgCardList';
 import connectBasicData from '../../../models/connectBasicData';
+import styles from './SelectUser.less';
 
 const Option = Select.Option;
 
@@ -37,8 +37,10 @@ class UserSelect extends React.Component {
       options: [],
       searchKey: ''
     };
+  }
 
-    this.setUserNameMap(props);
+  componentDidMount() {
+    this.setUserNameMap(this.props);
 
     this.setValue = this.ensureDataReady(this.setValue);
     this.setValueByName = this.ensureDataReady(this.setValueByName);
@@ -303,13 +305,16 @@ class UserSelect extends React.Component {
     }
 
     if (this.props.view && this.props.multiple && this.props.isCommonForm) { //查看页
-      return <ImgCardList.View
-        dataSouce={this.state.allUsers}
-        value={this.props.value} />;
+      return (
+        <ImgCardList.View
+          dataSouce={this.state.allUsers}
+          value={this.props.value}
+        />
+      );
     } else if (this.props.view) {
       const emptyText = <span style={{ color: '#999999' }}>(空)</span>;
-      const text = (this.props.value_name !== undefined && this.props.value_name !== '') ? this.props.value_name : this.props.value;
-      return <div style={{ display: 'inline-block' }}>{text ? (text + '') : emptyText}</div>;
+      const _text = (this.props.value_name !== undefined && this.props.value_name !== '') ? this.props.value_name : this.props.value;
+      return <div style={{ display: 'inline-block' }}>{_text ? (_text + '') : emptyText}</div>;
     }
 
     const cls = classnames([styles.wrap, {
@@ -320,6 +325,7 @@ class UserSelect extends React.Component {
     const iconCls = classnames([styles.iconClose, {//非禁用状态且有值得时候  支持删除操作
       [styles.iconCloseShow]: text !== '' && this.props.isReadOnly !== 1
     }]);
+
     return (
       <div className={cls} style={{ ...this.props.style }}>
         {
@@ -341,11 +347,7 @@ class UserSelect extends React.Component {
                 onFocus={this.selectFocus}
                 allowClear
               >
-                {
-                  options instanceof Array && options.map(item => {
-                    return <Option key={item.id}>{item.name}</Option>;
-                  })
-                }
+                {options instanceof Array && options.map(item => <Option key={item.id}>{item.name}</Option>)}
               </Select>
               <div className={classnames(styles.openModal, { [styles.openModalDisabled]: this.props.isReadOnly === 1 })} onClick={this.showModal}>
                 <Icon type="plus-square" />
@@ -365,10 +367,6 @@ class UserSelect extends React.Component {
   }
 }
 
-UserSelect.View = (props) => {
-  return (
-    <UserSelect view={true} {...props} onChange={() => { }} />
-  );
-};
+UserSelect.View = props => <UserSelect view {...props} onChange={() => { }} />;
 
 export default connectBasicData('allUsers', UserSelect);
