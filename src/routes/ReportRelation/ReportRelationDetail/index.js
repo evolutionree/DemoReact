@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Button } from 'antd';
+import { Link } from 'dva/router';
 import Page from '../../../components/Page';
 import Toolbar from '../../../components/Toolbar';
 import Search from '../../../components/Search';
@@ -121,7 +122,7 @@ class ReportRelationDetail extends Component {
     ];
 
     return (
-      <Page title={`汇报关系 - ${title}`}>
+      <Page title={<div><Link to="/reportrelation">汇报关系</Link> > {title}</div>}>
         <Toolbar
           selectedCount={selectedRows.length}
           actions={[
