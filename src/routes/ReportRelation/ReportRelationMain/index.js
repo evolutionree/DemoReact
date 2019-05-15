@@ -7,6 +7,7 @@ import Toolbar from '../../../components/Toolbar';
 import Search from '../../../components/Search';
 import ConfigTable from '../../../components/ConfigTable';
 import FormModal from './FormModal';
+import FilterModal from '../FilterModal';
 import formConfig from './formConfig';
 
 const SPACENAME = 'reportrelation';
@@ -103,7 +104,7 @@ class ReportRelationMain extends Component {
   render() {
     const {
       list, selectedRows, initParams, onSeach,
-      onSelectRow, showModals, dispatch,
+      onSelectRow, showModals, dispatch, toggleModal,
       fetchDataLoading, confirmLoading, checkFunc
     } = this.props;
 
@@ -130,16 +131,17 @@ class ReportRelationMain extends Component {
           ]}
         >
           <div style={{ float: 'left' }}>
-            {checkFunc('Add') && <Button onClick={this.add}>新增</Button>}
+            {checkFunc('Add') && <Button style={{ marginRight: 16 }} onClick={this.add}>新增</Button>}
           </div>
-          {/* <Toolbar.Right>
-            <Search
+          <Toolbar.Right>
+            {/* <Search
               placeholder="请输入汇报关系名称"
               value={keyWord}
               onChange={this.onHandleSearchChange}
               onSearch={this.onHandleSearch}
-            />
-          </Toolbar.Right> */}
+            /> */}
+            {<Button onClick={() => toggleModal(showModals, 'FilterModal')}>过滤</Button>}
+          </Toolbar.Right>
         </Toolbar>
 
         <ConfigTable
@@ -168,6 +170,16 @@ class ReportRelationMain extends Component {
           cancel={() => this.handleCancel('FormModal')}
           fetchDataLoading={fetchDataLoading.FormModal}
           confirmLoading={confirmLoading.FormModal}
+        />
+        <FilterModal
+          spacename={SPACENAME}
+          dispatch={dispatch}
+          list={formConfig.map(item => ({ ...item, key: item.fieldname, title: item.label }))}
+          initParams={initParams}
+          visible={showModals.FilterModal}
+          cancel={() => toggleModal(showModals, 'FilterModal', '')}
+          confirmLoading={confirmLoading.FilterModal}
+          WrapComponent={FilterModal}
         />
       </Page>
     );

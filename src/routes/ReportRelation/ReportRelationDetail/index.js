@@ -6,6 +6,7 @@ import Toolbar from '../../../components/Toolbar';
 import Search from '../../../components/Search';
 import ConfigTable from '../../../components/ConfigTable';
 import FormModal from './FormModal';
+import FilterModal from '../FilterModal';
 import formConfig from './formConfig';
 
 const SPACENAME = 'reportrelationdetail';
@@ -101,7 +102,7 @@ class ReportRelationDetail extends Component {
   render() {
     const {
       list, selectedRows, initParams, onSeach,
-      onSelectRow, showModals, dispatch,
+      onSelectRow, showModals, dispatch, toggleModal,
       fetchDataLoading, confirmLoading, checkFunc
     } = this.props;
 
@@ -132,14 +133,15 @@ class ReportRelationDetail extends Component {
             {checkFunc('AddDetail') && <Button onClick={this.add}>新增</Button>}
             {checkFunc('Import') && <Button onClick={this.import} style={{ marginLeft: 15 }}>导入</Button>}
           </div>
-          {/* <Toolbar.Right>
-            <Search
+          <Toolbar.Right>
+            {/* <Search
               placeholder="请输入汇报人"
               value={keyWord}
               onChange={this.onHandleSearchChange}
               onSearch={this.onHandleSearch}
-            />
-          </Toolbar.Right> */}
+            /> */}
+            {<Button onClick={() => toggleModal(showModals, 'FilterModal')}>过滤</Button>}
+          </Toolbar.Right>
         </Toolbar>
 
         <ConfigTable
@@ -168,6 +170,16 @@ class ReportRelationDetail extends Component {
           cancel={() => this.handleCancel('FormModal')}
           fetchDataLoading={fetchDataLoading.FormModal}
           confirmLoading={confirmLoading.FormModal}
+        />
+        <FilterModal
+          spacename={SPACENAME}
+          dispatch={dispatch}
+          list={formConfig.map(item => ({ ...item, key: item.fieldname, title: item.label }))}
+          initParams={initParams}
+          visible={showModals.FilterModal}
+          cancel={() => toggleModal(showModals, 'FilterModal', '')}
+          confirmLoading={confirmLoading.FilterModal}
+          WrapComponent={FilterModal}
         />
       </Page>
     );

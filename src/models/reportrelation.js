@@ -10,13 +10,16 @@ export default {
     list: [],
     selectedRows: [],
     confirmLoading: {
-      FormModal: false
+      FormModal: false,
+      FilterModal: false
     },
     fetchDataLoading: {
-      FormModal: false
+      FormModal: false,
+      FilterModal: false
     },
     showModals: {
-      FormModal: ''
+      FormModal: '',
+      FilterModal: ''
     },
     initParams: {
       pageIndex: 1,
