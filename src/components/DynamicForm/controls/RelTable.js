@@ -600,7 +600,7 @@ class RelTable extends Component {
       fixedColumn = tableFields[0].fieldid;
     }
     return this.parseValue().map((item, index) => {
-      const value = this.props.mode === 'ADD' ? generateDefaultFormData(this.state.tableFields, item && item.FieldData || item) : item && item.FieldData || item;
+      const value = this.props.mode === 'ADD' ? generateDefaultFormData(this.state.tableFields, item && item.FieldData || item) : item && { ...item.FieldData } || item;
       const batchAddInfo = {
         type: item && item.type,
         field: _.find(this.state.tableFields, filedItem => filedItem.fieldname === this.props.batchAddField)
