@@ -2,13 +2,14 @@
  * Created by 0291 on 2018/4/18.
  */
 import React, { PropTypes, Component } from 'react';
-import { Checkbox } from 'antd';
+import { Checkbox, Input } from 'antd';
 import connectBasicData from '../../../models/connectBasicData';
 import { getIntlText } from '../../UKComponent/Form/IntlText';
 import { queryTypes } from '../../../services/entity';
 import Styles from './SelectList.less';
 
 const CheckboxGroup = Checkbox.Group;
+const Search = Input.Search;
 
 class SelectList extends Component {
   static propTypes = {
@@ -30,7 +31,8 @@ class SelectList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      options: []
+      options: [],
+      chacheOptions: []
     };
   }
 
@@ -53,7 +55,8 @@ class SelectList extends Component {
           value: item.categoryid,
           label: item.categoryname
         }));
-        this.setState({ options: [...options, { value: 'isnull', label: '空(未填写)' }] });
+        const resultOptions = [...options, { value: 'isnull', label: '空(未填写)' }];
+        this.setState({ options: resultOptions, chacheOptions: resultOptions });
       });
     } else {
       const { dataSource: { sourceId }, dictionaryData } = props;
@@ -65,10 +68,21 @@ class SelectList extends Component {
             label: <span title={title && title.length > 5 ? title : ''}>{title}</span>
           };
         });
-        this.setState({ options: [...options, { value: 'isnull', label: '空(未填写)' }] });
+        const resultOptions = [...options, { value: 'isnull', label: '空(未填写)' }];
+        this.setState({ options: resultOptions, chacheOptions: resultOptions });
       }
     }
   };
+
+  handleChangeValue = (val) => {
+    const { options, chacheOptions } = this.state;
+    if (!val) {
+      this.setState({ options: chacheOptions });
+      return;
+    }
+    const result = options.filter(item => (item.label.props ? item.label.props.children : item.label).includes(val));
+    this.setState({ options: result });
+  }
 
 
   onChange = checkedValues => {
@@ -76,13 +90,22 @@ class SelectList extends Component {
   };
 
   render() {
-    const { width = 160 } = this.props;
+    const { width = 160, value } = this.props;
     const { options } = this.state;
     const classWrap = options.length >= 10 ? Styles.MulSelectListWrap : (width === 160 ? Styles.SelectListWrap : Styles.Wrap);
 
     return (
-      <div style={{ width: options.length < 10 ? width : (width === 160 ? width : undefined), marginRight: 8 }} className={classWrap}>
-        <CheckboxGroup options={this.state.options} value={this.props.value} onChange={this.onChange} />
+      <div style={{ paddingTop: 32, width: options.length < 10 ? width : (width === 160 ? width : undefined), marginRight: 8 }} className={classWrap}>
+        <div style={{ position: 'absolute', top: 8, left: 10, width: 150 }}>
+          <Search
+            allowClear
+            size="default"
+            placeholder="serach"
+            onSearch={this.handleChangeValue}
+          />
+        </div>
+
+        <CheckboxGroup options={options} value={value} onChange={this.onChange} />
       </div>
     );
   }
