@@ -41,7 +41,6 @@ export default {
     *QueryList({ payload }, { select, put, call }) {
       const { initParams } = yield select(state => state[NAMESPACE]);
       const params = { ...(payload || initParams) };
-      console.log(params);
 
       try {
         const { data } = yield call(getreportreldetail, params);
