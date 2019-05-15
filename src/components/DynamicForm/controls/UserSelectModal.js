@@ -197,7 +197,8 @@ class UserSelectModal extends React.Component {
       designateDataSource,
       designateDataSourceByName,
       designateFilterDataSource,
-      designateFilterDataSourceByName
+      designateFilterDataSourceByName,
+      multiple
     } = this.props;
     const { currentSelected } = this.state;
     let flag = true;
@@ -217,7 +218,7 @@ class UserSelectModal extends React.Component {
       tempArray = designateFilterDataSourceByName.split(',');
       flag = flag && !_.includes(tempArray, option.accountname);
     }
-    if (currentSelected.some(item => item.id === value)) flag = false;
+    if (multiple && currentSelected.some(item => item.id === value)) flag = false;
     return flag;
   };
 
