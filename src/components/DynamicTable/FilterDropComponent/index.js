@@ -34,10 +34,14 @@ class FilterDrop extends Component {
   }
 
   componentDidMount() {
+    document.addEventListener('mousedown', this.mousedown);
+    document.addEventListener('mouseup', this.mouseup);
     document.addEventListener('click', this.hideFilterDrop);
   }
 
   componentWillUnmount() {
+    document.removeEventListener('mousedown', this.mousedown);
+    document.removeEventListener('mouseup', this.mouseup);
     document.removeEventListener('click', this.hideFilterDrop);
   }
 
@@ -79,13 +83,20 @@ class FilterDrop extends Component {
     }
   }
 
+  mousedown = e => this.mousedownScreenX = e.screenX;
+
+  mouseup = e => this.mouseupScreenX = e.screenX;
+
   hideFilterDrop = () => {
     const parentDom = document.getElementsByClassName('ant-calendar-panel')[0];
     setTimeout(() => {
-      if (parentDom) {
-       // this.props.hideFilter && this.props.hideFilter(this.props.field.fieldname, true);
-      } else {
-        this.props.hideFilter && this.props.hideFilter(this.props.field.fieldname, false);
+      if (!parentDom) {
+        if (this.mousedownScreenX && this.mouseupScreenX && Math.abs(this.mousedownScreenX - this.mouseupScreenX) > 50) return;
+        if (this.props.hideFilter) {
+          this.mousedownScreenX = undefined;
+          this.mouseupScreenX = undefined;
+          this.props.hideFilter(this.props.field.fieldname, false);
+        }
       }
     }, 30);
   }
