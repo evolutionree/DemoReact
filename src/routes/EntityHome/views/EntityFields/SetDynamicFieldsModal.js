@@ -50,7 +50,7 @@ class SetDynamicFieldsModal extends React.Component {
         this.props.form.setFieldsValue({ fieldids });
       }).catch(e => {
         message.error(e.message || '获取数据出错');
-      })
+      });
     }
   }
 
@@ -59,7 +59,11 @@ class SetDynamicFieldsModal extends React.Component {
       if (result) {
         const { data } = result;
         const entityTypeId = data && Array.isArray(data.entitytypepros) && data.entitytypepros.length && data.entitytypepros[0].categoryid;
-        this.setState({ entityTypeId });
+        if (entityTypeId) {
+          this.setState({ entityTypeId });
+        } else {
+          message.error('queryentitytype 获取数据出错');
+        }
       }
     });
   };
