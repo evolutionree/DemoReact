@@ -23,14 +23,15 @@ function MyDaily({ allDailyDetailListProtocal, myDailylistData, comment, comment
             value.map((item, index) => {
               const detailData = item.detail;
               return (
-                <DailyListDetail dropMenu={['详情', '编辑']}
-                                 key={index}
-                                 data={item}
-                                 onCommentParent={commentParent.bind(this, detailData.dynamicid)}
-                                 onComment={comment.bind(this, detailData.dynamicid)}
-                                 detailFields={detailFields}
-                                 detailValue={item.tempdata}
-                                 commentList={detailData.commentlist && detailData.commentlist.detail} />
+                <DailyListDetail
+                  dropMenu={['详情', '编辑']}
+                  key={index}
+                  data={item}
+                  onCommentParent={commentParent.bind(this, detailData.dynamicid)}
+                  onComment={comment.bind(this, detailData.dynamicid)}
+                  detailFields={item.tempcontent.format.filter(o => !!o.fieldname)}
+                  detailValue={item.tempdata}
+                  commentList={detailData.commentlist && detailData.commentlist.detail} />
               );
             })
           }

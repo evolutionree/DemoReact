@@ -44,7 +44,7 @@ function MyWeekly(props) {
                   data={item}
                   onCommentParent={commentParent.bind(this, item.detail instanceof Array && item.detail.length > 0 && item.detail[0].dynamicid)}
                   onComment={comment.bind(this, item.detail instanceof Array && item.detail.length > 0 && item.detail[0].dynamicid)}
-                  detailFields={detailFields}
+                  detailFields={item.tempcontent.format.filter(o => !!o.fieldname)}
                   detailValue={item.tempdata}
                   commentList={detailData instanceof Array && detailData.length > 0 && detailData[0].commentlist && detailData[0].commentlist.detail}
                 />

@@ -104,9 +104,10 @@ class DailyListDetail extends Component {
           </div>
           <div>
             <DynamicTemplateView
-              fields={this.props.detailFields && this.props.detailFields.filter(field => field.fieldname !== 'viewusers' && field.fieldname !== 'copyusers' && field.fieldname !== 'reportdate')}
+              fields={this.props.detailFields}
               value={this.props.detailValue}
-              entityId="601cb738-a829-4a7b-a3d9-f8914a5d90f2" />
+              entityId="601cb738-a829-4a7b-a3d9-f8914a5d90f2"
+            />
             <div className={Styles.users_name}>批阅人：{data.viewusers_name}</div>
             <div className={Styles.users_name}>抄送人：{data.copyusers_name}</div>
           </div>
