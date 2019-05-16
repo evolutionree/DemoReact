@@ -96,9 +96,8 @@ class SelectList extends Component {
 
     return (
       <div style={{ paddingTop: 32, width: options.length < 10 ? width : (width === 160 ? width : undefined), marginRight: 8 }} className={classWrap}>
-        <div style={{ position: 'absolute', top: 8, left: 10, width: 150 }}>
+        <div style={{ position: 'absolute', top: 0, left: -4, width: 150 }}>
           <Search
-            allowClear
             size="default"
             placeholder="serach"
             onSearch={this.handleChangeValue}
