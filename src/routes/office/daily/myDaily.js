@@ -29,7 +29,7 @@ function MyDaily({ allDailyDetailListProtocal, myDailylistData, comment, comment
                   data={item}
                   onCommentParent={commentParent.bind(this, detailData.dynamicid)}
                   onComment={comment.bind(this, detailData.dynamicid)}
-                  detailFields={item.tempcontent.format.filter(o => !!o.fieldname)}
+                  detailFields={item.tempcontent && Array.isArray(item.tempcontent.format) ? item.tempcontent.format.filter(o => !!o.fieldname) : []}
                   detailValue={item.tempdata}
                   commentList={detailData.commentlist && detailData.commentlist.detail} />
               );
