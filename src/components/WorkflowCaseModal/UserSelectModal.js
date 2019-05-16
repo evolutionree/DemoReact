@@ -139,7 +139,12 @@ class UserSelectModal extends React.Component {
     const { visible, onCancel, limit, allUsers, filterUsers, isSearchLocal, zIndex = 1000 } = this.props;
     let { currentSelected, userList } = this.state;
     userList = userList.filter(u => {
-      return filterUsers.indexOf(u.userid) === -1 && limit !== 1 && !currentSelected.includes(u.userid);
+      if (limit !== 1) { // 多选
+        if (filterUsers.indexOf(u.userid) === -1 && !currentSelected.includes(u.userid)) return true;
+      } else if (filterUsers.indexOf(u.userid) === -1) {
+        return true;
+      }
+      return false;
     });
     const currentSelectedUsers = currentSelected.map(id => _.find(allUsers, ['userid', id]));
     return (
@@ -192,19 +197,17 @@ class UserSelectModal extends React.Component {
               </ul>
             </Col>
           </Row>
-        ) : (
-          <ul className={styles.userlist}>
-            {userList.map(user => {
-              const cls = (currentSelected[0] === user.userid) ? styles.highlight : '';
-              return (
-                <li key={user.userid} onClick={this.selectSingle.bind(this, user)} className={cls}>
-                  <span title={user.username}>{user.username}</span>
-                  <span title={user.deptname}>{user.deptname}</span>
-                </li>
-              );
-            })}
-          </ul>
-        )}
+        ) : (<ul className={styles.userlist}>
+          {userList.map(user => {
+            const cls = (currentSelected[0] === user.userid) ? styles.highlight : '';
+            return (
+              <li key={user.userid} onClick={this.selectSingle.bind(this, user)} className={cls}>
+                <span title={user.username}>{user.username}</span>
+                <span title={user.deptname}>{user.deptname}</span>
+              </li>
+            );
+          })}
+        </ul>)}
       </Modal>
     );
   }
