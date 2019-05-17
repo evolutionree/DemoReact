@@ -391,14 +391,18 @@ export default {
         nodeType: rawNodeData.nodetype || 0,
         stepUser: {
           type: rawNodeData.steptypeid !== undefined ? rawNodeData.steptypeid : 1,
-          data: rawNodeData.ruleconfig || {}
+          data: { 
+            ...rawNodeData.ruleconfig, 
+            reportrelation: rawNodeData.ruleconfig ? (typeof rawNodeData.ruleconfig.reportrelation === 'string' ? JSON.parse(rawNodeData.ruleconfig.reportrelation) : rawNodeData.ruleconfig.reportrelation) : {}
+          } || {}
         },
         cpUser: {
-          type: rawNodeData.stepcptypeid !== undefined ? rawNodeData.stepcptypeid : 1,
+          type: rawNodeData.stepcptypeid !== undefined ? rawNodeData.stepcptypeid : 17,
           data: rawNodeData.ruleconfig || {}
         },
         auditsucc: rawNodeData.auditsucc || 1,
         stepFields: parseColumnConfig(rawNodeData.columnconfig),
+        notfound: rawNodeData.notfound || 1,
         funcname: rawNodeData.funcname || ''
       };
       yield put({
@@ -540,7 +544,7 @@ export default {
           const data = editingFlowStepForm.stepUser.data;
           const type = editingFlowStepForm.stepUser.type;
           if (data) {
-            const { userid, roleid, deptid, fieldname } = data;
+            const { userid, roleid, deptid, fieldname, fieldteam, entityid, isleader } = data;
             if ((type === 5 || type === 6) && !deptid) {
               message.error('请选择团队');
               return;
@@ -554,6 +558,17 @@ export default {
               message.error('请选择表单用户字段');
               return;
             }
+            // } else if ([802, 112, 116].includes(type) && !entityid) {
+            //   message.error('请选择表单字段');
+            // } else if ([902, 102, 106].includes(type) && !entityid) {
+            //   message.error('请选择表单字段');
+            // } else if ([802, 112, 116].includes(type) && !fieldteam) {
+            //   message.error('请选择表单团队字段');
+            // } else if ([902, 102, 106].includes(type) && !fieldteam) {
+            //   message.error('请选择表单团队字段');
+            // } else if ([5, 8, 801, 802, 11, 111, 112, 116].includes(type) && !isleader) {
+            //   message.error('请选择领导字段');
+            // }
           }
         }
 
@@ -569,16 +584,24 @@ export default {
           }
         }
 
+        const reportrelationObj = editingFlowStepForm.stepUser.data.reportrelation || {};
+        if (!(reportrelationObj && reportrelationObj.type)) reportrelationObj.type = 1;
+        const reportrelation = reportrelationObj ? JSON.stringify(reportrelationObj) : '';
+
         flowStep.rawNode = {
           ...flowStep.rawNode,
           auditnum: editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.stepUser.data.userid.split(',').length,
           auditsucc: editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.auditsucc,
           nodetype: editingFlowStepForm.nodeType,
-          ruleconfig: { ...editingFlowStepForm.stepUser.data, ...editingFlowStepForm.cpUser.data },
+          ruleconfig: { 
+            ...editingFlowStepForm.cpUser.data,
+            ...editingFlowStepForm.stepUser.data,
+            reportrelation
+          },
           steptypeid: editingFlowStepForm.stepUser.type,
           stepcptypeid: editingFlowStepForm.cpUser.type,
           columnconfig: formatFieldsToColumnConfig(fields),
-          notfound: editingFlowStepForm.notfound,
+          notfound: editingFlowStepForm.notfound || 1,
           funcname: editingFlowStepForm.funcname
         };
       }

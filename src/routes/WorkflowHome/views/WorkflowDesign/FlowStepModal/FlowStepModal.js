@@ -28,7 +28,7 @@ class SelectFlowUserAll extends Component {
 }
 
 class SelectCopyUser extends Component {
- 
+
   onDataChange = (keyValues) => {
     const { onChange, value } = this.props;
     onChange({
@@ -83,10 +83,10 @@ class SelectCopyUser extends Component {
         <Radio style={radioStyle} value={16}>自定义抄送人</Radio>
         <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}>
           <TextArea
-            value={type === 16 ? data.funcname : undefined}
+            value={type === 16 ? data.cpfuncname : undefined}
             disabled={type !== 16}
             placeholder="输入需要执行的sql语句"
-            onChange={this.onSelectChange.bind(this, 'funcname')}
+            onChange={this.onSelectChange.bind(this, 'cpfuncname')}
           />
         </div>
       </Radio.Group>
@@ -169,9 +169,7 @@ class FlowStepModal extends Component {
               </TabPane>
               <TabPane forceRender tab="设置抄送人" key="2">
                 <FormItem label="">
-                  {getFieldDecorator('cpUser')(
-                    <SelectCopyUser entities={flowEntities} />
-                  )}
+                  {getFieldDecorator('cpUser')(<SelectCopyUser />)}
                 </FormItem>
               </TabPane>
             </Tabs>
@@ -270,10 +268,6 @@ export default connect(
           type: 1,
           data: {}
         };
-        values.cpUser = {
-          type: 17,
-          data: {}
-        };
       } else if (values.nodeType === 1) {
         values.stepUser = {
           type: 2,
@@ -282,12 +276,13 @@ export default connect(
             username: ''
           }
         };
-        values.cpUser = {
-          type: 17,
-          data: {}
-        };
       }
+      values.cpUser = {
+        type: 17,
+        data: {}
+      };
     }
+    console.log({ ...editingFlowStepForm, ...values });
     dispatch({
       type: 'workflowDesign/putState',
       payload: {

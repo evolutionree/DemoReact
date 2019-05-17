@@ -66,10 +66,10 @@ const SelectRole = ({ value, value_name, onChange, isReadOnly, allRoles }) => {
 };
 
 const SelectField = ({ keys = 'fieldname', value, onChange, disabled, fields, placeholder, style }) => {
-  function onSelectChange(name) {
-    if (!name) return onChange();
-    const fieldlabel = _.find(fields, [[keys], name]).displayname;
-    onChange(name, fieldlabel);
+  function onSelectChange(fieldname) {
+    if (!fieldname) return onChange();
+    const fieldlabel = _.find(fields, [[keys], fieldname]).displayname;
+    onChange(fieldname, fieldlabel);
   }
   return (
     <Select
@@ -182,6 +182,9 @@ class SelectFlowUser extends Component {
       reportrelationList = entities[0].reportrelationList;
     }
 
+    const reportrelationdata = typeof data.reportrelation === 'string' ? JSON.parse(data.reportrelation) : data.reportrelation;
+    console.log(data, userFields);
+
     return (
       <div className={styles.selectFlowUser}>
         <Radio.Group onChange={this.onRadioChange} style={{ width: '100%' }}>
@@ -282,9 +285,9 @@ class SelectFlowUser extends Component {
             {
               _.includes([116], type) &&
               <SelectField
-                value={_.includes([802, 112, 116], type) ? data.fieldid : undefined}
+                value={_.includes([802, 112, 116], type) ? data.fieldtem : undefined}
                 placeholder="请选择表单团队字段"
-                onChange={(fieldid, fieldlabel) => this.onDataChange({ fieldid, fieldlabel })}
+                onChange={(fieldname, fieldlabel) => this.onDataChange({ fieldtem: fieldname, fieldlabel })}
                 fields={formTeamFields}
               />
             }
@@ -356,9 +359,9 @@ class SelectFlowUser extends Component {
             {
               _.includes([106], type) &&
               <SelectField
-                value={_.includes([902, 102, 106], type) ? data.fieldid : undefined}
+                value={_.includes([902, 102, 106], type) ? data.fieldtem : undefined}
                 placeholder="请选择表单团队字段"
-                onChange={(fieldid, fieldlabel) => this.onDataChange({ fieldid, fieldlabel })}
+                onChange={(fieldname, fieldlabel) => this.onDataChange({ fieldtem: fieldname, fieldlabel })}
                 fields={formTeamFields}
               />
             }
@@ -399,8 +402,8 @@ class SelectFlowUser extends Component {
           <Radio style={radioStyle} checked={_.includes(reportRelation, type)} value={reportRelation}>汇报关系</Radio>
           <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}>
             <SelectNumber
-              value={(_.includes(reportRelation, type) && data.reportrelation) ? (data.reportrelation.type ? data.reportrelation.type + '' : '1') : '1'}
-              onChange={(reportrelationtype, fieldlabel) => this.onDataChange({ reportrelation: { ...data.reportrelation, type: reportrelationtype }, fieldlabel })}
+              value={(_.includes(reportRelation, type) && reportrelationdata) ? (reportrelationdata.type ? reportrelationdata.type + '' : '1') : '1'}
+              onChange={(reportrelationtype) => this.onDataChange({ reportrelation: { ...reportrelationdata, type: reportrelationtype }, fieldlabel: ['流程发起人', '上一步骤处理人', '表单中的人员'][reportrelationtype * 1 - 1] })}
               disabled={!_.includes(reportRelation, type)}
               style={{ width: '260px' }}
             >
@@ -410,9 +413,9 @@ class SelectFlowUser extends Component {
               <SelectField
                 keys="reportrelationid"
                 disabled={!_.includes(reportRelation, type)}
-                value={(_.includes(reportRelation, type) && data.reportrelation) ? data.reportrelation.id : undefined}
+                value={(_.includes(reportRelation, type) && reportrelationdata) ? reportrelationdata.id : undefined}
                 placeholder="请选择汇报关系"
-                onChange={(reportrelationid, fieldlabel) => this.onDataChange({ reportrelation: { ...data.reportrelation, id: reportrelationid }, fieldlabel })}
+                onChange={(reportrelationid, fieldlabel) => this.onDataChange({ reportrelation: { ...reportrelationdata, id: reportrelationid }, fieldlabel })}
                 fields={reportrelationList}
               />
             }
