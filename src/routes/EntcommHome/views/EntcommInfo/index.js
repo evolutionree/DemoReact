@@ -97,7 +97,7 @@ function EntcommInfo(props) {
           <Button onClick={onSubmitEdit} loading={excutingJSLoading} style={{ marginRight: '10px' }}>保存</Button>
           <Button type="default" onClick={cancelEdit}>取消</Button>
         </div>
-        <div style={{ maxHeight: document.documentElement.clientHeight - 270 }} className={classnames(styles.formBody, 'entcomminfoBody')}>
+        <div style={{ minHeight: document.documentElement.clientHeight - 270 }} className={classnames(styles.formBody, 'entcomminfoBody')}>
           <DynamicFormEdit
             entityId={entityId}
             entityTypeId={editData && editData.rectype}
@@ -123,7 +123,7 @@ function EntcommInfo(props) {
         <div className={styles.btnrow}>
           {checkFunc('EntityDataEdit') && <Button onClick={startEdit}>编辑</Button>}
         </div>
-        <div style={{ maxHeight: document.documentElement.clientHeight - 270 }} className={styles.formBody}>
+        <div style={{ minHeight: document.documentElement.clientHeight - 270 }} className={styles.formBody}>
           <DynamicFormView
             entityId={entityId}
             entityTypeId={detailData && detailData.rectype}
