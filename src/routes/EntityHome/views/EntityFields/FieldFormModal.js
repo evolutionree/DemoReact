@@ -139,7 +139,7 @@ class FieldFormModal extends Component {
 
       const newVal = processFormValues(newValues, editingRecord, isEdit);
 
-      this.props.onOk(newVal, () => { form.resetFields(); });
+      this.props.onOk(newVal, this.handleCancel);
     });
   };
 
