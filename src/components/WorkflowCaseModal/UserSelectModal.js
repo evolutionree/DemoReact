@@ -80,7 +80,6 @@ class UserSelectModal extends React.Component {
   };
 
   onSearch = (keyword) => {
-    console.log(this.props.allUsers);
     if (this.props.isSearchLocal) {
       // 这里执行本地搜索
       const retList = this.props.allUsers.filter(item => item.username.indexOf(keyword) >= 0);
