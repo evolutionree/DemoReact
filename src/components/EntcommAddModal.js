@@ -254,7 +254,7 @@ class EntcommAddModal extends Component {
         dataModel = {
           cacheid: this.props.cacheId,
           entityid: this.state.selectedEntityType,
-          flowid: flowid || this.props.flow.flowid,
+          flowid: flowid || (this.props.flow ? this.props.flow.flowid : null),
           recid: this.props.recId,
           relentityid: this.props.refEntity,
           relrecid: this.props.refRecord,
@@ -264,7 +264,7 @@ class EntcommAddModal extends Component {
         dataModel = {
           cacheid: this.props.cacheId, //暂存的表单数据  重新提交 需要传cacheid
           typeid: this.state.selectedEntityType,
-          flowid: flowid || this.props.flow.flowid,
+          flowid: flowid || (this.props.flow ? this.props.flow.flowid : null),
           relentityid: this.props.refEntity,
           relrecid: this.props.refRecord,
           fielddata: values,

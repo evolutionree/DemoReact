@@ -41,7 +41,7 @@ function EntcommList({
   sortFieldAndOrder,  //当前排序的字段及排序顺序
   ColumnFilter,
   entityTypes,
-  selectedFlowObj,
+  // selectedFlowObj,
   showModals,
   onAddModalCanel,
   onAddModalDone
@@ -283,7 +283,7 @@ function EntcommList({
         entityId={entityId}
         entityName={entityName}
         entityTypes={entityTypes}
-        flow={selectedFlowObj}
+        // flow={selectedFlowObj}
         cancel={onAddModalCanel}
         done={onAddModalDone}
         pageType="entcommList"

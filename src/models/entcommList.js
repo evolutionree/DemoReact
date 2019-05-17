@@ -67,8 +67,8 @@ export default {
         }
 
         //获取审批信息
-        const { data: selectedFlowObj } = yield call(queryWorkflow, entityId);
-        yield put({ type: 'putState', payload: { selectedFlowObj } });
+        // const { data: selectedFlowObj } = yield call(queryWorkflow, entityId);
+        // yield put({ type: 'putState', payload: { selectedFlowObj } });
 
         // 获取实体类型
         const { data: { entitytypepros: entityTypes } } = yield call(queryTypes, { entityId });
