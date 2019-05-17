@@ -371,7 +371,7 @@ class DynamicFormBase extends Component {
       setRelObjectFields.map(item => { //引用同一个字段的 引用对象  共用一个接口  减少性能消耗
         const { originFieldname } = item.fieldconfig;
         const value_name = detailData[originFieldname + '_name'] || detailData[originFieldname];
-        this.getFieldControlInstance(item.fieldname).setTitle(value_name);
+        this.getFieldControlInstance(item.fieldname).setTitle(typeof value_name === 'object' ? '' : value_name);
         this.setState({
           entcommDetail: {
             ...entcommDetail,
