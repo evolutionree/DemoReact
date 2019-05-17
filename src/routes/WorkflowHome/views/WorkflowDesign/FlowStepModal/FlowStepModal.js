@@ -83,7 +83,7 @@ class SelectCopyUser extends Component {
         <Radio style={radioStyle} value={16}>自定义抄送人</Radio>
         <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}>
           <TextArea
-            value={data.funcname || undefined}
+            value={type === 16 ? data.funcname : undefined}
             disabled={type !== 16}
             placeholder="输入需要执行的sql语句"
             onChange={this.onSelectChange.bind(this, 'funcname')}

@@ -573,12 +573,12 @@ export default {
           ...flowStep.rawNode,
           auditnum: editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.stepUser.data.userid.split(',').length,
           auditsucc: editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.auditsucc,
-          notfound: editingFlowStepForm.notfound,
           nodetype: editingFlowStepForm.nodeType,
           ruleconfig: { ...editingFlowStepForm.stepUser.data, ...editingFlowStepForm.cpUser.data },
           steptypeid: editingFlowStepForm.stepUser.type,
           stepcptypeid: editingFlowStepForm.cpUser.type,
           columnconfig: formatFieldsToColumnConfig(fields),
+          notfound: editingFlowStepForm.notfound,
           funcname: editingFlowStepForm.funcname
         };
       }
