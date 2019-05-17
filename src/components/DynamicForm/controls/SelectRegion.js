@@ -156,10 +156,14 @@ class SelectRegion extends Component {
   render() {
     const { value, isReadOnly, onFocus } = this.props;
     const options = this.getOptions();
+    const currentLocale = window.localStorage.getItem('currentLocale') || '';
+    const placeholder = currentLocale === 'cn' ? '请选择' : currentLocale === 'en' ? 'Pleace select' : '請選擇';
+
     return (
       <Cascader
         changeOnSelect
         options={options}
+        placeholder={placeholder}
         value={this.parseValue(value, options)}
         onChange={this.onSelectChange}
         disabled={isReadOnly === 1}
