@@ -372,15 +372,22 @@ class DynamicFormBase extends Component {
   };
 
   renderField = field => {
-    let colNum = 24;
+    // let colNum = 24;
     if (field.controltype === 30) { // 用于主页动态实体，传入当前recid
-      return ([colNum, (
+      /* return ([colNum, (
+         <FormItem key={field.fieldname} style={{ display: 'none' }}>
+           {this.props.form.getFieldDecorator(field.fieldname, {
+             initialValue: this.props.refRecord
+           })(<div>{this.props.refRecord}</div>)}
+         </FormItem>
+       )]);*/
+      return (
         <FormItem key={field.fieldname} style={{ display: 'none' }}>
           {this.props.form.getFieldDecorator(field.fieldname, {
             initialValue: this.props.refRecord
           })(<div>{this.props.refRecord}</div>)}
         </FormItem>
-      )]);
+      );
     }
 
     const fieldControl = this.renderFieldControl(field);

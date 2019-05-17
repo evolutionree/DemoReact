@@ -445,13 +445,19 @@ class DynamicFormBase extends Component {
     const fieldControl = this.renderFieldControl(field);
 
     let className = '';
-    if (this.getFormLayout() === 'horizontal' && !this.props.cols) { //TODO： 如果表单单元项 lable 和 formItem是横向布局， 有的单元项会占一行，导致lable的宽跟其他表单项对不齐  so...
-      if (document.body.clientWidth > 1500) {
-        className = colNum === 24 ? 'fourCol_onlylineFormItem' : '';
-      } else if (document.body.clientWidth > 1100) {
-        className = colNum === 24 ? 'threeCol_onlylineFormItem' : '';
-      } else {
-        className = colNum === 24 ? 'twoCol_onlylineFormItem' : '';
+    if (!this.props.cols) {
+      const isHorizontal = this.getFormLayout() === 'horizontal';
+      if (isHorizontal) {
+        //TODO： 如果表单单元项 lable 和 formItem是横向布局， 有的单元项会占一行，导致lable的宽跟其他表单项对不齐  so...
+        if (colNum === 24) {
+          className = 'twoCol_onlylineFormItem';
+          if (document.body.clientWidth > 1100) className = 'threeCol_onlylineFormItem';
+          if (document.body.clientWidth > 1500) className = 'fourCol_onlylineFormItem';
+        } else if ([6, 8].includes(colNum)) {
+          className = 'height50Col_onlylineFormItem';
+        }
+      } else if (colNum !== 24) {
+        className = 'height79Col_onlylineFormItem';
       }
     }
 

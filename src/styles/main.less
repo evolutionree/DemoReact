@@ -66,31 +66,47 @@ body {
       margin: 0;
     }
 
-    .fourCol_onlylineFormItem{
-      .ant-form-item-label{
-        width: ~"calc(6.25% - 5px)";
-      }
-      .ant-form-item-control-wrapper{
-        width: ~"calc(93.75% + 5px)";
-      }
-    }
-
-    .threeCol_onlylineFormItem {
-      .ant-form-item-label{
-        width: ~"calc(8.333333333% - 5px)";
-      }
-      .ant-form-item-control-wrapper{
-        width: ~"calc(91.666666667% + 5px)";
+    .twoCol_onlylineFormItem,
+    .threeCol_onlylineFormItem,
+    .fourCol_onlylineFormItem {
+      .ant-row {
+        display: flex;
       }
     }
 
     .twoCol_onlylineFormItem {
       .ant-form-item-label{
-        width: ~"calc(12.5% - 5px)";
+        width: 12%;
       }
       .ant-form-item-control-wrapper{
-        width: ~"calc(87.5% + 5px)";
+        flex: 1;
       }
+    }
+
+    .threeCol_onlylineFormItem {
+      .ant-form-item-label{
+        width: 8%;
+      }
+      .ant-form-item-control-wrapper{
+        flex: 1;
+      }
+    }
+
+    .fourCol_onlylineFormItem{
+      .ant-form-item-label{
+        width: 6%;
+      }
+      .ant-form-item-control-wrapper{
+        flex: 1;
+      }
+    }
+
+    .height50Col_onlylineFormItem {
+      min-height: 50px;
+    }
+
+    .height79Col_onlylineFormItem {
+      min-height: 79px;
     }
 
     .ant-form-explain{
