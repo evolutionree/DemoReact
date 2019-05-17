@@ -1,24 +1,23 @@
 import React from 'react';
+import _ from 'lodash';
 import { Form, Input, Modal } from 'antd';
 import { connect } from 'dva';
 import styles from './ResetPasswordModal.less';
-import _ from 'lodash';
 
 const FormItem = Form.Item;
 
-
 function ResetPasswordModal({
-                          form: {
-                            getFieldDecorator,
-                            validateFields,
-                            getFieldValue,
-                            resetFields
-                          },
-                          showModals,
-                              currentItems,
-                              revertPassword,
-                          cancel
-                        }) {
+  form: {
+    getFieldDecorator,
+    validateFields,
+    getFieldValue,
+    resetFields
+  },
+  showModals,
+  currentItems,
+  revertPassword,
+  cancel
+}) {
   function handleOk() {
     validateFields((err, values) => {
       if (err) return;
@@ -28,23 +27,26 @@ function ResetPasswordModal({
           revertPassword(_.pick(values, ['accountpwd']));
         }
       });
-
-    })
+    });
   }
   function handelCancel() {
-
     cancel();
   }
   function checkSameChar(rule, value, callback) {
     if (!value) return callback();
     if (value.length < 6) return callback();
+
     let isAllSameChar = true;
     const chars = value.split('');
-    for (let i = 1; i < chars.length; i++) {
+    for (let i = 1; i < chars.length; i += 1) {
       if (chars[i] !== chars[0]) isAllSameChar = false;
     }
+    const confirmValue = getFieldValue('confirm');
+
     if (isAllSameChar) {
       callback('密码不能全部相同');
+    } else if (confirmValue && confirmValue.length >= 6 && value !== confirmValue) {
+      callback('两次填写的密码不一致');
     } else {
       callback();
     }
@@ -70,11 +72,10 @@ function ResetPasswordModal({
         {currentItems.map(u => u.username).join('、')}
       </div>
       <Form>
-
-
         <FormItem label="新密码">
           {getFieldDecorator('accountpwd', {
             initialValue: '',
+            normalize: value => (value ? value.trim() : value),
             rules: [{
               required: true,
               pattern: /^.{6,16}$/,
@@ -91,6 +92,7 @@ function ResetPasswordModal({
         <FormItem label="确认密码">
           {getFieldDecorator('confirm', {
             initialValue: '',
+            normalize: value => (value ? value.trim() : value),
             trigger: 'onChange',
             rules: [{
               required: true, message: '请输入确认密码'
