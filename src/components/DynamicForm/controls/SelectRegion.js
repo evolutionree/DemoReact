@@ -157,7 +157,7 @@ class SelectRegion extends Component {
     const { value, isReadOnly, onFocus } = this.props;
     const options = this.getOptions();
     const currentLocale = window.localStorage.getItem('currentLocale') || '';
-    const placeholder = currentLocale === 'cn' ? '请选择' : currentLocale === 'en' ? 'Pleace select' : '請選擇';
+    const placeholder = currentLocale === 'en' ? 'Pleace select' : currentLocale === 'tw' ? '請選擇' : '请选择';
 
     return (
       <Cascader
