@@ -137,7 +137,16 @@ class FlowStepModal extends Component {
               )}
             </FormItem>
 
-            <Tabs defaultActiveKey="1" size="small">
+
+            <FormItem label="设置审批人">
+              {getFieldDecorator('stepUser', {
+                rules: [{ required: true, message: '请设置审批人' }]
+              })(
+                <SelectFlowUserAll nodeType={nodeType} entities={this.props.flowEntities} />
+              )}
+            </FormItem>
+
+            {/* <Tabs defaultActiveKey="1" size="small">
               <TabPane forceRender tab={setApproveTitle} key="1">
                 <FormItem label="">
                   {
@@ -154,7 +163,7 @@ class FlowStepModal extends Component {
                   )}
                 </FormItem>
               </TabPane>
-            </Tabs>
+            </Tabs> */}
 
             {
               nodeType === 1 &&
