@@ -11,7 +11,8 @@ function ResetPasswordModal({
     getFieldDecorator,
     validateFields,
     getFieldValue,
-    resetFields
+    resetFields,
+    setFieldsValue
   },
   showModals,
   currentItems,
@@ -48,6 +49,7 @@ function ResetPasswordModal({
     } else if (confirmValue && confirmValue.length >= 6 && value !== confirmValue) {
       callback('两次填写的密码不一致');
     } else {
+      if (confirmValue === value) setTimeout(setFieldsValue({ confirm: confirmValue }), 0);
       callback();
     }
   }

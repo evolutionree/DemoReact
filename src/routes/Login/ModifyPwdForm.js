@@ -8,14 +8,15 @@ import _ from 'lodash';
 const FormItem = Form.Item;
 
 function ModifyPwdForm({
-                     onSubmit,
-                     submitBtnLoading,
-                     form: {
-                       getFieldDecorator,
-                       validateFields,
-                       getFieldValue
-                     }
-                   }) {
+  onSubmit,
+  submitBtnLoading,
+  form: {
+    getFieldDecorator,
+    validateFields,
+    getFieldValue,
+    setFieldsValue
+  }
+}) {
   function handleSubmit(e) {
     e.preventDefault();
     validateFields((err, values) => {
@@ -29,12 +30,17 @@ function ModifyPwdForm({
     if (value.length < 6) return callback();
     let isAllSameChar = true;
     const chars = value.split('');
-    for (let i = 1; i < chars.length; i++) {
+    for (let i = 1; i < chars.length; i += 1) {
       if (chars[i] !== chars[0]) isAllSameChar = false;
     }
+    const confirmValue = getFieldValue('confirm');
+
     if (isAllSameChar) {
       callback('密码不能全部相同');
+    } else if (confirmValue && confirmValue.length >= 6 && value !== confirmValue) {
+      callback('两次填写的密码不一致');
     } else {
+      if (confirmValue === value) setTimeout(setFieldsValue({ confirm: confirmValue }), 0);
       callback();
     }
   }
