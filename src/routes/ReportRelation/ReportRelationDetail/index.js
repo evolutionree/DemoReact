@@ -18,6 +18,12 @@ class ReportRelationDetail extends Component {
     keyWord: ''
   }
 
+  componentDidMount() {
+    const { onInit, initParams } = this.props;
+    const reportrelationid = sessionStorage.getItem('reportrelationid') || null;
+    if (onInit) onInit({ ...initParams, reportrelationid });
+  }
+
   fecthFormData = (recid) => {
     const { dispatch } = this.props;
     const { OptionList } = this.state;
@@ -54,11 +60,6 @@ class ReportRelationDetail extends Component {
     this.clearSelect();
     onDel(params);
   };
-
-  componentDidMount() {
-    const { onInit } = this.props;
-    if (onInit) onInit();
-  }
 
   handleSelectRecords = (selectedRows) => {
     const { onSelectRow } = this.props;
@@ -190,8 +191,8 @@ class ReportRelationDetail extends Component {
 export default connect(
   state => state[SPACENAME],
   dispatch => ({
-    onInit() {
-      dispatch({ type: `${SPACENAME}/Init` });
+    onInit(params) {
+      dispatch({ type: `${SPACENAME}/Init`, payload: params });
     },
     toggleModal(showModals, modal, action) {
       dispatch({ type: `${SPACENAME}/showModals`, payload: { ...showModals, [modal]: (action === undefined ? modal : action) } });

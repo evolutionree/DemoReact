@@ -45,7 +45,9 @@ export default {
       try {
         const { data } = yield call(getreportreldetail, params);
         const list = data.datalist || [];
-        yield put({ type: 'putState', payload: { list } });
+        const reportrelationid = sessionStorage.getItem('reportrelationid') || null;
+
+        yield put({ type: 'putState', payload: { list: list.filter(o => o.reportrelationid === reportrelationid) } });
       } catch (e) {
         message.error(e.message || '获取列表失败');
       }
