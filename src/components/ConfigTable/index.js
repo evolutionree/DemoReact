@@ -10,10 +10,12 @@ const tableDomWdith = document.body.offsetWidth && document.documentElement.clie
 class ConfigTable extends Component {
   constructor(props) {
     super(props);
+    const selectedRowKeys = props.selectedRows && props.rowKey ? props.selectedRows.map(o => o[props.rowKey]) : [];
+
     this.state = {
       clientHeight: initClientHeight,
       FilterVisibles: {},
-      selectedRowKeys: [],
+      selectedRowKeys,
       selectedRows: props.selectedRows || [],
       OptionList: Option
     };
