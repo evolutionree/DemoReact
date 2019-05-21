@@ -90,7 +90,7 @@ class DateTimeRange extends Component {
       <Row>
         <Col span={11}>
           <DatePicker
-            showTime
+            showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
             style={{ width: '100%' }}
             value={minDate}
             onChange={this.handleMinChange}
@@ -100,7 +100,7 @@ class DateTimeRange extends Component {
         <Col span={2} style={{ textAlign: 'center' }}><span>~</span></Col>
         <Col span={11}>
           <DatePicker
-            showTime
+            showTime={{ defaultValue: moment('23:59:59', 'HH:mm:ss') }}
             style={{ width: '100%' }}
             value={maxDate}
             onChange={this.handleMaxChange}
