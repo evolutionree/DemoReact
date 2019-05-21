@@ -41,7 +41,7 @@ const SelectLeader = (props) => {
 };
 
 const SelectRole = ({ value, value_name, onChange, isReadOnly, allRoles }) => {
-  let val = value ? value.split(',') : [];
+  const val = value ? value.split(',') : [];
   function onSelectChange(arrVal) {
     onChange(arrVal.join(','));
   }
@@ -137,10 +137,11 @@ class SelectFlowUser extends Component {
   };
 
   onDataChange = (keyValues) => {
-    this.props.onChange({
-      ...this.props.value,
+    const { onChange, value } = this.props;
+    onChange({
+      ...value,
       data: {
-        ...this.props.value.data,
+        ...value.data,
         ...keyValues
       }
     });
@@ -154,7 +155,7 @@ class SelectFlowUser extends Component {
 
   onTypeChange = type => {
     // 初始化data
-    let data = {};
+    const data = {};
     this.props.onChange({
       type,
       data
@@ -165,6 +166,7 @@ class SelectFlowUser extends Component {
 
   render() {
     const { entities, value = {} } = this.props;
+    const { allRoles } = this.state;
     const { type, data } = value;
 
     const radioStyle = {
@@ -182,7 +184,7 @@ class SelectFlowUser extends Component {
         <Radio.Group onChange={this.onRadioChange} style={{ width: '100%' }}>
           {/* type 1 */}
           <Radio style={radioStyle} checked={_.includes(userSelf, type)} value={userSelf}>让用户自己选择审批人</Radio>
-          <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}></div>
+          <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }} />
 
           {/* type 2 */}
           <Radio style={radioStyle} checked={_.includes(special, type)} value={special}>
@@ -195,8 +197,8 @@ class SelectFlowUser extends Component {
               value={_.includes(special, type) ? data.userid : ''}
               value_name={_.includes(special, type) ? data.username : ''}
               onChange={() => { }}
-              onChangeWithName={({ value, value_name }) => {
-                this.onDataChange({ userid: value, username: value_name });
+              onChangeWithName={({ val, value_name }) => {
+                this.onDataChange({ userid: val, username: value_name });
               }}
               isReadOnly={_.includes(special, type) ? 0 : 1}
               multiple={1}
@@ -214,7 +216,7 @@ class SelectFlowUser extends Component {
               value_name={_.includes(specialRole, type) ? data.rolename : ''}
               onChange={(values) => {
                 if (values) {
-                  const labels = values.split(',').map(id => _.find(this.state.allRoles, ['id', id]).name);
+                  const labels = values.split(',').map(id => _.find(allRoles, ['id', id]).name);
                   this.onDataChange({
                     roleid: values,
                     rolename: labels.join(',')
@@ -224,7 +226,7 @@ class SelectFlowUser extends Component {
                 }
               }}
               isReadOnly={_.includes(specialRole, type) ? 0 : 1}
-              allRoles={this.state.allRoles}
+              allRoles={allRoles}
             />
           </div>
 
@@ -361,7 +363,7 @@ class SelectFlowUser extends Component {
               value_name={_.includes(teamAndRole, type) ? data.rolename : ''}
               onChange={(values) => {
                 if (values) {
-                  const labels = values.split(',').map(id => _.find(this.state.allRoles, ['id', id]).name);
+                  const labels = values.split(',').map(id => _.find(allRoles, ['id', id]).name);
                   this.onDataChange({
                     roleid: values,
                     rolename: labels.join(',')
@@ -371,13 +373,13 @@ class SelectFlowUser extends Component {
                 }
               }}
               isReadOnly={_.includes(teamAndRole, type) ? 0 : 1}
-              allRoles={this.state.allRoles}
+              allRoles={allRoles}
             />
           </div>
 
           {/* type 7 */}
           <Radio style={radioStyle} checked={_.includes(initator, type)} value={initator}>流程发起人</Radio>
-          <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}></div>
+          <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }} />
 
           {/* type 203 */}
           <Radio style={radioStyle} checked={_.includes(reportRelation, type)} value={reportRelation}>汇报关系</Radio>
@@ -409,6 +411,7 @@ class SelectFlowUser extends Component {
             <TextArea
               disabled={!_.includes(customs, type)}
               placeholder="输入需要执行的sql语句"
+              onChange={this.onSelectChange.bind(this, 'executeSql')}
             />
           </div>
 

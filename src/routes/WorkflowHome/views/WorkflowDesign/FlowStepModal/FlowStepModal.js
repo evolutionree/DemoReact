@@ -1,4 +1,4 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Form, Modal, Radio, InputNumber, Input, Tabs } from 'antd';
 import _ from 'lodash';
