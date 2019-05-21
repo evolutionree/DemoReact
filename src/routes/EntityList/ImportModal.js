@@ -44,17 +44,15 @@ class ImportModal extends Component {
       const index = fileList.indexOf(file);
       const newFileList = fileList.slice();
       newFileList.splice(index, 1);
-      return {
-        fileList: newFileList
-      };
+      return { fileList: newFileList };
     });
   }
 
   handleUpload = () => {
-    this.setState({
-      uploading: true
-    })
     const { fileList } = this.state;
+
+    this.setState({ uploading: true });
+    
     if (fileList instanceof Array && fileList.length === 0) {
       message.error('请先选择文件，再执行导入操作');
       return;
@@ -75,7 +73,7 @@ class ImportModal extends Component {
     //   console.log(res);
     // })
 
-    let xhr = new XMLHttpRequest();  // XMLHttpRequest 对象
+    const xhr = new XMLHttpRequest();  // XMLHttpRequest 对象
     xhr.open('post', '/api/EntityPro/importentity', true); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
     xhr.onload = ({ currentTarget }) => {
       const response = JSON.parse(currentTarget.response);
@@ -86,18 +84,12 @@ class ImportModal extends Component {
           message.success('导入成功');
           this.cancel();
         } else {
-          this.setState({
-            showErr: allmessage
-          });
+          this.setState({ showErr: allmessage });
         }
 
-        this.setState({
-          uploading: false
-        });
+        this.setState({ uploading: false });
       } else {
-        this.setState({
-          uploading: false
-        });
+        this.setState({ uploading: false });
         message.error(response.error_msg);
         console.error(response.error_msg);
       }
@@ -105,15 +97,13 @@ class ImportModal extends Component {
     xhr.onerror = (e) => {
       console.error(e.message);
       message.error(e.message);
-      this.setState({
-        uploading: false
-      });
+      this.setState({ uploading: false });
     }; //请求失败
     const headers = {
       ...getDeviceHeaders(),
       Authorization: 'Bearer ' + this.props.token
     };
-    for (let item in headers) {
+    for (const item in headers) {
       xhr.setRequestHeader(item, headers[item]);
     }
     xhr.send(formData); //开始上传，发送form数据
@@ -151,9 +141,7 @@ class ImportModal extends Component {
               color: '#e56b6b'
             }}>
               <h3> 错误信息：</h3>
-              {
-                this.state.showErr
-              }
+              { this.state.showErr }
             </div>
           ) : null
         }
