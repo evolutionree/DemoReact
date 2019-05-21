@@ -13,7 +13,8 @@ class ConfigTable extends Component {
     this.state = {
       clientHeight: initClientHeight,
       FilterVisibles: {},
-      selectedRows: [],
+      selectedRowKeys: [],
+      selectedRows: props.selectedRows || [],
       OptionList: Option
     };
     this.tableWidth = 1080;
@@ -28,6 +29,16 @@ class ConfigTable extends Component {
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.onWindowResize, false);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { selectedRows: oldSelectedRows, rowKey } = this.props;
+    const { selectedRows } = nextProps;
+
+    if (selectedRows && rowKey && selectedRows.length !== oldSelectedRows.length) {
+      const selectedRowKeys = selectedRows.map(o => o[rowKey]);
+      this.setState({ selectedRowKeys, selectedRows });
+    }
   }
 
   onWindowResize() {
@@ -83,16 +94,17 @@ class ConfigTable extends Component {
   }
 
   onSelectListChange = async (selectedRowKeys, selectedRows) => {
-    await this.setStateAsync({ selectedRowKeys, selectedRows });
     const { CBSelectRow } = this.props;
+
+    await this.setStateAsync({ selectedRowKeys, selectedRows });
     if (CBSelectRow) CBSelectRow(selectedRows);
   }
 
   onSelectAllListChange = async (selected, selectedRows) => {
-    const { rowKey } = this.props;
+    const { rowKey, CBSelectRow } = this.props;
     const selectedRowKeys = selectedRows.map(o => o[rowKey]);
+
     await this.setStateAsync({ selectedRowKeys, selectedRows });
-    const { CBSelectRow } = this.props;
     if (CBSelectRow) CBSelectRow(selectedRows);
   }
 

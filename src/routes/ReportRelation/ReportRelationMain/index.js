@@ -32,7 +32,6 @@ class ReportRelationMain extends Component {
 
   clearSelect = () => {
     const { onSelectRow } = this.props;
-    this.setState({ selectedRowKeys: [], selectedRows: [] });
     if (onSelectRow) onSelectRow([]);
   }
 
@@ -151,6 +150,7 @@ class ReportRelationMain extends Component {
           onSeach={onSeach}
           initParams={initParams}
           dataSource={list}
+          selectedRows={selectedRows}
           CBSelectRow={data => onSelectRow(data)}
           columns={columns}
         />

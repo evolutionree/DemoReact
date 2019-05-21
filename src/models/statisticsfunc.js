@@ -70,12 +70,12 @@ export default {
 
         const params = {
           ...rest,
-          anafuncid: currentRecords ? currentRecords[0].anafuncid : null,
+          anafuncid: currentRecords ? currentRecords[0].anafuncid : '',
           anafuncname: anafuncname_lang.cn,
           anafuncname_lang: JSON.stringify(anafuncname_lang),
           allowinto: isAllowinto,
           moreflag: isAllowinto && moreflag ? 1 : 0,
-          morefunc: (isAllowinto && moreflag ? morefunc : null) || null,
+          morefunc: (isAllowinto && moreflag ? morefunc : '') || '',
           entityid: isAllowinto && moreflag ? entityid : null
         };
         const res = yield call(isEdit ? updatestatistics : addstatistics, params);
