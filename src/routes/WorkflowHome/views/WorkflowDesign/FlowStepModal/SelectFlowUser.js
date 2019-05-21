@@ -41,7 +41,7 @@ const SelectLeader = (props) => {
 };
 
 const SelectRole = ({ value, value_name, onChange, isReadOnly, allRoles }) => {
-  const val = value ? value.split(',') : [];
+  let val = value ? value.split(',') : [];
   function onSelectChange(arrVal) {
     onChange(arrVal.join(','));
   }
@@ -154,7 +154,7 @@ class SelectFlowUser extends Component {
 
   onTypeChange = type => {
     // 初始化data
-    const data = {};
+    let data = {};
     this.props.onChange({
       type,
       data
@@ -182,14 +182,14 @@ class SelectFlowUser extends Component {
         <Radio.Group onChange={this.onRadioChange} style={{ width: '100%' }}>
           {/* type 1 */}
           <Radio style={radioStyle} checked={_.includes(userSelf, type)} value={userSelf}>让用户自己选择审批人</Radio>
-          <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }} />
+          <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}></div>
 
           {/* type 2 */}
           <Radio style={radioStyle} checked={_.includes(special, type)} value={special}>
             指定审批人
           </Radio>
           <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}>
-            {/* <SelectUser
+            <SelectUser
               placeholder="请选择审批人"
               style={{ width: '260px', height: 'inherit' }}
               value={_.includes(special, type) ? data.userid : ''}
@@ -200,7 +200,7 @@ class SelectFlowUser extends Component {
               }}
               isReadOnly={_.includes(special, type) ? 0 : 1}
               multiple={1}
-            /> */}
+            />
           </div>
 
           {/* type 4 */}
@@ -249,7 +249,7 @@ class SelectFlowUser extends Component {
               <Option key="111">流程发起人所在团队的上级团队</Option>
               <Option key="802">表单中用户所在团队</Option>
               <Option key="112">表单中用户所在团队的上级团队</Option>
-              {/* <Option key="116">表单中的团队</Option> */}
+              <Option key="116">表单中的团队</Option>
             </SelectNumber>
             {
               type === 5 &&
@@ -263,7 +263,7 @@ class SelectFlowUser extends Component {
                 width="260px"
               />
             }
-            {/* {
+            {
               _.includes([802, 112, 116], type) &&
               <SelectField
                 style={{ width: 160 }}
@@ -281,7 +281,7 @@ class SelectFlowUser extends Component {
                 onChange={(formname, fieldlabel) => this.onDataChange({ formname, fieldlabel })}
                 fields={userFields}
               />
-            } */}
+            }
             {
               _.includes([802, 112], type) &&
               <SelectField
@@ -291,13 +291,13 @@ class SelectFlowUser extends Component {
                 fields={userFields}
               />
             }
-            {/* <SelectLeader
+            <SelectLeader
               currentType={type}
               type={teamAndPost}
               fieldValue={data.deptLeader}
               onChange={this.onSelectChange.bind(this, 'deptLeader')}
               placeholder="请选择是否领导"
-            /> */}
+            />
           </div>
 
 
@@ -322,7 +322,7 @@ class SelectFlowUser extends Component {
               <Option key="101">流程发起人所在团队的上级团队</Option>
               <Option key="902">表单中用户所在团队</Option>
               <Option key="102">表单中用户所在团队的上级团队</Option>
-              {/* <Option key="106">表单中的团队</Option> */}
+              <Option key="106">表单中的团队</Option>
             </SelectNumber>
             {
               type === 6 &&
@@ -336,7 +336,7 @@ class SelectFlowUser extends Component {
                 width="260px"
               />
             }
-            {/* {
+            {
               _.includes([902, 102, 106], type) &&
               <SelectField
                 style={{ width: 160 }}
@@ -345,7 +345,7 @@ class SelectFlowUser extends Component {
                 onChange={(form, fieldlabel) => this.onDataChange({ form, fieldlabel })}
                 fields={userFields}
               />
-            } */}
+            }
             {
               _.includes([902, 102, 106], type) &&
               <SelectField
@@ -377,10 +377,10 @@ class SelectFlowUser extends Component {
 
           {/* type 7 */}
           <Radio style={radioStyle} checked={_.includes(initator, type)} value={initator}>流程发起人</Radio>
-          <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }} />
+          <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}></div>
 
           {/* type 203 */}
-          {/* <Radio style={radioStyle} checked={_.includes(reportRelation, type)} value={reportRelation}>汇报关系</Radio>
+          <Radio style={radioStyle} checked={_.includes(reportRelation, type)} value={reportRelation}>汇报关系</Radio>
           <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}>
             <SelectNumber
               value={_.includes(reportRelation, type) ? type : 201}
@@ -401,16 +401,16 @@ class SelectFlowUser extends Component {
                 fields={userFields}
               />
             }
-          </div> */}
+          </div>
 
           {/* 301 */}
-          {/* <Radio style={radioStyle} checked={_.includes(customs, type)} value={customs}>自定义审批人</Radio>
+          <Radio style={radioStyle} checked={_.includes(customs, type)} value={customs}>自定义审批人</Radio>
           <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}>
             <TextArea
               disabled={!_.includes(customs, type)}
               placeholder="输入需要执行的sql语句"
             />
-          </div> */}
+          </div>
 
         </Radio.Group>
       </div>
