@@ -17,8 +17,8 @@ const specialRole = [4]; // 指定审批人的角色
 const teamAndPost = [5, 8, 801, 802, 11, 111, 112, 116]; // 指定审批人所在团队及职位
 const teamAndRole = [6, 9, 901, 902, 10, 101, 102, 106]; // 指定审批人所在团队及角色
 const initator = [7]; // 流程发起人
-const reportRelation = [201, 202, 203]; // 汇报关系
-const customs = [301]; // 自定义审批人
+const reportRelation = [15]; // 汇报关系
+const customs = [16]; // 自定义审批人
 
 
 const SelectLeader = (props) => {
@@ -65,13 +65,11 @@ const SelectRole = ({ value, value_name, onChange, isReadOnly, allRoles }) => {
   );
 };
 
-const SelectField = ({ value, onChange, disabled, fields, placeholder, style }) => {
-  function onSelectChange(fieldname) {
-    if (!fieldname) {
-      return onChange();
-    }
-    const fieldlabel = _.find(fields, ['fieldname', fieldname]).displayname;
-    onChange(fieldname, fieldlabel);
+const SelectField = ({ keys = 'fieldname', value, onChange, disabled, fields, placeholder, style }) => {
+  function onSelectChange(name) {
+    if (!name) return onChange();
+    const fieldlabel = _.find(fields, [[keys], name]).displayname;
+    onChange(name, fieldlabel);
   }
   return (
     <Select
@@ -81,9 +79,7 @@ const SelectField = ({ value, onChange, disabled, fields, placeholder, style }) 
       placeholder={placeholder}
       style={{ width: 230, ...style }}
     >
-      {fields.map(item => (
-        <Option key={item.fieldname}>{item.displayname}</Option>
-      ))}
+      {fields.map(item => <Option key={item[keys]}>{item.displayname}</Option>)}
     </Select>
   );
 };
@@ -162,7 +158,7 @@ class SelectFlowUser extends Component {
     });
   };
 
-  onSelectChange = (field, e) => this.onDataChange({ [field]: e });
+  onSelectChange = (field, e) => this.onDataChange({ [field]: (e && e.target) ? e.target.value : e });
 
   render() {
     const { entities, value = {} } = this.props;
@@ -174,9 +170,16 @@ class SelectFlowUser extends Component {
       marginRight: '700px'
     };
 
+    let formFields = [];
     let userFields = [];
+    let formTeamFields = [];
+    let reportrelationList = [];
+
     if (entities && entities[0]) {
+      formFields = entities[0].forms;
       userFields = entities[0].fields.filter(field => [25, 1002, 1003, 1006].indexOf(field.controltype) !== -1);
+      formTeamFields = entities[0].fields.filter(field => [17].indexOf(field.controltype) !== -1);
+      reportrelationList = entities[0].reportrelationList;
     }
 
     return (
@@ -197,8 +200,8 @@ class SelectFlowUser extends Component {
               value={_.includes(special, type) ? data.userid : ''}
               value_name={_.includes(special, type) ? data.username : ''}
               onChange={() => { }}
-              onChangeWithName={({ val, value_name }) => {
-                this.onDataChange({ userid: val, username: value_name });
+              onChangeWithName={({ value, value_name }) => {
+                this.onDataChange({ userid: value, username: value_name });
               }}
               isReadOnly={_.includes(special, type) ? 0 : 1}
               multiple={1}
@@ -268,20 +271,21 @@ class SelectFlowUser extends Component {
             {
               _.includes([802, 112, 116], type) &&
               <SelectField
+                keys="entityid"
                 style={{ width: 160 }}
-                value={_.includes([802, 112, 116], type) ? data.form : undefined}
+                value={_.includes([802, 112, 116], type) ? data.entityid : undefined}
                 placeholder="请选择表单"
-                onChange={(form, fieldlabel) => this.onDataChange({ form, fieldlabel })}
-                fields={userFields}
+                onChange={(entityid, fieldlabel) => this.onDataChange({ entityid, fieldlabel })}
+                fields={formFields}
               />
             }
             {
-              _.includes([802, 112, 116], type) &&
+              _.includes([116], type) &&
               <SelectField
-                value={_.includes([802, 112, 116], type) ? data.formname : undefined}
+                value={_.includes([802, 112, 116], type) ? data.fieldid : undefined}
                 placeholder="请选择表单团队字段"
-                onChange={(formname, fieldlabel) => this.onDataChange({ formname, fieldlabel })}
-                fields={userFields}
+                onChange={(fieldid, fieldlabel) => this.onDataChange({ fieldid, fieldlabel })}
+                fields={formTeamFields}
               />
             }
             {
@@ -296,8 +300,8 @@ class SelectFlowUser extends Component {
             <SelectLeader
               currentType={type}
               type={teamAndPost}
-              fieldValue={data.deptLeader}
-              onChange={this.onSelectChange.bind(this, 'deptLeader')}
+              fieldValue={data.isleader}
+              onChange={this.onSelectChange.bind(this, 'isleader')}
               placeholder="请选择是否领导"
             />
           </div>
@@ -341,15 +345,25 @@ class SelectFlowUser extends Component {
             {
               _.includes([902, 102, 106], type) &&
               <SelectField
+                keys="entityid"
                 style={{ width: 160 }}
-                value={_.includes([902, 102, 106], type) ? data.form : undefined}
+                value={_.includes([902, 102, 106], type) ? data.entityid : undefined}
                 placeholder="请选择表单"
-                onChange={(form, fieldlabel) => this.onDataChange({ form, fieldlabel })}
-                fields={userFields}
+                onChange={(entityid, fieldlabel) => this.onDataChange({ entityid, fieldlabel })}
+                fields={formFields}
               />
             }
             {
-              _.includes([902, 102, 106], type) &&
+              _.includes([106], type) &&
+              <SelectField
+                value={_.includes([902, 102, 106], type) ? data.fieldid : undefined}
+                placeholder="请选择表单团队字段"
+                onChange={(fieldid, fieldlabel) => this.onDataChange({ fieldid, fieldlabel })}
+                fields={formTeamFields}
+              />
+            }
+            {
+              _.includes([902, 102], type) &&
               <SelectField
                 placeholder="请选择表单用户字段"
                 value={_.includes([902, 102, 106], type) ? data.fieldname : undefined}
@@ -381,37 +395,37 @@ class SelectFlowUser extends Component {
           <Radio style={radioStyle} checked={_.includes(initator, type)} value={initator}>流程发起人</Radio>
           <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }} />
 
-          {/* type 203 */}
+          {/* type 15 */}
           <Radio style={radioStyle} checked={_.includes(reportRelation, type)} value={reportRelation}>汇报关系</Radio>
           <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}>
             <SelectNumber
-              value={_.includes(reportRelation, type) ? type : 201}
-              onChange={this.onTypeChange}
+              value={(_.includes(reportRelation, type) && data.reportrelation) ? (data.reportrelation.type ? data.reportrelation.type + '' : '1') : '1'}
+              onChange={(reportrelationtype, fieldlabel) => this.onDataChange({ reportrelation: { ...data.reportrelation, type: reportrelationtype }, fieldlabel })}
               disabled={!_.includes(reportRelation, type)}
               style={{ width: '260px' }}
             >
-              <Option key="201">流程发起人</Option>
-              <Option key="202">上一步骤处理人</Option>
-              <Option key="203">表单中的人员</Option>
+              {['流程发起人', '上一步骤处理人', '表单中的人员'].map((item, index) => <Option key={index} value={(index + 1) + ''}>{item}</Option>)}
             </SelectNumber>
             {
               <SelectField
+                keys="reportrelationid"
                 disabled={!_.includes(reportRelation, type)}
-                value={_.includes(reportRelation, type) ? data.report : undefined}
+                value={(_.includes(reportRelation, type) && data.reportrelation) ? data.reportrelation.id : undefined}
                 placeholder="请选择汇报关系"
-                onChange={(report, fieldlabel) => this.onDataChange({ report, fieldlabel })}
-                fields={userFields}
+                onChange={(reportrelationid, fieldlabel) => this.onDataChange({ reportrelation: { ...data.reportrelation, id: reportrelationid }, fieldlabel })}
+                fields={reportrelationList}
               />
             }
           </div>
 
-          {/* 301 */}
+          {/* 16 */}
           <Radio style={radioStyle} checked={_.includes(customs, type)} value={customs}>自定义审批人</Radio>
           <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}>
             <TextArea
               disabled={!_.includes(customs, type)}
+              value={_.includes(customs, type) ? data.funcname : undefined}
               placeholder="输入需要执行的sql语句"
-              onChange={this.onSelectChange.bind(this, 'executeSql')}
+              onChange={this.onSelectChange.bind(this, 'funcname')}
             />
           </div>
 

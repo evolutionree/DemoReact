@@ -28,45 +28,65 @@ class SelectFlowUserAll extends Component {
 }
 
 class SelectCopyUser extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      type: 0
-    };
-  }
  
-  onRadioChange = (e) => {
-    console.log(e);
-    this.setState({ type: e.target.value });
-  }
+  onDataChange = (keyValues) => {
+    const { onChange, value } = this.props;
+    onChange({
+      ...value,
+      data: {
+        ...value.data,
+        ...keyValues
+      }
+    });
+  };
+
+  onRadioChange = event => {
+    this.onTypeChange(event.target.value);
+  };
+
+  onTypeChange = type => {
+    // 初始化data
+    const data = {};
+    this.props.onChange({
+      type,
+      data
+    });
+  };
+
+  onSelectChange = (field, e) => this.onDataChange({ [field]: e.target.value });
 
   render() {
-    const { value } = this.props;
-    const { type } = this.state;
-    const copyid = value ? value.copyid : '';
-    const copyname = value ? value.copyname : '';
+    const { value = {} } = this.props;
+    const { type = 17, data } = value;
+
+    const cpuserid = data ? data.cpuserid : '';
+    const cpusername = data ? data.cpusername : '';
 
     return (
       <Radio.Group onChange={this.onRadioChange} value={type} style={{ width: '100%' }}>
-        <Radio style={radioStyle} value={0}>指定抄送人</Radio>
+        <Radio style={radioStyle} value={17}>指定抄送人</Radio>
         <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}>
           <SelectUser
             placeholder="请选择抄送人"
             style={{ width: '260px', height: 'inherit' }}
-            value={type === 0 ? copyid : ''}
-            value_name={type === 0 ? copyname : ''}
-            onChangeWithName={({ val, value_name }) => {
-              this.onDataChange({ copyid: val, copyname: value_name });
+            value={type === 17 ? cpuserid : ''}
+            value_name={type === 17 ? cpusername : ''}
+            onChange={() => {}}
+            onChangeWithName={({ value, value_name }) => {
+              this.onDataChange({ cpuserid: value, cpusername: value_name });
             }}
-            isReadOnly={type !== 0 ? 1 : 0}
+            isReadOnly={type !== 17 ? 1 : 0}
             multiple={1}
           />
         </div>
-        <Radio style={radioStyle} value={1}>自定义抄送人</Radio>
+
+        <Radio style={radioStyle} value={16}>自定义抄送人</Radio>
         <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}>
           <TextArea
-            disabled={type !== 1}
+            value={data.funcname || undefined}
+            disabled={type !== 16}
             placeholder="输入需要执行的sql语句"
+            onChange={this.onSelectChange.bind(this, 'funcname')}
           />
         </div>
       </Radio.Group>
@@ -149,7 +169,7 @@ class FlowStepModal extends Component {
               </TabPane>
               <TabPane forceRender tab="设置抄送人" key="2">
                 <FormItem label="">
-                  {getFieldDecorator('copyUser')(
+                  {getFieldDecorator('cpUser')(
                     <SelectCopyUser entities={flowEntities} />
                   )}
                 </FormItem>
@@ -176,14 +196,13 @@ class FlowStepModal extends Component {
             </FormItem>
 
             <FormItem label="找不到审批人处理方式">
-              {getFieldDecorator('handle111111', {
-                initialValue: 0,
+              {getFieldDecorator('notfound', {
                 rules: [{ required: true, message: '请选择处理方式' }]
               })(
                 <Radio.Group>
-                  <Radio value={0}>显示全部人员</Radio>
-                  <Radio value={1}>跳过此节点</Radio>
-                  <Radio value={2}>暂停流程</Radio>
+                  <Radio value={1}>显示全部人员</Radio>
+                  <Radio value={2}>跳过此节点</Radio>
+                  <Radio disabled value={0}>暂停流程</Radio>
                 </Radio.Group>
               )}
             </FormItem>
@@ -251,6 +270,10 @@ export default connect(
           type: 1,
           data: {}
         };
+        values.cpUser = {
+          type: 17,
+          data: {}
+        };
       } else if (values.nodeType === 1) {
         values.stepUser = {
           type: 2,
@@ -258,6 +281,10 @@ export default connect(
             userid: '',
             username: ''
           }
+        };
+        values.cpUser = {
+          type: 17,
+          data: {}
         };
       }
     }
