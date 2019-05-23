@@ -183,7 +183,6 @@ class SelectFlowUser extends Component {
     }
 
     const reportrelationdata = typeof data.reportrelation === 'string' ? JSON.parse(data.reportrelation) : data.reportrelation;
-    console.log(data, userFields);
 
     return (
       <div className={styles.selectFlowUser}>
@@ -403,12 +402,26 @@ class SelectFlowUser extends Component {
           <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}>
             <SelectNumber
               value={(_.includes(reportRelation, type) && reportrelationdata) ? (reportrelationdata.type ? reportrelationdata.type + '' : '1') : '1'}
-              onChange={(reportrelationtype) => this.onDataChange({ reportrelation: { ...reportrelationdata, type: reportrelationtype }, fieldlabel: ['流程发起人', '上一步骤处理人', '表单中的人员'][reportrelationtype * 1 - 1] })}
+              onChange={(reportrelationtype) => {
+                this.onDataChange({
+                  reportrelation: { ...reportrelationdata, type: reportrelationtype },
+                  fieldlabel: ['流程发起人', '上一步骤处理人', '表单中的人员'][reportrelationtype * 1 - 1]
+                });
+              }}
               disabled={!_.includes(reportRelation, type)}
               style={{ width: '260px' }}
             >
               {['流程发起人', '上一步骤处理人', '表单中的人员'].map((item, index) => <Option key={index} value={(index + 1) + ''}>{item}</Option>)}
             </SelectNumber>
+            {
+              _.includes(reportRelation, type) && (reportrelationdata && reportrelationdata.type * 1) === 3 &&
+              <SelectField
+                placeholder="请选择表单用户字段"
+                value={(_.includes([15], type) && reportrelationdata) ? data.fieldname : undefined}
+                onChange={(fieldname, fieldlabel) => this.onDataChange({ fieldname, fieldlabel })}
+                fields={userFields}
+              />
+            }
             {
               <SelectField
                 keys="reportrelationid"

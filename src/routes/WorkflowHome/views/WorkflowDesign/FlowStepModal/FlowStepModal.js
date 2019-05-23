@@ -200,7 +200,7 @@ class FlowStepModal extends Component {
                 <Radio.Group>
                   <Radio value={1}>显示全部人员</Radio>
                   <Radio value={2}>跳过此节点</Radio>
-                  <Radio disabled value={0}>暂停流程</Radio>
+                  {/* <Radio disabled value={0}>暂停流程</Radio> */}
                 </Radio.Group>
               )}
             </FormItem>
@@ -282,7 +282,6 @@ export default connect(
         data: {}
       };
     }
-    console.log({ ...editingFlowStepForm, ...values });
     dispatch({
       type: 'workflowDesign/putState',
       payload: {
