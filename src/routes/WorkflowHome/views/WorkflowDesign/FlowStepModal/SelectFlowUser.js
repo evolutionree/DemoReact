@@ -416,6 +416,17 @@ class SelectFlowUser extends Component {
             {
               _.includes(reportRelation, type) && (reportrelationdata && reportrelationdata.type * 1) === 3 &&
               <SelectField
+                keys="entityid"
+                style={{ width: 160 }}
+                value={(_.includes(reportRelation, type) && reportrelationdata) ? data.entityid : undefined}
+                placeholder="请选择表单"
+                onChange={(entityid, fieldlabel) => this.onDataChange({ entityid, fieldlabel })}
+                fields={formFields}
+              />
+            }
+            {
+              _.includes(reportRelation, type) && (reportrelationdata && reportrelationdata.type * 1) === 3 &&
+              <SelectField
                 placeholder="请选择表单用户字段"
                 value={(_.includes([15], type) && reportrelationdata) ? data.fieldname : undefined}
                 onChange={(fieldname, fieldlabel) => this.onDataChange({ fieldname, fieldlabel })}
