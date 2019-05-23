@@ -15,7 +15,7 @@ function RuleTable({
     const isImportCheckbox = /import/.test(key);
     let disabled = false;
     // 头像，提示文本，分组，定位，图片，附件，表格不支持勾选导入
-    if (isImportCheckbox && [15, 2, 20, 14, 22, 23, 24].indexOf(record.controlType) !== -1) {
+    if (isImportCheckbox && [15, 2, 20, 14, 22, 23].indexOf(record.controlType) !== -1) {
       disabled = true;
     }
     return (
