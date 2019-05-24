@@ -34,7 +34,14 @@ export default {
       title: '复制新增装载',
       name: 'copyScript'
     },
-    showingScript: 'addScript'
+    showingScript: 'addScript',
+    fetchDataLoading: {
+      FilterModal: false
+    },
+    showModals: {
+      HistoryModal: '',
+      FilterModal: ''
+    }
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -97,6 +104,10 @@ export default {
       } catch (e) {
         message.error(e.message || '保存失败');
       }
+    },
+    *showHistoryModal({ payload }, { put, select }) {
+      const { showModals } = yield select(state => state.entityScripts);
+      yield put({ type: 'showModals', payload: { ...showModals, HistoryModal: 'HistoryModal' } });
     }
   },
   reducers: {
@@ -105,6 +116,9 @@ export default {
         ...state,
         ...payload
       };
+    },
+    showModals(state, { payload }) {
+      return { ...state, showModals: payload };
     },
     queryScriptsSuccess(state, { payload }) {
       const data = _.mapValues(payload, (scriptContent, scriptName) => {

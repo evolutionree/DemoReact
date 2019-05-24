@@ -3,6 +3,7 @@ import { connect } from 'dva';
 import { Row, Col, Button, Input, Menu } from 'antd';
 import * as _ from 'lodash';
 import CodeEditor from '../../../../components/CodeEditor';
+import HistoryModal from '../../Components/HistoryModal';
 import styles from './EntityScripts.less';
 
 // const ScriptItem = ({ title, content, editingContent, editing, onChange, onClear, onEdit, onCancel }) => {
@@ -29,6 +30,7 @@ function EntityScripts({
   toggleShowing,
   onChange,
   onCancel,
+  onShow,
   onEdit,
   onSave,
   onClear
@@ -53,7 +55,7 @@ function EntityScripts({
         </Col>
         <Col span={20}>
           {/*<div style={{ textAlign: 'right' }}>*/}
-            {/*<Button onClick={onSave}>保存</Button>*/}
+          {/*<Button onClick={onSave}>保存</Button>*/}
           {/*</div>*/}
           <div className={styles.rightCol}>
             <CodeEditor
@@ -63,6 +65,7 @@ function EntityScripts({
               style={{ border: '1px solid #ddd', height: '400px' }}
             />
             <div className={styles.scriptBtnRow} style={{ textAlign: 'right' }}>
+              <Button onClick={onShow.bind(null, name)}>历史记录</Button>
               {!editing && <Button onClick={onEdit.bind(null, name)}>编辑</Button>}
               {editing && <Button onClick={onClear.bind(null, name)}>清空</Button>}
               {editing && <Button onClick={onCancel.bind(null, name)}>取消</Button>}
@@ -70,30 +73,8 @@ function EntityScripts({
             </div>
           </div>
         </Col>
+        <HistoryModal keyname={showingScript} />
       </Row>
-      {/*{allScripts.map(item => {*/}
-        {/*const { title, name, content, editingContent, editing } = item;*/}
-        {/*return (*/}
-          {/*<div className={styles.scriptItem} key={name}>*/}
-            {/*<div className={styles.scriptTitle}>*/}
-              {/*{title}*/}
-            {/*</div>*/}
-            {/*<div className={styles.scriptContent}>*/}
-              {/*<CodeEditor*/}
-                {/*value={editing ? editingContent : content}*/}
-                {/*onChange={onChange.bind(null, item)}*/}
-                {/*disabled={!editing}*/}
-                {/*style={{ border: '1px solid #ddd', width: '800px' }}*/}
-              {/*/>*/}
-            {/*</div>*/}
-            {/*<div className={styles.scriptBtnRow}>*/}
-              {/*{!editing && <Button onClick={onEdit.bind(null, item)}>编辑</Button>}*/}
-              {/*{editing && <Button onClick={onClear.bind(null, item)}>清空</Button>}*/}
-              {/*{editing && <Button onClick={onCancel.bind(null, item)}>取消</Button>}*/}
-            {/*</div>*/}
-          {/*</div>*/}
-        {/*);*/}
-      {/*})}*/}
     </div>
   );
 }
@@ -107,6 +88,9 @@ export default connect(
       },
       onCancel(scriptName) {
         dispatch({ type: 'entityScripts/cancelEdit', payload: scriptName });
+      },
+      onShow(scriptName) {
+        dispatch({ type: 'entityScripts/showHistoryModal', payload: scriptName });
       },
       onEdit(scriptName) {
         dispatch({ type: 'entityScripts/editScript', payload: scriptName });
