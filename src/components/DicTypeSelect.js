@@ -43,8 +43,8 @@ class DicTypeSelect extends React.Component {
       >
         <Option disabled value="0">未选择</Option>
         {
-          Object.keys(dictionaryData).length ? Array.isArray(dictionaryData[154]) &&
-            dictionaryData[154].map(item => {
+          Object.keys(dictionaryData).length ? Array.isArray(dictionaryData[12]) &&
+            dictionaryData[12].map(item => {
               return (
                 <Option key={item.dataid} value={item.dataid + ''}>{getIntlText('dataval', item)}</Option>
               );
