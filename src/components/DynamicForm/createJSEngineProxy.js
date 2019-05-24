@@ -5,7 +5,7 @@ import { Modal } from 'antd';
 import { getAuthedHeaders } from '../../utils/request';
 import { queryEntityDetail } from '../../services/entity';
 import { getLocalAuthentication } from '../../services/authentication';
-import { uuid } from "../../utils";
+import { uuid } from '../../utils';
 
 function debugMsg(type, msg) {
   Modal.info({
@@ -320,7 +320,6 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
         // this.props.form.setFields({ [fieldName]: { value } });
         // this.props.form.setFieldsValue({ [fieldName]: value });
       }
-      this.getFieldComponentInstance(fieldName) && this.getFieldComponentInstance(fieldName).setValue(val, decimalLength, fieldName);
     };
 
     // 给指定字段设置显示值，支持字典、选人、树形控件
@@ -569,7 +568,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
           designateDataSourceByName: ''
         });
       } else if (type === 0) {
-        let names = values || '';
+        const names = values || '';
         instance.setFieldConfig(columnFieldName, {
           designateDataSource: '',
           designateDataSourceByName: names
@@ -606,7 +605,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
           excuteId: this.excuteId
         });
       } else if (type === 0) {
-        let names = values || '';
+        const names = values || '';
         const conf = instance.getFieldConfig(columnFieldName);
         if (!conf) return;
         const { designateFilterDataSourceByName: oldVal, excuteId } = conf;
