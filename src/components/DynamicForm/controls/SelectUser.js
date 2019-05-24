@@ -292,7 +292,6 @@ class UserSelect extends React.Component {
   }
 
   render() {
-    const { cpusers } = this.props;
     let { options, searchKey } = this.state;
     const { text, users } = this.parseValue();
     const value = users.map(item => item.id + '');
@@ -357,7 +356,6 @@ class UserSelect extends React.Component {
         }
         <UserSelectModal
           {...this.props}
-          cpusers={cpusers}
           visible={this.state.modalVisible}
           selectedUsers={users}
           onOk={this.handleOk}

@@ -50,17 +50,12 @@ class UserSelectModal extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { cpusers } = nextProps;
     if (!this.props.visible && nextProps.visible) {
       this.setState({
         searchName: '',
         deptId: '7f74192d-b937-403f-ac2a-8be34714278b',
         currentSelected: nextProps.selectedUsers
       }, this.fetchUserList);
-    }
-
-    if (cpusers && Array.isArray(cpusers) && cpusers.length) {
-      this.setState({ userList: cpusers });
     }
   }
 
@@ -99,15 +94,6 @@ class UserSelectModal extends React.Component {
   // };
 
   fetchUserList = () => {
-    const { cpusers } = this.props;
-    if (cpusers && Array.isArray(cpusers) && cpusers.length) { // 使用抄送数据
-      this.setState({
-        userList: cpusers,
-        currentSelected: this.props.multiple ? addDeptName(this.state.currentSelected, cpusers) : []
-      });
-      return;
-    }
-
     const params = {
       userName: this.state.searchName,
       deptId: this.state.deptId,
@@ -118,10 +104,10 @@ class UserSelectModal extends React.Component {
     };
     queryUsers(params).then(result => {
       const userList = result.data.pagedata;
-      // this.setState({
-      //   userList,
-      //   currentSelected: this.props.multiple ? addDeptName(this.state.currentSelected, userList) : []
-      // });
+      this.setState({
+        userList,
+        currentSelected: this.props.multiple ? addDeptName(this.state.currentSelected, userList) : []
+      });
     });
     function addDeptName(currSelected, userList) {
       return currSelected.map(item => {

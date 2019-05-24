@@ -284,9 +284,9 @@ class SelectFlowUser extends Component {
             {
               _.includes([116], type) &&
               <SelectField
-                value={_.includes([802, 112, 116], type) ? data.fieldtem : undefined}
+                value={_.includes([116], type) ? data.fieldname : undefined}
                 placeholder="请选择表单团队字段"
-                onChange={(fieldname, fieldlabel) => this.onDataChange({ fieldtem: fieldname, fieldlabel })}
+                onChange={(fieldname, fieldlabel) => this.onDataChange({ fieldname, fieldlabel })}
                 fields={formTeamFields}
               />
             }
@@ -358,9 +358,9 @@ class SelectFlowUser extends Component {
             {
               _.includes([106], type) &&
               <SelectField
-                value={_.includes([902, 102, 106], type) ? data.fieldtem : undefined}
+                value={_.includes([106], type) ? data.fieldname : undefined}
                 placeholder="请选择表单团队字段"
-                onChange={(fieldname, fieldlabel) => this.onDataChange({ fieldtem: fieldname, fieldlabel })}
+                onChange={(fieldname, fieldlabel) => this.onDataChange({ fieldname, fieldlabel })}
                 fields={formTeamFields}
               />
             }
@@ -368,7 +368,7 @@ class SelectFlowUser extends Component {
               _.includes([902, 102], type) &&
               <SelectField
                 placeholder="请选择表单用户字段"
-                value={_.includes([902, 102, 106], type) ? data.fieldname : undefined}
+                value={_.includes([902, 102], type) ? data.fieldname : undefined}
                 onChange={(fieldname, fieldlabel) => this.onDataChange({ fieldname, fieldlabel })}
                 fields={userFields}
               />

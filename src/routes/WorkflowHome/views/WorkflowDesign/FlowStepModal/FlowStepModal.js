@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Form, Modal, Radio, InputNumber, Input, Tabs } from 'antd';
 import _ from 'lodash';
-import { preAddCase } from '../../../../../services/workflow';
 import SelectFlowUser from './SelectFlowUser';
 import SelectFlowUserMultiple from './SelectFlowUserMultiple';
 import SelectStepFields from './SelectStepFields';
@@ -29,32 +28,6 @@ class SelectFlowUserAll extends Component {
 }
 
 class SelectCopyUser extends Component {
-  state = {
-    cpusers: []
-  }
-  componentDidMount() {
-    this.fetchuserList();
-  }
-
-  fetchuserList = () => {
-    const { flowId, entityId } = this.props;
-
-    const params = {
-      datatype: 1,
-      casemodel: {
-        entityId,
-        flowId,
-        recId: flowId
-      }
-    };
-    preAddCase(params).then(res => {
-      const { approvers, cpusers, nodeinfo } = res.data;
-      if (Array.isArray(cpusers) && cpusers.length) {
-        this.setState({ cpusers });
-      }
-    });
-  }
-
   onDataChange = (keyValues) => {
     const { onChange, value } = this.props;
     onChange({
@@ -84,7 +57,6 @@ class SelectCopyUser extends Component {
   render() {
     const { value = {} } = this.props;
     const { type = 17, data } = value;
-    const { cpusers } = this.state;
 
     const cpuserid = data ? data.cpuserid : '';
     const cpusername = data ? data.cpusername : '';
@@ -94,7 +66,6 @@ class SelectCopyUser extends Component {
         <Radio style={radioStyle} value={17}>指定抄送人</Radio>
         <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}>
           <SelectUser
-            cpusers={cpusers}
             placeholder="请选择抄送人"
             style={{ width: '260px', height: 'inherit' }}
             value={type === 17 ? cpuserid : ''}
