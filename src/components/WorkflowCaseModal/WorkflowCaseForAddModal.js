@@ -16,7 +16,7 @@ export function autoAddCaseItem (isAddCase, dataModel) {
   };
   // 预提交
   return preAddCase(params).then(result => {
-    const { approvers, nodeinfo } = result.data;
+    const { approvers, cpusers, nodeinfo } = result.data;
     // 判断是否需要选人，不需要则提交审批
     if (nodeinfo.nodestate !== 0) {
       const nextParams = {
@@ -29,7 +29,7 @@ export function autoAddCaseItem (isAddCase, dataModel) {
         throw error;
       });
     }
-    return { approvers, nodeinfo };
+    return { approvers, cpusers, nodeinfo };
   });
 }
 
@@ -61,9 +61,9 @@ class WorkflowCaseForAddModal extends Component {
     if (isOpening) {
       const { isAddCase, dataModel } = nextProps;
       autoAddCaseItem(isAddCase, dataModel).then(result => {
-        const { approvers, nodeinfo } = result;
+        const { approvers, cpusers, nodeinfo } = result;
         if (approvers) {
-          this.setState({ nodeData: { approvers, nodeinfo }, modalVisible: true });
+          this.setState({ nodeData: { approvers, cpusers, nodeinfo }, modalVisible: true });
         } else {
           message.success('提交成功');
           this.props.onDone();

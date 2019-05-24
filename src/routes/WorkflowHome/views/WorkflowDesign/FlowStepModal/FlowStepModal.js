@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import { Form, Modal, Radio, InputNumber, Input, Tabs } from 'antd';
 import _ from 'lodash';
+import { preAddCase } from '../../../../../services/workflow';
 import SelectFlowUser from './SelectFlowUser';
 import SelectFlowUserMultiple from './SelectFlowUserMultiple';
 import SelectStepFields from './SelectStepFields';
@@ -28,6 +29,31 @@ class SelectFlowUserAll extends Component {
 }
 
 class SelectCopyUser extends Component {
+  state = {
+    cpusers: []
+  }
+  componentDidMount() {
+    this.fetchuserList();
+  }
+
+  fetchuserList = () => {
+    const { flowId, entityId } = this.props;
+
+    const params = {
+      datatype: 1,
+      casemodel: {
+        entityId,
+        flowId,
+        recId: flowId
+      }
+    };
+    preAddCase(params).then(res => {
+      const { approvers, cpusers, nodeinfo } = res.data;
+      if (Array.isArray(cpusers) && cpusers.length) {
+        this.setState({ cpusers });
+      }
+    });
+  }
 
   onDataChange = (keyValues) => {
     const { onChange, value } = this.props;
@@ -58,6 +84,7 @@ class SelectCopyUser extends Component {
   render() {
     const { value = {} } = this.props;
     const { type = 17, data } = value;
+    const { cpusers } = this.state;
 
     const cpuserid = data ? data.cpuserid : '';
     const cpusername = data ? data.cpusername : '';
@@ -67,6 +94,7 @@ class SelectCopyUser extends Component {
         <Radio style={radioStyle} value={17}>指定抄送人</Radio>
         <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}>
           <SelectUser
+            cpusers={cpusers}
             placeholder="请选择抄送人"
             style={{ width: '260px', height: 'inherit' }}
             value={type === 17 ? cpuserid : ''}
@@ -122,11 +150,12 @@ class FlowStepModal extends Component {
   };
 
   render() {
-    const { form, flowEntities } = this.props;
+    const { form, flowEntities, flowId } = this.props;
     const { getFieldDecorator, getFieldValue } = form;
     const nodeType = getFieldValue('nodeType');
     const stepUser = form.getFieldValue('stepUser');
     const steptypeid = stepUser && stepUser.type;
+    const entityId = Array.isArray(flowEntities) && flowEntities.length && flowEntities[0].entityid;
 
     const setApproveTitle = (
       <div style={{ position: 'relative' }}>
@@ -169,7 +198,7 @@ class FlowStepModal extends Component {
               </TabPane>
               <TabPane forceRender tab="设置抄送人" key="2">
                 <FormItem label="">
-                  {getFieldDecorator('cpUser')(<SelectCopyUser />)}
+                  {getFieldDecorator('cpUser')(<SelectCopyUser flowId={flowId} entityId={entityId} />)}
                 </FormItem>
               </TabPane>
             </Tabs>
@@ -229,11 +258,12 @@ class FlowStepModal extends Component {
 
 export default connect(
   state => {
-    const { showModals, editingFlowStepForm, flowEntities } = state.workflowDesign;
+    const { flowId, showModals, editingFlowStepForm, flowEntities } = state.workflowDesign;
     return {
       visible: /flowStep/.test(showModals),
       editingFlowStepForm,
-      flowEntities
+      flowEntities,
+      flowId
     };
   },
   (dispatch, { editingFlowStepForm }) => {

@@ -76,7 +76,7 @@ class WorkflowCaseForm extends Component {
 
   render() {
     const { form, caseNodes, selectedNode } = this.props;
-    const { nodeinfo, approvers } = selectedNode || {};
+    const { nodeinfo, approvers, cpusers } = selectedNode || {};
     const isFreeFlow = !!(nodeinfo && nodeinfo.flowtype === 0); // 自由流程
     const isFreeUser = isFreeFlow || (nodeinfo && nodeinfo.steptypeid === 1); // 自由选审批人
     return (
@@ -109,7 +109,7 @@ class WorkflowCaseForm extends Component {
             })(
               <CaseUserSelect
                 isFreeUser
-                users={this.state.allUsers}
+                users={Array.isArray(cpusers) && cpusers.length ? cpusers : this.state.allUsers}
                 filterUsers={form.getFieldValue('handleuser')}
                 limit={0}
               />
