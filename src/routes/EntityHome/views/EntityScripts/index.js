@@ -73,7 +73,7 @@ function EntityScripts({
             </div>
           </div>
         </Col>
-        <HistoryModal keyname={showingScript} />
+        <HistoryModal keyname={showingScript} width={'90%'} />
       </Row>
     </div>
   );

@@ -23,7 +23,17 @@ class HistoryModal extends Component {
     },
     confirmLoading: {
       FilterModal: false
-    }
+    },
+    columns: [
+      { title: '变更流水号', key: '1', width: 140, sorter: true },
+      { title: '变更日期', key: '2', width: 140, sorter: true },
+      { title: '变更人', key: '3', width: 140, sorter: true },
+      { title: '变更前长度', key: '4', width: 140, sorter: true },
+      { title: '变更后长度', key: '5', width: 140, sorter: true },
+      { title: '变更备注', key: '6', width: 140, sorter: true },
+      { title: '备注时间', key: '7', width: 140, sorter: true },
+      { title: '备注人', key: '8', width: 140, sorter: true }
+    ]
   }
 
   componentDidMount() {
@@ -31,7 +41,8 @@ class HistoryModal extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-
+    const { selectedRows } = nextProps;
+    if (selectedRows) this.setState({ selectedRows });
   }
 
   fetchList = () => {
@@ -39,6 +50,18 @@ class HistoryModal extends Component {
     const params = {
       keyname
     };
+    this.setState({ list: [
+      {
+        1: '5435',
+        2: '5435',
+        3: '5435',
+        4: '5435',
+        5: '5435',
+        6: '5435',
+        7: '5435',
+        8: '5435'
+      }
+    ].map((item, i) => ({ ...item, recid: i })) });
   }
 
   fecthFormData = (recid) => {
@@ -51,11 +74,6 @@ class HistoryModal extends Component {
     }).then(res => {
       // callback behavior
     });
-  }
-
-  clearSelect = () => {
-    const { onSelectRow } = this.props;
-    if (onSelectRow) onSelectRow([]);
   }
 
   add = () => {
@@ -105,35 +123,46 @@ class HistoryModal extends Component {
     sessionStorage.setItem('reportrelationid', record.reportrelationid);
   }
 
-  render() {
-    const { onSeach, onSelectRow, showModals, dispatch, toggleModal } = this.props;
+  onSelectRow = (selectedRows) => this.setState({ selectedRows });
 
-    const { selectedRows, list, initParams, confirmLoading } = this.state;
+  clearSelect = () => {
+    const { onSelectRow } = this.props;
+    if (onSelectRow) onSelectRow([]);
+    this.setState({ selectedRows: [] });
+  }
+
+  handleOk = () => {
+    if (true) {
+      this.handleCancel();
+    }
+  }
+
+  handleCancel = () => {
+    const { toggleModal, showModals } = this.props;
+    if (toggleModal) toggleModal(showModals, 'HistoryModal', '');
+    this.clearSelect();
+  }
+
+  render() {
+    const { width = 550, onSeach, onSelectRow, showModals, dispatch, toggleModal, rowKey = 'recid' } = this.props;
+
+    const { selectedRows, list, initParams, columns, confirmLoading } = this.state;
 
     const title = '汇报关系';
-    const columns = [
-      {
-        title: '汇报关系名称',
-        key: 'reportrelationname',
-        width: 200,
-        render: (text, record) => <a href="javascript:;" onClick={this.jump.bind(this, text, record)}>{text}</a>,
-        sorter: true
-      },
-      { title: '描述', key: 'reportremark', width: 300, sorter: true }
-    ];
 
     return (
       <Modal
         title={`${title}历史纪录`}
-        visible={!!showModals.HistoryModal}
+        width={width}
+        visible={!!(showModals && showModals.HistoryModal)}
         onOk={this.handleOk}
-        onCancel={() => toggleModal(showModals, 'HistoryModal', '')}
+        onCancel={this.handleCancel}
       >
         <Toolbar
           selectedCount={selectedRows.length}
           actions={[
-            { label: '编辑', single: true, handler: this.edit, show: () => true },
-            { label: '删除', handler: this.del, show: () => true }
+            { label: '与当前对比', single: true, handler: this.diffCurrent, show: () => true },
+            { label: '对比', handler: this.diff, show: () => selectedRows.length === 2 }
           ]}
         >
           <div style={{ float: 'left' }}>
@@ -145,23 +174,23 @@ class HistoryModal extends Component {
         </Toolbar>
 
         <ConfigTable
-          rowKey="reportrelationid"
+          rowKey={rowKey}
           rowSelect
           spacename={SPACENAME}
           onSeach={onSeach}
           initParams={initParams}
           dataSource={list}
           selectedRows={selectedRows}
-          CBSelectRow={data => onSelectRow(data)}
+          CBSelectRow={data => (onSelectRow ? onSelectRow(data) : this.onSelectRow(data))}
           columns={columns}
         />
 
         <FilterModal
           spacename={SPACENAME}
           dispatch={dispatch}
-          list={formConfig.map(item => ({ ...item, key: item.fieldname, title: item.label }))}
+          list={columns}
           initParams={initParams}
-          visible={showModals.FilterModal}
+          visible={showModals && showModals.FilterModal}
           cancel={() => toggleModal(showModals, 'FilterModal', '')}
           confirmLoading={confirmLoading.FilterModal}
         />
