@@ -58,7 +58,7 @@ class WorkflowCaseForm extends Component {
   initFormData = () => {
     this.props.form.resetFields();
     if (!this.props.selectedNode) return;
-    const { nodeinfo, approvers } = this.props.selectedNode;
+    const { nodeinfo, approvers, cpusers } = this.props.selectedNode;
     if (nodeinfo.nodetype === 1) { // 会审，列出所有审批人
       this.props.form.setFieldsValue({
         handleuser: approvers.map(u => u.userid)
@@ -66,6 +66,12 @@ class WorkflowCaseForm extends Component {
     } else if (approvers.length === 1) {
       this.props.form.setFieldsValue({
         handleuser: approvers.map(u => u.userid)
+      });
+    }
+
+    if (cpusers.length) {
+      this.props.form.setFieldsValue({
+        copyuser: cpusers.map(u => u.userid)
       });
     }
   };

@@ -593,10 +593,12 @@ export default {
           auditnum: editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.stepUser.data.userid.split(',').length,
           auditsucc: editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.auditsucc,
           nodetype: editingFlowStepForm.nodeType,
-          ruleconfig: { 
-            ...editingFlowStepForm.cpUser.data,
+          ruleconfig: {
             ...editingFlowStepForm.stepUser.data,
-            reportrelation
+            reportrelation,
+            cpuserid: editingFlowStepForm.cpUser.data.cpuserid,
+            cpusername: editingFlowStepForm.cpUser.data.cpusername,
+            cpfuncname: editingFlowStepForm.cpUser.data.cpfuncname
           },
           steptypeid: editingFlowStepForm.stepUser.type,
           stepcptypeid: editingFlowStepForm.cpUser.type,
