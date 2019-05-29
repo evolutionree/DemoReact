@@ -19,6 +19,8 @@ import SetCheckRepeatConfigModal from './SetCheckRepeatConfigModal';
 import ExpandJSModal from './ExpandJSModal';
 import styles from './EntityFields.less';
 
+const NAMESPACE = 'entityFields';
+
 function getCtrlNameByType(type) {
   const specialTypes = {
     1001: '记录ID', // 记录ID
@@ -63,20 +65,19 @@ function EntityFields({
   showModals,
   editingRecord,
   modalPending,
-  formValues
+  formValues,
+  toggleModal
 }) {
-
   function handleAdd() {
-    dispatch({ type: 'entityFields/add' });
+    dispatch({ type: `${NAMESPACE}/putState`, payload: { editingRecord: null } });
+    toggleModal(showModals, 'FieldFormModal', 'add');
+  }
+  function editField(record) {
+    dispatch({ type: 'entityFields/edit', payload: record });
+    toggleModal(showModals, 'FieldFormModal', 'edit');
   }
   function handleFormSubmit(data, cb) {
     dispatch({ type: 'entityFields/save', payload: { data, callback: cb } });
-  }
-  function handleFormCancel() {
-    dispatch({ type: 'entityFields/hideModal', payload: '' });
-  }
-  function handleOpenSort() {
-    dispatch({ type: 'entityFields/showModals', payload: 'sort' });
   }
   function onSort(data) {
     const params = data.map((item, index) => {
@@ -87,38 +88,10 @@ function EntityFields({
     });
     dispatch({ type: 'entityFields/sort', payload: params });
   }
-  function editMobList() {
-    dispatch({ type: 'entityFields/showModals', payload: 'mListConfig' });
-  }
-  function editWebList() {
-    dispatch({ type: 'entityFields/showModals', payload: 'wListConfig' });
-  }
-  function setMainField() {
-    dispatch({ type: 'entityFields/showModals', payload: 'setMainField' });
-  }
-  function setListFilter() {
-    dispatch({ type: 'entityFields/showModals', payload: 'listFilter' });
-  }
-  function setDynamicFields() {
-    dispatch({ type: 'entityFields/showModals', payload: 'dynamicFields' });
-  }
-
-  function setCustomBasicConfig() {
-    dispatch({ type: 'entityFields/showModals', payload: 'customBasicConfig' });
-  }
-  function setCustomMailConfig() {
-    dispatch({ type: 'entityFields/showModals', payload: 'customMailConfig' });
-  }
-
-  function setCheckRepeatFields() {
-    dispatch({ type: 'entityFields/showModals', payload: 'checkRepeatConfig' });
-  }
   function editConfigJS(record, type) {
     const params = { record, type };
     dispatch({ type: 'entityFields/editExpandJS', payload: params });
-  }
-  function editField(record) {
-    dispatch({ type: 'entityFields/edit', payload: record });
+    toggleModal(showModals, 'ExpandJSModal', type === 'filter' ? type : 'ExpandJSModal');
   }
   function delField(record) {
     dispatch({ type: 'entityFields/del', payload: record.fieldid });
@@ -247,15 +220,15 @@ function EntityFields({
     <div>
       <Toolbar>
         {btns.add && <Button onClick={handleAdd}>添加字段</Button>}
-        {btns.order && <Button onClick={handleOpenSort}>排序</Button>}
-        {btns.webvis && <Button onClick={editWebList}>设置web列表显示字段</Button>}
-        {btns.mobvis && <Button onClick={editMobList}>设置手机端列表显示</Button>}
-        {btns.topfield && <Button onClick={setMainField}>设置主页顶部显示字段</Button>}
-        {btns.setfilter && <Button onClick={setListFilter}>设置筛选条件</Button>}
-        {btns.dynamic && <Button onClick={setDynamicFields}>动态摘要配置</Button>}
-        {btns.checkrepeat && <Button onClick={setCheckRepeatFields}>设置查重条件</Button>}
-        {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={setCustomBasicConfig}>设置客户基础资料字段</Button> : null}
-        {/* {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={setCustomMailConfig}>设置邮件客户信息字段</Button> : null} */}
+        {btns.order && <Button onClick={() => toggleModal(showModals, 'FieldSortModal')}>排序</Button>}
+        {btns.webvis && <Button onClick={() => toggleModal(showModals, 'WebListConfigModal')}>设置web列表显示字段</Button>}
+        {btns.mobvis && <Button onClick={() => toggleModal(showModals, 'MobileListConfigModal')}>设置手机端列表显示</Button>}
+        {btns.topfield && <Button onClick={() => toggleModal(showModals, 'SetMainFieldModal')}>设置主页顶部显示字段</Button>}
+        {btns.setfilter && <Button onClick={() => toggleModal(showModals, 'SelListFilterModal')}>设置筛选条件</Button>}
+        {btns.dynamic && <Button onClick={() => toggleModal(showModals, 'SetDynamicFieldsModal')}>动态摘要配置</Button>}
+        {btns.checkrepeat && <Button onClick={() => toggleModal(showModals, 'SetCheckRepeatConfigModal')}>设置查重条件</Button>}
+        {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={() => toggleModal(showModals, 'SetCustomBasicConfigModal')}>设置客户基础资料字段</Button> : null}
+        {/* {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={() => toggleModal(showModals, 'SetCustomMailConfigModal')}>设置邮件客户信息字段</Button> : null} */}
       </Toolbar>
       <Table
         columns={columns}
@@ -265,35 +238,70 @@ function EntityFields({
         scroll={{ y: document.body.clientHeight - 290 }}
       />
       <FieldFormModal
-        showModals={showModals}
+        visible={showModals.FieldFormModal}
         dispatch={dispatch}
         editingRecord={editingRecord}
         formValues={formValues}
         modalPending={modalPending}
         onOk={handleFormSubmit}
-        onCancel={handleFormCancel}
+        onCancel={() => toggleModal(showModals, 'FieldFormModal', '')}
         entityFields={list}
         entityId={entityId}
       />
       <FieldSortModal
-        showModals={showModals}
+        visible={showModals.FieldSortModal}
         fields={list}
         modalPending={modalPending}
         onOk={onSort}
-        onCancel={handleFormCancel}
+        onCancel={() => toggleModal(showModals, 'FieldSortModal', '')}
       />
-      <MobileListConfigModal />
-      <WebListConfigModal />
-      <SetMainFieldModal />
-      <SelListFilterModal />
-      <SetDynamicFieldsModal />
-      <SetCustomBasicConfigModal />
-      <SetCustomMailConfigModal />
-      <SetCheckRepeatConfigModal />
-      <ExpandJSModal />
+      <WebListConfigModal
+        visible={showModals.WebListConfigModal}
+        onCancel={() => toggleModal(showModals, 'WebListConfigModal', '')}
+      />
+      <MobileListConfigModal
+        visible={showModals.MobileListConfigModal}
+        onCancel={() => toggleModal(showModals, 'MobileListConfigModal', '')}
+      />
+      <SetMainFieldModal
+        visible={showModals.SetMainFieldModal}
+        onCancel={() => toggleModal(showModals, 'SetMainFieldModal', '')}
+      />
+      <SelListFilterModal
+        visible={showModals.SelListFilterModal}
+        onCancel={() => toggleModal(showModals, 'SelListFilterModal', '')}
+      />
+      <SetDynamicFieldsModal
+        visible={showModals.SetDynamicFieldsModal}
+        onCancel={() => toggleModal(showModals, 'SetDynamicFieldsModal', '')}
+      />
+      <SetCustomBasicConfigModal
+        visible={showModals.SetCustomBasicConfigModal}
+        onCancel={() => toggleModal(showModals, 'SetCustomBasicConfigModal', '')}
+      />
+      <SetCustomMailConfigModal
+        visible={showModals.SetCustomMailConfigModal}
+        onCancel={() => toggleModal(showModals, 'SetCustomMailConfigModal', '')}
+      />
+      <SetCheckRepeatConfigModal
+        visible={showModals.SetCheckRepeatConfigModal}
+        onCancel={() => toggleModal(showModals, 'SetCheckRepeatConfigModal', '')}
+      />
+      <ExpandJSModal
+        visible={showModals.ExpandJSModal}
+        onCancel={() => toggleModal(showModals, 'ExpandJSModal', '')}
+      />
     </div>
   );
 }
 
 
-export default connect(({ entityFields }) => entityFields)(EntityFields);
+export default connect(
+  state => state[NAMESPACE],
+  dispatch => ({
+    toggleModal(showModals, modal, action) {
+      dispatch({ type: `${NAMESPACE}/showModals`, payload: { ...showModals, [modal]: (action === undefined ? modal : action) } });
+    },
+    dispatch
+  })
+  )(EntityFields);

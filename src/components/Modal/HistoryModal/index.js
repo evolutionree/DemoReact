@@ -1,31 +1,27 @@
 import React, { Component } from 'react';
-import { connect } from 'dva';
 import { routerRedux } from 'dva/router';
 import { Modal, Button } from 'antd';
-import Toolbar from '../../../../components/Toolbar';
-import ConfigTable from '../../../../components/ConfigTable';
-// import FormModal from './FormModal';
+import * as _ from 'lodash';
+import Toolbar from '../../Toolbar';
+import ConfigTable from '../../ConfigTable';
+import CodeMerge from '../../CodeMerge';
+import FormModal from './FormModal';
 import FilterModal from '../FilterModal';
 import formConfig from './formConfig';
-
-const SPACENAME = 'entityScripts';
 
 class HistoryModal extends Component {
   state = {
     OptionList: [],
-    list: [],
     selectedRows: [],
-    initParams: {
-      pageIndex: 1,
-      pageSize: 10000,
-      searchOrder: '',
-      columnFilter: null //字段查询
-    },
     confirmLoading: {
       FilterModal: false
     },
+    fetchDataLoading: {
+      FormModal: false
+    },
+    visibleCodeMerge: false,
     columns: [
-      { title: '变更流水号', key: '1', width: 140, sorter: true },
+      { title: '变更流水号', key: '1', width: 140, sorter: true, render: (text, record) => <a href="javascript:;" onClick={() => this.showDetail(record)}>{text}</a> },
       { title: '变更日期', key: '2', width: 140, sorter: true },
       { title: '变更人', key: '3', width: 140, sorter: true },
       { title: '变更前长度', key: '4', width: 140, sorter: true },
@@ -65,35 +61,39 @@ class HistoryModal extends Component {
   }
 
   fecthFormData = (recid) => {
-    const { dispatch } = this.props;
+    const { dispatch, spaceName } = this.props;
     const { OptionList } = this.state;
     const fields = {};
     OptionList.forEach(item => (fields[item.fieldname] = ''));
     new Promise((resolve) => {
-      dispatch({ type: `${SPACENAME}/FecthAllFormData`, payload: { recid, fields, resolve } });
+      dispatch({ type: `${spaceName}/FecthAllFormData`, payload: { recid, fields, resolve } });
     }).then(res => {
       // callback behavior
     });
   }
 
+  toggleModal = (modal, action) => {
+    const { dispatch, spaceName, showModals } = this.props;
+    dispatch({ type: `${spaceName}/showModals`, payload: { ...showModals, [modal]: (action === undefined ? modal : action) } });
+  }
+
   add = () => {
-    const { showModals, toggleModal } = this.props;
-    toggleModal(showModals, 'FormModal', 'add');
+    this.toggleModal('FormModal', 'add');
     this.fecthFormData();
   }
 
   edit = () => {
-    const { showModals, toggleModal, selectedRows } = this.props;
+    const { selectedRows } = this.props;
     const { reportrelationid } = selectedRows[0];
-    toggleModal(showModals, 'FormModal', 'edit');
+    this.toggleModal('FormModal', 'edit');
     this.fecthFormData(reportrelationid);
   }
 
   del = () => {
-    const { onDel, selectedRows } = this.props;
+    const { dispatch, spaceName, selectedRows } = this.props;
     const params = selectedRows.map(item => item.reportrelationid);
     this.clearSelect();
-    onDel(params);
+    dispatch({ type: `${spaceName}/Del`, payload: params });
   };
 
   handleSelectRecords = () => {
@@ -105,7 +105,7 @@ class HistoryModal extends Component {
   }
 
   onHandleSearch = val => {
-    const { onSeach, initParams } = this.props;
+    const { initParams } = this.props;
     const params = {
       ...initParams,
       columnFilter: {
@@ -113,12 +113,17 @@ class HistoryModal extends Component {
         reportrelationname: val
       }
     };
-    onSeach(params);
+    this.onSeach(params);
+  }
+
+  onSeach = (params) => {
+    const { dispatch, spaceName } = this.props;
+    dispatch({ type: `${spaceName}/Search`, payload: params });
   }
 
   jump = (text, record) => {
-    const { dispatch } = this.props;
-    dispatch(routerRedux.push({ pathname: `/${SPACENAME}detail/${record.reportrelationid}` }));
+    const { dispatch, spaceName } = this.props;
+    dispatch(routerRedux.push({ pathname: `/${spaceName}detail/${record.reportrelationid}` }));
     sessionStorage.setItem('reportrelationdetailtitle', text);
     sessionStorage.setItem('reportrelationid', record.reportrelationid);
   }
@@ -138,17 +143,30 @@ class HistoryModal extends Component {
   }
 
   handleCancel = () => {
-    const { toggleModal, showModals } = this.props;
-    if (toggleModal) toggleModal(showModals, 'HistoryModal', '');
+    this.toggleModal('HistoryModal', '');
     this.clearSelect();
+  }
+  
+  diffCurrent = () => {
+    const { visibleCodeMerge } = this.state;
+    this.setState({ visibleCodeMerge: !visibleCodeMerge });
+  }
+
+  showDetail = (record) => {
+    console.log(record);
+    this.toggleModal('FormModal');
   }
 
   render() {
-    const { width = 550, onSeach, onSelectRow, showModals, dispatch, toggleModal, rowKey = 'recid' } = this.props;
+    const { 
+      width = 550, initParams, onSelectRow, spaceName,
+      title, value, orig, historyList,
+      showModals, dispatch, rowKey = 'recid'
+    } = this.props;
 
-    const { selectedRows, list, initParams, columns, confirmLoading } = this.state;
+    const { selectedRows, list, columns, confirmLoading, fetchDataLoading, visibleCodeMerge } = this.state;
 
-    const title = '汇报关系';
+    const len = selectedRows.length;
 
     return (
       <Modal
@@ -159,62 +177,72 @@ class HistoryModal extends Component {
         onCancel={this.handleCancel}
       >
         <Toolbar
-          selectedCount={selectedRows.length}
+          selectedCount={len}
           actions={[
-            { label: '与当前对比', single: true, handler: this.diffCurrent, show: () => true },
-            { label: '对比', handler: this.diff, show: () => selectedRows.length === 2 }
+            { label: '与当前对比', single: true, handler: this.diffCurrent, show: () => (value || orig) },
+            { label: '对比', handler: this.diff, show: () => len === 2 }
           ]}
         >
           <div style={{ float: 'left' }}>
-            {<Button style={{ marginRight: 16 }} onClick={this.add}>新增</Button>}
+            {/* {<Button style={{ marginRight: 16 }} onClick={this.add}>新增</Button>} */}
           </div>
           <Toolbar.Right>
-            {<Button onClick={() => toggleModal(showModals, 'FilterModal')}>过滤</Button>}
+            {<Button onClick={() => this.toggleModal('FilterModal')}>过滤</Button>}
           </Toolbar.Right>
         </Toolbar>
 
         <ConfigTable
           rowKey={rowKey}
           rowSelect
-          spacename={SPACENAME}
-          onSeach={onSeach}
+          spacename={spaceName}
+          onSeach={this.onSeach}
           initParams={initParams}
           dataSource={list}
           selectedRows={selectedRows}
           CBSelectRow={data => (onSelectRow ? onSelectRow(data) : this.onSelectRow(data))}
           columns={columns}
         />
-
+        <FormModal
+          title="历史纪录详情"
+          mode="normal"
+          width="85%"
+          spacename={spaceName}
+          dispatch={dispatch}
+          list={formConfig}
+          api="api/ReportRelation/addreportreldetail"
+          selectedRows={selectedRows}
+          visible={showModals && showModals.FormModal}
+          onChange={this.handleSelectRecords}
+          cancel={() => this.toggleModal('FormModal', '')}
+          fetchDataLoading={fetchDataLoading.FormModal}
+          confirmLoading={confirmLoading.FormModal}
+        />
         <FilterModal
-          spacename={SPACENAME}
+          spacename={spaceName}
           dispatch={dispatch}
           list={columns}
           initParams={initParams}
           visible={showModals && showModals.FilterModal}
-          cancel={() => toggleModal(showModals, 'FilterModal', '')}
+          cancel={() => this.toggleModal('FilterModal', '')}
           confirmLoading={confirmLoading.FilterModal}
         />
+        {
+          visibleCodeMerge ? (
+            <CodeMerge
+              len={len}
+              options={{
+                value: len === 2 ? selectedRows[0].script : value,
+                orig: len === 2 ? selectedRows[1].script : orig
+              }}
+              visible={visibleCodeMerge}
+              cancel={this.diffCurrent}
+              // onChange={onChange.bind(null, name)}
+            />
+          ) : null
+        }
       </Modal>
     );
   }
 }
 
-export default connect(
-  state => state[SPACENAME],
-  dispatch => ({
-    onInit() {
-      dispatch({ type: `${SPACENAME}/Init` });
-    },
-    toggleModal(showModals, modal, action) {
-      dispatch({ type: `${SPACENAME}/showModals`, payload: { ...showModals, [modal]: (action === undefined ? modal : action) } });
-    },
-    onDel(params) {
-      dispatch({ type: `${SPACENAME}/Del`, payload: params });
-    },
-    onSeach(params) {
-      dispatch({ type: `${SPACENAME}/Search`, payload: params });
-    },
-    dispatch
-  })
-)(HistoryModal);
-
+export default HistoryModal;

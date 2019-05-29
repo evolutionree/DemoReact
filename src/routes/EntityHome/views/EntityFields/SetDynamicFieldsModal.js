@@ -29,8 +29,8 @@ class SetDynamicFieldsModal extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     // 打开窗口时，查数据
-    const isOpening = !/dynamicFields/.test(this.props.showModals) &&
-      /dynamicFields/.test(nextProps.showModals);
+    const isOpening = !/SetDynamicFieldsModal$/.test(this.props.visible) &&
+      /SetDynamicFieldsModal$/.test(nextProps.visible);
     if (isOpening) {
       this.setState({ rawData: null });
       const params = {
@@ -83,11 +83,11 @@ class SetDynamicFieldsModal extends React.Component {
       saveDynamicConfig(params).then(result => {
         message.success('保存成功');
         this.setState({ loading: false });
-        this.props.cancel();
+        this.props.onCancel();
       }).catch(e => {
         message.error(e.message || '提交数据出错');
         this.setState({ loading: false });
-      })
+      });
     });
   };
 
@@ -102,18 +102,18 @@ class SetDynamicFieldsModal extends React.Component {
           <Option key={field.fieldid} value={field.fieldid} disabled={field.recstatus !== 1}>{getIntlText('displayname', field)}</Option>
         ))}
       </Select>
-    )
+    );
   };
 
   render() {
-    const { showModals, list, form, cancel } = this.props;
+    const { visible, list, form, onCancel } = this.props;
     const { getFieldDecorator } = form;
     return (
       <Modal
         title="动态摘要配置"
-        visible={/dynamicFields/.test(showModals)}
+        visible={/SetDynamicFieldsModal$/.test(visible)}
         onOk={this.handleOk}
-        onCancel={cancel}
+        onCancel={onCancel}
         confirmLoading={this.state.loading}
       >
         <Form>
@@ -155,12 +155,5 @@ class SetDynamicFieldsModal extends React.Component {
 }
 
 export default connect(
-  state => state.entityFields,
-  dispatch => {
-    return {
-      cancel: () => {
-        dispatch({ type: 'entityFields/showModals', payload: '' });
-      }
-    }
-  }
+  state => state.entityFields
 )(Form.create({})(SetDynamicFieldsModal));

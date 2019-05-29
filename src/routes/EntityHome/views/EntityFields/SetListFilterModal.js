@@ -27,7 +27,7 @@ function isSupportLikeSearch({ controltype }) {
 class SetListFilterModal extends Component {
   static propTypes = {
     visible: PropTypes.bool,
-    close: PropTypes.func
+    onCancel: PropTypes.func
   };
   static defaultProps = {
     visible: false
@@ -120,7 +120,7 @@ class SetListFilterModal extends Component {
     saveListFilter(params).then(result => {
       this.setState({ confirmLoading: false });
       message.success('保存成功');
-      this.props.close();
+      this.props.onCancel();
     }).catch(e => {
       this.setState({ confirmLoading: false });
       console.error(e);
@@ -136,7 +136,7 @@ class SetListFilterModal extends Component {
         title="设置筛选条件"
         visible={this.props.visible}
         onOk={this.onOk}
-        onCancel={this.props.close}
+        onCancel={this.props.onCancel}
         confirmLoading={this.state.confirmLoading}
         width={580}
       >
@@ -218,22 +218,14 @@ class SetListFilterModal extends Component {
 
 export default connect(
   ({ entityFields }) => {
-    const { showModals, list, entityId } = entityFields;
+    const { list, entityId } = entityFields;
     // 过滤掉记录id,提示文本、分组、头像、图片、附件、表格
     // const searchableFields = list.filter(field => {
     //   return [1001, 2, 15, 20, 22, 23, 24].indexOf(field.controltype) === -1;
     // });
     return {
-      visible: /listFilter/.test(showModals),
       // allFields: searchableFields,
       entityId: entityId
-    };
-  },
-  dispatch => {
-    return {
-      close: () => {
-        dispatch({ type: 'entityFields/showModals', payload: '' });
-      }
     };
   }
 )(SetListFilterModal);

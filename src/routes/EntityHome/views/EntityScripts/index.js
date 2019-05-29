@@ -1,10 +1,13 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Row, Col, Button, Input, Menu } from 'antd';
+import { Row, Col, Button, Menu } from 'antd';
 import * as _ from 'lodash';
 import CodeEditor from '../../../../components/CodeEditor';
-import HistoryModal from '../../Components/HistoryModal';
+import DynamicLoadModal from '../../../../components/Modal/DynamicLoadModal';
+import HistoryModal from '../../../../components/Modal/HistoryModal';
 import styles from './EntityScripts.less';
+
+const SPACENAME = 'entityScripts';
 
 // const ScriptItem = ({ title, content, editingContent, editing, onChange, onClear, onEdit, onCancel }) => {
 //   return (
@@ -33,7 +36,9 @@ function EntityScripts({
   onShow,
   onEdit,
   onSave,
-  onClear
+  onClear,
+  showModals,
+  initParams
 }) {
   const allScripts = [addScript, editScript, viewScript, copyScript];
   const scriptItem = _.find(allScripts, ['name', showingScript]);
@@ -73,36 +78,47 @@ function EntityScripts({
             </div>
           </div>
         </Col>
-        <HistoryModal keyname={showingScript} width={'90%'} />
+        <DynamicLoadModal
+          width={'90%'}
+          title={title}
+          value={editingContent}
+          orig={content}
+          spaceName={SPACENAME}
+          name={showingScript}
+          showModals={showModals}
+          allScripts={allScripts}
+          initParams={initParams}
+          WrapComponent={HistoryModal}
+        />
       </Row>
     </div>
   );
 }
 
 export default connect(
-  state => state.entityScripts,
+  state => state[SPACENAME],
   dispatch => {
     return {
       onChange(scriptName, value) {
-        dispatch({ type: 'entityScripts/contentChange', payload: { scriptName, value } });
+        dispatch({ type: `${SPACENAME}/contentChange`, payload: { scriptName, value } });
       },
       onCancel(scriptName) {
-        dispatch({ type: 'entityScripts/cancelEdit', payload: scriptName });
+        dispatch({ type: `${SPACENAME}/cancelEdit`, payload: scriptName });
       },
       onShow(scriptName) {
-        dispatch({ type: 'entityScripts/showHistoryModal', payload: scriptName });
+        dispatch({ type: `${SPACENAME}/showHistoryModal`, payload: scriptName });
       },
       onEdit(scriptName) {
-        dispatch({ type: 'entityScripts/editScript', payload: scriptName });
+        dispatch({ type: `${SPACENAME}/editScript`, payload: scriptName });
       },
       onSave() {
-        dispatch({ type: 'entityScripts/saveScript' });
+        dispatch({ type: `${SPACENAME}/saveScript` });
       },
       onClear(scriptName) {
-        dispatch({ type: 'entityScripts/contentChange', payload: { scriptName, value: '' } });
+        dispatch({ type: `${SPACENAME}/contentChange`, payload: { scriptName, value: '' } });
       },
       toggleShowing(scriptName) {
-        dispatch({ type: 'entityScripts/toggleShowing', payload: scriptName });
+        dispatch({ type: `${SPACENAME}/toggleShowing`, payload: scriptName });
       }
     };
   }

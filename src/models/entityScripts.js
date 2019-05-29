@@ -1,6 +1,7 @@
 import { message } from 'antd';
 import * as _ from 'lodash';
 import { saveEntityScripts, queryEntityDetail } from '../services/entity';
+import { setSessionItem, getCacheData } from '../utils/newStorage';
 
 function getScriptServerKey(scriptName) {
   const serverNameMap = {
@@ -12,8 +13,10 @@ function getScriptServerKey(scriptName) {
   return serverNameMap[scriptName] || '';
 }
 
+const NAMESPACE = 'entityScripts';
+
 export default {
-  namespace: 'entityScripts',
+  namespace: NAMESPACE,
   state: {
     addScript: {
       title: '新增JS',
@@ -40,8 +43,16 @@ export default {
     },
     showModals: {
       HistoryModal: '',
-      FilterModal: ''
-    }
+      FilterModal: '',
+      FormModal: ''
+    },
+    initParams: {
+      pageIndex: 1,
+      pageSize: 10000,
+      searchOrder: '',
+      columnFilter: null //字段查询
+    },
+    historyList: []
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -67,7 +78,7 @@ export default {
   },
   effects: {
     *queryScripts(action, { call, select, put }) {
-      const { entityId } = yield select(state => state.entityScripts);
+      const { entityId } = yield select(state => state[NAMESPACE]);
       try {
         const { data: { entityproinfo } } = yield call(queryEntityDetail, entityId);
         yield put({
@@ -84,7 +95,7 @@ export default {
       }
     },
     *saveScript({ payload: scriptName }, { call, select, put }) {
-      const { entityId, addScript, editScript, viewScript, copyScript } = yield select(state => state.entityScripts);
+      const { entityId, addScript, editScript, viewScript, copyScript } = yield select(state => state[NAMESPACE]);
       try {
         const params = {
           entityid: entityId,
@@ -94,7 +105,7 @@ export default {
           copyload: copyScript.editingContent || ''
         };
         if (scriptName) {
-          const { editingContent } = yield select(state => state.entityScripts[scriptName]);
+          const { editingContent } = yield select(state => state[NAMESPACE][scriptName]);
           const serverKey = getScriptServerKey(scriptName);
           params[serverKey] = editingContent;
         }
@@ -106,11 +117,39 @@ export default {
       }
     },
     *showHistoryModal({ payload }, { put, select }) {
-      const { showModals } = yield select(state => state.entityScripts);
+      const { showModals } = yield select(state => state[NAMESPACE]);
       yield put({ type: 'showModals', payload: { ...showModals, HistoryModal: 'HistoryModal' } });
+    },
+    *Search({ payload }, { put }) {
+      yield put({ type: 'setListParams', payload });
+      yield put({ type: 'QueryList' });
+    },
+    *QueryList({ payload }, { select, put, call }) {
+      const { initParams } = yield select(state => state[NAMESPACE]);
+      const params = { ...(payload || initParams) };
+
+      try {
+        const { data } = yield call(queryEntityDetail, params);
+        const historyList = data.datalist || [];
+        yield put({ type: 'putState', payload: { historyList } });
+      } catch (e) {
+        message.error(e.message || '获取列表失败');
+      }
     }
   },
   reducers: {
+    setListParams(state, { payload }) {
+      const key = `${NAMESPACE}_Params`;
+      const cacheKey = `cache${NAMESPACE}_Params`;
+      const cacheData = getCacheData(cacheKey, state.initParams);
+
+      setSessionItem(cacheKey, cacheData);
+      setSessionItem(key, payload);
+      return {
+        ...state,
+        initParams: payload
+      };
+    },
     putState(state, { payload }) {
       return {
         ...state,

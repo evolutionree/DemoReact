@@ -25,8 +25,8 @@ class SetCustMailConfigModal extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     // 打开窗口时，查数据
-    const isOpening = !/customMailConfig/.test(this.props.showModals) &&
-      /customMailConfig/.test(nextProps.showModals);
+    const isOpening = !/SetCustomMailConfigModal$/.test(this.props.visible) &&
+      /SetCustomMailConfigModal$/.test(nextProps.visible);
     if (isOpening) {
       const params = {
         entityid: this.props.entityId,
@@ -54,7 +54,7 @@ class SetCustMailConfigModal extends React.Component {
     saveCommonRelField(params).then(result => {
       this.setState({ modalPending: false });
       message.success('保存成功');
-      this.props.cancel();
+      this.props.onCancel();
     }, err => {
       this.setState({ modalPending: false });
       message.error(err.message || '保存失败');
@@ -63,7 +63,7 @@ class SetCustMailConfigModal extends React.Component {
 
 
   pickField = (field) => {
-    let newData = _.cloneDeep(this.state.data);
+    const newData = _.cloneDeep(this.state.data);
     newData.fieldnotvisible = newData.fieldnotvisible.filter((item) => {
       return item.fieldid !== field.fieldid;
     });
@@ -74,7 +74,7 @@ class SetCustMailConfigModal extends React.Component {
   };
 
   removeField = (field) => {
-    let newData = _.cloneDeep(this.state.data);
+    const newData = _.cloneDeep(this.state.data);
     newData.fieldvisible = newData.fieldvisible.filter((item) => {
       return item.fieldid !== field.fieldid;
     });
@@ -85,7 +85,7 @@ class SetCustMailConfigModal extends React.Component {
   };
 
   pickAll = () => {
-    let newData = _.cloneDeep(this.state.data);
+    const newData = _.cloneDeep(this.state.data);
     newData.fieldnotvisible.forEach((field) => {
       newData.fieldvisible.push(field);
     });
@@ -97,7 +97,7 @@ class SetCustMailConfigModal extends React.Component {
   };
 
   removeAll = () => {
-    let newData = _.cloneDeep(this.state.data);
+    const newData = _.cloneDeep(this.state.data);
     newData.fieldvisible.forEach((field) => {
       newData.fieldnotvisible.push(field);
     });
@@ -111,8 +111,8 @@ class SetCustMailConfigModal extends React.Component {
     return (
       <Modal
         title="设置邮件客户信息字段"
-        visible={/customMailConfig/.test(this.props.showModals)}
-        onCancel={this.props.cancel}
+        visible={/SetCustomMailConfigModal$/.test(this.props.visible)}
+        onCancel={this.props.onCancel}
         onOk={this.handleOk}
         confirmLoading={this.state.modalPending}
       >
@@ -159,17 +159,10 @@ class SetCustMailConfigModal extends React.Component {
 
 export default connect(
   state => {
-    const { showModals, entityId } = state.entityFields;
+    const { visible, entityId } = state.entityFields;
     return {
-      showModals,
+      visible,
       entityId
-    };
-  },
-  dispatch => {
-    return {
-      cancel: () => {
-        dispatch({ type: 'entityFields/showModals', payload: '' })
-      }
     };
   }
 )(SetCustMailConfigModal);

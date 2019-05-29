@@ -1,7 +1,11 @@
 import React, { PropTypes, Component } from 'react';
-import { Modal, Input } from 'antd';
+import { Modal, Button } from 'antd';
 import { connect } from 'dva';
 import CodeEditor from '../../../../components/CodeEditor';
+import DynamicLoadModal from '../../../../components/Modal/DynamicLoadModal';
+import HistoryModal from '../../../../components/Modal/HistoryModal';
+
+const SPACENAME = 'entityFields';
 
 class ExpandJSModal extends Component {
   static propTypes = {};
@@ -10,7 +14,8 @@ class ExpandJSModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      expandJS: ''
+      expandJS: '',
+      visibleHistory: false
     };
   }
 
@@ -33,34 +38,64 @@ class ExpandJSModal extends Component {
       fieldId: this.props.editingRecord.fieldId,
       type: this.props.expandJSType
     };
-    this.props.save(params);
+    this.props.save(params, this.props.onCancel);
   };
 
   onExpandJSChange = val => {
     this.setState({ expandJS: val });
   };
 
+  onShow = () => {
+    this.setState({ visibleHistory: true });
+  }
+
+  handleCancel = () => {
+    this.setState({ visibleHistory: false });
+  }
+
   render() {
+    const { 
+      expandJSType, visible, onCancel, modalPending,
+      initParams, showModals
+    } = this.props;
+    const { visibleHistory } = this.state;
+
+    const title = '6666';
+    const value = '6666';
+    const orig = '6666';
+    const allScripts = [];
+
     return (
       <Modal
-        title={this.props.expandJSType ? '配置过滤脚本' : '配置脚本'}
-        visible={this.props.visible}
+        title={expandJSType ? '配置过滤脚本' : '配置脚本'}
+        visible={visible}
         onOk={this.handleOk}
-        onCancel={this.props.cancel}
-        confirmLoading={this.props.modalPending}
+        onCancel={onCancel}
+        confirmLoading={modalPending}
         wrapClassName="code-editor-modal"
         width={750}
+        footer={[
+          <Button key="history" onClick={this.onShow}>历史纪录</Button>,
+          <Button key="back" onClick={onCancel}>取消</Button>,
+          <Button key="submit" type="primary" onClick={this.handleOk}>确定</Button>
+        ]}
       >
-        {/*<Input*/}
-          {/*type="textarea"*/}
-          {/*value={this.state.expandJS}*/}
-          {/*onChange={e => this.setState({ expandJS: e.target.value })}*/}
-          {/*autosize={{ minRows: 4, maxRows: 25 }}*/}
-          {/*placeholder="请输入js脚本"*/}
-        {/*/>*/}
         <CodeEditor
           value={this.state.expandJS}
           onChange={this.onExpandJSChange}
+        />
+        <DynamicLoadModal
+          width={'90%'}
+          title={title}
+          value={value}
+          orig={orig}
+          spaceName={SPACENAME}
+          showModals={showModals}
+          allScripts={allScripts}
+          initParams={initParams}
+          visible={visibleHistory}
+          cancel={() => this.handleCancel}
+          WrapComponent={HistoryModal}
         />
       </Modal>
     );
@@ -69,21 +104,19 @@ class ExpandJSModal extends Component {
 
 export default connect(
   state => {
-    const { showModals, modalPending, editingRecord } = state.entityFields;
+    const { showModals, visible, modalPending, editingRecord } = state[SPACENAME];
     return {
       modalPending,
       editingRecord,
-      visible: /expandJS/.test(showModals),
-      expandJSType: /expandJS-filter/.test(showModals) ? 1 : 0
+      showModals,
+      visible: /ExpandJSModal$/.test(visible),
+      expandJSType: /filter$/.test(visible) ? 1 : 0
     };
   },
   dispatch => {
     return {
-      cancel() {
-        dispatch({ type: 'entityFields/hideModal' });
-      },
-      save(payload) {
-        dispatch({ type: 'entityFields/saveExpandJS', payload });
+      save(params, callback) {
+        dispatch({ type: `${SPACENAME}/saveExpandJS`, payload: { params, callback } });
       }
     };
   }

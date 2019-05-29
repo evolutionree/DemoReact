@@ -34,7 +34,7 @@ const SortableList = SortableContainer(props => {
 
 class FieldSortModal extends React.Component {
   static propTypes = {
-    showModals: React.PropTypes.string,
+    visible: React.PropTypes.string,
     modalPending: React.PropTypes.bool,
     fields: React.PropTypes.array,
     onOk: React.PropTypes.func,
@@ -50,7 +50,7 @@ class FieldSortModal extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const isOpening = !/sort/.test(this.props.showModals) && /sort/.test(nextProps.showModals);
+    const isOpening = !/FieldSortModal$/.test(this.props.visible) && /FieldSortModal$/.test(nextProps.visible);
     if (isOpening) {
       this.setState({ sortFields: this.resetSortFields() });
     }
@@ -78,11 +78,11 @@ class FieldSortModal extends React.Component {
   };
 
   render() {
-    const { showModals, onCancel, modalPending } = this.props;
+    const { visible, onCancel, modalPending } = this.props;
     return (
       <Modal
         title="排序"
-        visible={/sort/.test(showModals)}
+        visible={/FieldSortModal$/.test(visible)}
         onOk={this.handleOk}
         onCancel={onCancel}
         confirmLoading={modalPending}

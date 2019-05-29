@@ -1,4 +1,5 @@
 import { message } from 'antd';
+import { setSessionItem, getCacheData } from '../utils/newStorage';
 import {
   queryFields,
   saveField,
@@ -12,15 +13,40 @@ import {
   updateentitycondition
 } from '../services/entity';
 
+const NAMESPACE = 'entityFields';
+
+
 export default {
-  namespace: 'entityFields',
+  namespace: NAMESPACE,
   state: {
     entityId: null,
     list: [],
-    showModals: '',
+    // showModals: '',
     editingRecord: null,
     modalPending: false,
-    nodeCell: null
+    nodeCell: null,
+    showModals: {
+      FieldFormModal: '',
+      FieldSortModal: '',
+      WebListConfigModal: '',
+      MobileListConfigModal: '',
+      SetMainFieldModal: '',
+      SelListFilterModal: '',
+      SetDynamicFieldsModal: '',
+      SetCustomBasicConfigModal: '',
+      SetCustomMailConfigModal: '',
+      SetCheckRepeatConfigModal: '',
+      ExpandJSModal: '',
+      HistoryModal: '',
+      FilterModal: ''
+    },
+    initParams: {
+      pageIndex: 1,
+      pageSize: 10000,
+      searchOrder: '',
+      columnFilter: null //字段查询
+    },
+    historyList: []
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -47,7 +73,7 @@ export default {
   effects: {
     *query(action, { select, put, call }) {
       try {
-        const { entityId } = yield select(({ entityFields }) => entityFields);
+        const { entityId } = yield select(state => (state[NAMESPACE]));
         const { data } = yield call(queryFields, entityId);
         yield put({ type: 'querySuccess', payload: data.entityfieldpros });
       } catch (err) {
@@ -58,10 +84,10 @@ export default {
       yield put({ type: 'modalPending', payload: true });
       try {
         const isEdit = !!data.fieldId;
-        const { entityId } = yield select(({ entityFields }) => entityFields);
+        const { entityId } = yield select(state => (state[NAMESPACE]));
         const params = { ...data, entityId };
         if (params.fieldId === 'a85009a1-781f-4b99-bbfe-2620eab1742a') { // 邮箱 签名字段特殊处理
-          let { fieldConfig } = params;
+          const { fieldConfig } = params;
           if (fieldConfig) {
             params.fieldConfig = JSON.stringify({
               ...JSON.parse(fieldConfig),
@@ -107,11 +133,12 @@ export default {
         yield put({ type: 'modalPending', payload: false });
       }
     },
-    *setWebVisibleFields({ payload: fieldIds }, { select, put, call }) {
+    *setWebVisibleFields({ payload }, { select, put, call }) {
+      const { fieldIds, callback } = payload;
       yield put({ type: 'modalPending', payload: true });
 
       try {
-        const entityId = yield select(state => state.entityFields.entityId);
+        const { entityId } = yield select(state => (state[NAMESPACE]));
         const params = {
           entityId,
           viewtype: 0,
@@ -120,16 +147,17 @@ export default {
         yield call(saveWebFieldVisible, params);
         message.success('保存成功');
         yield put({ type: 'modalPending', payload: false });
-        yield put({ type: 'hideModal' });
+        if (callback) callback();
       } catch (err) {
         message.error(err.message || '保存失败');
         yield put({ type: 'modalPending', payload: false });
       }
     },
-    *setCheckRepeatConfig({ payload: data }, { select, put, call }) {
+    *setCheckRepeatConfig({ payload }, { select, put, call }) {
+      const { visibleFields: data, callback } = payload;
       yield put({ type: 'modalPending', payload: true });
       try {
-        const EntityId = yield select(state => state.entityFields.entityId);
+        const { entityId: EntityId } = yield select(state => (state[NAMESPACE]));
         const params = {
           EntityId,
           FieldIds: data.fieldvisible.map(item => item.fieldid).join(',')
@@ -137,17 +165,18 @@ export default {
         yield call(updateentitycondition, params);
         message.success('保存成功');
         yield put({ type: 'modalPending', payload: false });
-        yield put({ type: 'hideModal' });
+        if (callback) callback();
       } catch (err) {
         message.error(err.message || '保存失败');
         yield put({ type: 'modalPending', payload: false });
       }
     },
-    *setCustomBasicConfig({ payload: data }, { select, put, call }) {
+    *setCustomBasicConfig({ payload }, { select, put, call }) {
+      const { visibleFields: data, callback } = payload;
       yield put({ type: 'modalPending', payload: true });
 
       try {
-        const entityId = yield select(state => state.entityFields.entityId);
+        const { entityId } = yield select(state => (state[NAMESPACE]));
 
         const params = data.fieldvisible.map((item) => {
           return {
@@ -155,19 +184,21 @@ export default {
             fieldid: item.fieldid,
             fieldname: item.fieldname,
             relentityid: 'ac051b46-7a20-4848-9072-3b108f1de9b0' // 客户基础资料实体
-          }
-        })
+          };
+        });
 
         yield call(saveCustomBasicConfig, params);
         message.success('保存成功');
         yield put({ type: 'modalPending', payload: false });
-        yield put({ type: 'hideModal' });
+        if (callback) callback();
       } catch (err) {
         message.error(err.message || '保存失败');
         yield put({ type: 'modalPending', payload: false });
       }
     },
-    *saveExpandJS({ payload: { fieldId, expandJS, type } }, { put, call }) {
+    *saveExpandJS({ payload }, { put, call }) {
+      const { params: data, callback } = payload;
+      const { fieldId, expandJS, type } = data;
       yield put({ type: 'modalPending', payload: true });
 
       try {
@@ -175,7 +206,7 @@ export default {
         yield call(type ? updateFieldExpandFilterJS : updateFieldExpandJS, params);
         message.success('保存成功');
         yield put({ type: 'modalPending', payload: false });
-        yield put({ type: 'hideModal' });
+        if (callback) callback();
         yield put({ type: 'query' });
       } catch (e) {
         message.error(e.message || '保存失败');
@@ -183,14 +214,51 @@ export default {
       }
     },
     *nodeCell({ payload }, { put, select }) {
-      const { nodeCell } = yield select(state => state.entityFields);
+      const { nodeCell } = yield select(state => (state[NAMESPACE]));
       if (nodeCell === payload) return;
       if (nodeCell) nodeCell.check();
       yield put({ type: 'updateNodeCell', payload });
+    },
+    *Search({ payload }, { put }) {
+      yield put({ type: 'setListParams', payload });
+      yield put({ type: 'QueryList' });
+    },
+    *QueryList({ payload }, { select, put, call }) {
+      const { initParams } = yield select(state => state[NAMESPACE]);
+      const params = { ...(payload || initParams) };
+
+      try {
+        const { data } = yield call(queryFields, params);
+        const historyList = data.datalist || [];
+        yield put({ type: 'putState', payload: { historyList } });
+      } catch (e) {
+        message.error(e.message || '获取列表失败');
+      }
     }
   },
 
   reducers: {
+    setListParams(state, { payload }) {
+      const key = `${NAMESPACE}_Params`;
+      const cacheKey = `cache${NAMESPACE}_Params`;
+      const cacheData = getCacheData(cacheKey, state.initParams);
+
+      setSessionItem(cacheKey, cacheData);
+      setSessionItem(key, payload);
+      return {
+        ...state,
+        initParams: payload
+      };
+    },
+    putState(state, { payload }) {
+      return {
+        ...state,
+        ...payload
+      };
+    },
+    showModals(state, { payload }) {
+      return { ...state, showModals: payload };
+    },
     gotEntityInfo(state, { payload: entityInfo }) {
       return {
         ...state,
@@ -218,8 +286,7 @@ export default {
 
       return {
         ...state,
-        editingRecord,
-        showModals: 'edit'
+        editingRecord
       };
     },
     editExpandJS(state, { payload: { record, type } }) {
@@ -239,15 +306,8 @@ export default {
 
       return {
         ...state,
-        editingRecord,
-        showModals: 'expandJS-' + type
+        editingRecord
       };
-    },
-    add(state) {
-      return { ...state, editingRecord: null, showModals: 'add' };
-    },
-    showModals(state, { payload }) {
-      return { ...state, showModals: payload };
     },
     hideModal(state) {
       return { ...state, editingRecord: null, showModals: '', modalPending: false };
