@@ -45,7 +45,7 @@ class CodeMerge extends Component {
       options: {
         value: '',
         origLeft: null,
-        origRight: null,
+        origRight: true,
         orig: 'test',
         lineNumbers: true,
         mode: 'javascript',

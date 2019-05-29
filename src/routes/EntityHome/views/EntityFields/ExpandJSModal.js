@@ -14,8 +14,7 @@ class ExpandJSModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      expandJS: '',
-      visibleHistory: false
+      expandJS: ''
     };
   }
 
@@ -45,20 +44,11 @@ class ExpandJSModal extends Component {
     this.setState({ expandJS: val });
   };
 
-  onShow = () => {
-    this.setState({ visibleHistory: true });
-  }
-
-  handleCancel = () => {
-    this.setState({ visibleHistory: false });
-  }
-
   render() {
     const { 
       expandJSType, visible, onCancel, modalPending,
-      initParams, showModals
+      initParams, showModals, historyList, toggleHistory
     } = this.props;
-    const { visibleHistory } = this.state;
 
     const title = '6666';
     const value = '6666';
@@ -68,14 +58,14 @@ class ExpandJSModal extends Component {
     return (
       <Modal
         title={expandJSType ? '配置过滤脚本' : '配置脚本'}
-        visible={visible}
+        visible={!!visible}
         onOk={this.handleOk}
         onCancel={onCancel}
         confirmLoading={modalPending}
         wrapClassName="code-editor-modal"
         width={750}
         footer={[
-          <Button key="history" onClick={this.onShow}>历史纪录</Button>,
+          <Button key="history" onClick={() => toggleHistory('HistoryModal')}>历史纪录</Button>,
           <Button key="back" onClick={onCancel}>取消</Button>,
           <Button key="submit" type="primary" onClick={this.handleOk}>确定</Button>
         ]}
@@ -84,19 +74,24 @@ class ExpandJSModal extends Component {
           value={this.state.expandJS}
           onChange={this.onExpandJSChange}
         />
-        <DynamicLoadModal
-          width={'90%'}
-          title={title}
-          value={value}
-          orig={orig}
-          spaceName={SPACENAME}
-          showModals={showModals}
-          allScripts={allScripts}
-          initParams={initParams}
-          visible={visibleHistory}
-          cancel={() => this.handleCancel}
-          WrapComponent={HistoryModal}
-        />
+        {
+          showModals.HistoryModal ? <DynamicLoadModal
+            width={1120}
+            title={title}
+            value={value}
+            orig={orig}
+            rowKey="id"
+            keyname={visible === 'filter' ? 'EntityFieldFilter' : 'EntityFieldChange'}
+            spaceName={SPACENAME}
+            historyList={historyList}
+            showModals={showModals}
+            allScripts={allScripts}
+            detailapi="api/entitypro/getucodedetail"
+            initParams={initParams}
+            visible={showModals.HistoryModal}
+            WrapComponent={HistoryModal}
+          /> : null
+        }
       </Modal>
     );
   }
@@ -104,19 +99,21 @@ class ExpandJSModal extends Component {
 
 export default connect(
   state => {
-    const { showModals, visible, modalPending, editingRecord } = state[SPACENAME];
+    const { showModals, ...rest } = state[SPACENAME];
     return {
-      modalPending,
-      editingRecord,
+      ...rest,
       showModals,
-      visible: /ExpandJSModal$/.test(visible),
-      expandJSType: /filter$/.test(visible) ? 1 : 0
+      visible: showModals.ExpandJSModal,
+      expandJSType: /filter$/.test(showModals.ExpandJSModal) ? 1 : 0
     };
   },
   dispatch => {
     return {
       save(params, callback) {
         dispatch({ type: `${SPACENAME}/saveExpandJS`, payload: { params, callback } });
+      },
+      toggleHistory(payload) {
+        dispatch({ type: `${SPACENAME}/showHistoryModal`, payload });
       }
     };
   }

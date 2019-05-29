@@ -1,25 +1,18 @@
 import React, { Component } from 'react';
-import { routerRedux } from 'dva/router';
-import { Modal, Button } from 'antd';
-import * as _ from 'lodash';
-import Toolbar from '../../Toolbar';
-import ConfigTable from '../../ConfigTable';
-import CodeMerge from '../../CodeMerge';
-import FormModal from './FormModal';
-import FilterModal from '../FilterModal';
+import { connect } from 'dva';
+import { Button } from 'antd';
+import Page from '../../../components/Page';
+import Toolbar from '../../../components/Toolbar';
+import CodeMerge from '../../../components/CodeMerge';
+import ConfigTable from '../../../components/ConfigTable';
+import FilterModal from '../../../components/Modal/FilterModal';
+import FormModal from '../../../components/Modal/HistoryModal/FormModal';
 import formConfig from './formConfig';
 import { dynamicRequest } from '../../../services/common';
 
-const _info = {
-  addScript: 'EntityAddNew',
-  editScript: 'EntityView',
-  viewScript: 'EntityEdit',
-  copyScript: 'EntityCopyNew',
-  EntityFieldChange: 'EntityFieldChange',
-  EntityFieldFilter: 'EntityFieldFilter'
-};
+const SPACENAME = 'historyscript';
 
-class HistoryModal extends Component {
+class Historyscript extends Component {
   state = {
     OptionList: [],
     selectedRows: [],
@@ -47,18 +40,15 @@ class HistoryModal extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { keyname: oldname } = this.props;
-    const { selectedRows, keyname: newname } = nextProps;
+    const { selectedRows } = nextProps;
     if (selectedRows) this.setState({ selectedRows });
-    if (newname && (oldname !== newname)) this.fetchList(nextProps);
   }
 
   fetchList = (props) => {
-    const { dispatch, spaceName, keyname, initParams } = props;
+    const { dispatch, spaceName, initParams } = props;
 
     const params = {
-      ...initParams,
-      codetype: _info[keyname] || ''
+      ...initParams
     };
 
     dispatch({ type: `${spaceName}/Search`, payload: params });
@@ -125,13 +115,6 @@ class HistoryModal extends Component {
     dispatch({ type: `${spaceName}/Search`, payload: params });
   }
 
-  jump = (text, record) => {
-    const { dispatch, spaceName } = this.props;
-    dispatch(routerRedux.push({ pathname: `/${spaceName}detail/${record.reportrelationid}` }));
-    sessionStorage.setItem('reportrelationdetailtitle', text);
-    sessionStorage.setItem('reportrelationid', record.reportrelationid);
-  }
-
   onSelectRow = (selectedRows) => this.setState({ selectedRows });
 
   clearSelect = () => {
@@ -173,24 +156,17 @@ class HistoryModal extends Component {
 
   render() {
     const { 
-      width = 550, initParams, onSelectRow, spaceName, keyname,
-      title, value, orig, historyList,
+      width = 550, initParams, onSelectRow, spaceName,
+      title, value, orig, list,
       showModals, dispatch, rowKey = 'recid'
     } = this.props;
 
     const { detailData, selectedRows, columns, confirmLoading, fetchDataLoading, visibleCodeMerge } = this.state;
 
     const len = selectedRows.length;
-    const list = Array.isArray(historyList) ? historyList.filter(item => item.codetype === _info[keyname]) : [];
 
     return (
-      <Modal
-        title={`${title}历史纪录`}
-        width={width}
-        visible={!!(showModals && showModals.HistoryModal)}
-        onOk={this.handleOk}
-        onCancel={this.handleCancel}
-      >
+      <Page title="脚本历史纪录">
         <Toolbar
           selectedCount={len}
           actions={[
@@ -198,9 +174,6 @@ class HistoryModal extends Component {
             { label: '对比', handler: this.diffCurrent, show: () => (len === 2 && (selectedRows[0].newcode || selectedRows[1].newcode)) }
           ]}
         >
-          <div style={{ float: 'left' }}>
-            {/* {<Button style={{ marginRight: 16 }} onClick={this.add}>新增</Button>} */}
-          </div>
           <Toolbar.Right>
             {<Button onClick={() => this.toggleModal('FilterModal')}>过滤</Button>}
           </Toolbar.Right>
@@ -256,9 +229,36 @@ class HistoryModal extends Component {
             />
           ) : null
         }
-      </Modal>
+      </Page>
     );
   }
 }
 
-export default HistoryModal;
+export default connect(
+  state => state[SPACENAME],
+  dispatch => ({
+    onInit(params) {
+      dispatch({ type: `${SPACENAME}/Init`, payload: params });
+    },
+    toggleModal(showModals, modal, action) {
+      dispatch({ type: `${SPACENAME}/showModals`, payload: { ...showModals, [modal]: (action === undefined ? modal : action) } });
+    },
+    onDel(params) {
+      dispatch({ type: `${SPACENAME}/Del`, payload: params });
+    },
+    onSeach(params) {
+      dispatch({ type: `${SPACENAME}/Search`, payload: params });
+    },
+    onSelectRow(selectedRows) {
+      dispatch({ type: `${SPACENAME}/putState`, payload: { selectedRows } });
+    },
+    onImport() {
+      dispatch({
+        type: 'task/impModals',
+        payload: { templateType: 1, templateKey: '' }
+      });
+    },
+    dispatch
+  })
+)(Historyscript);
+

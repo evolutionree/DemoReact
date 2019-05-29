@@ -113,7 +113,7 @@ class ConfigTable extends Component {
   render() {
     const {
       dataSource, rowKey = 'recid', columns: propColumns,
-      rowSelect, rowSelection
+      rowSelect, rowSelection, pwidth = tableDomWdith
     } = this.props;
     const { selectedRowKeys, clientHeight } = this.state;
 
@@ -133,7 +133,7 @@ class ConfigTable extends Component {
         dataSource={dataSource}
         onChange={this.handleTableChange}
         scroll={{
-          x: (tableDomWdith > this.tableWidth ? '100%' : (rowSelect ? this.tableWidth + 62 : this.tableWidth)),
+          x: (pwidth > this.tableWidth ? '100%' : (rowSelect ? this.tableWidth + 62 : this.tableWidth)),
           y: Div3Height - 130
         }}
         rowSelection={rowSelect ? {

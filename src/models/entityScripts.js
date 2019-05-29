@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import * as _ from 'lodash';
-import { saveEntityScripts, queryEntityDetail } from '../services/entity';
+import { saveEntityScripts, queryEntityDetail, getucodelist } from '../services/entity';
 import { setSessionItem, getCacheData } from '../utils/newStorage';
 
 function getScriptServerKey(scriptName) {
@@ -50,7 +50,8 @@ export default {
       pageIndex: 1,
       pageSize: 10000,
       searchOrder: '',
-      columnFilter: null //字段查询
+      columnFilter: null, //字段查询
+      codetype: 'EntityAddNew'
     },
     historyList: []
   },
@@ -129,8 +130,8 @@ export default {
       const params = { ...(payload || initParams) };
 
       try {
-        const { data } = yield call(queryEntityDetail, params);
-        const historyList = data.datalist || [];
+        const { data } = yield call(getucodelist, params);
+        const historyList = data || [];
         yield put({ type: 'putState', payload: { historyList } });
       } catch (e) {
         message.error(e.message || '获取列表失败');

@@ -26,7 +26,7 @@ function isSupportLikeSearch({ controltype }) {
 
 class SetListFilterModal extends Component {
   static propTypes = {
-    visible: PropTypes.bool,
+    visible: PropTypes.string,
     onCancel: PropTypes.func
   };
   static defaultProps = {
@@ -134,7 +134,7 @@ class SetListFilterModal extends Component {
     return (
       <Modal
         title="设置筛选条件"
-        visible={this.props.visible}
+        visible={!!this.props.visible}
         onOk={this.onOk}
         onCancel={this.props.onCancel}
         confirmLoading={this.state.confirmLoading}

@@ -91,7 +91,7 @@ function EntityFields({
   function editConfigJS(record, type) {
     const params = { record, type };
     dispatch({ type: 'entityFields/editExpandJS', payload: params });
-    toggleModal(showModals, 'ExpandJSModal', type === 'filter' ? type : 'ExpandJSModal');
+    toggleModal(showModals, 'ExpandJSModal', (type === 'filter' ? type : 'ExpandJSModal'));
   }
   function delField(record) {
     dispatch({ type: 'entityFields/del', payload: record.fieldid });
@@ -288,7 +288,6 @@ function EntityFields({
         onCancel={() => toggleModal(showModals, 'SetCheckRepeatConfigModal', '')}
       />
       <ExpandJSModal
-        visible={showModals.ExpandJSModal}
         onCancel={() => toggleModal(showModals, 'ExpandJSModal', '')}
       />
     </div>

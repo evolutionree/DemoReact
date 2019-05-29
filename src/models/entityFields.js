@@ -10,7 +10,8 @@ import {
   saveCustomBasicConfig,
   updateFieldExpandJS,
   updateFieldExpandFilterJS,
-  updateentitycondition
+  updateentitycondition,
+  getucodelist
 } from '../services/entity';
 
 const NAMESPACE = 'entityFields';
@@ -44,7 +45,8 @@ export default {
       pageIndex: 1,
       pageSize: 10000,
       searchOrder: '',
-      columnFilter: null //字段查询
+      columnFilter: null, //字段查询
+      codetype: 'EntityFieldChange'
     },
     historyList: []
   },
@@ -219,6 +221,10 @@ export default {
       if (nodeCell) nodeCell.check();
       yield put({ type: 'updateNodeCell', payload });
     },
+    *showHistoryModal({ payload }, { put, select }) {
+      const { showModals } = yield select(state => state[NAMESPACE]);
+      yield put({ type: 'showModals', payload: { ...showModals, HistoryModal: payload } });
+    },
     *Search({ payload }, { put }) {
       yield put({ type: 'setListParams', payload });
       yield put({ type: 'QueryList' });
@@ -228,8 +234,8 @@ export default {
       const params = { ...(payload || initParams) };
 
       try {
-        const { data } = yield call(queryFields, params);
-        const historyList = data.datalist || [];
+        const { data } = yield call(getucodelist, params);
+        const historyList = Array.isArray(data) ? data : [];
         yield put({ type: 'putState', payload: { historyList } });
       } catch (e) {
         message.error(e.message || '获取列表失败');

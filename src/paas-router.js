@@ -72,6 +72,7 @@ import DeskComponentConfig from './routes/Configure/Desk/ComponentList';
 import Desk from './routes/Desk';
 import Demo from './routes/Demo';
 import WebApiInspector from './devutils/routes/webapiinspector';
+import Historyscript from './devutils/routes/Historyscript';
 
 import BackFillRule from './routes/BusinessInquire/config/BackFillRule';
 
@@ -152,6 +153,7 @@ const appRoutes = [
   { path: 'demo', comp: Demo },
   { path: 'deskcomponentconfig', comp: DeskComponentConfig, model: require('./models/deskComponentConfig') },
   { path: 'webapiinspector', comp: WebApiInspector, model: require('./devutils/models/webapiinspector') },
+  { path: 'historyscript', comp: Historyscript, model: require('./devutils/models/historyscript') },
 
   { path: 'backfillrule', comp: BackFillRule },
 

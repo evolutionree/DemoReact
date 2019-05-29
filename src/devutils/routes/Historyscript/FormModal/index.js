@@ -1,14 +1,15 @@
-import React, { PureComponent } from 'react';
-import { Modal, Form, Input, message, Spin, Row, Col } from 'antd';
+import React, { Component } from 'react';
+import { Modal, Form, message, Spin, Row, Col } from 'antd';
+// import IntlInput from '../../../../components/UKComponent/Form/IntlInput';
+// import { getIntlText } from '../../../../components/UKComponent/Form/IntlText';
 import { dynamicRequest } from '../../../../services/common';
-import styles from './index.less';
+import UserSelect from '../../../../components/DynamicForm/controls/SelectUser';
 
 const _ = require('lodash');
 
-const TextArea = Input.TextArea;
 const FormItem = Form.Item;
 
-class FormModal extends PureComponent {
+class FormModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -25,8 +26,14 @@ class FormModal extends PureComponent {
       if (onOk) onOk(values);
       if (api || fetch) {
         const url = api || (isEdit ? fetch.edit : fetch.add);
-        const reportrelationid = isEdit ? selectedRows[0].reportrelationid : null;
-        const params = { ...values, reportrelationid };
+        const reportrelationId = sessionStorage.getItem('reportrelationid');
+        if (!reportrelationId) {
+          message.error('缺少 reportrelationid ！');
+          return;
+        }
+        const reportrelationid = isEdit ? selectedRows[0].reportrelationid : reportrelationId;
+        const reportreldetailid = isEdit ? selectedRows[0].reportreldetailid : null;
+        const params = { ...values, reportrelationid, reportreldetailid };
 
         dynamicRequest(url, params)
           .then(res => {
@@ -41,57 +48,48 @@ class FormModal extends PureComponent {
     });
   }
 
+  handleChange = (field, diffField, value) => {
+    const { form: { getFieldValue, setFieldsValue } } = this.props;
+    const diffFieldValue = getFieldValue(diffField);
+
+    if (value && diffFieldValue) {
+      const currentFieldValueArr = diffFieldValue.split(',') || [''];
+      const valueArr = value.split(',') || [''];
+      const result = [].filter.call(valueArr, val => !currentFieldValueArr.includes(val)).join();
+
+      setTimeout(() => setFieldsValue({ [field]: result }), 0);
+    }
+  }
+
   handleCancel = () => {
     const { form, cancel } = this.props;
     form.resetFields();
     if (cancel) cancel();
   }
 
-  beforeNode = () => {
-    const { selectedRows } = this.props;
-    const record = Array.isArray(selectedRows) && selectedRows.length ? selectedRows[0] : {};
-
-    return (
-      <div className={styles.before}>
-        <span>变更人：{record.username || '(空)'}</span>
-        <span>变更时间：{record.commitdate || '(空)'}</span>
-        <span>备注人：{record.commitusername || '(空)'}</span>
-        <span>备注时间：{record.commitremarkdate || '(空)'}</span>
-      </div>
-    );
-  }
-
   formNode = (record) => {
+    const { bindArgument: arg } = record;
     return {
-      TextArea1: <TextArea autosize={record.autosize || false} placeholder={record.placeholder || `请输入${record.label}`} />,
-      TextArea2: <TextArea autosize={record.autosize || false} placeholder={record.placeholder || `请输入${record.label}`} />
+      UserSelect: <UserSelect onChange={this.handleChange.bind(this, arg[0], arg[1])} multiple={1} />
     };
   }
 
   render() {
-    const { width = 550, mode = 'double', form, visible, title, confirmLoading, fetchDataLoading, justify = 'space-between' } = this.props;
-    const { list } = this.state;
+    const { form, visible, title, confirmLoading, fetchDataLoading, justify = 'space-between' } = this.props;
     const { getFieldDecorator } = form;
-    const isEdit = /^edit$/.test(visible);
-    const isNormal = (mode === 'normal');
-    const double = (mode === 'double');
+    const { list } = this.state;
 
-    const resultTitle = () => {
-      if (isNormal) return title;
-      if (double) return `${isEdit ? '编辑' : '新增'}${title}`;
-    };
-    
+    const isEdit = /^edit$/.test(visible);
+
     return (
       <Modal
-        title={resultTitle()}
-        width={width}
-        visible={!!(isNormal ? visible : /edit|add/.test(visible))}
+        title={`${isEdit ? '编辑' : '新增'}${title}`}
+        visible={/edit|add/.test(visible)}
         onOk={this.handleSubmit}
         onCancel={this.handleCancel}
         confirmLoading={confirmLoading}
       >
         <Spin spinning={fetchDataLoading}>
-          {this.beforeNode()}
           <Form>
             <Row type="flex" justify={justify}>
               {
@@ -119,11 +117,10 @@ class FormModal extends PureComponent {
 
 export default Form.create({
   onValuesChange: (props, values) => {
-    const { mode, onChange, selectedRows, visible } = props;
+    const { onChange, selectedRows, visible } = props;
     const isEdit = /^edit$/.test(visible);
-    const isNormal = (mode === 'normal');
 
-    if (isEdit || isNormal) {
+    if (isEdit) {
       onChange([{
         ...(selectedRows && selectedRows.length === 1 ? selectedRows[0] : {}),
         ...values
@@ -132,7 +129,7 @@ export default Form.create({
   },
   mapPropsToFields: (props) => {
     const { selectedRows, visible } = props;
-    const currentRecord = selectedRows ? selectedRows[0] : {};
+    const currentRecord = selectedRows && selectedRows.length === 1 ? selectedRows[0] : {};
     if (visible === '') return {};
     return _.mapValues(currentRecord, val => ({ value: val }));
   }

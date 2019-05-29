@@ -38,18 +38,26 @@ function EntityScripts({
   onSave,
   onClear,
   showModals,
-  initParams
+  initParams,
+  historyList
 }) {
   const allScripts = [addScript, editScript, viewScript, copyScript];
   const scriptItem = _.find(allScripts, ['name', showingScript]);
   const { title, name, content, editingContent, editing } = scriptItem;
+
+  function selectSideMenu(e) {
+    toggleShowing(e.key);
+  }
+  
   return (
     <div>
       <Row gutter={10}>
         <Col span={4}>
-          <Menu selectedKeys={[showingScript]}
-                style={{ overflowY: 'auto', overflowX: 'hidden' }}
-                onSelect={event => toggleShowing(event.key)}>
+          <Menu 
+            selectedKeys={[showingScript]}
+            style={{ overflowY: 'auto', overflowX: 'hidden' }}
+            onSelect={selectSideMenu}
+          >
             {allScripts.map(item => (
               <Menu.Item key={item.name}>
                 {item.title}
@@ -79,15 +87,19 @@ function EntityScripts({
           </div>
         </Col>
         <DynamicLoadModal
-          width={'90%'}
+          width={1120}
           title={title}
+          keyname={showingScript}
+          rowKey="id"
           value={editingContent}
           orig={content}
           spaceName={SPACENAME}
           name={showingScript}
           showModals={showModals}
           allScripts={allScripts}
+          detailapi="api/entitypro/getucodedetail"
           initParams={initParams}
+          historyList={historyList}
           WrapComponent={HistoryModal}
         />
       </Row>

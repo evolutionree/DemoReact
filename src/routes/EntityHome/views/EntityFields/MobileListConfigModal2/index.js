@@ -52,7 +52,7 @@ function getFieldCount(styleId) {
 class MobileListConfigModal extends React.Component {
   static propTypes = {
     fields: React.PropTypes.array,
-    visible: React.PropTypes.bool,
+    visible: React.PropTypes.string,
     entityId: React.PropTypes.string
   };
   static defaultProps = {
@@ -161,7 +161,7 @@ class MobileListConfigModal extends React.Component {
     return (
       <Modal
         title="设置手机端列表显示"
-        visible={visible}
+        visible={!!visible}
         onOk={this.handleOk}
         onCancel={onCancel}
         confirmLoading={loading}
