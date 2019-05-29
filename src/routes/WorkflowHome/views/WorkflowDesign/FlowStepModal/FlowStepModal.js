@@ -99,8 +99,9 @@ class FlowStepModal extends Component {
 
   constructor(props) {
     super(props);
+    const nodeType = props.editingFlowStepForm && props.editingFlowStepForm.nodeType === 1 ? 1 : 0;
     this.state = {
-      nodeType: 0,
+      nodeType,
       activeKey: '1'
     };
   }
@@ -108,7 +109,8 @@ class FlowStepModal extends Component {
   componentWillReceiveProps(nextProps) {
     const isOpening = !this.props.visible && nextProps.visible;
     if (isOpening) {
-
+      const nodeType = nextProps.editingFlowStepForm && nextProps.editingFlowStepForm.nodeType === 1 ? 1 : 0;
+      this.setState({ nodeType });
     }
   }
 
@@ -185,8 +187,8 @@ class FlowStepModal extends Component {
                nodeType === 0 &&
                <TabPane forceRender tab="设置抄送人" key="2" disabled={nodeType !== 0}>
                  <FormItem label="">
-                    {getFieldDecorator('cpUser')(<SelectCopyUser flowId={flowId} entityId={entityId} />)}
-                  </FormItem>
+                   {getFieldDecorator('cpUser')(<SelectCopyUser flowId={flowId} entityId={entityId} />)}
+                 </FormItem>
                </TabPane>
              }
             </Tabs>
