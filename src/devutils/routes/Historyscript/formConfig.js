@@ -22,12 +22,10 @@ const formItemLayoutLine = {
 
 const formConfig = [
   {
-    type: 'UserSelect', span: 24, label: '汇报人', fieldname: 'reportuser',
-    formItemLayout: formItemLayoutLine, required: true, bindArgument: ['reportuser', 'reportleader']
+    type: 'TextArea1', span: 24, label: '变更说明', fieldname: 'commitremark', formItemLayout: formItemLayoutLine, required: true
   },
   {
-    type: 'UserSelect', span: 24, label: '汇报上级', fieldname: 'reportleader', 
-    formItemLayout: formItemLayoutLine, bindArgument: ['reportleader', 'reportuser']
+    type: 'TextArea2', span: 24, label: '脚本内容', fieldname: 'newcode', formItemLayout: formItemLayoutLine, autosize: { minRows: 6, maxRows: 16 }
   }
 ];
 

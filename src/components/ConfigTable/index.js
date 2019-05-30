@@ -34,12 +34,12 @@ class ConfigTable extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { selectedRows: oldSelectedRows, rowKey } = this.props;
-    const { selectedRows } = nextProps;
+    const { selectedRows: oldRows, rowKey } = this.props;
+    const { selectedRows: newRows } = nextProps;
 
-    if (selectedRows && rowKey && selectedRows.length !== oldSelectedRows.length) {
-      const selectedRowKeys = selectedRows.map(o => o[rowKey]);
-      this.setState({ selectedRowKeys, selectedRows });
+    if (Array.isArray(newRows) && (oldRows !== newRows)) {
+      const selectedRowKeys = newRows.map(o => o[rowKey]);
+      this.setState({ selectedRowKeys, selectedRows: newRows });
     }
   }
 

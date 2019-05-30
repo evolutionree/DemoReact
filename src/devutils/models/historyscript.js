@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { add, update, getreportrelation, deletereportrelation } from '../../services/reportrelation';
+import { add, update, del, getucodelist, getucodedetail } from '../services/historyscript';
 import { setSessionItem, getCacheData } from '../../utils/newStorage';
 
 const NAMESPACE = 'historyscript';
@@ -19,7 +19,8 @@ export default {
     },
     showModals: {
       FormModal: '',
-      FilterModal: ''
+      FilterModal: '',
+      CodeMerge: ''
     },
     initParams: {
       pageIndex: 1,
@@ -44,8 +45,8 @@ export default {
       const params = { ...(payload || initParams) };
 
       try {
-        const { data } = yield call(getreportrelation, params);
-        const list = data.datalist || [];
+        const { data } = yield call(getucodelist, params);
+        const list = data || [];
         yield put({ type: 'putState', payload: { list } });
       } catch (e) {
         message.error(e.message || '获取列表失败');
@@ -57,7 +58,7 @@ export default {
         recstatus: 0
       };
       try {
-        const { error_msg } = yield call(deletereportrelation, params);
+        const { error_msg } = yield call(del, params);
         message.success(error_msg || '删除成功！');
         yield put({ type: 'QueryList' });
       } catch (e) {
@@ -94,7 +95,7 @@ export default {
             payload: { fetchDataLoading: { ...fetchDataLoading, FormModal: true } }
           });
 
-          const { data } = yield call(getreportrelation, {});
+          const { data } = yield call(getucodedetail, {});
           const list = data.datalist || [];
           yield put({
             type: 'putState',

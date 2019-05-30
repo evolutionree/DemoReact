@@ -248,7 +248,7 @@ class HistoryModal extends Component {
               len={len}
               options={{
                 value: len === 2 ? selectedRows[0].newcode : value,
-                orig: len === 2 ? selectedRows[1].newcode : orig
+                origRight: len === 2 ? selectedRows[1].newcode : orig
               }}
               visible={visibleCodeMerge}
               cancel={this.diffCurrent}

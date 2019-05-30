@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
+import { dynamicRequest } from '../../../services/common';
 import Page from '../../../components/Page';
 import Toolbar from '../../../components/Toolbar';
 import CodeMerge from '../../../components/CodeMerge';
 import ConfigTable from '../../../components/ConfigTable';
 import FilterModal from '../../../components/Modal/FilterModal';
-import FormModal from '../../../components/Modal/HistoryModal/FormModal';
+import FormModal from './FormModal';
 import formConfig from './formConfig';
-import { dynamicRequest } from '../../../services/common';
 
 const SPACENAME = 'historyscript';
 
@@ -23,7 +23,6 @@ class Historyscript extends Component {
     fetchDataLoading: {
       FormModal: false
     },
-    visibleCodeMerge: false,
     columns: [
       { title: '变更流水号', key: 'reccode', width: 140, sorter: true, render: (text, record) => <a href="javascript:;" onClick={() => this.showDetail(record)}>{text || '(空)'}</a> },
       { title: '变更人', key: 'username', width: 120, sorter: true },
@@ -36,22 +35,15 @@ class Historyscript extends Component {
   }
 
   componentDidMount() {
-    this.fetchList(this.props);
+    const { onInit, initParams } = this.props;
+    onInit(initParams);
   }
 
   componentWillReceiveProps(nextProps) {
-    const { selectedRows } = nextProps;
-    if (selectedRows) this.setState({ selectedRows });
-  }
+    const { selectedRows: oldRows } = this.props;
+    const { selectedRows: newRows } = nextProps;
 
-  fetchList = (props) => {
-    const { dispatch, spaceName, initParams } = props;
-
-    const params = {
-      ...initParams
-    };
-
-    dispatch({ type: `${spaceName}/Search`, payload: params });
+    if (Array.isArray(newRows) && (oldRows !== newRows)) this.setState({ selectedRows: newRows });
   }
 
   fecthFormData = (recid) => {
@@ -77,14 +69,15 @@ class Historyscript extends Component {
   }
 
   edit = () => {
-    const { selectedRows } = this.props;
+    const { selectedRows } = this.state;
     const { reportrelationid } = selectedRows[0];
     this.toggleModal('FormModal', 'edit');
     this.fecthFormData(reportrelationid);
   }
 
   del = () => {
-    const { dispatch, spaceName, selectedRows } = this.props;
+    const { dispatch, spaceName } = this.props;
+    const { selectedRows } = this.state;
     const params = selectedRows.map(item => item.reportrelationid);
     this.clearSelect();
     dispatch({ type: `${spaceName}/Del`, payload: params });
@@ -119,7 +112,10 @@ class Historyscript extends Component {
 
   clearSelect = () => {
     const { onSelectRow } = this.props;
-    if (onSelectRow) onSelectRow([]);
+    if (onSelectRow) {
+      onSelectRow([]);
+      return;
+    }
     this.setState({ selectedRows: [] });
   }
 
@@ -133,45 +129,45 @@ class Historyscript extends Component {
     this.toggleModal('HistoryModal', '');
     this.clearSelect();
   }
-  
-  diffCurrent = () => {
-    const { visibleCodeMerge } = this.state;
-    this.setState({ visibleCodeMerge: !visibleCodeMerge });
-  }
 
   showDetail = (record) => {
-    const { detailapi } = this.props;
     const { fetchDataLoading } = this.state;
 
     this.setState({ detailData: [], fetchDataLoading: { ...fetchDataLoading, FormModal: true } });
     this.toggleModal('FormModal');
-    dynamicRequest(detailapi, { id: record.id }).then(res => {
+    dynamicRequest('api/entitypro/getucodedetail', { id: record.id }).then(res => {
       const { data } = res;
       this.setState({ 
         detailData: Array.isArray(data) ? data : [],
         fetchDataLoading: { ...fetchDataLoading, FormModal: false }
       });
-    }).catch(e => console.error(e.message));
+    }).catch(e => {
+      console.error(e.message);
+      message.error(e.message);
+    });
   }
 
   render() {
     const { 
       width = 550, initParams, onSelectRow, spaceName,
-      title, value, orig, list,
-      showModals, dispatch, rowKey = 'recid'
+      title, value = '', orig = '', list, showModals, dispatch
     } = this.props;
 
-    const { detailData, selectedRows, columns, confirmLoading, fetchDataLoading, visibleCodeMerge } = this.state;
+    const { selectedRows, detailData, columns, confirmLoading, fetchDataLoading } = this.state;
 
     const len = selectedRows.length;
+    const flag = [
+      len === 2 ? selectedRows[0].username : '',
+      len === 2 ? selectedRows[1].username : ''
+    ];
 
     return (
       <Page title="脚本历史纪录">
         <Toolbar
           selectedCount={len}
           actions={[
-            { label: '与当前对比', single: true, handler: this.diffCurrent, show: () => (value || orig) },
-            { label: '对比', handler: this.diffCurrent, show: () => (len === 2 && (selectedRows[0].newcode || selectedRows[1].newcode)) }
+            { label: '与当前对比', single: true, handler: () => this.toggleModal('CodeMerge'), show: () => (value || orig) },
+            { label: '对比', handler: () => this.toggleModal('CodeMerge'), show: () => (len === 2 && (selectedRows[0].newcode || selectedRows[1].newcode)) }
           ]}
         >
           <Toolbar.Right>
@@ -181,7 +177,7 @@ class Historyscript extends Component {
 
         <ConfigTable
           pwidth={width}
-          rowKey={rowKey}
+          rowKey="id"
           rowSelect
           spacename={spaceName}
           onSeach={this.onSeach}
@@ -198,9 +194,8 @@ class Historyscript extends Component {
           spacename={spaceName}
           dispatch={dispatch}
           list={formConfig}
-          api="api/ReportRelation/addreportreldetail"
           selectedRows={detailData}
-          visible={showModals && showModals.FormModal}
+          visible={showModals.FormModal}
           onChange={this.handleSelectRecords}
           cancel={() => this.toggleModal('FormModal', '')}
           fetchDataLoading={fetchDataLoading.FormModal}
@@ -216,15 +211,16 @@ class Historyscript extends Component {
           confirmLoading={confirmLoading.FilterModal}
         />
         {
-          visibleCodeMerge ? (
+          showModals.CodeMerge ? (
             <CodeMerge
               len={len}
               options={{
                 value: len === 2 ? selectedRows[0].newcode : value,
-                orig: len === 2 ? selectedRows[1].newcode : orig
+                origRight: len === 2 ? selectedRows[1].newcode : orig
               }}
-              visible={visibleCodeMerge}
-              cancel={this.diffCurrent}
+              flag={flag}
+              visible={showModals.CodeMerge}
+              cancel={() => this.toggleModal('CodeMerge', '')}
               // onChange={onChange.bind(null, name)}
             />
           ) : null
@@ -235,7 +231,7 @@ class Historyscript extends Component {
 }
 
 export default connect(
-  state => state[SPACENAME],
+  state => ({ ...state[SPACENAME], spaceName: SPACENAME }),
   dispatch => ({
     onInit(params) {
       dispatch({ type: `${SPACENAME}/Init`, payload: params });
@@ -251,12 +247,6 @@ export default connect(
     },
     onSelectRow(selectedRows) {
       dispatch({ type: `${SPACENAME}/putState`, payload: { selectedRows } });
-    },
-    onImport() {
-      dispatch({
-        type: 'task/impModals',
-        payload: { templateType: 1, templateKey: '' }
-      });
     },
     dispatch
   })

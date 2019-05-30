@@ -45,8 +45,8 @@ class CodeMerge extends Component {
       options: {
         value: '',
         origLeft: null,
-        origRight: true,
-        orig: 'test',
+        origRight: 'text',
+        orig: 'text',
         lineNumbers: true,
         mode: 'javascript',
         highlightDifferences: true,
@@ -164,14 +164,12 @@ class CodeMerge extends Component {
   }
 
   formBeforeAddEditForm = () => {
-    const { len } = this.props;
+    const { len, flag } = this.props;
     const { collapseIdentical, connect } = this.state;
     return (
       <div className={styles.before}>
-        <div style={{ width: `calc(50% + ${30}px)`, fontWeight: 600 }}>{len === 2 ? 'select one' : '当前内容'}</div>
-        <div style={{ width: `calc(50% - ${30}px)`, fontWeight: 600 }}>{len === 2 ? 'select tow' : '原有内容'}</div>
-        {/* <Button onClick={() => this.setOption('collapseIdentical', !collapseIdentical)}>collapse</Button>
-        <Button onClick={() => this.setOption('connect', connect ? null : 'align')}>connect</Button> */}
+        <div style={{ width: `calc(50% + ${30}px)`, fontWeight: 600 }}>{len === 2 ? (flag ? flag[0] : 'select one') : '当前内容'}</div>
+        <div style={{ width: `calc(50% - ${30}px)`, fontWeight: 600 }}>{len === 2 ? (flag ? flag[1] : 'select tow') : '原有内容'}</div>
       </div>
     );
   }
@@ -192,7 +190,7 @@ class CodeMerge extends Component {
       <Modal
         title={title}
         width={width}
-        visible={visible}
+        visible={!!visible}
         onOk={this.handleOk}
         onCancel={this.handleCancel}
       >
