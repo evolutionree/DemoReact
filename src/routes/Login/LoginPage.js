@@ -53,7 +53,7 @@ function LoginPage({ login, pending, authCompany, rememberedPwd, loginError, mod
       </div>
       <div className={styles.footer}>
         <p>
-          <span style={{ marginRight: '20px' }}>版权所有：广州仁千信息科技有限公司</span>
+          <span style={{ marginRight: '20px' }}>版权所有：广州市玄武无线科技股份有限公司</span>
           <a style={{ color: '#fff', textDecoration: 'underline' }} target="_blank"
              href="http://www.miitbeian.gov.cn">备案号：粤ICP备17055080号</a>
           <span style={{ marginLeft: '20px' }}>授权：{authCompany}</span>
