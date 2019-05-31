@@ -5,10 +5,10 @@ import { setSessionItem, getCacheData } from '../utils/newStorage';
 
 function getScriptServerKey(scriptName) {
   const serverNameMap = {
-    addScript: 'newload',
-    editScript: 'editload',
-    viewScript: 'checkload',
-    copyScript: 'copyload'
+    EntityAddNew: 'newload',
+    EntityEdit: 'editload',
+    EntityView: 'checkload',
+    EntityCopyNew: 'copyload'
   };
   return serverNameMap[scriptName] || '';
 }
@@ -18,27 +18,29 @@ const NAMESPACE = 'entityScripts';
 export default {
   namespace: NAMESPACE,
   state: {
-    addScript: {
+    entityId: '',
+    EntityAddNew: {
       title: '新增JS',
-      name: 'addScript',
+      name: 'EntityAddNew',
       content: '',
       editingContent: '',
       editing: false
     },
-    editScript: {
+    EntityEdit: {
       title: '编辑装载',
-      name: 'editScript'
+      name: 'EntityEdit'
     },
-    viewScript: {
+    EntityView: {
       title: '查看装载',
-      name: 'viewScript'
+      name: 'EntityView'
     },
-    copyScript: {
+    EntityCopyNew: {
       title: '复制新增装载',
-      name: 'copyScript'
+      name: 'EntityCopyNew'
     },
-    showingScript: 'addScript',
+    showingScript: 'EntityAddNew',
     fetchDataLoading: {
+      HistoryModal: false,
       FilterModal: false
     },
     showModals: {
@@ -51,7 +53,8 @@ export default {
       pageSize: 10000,
       searchOrder: '',
       columnFilter: null, //字段查询
-      codetype: 'EntityAddNew'
+      codetype: 'EntityAddNew',
+      recid: ''
     },
     historyList: []
   },
@@ -85,10 +88,10 @@ export default {
         yield put({
           type: 'queryScriptsSuccess',
           payload: {
-            addScript: entityproinfo[0].newload,
-            editScript: entityproinfo[0].editload,
-            viewScript: entityproinfo[0].checkload,
-            copyScript: entityproinfo[0].copyload
+            EntityAddNew: entityproinfo[0].newload,
+            EntityEdit: entityproinfo[0].editload,
+            EntityView: entityproinfo[0].checkload,
+            EntityCopyNew: entityproinfo[0].copyload
           }
         });
       } catch (e) {
@@ -96,14 +99,14 @@ export default {
       }
     },
     *saveScript({ payload: scriptName }, { call, select, put }) {
-      const { entityId, addScript, editScript, viewScript, copyScript } = yield select(state => state[NAMESPACE]);
+      const { entityId, EntityAddNew, EntityEdit, EntityView, EntityCopyNew } = yield select(state => state[NAMESPACE]);
       try {
         const params = {
           entityid: entityId,
-          newload: addScript.editingContent || '',
-          editload: editScript.editingContent || '',
-          checkload: viewScript.editingContent || '',
-          copyload: copyScript.editingContent || ''
+          newload: EntityAddNew.editingContent || '',
+          editload: EntityEdit.editingContent || '',
+          checkload: EntityView.editingContent || '',
+          copyload: EntityCopyNew.editingContent || ''
         };
         if (scriptName) {
           const { editingContent } = yield select(state => state[NAMESPACE][scriptName]);
@@ -126,14 +129,28 @@ export default {
       yield put({ type: 'QueryList' });
     },
     *QueryList({ payload }, { select, put, call }) {
-      const { initParams } = yield select(state => state[NAMESPACE]);
+      const { initParams, fetchDataLoading } = yield select(state => state[NAMESPACE]);
       const params = { ...(payload || initParams) };
+
+      yield put({ 
+        type: 'putState', 
+        payload: { fetchDataLoading: { ...fetchDataLoading, HistoryModal: true } } 
+      });
 
       try {
         const { data } = yield call(getucodelist, params);
         const historyList = data || [];
         yield put({ type: 'putState', payload: { historyList } });
+
+        yield put({ 
+          type: 'putState',
+          payload: { fetchDataLoading: { ...fetchDataLoading, HistoryModal: false } } 
+        });
       } catch (e) {
+        yield put({ 
+          type: 'putState', 
+          payload: { fetchDataLoading: { ...fetchDataLoading, HistoryModal: false } } 
+        });
         message.error(e.message || '获取列表失败');
       }
     }
@@ -174,7 +191,7 @@ export default {
         ...data
       };
     },
-    editScript(state, { payload: scriptName }) {
+    EntityEdit(state, { payload: scriptName }) {
       return {
         ...state,
         [scriptName]: {
@@ -210,26 +227,26 @@ export default {
     },
     resetState() {
       return {
-        addScript: {
+        EntityAddNew: {
           title: '新增JS',
-          name: 'addScript',
+          name: 'EntityAddNew',
           content: '',
           editingContent: '',
           editing: false
         },
-        editScript: {
+        EntityEdit: {
           title: '编辑装载',
-          name: 'editScript'
+          name: 'EntityEdit'
         },
-        viewScript: {
+        EntityView: {
           title: '查看装载',
-          name: 'viewScript'
+          name: 'EntityView'
         },
-        copyScript: {
+        EntityCopyNew: {
           title: '复制新增装载',
-          name: 'copyScript'
+          name: 'EntityCopyNew'
         },
-        showingScript: 'addScript'
+        showingScript: 'EntityAddNew'
       };
     }
   }

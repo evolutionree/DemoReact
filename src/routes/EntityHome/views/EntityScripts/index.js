@@ -25,10 +25,11 @@ const SPACENAME = 'entityScripts';
 // };
 
 function EntityScripts({
-  addScript,
-  editScript,
-  viewScript,
-  copyScript,
+  entityId,
+  EntityAddNew,
+  EntityEdit,
+  EntityView,
+  EntityCopyNew,
   showingScript,
   toggleShowing,
   onChange,
@@ -39,9 +40,10 @@ function EntityScripts({
   onClear,
   showModals,
   initParams,
-  historyList
+  historyList,
+  fetchDataLoading
 }) {
-  const allScripts = [addScript, editScript, viewScript, copyScript];
+  const allScripts = [EntityAddNew, EntityEdit, EntityView, EntityCopyNew];
   const scriptItem = _.find(allScripts, ['name', showingScript]);
   const { title, name, content, editingContent, editing } = scriptItem;
 
@@ -91,6 +93,7 @@ function EntityScripts({
           title={title}
           keyname={showingScript}
           rowKey="id"
+          recid={entityId}
           value={editingContent}
           orig={content}
           spaceName={SPACENAME}
@@ -101,6 +104,7 @@ function EntityScripts({
           initParams={initParams}
           historyList={historyList}
           WrapComponent={HistoryModal}
+          listLoading={fetchDataLoading.HistoryModal}
         />
       </Row>
     </div>
@@ -121,7 +125,7 @@ export default connect(
         dispatch({ type: `${SPACENAME}/showHistoryModal`, payload: scriptName });
       },
       onEdit(scriptName) {
-        dispatch({ type: `${SPACENAME}/editScript`, payload: scriptName });
+        dispatch({ type: `${SPACENAME}/EntityEdit`, payload: scriptName });
       },
       onSave() {
         dispatch({ type: `${SPACENAME}/saveScript` });

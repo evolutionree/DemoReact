@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { routerRedux } from 'dva/router';
-import { Modal, Button } from 'antd';
+import { Modal, Button, Spin } from 'antd';
 import * as _ from 'lodash';
 import Toolbar from '../../Toolbar';
 import ConfigTable from '../../ConfigTable';
@@ -11,10 +11,10 @@ import formConfig from './formConfig';
 import { dynamicRequest } from '../../../services/common';
 
 const _info = {
-  addScript: 'EntityAddNew',
-  editScript: 'EntityView',
-  viewScript: 'EntityEdit',
-  copyScript: 'EntityCopyNew',
+  EntityAddNew: 'EntityAddNew',
+  EntityEdit: 'EntityEdit',
+  EntityView: 'EntityView',
+  EntityCopyNew: 'EntityCopyNew',
   EntityFieldChange: 'EntityFieldChange',
   EntityFieldFilter: 'EntityFieldFilter'
 };
@@ -35,9 +35,9 @@ class HistoryModal extends Component {
       { title: '变更流水号', key: 'reccode', width: 140, sorter: true, render: (text, record) => <a href="javascript:;" onClick={() => this.showDetail(record)}>{text || '(空)'}</a> },
       { title: '变更人', key: 'username', width: 120, sorter: true },
       { title: '变更日期', key: 'commitdate', width: 150, sorter: true },
-      { title: '变更长度前后对比', key: 'lenoldcode', width: 170, sorter: true, render: (text, record) => (`${text} : ${record.lennewcode}`) },
+      { title: '变更前后长度对比', key: 'lenoldcode', width: 170, sorter: true, render: (text, record) => (`${text} : ${record.lennewcode}`) },
       { title: '备注人', key: 'commitusername', width: 120, sorter: true },
-      { title: '备注时间', key: 'commitremarkdate', width: 150, sorter: true },
+      { title: '备注日期', key: 'commitremarkdate', width: 150, sorter: true },
       { title: '变更备注', key: 'commitremark', width: 150, sorter: true }
     ]
   }
@@ -54,11 +54,12 @@ class HistoryModal extends Component {
   }
 
   fetchList = (props) => {
-    const { dispatch, spaceName, keyname, initParams } = props;
+    const { dispatch, spaceName, keyname, initParams, recid } = props;
 
     const params = {
       ...initParams,
-      codetype: _info[keyname] || ''
+      codetype: _info[keyname] || '',
+      recid
     };
 
     dispatch({ type: `${spaceName}/Search`, payload: params });
@@ -108,35 +109,19 @@ class HistoryModal extends Component {
     this.setState({ keyWord: val });
   }
 
-  onHandleSearch = val => {
-    const { initParams } = this.props;
-    const params = {
-      ...initParams,
-      columnFilter: {
-        ...initParams.columnFilter,
-        reportrelationname: val
-      }
-    };
-    this.onSeach(params);
-  }
-
   onSeach = (params) => {
     const { dispatch, spaceName } = this.props;
     dispatch({ type: `${spaceName}/Search`, payload: params });
-  }
-
-  jump = (text, record) => {
-    const { dispatch, spaceName } = this.props;
-    dispatch(routerRedux.push({ pathname: `/${spaceName}detail/${record.reportrelationid}` }));
-    sessionStorage.setItem('reportrelationdetailtitle', text);
-    sessionStorage.setItem('reportrelationid', record.reportrelationid);
   }
 
   onSelectRow = (selectedRows) => this.setState({ selectedRows });
 
   clearSelect = () => {
     const { onSelectRow } = this.props;
-    if (onSelectRow) onSelectRow([]);
+    if (onSelectRow) {
+      onSelectRow([]);
+      return;
+    }
     this.setState({ selectedRows: [] });
   }
 
@@ -174,18 +159,22 @@ class HistoryModal extends Component {
   render() {
     const { 
       width = 550, initParams, onSelectRow, spaceName, keyname,
-      title, value, orig, historyList,
+      title, value = '', historyList, listLoading,
       showModals, dispatch, rowKey = 'recid'
     } = this.props;
 
     const { detailData, selectedRows, columns, confirmLoading, fetchDataLoading, visibleCodeMerge } = this.state;
 
     const len = selectedRows.length;
+    const flag = [
+      len === 2 ? `${selectedRows[0].username} 于 ${selectedRows[0].commitdate} 修改为：` : '',
+      len === 2 ? `${selectedRows[1].username} 于 ${selectedRows[1].commitdate} 修改为：` : ''
+    ];
     const list = Array.isArray(historyList) ? historyList.filter(item => item.codetype === _info[keyname]) : [];
 
     return (
       <Modal
-        title={`${title}历史纪录`}
+        title={`[${title}] 历史纪录`}
         width={width}
         visible={!!(showModals && showModals.HistoryModal)}
         onOk={this.handleOk}
@@ -194,7 +183,7 @@ class HistoryModal extends Component {
         <Toolbar
           selectedCount={len}
           actions={[
-            { label: '与当前对比', single: true, handler: this.diffCurrent, show: () => (value || orig) },
+            { label: '与当前对比', single: true, handler: this.diffCurrent, show: () => value },
             { label: '对比', handler: this.diffCurrent, show: () => (len === 2 && (selectedRows[0].newcode || selectedRows[1].newcode)) }
           ]}
         >
@@ -205,19 +194,20 @@ class HistoryModal extends Component {
             {<Button onClick={() => this.toggleModal('FilterModal')}>过滤</Button>}
           </Toolbar.Right>
         </Toolbar>
-
-        <ConfigTable
-          pwidth={width}
-          rowKey={rowKey}
-          rowSelect
-          spacename={spaceName}
-          onSeach={this.onSeach}
-          initParams={initParams}
-          dataSource={list}
-          selectedRows={selectedRows}
-          CBSelectRow={data => (onSelectRow ? onSelectRow(data) : this.onSelectRow(data))}
-          columns={columns}
-        />
+        <Spin spinning={listLoading}>
+          <ConfigTable
+            pwidth={width}
+            rowKey={rowKey}
+            rowSelect
+            spacename={spaceName}
+            onSeach={this.onSeach}
+            initParams={initParams}
+            dataSource={list}
+            selectedRows={selectedRows}
+            CBSelectRow={data => (onSelectRow ? onSelectRow(data) : this.onSelectRow(data))}
+            columns={columns}
+          />
+        </Spin>
         <FormModal
           title={`${title}详情`}
           mode="normal"
@@ -225,7 +215,7 @@ class HistoryModal extends Component {
           spacename={spaceName}
           dispatch={dispatch}
           list={formConfig}
-          api="api/ReportRelation/addreportreldetail"
+          api="api/entitypro/updateglobaljshistoryremark"
           selectedRows={detailData}
           visible={showModals && showModals.FormModal}
           onChange={this.handleSelectRecords}
@@ -248,8 +238,9 @@ class HistoryModal extends Component {
               len={len}
               options={{
                 value: len === 2 ? selectedRows[0].newcode : value,
-                origRight: len === 2 ? selectedRows[1].newcode : orig
+                origRight: len === 2 ? selectedRows[1].newcode : selectedRows[0].newcode
               }}
+              flag={flag}
               visible={visibleCodeMerge}
               cancel={this.diffCurrent}
               // onChange={onChange.bind(null, name)}

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Button, message } from 'antd';
+import { Button, message, Spin } from 'antd';
 import { dynamicRequest } from '../../../services/common';
 import Page from '../../../components/Page';
 import Toolbar from '../../../components/Toolbar';
@@ -27,9 +27,9 @@ class Historyscript extends Component {
       { title: '变更流水号', key: 'reccode', width: 140, sorter: true, render: (text, record) => <a href="javascript:;" onClick={() => this.showDetail(record)}>{text || '(空)'}</a> },
       { title: '变更人', key: 'username', width: 120, sorter: true },
       { title: '变更日期', key: 'commitdate', width: 150, sorter: true },
-      { title: '变更长度前后对比', key: 'lenoldcode', width: 170, sorter: true, render: (text, record) => (`${text} : ${record.lennewcode}`) },
+      { title: '变更前后长度对比', key: 'lenoldcode', width: 170, sorter: true, render: (text, record) => (`${text} : ${record.lennewcode}`) },
       { title: '备注人', key: 'commitusername', width: 120, sorter: true },
-      { title: '备注时间', key: 'commitremarkdate', width: 150, sorter: true },
+      { title: '备注日期', key: 'commitremarkdate', width: 150, sorter: true },
       { title: '变更备注', key: 'commitremark', width: 150, sorter: true }
     ]
   }
@@ -91,18 +91,6 @@ class Historyscript extends Component {
     this.setState({ keyWord: val });
   }
 
-  onHandleSearch = val => {
-    const { initParams } = this.props;
-    const params = {
-      ...initParams,
-      columnFilter: {
-        ...initParams.columnFilter,
-        reportrelationname: val
-      }
-    };
-    this.onSeach(params);
-  }
-
   onSeach = (params) => {
     const { dispatch, spaceName } = this.props;
     dispatch({ type: `${spaceName}/Search`, payload: params });
@@ -150,15 +138,15 @@ class Historyscript extends Component {
   render() {
     const { 
       width = 550, initParams, onSelectRow, spaceName,
-      title, value = '', orig = '', list, showModals, dispatch
+      value = '', list, showModals, dispatch
     } = this.props;
 
     const { selectedRows, detailData, columns, confirmLoading, fetchDataLoading } = this.state;
 
     const len = selectedRows.length;
     const flag = [
-      len === 2 ? selectedRows[0].username : '',
-      len === 2 ? selectedRows[1].username : ''
+      len === 2 ? `${selectedRows[0].username} 于 ${selectedRows[0].commitdate} 修改为：` : '',
+      len === 2 ? `${selectedRows[1].username} 于 ${selectedRows[1].commitdate} 修改为：` : ''
     ];
 
     return (
@@ -166,7 +154,7 @@ class Historyscript extends Component {
         <Toolbar
           selectedCount={len}
           actions={[
-            { label: '与当前对比', single: true, handler: () => this.toggleModal('CodeMerge'), show: () => (value || orig) },
+            { label: '与当前对比', single: true, handler: () => this.toggleModal('CodeMerge'), show: () => value },
             { label: '对比', handler: () => this.toggleModal('CodeMerge'), show: () => (len === 2 && (selectedRows[0].newcode || selectedRows[1].newcode)) }
           ]}
         >
@@ -174,7 +162,6 @@ class Historyscript extends Component {
             {<Button onClick={() => this.toggleModal('FilterModal')}>过滤</Button>}
           </Toolbar.Right>
         </Toolbar>
-
         <ConfigTable
           pwidth={width}
           rowKey="id"
@@ -188,12 +175,13 @@ class Historyscript extends Component {
           columns={columns}
         />
         <FormModal
-          title={`${title}详情`}
+          title="历史纪录详情"
           mode="normal"
           width="85%"
           spacename={spaceName}
           dispatch={dispatch}
           list={formConfig}
+          api=""
           selectedRows={detailData}
           visible={showModals.FormModal}
           onChange={this.handleSelectRecords}
@@ -216,7 +204,7 @@ class Historyscript extends Component {
               len={len}
               options={{
                 value: len === 2 ? selectedRows[0].newcode : value,
-                origRight: len === 2 ? selectedRows[1].newcode : orig
+                origRight: len === 2 ? selectedRows[1].newcode : selectedRows[0].newcode
               }}
               flag={flag}
               visible={showModals.CodeMerge}

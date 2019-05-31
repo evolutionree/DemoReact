@@ -46,13 +46,14 @@ class ExpandJSModal extends Component {
 
   render() {
     const { 
-      expandJSType, visible, onCancel, modalPending,
-      initParams, showModals, historyList, toggleHistory
+      expandJSType, visible, onCancel, modalPending, editingRecord,
+      initParams, showModals, historyList, toggleHistory, fetchDataLoading
     } = this.props;
 
-    const title = '6666';
-    const value = '6666';
-    const orig = '6666';
+    const { expandJS } = this.state;
+
+    const title = editingRecord ? editingRecord.fieldlabel : '(空)';
+    const origRight = editingRecord ? (expandJSType ? editingRecord.filterJS : editingRecord.expandJS) : '';
     const allScripts = [];
 
     return (
@@ -71,16 +72,17 @@ class ExpandJSModal extends Component {
         ]}
       >
         <CodeEditor
-          value={this.state.expandJS}
+          value={expandJS}
           onChange={this.onExpandJSChange}
         />
         {
-          showModals.HistoryModal ? <DynamicLoadModal
+          showModals && showModals.HistoryModal ? <DynamicLoadModal
             width={1120}
             title={title}
-            value={value}
-            orig={orig}
+            value={expandJS}
+            origRight={origRight}
             rowKey="id"
+            recid={editingRecord.fieldId}
             keyname={visible === 'filter' ? 'EntityFieldFilter' : 'EntityFieldChange'}
             spaceName={SPACENAME}
             historyList={historyList}
@@ -88,7 +90,8 @@ class ExpandJSModal extends Component {
             allScripts={allScripts}
             detailapi="api/entitypro/getucodedetail"
             initParams={initParams}
-            visible={showModals.HistoryModal}
+            visible={showModals && showModals.HistoryModal}
+            listLoading={fetchDataLoading && fetchDataLoading.HistoryModal}
             WrapComponent={HistoryModal}
           /> : null
         }

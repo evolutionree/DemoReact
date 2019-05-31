@@ -25,8 +25,8 @@ class FormModal extends PureComponent {
       if (onOk) onOk(values);
       if (api || fetch) {
         const url = api || (isEdit ? fetch.edit : fetch.add);
-        const reportrelationid = isEdit ? selectedRows[0].reportrelationid : null;
-        const params = { ...values, reportrelationid };
+        const id = selectedRows[0].id || null;
+        const params = { commitremark: values.commitremark, id };
 
         dynamicRequest(url, params)
           .then(res => {
@@ -64,7 +64,7 @@ class FormModal extends PureComponent {
   formNode = (record) => {
     return {
       TextArea1: <TextArea autosize={record.autosize || false} placeholder={record.placeholder || `请输入${record.label}`} />,
-      TextArea2: <TextArea autosize={record.autosize || false} placeholder={record.placeholder || `请输入${record.label}`} />
+      TextArea2: <TextArea disabled autosize={record.autosize || false} placeholder={record.placeholder || ''} />
     };
   }
 
@@ -86,6 +86,7 @@ class FormModal extends PureComponent {
         title={resultTitle()}
         width={width}
         visible={!!(isNormal ? visible : /edit|add/.test(visible))}
+        okText="保存"
         onOk={this.handleSubmit}
         onCancel={this.handleCancel}
         confirmLoading={confirmLoading}
@@ -102,7 +103,7 @@ class FormModal extends PureComponent {
                       <FormItem label={item.label} formItemLayout={item.formItemLayout}>
                         {getFieldDecorator(item.fieldname, {
                           initialValue: item.initialValue || '',
-                          rules: item.rules || [{ required: item.required || true, message: item.message || `缺少${item.label}` }]
+                          rules: item.rules || [{ required: item.required || false, message: item.message || `缺少${item.label}` }]
                         })(this.formNode(item)[item.type])}
                       </FormItem>
                     </Col>

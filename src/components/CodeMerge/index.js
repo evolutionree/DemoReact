@@ -168,8 +168,8 @@ class CodeMerge extends Component {
     const { collapseIdentical, connect } = this.state;
     return (
       <div className={styles.before}>
-        <div style={{ width: `calc(50% + ${30}px)`, fontWeight: 600 }}>{len === 2 ? (flag ? flag[0] : 'select one') : '当前内容'}</div>
-        <div style={{ width: `calc(50% - ${30}px)`, fontWeight: 600 }}>{len === 2 ? (flag ? flag[1] : 'select tow') : '原有内容'}</div>
+        <div style={{ width: `calc(50% + ${30}px)`, fontWeight: 600 }}>{len === 2 ? (flag ? flag[0] : 'select one') : '当前编辑内容'}</div>
+        <div style={{ width: `calc(50% - ${30}px)`, fontWeight: 600 }}>{len === 2 ? (flag ? flag[1] : 'select tow') : '所选记录内容'}</div>
       </div>
     );
   }

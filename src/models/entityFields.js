@@ -41,12 +41,16 @@ export default {
       HistoryModal: '',
       FilterModal: ''
     },
+    fetchDataLoading: {
+      HistoryModal: false
+    },
     initParams: {
       pageIndex: 1,
       pageSize: 10000,
       searchOrder: '',
       columnFilter: null, //字段查询
-      codetype: 'EntityFieldChange'
+      codetype: 'EntityFieldChange',
+      recid: ''
     },
     historyList: []
   },
@@ -230,14 +234,28 @@ export default {
       yield put({ type: 'QueryList' });
     },
     *QueryList({ payload }, { select, put, call }) {
-      const { initParams } = yield select(state => state[NAMESPACE]);
+      const { initParams, fetchDataLoading } = yield select(state => state[NAMESPACE]);
       const params = { ...(payload || initParams) };
+
+      yield put({ 
+        type: 'putState', 
+        payload: { fetchDataLoading: { ...fetchDataLoading, HistoryModal: true } } 
+      });
 
       try {
         const { data } = yield call(getucodelist, params);
         const historyList = Array.isArray(data) ? data : [];
         yield put({ type: 'putState', payload: { historyList } });
+
+        yield put({ 
+          type: 'putState', 
+          payload: { fetchDataLoading: { ...fetchDataLoading, HistoryModal: false } } 
+        });
       } catch (e) {
+        yield put({ 
+          type: 'putState', 
+          payload: { fetchDataLoading: { ...fetchDataLoading, HistoryModal: false } } 
+        });
         message.error(e.message || '获取列表失败');
       }
     }
@@ -287,7 +305,8 @@ export default {
         fieldConfig: record.fieldconfig,
         fieldType: record.fieldtype,
         expandJS: record.expandjs,
-        filterJS: record.filterjs
+        filterJS: record.filterjs,
+        fieldlabel: record.fieldlabel
       };
 
       return {
@@ -307,7 +326,8 @@ export default {
         fieldConfig: record.fieldconfig,
         fieldType: record.fieldtype,
         expandJS: record.expandjs,
-        filterJS: record.filterjs
+        filterJS: record.filterjs,
+        fieldlabel: record.fieldlabel
       };
 
       return {

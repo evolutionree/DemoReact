@@ -16,9 +16,10 @@ export default class FilterModal extends Component {
 
   constructor(props) {
     super(props);
+    const columnFilter = props.initParams ? props.initParams.columnFilter : null;
     this.state = {
       selectValueList: [],
-      columnFilter: props.initParams.columnFilter,
+      columnFilter,
       loading: false
     };
 

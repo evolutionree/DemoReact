@@ -62,6 +62,18 @@ class FormModal extends PureComponent {
     );
   }
 
+  afterNode = () => {
+    const { selectedRows } = this.props;
+    const record = Array.isArray(selectedRows) && selectedRows.length ? selectedRows[0] : {};
+
+    return (
+      <div className={styles.after}>
+        <span>日志人：{record.username || '(空)'}</span>
+        <span>日志时间：{record.commitdate || '(空)'}</span>
+      </div>
+    );
+  }
+
   formNode = (record) => {
     return {
       TextArea1: <TextArea autosize={record.autosize || false} placeholder={record.placeholder || `请输入${record.label}`} />,
@@ -70,7 +82,7 @@ class FormModal extends PureComponent {
   }
 
   render() {
-    const { width = 550, mode = 'double', form, visible, title, confirmLoading, fetchDataLoading, justify = 'space-between' } = this.props;
+    const { width = 550, mode = 'double', form, visible, title = '', confirmLoading, fetchDataLoading, justify = 'space-between' } = this.props;
     const { list } = this.state;
     const { getFieldDecorator } = form;
     const isEdit = /^edit$/.test(visible);
@@ -87,6 +99,7 @@ class FormModal extends PureComponent {
         title={resultTitle()}
         width={width}
         visible={!!(isNormal ? visible : /edit|add/.test(visible))}
+        okText="保存"
         onOk={this.handleSubmit}
         onCancel={this.handleCancel}
         confirmLoading={confirmLoading}
@@ -103,7 +116,7 @@ class FormModal extends PureComponent {
                       <FormItem label={item.label} formItemLayout={item.formItemLayout}>
                         {getFieldDecorator(item.fieldname, {
                           initialValue: item.initialValue || '',
-                          rules: item.rules || [{ required: item.required || true, message: item.message || `缺少${item.label}` }]
+                          rules: item.rules || [{ required: item.required || false, message: item.message || `缺少${item.label}` }]
                         })(this.formNode(item)[item.type])}
                       </FormItem>
                     </Col>
@@ -112,6 +125,7 @@ class FormModal extends PureComponent {
               }
             </Row>
           </Form>
+          {this.afterNode()}
         </Spin>
       </Modal>
     );

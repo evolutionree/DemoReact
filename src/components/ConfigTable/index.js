@@ -49,7 +49,10 @@ class ConfigTable extends Component {
   }
 
   importTableParmas() {
-    const { initParams: { searchOrder, columnFilter } } = this.props;
+    const { initParams } = this.props;
+    const searchOrder = initParams ? initParams.searchOrder : '';
+    const columnFilter = initParams ? initParams.columnFilter : null;
+
     const { FilterVisibles } = this.state;
     const toggleFilter = this.toggleFilter;
     const onFilter = this.onFilter;

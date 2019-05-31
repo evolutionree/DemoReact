@@ -1178,3 +1178,14 @@ export async function getucodedetail(params) {
     body: JSON.stringify(params)
   });
 }
+
+// {
+//   "id":"9b170d66-3d16-4ca1-8d08-f3a414a5e272",
+//   "CommitRemark":"12312312"
+// }
+export async function updateglobaljshistoryremark(params) {
+  return request('api/entitypro/updateglobaljshistoryremark', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}
