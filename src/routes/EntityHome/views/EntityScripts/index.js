@@ -1,28 +1,15 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Row, Col, Button, Menu } from 'antd';
+import { Row, Col, Button, Menu, Input } from 'antd';
 import * as _ from 'lodash';
 import CodeEditor from '../../../../components/CodeEditor';
 import DynamicLoadModal from '../../../../components/Modal/DynamicLoadModal';
 import HistoryModal from '../../../../components/Modal/HistoryModal';
 import styles from './EntityScripts.less';
 
-const SPACENAME = 'entityScripts';
+const TextArea = Input.TextArea;
 
-// const ScriptItem = ({ title, content, editingContent, editing, onChange, onClear, onEdit, onCancel }) => {
-//   return (
-//     <div className={styles.scriptItem}>
-//       <div className={styles.scriptTitle}>
-//         {title}
-//       </div>
-//       <div className={styles.scriptContent}>
-//         <CodeEditor
-//           value={editing ? editingContent : content}
-//         />
-//       </div>
-//     </div>
-//   );
-// };
+const SPACENAME = 'entityScripts';
 
 function EntityScripts({
   entityId,
@@ -45,7 +32,7 @@ function EntityScripts({
 }) {
   const allScripts = [EntityAddNew, EntityEdit, EntityView, EntityCopyNew];
   const scriptItem = _.find(allScripts, ['name', showingScript]);
-  const { title, name, content, editingContent, editing } = scriptItem;
+  const { title, name, content, editingContent, remark, editing } = scriptItem;
 
   function selectSideMenu(e) {
     toggleShowing(e.key);
@@ -69,16 +56,14 @@ function EntityScripts({
           </Menu>
         </Col>
         <Col span={20}>
-          {/*<div style={{ textAlign: 'right' }}>*/}
-          {/*<Button onClick={onSave}>保存</Button>*/}
-          {/*</div>*/}
           <div className={styles.rightCol}>
             <CodeEditor
               value={(editing ? editingContent : content) || ''}
-              onChange={onChange.bind(null, name)}
+              onChange={onChange.bind(null, name, 'editingContent')}
               readOnly={!editing}
               style={{ border: '1px solid #ddd', height: '400px' }}
             />
+            <TextArea style={{ marginTop: 8 }} value={remark} onChange={(e) => onChange(name, 'remark', e.target.value)} placeholder="请填写修改备注" />
             <div className={styles.scriptBtnRow} style={{ textAlign: 'right' }}>
               <Button onClick={onShow.bind(null, name)}>历史记录</Button>
               {!editing && <Button onClick={onEdit.bind(null, name)}>编辑</Button>}
@@ -101,10 +86,11 @@ function EntityScripts({
           showModals={showModals}
           allScripts={allScripts}
           detailapi="api/entitypro/getucodedetail"
+          onChange={onChange.bind(null, name, 'editingContent')}
           initParams={initParams}
           historyList={historyList}
           WrapComponent={HistoryModal}
-          listLoading={fetchDataLoading.HistoryModal}
+          listLoading={fetchDataLoading && fetchDataLoading.HistoryModal}
         />
       </Row>
     </div>
@@ -115,8 +101,8 @@ export default connect(
   state => state[SPACENAME],
   dispatch => {
     return {
-      onChange(scriptName, value) {
-        dispatch({ type: `${SPACENAME}/contentChange`, payload: { scriptName, value } });
+      onChange(scriptName, key, value) {
+        dispatch({ type: `${SPACENAME}/contentChange`, payload: { scriptName, key, value } });
       },
       onCancel(scriptName) {
         dispatch({ type: `${SPACENAME}/cancelEdit`, payload: scriptName });

@@ -1,14 +1,14 @@
 import request from '../../utils/request';
 
-export async function getucodelist(params) {
-  return request('api/entitypro/getucodelist', {
+export async function getpgcodelist(params) {
+  return request('api/entitypro/getpgcodelist', {
     method: 'POST',
     body: JSON.stringify(params)
   });
 }
 
-export async function getucodedetail(params) {
-  return request('api/entitypro/getucodedetail', {
+export async function getpgcodedetail(params) {
+  return request('api/entitypro/getpgcodedetail', {
     method: 'POST',
     body: JSON.stringify(params)
   });

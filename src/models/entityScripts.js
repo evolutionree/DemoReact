@@ -3,42 +3,40 @@ import * as _ from 'lodash';
 import { saveEntityScripts, queryEntityDetail, getucodelist } from '../services/entity';
 import { setSessionItem, getCacheData } from '../utils/newStorage';
 
-function getScriptServerKey(scriptName) {
-  const serverNameMap = {
-    EntityAddNew: 'newload',
-    EntityEdit: 'editload',
-    EntityView: 'checkload',
-    EntityCopyNew: 'copyload'
-  };
-  return serverNameMap[scriptName] || '';
-}
-
 const NAMESPACE = 'entityScripts';
 
 export default {
   namespace: NAMESPACE,
   state: {
     entityId: '',
+    showingScript: 'EntityAddNew',
     EntityAddNew: {
+      type: 1,
       title: '新增JS',
       name: 'EntityAddNew',
       content: '',
       editingContent: '',
+      remark: '',
       editing: false
     },
-    EntityEdit: {
-      title: '编辑装载',
-      name: 'EntityEdit'
-    },
     EntityView: {
+      type: 2,
       title: '查看装载',
-      name: 'EntityView'
+      name: 'EntityView',
+      remark: ''
+    },
+    EntityEdit: {
+      type: 3,
+      title: '编辑装载',
+      name: 'EntityEdit',
+      remark: ''
     },
     EntityCopyNew: {
+      type: 4,
       title: '复制新增装载',
-      name: 'EntityCopyNew'
+      name: 'EntityCopyNew',
+      remark: ''
     },
-    showingScript: 'EntityAddNew',
     fetchDataLoading: {
       HistoryModal: false,
       FilterModal: false
@@ -99,20 +97,24 @@ export default {
       }
     },
     *saveScript({ payload: scriptName }, { call, select, put }) {
-      const { entityId, EntityAddNew, EntityEdit, EntityView, EntityCopyNew } = yield select(state => state[NAMESPACE]);
+      const { showingScript, entityId, EntityAddNew, EntityView, EntityEdit, EntityCopyNew } = yield select(state => state[NAMESPACE]);
+      // const keyname = scriptName || showingScript;
+
+      // const allInfo = { EntityAddNew, EntityView, EntityEdit, EntityCopyNew };
+      // const type = allInfo[keyname].type;
+      // const load = allInfo[keyname].editingContent;
+      // const remark = allInfo[keyname].remark;
+
       try {
         const params = {
           entityid: entityId,
-          newload: EntityAddNew.editingContent || '',
-          editload: EntityEdit.editingContent || '',
-          checkload: EntityView.editingContent || '',
-          copyload: EntityCopyNew.editingContent || ''
+          details: [
+            { type: 1, load: EntityAddNew.editingContent, remark: EntityAddNew.remark },
+            { type: 2, load: EntityView.editingContent, remark: EntityView.remark },
+            { type: 3, load: EntityEdit.editingContent, remark: EntityEdit.remark },
+            { type: 4, load: EntityCopyNew.editingContent, remark: EntityCopyNew.remark }
+          ]
         };
-        if (scriptName) {
-          const { editingContent } = yield select(state => state[NAMESPACE][scriptName]);
-          const serverKey = getScriptServerKey(scriptName);
-          params[serverKey] = editingContent;
-        }
         yield call(saveEntityScripts, params);
         message.success('保存成功');
         yield put({ type: 'queryScripts' });
@@ -210,12 +212,12 @@ export default {
         }
       };
     },
-    contentChange(state, { payload: { scriptName, value } }) {
+    contentChange(state, { payload: { scriptName, key, value } }) {
       return {
         ...state,
         [scriptName]: {
           ...state[scriptName],
-          editingContent: value
+          [key]: value
         }
       };
     },

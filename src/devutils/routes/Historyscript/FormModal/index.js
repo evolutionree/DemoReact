@@ -53,11 +53,9 @@ class FormModal extends PureComponent {
 
     return (
       <div className={styles.before}>
-        <span>函数名称：{record.username || '(空)'}</span>
-        <span>参数名称：{record.commitdate || '(空)'}</span>
-        <span>备注人：{record.commitusername || '(空)'}</span>
-        <span>变更时间：{record.commitremarkdate || '(空)'}</span>
-        <span>变更类型：{record.commitremarkdate || '(空)'}</span>
+        <span>备注人：{record.marker || '(空)'}</span>
+        <span>变更时间：{record.marktime || '(空)'}</span>
+        <span>变更类型：{record.changetype || '(空)'}</span>
       </div>
     );
   }
@@ -68,16 +66,17 @@ class FormModal extends PureComponent {
 
     return (
       <div className={styles.after}>
-        <span>日志人：{record.username || '(空)'}</span>
-        <span>日志时间：{record.commitdate || '(空)'}</span>
+        {/* <span>日志人：{record.username || '(空)'}</span>
+        <span>日志时间：{record.commitdate || '(空)'}</span> */}
       </div>
     );
   }
 
   formNode = (record) => {
     return {
+      Input: <Input disabled />,
       TextArea1: <TextArea autosize={record.autosize || false} placeholder={record.placeholder || `请输入${record.label}`} />,
-      TextArea2: <TextArea disabled autosize={record.autosize || false} placeholder={record.placeholder || `请输入${record.label}`} />
+      TextArea2: <TextArea disabled autosize={record.autosize || false} placeholder={record.placeholder || '(空)'} />
     };
   }
 
@@ -113,7 +112,7 @@ class FormModal extends PureComponent {
                   list.map((item, index) => (
                     this.formNode(item)[item.type] &&
                     <Col key={index} span={item.span || 24}>
-                      <FormItem label={item.label} formItemLayout={item.formItemLayout}>
+                      <FormItem label={item.label} {...item.formItemLayout}>
                         {getFieldDecorator(item.fieldname, {
                           initialValue: item.initialValue || '',
                           rules: item.rules || [{ required: item.required || false, message: item.message || `缺少${item.label}` }]

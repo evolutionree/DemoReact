@@ -25,12 +25,14 @@ class Historyscript extends Component {
     },
     columns: [
       { title: '变更流水号', key: 'reccode', width: 140, sorter: true, render: (text, record) => <a href="javascript:;" onClick={() => this.showDetail(record)}>{text || '(空)'}</a> },
-      { title: '变更人', key: 'username', width: 120, sorter: true },
-      { title: '变更日期', key: 'commitdate', width: 150, sorter: true },
-      { title: '变更前后长度对比', key: 'lenoldcode', width: 170, sorter: true, render: (text, record) => (`${text} : ${record.lennewcode}`) },
-      { title: '备注人', key: 'commitusername', width: 120, sorter: true },
-      { title: '备注日期', key: 'commitremarkdate', width: 150, sorter: true },
-      { title: '变更备注', key: 'commitremark', width: 150, sorter: true }
+      { title: '用户', key: 'marker', width: 120, sorter: true },
+      { title: '变更日期', key: 'marktime', width: 150, sorter: true },
+      { title: '变更前后长度对比', key: 'oldsql', width: 170, sorter: true, render: (text, record) => (`${text.length} : ${record.newsql.length}`) },
+      { title: '类型', key: 'objtype', width: 120, sorter: true },
+      { title: '操作类型', key: 'changetype', width: 120, sorter: true },
+      { title: '函数名称', key: 'funcname', width: 150, sorter: true },
+      { title: '函数参数', key: 'paramsname', width: 150, sorter: true },
+      { title: '变更备注', key: 'remark', width: 150, sorter: true }
     ]
   }
 
@@ -123,9 +125,9 @@ class Historyscript extends Component {
 
     this.setState({ detailData: [], fetchDataLoading: { ...fetchDataLoading, FormModal: true } });
     this.toggleModal('FormModal');
-    dynamicRequest('api/entitypro/getucodedetail', { id: record.id }).then(res => {
+    dynamicRequest('api/entitypro/getpgcodedetail', { id: record.recid }).then(res => {
       const { data } = res;
-      this.setState({ 
+      this.setState({
         detailData: Array.isArray(data) ? data : [],
         fetchDataLoading: { ...fetchDataLoading, FormModal: false }
       });
@@ -145,8 +147,8 @@ class Historyscript extends Component {
 
     const len = selectedRows.length;
     const flag = [
-      len === 2 ? `${selectedRows[0].username} 于 ${selectedRows[0].commitdate} 修改为：` : '',
-      len === 2 ? `${selectedRows[1].username} 于 ${selectedRows[1].commitdate} 修改为：` : ''
+      len === 2 && selectedRows[0].marker && selectedRows[0].marktime ? `${selectedRows[0].marker} 于 ${selectedRows[0].marktime} 修改为：` : '',
+      len === 2 && selectedRows[1].marker && selectedRows[1].marktime ? `${selectedRows[1].marker} 于 ${selectedRows[1].marktime} 修改为：` : ''
     ];
 
     return (
@@ -155,7 +157,7 @@ class Historyscript extends Component {
           selectedCount={len}
           actions={[
             { label: '与当前对比', single: true, handler: () => this.toggleModal('CodeMerge'), show: () => value },
-            { label: '对比', handler: () => this.toggleModal('CodeMerge'), show: () => (len === 2 && (selectedRows[0].newcode || selectedRows[1].newcode)) }
+            { label: '对比', handler: () => this.toggleModal('CodeMerge'), show: () => (len === 2 && (selectedRows[0].newsql || selectedRows[1].newsql)) }
           ]}
         >
           <Toolbar.Right>
@@ -163,8 +165,8 @@ class Historyscript extends Component {
           </Toolbar.Right>
         </Toolbar>
         <ConfigTable
+          rowKey="recid"
           pwidth={width}
-          rowKey="id"
           rowSelect
           spacename={spaceName}
           onSeach={this.onSeach}
@@ -203,8 +205,8 @@ class Historyscript extends Component {
             <CodeMerge
               len={len}
               options={{
-                value: len === 2 ? selectedRows[0].newcode : value,
-                origRight: len === 2 ? selectedRows[1].newcode : selectedRows[0].newcode
+                value: len === 2 ? selectedRows[0].newsql : value,
+                origRight: len === 2 ? selectedRows[1].newsql : selectedRows[0].newsql
               }}
               flag={flag}
               visible={showModals.CodeMerge}

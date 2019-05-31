@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import { Modal, Button } from 'antd';
+import { Modal } from 'antd';
 import styles from './CodeMerge.less';
 
 window.JSHINT = require('./jshint').JSHINT;
@@ -61,40 +61,33 @@ class CodeMerge extends Component {
 
   componentDidMount() {
     const { options } = this.state;
-    if (this.textAreaNode) this.codeMirror = CodeMirror.MergeView(this.textAreaNode, options); console.log(this.codeMirror);
-    // this.codeMirror.on('change', this.handleContentChange);
-    // this.codeMirror.on('keyup', this.handleKeyUp);
-    // this.codeMirror.setValue(this.props.value || '');
+
+    if (this.textAreaNode) this.codeMirror = CodeMirror.MergeView(this.textAreaNode, options);
+    console.log(this.codeMirror);
+    this.codeMirror.editor().on('change', this.handleContentChange);
+    this.codeMirror.editor().on('keyup', this.handleKeyUp);
+    this.codeMirror.editor().setValue(options.value || '');
   }
 
   componentWillReceiveProps(nextProps) {
     if (
       this.codeMirror && 
-      nextProps.value !== undefined &&
-      nextProps.value !== this.props.value &&
-      normalizeLineEndings(this.codeMirror.getValue()) !== normalizeLineEndings(nextProps.value)
+      this.codeMirror.editor() &&
+      nextProps.options.value !== this.props.options.value &&
+      normalizeLineEndings(this.codeMirror.editor().getValue()) !== normalizeLineEndings(nextProps.options.value)
     ) {
-      this.codeMirror.setValue(nextProps.value);
+      this.codeMirror.editor().setValue(nextProps.options.value);
     }
-    if (nextProps.readOnly !== this.props.readOnly) {
-      this.codeMirror.setOption('readOnly', nextProps.readOnly ? 'nocursor' : false);
+    if (nextProps.options.readOnly !== this.props.options.readOnly) {
+      this.codeMirror.editor().setOption('readOnly', nextProps.readOnly ? 'nocursor' : false);
     }
-  }
-
-  componentWillUnmount() {
-    // is there a lighter-weight way to remove the cm instance?
-    if (this.codeMirror) {
-      // this.codeMirror.toTextArea();
-    }
-  }
-
-  componentWillUpdate() {
-
   }
 
   handleContentChange = (cm, change) => {
-    if (this.props.onChange && change.origin !== 'setValue') {
-      this.props.onChange(cm.getValue(), change);
+    const { onChange } = this.props;
+
+    if (onChange && change.origin !== 'setValue') {
+      onChange(cm.getValue(), change);
     }
   };
 
@@ -165,7 +158,6 @@ class CodeMerge extends Component {
 
   formBeforeAddEditForm = () => {
     const { len, flag } = this.props;
-    const { collapseIdentical, connect } = this.state;
     return (
       <div className={styles.before}>
         <div style={{ width: `calc(50% + ${30}px)`, fontWeight: 600 }}>{len === 2 ? (flag ? flag[0] : 'select one') : '当前编辑内容'}</div>
@@ -175,6 +167,8 @@ class CodeMerge extends Component {
   }
 
   handleOk = () => {
+    const { onOk } = this.props;
+    if (onOk) onOk();
     this.handleCancel();
   }
 

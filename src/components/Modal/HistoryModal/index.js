@@ -20,37 +20,44 @@ const _info = {
 };
 
 class HistoryModal extends Component {
-  state = {
-    OptionList: [],
-    selectedRows: [],
-    detailData: [],
-    confirmLoading: {
-      FilterModal: false
-    },
-    fetchDataLoading: {
-      FormModal: false
-    },
-    visibleCodeMerge: false,
-    columns: [
-      { title: '变更流水号', key: 'reccode', width: 140, sorter: true, render: (text, record) => <a href="javascript:;" onClick={() => this.showDetail(record)}>{text || '(空)'}</a> },
-      { title: '变更人', key: 'username', width: 120, sorter: true },
-      { title: '变更日期', key: 'commitdate', width: 150, sorter: true },
-      { title: '变更前后长度对比', key: 'lenoldcode', width: 170, sorter: true, render: (text, record) => (`${text} : ${record.lennewcode}`) },
-      { title: '备注人', key: 'commitusername', width: 120, sorter: true },
-      { title: '备注日期', key: 'commitremarkdate', width: 150, sorter: true },
-      { title: '变更备注', key: 'commitremark', width: 150, sorter: true }
-    ]
+  constructor(props) {
+    super(props);
+    this.state = {
+      OptionList: [],
+      selectedRows: [],
+      detailData: [],
+      value: props.value,
+      confirmLoading: {
+        FilterModal: false
+      },
+      fetchDataLoading: {
+        FormModal: false
+      },
+      visibleCodeMerge: false,
+      columns: [
+        { title: '变更流水号', key: 'reccode', width: 140, sorter: true, render: (text, record) => <a href="javascript:;" onClick={() => this.showDetail(record)}>{text || '(空)'}</a> },
+        { title: '变更人', key: 'username', width: 120, sorter: true },
+        { title: '变更日期', key: 'commitdate', width: 150, sorter: true },
+        { title: '变更前后长度对比', key: 'lenoldcode', width: 170, sorter: true, render: (text, record) => (`${text} : ${record.lennewcode}`) },
+        { title: '备注人', key: 'commitusername', width: 120, sorter: true },
+        { title: '备注日期', key: 'commitremarkdate', width: 150, sorter: true },
+        { title: '变更备注', key: 'commitremark', width: 150, sorter: true }
+      ]
+    };
   }
+ 
 
   componentDidMount() {
     this.fetchList(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
-    const { keyname: oldname } = this.props;
-    const { selectedRows, keyname: newname } = nextProps;
-    if (selectedRows) this.setState({ selectedRows });
+    const { selectedRows: oldRows, keyname: oldname, value: oldValue } = this.props;
+    const { selectedRows: newRows, keyname: newname, value: newValue } = nextProps;
+
     if (newname && (oldname !== newname)) this.fetchList(nextProps);
+    if (oldRows !== newRows) this.setState({ selectedRows: newRows });
+    if (oldValue !== newValue) this.setState({ value: newValue });
   }
 
   fetchList = (props) => {
@@ -141,6 +148,17 @@ class HistoryModal extends Component {
     this.setState({ visibleCodeMerge: !visibleCodeMerge });
   }
 
+  handleValue = (value, change) => {
+    this.setState({ value: value });
+  }
+
+  changeCodeMergeValue = () => {
+    const { onChange } = this.props;
+    const { value } = this.state;
+
+    if (onChange) onChange(value);
+  }
+
   showDetail = (record) => {
     const { detailapi } = this.props;
     const { fetchDataLoading } = this.state;
@@ -158,12 +176,14 @@ class HistoryModal extends Component {
 
   render() {
     const { 
-      width = 550, initParams, onSelectRow, spaceName, keyname,
-      title, value = '', historyList, listLoading,
+      width = 550, initParams, onSelectRow, spaceName,
+      title, historyList, listLoading, keyname,
       showModals, dispatch, rowKey = 'recid'
     } = this.props;
 
-    const { detailData, selectedRows, columns, confirmLoading, fetchDataLoading, visibleCodeMerge } = this.state;
+    const {
+      detailData, selectedRows, columns, confirmLoading, fetchDataLoading, visibleCodeMerge, value
+    } = this.state;
 
     const len = selectedRows.length;
     const flag = [
@@ -242,8 +262,9 @@ class HistoryModal extends Component {
               }}
               flag={flag}
               visible={visibleCodeMerge}
+              onOk={this.changeCodeMergeValue}
               cancel={this.diffCurrent}
-              // onChange={onChange.bind(null, name)}
+              onChange={this.handleValue}
             />
           ) : null
         }

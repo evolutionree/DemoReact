@@ -98,19 +98,23 @@ class ConfigTable extends Component {
     onSeach(newPramas);
   }
 
-  onSelectListChange = async (selectedRowKeys, selectedRows) => {
+  onSelectListChange = (selectedRowKeys, selectedRows) => {
     const { CBSelectRow } = this.props;
-
-    await this.setStateAsync({ selectedRowKeys, selectedRows });
-    if (CBSelectRow) CBSelectRow(selectedRows);
+    if (CBSelectRow) {
+      CBSelectRow(selectedRows);
+      return;
+    }
+    this.setState({ selectedRowKeys, selectedRows });
   }
 
-  onSelectAllListChange = async (selected, selectedRows) => {
+  onSelectAllListChange = (selected, selectedRows) => {
     const { rowKey, CBSelectRow } = this.props;
     const selectedRowKeys = selectedRows.map(o => o[rowKey]);
-
-    await this.setStateAsync({ selectedRowKeys, selectedRows });
-    if (CBSelectRow) CBSelectRow(selectedRows);
+    if (CBSelectRow) {
+      CBSelectRow(selectedRows);
+      return;
+    }
+    this.setState({ selectedRowKeys, selectedRows });
   }
 
   render() {

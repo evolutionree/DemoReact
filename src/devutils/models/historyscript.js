@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { add, update, del, getucodelist, getucodedetail } from '../services/historyscript';
+import { add, update, del, getpgcodelist, getpgcodedetail } from '../services/historyscript';
 import { setSessionItem, getCacheData } from '../../utils/newStorage';
 
 const NAMESPACE = 'historyscript';
@@ -45,8 +45,8 @@ export default {
       const params = { ...(payload || initParams) };
 
       try {
-        const { data } = yield call(getucodelist, params);
-        const list = data || [];
+        const { data } = yield call(getpgcodelist, params);
+        const list = data.datalist || [];
         yield put({ type: 'putState', payload: { list } });
       } catch (e) {
         message.error(e.message || '获取列表失败');
@@ -95,7 +95,7 @@ export default {
             payload: { fetchDataLoading: { ...fetchDataLoading, FormModal: true } }
           });
 
-          const { data } = yield call(getucodedetail, {});
+          const { data } = yield call(getpgcodedetail, {});
           const list = data.datalist || [];
           yield put({
             type: 'putState',
