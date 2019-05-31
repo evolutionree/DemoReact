@@ -18,7 +18,7 @@
         "/api": {
           //"target": "http://172.16.0.183",
           //"target": "http://172.16.0.185",
-          //"target": "http://172.16.0.185:1501",
+          //"target": "http://172.16.0.185:1505",
           //"target": "http://183.63.72.242:1510",
           "target": "http://172.16.0.185:1610",
           "changeOrigin": true

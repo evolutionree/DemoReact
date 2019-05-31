@@ -26,14 +26,8 @@ export default {
         if (match) {
           const entityId = match[1];
           const entityType = match[2];
-          dispatch({
-            type: 'putState',
-            payload: {
-              entityId,
-              entityType
-            }
-          });
-          dispatch({ type: 'queryButtons' });
+
+          dispatch({ type: 'Init', payload: { entityId, entityType } });
         } else {
           dispatch({ type: 'resetState' });
         }
@@ -41,6 +35,10 @@ export default {
     }
   },
   effects: {
+    *Init({ payload }, { put }) {
+      yield put({ type: 'putState', payload });
+      yield put({ type: 'queryButtons' });
+    },
     *queryButtons({ payload: persistSelect }, { select, put, call }) {
       const { entityId, selectedButton } = yield select(state => state.entityButtons);
       try {
@@ -66,7 +64,7 @@ export default {
           });
         }
       } catch (e) {
-        console.error(e)
+        console.error(e);
         message.error(e.message || '获取按钮列表失败');
       }
     },

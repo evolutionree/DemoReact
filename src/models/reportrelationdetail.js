@@ -32,6 +32,7 @@ export default {
   },
   effects: {
     *Init({ payload }, { put }) {
+      yield put({ type: 'putState', payload: { selectedRows: [] } });
       yield put({ type: 'QueryList', payload });
     },
     *Search({ payload }, { put }) {

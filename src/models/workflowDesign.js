@@ -2,7 +2,9 @@ import { message } from 'antd';
 import * as _ from 'lodash';
 import uuid from 'uuid';
 import { queryFlowJSONv2, saveFlowJSON } from '../services/workflow';
-import { queryFields } from '../services/entity';
+import { queryFields, queryEntityDetail } from '../services/entity';
+import { getreportrelation } from '../services/reportrelation';
+import { getIntlText } from '../components/UKComponent/Form/IntlText';
 
 // 654209d5-3506-48eb-b5d2-0e0ea2ba7c84
 
@@ -29,7 +31,7 @@ function parseFlowJSON(data) {
   let index = 0;
   while (restLines.length && index < data.lines.length) {
     restLines = loopRestLines(restLines);
-    index ++;
+    index++;
   }
   Object.keys(nodesByIdCollection).forEach(id => {
     const node = nodesByIdCollection[id];
@@ -82,7 +84,7 @@ function parseFlowJSON(data) {
 
   function loopRestLines(lines) {
     const nextRest = [...lines];
-    let removecount = 0 ;
+    let removecount = 0;
     lines.forEach((line, index) => {
       const { fromnodeid: fromId, tonodeid: endId } = line;
       const fromNode = nodesByIdCollection[fromId];
@@ -91,8 +93,8 @@ function parseFlowJSON(data) {
       endNode.position = endNode.position !== undefined
         ? Math.max(endNode.position, fromNode.position + 1)
         : (fromNode.position + 1);
-      nextRest.splice(index- removecount, 1);
-      removecount ++;
+      nextRest.splice(index - removecount, 1);
+      removecount++;
     });
 
     return nextRest;
@@ -328,13 +330,34 @@ export default {
       try {
         const { entityid, entityname, relentityid, relentityname } = flowInfo;
         const { data } = yield call(queryFields, entityid);
+        const { data: entityDetail } = yield call(queryEntityDetail, entityid); // 获取实体数据
+
+        const entityproinfo = Array.isArray(entityDetail.entityproinfo) ?
+          entityDetail.entityproinfo.map(item => ({ ...item, displayname: getIntlText('entityname', item) })) : [];
+
+        let entityproinfo2 = [];
+
+        if (relentityid && relentityname) { // 获取关联实体数据
+          const { data: meta20 } = yield call(queryEntityDetail, relentityid);
+          entityproinfo2 = Array.isArray(meta20.entityproinfo) ?
+            meta20.entityproinfo.map(item => ({ ...item, displayname: getIntlText('entityname', item) })) : [];
+        }
+        const forms = [...entityproinfo, ...entityproinfo2];
+
+        const { data: reportrelation } = yield call(getreportrelation, {});
+        const reportrelationList = Array.isArray(reportrelation.datalist) ? reportrelation.datalist.map(item => ({ ...item, displayname: item.reportrelationname })) : [];
+
         const flowEntities = [{
           entityid,
           entityname,
-          fields: data.entityfieldpros
+          fields: data.entityfieldpros,
+          forms,
+          reportrelationList
         }];
+
         if (relentityid && relentityname) {
           const { data: data2 } = yield call(queryFields, relentityid);
+          
           flowEntities.push({
             entityid: relentityid,
             entityname: relentityname,
@@ -363,15 +386,23 @@ export default {
       const { flowSteps } = yield select(state => state.workflowDesign);
       const flowStep = _.find(flowSteps, ['id', stepId]);
       const rawNodeData = flowStep.rawNode || {};
-      let editingFlowStepForm = {
+      const editingFlowStepForm = {
         stepId: flowStep.id,
         nodeType: rawNodeData.nodetype || 0,
         stepUser: {
           type: rawNodeData.steptypeid !== undefined ? rawNodeData.steptypeid : 1,
+          data: { 
+            ...rawNodeData.ruleconfig, 
+            reportrelation: rawNodeData.ruleconfig ? (typeof rawNodeData.ruleconfig.reportrelation === 'string' ? JSON.parse(rawNodeData.ruleconfig.reportrelation) : rawNodeData.ruleconfig.reportrelation) : {}
+          } || {}
+        },
+        cpUser: {
+          type: rawNodeData.stepcptypeid !== undefined ? rawNodeData.stepcptypeid : 17,
           data: rawNodeData.ruleconfig || {}
         },
         auditsucc: rawNodeData.auditsucc || 1,
         stepFields: parseColumnConfig(rawNodeData.columnconfig),
+        notfound: rawNodeData.notfound || 1,
         funcname: rawNodeData.funcname || ''
       };
       yield put({
@@ -457,7 +488,7 @@ export default {
             ruleid: null
           }));
         }));
-        let newFlowPaths = flowPaths.filter(path => path.from !== stepId && path.to !== stepId);
+        const newFlowPaths = flowPaths.filter(path => path.from !== stepId && path.to !== stepId);
         // newFlowPaths = [...newFlowPaths, ...newToNextStepsPaths];
         // newFlowPaths = newFlowPaths.filter(path => {
         //   return newToNextStepsPaths.every(step => {
@@ -513,7 +544,7 @@ export default {
           const data = editingFlowStepForm.stepUser.data;
           const type = editingFlowStepForm.stepUser.type;
           if (data) {
-            const { userid, roleid, deptid, fieldname } = data;
+            const { userid, roleid, deptid, fieldname, fieldteam, entityid, isleader } = data;
             if ((type === 5 || type === 6) && !deptid) {
               message.error('请选择团队');
               return;
@@ -527,6 +558,17 @@ export default {
               message.error('请选择表单用户字段');
               return;
             }
+            // } else if ([802, 112, 116].includes(type) && !entityid) {
+            //   message.error('请选择表单字段');
+            // } else if ([902, 102, 106].includes(type) && !entityid) {
+            //   message.error('请选择表单字段');
+            // } else if ([802, 112, 116].includes(type) && !fieldteam) {
+            //   message.error('请选择表单团队字段');
+            // } else if ([902, 102, 106].includes(type) && !fieldteam) {
+            //   message.error('请选择表单团队字段');
+            // } else if ([5, 8, 801, 802, 11, 111, 112, 116].includes(type) && !isleader) {
+            //   message.error('请选择领导字段');
+            // }
           }
         }
 
@@ -542,14 +584,26 @@ export default {
           }
         }
 
+        const reportrelationObj = editingFlowStepForm.stepUser.data.reportrelation || {};
+        if (!(reportrelationObj && reportrelationObj.type)) reportrelationObj.type = 1;
+        const reportrelation = reportrelationObj ? JSON.stringify(reportrelationObj) : '';
+
         flowStep.rawNode = {
           ...flowStep.rawNode,
           auditnum: editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.stepUser.data.userid.split(',').length,
           auditsucc: editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.auditsucc,
           nodetype: editingFlowStepForm.nodeType,
-          ruleconfig: editingFlowStepForm.stepUser.data,
+          ruleconfig: {
+            ...editingFlowStepForm.stepUser.data,
+            reportrelation,
+            cpuserid: editingFlowStepForm.cpUser.data.cpuserid,
+            cpusername: editingFlowStepForm.cpUser.data.cpusername,
+            cpfuncname: editingFlowStepForm.cpUser.data.cpfuncname
+          },
           steptypeid: editingFlowStepForm.stepUser.type,
+          stepcptypeid: editingFlowStepForm.cpUser.type,
           columnconfig: formatFieldsToColumnConfig(fields),
+          notfound: editingFlowStepForm.notfound || 1,
           funcname: editingFlowStepForm.funcname
         };
       }
@@ -575,7 +629,7 @@ export default {
       try {
         const nodeIdCollect = {};
         const nodes = flowSteps.map(({ id, name, rawNode }) => {
-          const { nodetype, steptypeid, ruleconfig, columnconfig, auditnum, auditsucc, funcname } = rawNode;
+          const { nodetype, steptypeid, stepcptypeid, notfound, ruleconfig, columnconfig, auditnum, auditsucc, funcname } = rawNode;
           const newNodeId = nodeIdCollect[id] = uuid.v4();
           return {
             nodename: name,
@@ -583,6 +637,8 @@ export default {
             auditnum,
             nodetype,
             steptypeid,
+            stepcptypeid,
+            notfound,
             ruleconfig,
             columnconfig,
             auditsucc,

@@ -245,7 +245,7 @@ class UserSelect extends React.Component {
           id: item.userid,
           name: item.username
         };
-      })
+      });
       const { text, users } = this.parseValue();
       options = _.uniqBy(_.concat(users, options), 'id');
       this.setState({

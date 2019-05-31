@@ -58,7 +58,7 @@ class WorkflowCaseForm extends Component {
   initFormData = () => {
     this.props.form.resetFields();
     if (!this.props.selectedNode) return;
-    const { nodeinfo, approvers } = this.props.selectedNode;
+    const { nodeinfo, approvers, cpusers } = this.props.selectedNode;
     if (nodeinfo.nodetype === 1) { // 会审，列出所有审批人
       this.props.form.setFieldsValue({
         handleuser: approvers.map(u => u.userid)
@@ -66,6 +66,12 @@ class WorkflowCaseForm extends Component {
     } else if (approvers.length === 1) {
       this.props.form.setFieldsValue({
         handleuser: approvers.map(u => u.userid)
+      });
+    }
+
+    if (cpusers.length) {
+      this.props.form.setFieldsValue({
+        copyuser: cpusers.map(u => u.userid)
       });
     }
   };
@@ -76,7 +82,7 @@ class WorkflowCaseForm extends Component {
 
   render() {
     const { form, caseNodes, selectedNode } = this.props;
-    const { nodeinfo, approvers } = selectedNode || {};
+    const { nodeinfo, approvers, cpusers } = selectedNode || {};
     const isFreeFlow = !!(nodeinfo && nodeinfo.flowtype === 0); // 自由流程
     const isFreeUser = isFreeFlow || (nodeinfo && nodeinfo.steptypeid === 1); // 自由选审批人
     return (
@@ -109,7 +115,7 @@ class WorkflowCaseForm extends Component {
             })(
               <CaseUserSelect
                 isFreeUser
-                users={this.state.allUsers}
+                users={Array.isArray(cpusers) && cpusers.length ? cpusers : this.state.allUsers}
                 filterUsers={form.getFieldValue('handleuser')}
                 limit={0}
               />

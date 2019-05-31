@@ -4,7 +4,7 @@
     "app": "./src/index.js"
   },
   "scripts": {
-    "start": "roadhog server",
+    "start": "set HOST=172.16.13.250&&roadhog server",
     "build": "roadhog build",
     "lint": "eslint --ext .js src test",
     "publish": "roadhog build&&node ./scripts/publish.js -d -t",

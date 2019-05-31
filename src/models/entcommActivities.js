@@ -1,13 +1,13 @@
 import { message, Modal } from 'antd';
 import _ from 'lodash';
-import { query,queryTypes } from '../services/entity';
-import { getEntcommDetail, getEntcommAtivities, commentEntcommActivity, getActivityDetail, likeEntcommActivity, queryPlugins,dynamicRequest, extraToolbarClickSendData } from '../services/entcomm';
+import { query, queryTypes } from '../services/entity';
+import { getEntcommDetail, getEntcommAtivities, commentEntcommActivity, getActivityDetail, likeEntcommActivity, queryPlugins, dynamicRequest, extraToolbarClickSendData } from '../services/entcomm';
 
 const delay = (timeout) => {
   return new Promise(resolve => {
     setTimeout(resolve, timeout);
   });
-}
+};
 
 const confirmModal = (title, callback) => {
   Modal.confirm({
@@ -43,7 +43,7 @@ export default {
         if (match) {
           const entityId = match[1];
           const recordId = match[2];
-          dispatch({ type: 'putState', payload: { pageIndex: 0} });
+          dispatch({ type: 'putState', payload: { pageIndex: 0 } });
           dispatch({ type: 'init', payload: { entityId, recordId } });
         } else {
           dispatch({ type: 'resetState' });
@@ -66,7 +66,7 @@ export default {
       yield put({ type: 'putState', payload: { entityId, recordId } });
 
       yield put({ type: 'fetchPlugins' });
-      yield put({ type: 'loadMore__' ,payload: { isReload:true } });
+      yield put({ type: 'loadMore__' , payload: { isReload: true } });
     },
     *fetchPlugins(action, { select, put, call }) {
       const { entityId, recordId } = yield select(state => state.entcommActivities);
@@ -79,7 +79,6 @@ export default {
         // 获取实体类型
         const { data: { entitytypepros: entityTypes } } = yield call(queryTypes, { entityId });
         yield put({ type: 'entityTypes', payload: entityTypes });
-
       } catch (e) {
         message.error(e.message || '获取动态实体失败');
       }
@@ -138,7 +137,7 @@ export default {
         message.error(e.message || '点赞失败');
       }
     },
-    *pluginAdd({ payload: pluginIndex }, { select, put, call,cps }) {
+    *pluginAdd({ payload: pluginIndex }, { select, put, call, cps }) {
       const { plugins, recordId, entityId } = yield select(state => state.entcommActivities);
       const currPlugin = plugins[pluginIndex];
       switch (currPlugin.type) {
@@ -195,9 +194,9 @@ export default {
           if (!confirmed) return;
           try {
             const { entityId, recordId } = yield select(state => state.entcommActivities);
-            if(plugins[pluginIndex].entity&&plugins[pluginIndex].entity.extradata){
+            if (plugins[pluginIndex].entity && plugins[pluginIndex].entity.extradata) {
               const { routepath } = plugins[pluginIndex].entity;
-              yield call(dynamicRequest,'/'+routepath, {
+              yield call(dynamicRequest, '/' + routepath, {
                 RecId: recordId,
                 Status: plugins[pluginIndex].entity.extradata.status
               });
