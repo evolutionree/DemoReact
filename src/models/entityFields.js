@@ -244,17 +244,17 @@ export default {
 
       try {
         const { data } = yield call(getucodelist, params);
-        const historyList = Array.isArray(data) ? data : [];
+        const historyList = Array.isArray(data.datalist) ? data.datalist : [];
         yield put({ type: 'putState', payload: { historyList } });
 
-        yield put({ 
-          type: 'putState', 
-          payload: { fetchDataLoading: { ...fetchDataLoading, HistoryModal: false } } 
+        yield put({
+          type: 'putState',
+          payload: { fetchDataLoading: { ...fetchDataLoading, HistoryModal: false } }
         });
       } catch (e) {
-        yield put({ 
-          type: 'putState', 
-          payload: { fetchDataLoading: { ...fetchDataLoading, HistoryModal: false } } 
+        yield put({
+          type: 'putState',
+          payload: { fetchDataLoading: { ...fetchDataLoading, HistoryModal: false } }
         });
         message.error(e.message || '获取列表失败');
       }

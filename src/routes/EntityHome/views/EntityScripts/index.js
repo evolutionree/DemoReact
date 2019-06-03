@@ -63,7 +63,14 @@ function EntityScripts({
               readOnly={!editing}
               style={{ border: '1px solid #ddd', height: '400px' }}
             />
-            <TextArea style={{ marginTop: 8 }} value={remark} onChange={(e) => onChange(name, 'remark', e.target.value)} placeholder="请填写修改备注" />
+            {
+              editing && <TextArea 
+                style={{ marginTop: 8 }} 
+                value={remark} 
+                onChange={(e) => onChange(name, 'remark', e.target.value)} 
+                placeholder="请填写修改备注"
+              />
+            }
             <div className={styles.scriptBtnRow} style={{ textAlign: 'right' }}>
               <Button onClick={onShow.bind(null, name)}>历史记录</Button>
               {!editing && <Button onClick={onEdit.bind(null, name)}>编辑</Button>}

@@ -109,10 +109,10 @@ export default {
         const params = {
           entityid: entityId,
           details: [
-            { type: 1, load: EntityAddNew.editingContent, remark: EntityAddNew.remark },
-            { type: 2, load: EntityView.editingContent, remark: EntityView.remark },
-            { type: 3, load: EntityEdit.editingContent, remark: EntityEdit.remark },
-            { type: 4, load: EntityCopyNew.editingContent, remark: EntityCopyNew.remark }
+            { type: 1, load: EntityAddNew.editingContent || '', remark: EntityAddNew.remark },
+            { type: 2, load: EntityView.editingContent || '', remark: EntityView.remark },
+            { type: 3, load: EntityEdit.editingContent || '', remark: EntityEdit.remark },
+            { type: 4, load: EntityCopyNew.editingContent || '', remark: EntityCopyNew.remark }
           ]
         };
         yield call(saveEntityScripts, params);
@@ -141,7 +141,7 @@ export default {
 
       try {
         const { data } = yield call(getucodelist, params);
-        const historyList = data || [];
+        const historyList = Array.isArray(data.datalist) ? data.datalist : [];
         yield put({ type: 'putState', payload: { historyList } });
 
         yield put({ 
