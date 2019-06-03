@@ -25,16 +25,16 @@ class FormModal extends PureComponent {
       if (onOk) onOk(values);
       if (api || fetch) {
         const url = api || (isEdit ? fetch.edit : fetch.add);
-        const reportrelationid = isEdit ? selectedRows[0].reportrelationid : null;
-        const params = { ...values, reportrelationid };
+        const id = selectedRows[0].recid ? selectedRows[0].recid : null;
+        const params = { id, remark: values.remark };
 
         dynamicRequest(url, params)
           .then(res => {
             if (res) {
-              const { error_msg } = res;
+              const { data } = res;
               this.handleCancel();
               if (dispatch) dispatch({ type: `${spacename}/QueryList` });
-              message.success(error_msg || '操作成功');
+              message.success(data.msg || '操作成功');
             }
           }).catch(e => message.error(e.message));
       }

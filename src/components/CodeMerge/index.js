@@ -63,7 +63,7 @@ class CodeMerge extends Component {
     const { options } = this.state;
 
     if (this.textAreaNode) this.codeMirror = CodeMirror.MergeView(this.textAreaNode, options);
-    console.log(this.codeMirror);
+
     this.codeMirror.editor().on('change', this.handleContentChange);
     this.codeMirror.editor().on('keyup', this.handleKeyUp);
     this.codeMirror.editor().setValue(options.value || '');

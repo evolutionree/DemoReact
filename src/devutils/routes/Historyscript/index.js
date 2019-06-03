@@ -183,7 +183,7 @@ class Historyscript extends Component {
           spacename={spaceName}
           dispatch={dispatch}
           list={formConfig}
-          api=""
+          api="api/entitypro/updategghistorylogremark"
           selectedRows={detailData}
           visible={showModals.FormModal}
           onChange={this.handleSelectRecords}
@@ -203,15 +203,17 @@ class Historyscript extends Component {
         {
           showModals.CodeMerge ? (
             <CodeMerge
+              width="95%"
               len={len}
               options={{
                 value: len === 2 ? selectedRows[0].newsql : value,
-                origRight: len === 2 ? selectedRows[1].newsql : selectedRows[0].newsql
+                origRight: len === 2 ? selectedRows[1].newsql : selectedRows[0].newsql,
+                readOnly: 'nocursor',
+                revertButtons: false
               }}
               flag={flag}
               visible={showModals.CodeMerge}
               cancel={() => this.toggleModal('CodeMerge', '')}
-              // onChange={onChange.bind(null, name)}
             />
           ) : null
         }
