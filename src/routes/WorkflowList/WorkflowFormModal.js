@@ -22,7 +22,8 @@ class WorkflowFormModal extends Component {
     super(props);
     this.state = {
       entities: [],
-      controlEntranceFlow: false
+      controlEntranceFlow: false,
+      skipflagDisabled: false
     };
   }
 
@@ -73,13 +74,16 @@ class WorkflowFormModal extends Component {
   };
 
   onChangeEntity = entityid => {
+    const { form } = this.props;
     if (entityid) {
       queryEntityDetail(entityid)
         .then(res => {
           const { data } = res;
           if (data) {
-            const controlEntranceFlow = [0, 2].includes(parseInt(data.entityproinfo[0].modeltype, 10)); // 0 2 独立实体 简单实体
-            this.setState({ controlEntranceFlow });
+            const modeltype = parseInt(data.entityproinfo[0].modeltype, 10);
+            const controlEntranceFlow = [0, 2].includes(modeltype); // 0 2 独立实体 简单实体
+            this.setState({ controlEntranceFlow, skipflagDisabled: modeltype === 2 });
+            form.setFieldsValue({ entrance: modeltype === 2 ? 1 : 0 });
           }
         }).catch(e => console.error(e));
     }
@@ -128,7 +132,7 @@ class WorkflowFormModal extends Component {
   render() {
     const { getFieldDecorator, getFieldValue } = this.props.form;
     const isEdit = !!this.props.editingRecord;
-    const { controlEntranceFlow } = this.state;
+    const { controlEntranceFlow, skipflagDisabled } = this.state;
 
     return (
       <Modal
@@ -190,7 +194,7 @@ class WorkflowFormModal extends Component {
                   initialValue: 0,
                   rules: [{ required: true, message: '请选择是否入口工作流程' }]
                 })(
-                  <Radio.Group>
+                  <Radio.Group disabled={skipflagDisabled}>
                     <Radio value={1}>是</Radio>
                     <Radio value={0}>否</Radio>
                   </Radio.Group>
