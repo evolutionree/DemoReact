@@ -30,7 +30,8 @@ export default class FilterModal extends Component {
 
   componentWillReceiveProps(nextProps) {
     const { visible: newView } = nextProps;
-    const { visible: oldView, initParams: { columnFilter } } = this.props;
+    const { visible: oldView, initParams } = this.props;
+    const columnFilter = initParams ? initParams.columnFilter : null;
 
     if (!oldView && newView) {
       const _list = columnFilter ? Object.keys(columnFilter).map(item => item) : [];
