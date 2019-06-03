@@ -64,7 +64,7 @@ class SelectInput extends Component {
       <div className={Styles.SelectInputWrap}>
         {
           this.props.fields && this.props.fields instanceof Array && this.props.fields.map((item, index) => {
-            const itemValue = value && value[item.fieldname] || item.fieldconfig.defaultValue;
+            const itemValue = value && value[item.fieldname] || ((item.fieldconfig && item.fieldconfig.defaultValue) ? item.fieldconfig.defaultValue : item.fieldconfig.defaultValueNormal);
             switch (item.controltype) {
               case 3:
                 return (
@@ -77,7 +77,7 @@ class SelectInput extends Component {
                   <div style={{ width: this.props.toolTip ? 'calc(100% - 146px)' : 'calc(100% - 124px)', display: 'inline-block' }}>
                     <InputRecName ref={this.onFieldControlRef.bind(this, item.fieldname)} onChange={this.selectValueChange.bind(this, item.fieldname)} value={itemValue} {...item.fieldconfig} />
                   </div>
-                )
+                );
               default:
                 return null;
             }
