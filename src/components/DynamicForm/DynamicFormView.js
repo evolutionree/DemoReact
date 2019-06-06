@@ -51,7 +51,7 @@ class DynamicFormView extends React.Component {
   renderFields = fields => {
     const { value, entityId, entityTypeId, cols } = this.props;
     // filter筛选条件加上不显示的判断
-    return fields.filter(field => field.controltype !== 30 || !(field.fieldconfig.isVisible !== 1 || field.fieldconfig.isVisibleJS === 0)).map(field => {
+    return fields.filter(field => (field.controltype !== 30 && (field.fieldconfig.isVisibleJS === 1 || field.fieldconfig.isVisible === 1))).map(field => {
       const { fieldname, displayname, controltype, fieldconfig } = field;
       const layout = this.getFormItemLayout(field.fieldname);
 
