@@ -4,7 +4,8 @@
 export default {
   namespace: 'reportForm',
   state: {
-    reportId: ''
+    reportId: '',
+    currentSelect: ''
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -22,7 +23,9 @@ export default {
     }
   },
   effects: {
-
+    *handleSelectTree({ payload }, { put, select }) {
+      yield put({ type: 'setCurrentSelect', payload  });
+    }
   },
   reducers: {
     setState(state, { payload: reportId }) {
@@ -30,6 +33,12 @@ export default {
         ...state,
         reportId
       };
+    },
+    setCurrentSelect(state, { payload: currentSelect }) {
+      return {
+        ...state,
+        currentSelect
+      }
     }
   }
 };
