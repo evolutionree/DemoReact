@@ -35,13 +35,16 @@ class HistoryModal extends Component {
       },
       visibleCodeMerge: false,
       columns: [
-        { title: '变更流水号', key: 'reccode', width: 140, sorter: true, render: (text, record) => <a href="javascript:;" onClick={() => this.showDetail(record)}>{text || '(空)'}</a> },
-        { title: '变更人', key: 'username', width: 120, sorter: true },
-        { title: '变更日期', key: 'commitdate', width: 150, sorter: true },
-        { title: '变更前后长度对比', key: 'lenoldcode', width: 170, sorter: true, render: (text, record) => (`${text} : ${record.lennewcode}`) },
-        { title: '备注人', key: 'commitusername', width: 120, sorter: true },
-        { title: '备注日期', key: 'commitremarkdate', width: 150, sorter: true },
-        { title: '变更备注', key: 'commitremark', width: 150, sorter: true }
+        {
+          title: '变更流水号', key: 'reccode', width: 140, filterType: 1, sorter: true,
+          render: (text, record) => <a href="javascript:;" onClick={() => this.showDetail(record)}>{text || '(空)'}</a> 
+        },
+        { title: '变更人', key: 'username', width: 120, filterType: 1, sorter: true },
+        { title: '变更日期', key: 'commitdate', width: 150, filterType: 8, sorter: true },
+        { title: '变更前后长度对比', key: 'lenoldcode', width: 170, filterType: 6, render: (text, record) => (`${text} : ${record.lennewcode}`) },
+        { title: '备注人', key: 'commitusername', width: 120, filterType: 1, sorter: true },
+        { title: '备注日期', key: 'commitremarkdate', width: 150, filterType: 8, sorter: true },
+        { title: '变更备注', key: 'commitremark', width: 150, filterType: 1, sorter: true }
       ]
     };
   }
@@ -139,8 +142,11 @@ class HistoryModal extends Component {
   }
 
   handleCancel = () => {
+    const { initParams } = this.props;
     this.toggleModal('HistoryModal', '');
     this.clearSelect();
+    const params = { ...initParams, columnFilter: null, searchOrder: '' };
+    this.onSeach(params);
   }
   
   diffCurrent = () => {
@@ -210,9 +216,9 @@ class HistoryModal extends Component {
           <div style={{ float: 'left' }}>
             {/* {<Button style={{ marginRight: 16 }} onClick={this.add}>新增</Button>} */}
           </div>
-          <Toolbar.Right>
+          {/* <Toolbar.Right>
             {<Button onClick={() => this.toggleModal('FilterModal')}>过滤</Button>}
-          </Toolbar.Right>
+          </Toolbar.Right> */}
         </Toolbar>
         <Spin spinning={listLoading}>
           <ConfigTable
@@ -231,7 +237,7 @@ class HistoryModal extends Component {
         <FormModal
           title={`${title}详情`}
           mode="normal"
-          width="85%"
+          width="95%"
           spacename={spaceName}
           dispatch={dispatch}
           list={formConfig}
@@ -255,6 +261,7 @@ class HistoryModal extends Component {
         {
           visibleCodeMerge ? (
             <CodeMerge
+              width="100%"
               len={len}
               options={{
                 value: len === 2 ? selectedRows[0].newcode : value,

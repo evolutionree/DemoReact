@@ -88,11 +88,12 @@ class ConfigTable extends Component {
 
   handleTableChange = (pagination, filters, sorter) => {
     const { onSeach, initParams } = this.props;
-    const searchOrder = sorter.field ? (sorter.field + (sorter.order === 'ascend' ? ' asc' : ' desc')) : '';
+    // const searchOrder = sorter.field ? (sorter.field + (sorter.order === 'ascend' ? ' asc' : ' desc')) : '';
+    const searchOrder = (sorter.field && sorter.order !== 'ascend') ? (sorter.field + ' desc') : '';
     const newPramas = {
       ...initParams,
-      pageIndex: pagination.current,
-      pageSize: pagination.pageSize,
+      // pageIndex: pagination.current,
+      // pageSize: pagination.pageSize,
       searchOrder
     };
     onSeach(newPramas);

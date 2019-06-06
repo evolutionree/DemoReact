@@ -24,15 +24,15 @@ class Historyscript extends Component {
       FormModal: false
     },
     columns: [
-      { title: '变更流水号', key: 'reccode', width: 140, sorter: true, render: (text, record) => <a href="javascript:;" onClick={() => this.showDetail(record)}>{text || '(空)'}</a> },
-      { title: '用户', key: 'marker', width: 120, sorter: true },
-      { title: '变更日期', key: 'marktime', width: 150, sorter: true },
-      { title: '变更前后长度对比', key: 'oldsql', width: 170, sorter: true, render: (text, record) => (`${text.length} : ${record.newsql.length}`) },
-      { title: '类型', key: 'objtype', width: 120, sorter: true },
-      { title: '操作类型', key: 'changetype', width: 120, sorter: true },
-      { title: '函数名称', key: 'funcname', width: 150, sorter: true },
-      { title: '函数参数', key: 'paramsname', width: 150, sorter: true },
-      { title: '变更备注', key: 'remark', width: 150, sorter: true }
+      { title: '变更流水号', key: 'reccode', width: 130, filterType: 1, sorter: true, render: (text, record) => <a href="javascript:;" onClick={() => this.showDetail(record)}>{text || '(空)'}</a> },
+      { title: '函数名称', key: 'funcname', width: 250, filterType: 1, sorter: true, render: text => (text.replace(/^public\./,'')) },
+      { title: '函数参数', key: 'paramsname', width: 150, filterType: 1, sorter: true },
+      { title: '类型', key: 'objtype', width: 98, filterType: 1, sorter: true },
+      { title: '操作类型', key: 'changetype', width: 113, filterType: 1, sorter: true },
+      { title: '用户', key: 'marker', width: 98, filterType: 1, sorter: true },
+      { title: '变更日期', key: 'marktime', width: 150, filterType: 8, sorter: true },
+      { title: '变更前后长度对比', key: 'oldsql', width: 170, filterType: 6, render: (text, record) => (`${text.length} : ${record.newsql.length}`) },
+      { title: '变更备注', key: 'remark', width: 150, filterType: 1, sorter: true }
     ]
   }
 
@@ -160,9 +160,9 @@ class Historyscript extends Component {
             { label: '对比', handler: () => this.toggleModal('CodeMerge'), show: () => (len === 2 && (selectedRows[0].newsql || selectedRows[1].newsql)) }
           ]}
         >
-          <Toolbar.Right>
+          {/* <Toolbar.Right>
             {<Button onClick={() => this.toggleModal('FilterModal')}>过滤</Button>}
-          </Toolbar.Right>
+          </Toolbar.Right> */}
         </Toolbar>
         <ConfigTable
           rowKey="recid"
@@ -203,7 +203,7 @@ class Historyscript extends Component {
         {
           showModals.CodeMerge ? (
             <CodeMerge
-              width="95%"
+              width="100%"
               len={len}
               options={{
                 value: len === 2 ? selectedRows[0].newsql : value,

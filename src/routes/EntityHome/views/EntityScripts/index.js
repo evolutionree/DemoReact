@@ -80,25 +80,28 @@ function EntityScripts({
             </div>
           </div>
         </Col>
-        <DynamicLoadModal
-          width={1120}
-          title={title}
-          keyname={showingScript}
-          rowKey="id"
-          recid={entityId}
-          value={editingContent}
-          orig={content}
-          spaceName={SPACENAME}
-          name={showingScript}
-          showModals={showModals}
-          allScripts={allScripts}
-          detailapi="api/entitypro/getucodedetail"
-          onChange={onChange.bind(null, name, 'editingContent')}
-          initParams={initParams}
-          historyList={historyList}
-          WrapComponent={HistoryModal}
-          listLoading={fetchDataLoading && fetchDataLoading.HistoryModal}
-        />
+        {
+          showModals && showModals.HistoryModal &&
+          <DynamicLoadModal
+            width={1120}
+            title={title}
+            keyname={showingScript}
+            rowKey="id"
+            recid={entityId}
+            value={editingContent}
+            orig={content}
+            spaceName={SPACENAME}
+            name={showingScript}
+            showModals={showModals}
+            allScripts={allScripts}
+            detailapi="api/entitypro/getucodedetail"
+            onChange={onChange.bind(null, name, 'editingContent')}
+            initParams={initParams}
+            historyList={historyList}
+            WrapComponent={HistoryModal}
+            listLoading={fetchDataLoading && fetchDataLoading.HistoryModal}
+          />
+        }
       </Row>
     </div>
   );
