@@ -733,10 +733,9 @@ class ReportForm extends React.Component {
         return (
           <div style={{ height: '100%', width: '100%', borderRadius: '4px', padding: '20px', boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)' }}>  
           {
-            Array.isArray(this.state[item.datasourcename]) && this.state[item.datasourcename].length ? 
             <LinesMap
-              data={this.state[item.datasourcename] }
-            /> : null
+              data={this.state[item.datasourcename] ? [...this.state[item.datasourcename].filter(o => currentSelect.includes('5'))] : [] }
+            />
           }
           </div>
         );
@@ -758,7 +757,6 @@ class ReportForm extends React.Component {
               value={currentSelect}
               list={_LIST}
               placeholder="搜索人员或部门"
-              onSearch={this.onSearch.bind(this, item.datasourcename)}
               comboKeyOption={{ key: 'recid', parentKey: 'parentid', title: 'label', searchKey: "recname" }}
               onChange={this.oneSelectTree.bind(this, { list:  _LIST, max, checkable, selectmode })}
             /> : null
@@ -766,13 +764,6 @@ class ReportForm extends React.Component {
           </div>
       );
     }
-  }
-
-  onSearch = (key, value) => {
-    // const list = this.state[key] || [];
-    // const result = _LIST.filter(item => (item.parentid === '00000000-0000-0000-0000-000000000000' || item.recname.indexOf(value) !== -1));
-
-    // this.setState({ [`${key}Filter`]: value ? result : null });
   }
 
   oneSelectTree = (record, checkedKeys, e) => {

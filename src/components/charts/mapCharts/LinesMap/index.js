@@ -30,111 +30,128 @@ const comboMapData = (data, type = 'lines', key = 'dataname') => {
 class LinesMap extends Component {
   constructor (props) {
     super(props)
-    this.state = {}
+    this.state = {
+      option: null
+    }
   }
   myChart = null
+  chartNode = null
 
   componentDidMount () {
-    const { data } = this.props;
+    if (this.chartNode) {
+      this.myChart = echarts.init(this.chartNode);
+      this.initUI(this.props.data)
+    }
+  }
 
-    if (Array.isArray(data) && data.length && this.myChart) {
-      const list = [...data];
-      const myChart = echarts.init(this.myChart);
-      const center = list.filter(item => [1].includes(item.datatype));
-      const lines = comboMapData(list.filter(item => [2, 6].includes(item.datatype)));
-      const points = comboMapData(list.filter(item => [4, 6].includes(item.datatype)), 'effectScatter');
+  componentWillReceiveProps(nextProps) {
+    const { data: oldData } = this.props
+    const { data: newData } = nextProps
 
-      myChart.setOption({
-        tooltip : {
-          trigger: 'item'
+    if (this.chartNode && !this.myChart) this.myChart = echarts.init(this.chartNode);
+
+    if (this.myChart) this.initUI(newData)
+  }
+
+  initUI = (data) => {
+    const list = Array.isArray(data) ? [...data] : [];
+    const len = list.length
+
+    const center = len ? list.filter(item => [1].includes(item.datatype)) : [{ lng: 116.4136103013, lat: 39.9110666857 }];
+    const lines = len ? comboMapData(list.filter(item => [2, 6].includes(item.datatype))) : [];
+    const points = len ? comboMapData(list.filter(item => [4, 6].includes(item.datatype)), 'effectScatter') : [];
+
+    const option = {
+      tooltip : {trigger: 'item' },
+      bmap: {
+        center: [center[0].lng, center[0].lat],
+        zoom: 14,
+        roam: true,
+        itemStyle: {
+          normal: {
+            areaColor: '#323c48',
+            borderColor: '#404a59'
+          },
+          emphasis: {
+            areaColor: '#2a333d'
+          }
+        }
+      },
+      series: [{
+        name: 'line1',
+        type: 'lines',
+        coordinateSystem: 'bmap',
+        zlevel: 1,
+        polyline: true,
+        effect: {
+          show: true,
+          period: 6,
+          trailLength: 0.7,
+          color: '#fff',
+          symbolSize: 5
         },
-        bmap: {
-          center: [center[0].lng, center[0].lat],
-          zoom: 14,
-          roam: true,
-          itemStyle: {
-            normal: {
-              areaColor: '#323c48',
-              borderColor: '#404a59'
-            },
-            emphasis: {
-              areaColor: '#2a333d'
-            }
+        lineStyle: {
+          normal: {
+            color: 'purple',
+            width: 5,
+            opacity: 0.6,
+            curveness: 0.1
           }
         },
-        series: [{
-          name: 'line1',
+        data: lines
+        }, {
+          name: 'line2',
           type: 'lines',
           coordinateSystem: 'bmap',
-          zlevel: 1,
+          zlevel: 2,
           polyline: true,
-          effect: {
-            show: true,
-            period: 6,
-            trailLength: 0.7,
-            color: '#fff',
-            symbolSize: 5
-          },
+          symbol: ['none', 'arrow'],
+          symbolSize: 100,
           lineStyle: {
             normal: {
               color: 'purple',
-              width: 5,
+              width: 3,
               opacity: 0.6,
               curveness: 0.1
             }
           },
           data: lines
-          }, {
-            name: 'line2',
-            type: 'lines',
-            coordinateSystem: 'bmap',
-            zlevel: 2,
-            polyline: true,
-            symbol: ['none', 'arrow'],
-            symbolSize: 100,
-            lineStyle: {
-              normal: {
-                color: 'purple',
-                width: 3,
-                opacity: 0.6,
-                curveness: 0.1
-              }
-            },
-            data: lines
-        }, {
-          name: '打卡坐标',
-          type: 'scatter',
-          coordinateSystem: 'bmap',
-          rippleEffect: {
-            brushType: 'stroke'
+      }, {
+        name: '打卡坐标',
+        type: 'scatter',
+        coordinateSystem: 'bmap',
+        rippleEffect: {
+          brushType: 'stroke'
+        },
+        label: {
+          normal: {
+            show: true,
+            position: 'right',
+            formatter: '{b}'
           },
-          label: {
-            normal: {
-              show: true,
-              position: 'right',
-              formatter: '{b}'
-            },
-            position: 'end'
-          },
-          showEffectOn: 'emphasis',
-          symbolSize: function (val) {
-            return val[2];
-          },
-          itemStyle: {
-            normal: {
-              color: 'purple'
-            }
-          },
-          data: points
-        }]
-      })
+          position: 'end'
+        },
+        showEffectOn: 'emphasis',
+        symbolSize: function (val) {
+          return val[2];
+        },
+        itemStyle: {
+          normal: {
+            color: 'purple'
+          }
+        },
+        data: points
+      }]
     }
+
+    this.myChart.setOption(option)
+    this.setState({ option })
   }
 
   render () {
     return (
       <div
-        ref={node => (this.myChart = node)}
+        ref={node => (this.chartNode = node)}
         style={{ width: '100%', height: 600 }}
       >
         loading...
