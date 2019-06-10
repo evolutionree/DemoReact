@@ -35,20 +35,12 @@ class LinesMap extends Component {
   myChart = null
 
   componentDidMount () {
-    this.initUI()
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.initUI()
-  }
-
-  initUI = () => {
     const { data } = this.props;
 
-    if (this.myChart) {
-      const list = Array.isArray(data) ? [...data] : [];
+    if (Array.isArray(data) && data.length && this.myChart) {
+      const list = [...data];
       const myChart = echarts.init(this.myChart);
-      const center = list.filter(item => [1].includes(item.datatype)).length ? list.filter(item => [1].includes(item.datatype)) : [{ lat: 39.9110666857, lng: 116.4136103013 }];
+      const center = list.filter(item => [1].includes(item.datatype));
       const lines = comboMapData(list.filter(item => [2, 6].includes(item.datatype)));
       const points = comboMapData(list.filter(item => [4, 6].includes(item.datatype)), 'effectScatter');
 

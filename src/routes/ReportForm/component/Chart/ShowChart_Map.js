@@ -1,28 +1,29 @@
 /**
  * Created by 0291 on 2017/8/29.
  */
-import React, { Component } from 'react'
-import { message } from 'antd'
-import EchartsReact from './EchartsReact'
+import React, { Component } from 'react';
+import { message } from 'antd';
+import EchartsReact from './EchartsReact';
 // then import echarts modules those you have used manually.
 
-function ShowMapChart ({
-  loading,
-  dataSource,
-  onEvents,
-  title,
-  titleShow = true,
-  exporttitle,
-  mapType,
-  echarts,
-  roam,
-  tooltipShow = true,
-  mapItemStyle,
-  toolboxShow = true,
-  visualMapShow = true,
-  label,
-  visualMap
-}) {
+
+function ShowMapChart({
+                           loading,
+                           dataSource,
+                           onEvents,
+                           title,
+                            titleShow = true,
+                           exporttitle,
+                           mapType,
+                           echarts,
+                           roam,
+                        tooltipShow = true,
+                           mapItemStyle,
+                          toolboxShow = true,
+                          visualMapShow = true,
+                          label,
+                        visualMap
+                         }) {
   let option = {
     title: {
       show: titleShow,
@@ -32,35 +33,20 @@ function ShowMapChart ({
     tooltip: {
       show: tooltipShow,
       trigger: 'item',
-      formatter: function (obj) {
-        return (
-          obj.seriesName +
-          '<br/>' +
-          obj.name +
-          ': ' +
-          (obj.value ? obj.value : 0)
-        )
+      formatter: function(obj) {
+        return obj.seriesName + '<br/>' + obj.name + ': ' + (obj.value ? obj.value : 0);
       }
     },
-    visualMap: visualMap || {
+    visualMap: visualMap ? visualMap : {
       show: visualMapShow,
       seriesIndex: 0,
       min: 1,
       max: 200,
       left: 'left',
       bottom: 30,
-      text: ['高', '低'], // 文本，默认为数值文本
+      text: ['高', '低'],           // 文本，默认为数值文本
       calculable: true,
-      color: [
-        '#1772c6',
-        '#2d81c8',
-        '#408dce',
-        '#5197d2',
-        '#77b2de',
-        '#a3cae7',
-        '#bedbeb',
-        '#d0e6f3'
-      ]
+      color: ['#1772c6', '#2d81c8', '#408dce', '#5197d2', '#77b2de', '#a3cae7', '#bedbeb', '#d0e6f3']
     },
 
     toolbox: {
@@ -71,7 +57,7 @@ function ShowMapChart ({
       top: 'top',
       feature: {
         saveAsImage: {
-          name: exporttitle || title
+          name: exporttitle ? exporttitle : title
         }
       }
     },
@@ -80,8 +66,8 @@ function ShowMapChart ({
         name: title,
         type: 'map',
         mapType: mapType,
-        roam: roam || roam === false ? roam : true, // 是否开启鼠标缩放和平移漫游。默认不开启。如果只想要开启缩放或者平移，可以设置成 'scale' 或者 'move'。设置成 true 为都开启
-        itemStyle: mapItemStyle || {
+        roam: (roam || roam === false) ? roam : true, //是否开启鼠标缩放和平移漫游。默认不开启。如果只想要开启缩放或者平移，可以设置成 'scale' 或者 'move'。设置成 true 为都开启
+        itemStyle: mapItemStyle ? mapItemStyle : {
           normal: {
             areaColor: '#FFFFFF',
             borderColor: '#3398db'
@@ -91,7 +77,7 @@ function ShowMapChart ({
             borderColor: '#ffbe23'
           }
         },
-        label: label || {
+        label: label ? label : {
           normal: {
             show: true
           },
@@ -104,6 +90,7 @@ function ShowMapChart ({
     ]
   }
 
+
   return (
     <EchartsReact
       echarts={echarts}
@@ -111,10 +98,9 @@ function ShowMapChart ({
       showLoading={loading}
       style={{ width: '100%', height: '100%' }}
       option={option}
-      notMerge
-      lazyUpdate
-    />
-  )
+      notMerge={true}
+      lazyUpdate={true} />
+  );
 }
 
-export default ShowMapChart
+export default ShowMapChart;
