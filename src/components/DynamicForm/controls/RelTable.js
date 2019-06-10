@@ -90,6 +90,7 @@ class RelTable extends Component {
     if (this.props.entityId !== nextProps.entityId) {
       this.queryFields(nextProps.entityId, nextProps);
     }
+    this.setAlignTableWidthAndHeight();
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -692,7 +693,7 @@ class RelTable extends Component {
       this.fixLeftWrapRef.style.height = this.relTableWrapRef.getBoundingClientRect().height - scrollHeight + 'px';
       this.fixLeftWrapRef.style.maxHeight = TableMaxHeight - scrollHeight + 'px';
 
-      this.fixTopWrapRef.style.width = `calc(100% - ${scrollWidth}px)`;
+      this.fixTopWrapRef.style.width = scrollWidth ? `calc(100% - ${scrollWidth}px)` : undefined;
       this.fixTopWrapRef.style.height = this.relTableWrapRef.children[0].children[0].getBoundingClientRect().height + 1 + 'px';
       this.fixTopTableRef.style.width = this.relTableRef.getBoundingClientRect().width + 'px';
 
