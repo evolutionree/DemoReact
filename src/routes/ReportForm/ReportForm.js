@@ -16,6 +16,7 @@ import DataGrid from './component/Table/DataGrid.jsx';
 import HeaderModel from './component/Table/HeaderModel.js';
 import SearchBar from './component/SearchBar/SearchBar.js'; //查询组件
 import ShowChart from './component/Chart/ShowChart'; //一般图表（柱状图、折线图等）
+import ShowLineMap from './component/Chart/ShowLineMap'; //路径图
 import ShowFunnelChart from './component/Chart/ShowChart_Funnel'; //漏斗图表
 import ShowMapChart from './component/Chart/ShowChart_Map'; //地图
 import ShowBMapChart from './component/Chart/ShowChart_Map_BMap'; //详细地图（县级以下）
@@ -732,11 +733,15 @@ class ReportForm extends React.Component {
       case 10:
         return (
           <div style={{ height: '100%', width: '100%', borderRadius: '4px', padding: '20px', boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)' }}>  
-          {
-            <LinesMap
-              data={this.state[item.datasourcename] ? [...this.state[item.datasourcename].filter(o => currentSelect.includes('5'))] : [] }
-            />
-          }
+          {/* <LinesMap
+            data={this.state[item.datasourcename] ? [...this.state[item.datasourcename].filter(o => currentSelect.includes('5'))] : [] }
+          /> */}
+          <ShowLineMap 
+            echarts={this.echartsInstance}
+            loading={this.state[item.datasourcename + 'loading']}
+            // onEvents={this.getMapChartEvents(this.state[item.datasourcename + 'loading'])}
+            dataSource={this.state[item.datasourcename] ? [...this.state[item.datasourcename].filter(o => this.state[`${[item.datasourcename]}Select`].split(',').includes(o.recid))] : [] }
+          />
           </div>
         );
       case 11:
@@ -745,6 +750,7 @@ class ReportForm extends React.Component {
         const max = orgcomponentinfo && orgcomponentinfo.maxselectcount;
         const checkable = orgcomponentinfo && orgcomponentinfo.multiselect === 1; // 是否多选
         const selectmode = orgcomponentinfo ? orgcomponentinfo.selectmode : 1; // 1 只选人  2 只选部门 3 选人&部门
+
         return (
           <div style={{ height: '100%', width: '100%', borderRadius: '4px', padding: '20px', boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)' }}>  
           {
@@ -754,11 +760,11 @@ class ReportForm extends React.Component {
               trigger="onChange"
               expandedKeys={list.filter(o => o.parentid === '00000000-0000-0000-0000-000000000000').map(item => item.recid) || []}
               checkable={checkable}
-              value={currentSelect}
+              value={this.state[`${[item.datasourcename]}Select`] || ''}
               list={_LIST}
               placeholder="搜索人员或部门"
               comboKeyOption={{ key: 'recid', parentKey: 'parentid', title: 'label', searchKey: "recname" }}
-              onChange={this.oneSelectTree.bind(this, { list:  _LIST, max, checkable, selectmode })}
+              onChange={this.oneSelectTree.bind(this, { item, list:  _LIST, max, checkable, selectmode })}
             /> : null
           }
           </div>
@@ -768,20 +774,20 @@ class ReportForm extends React.Component {
 
   oneSelectTree = (record, checkedKeys, e) => {
     const { handleSelectTree } = this.props;
-    const { list, max, checkable, selectmode } = record;
+    const { item, list, max, checkable, selectmode } = record;
     let result = checkedKeys.split(',');
 
     if (checkable && max && result.length > max) return;
 
     if (checkedKeys && list.length) {
       // 只选人
-      if (selectmode === 1) result = result.filter(key => list.find(item => item.recid === key).rectype === 2);
+      if (selectmode === 1) result = result.filter(key => list.find(o => o.recid === key).rectype === 2);
 
       // 只选部门
-      if (selectmode === 2) result = result.filter(key => list.find(item => item.recid === key).rectype === 1);
+      if (selectmode === 2) result = result.filter(key => list.find(o => o.recid === key).rectype === 1);
     }
-
-    if (handleSelectTree) handleSelectTree(result.join(','));
+    // if (handleSelectTree) handleSelectTree(result.join(','));
+    this.setState({ [`${[item.datasourcename]}Select`]: result.join(',') });
   }
 
   render() {
