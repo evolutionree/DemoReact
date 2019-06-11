@@ -1,6 +1,6 @@
-import React, { PropTypes } from 'react';
-import { is } from 'immutable';
-import { controlMap } from './constants';
+import React, { PropTypes } from 'react'
+import { is } from 'immutable'
+import { controlMap } from './constants'
 
 class DynamicField extends React.Component {
   static propTypes = {
@@ -25,44 +25,50 @@ class DynamicField extends React.Component {
     fieldId: PropTypes.string,
     allowadd: PropTypes.bool,
     jsEngine: PropTypes.object
-  };
+  }
   static defaultProps = {
     isAdvanceSearch: false,
     isTable: false,
     mode: 'ADD'
-  };
+  }
 
   getControlRef = () => {
-    let controlRef = this.instRef;
+    let controlRef = this.instRef
     while (controlRef && controlRef.getWrappedInstance) {
-      controlRef = controlRef.getWrappedInstance();
+      controlRef = controlRef.getWrappedInstance()
     }
-    return controlRef;
-  };
+    return controlRef
+  }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    const thisProps = this.props || {};
+  shouldComponentUpdate (nextProps, nextState) {
+    const thisProps = this.props || {}
 
     if (Object.keys(thisProps).length !== Object.keys(nextProps).length) {
-      return true;
+      return true
     }
 
     for (const key in nextProps) {
-      if (['onFocus', 'data-__meta'].indexOf(key) === -1 && !is(thisProps[key], nextProps[key])) {
+      if (
+        ['onFocus', 'data-__meta'].indexOf(key) === -1 &&
+        !is(thisProps[key], nextProps[key])
+      ) {
         // console.error(this.props.fieldname, key);
         // console.log(nextProps[key])
-        return true;
+        return true
       }
     }
-    return false;
+    if (nextProps && nextProps.controlType === 24) {
+      return true
+    }
+    return false
   }
 
-  render() {
+  render () {
     const props = {
       key: this.props.fieldId,
       isCommonForm: this.props.isCommonForm,
       entityId: this.props.entityId,
-      mainEntityId: this.props.entityId, //嵌套表格的实体定义属性名 跟 独立实体 简单实体 重名了，重新加一个  （嵌套实体 导入用到）
+      mainEntityId: this.props.entityId, // 嵌套表格的实体定义属性名 跟 独立实体 简单实体 重名了，重新加一个  （嵌套实体 导入用到）
       entityTypeId: this.props.entityTypeId,
       isTable: this.props.isTable,
       mode: ['ADD', 'EDIT'][this.props.usage],
@@ -75,22 +81,24 @@ class DynamicField extends React.Component {
       onChangeWithName: this.props.onChangeWithName,
       onFocus: this.props.onFocus,
       quoteHandler: this.props.quoteHandler,
-      ref: instRef => { this.instRef = instRef; },
+      ref: instRef => {
+        this.instRef = instRef
+      },
       jsEngine: this.props.jsEngine,
       origin: this.props.origin,
       OriginCopyAddForm: this.props.OriginCopyAddForm,
       ...this.props.config
-    };
-    let ControlComponent = controlMap[this.props.controlType];
+    }
+    let ControlComponent = controlMap[this.props.controlType]
     if (!ControlComponent) {
-      console.error(`无法识别控件类型: [controlType]${this.props.controlType}`);
-      return null;
+      console.error(`无法识别控件类型: [controlType]${this.props.controlType}`)
+      return null
     }
     if (this.props.usage === 2) {
-      ControlComponent = ControlComponent.AdvanceSearch || ControlComponent;
+      ControlComponent = ControlComponent.AdvanceSearch || ControlComponent
     }
-    return React.createElement(ControlComponent, props);
+    return React.createElement(ControlComponent, props)
   }
 }
 
-export default DynamicField;
+export default DynamicField
