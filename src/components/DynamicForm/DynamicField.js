@@ -57,6 +57,9 @@ class DynamicField extends React.Component {
         return true
       }
     }
+    if (nextProps && nextProps.controlType === 24) {
+      return true
+    }
     return false
   }
 
