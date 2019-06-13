@@ -48,7 +48,7 @@ class DynamicDetailModal extends React.Component {
           onCancel={this.props.onCancel}
           footer={null}
         >
-          {Object.keys(item).length ? (
+          {item && Object.keys(item).length ? (
             <ActivityBoard
               title={item.entityname}
               time={item.reccreated}
