@@ -1,217 +1,319 @@
 /**
  * Created by 0291 on 2017/7/14.
  */
-import React from 'react';
-import { Layout, Dropdown, Menu, Icon, Spin, Modal, message, Button } from 'antd';
-import { connect } from 'dva';
-import { Link, routerRedux } from 'dva/router';
-import request from '../../utils/request';
-import { disableReminder } from '../../services/reminder';
-import { checkHasPermission } from '../../services/entcomm';
-import classnames from 'classnames';
-import BadgeIcon from './BadgeIcon';
-import styles from './MessageList.less';
+import React from 'react'
+import { Tabs, Icon, Spin, Modal, message, Button } from 'antd'
+import { connect } from 'dva'
+import { routerRedux } from 'dva/router'
+import request from '../../utils/request'
+import { disableReminder } from '../../services/reminder'
+import { checkHasPermission } from '../../services/entcomm'
+import classnames from 'classnames'
+import BadgeIcon from './BadgeIcon'
+import styles from './MessageList.less'
 
-const clientHeight = document.body.offsetHeight && document.documentElement.clientHeight;
+const { TabPane } = Tabs
+
+const clientHeight =
+  document.body.offsetHeight && document.documentElement.clientHeight
 // const menuData=[{key:-1, text:'全部'}, {key:0, text:'系统通知'} ,{key:1, text:'实体操作消息'},
 //   {key:2, text:'实体动态消息'},{key:3, text:'实体动态带点赞'},{key:4, text:'提醒'},{key:5, text:'审批'},
 //   {key:6, text:'工作报告'},{key:7, text:'公告通知'},{key:99, text:'导入结果提醒'}];
 
-const MSG_GROUP_ID = 1004;
-const APPROVE_GROUP_ID = 1006;
+const MSG_GROUP_ID = 1004
+const APPROVE_GROUP_ID = 1006
+
 const msgTypes = {
   IMPORT_RESULT: 99,
   TASK: 4,
   APPROVE: 5
-};
-const menuData = [{ key: msgTypes.IMPORT_RESULT, text: '导入结果提醒' }, { key: msgTypes.TASK, text: '智能提醒' }, { key: msgTypes.APPROVE, text: '审批提醒' }];
+}
+const menuData = [
+  { key: msgTypes.IMPORT_RESULT, text: '导入结果提醒', type: 'IMPORT_RESULT' },
+  { key: msgTypes.TASK, text: '智能提醒', type: 'TASK' },
+  { key: msgTypes.APPROVE, text: '审批提醒', type: 'APPROVE' }
+]
 
 class MessageList extends React.Component {
-  static propTypes = {};
+  static propTypes = {}
   static defaultProps = {
     url: '/api/notify/vertionmsglist'
-  };
+  }
 
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super(props)
     this.state = {
       visible: false,
-      data: [],
       isPessionLoad: true,
       pageIndex: 0,
-      clientHeight: clientHeight,
+      clientHeight,
       unReadCount: null,
       loading: false,
       msgType: msgTypes.IMPORT_RESULT,
       modalVisible: false,
       modalBtnLoading: false,
       currentItem: null
-    };
+    }
   }
 
-  componentWillMount() {
-    this.fetchUnReadCount();
-    this.interval = setInterval(() => this.fetchUnReadCount(), 15000);
+  componentDidMount () {
+    this.fetchUnReadCount()
+    this.interval = setInterval(() => this.fetchUnReadCount(), 15000)
+
+    document.body.addEventListener('click', this.hideList, false)
+    window.addEventListener('resize', this.onWindowResize, false)
+    const clientHeight =
+      document.body.offsetHeight && document.documentElement.clientHeight
+    this.setState({ clientHeight })
   }
 
-  componentDidMount() {
-    document.body.addEventListener('click', this.hideList, false);
-    window.addEventListener('resize', this.onWindowResize, false);
-    const clientHeight = document.body.offsetHeight && document.documentElement.clientHeight;
-    this.setState({
-      clientHeight: clientHeight
-    })
-  }
-
-  componentWillUnmount() {
-    document.body.removeEventListener('click', this.hideList, false);
-    window.removeEventListener('resize', this.onWindowResize, false);
+  componentWillUnmount () {
+    document.body.removeEventListener('click', this.hideList, false)
+    window.removeEventListener('resize', this.onWindowResize, false)
     // 去掉定时器任务
     if (this.interval) {
-      clearInterval(this.interval);
+      clearInterval(this.interval)
     }
   }
 
   onWindowResize = () => {
-    const clientHeight = document.body.offsetHeight && document.documentElement.clientHeight;
+    const clientHeight =
+      document.body.offsetHeight && document.documentElement.clientHeight
     this.setState({
       clientHeight: clientHeight
     })
   }
 
-  fetchUnReadCount() {
+  fetchUnReadCount () {
     request('api/notify/unreadcount', {
-      method: 'post', body: JSON.stringify({ MsgGroupIds: [MSG_GROUP_ID, APPROVE_GROUP_ID] })
-    }).then((result) => {
-      this.setState({
-        unReadCount: result.data.reduce((total, item) => total + item.count, 0)
-      });
-    }).catch((e) => {
-      message.error(e.message);
-    });
+      method: 'post',
+      body: JSON.stringify({ MsgGroupIds: [MSG_GROUP_ID, APPROVE_GROUP_ID] })
+    })
+      .then(result => {
+        this.setState({
+          unReadCount: result.data.reduce(
+            (total, item) => total + item.count,
+            0
+          )
+        })
+      })
+      .catch(e => {
+        message.error(e.message)
+      })
   }
 
-  fetchMsgList(type, RecVersion, msgType = msgTypes.IMPORT_RESULT) {
-    this.setState({
-      loading: true
-    });
-    let MsgGroupIds = [MSG_GROUP_ID];
-    let newData = this.state.data;
-    let MsgStyleTypes;
+  getFieldType = msgType => {
+    return menuData.find(item => item.key === msgType).type || 'IMPORT_RESULT'
+  }
+
+  getMsgParams = (type, RecVersion, msgType = msgTypes.IMPORT_RESULT) => {
+    let MsgGroupIds = [MSG_GROUP_ID]
+    let MsgStyleTypes
+
     if (msgType === -1) {
-      MsgStyleTypes = [msgTypes.IMPORT_RESULT, msgTypes.TASK, 8];
+      MsgStyleTypes = [msgTypes.IMPORT_RESULT, msgTypes.TASK, 8]
     } else if (+msgType === msgTypes.TASK) {
-      MsgStyleTypes = [1, msgTypes.TASK, 8];
+      MsgStyleTypes = [1, msgTypes.TASK, 8]
     } else if (+msgType === msgTypes.APPROVE) {
-      MsgStyleTypes = [msgTypes.APPROVE];
-      MsgGroupIds = [APPROVE_GROUP_ID];
+      MsgStyleTypes = [msgTypes.APPROVE]
+      MsgGroupIds = [APPROVE_GROUP_ID]
     } else {
-      MsgStyleTypes = [msgTypes.IMPORT_RESULT];
+      MsgStyleTypes = [msgTypes.IMPORT_RESULT]
     }
-    const params = {
-      RecVersion: RecVersion,
-      Direction: RecVersion === 0 ? 0 : -1, //以版本号为基线，向前或者向后取值，-1为取小于RecVersion的数据，0为全量，1为取大于RecVersion的数据
+
+    return {
+      RecVersion,
+      Direction: RecVersion === 0 ? 0 : -1, // 以版本号为基线，向前或者向后取值，-1为取小于RecVersion的数据，0为全量，1为取大于RecVersion的数据
       PageSize: 10,
-      MsgGroupIds: MsgGroupIds,
+      MsgGroupIds,
       MsgStyleTypes
-    };
-    request(this.props.url, {
-      method: 'post', body: JSON.stringify(params)
-    }).then((result) => {
-      if (newData.length === 0) {
-        newData = result.data.datalist;
-      } else if (type === 'load') { //重新开始加载
-        newData = result.data.datalist;
-      } else if (type === 'loadMore') { //追加更多  查询更多
-        result.data.datalist.forEach((item) => {
-          newData.push(item);
-        });
-      }
-
-      this.setState({
-        data: newData,
-        RecVersion: result.data.pageminversion,
-        loading: false,
-        isPessionLoad: newData.length < 10 ? false : !(result.data.pagemaxversion === result.data.pageminversion) //是否所有数据查询完
-      });
-    }).catch((e) => {
-      message.error(e.message);
-      this.setState({
-        loading: false
-      });
-    });
-  }
-
-
-  toggleList(e) {
-    this.fetchMsgList('load', 0, this.state.msgType);
-    e.nativeEvent.stopImmediatePropagation();//阻止冒泡
-    this.setState({
-      visible: !this.state.visible
-    });
-  }
-
-  hideList = (event) => {
-    if (this.state.modalVisible) return;
-    if ($(event.target).closest('#message-panel').length || $(event.target).closest('.ant-dropdown').length) {
-      return;
     }
+  }
+
+  fetchList = async params => {
+    return request(this.props.url, {
+      method: 'post',
+      body: JSON.stringify(params)
+    })
+      .then(res => res)
+      .catch(e => {
+        message.error(e.message)
+        console.error(e.message)
+      })
+  }
+
+  fetchAllList = async (type, RecVersion) => {
+    const paramArr = menuData.map(item =>
+      this.getMsgParams(type, RecVersion, item.key)
+    )
+    const funcArr = paramArr.map(args => this.fetchList(args))
+    return Promise.all(funcArr)
+      .then(arr => {
+        const result = {}
+        menuData.forEach((item, i) => (result[item.type] = arr[i]))
+        return result
+      })
+      .catch(e => {
+        message.error(e.message)
+        console.error(e.message)
+      })
+  }
+
+  fetchMsgList = async (
+    type,
+    RecVersion,
+    msgType = msgTypes.IMPORT_RESULT,
+    isFirst
+  ) => {
+    const params = this.getMsgParams(type, RecVersion, msgType)
+
+    this.setState({ loading: true })
+
+    let result = null
+
+    if (!isFirst) {
+      result = await this.fetchList(params).then(res => (result = res))
+    } else {
+      result = await this.fetchAllList(type, RecVersion)
+        .then(res => res)
+        .catch(e => {
+          message.error(e.message)
+          console.error(e.message)
+        })
+    }
+
+    this.setNewData(result, type, msgType)
+  }
+
+  setNewData = (result, type, msgType) => {
+    const isSingle = result.data
+    const fieldType = this.getFieldType(msgType)
+    let newData = this.state[fieldType] || []
+    let otherState = {}
+
+    if (isSingle) {
+      // 单个请求
+      if (newData.length === 0 || type === 'load') {
+        newData = result.data ? result.data.datalist : []
+      } else if (type === 'loadMore') {
+        result.data &&
+          Array.isArray(result.data.datalist) &&
+          result.data.datalist.forEach(item => {
+            newData.push(item)
+          })
+      }
+    } else {
+      Object.keys(result).forEach(
+        key =>
+          (otherState[key] =
+            result[key].data && Array.isArray(result[key].data.datalist)
+              ? result[key].data.datalist
+              : [])
+      )
+    }
+
+    const RecVersion = isSingle
+      ? result.data.pageminversion
+      : result[fieldType].data.pageminversion
+
+    const pageminversion = isSingle
+      ? result.data.pageminversion
+      : result[fieldType].data.pageminversion
+
+    const pagemaxversion = isSingle
+      ? result.data.pagemaxversion
+      : result[fieldType].data.pagemaxversion
+
+    const isPessionLoad =
+      newData.length < 10 ? false : !(pageminversion === pagemaxversion) // 是否所有数据查询完
+
     this.setState({
-      visible: false
-    });
+      [fieldType]: newData,
+      RecVersion,
+      isPessionLoad,
+      loading: false,
+      ...otherState
+    })
   }
 
-  loadMore() {
-    this.fetchMsgList('loadMore', this.state.RecVersion, this.state.msgType);
+  toggleList (e) {
+    this.fetchMsgList('load', 0, this.state.msgType, true)
+    e.nativeEvent.stopImmediatePropagation() // 阻止冒泡
+    this.setState({ visible: !this.state.visible })
   }
 
-  headerMenuHandler({ key, domEvent }) {
-    domEvent.nativeEvent.stopImmediatePropagation();//阻止冒泡
-    this.fetchMsgList('load', 0, key);
-    this.setState({
-      msgType: key
-    });
+  hideList = event => {
+    if (this.state.modalVisible) return
+    if (
+      $(event.target).closest('#message-panel').length ||
+      $(event.target).closest('.ant-dropdown').length
+    ) {
+      return
+    }
+    this.setState({ visible: false })
   }
 
-  listClickHandler(readStatus, msgid, index, item) {//用户点击之后 表示已读 readstatus：0：未读 1：已查 2：已读
-    const { msgstyletype, msgparam } = item;
-    let link = null;
-    if (msgstyletype === 8 && msgparam && msgparam.entityid && msgparam.businessid) {
+  loadMore () {
+    this.fetchMsgList('loadMore', this.state.RecVersion, this.state.msgType)
+  }
+
+  headerMenuHandler = key => {
+    const msgType = key * 1
+    this.fetchMsgList('load', 0, msgType)
+    this.setState({ msgType })
+  }
+
+  listClickHandler (readStatus, msgid, index, item) {
+    // 用户点击之后 表示已读 readstatus：0：未读 1：已查 2：已读
+    const { msgstyletype, msgparam } = item
+    let link = null
+    if (
+      msgstyletype === 8 &&
+      msgparam &&
+      msgparam.entityid &&
+      msgparam.businessid
+    ) {
       if (msgparam.data.type + '' === '0') {
-        link = `/entcomm/${msgparam.entityid}/${msgparam.businessid}`;
+        link = `/entcomm/${msgparam.entityid}/${msgparam.businessid}`
       } else if (msgparam.data.type + '' === '2') {
-        link = `/entcomm-application/${msgparam.entityid}`;
+        link = `/entcomm-application/${msgparam.entityid}`
       }
     }
     if (link) {
       checkHasPermission({
         entityid: msgparam.entityid,
         recid: msgparam.businessid
-      }).then(result => {
-        if (result.data === '0') {
-          message.error('您没有权限查看该数据');
-        } else if (result.data === '2') {
-          message.error('该数据已删除，无法查看');
-        } else {
-          this.props.dispatch(routerRedux.push({
-            pathname: link
-          }));
+      }).then(
+        result => {
+          if (result.data === '0') {
+            message.error('您没有权限查看该数据')
+          } else if (result.data === '2') {
+            message.error('该数据已删除，无法查看')
+          } else {
+            this.props.dispatch(
+              routerRedux.push({
+                pathname: link
+              })
+            )
+          }
+        },
+        err => {
+          message.error('获取超时，请检查网络!')
         }
-      }, err => {
-        message.error('获取超时，请检查网络!');
-      });
+      )
     }
 
     if (readStatus === 2) {
-      return false;
+      return false
     }
     request('/api/notify/writeback', {
-      method: 'post', body: JSON.stringify({ MsgIds: [msgid] })
-    }).then((result) => {
+      method: 'post',
+      body: JSON.stringify({ MsgIds: [msgid] })
+    }).then(result => {
       // message.success('标记为已读');
-      let newData = this.state.data;
-      newData[index].readstatus = 2;
-      const unReadCount = this.state.unReadCount - 1;
+      let newData = this.state.data
+      newData[index].readstatus = 2
+      const unReadCount = this.state.unReadCount - 1
       this.setState({
         data: newData,
         unReadCount: unReadCount < 0 ? 0 : unReadCount
@@ -219,160 +321,246 @@ class MessageList extends React.Component {
     })
   }
 
-  openReminderConfig(item) {
+  openReminderConfig (item) {
     this.setState({
       modalVisible: true,
       currentItem: item
-    });
+    })
   }
 
-  closeReminderConfig(event) {
+  closeReminderConfig (event) {
     if (event) {
-      event.nativeEvent.stopImmediatePropagation();
+      event.nativeEvent.stopImmediatePropagation()
     }
     this.setState({
       modalVisible: false,
       currentItem: null
-    });
+    })
   }
 
-  setReminderDisabled(disabled) {
-    const { currentItem } = this.state;
-    if (!currentItem) return;
+  setReminderDisabled (disabled) {
+    const { currentItem } = this.state
+    if (!currentItem) return
     const params = {
       reminderid: currentItem.msgparam.reminderid,
       entityrecid: currentItem.msgparam.businessid,
       reminderstatus: disabled ? 1 : 0
-    };
-    this.setState({ modalBtnLoading: true });
-    disableReminder(params).then(() => {
-      this.setState({ modalBtnLoading: false });
-      this.closeReminderConfig();
-      message.success('设置成功');
-    }, error => {
-      this.setState({ modalBtnLoading: false });
-      message.error(error.message || '设置失败');
-    });
+    }
+    this.setState({ modalBtnLoading: true })
+    disableReminder(params).then(
+      () => {
+        this.setState({ modalBtnLoading: false })
+        this.closeReminderConfig()
+        message.success('设置成功')
+      },
+      error => {
+        this.setState({ modalBtnLoading: false })
+        message.error(error.message || '设置失败')
+      }
+    )
   }
 
-  renderText() {
+  renderText () {
     for (let i = 0; i < menuData.length; i++) {
-      if (menuData[i].key == this.state.msgType) { //注：不用全等
-        return menuData[i].text;
+      if (menuData[i].key == this.state.msgType) {
+        // 注：不用全等
+        return menuData[i].text
       }
     }
   }
 
-  isRenderMsgProgress(item) {
+  isRenderMsgProgress (item) {
     if (item.msgstyletype === msgTypes.IMPORT_RESULT) {
-      return `共导入数据${item.msgparam.data.DealRowsCount}条,导入成功${item.msgparam.data.DealRowsCount - item.msgparam.data.ErrorRowsCount}条,导入失败${item.msgparam.data.ErrorRowsCount}条`;
+      return `共导入数据${item.msgparam.data.DealRowsCount}条,导入成功${item
+        .msgparam.data.DealRowsCount -
+        item.msgparam.data.ErrorRowsCount}条,导入失败${
+        item.msgparam.data.ErrorRowsCount
+      }条`
     } else {
-      return null;
+      return null
     }
   }
 
-  render() {
-    const menu = (
-      <Menu onClick={this.headerMenuHandler.bind(this)}>
-        {
-          menuData.map((item) => {
-            return <Menu.Item key={item.key}>{item.text}</Menu.Item>
-          })
-        }
-      </Menu>
-    );
+  renderTabs = () => {
+    const {
+      msgType: msgtype,
+      loading,
+      isPessionLoad,
+      clientHeight
+    } = this.state
 
+    return (
+      <Tabs
+        size='small'
+        type='card'
+        activeKey={msgtype + ''}
+        onChange={this.headerMenuHandler}
+        tabBarStyle={{ marginBottom: -1 }}
+      >
+        {menuData.map(item => {
+          const data = this.state[item.type] || []
+          const count = data.length
+
+          return (
+            <TabPane
+              key={item.key + ''}
+              tab={`${item.text} ` + (count ? `(${count})` : '')}
+            >
+              <Spin spinning={loading} tip='Loading...'>
+                <ul
+                  className={styles.ulWrap}
+                  style={{ height: clientHeight - 68 }}
+                >
+                  {data.map((item, index) => {
+                    const cls = classnames({
+                      [styles.alreadyRead]: item.readstatus === 2
+                    })
+                    const {
+                      msgid,
+                      msgtitle,
+                      msgstyletype,
+                      msgparam,
+                      msgcontent
+                    } = item
+                    const hasLink = item.msgstyletype === 8 // 为8可以跳转 4 不可以
+
+                    return (
+                      <li
+                        className={cls}
+                        style={hasLink ? { cursor: 'pointer' } : null}
+                        key={msgid + 'itemWrap' + index}
+                        onClick={this.listClickHandler.bind(
+                          this,
+                          item.readstatus,
+                          msgid,
+                          index,
+                          item
+                        )}
+                      >
+                        <ul>
+                          <li>
+                            <span className={styles.msgtitle} title={msgtitle}>
+                              {msgstyletype === msgTypes.IMPORT_RESULT
+                                ? `${msgparam.data.TaskName}导入完成`
+                                : msgtitle}
+                            </span>
+                            <span className={styles.timeinfo}>
+                              {item.reccreated.toString().split(' ')[0]}
+                            </span>
+                          </li>
+                          {[msgTypes.IMPORT_RESULT].includes(msgstyletype) && (
+                            <li
+                              title={`导入结果：${this.isRenderMsgProgress(
+                                item
+                              )}`}
+                            >
+                              导入结果：
+                              {this.isRenderMsgProgress(item)}
+                              <a
+                                className={styles.download}
+                                href={`/api/fileservice/download?fileid=${
+                                  msgparam.data.ResultFileId
+                                }`}
+                              >
+                                下载
+                              </a>
+                            </li>
+                          )}
+                          {[msgTypes.TASK, 5, 8].includes(msgstyletype) && (
+                            <li title={msgcontent}>
+                              {msgcontent}
+                              {[msgTypes.TASK, 8].includes(msgstyletype) &&
+                                msgparam &&
+                                msgparam.reminderid && (
+                                <a
+                                  className={styles.download}
+                                  onClick={this.openReminderConfig.bind(
+                                    this,
+                                    item
+                                  )}
+                                >
+                                    提醒设置
+                                </a>
+                              )}
+                            </li>
+                          )}
+                        </ul>
+                      </li>
+                    )
+                  })}
+                  {loading ? null : isPessionLoad ? (
+                    <li
+                      key='loadMore'
+                      className={styles.loadMore}
+                      onClick={this.loadMore.bind(this)}
+                    >
+                      加载更多
+                    </li>
+                  ) : (
+                    <li key='loadMore' className={styles.loadNo}>
+                      亲,没有更多数据加载了哦
+                    </li>
+                  )}
+                </ul>
+              </Spin>
+            </TabPane>
+          )
+        })}
+      </Tabs>
+    )
+  }
+
+  render () {
     return (
       <div>
         <BadgeIcon
           textBool={false}
-          IconType="bell"
-          title="系统通知"
+          IconType='bell'
+          title='系统通知'
           onClick={this.toggleList.bind(this)}
           count={this.state.unReadCount}
         />
-        <div id="message-panel" className={styles.listContent}
-          style={{ right: this.state.visible ? 0 : "-440px", height: this.state.clientHeight - 60 }}
-          onClick={(e) => {
-            e.nativeEvent.stopImmediatePropagation()
-          }}>
-          <div className={styles.header}>
-            <Dropdown overlay={menu}>
-              <a>
-                {
-                  this.renderText()
-                }
-                <Icon type="down" />
-              </a>
-            </Dropdown>
-          </div>
-          <Spin spinning={this.state.loading} tip="Loading...">
-            <ul className={styles.ulWrap}>
-              {
-                this.state.data.map((item, index) => {
-                  const cls = classnames({
-                    [styles.alreadyRead]: item.readstatus === 2
-                  });
-                  const { msgid, msgtitle, msgstyletype, msgparam, msgcontent } = item;
-                  const hasLink = item.msgstyletype === 8; // 为8可以跳转 4 不可以
-                  return (
-                    <li
-                      className={cls}
-                      style={hasLink ? { cursor: 'pointer' } : null}
-                      key={msgid + 'itemWrap' + index}
-                      onClick={this.listClickHandler.bind(this, item.readstatus, msgid, index, item)}
-                    >
-                      <ul>
-                        <li>
-                          <span className={styles.msgtitle}
-                            title={msgtitle}>{msgstyletype === msgTypes.IMPORT_RESULT ? `${msgparam.data.TaskName}导入完成` : msgtitle}</span>
-                          <span className={styles.timeinfo}>{item.reccreated.toString().split(' ')[0]}</span>
-                        </li>
-                        {msgstyletype === msgTypes.IMPORT_RESULT && <li title={'导入结果：' + this.isRenderMsgProgress(item)}>
-                          导入结果：
-                          {this.isRenderMsgProgress(item)}
-                        </li>}
-                        {(msgstyletype === msgTypes.TASK || msgstyletype === 8 || msgstyletype === 5) && <li title={msgcontent}>
-                          {msgcontent}
-                        </li>}
-                      </ul>
-                      {msgstyletype === msgTypes.IMPORT_RESULT &&
-                        <a className={styles.download} href={`/api/fileservice/download?fileid=${msgparam.data.ResultFileId}`}>下载</a>}
-                      {((msgstyletype === msgTypes.TASK || msgstyletype === 8) && msgparam && msgparam.reminderid)
-                        && <a className={styles.download} onClick={this.openReminderConfig.bind(this, item)}>提醒设置</a>}
-                    </li>
-                  );
-                })
-              }
-              {
-                this.state.loading ? null : this.state.isPessionLoad ?
-                  <li key="loadMore" className={styles.loadMore} onClick={this.loadMore.bind(this)}>加载更多...</li> :
-                  <li key="loadMore" className={styles.loadMore}>亲,没有更多数据加载了哦</li>
-              }
-            </ul>
-          </Spin>
+        <div
+          id='message-panel'
+          className={styles.listContent}
+          style={{
+            width: 400,
+            right: this.state.visible ? 0 : '-440px'
+          }}
+          onClick={e => e.nativeEvent.stopImmediatePropagation()}
+        >
+          {this.renderTabs()}
           <Modal
             wrapClassName={styles.modal}
             width={420}
             visible={this.state.modalVisible}
             onCancel={this.closeReminderConfig.bind(this)}
             footer={[
-              <Button key="ok" loading={this.state.modalBtnLoading}
-                onClick={this.setReminderDisabled.bind(this, false)}>提醒</Button>,
-              <Button key="cancel" loading={this.state.modalBtnLoading}
-                onClick={this.setReminderDisabled.bind(this, true)}>不提醒</Button>
+              <Button
+                key='ok'
+                loading={this.state.modalBtnLoading}
+                onClick={this.setReminderDisabled.bind(this, false)}
+              >
+                提醒
+              </Button>,
+              <Button
+                key='cancel'
+                loading={this.state.modalBtnLoading}
+                onClick={this.setReminderDisabled.bind(this, true)}
+              >
+                不提醒
+              </Button>
             ]}
           >
             <div className={styles.modalContent}>
-              <Icon type="question-circle" />
+              <Icon type='question-circle' />
               <span>设置是否提醒</span>
             </div>
           </Modal>
         </div>
       </div>
-    );
+    )
   }
 }
 
-
-export default connect()(MessageList);
+export default connect()(MessageList)
