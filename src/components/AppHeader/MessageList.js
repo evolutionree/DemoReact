@@ -14,8 +14,7 @@ import styles from './MessageList.less'
 
 const { TabPane } = Tabs
 
-const clientHeight =
-  document.body.offsetHeight && document.documentElement.clientHeight
+const clientHeight = document.body.offsetHeight && document.documentElement.clientHeight
 // const menuData=[{key:-1, text:'全部'}, {key:0, text:'系统通知'} ,{key:1, text:'实体操作消息'},
 //   {key:2, text:'实体动态消息'},{key:3, text:'实体动态带点赞'},{key:4, text:'提醒'},{key:5, text:'审批'},
 //   {key:6, text:'工作报告'},{key:7, text:'公告通知'},{key:99, text:'导入结果提醒'}];
@@ -62,8 +61,7 @@ class MessageList extends React.Component {
 
     document.body.addEventListener('click', this.hideList, false)
     window.addEventListener('resize', this.onWindowResize, false)
-    const clientHeight =
-      document.body.offsetHeight && document.documentElement.clientHeight
+    const clientHeight = document.body.offsetHeight && document.documentElement.clientHeight
     this.setState({ clientHeight })
   }
 
@@ -77,8 +75,7 @@ class MessageList extends React.Component {
   }
 
   onWindowResize = () => {
-    const clientHeight =
-      document.body.offsetHeight && document.documentElement.clientHeight
+    const clientHeight = document.body.offsetHeight && document.documentElement.clientHeight
     this.setState({
       clientHeight: clientHeight
     })
@@ -91,10 +88,7 @@ class MessageList extends React.Component {
     })
       .then(result => {
         this.setState({
-          unReadCount: result.data.reduce(
-            (total, item) => total + item.count,
-            0
-          )
+          unReadCount: result.data.reduce((total, item) => total + item.count, 0)
         })
       })
       .catch(e => {
@@ -143,9 +137,7 @@ class MessageList extends React.Component {
   }
 
   fetchAllList = async (type, RecVersion) => {
-    const paramArr = menuData.map(item =>
-      this.getMsgParams(type, RecVersion, item.key)
-    )
+    const paramArr = menuData.map(item => this.getMsgParams(type, RecVersion, item.key))
     const funcArr = paramArr.map(args => this.fetchList(args))
     return Promise.all(funcArr)
       .then(arr => {
@@ -159,12 +151,7 @@ class MessageList extends React.Component {
       })
   }
 
-  fetchMsgList = async (
-    type,
-    RecVersion,
-    msgType = msgTypes.IMPORT_RESULT,
-    isFirst
-  ) => {
+  fetchMsgList = async (type, RecVersion, msgType = msgTypes.IMPORT_RESULT, isFirst) => {
     const params = this.getMsgParams(type, RecVersion, msgType)
 
     this.setState({ loading: true })
@@ -206,26 +193,17 @@ class MessageList extends React.Component {
       Object.keys(result).forEach(
         key =>
           (otherState[key] =
-            result[key].data && Array.isArray(result[key].data.datalist)
-              ? result[key].data.datalist
-              : [])
+            result[key].data && Array.isArray(result[key].data.datalist) ? result[key].data.datalist : [])
       )
     }
 
-    const RecVersion = isSingle
-      ? result.data.pageminversion
-      : result[fieldType].data.pageminversion
+    const RecVersion = isSingle ? result.data.pageminversion : result[fieldType].data.pageminversion
 
-    const pageminversion = isSingle
-      ? result.data.pageminversion
-      : result[fieldType].data.pageminversion
+    const pageminversion = isSingle ? result.data.pageminversion : result[fieldType].data.pageminversion
 
-    const pagemaxversion = isSingle
-      ? result.data.pagemaxversion
-      : result[fieldType].data.pagemaxversion
+    const pagemaxversion = isSingle ? result.data.pagemaxversion : result[fieldType].data.pagemaxversion
 
-    const isPessionLoad =
-      newData.length < 10 ? false : !(pageminversion === pagemaxversion) // 是否所有数据查询完
+    const isPessionLoad = newData.length < 10 ? false : !(pageminversion === pagemaxversion) // 是否所有数据查询完
 
     this.setState({
       [fieldType]: newData,
@@ -244,10 +222,7 @@ class MessageList extends React.Component {
 
   hideList = event => {
     if (this.state.modalVisible) return
-    if (
-      $(event.target).closest('#message-panel').length ||
-      $(event.target).closest('.ant-dropdown').length
-    ) {
+    if ($(event.target).closest('#message-panel').length || $(event.target).closest('.ant-dropdown').length) {
       return
     }
     this.setState({ visible: false })
@@ -267,12 +242,8 @@ class MessageList extends React.Component {
     // 用户点击之后 表示已读 readstatus：0：未读 1：已查 2：已读
     const { msgstyletype, msgparam } = item
     let link = null
-    if (
-      msgstyletype === 8 &&
-      msgparam &&
-      msgparam.entityid &&
-      msgparam.businessid
-    ) {
+
+    if (msgstyletype === 8 && msgparam && msgparam.entityid && msgparam.businessid) {
       if (msgparam.data.type + '' === '0') {
         link = `/entcomm/${msgparam.entityid}/${msgparam.businessid}`
       } else if (msgparam.data.type + '' === '2') {
@@ -311,11 +282,13 @@ class MessageList extends React.Component {
       body: JSON.stringify({ MsgIds: [msgid] })
     }).then(result => {
       // message.success('标记为已读');
-      let newData = this.state.data
+      const fieldType = this.getFieldType(msgstyletype)
+      let newData = this.state[fieldType] || []
+
       newData[index].readstatus = 2
       const unReadCount = this.state.unReadCount - 1
       this.setState({
-        data: newData,
+        [fieldType]: newData,
         unReadCount: unReadCount < 0 ? 0 : unReadCount
       })
     })
@@ -371,23 +344,15 @@ class MessageList extends React.Component {
 
   isRenderMsgProgress (item) {
     if (item.msgstyletype === msgTypes.IMPORT_RESULT) {
-      return `共导入数据${item.msgparam.data.DealRowsCount}条,导入成功${item
-        .msgparam.data.DealRowsCount -
-        item.msgparam.data.ErrorRowsCount}条,导入失败${
-        item.msgparam.data.ErrorRowsCount
-      }条`
+      return `共导入数据${item.msgparam.data.DealRowsCount}条,导入成功${item.msgparam.data.DealRowsCount -
+        item.msgparam.data.ErrorRowsCount}条,导入失败${item.msgparam.data.ErrorRowsCount}条`
     } else {
       return null
     }
   }
 
   renderTabs = () => {
-    const {
-      msgType: msgtype,
-      loading,
-      isPessionLoad,
-      clientHeight
-    } = this.state
+    const { msgType: msgtype, loading, isPessionLoad, clientHeight } = this.state
 
     return (
       <Tabs
@@ -402,26 +367,14 @@ class MessageList extends React.Component {
           const count = data.length
 
           return (
-            <TabPane
-              key={item.key + ''}
-              tab={`${item.text} ` + (count ? `(${count})` : '')}
-            >
+            <TabPane key={item.key + ''} tab={`${item.text} ` + (count ? `(${count})` : '')}>
               <Spin spinning={loading} tip='Loading...'>
-                <ul
-                  className={styles.ulWrap}
-                  style={{ height: clientHeight - 68 }}
-                >
+                <ul className={styles.ulWrap} style={{ height: clientHeight - 68 }}>
                   {data.map((item, index) => {
                     const cls = classnames({
                       [styles.alreadyRead]: item.readstatus === 2
                     })
-                    const {
-                      msgid,
-                      msgtitle,
-                      msgstyletype,
-                      msgparam,
-                      msgcontent
-                    } = item
+                    const { msgid, msgtitle, msgstyletype, msgparam, msgcontent } = item
                     const hasLink = item.msgstyletype === 8 // 为8可以跳转 4 不可以
 
                     return (
@@ -429,38 +382,22 @@ class MessageList extends React.Component {
                         className={cls}
                         style={hasLink ? { cursor: 'pointer' } : null}
                         key={msgid + 'itemWrap' + index}
-                        onClick={this.listClickHandler.bind(
-                          this,
-                          item.readstatus,
-                          msgid,
-                          index,
-                          item
-                        )}
+                        onClick={this.listClickHandler.bind(this, item.readstatus, msgid, index, item)}
                       >
                         <ul>
                           <li>
                             <span className={styles.msgtitle} title={msgtitle}>
-                              {msgstyletype === msgTypes.IMPORT_RESULT
-                                ? `${msgparam.data.TaskName}导入完成`
-                                : msgtitle}
+                              {msgstyletype === msgTypes.IMPORT_RESULT ? `${msgparam.data.TaskName}导入完成` : msgtitle}
                             </span>
-                            <span className={styles.timeinfo}>
-                              {item.reccreated.toString().split(' ')[0]}
-                            </span>
+                            <span className={styles.timeinfo}>{item.reccreated.toString().split(' ')[0]}</span>
                           </li>
                           {[msgTypes.IMPORT_RESULT].includes(msgstyletype) && (
-                            <li
-                              title={`导入结果：${this.isRenderMsgProgress(
-                                item
-                              )}`}
-                            >
+                            <li title={`导入结果：${this.isRenderMsgProgress(item)}`}>
                               导入结果：
                               {this.isRenderMsgProgress(item)}
                               <a
                                 className={styles.download}
-                                href={`/api/fileservice/download?fileid=${
-                                  msgparam.data.ResultFileId
-                                }`}
+                                href={`/api/fileservice/download?fileid=${msgparam.data.ResultFileId}`}
                               >
                                 下载
                               </a>
@@ -469,17 +406,9 @@ class MessageList extends React.Component {
                           {[msgTypes.TASK, 5, 8].includes(msgstyletype) && (
                             <li title={msgcontent}>
                               {msgcontent}
-                              {[msgTypes.TASK, 8].includes(msgstyletype) &&
-                                msgparam &&
-                                msgparam.reminderid && (
-                                <a
-                                  className={styles.download}
-                                  onClick={this.openReminderConfig.bind(
-                                    this,
-                                    item
-                                  )}
-                                >
-                                    提醒设置
+                              {[msgTypes.TASK, 8].includes(msgstyletype) && msgparam && msgparam.reminderid && (
+                                <a className={styles.download} onClick={this.openReminderConfig.bind(this, item)}>
+                                  提醒设置
                                 </a>
                               )}
                             </li>
@@ -489,11 +418,7 @@ class MessageList extends React.Component {
                     )
                   })}
                   {loading ? null : isPessionLoad ? (
-                    <li
-                      key='loadMore'
-                      className={styles.loadMore}
-                      onClick={this.loadMore.bind(this)}
-                    >
+                    <li key='loadMore' className={styles.loadMore} onClick={this.loadMore.bind(this)}>
                       加载更多
                     </li>
                   ) : (
