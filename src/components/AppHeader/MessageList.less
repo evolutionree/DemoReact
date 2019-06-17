@@ -1,24 +1,17 @@
 .listContent{
-  min-width: 340px;
+  min-width: 440px;
   position: absolute;
   top: 60px;
   right: -410px;
   background: #FFFFFF;
-  transition: 600ms;
+  transition: 300ms;
   overflow: auto;
   box-shadow: rgba(0, 0, 0, 0.176) 0px 6px 12px;
- // border: 1px solid rgb(230, 223, 223);
-
-  .header{
-    height: 50px;
-    width: 100%;
-    background: #f7f7f7;
-    text-align: center;
-    > a {
-      width: 100%;
-      height: 100%;
-      display: inline-block;
-    }
+  border-radius: 5px;
+  overflow: hidden;
+  .ulWrap {
+    overflow-x: hidden;
+    overflow-y: auto;
   }
   ul{
     li{
@@ -51,7 +44,7 @@
       }
       ul{
         border: none;
-        width: 340px;
+        width: 100%;
         height: 100%;
         float: left;
         padding: 10px 0 10px 10px;
@@ -68,7 +61,6 @@
       }
     }
 
-
     .alreadyRead{
       ul{
         color: #999999;
@@ -80,10 +72,7 @@
       }
     }
   }
-
-
 }
-
 
 
 .download{
@@ -92,25 +81,24 @@
 }
 
 
-.loadMore{
+.loadMore, .loadNo{
   line-height: 40px;
   height: 40px;
   text-align: center;
   background: rgb(241, 244, 247);
   color: #666;
+}
+
+.loadMore {
   cursor: pointer;
+  &:hover {
+    color: #3398db;
+  }
 }
 
 .modal {
-
-
-  :global {
-
-  }
-
   .modalContent {
     padding: 20px;
-
     i {
       font-size: 24px;
       color: #ffbf00;

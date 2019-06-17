@@ -14,3 +14,11 @@ if (cPos[0] < 0) {
 if (cPos[1] < 0) {  
     cPos[1] = 0;  
 }
+
+### `npm run build`
+文件路径： node_modules\roadhog\bin\roadhog.js
+
+将
+[require.resolve(`../lib/${script}`)].concat(args),
+替换为：
+['--max_old_space_size=4096', require.resolve(`../lib/${script}`)].concat(args),

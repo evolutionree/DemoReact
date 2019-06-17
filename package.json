@@ -4,7 +4,8 @@
     "app": "./src/index.js"
   },
   "scripts": {
-    "start": "roadhog server",
+    "init": "roadhog server",
+    "start": "node ./scripts/server.js && npm run init",
     "build": "roadhog build",
     "lint": "eslint --ext .js src test",
     "publish": "roadhog build&&node ./scripts/publish.js -d -t",
