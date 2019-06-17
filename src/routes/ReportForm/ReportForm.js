@@ -34,45 +34,6 @@ import chinaJson from '../../../public/mapJson/china.json'; //china Map Data
 echarts.registerMap('china', chinaJson);  //初始中国地图
 import html2canvas from './component/Chart/html2canvas';
 
-const _LIST =  [
-  {
-      "recid": "7f74192d-b937-403f-ac2a-8be34714278b",
-      "recname": "集团公司",
-      "rectype": 1,
-      "parentid": "00000000-0000-0000-0000-000000000000"
-  },
-  {
-      "recid": "1",
-      "recname": "系统管理员",
-      "rectype": 2,
-      "parentid": "7f74192d-b937-403f-ac2a-8be34714278b"
-  },
-  {
-      "recid": "5",
-      "recname": "系统管理员2",
-      "rectype": 2,
-      "parentid": "1"
-  },
-  {
-      "recid": "2",
-      "recname": "test",
-      "rectype": 2,
-      "parentid": "7f74192d-b937-403f-ac2a-8be34714278b"
-  },
- {
-      "recid": "3",
-      "recname": "系统管理员1",
-      "rectype": 2,
-      "parentid": "1"
-  },
- {
-      "recid": "4",
-      "recname": "test1",
-      "rectype": 2,
-      "parentid": "2"
-  }
-];
-
 class ReportForm extends React.Component {
   static propTypes = {
     url: React.PropTypes.string,
@@ -621,7 +582,8 @@ class ReportForm extends React.Component {
 
 
   renderComponent(item, index, height, width) {
-    const { currentSelect } = this.props;
+    const { orgcomponentinfo } = item;
+    const outparametername = (orgcomponentinfo && orgcomponentinfo.outparametername) ? orgcomponentinfo.outparametername : `${item.datasourcename}Select`
 
     switch (item.ctrltype) {
       //一般图表（柱状图、折线图,仪表盘，散点图）
@@ -732,19 +694,17 @@ class ReportForm extends React.Component {
       case 10:
         return (
           <div style={{ height: '100%', width: '100%', borderRadius: '4px', padding: '20px', boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)' }}>  
-          {
-            <LinesMap
-              data={this.state[item.datasourcename] ? [...this.state[item.datasourcename].filter(o => currentSelect.includes('5'))] : [] }
-            />
-          }
+          <LinesMap
+            dataSource={this.state[item.datasourcename] ? [...this.state[item.datasourcename]] : [] }
+          />
           </div>
         );
       case 11:
-        const { orgcomponentinfo } = item;
         const list = this.state[`${item.datasourcename}Filter`] ? this.state[`${item.datasourcename}Filter`] : (this.state[item.datasourcename] || []);
         const max = orgcomponentinfo && orgcomponentinfo.maxselectcount;
         const checkable = orgcomponentinfo && orgcomponentinfo.multiselect === 1; // 是否多选
         const selectmode = orgcomponentinfo ? orgcomponentinfo.selectmode : 1; // 1 只选人  2 只选部门 3 选人&部门
+
         return (
           <div style={{ height: '100%', width: '100%', borderRadius: '4px', padding: '20px', boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)' }}>  
           {
@@ -754,11 +714,11 @@ class ReportForm extends React.Component {
               trigger="onChange"
               expandedKeys={list.filter(o => o.parentid === '00000000-0000-0000-0000-000000000000').map(item => item.recid) || []}
               checkable={checkable}
-              value={currentSelect}
-              list={_LIST}
+              value={this.state[outparametername]}
+              list={list}
               placeholder="搜索人员或部门"
               comboKeyOption={{ key: 'recid', parentKey: 'parentid', title: 'label', searchKey: "recname" }}
-              onChange={this.oneSelectTree.bind(this, { list:  _LIST, max, checkable, selectmode })}
+              onChange={this.oneSelectTree.bind(this, { item, list, max, checkable, selectmode, outparametername })}
             /> : null
           }
           </div>
@@ -767,21 +727,26 @@ class ReportForm extends React.Component {
   }
 
   oneSelectTree = (record, checkedKeys, e) => {
-    const { handleSelectTree } = this.props;
-    const { list, max, checkable, selectmode } = record;
+    const { list, max, checkable, selectmode, outparametername } = record;
+
     let result = checkedKeys.split(',');
 
     if (checkable && max && result.length > max) return;
 
     if (checkedKeys && list.length) {
       // 只选人
-      if (selectmode === 1) result = result.filter(key => list.find(item => item.recid === key).rectype === 2);
+      if (selectmode === 1) result = result.filter(key => list.find(o => o.recid === key).rectype === 2);
 
       // 只选部门
-      if (selectmode === 2) result = result.filter(key => list.find(item => item.recid === key).rectype === 1);
+      if (selectmode === 2) result = result.filter(key => list.find(o => o.recid === key).rectype === 1);
     }
 
-    if (handleSelectTree) handleSelectTree(result.join(','));
+    this.setState({
+      [outparametername]: result.join(','),
+      reload: true
+    }, this.reloadReportData(
+      { ...this.state.serchValue, [outparametername]: result.join(',') }
+    ));
   }
 
   render() {

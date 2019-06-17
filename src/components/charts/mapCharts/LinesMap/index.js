@@ -40,21 +40,21 @@ class LinesMap extends Component {
   componentDidMount () {
     if (this.chartNode) {
       this.myChart = echarts.init(this.chartNode);
-      this.initUI(this.props.data)
+      this.initUI(this.props.dataSource)
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    const { data: oldData } = this.props
-    const { data: newData } = nextProps
+    const { dataSource: oldData } = this.props
+    const { dataSource: newData } = nextProps
 
     if (this.chartNode && !this.myChart) this.myChart = echarts.init(this.chartNode);
 
     if (this.myChart) this.initUI(newData)
   }
 
-  initUI = (data) => {
-    const list = Array.isArray(data) ? [...data] : [];
+  initUI = (dataSource) => {
+    const list = Array.isArray(dataSource) ? [...dataSource] : [];
     const len = list.length
 
     const center = len ? list.filter(item => [1].includes(item.datatype)) : [{ lng: 116.4136103013, lat: 39.9110666857 }];
