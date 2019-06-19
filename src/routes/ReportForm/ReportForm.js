@@ -706,7 +706,7 @@ class ReportForm extends React.Component {
         const selectmode = orgcomponentinfo ? orgcomponentinfo.selectmode : 1; // 1 只选人  2 只选部门 3 选人&部门
 
         return (
-          <div style={{ height: '100%', width: '100%', borderRadius: '4px', padding: '20px', boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)' }}>  
+          <div style={{ height: '100%', width: '100%', overflowY: 'auto', borderRadius: '4px', padding: '20px', boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)' }}>  
           {
             Array.isArray(this.state[item.datasourcename]) && this.state[item.datasourcename].length ?
             <TreeView
@@ -773,7 +773,7 @@ class ReportForm extends React.Component {
               } else if (item.ctrltype === 3) {
                 style = {};
               } else {
-                style = { height: height, padding: '10px 10px' };
+                style = { height, padding: '10px 10px' };
               }
               item.ctrltype === 4 ? style.overflowX = 'auto' : style;
               return (
