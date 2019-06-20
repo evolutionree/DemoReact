@@ -146,10 +146,14 @@ function getInitialFlowJSON() {
       {
         nodename: '审批节点',
         nodeid: nextNodeId,
-        // auditnum: 1,
-        // nodetype: 0,
-        // steptypeid: 9,
+        auditnum: 1,
+        steptypeid: 1,
+        notfound: 1,
+        nodetype: 0,
+        funcname: '',
         columnconfig: {},
+        stepcptypeid: 17,
+        ruleconfig: { reportrelation: JSON.stringify({ type: 1 }) },
         auditsucc: 1
       }
     ],

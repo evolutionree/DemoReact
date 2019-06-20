@@ -22,10 +22,10 @@ const formItemLayoutLine = {
 
 const formConfig = [
   {
-    type: 'Input', span: 24, label: '汇报关系名称', fieldname: 'reportrelationname', formItemLayout: formItemLayoutLine, required: true
+    type: 'TextArea1', span: 24, label: '变更说明', fieldname: 'commitremark', formItemLayout: formItemLayoutLine, required: true
   },
   {
-    type: 'TextArea', span: 24, label: '描述', fieldname: 'reportremark', formItemLayout: formItemLayoutLine
+    type: 'TextArea2', span: 24, label: '脚本内容', fieldname: 'newcode', formItemLayout: formItemLayoutLine, autosize: { minRows: 6, maxRows: 16 }
   }
 ];
 

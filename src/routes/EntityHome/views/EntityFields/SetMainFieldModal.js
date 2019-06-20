@@ -27,10 +27,10 @@ class SetMainFieldModal extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     // 打开窗口时，查数据
-    const isOpening = !/setMainField/.test(this.props.showModals) &&
-      /setMainField/.test(nextProps.showModals);
-    const isClosing = /setMainField/.test(this.props.showModals) &&
-      !/setMainField/.test(nextProps.showModals);
+    const isOpening = !/SetMainFieldModal$/.test(this.props.visible) &&
+      /SetMainFieldModal$/.test(nextProps.visible);
+    const isClosing = /SetMainFieldModal$/.test(this.props.visible) &&
+      !/SetMainFieldModal$/.test(nextProps.visible);
     if (isOpening) {
       this.props.form.resetFields();
       this.setState({ rawData: null });
@@ -51,7 +51,7 @@ class SetMainFieldModal extends React.Component {
   }
 
   handleOk = () => {
-    const fields = this.props.list;
+    const { list: fields, onCancel } = this.props;
 
     this.props.form.validateFields((err, values) => {
       if (err) return;
@@ -71,11 +71,11 @@ class SetMainFieldModal extends React.Component {
       savePageConfig(data).then(result => {
         message.success('保存成功');
         this.setState({ loading: false });
-        this.props.cancel();
+        onCancel();
       }).catch(e => {
         message.error(e.message || '提交数据出错');
         this.setState({ loading: false });
-      })
+      });
     });
 
     function getFieldNames(ids) {
@@ -95,18 +95,18 @@ class SetMainFieldModal extends React.Component {
           <Option key={field.fieldid} value={field.fieldid} disabled={field.recstatus !== 1}>{getIntlText('displayname', field)}</Option>
         ))}
       </Select>
-    )
+    );
   };
 
   render() {
-    const { showModals, list, form, cancel } = this.props;
+    const { visible, list, form, onCancel } = this.props;
     const { getFieldDecorator } = form;
     return (
       <Modal
         title="设置主页顶部显示字段"
-        visible={/setMainField/.test(showModals)}
+        visible={/SetMainFieldModal$/.test(visible)}
         onOk={this.handleOk}
-        onCancel={cancel}
+        onCancel={onCancel}
         confirmLoading={this.state.loading}
       >
         <Form>
@@ -160,12 +160,5 @@ class SetMainFieldModal extends React.Component {
 }
 
 export default connect(
-  state => state.entityFields,
-  dispatch => {
-    return {
-      cancel: () => {
-        dispatch({ type: 'entityFields/showModals', payload: '' });
-      }
-    }
-  }
+  state => state.entityFields
 )(Form.create()(SetMainFieldModal));

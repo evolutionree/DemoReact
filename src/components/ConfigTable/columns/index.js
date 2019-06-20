@@ -42,7 +42,7 @@ export const getColumns = (params, LoopList, callback) => {
       const filterObj = item.sorter ? {
         sorter: item.sorter || true,
         sortOrder: searchOrder ? searchOrder.split(' ')[0] === item.key && (searchOrder.split(' ')[1] + 'end') : false,
-        filterDropdown: item.filterDropdown ? item.filterDropdown : filterDropdown(item.key, item.title),
+        filterDropdown: item.filterDropdown ? item.filterDropdown : filterDropdown(item.key, item.title, (item.filterType || 1)),
         filterIcon: item.filterIcon ? item.filterIcon : filterIcon(item.key),
         filterDropdownVisible: item.filterDropdownVisible ? item.filterDropdownVisible : GetFilterVisible(item.key, FilterVisibles)
       } : {};

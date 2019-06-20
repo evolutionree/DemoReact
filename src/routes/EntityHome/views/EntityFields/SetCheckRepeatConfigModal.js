@@ -25,8 +25,8 @@ class CheckRepeat extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     // 打开窗口时，查数据
-    const isOpening = !/checkRepeatConfig/.test(this.props.showModals) &&
-      /checkRepeatConfig/.test(nextProps.showModals);
+    const isOpening = !/SetCheckRepeatConfigModal$/.test(this.props.visible) &&
+      /SetCheckRepeatConfigModal$/.test(nextProps.visible);
     if (isOpening) {
       queryentitycondition(this.props.entityId)
         .then(result => {
@@ -38,12 +38,12 @@ class CheckRepeat extends React.Component {
   }
 
   handleOk = () => {
-    this.props.submit(this.state.data);
+    this.props.submit(this.state.data, this.props.onCancel);
   };
 
 
   pickField = (field) => {
-    let newData = _.cloneDeep(this.state.data);
+    const newData = _.cloneDeep(this.state.data);
     newData.fieldnotvisible = newData.fieldnotvisible.filter((item) => {
       return item.fieldid !== field.fieldid;
     });
@@ -54,7 +54,7 @@ class CheckRepeat extends React.Component {
   };
 
   removeField = (field) => {
-    let newData = _.cloneDeep(this.state.data);
+    const newData = _.cloneDeep(this.state.data);
     newData.fieldvisible = newData.fieldvisible.filter((item) => {
       return item.fieldid !== field.fieldid;
     });
@@ -65,7 +65,7 @@ class CheckRepeat extends React.Component {
   };
 
   pickAll = () => {
-    let newData = _.cloneDeep(this.state.data);
+    const newData = _.cloneDeep(this.state.data);
     newData.fieldnotvisible.map((field) => {
       newData.fieldvisible.push(field);
     });
@@ -77,7 +77,7 @@ class CheckRepeat extends React.Component {
   };
 
   removeAll = () => {
-    let newData = _.cloneDeep(this.state.data);
+    const newData = _.cloneDeep(this.state.data);
     newData.fieldvisible.map((field) => {
       newData.fieldnotvisible.push(field);
     });
@@ -91,8 +91,8 @@ class CheckRepeat extends React.Component {
     return (
       <Modal
         title="设置查重字段"
-        visible={/checkRepeatConfig/.test(this.props.showModals)}
-        onCancel={this.props.cancel}
+        visible={/SetCheckRepeatConfigModal$/.test(this.props.visible)}
+        onCancel={this.props.onCancel}
         onOk={this.handleOk}
         confirmLoading={this.props.modalPending}
       >
@@ -141,11 +141,8 @@ export default connect(
   state => state.entityFields,
   dispatch => {
     return {
-      submit: (visibleFields) => {
-        dispatch({ type: 'entityFields/setCheckRepeatConfig', payload: visibleFields })
-      },
-      cancel: () => {
-        dispatch({ type: 'entityFields/showModals', payload: '' })
+      submit: (visibleFields, callback) => {
+        dispatch({ type: 'entityFields/setCheckRepeatConfig', payload: { visibleFields, callback } });
       }
     };
   }

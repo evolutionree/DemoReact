@@ -25,13 +25,14 @@ import { chinaMap } from './component/Chart/china-main-map';
 import storage from '../../utils/storage';
 // import moment from 'moment';
 import DynamicFieldView from '../../components/DynamicForm/DynamicFieldView';
+import LinesMap from '../../components/charts/mapCharts/LinesMap';
+import TreeView from '../../components/charts/TreeView';
 
 import styles from './index.less';
 
 import chinaJson from '../../../public/mapJson/china.json'; //china Map Data
 echarts.registerMap('china', chinaJson);  //初始中国地图
 import html2canvas from './component/Chart/html2canvas';
-
 
 class ReportForm extends React.Component {
   static propTypes = {
@@ -581,6 +582,9 @@ class ReportForm extends React.Component {
 
 
   renderComponent(item, index, height, width) {
+    const { orgcomponentinfo } = item;
+    const outparametername = (orgcomponentinfo && orgcomponentinfo.outparametername) ? orgcomponentinfo.outparametername : `${item.datasourcename}Select`
+
     switch (item.ctrltype) {
       //一般图表（柱状图、折线图,仪表盘，散点图）
       case 1:
@@ -687,7 +691,62 @@ class ReportForm extends React.Component {
             </div>
           </div>
         );
+      case 10:
+        return (
+          <div style={{ height: '100%', width: '100%', borderRadius: '4px', padding: '20px', boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)' }}>  
+          <LinesMap
+            dataSource={this.state[item.datasourcename] ? [...this.state[item.datasourcename]] : [] }
+          />
+          </div>
+        );
+      case 11:
+        const list = this.state[`${item.datasourcename}Filter`] ? this.state[`${item.datasourcename}Filter`] : (this.state[item.datasourcename] || []);
+        const max = orgcomponentinfo && orgcomponentinfo.maxselectcount;
+        const checkable = orgcomponentinfo && orgcomponentinfo.multiselect === 1; // 是否多选
+        const selectmode = orgcomponentinfo ? orgcomponentinfo.selectmode : 1; // 1 只选人  2 只选部门 3 选人&部门
+
+        return (
+          <div style={{ height: '100%', width: '100%', overflowY: 'auto', borderRadius: '4px', padding: '20px', boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)' }}>  
+          {
+            Array.isArray(this.state[item.datasourcename]) && this.state[item.datasourcename].length ?
+            <TreeView
+              searchFilter
+              trigger="onChange"
+              expandedKeys={list.filter(o => o.parentid === '00000000-0000-0000-0000-000000000000').map(item => item.recid) || []}
+              checkable={checkable}
+              value={this.state[outparametername]}
+              list={list}
+              placeholder="搜索人员或部门"
+              comboKeyOption={{ key: 'recid', parentKey: 'parentid', title: 'label', searchKey: "recname" }}
+              onChange={this.oneSelectTree.bind(this, { item, list, max, checkable, selectmode, outparametername })}
+            /> : null
+          }
+          </div>
+      );
     }
+  }
+
+  oneSelectTree = (record, checkedKeys, e) => {
+    const { list, max, checkable, selectmode, outparametername } = record;
+
+    let result = checkedKeys.split(',');
+
+    if (checkable && max && result.length > max) return;
+
+    if (checkedKeys && list.length) {
+      // 只选人
+      if (selectmode === 1) result = result.filter(key => list.find(o => o.recid === key).rectype === 2);
+
+      // 只选部门
+      if (selectmode === 2) result = result.filter(key => list.find(o => o.recid === key).rectype === 1);
+    }
+
+    this.setState({
+      [outparametername]: result.join(','),
+      reload: true
+    }, this.reloadReportData(
+      { ...this.state.serchValue, [outparametername]: result.join(',') }
+    ));
   }
 
   render() {
@@ -705,7 +764,6 @@ class ReportForm extends React.Component {
       <Page contentStyle={{ background: '#ffffff' }} title={this.state.pageName || ''}>
         <Row>
           {
-
             components.map((item, index) => {
               let widthActually = item.width * width / 24;
               let height = (item.height > 0 ? item.height : widthActually * Math.abs(item.height));
@@ -715,7 +773,7 @@ class ReportForm extends React.Component {
               } else if (item.ctrltype === 3) {
                 style = {};
               } else {
-                style = { height: height, padding: '10px 10px' };
+                style = { height, padding: '10px 10px' };
               }
               item.ctrltype === 4 ? style.overflowX = 'auto' : style;
               return (

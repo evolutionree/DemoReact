@@ -99,13 +99,18 @@ class FlowStepModal extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {};
+    const nodeType = props.editingFlowStepForm && props.editingFlowStepForm.nodeType === 1 ? 1 : 0;
+    this.state = {
+      nodeType,
+      activeKey: '1'
+    };
   }
 
   componentWillReceiveProps(nextProps) {
     const isOpening = !this.props.visible && nextProps.visible;
     if (isOpening) {
-
+      const nodeType = nextProps.editingFlowStepForm && nextProps.editingFlowStepForm.nodeType === 1 ? 1 : 0;
+      this.setState({ nodeType });
     }
   }
 
@@ -120,10 +125,21 @@ class FlowStepModal extends Component {
     callback();
   };
 
+  onChangeRadio = (e) => {
+    const nodeType = e.target.value;
+    if (nodeType !== 0) {
+      this.setState({ activeKey: '1' });
+    }
+    this.setState({ nodeType });
+  }
+
+  onChangeTabs = (activeKey) => this.setState({ activeKey });
+
   render() {
     const { form, flowEntities, flowId } = this.props;
-    const { getFieldDecorator, getFieldValue } = form;
-    const nodeType = getFieldValue('nodeType');
+    const { nodeType, activeKey } = this.state;
+
+    const { getFieldDecorator } = form;
     const stepUser = form.getFieldValue('stepUser');
     const steptypeid = stepUser && stepUser.type;
     const entityId = Array.isArray(flowEntities) && flowEntities.length && flowEntities[0].entityid;
@@ -150,14 +166,14 @@ class FlowStepModal extends Component {
               {getFieldDecorator('nodeType', {
                 rules: [{ required: true, message: '请选择审批节点类型' }]
               })(
-                <Radio.Group>
+                <Radio.Group onChange={this.onChangeRadio}>
                   <Radio value={0}>顺序审批</Radio>
                   <Radio value={1}>会审</Radio>
                 </Radio.Group>
               )}
             </FormItem>
 
-            <Tabs defaultActiveKey="1" size="small">
+            <Tabs activeKey={activeKey} onChange={this.onChangeTabs} size="small">
               <TabPane forceRender tab={setApproveTitle} key="1">
                 <FormItem label="">
                   {
@@ -167,11 +183,14 @@ class FlowStepModal extends Component {
                   }
                 </FormItem>
               </TabPane>
-              <TabPane forceRender tab="设置抄送人" key="2">
-                <FormItem label="">
-                  {getFieldDecorator('cpUser')(<SelectCopyUser flowId={flowId} entityId={entityId} />)}
-                </FormItem>
-              </TabPane>
+              {
+               nodeType === 0 &&
+               <TabPane forceRender tab="设置抄送人" key="2" disabled={nodeType !== 0}>
+                 <FormItem label="">
+                   {getFieldDecorator('cpUser')(<SelectCopyUser flowId={flowId} entityId={entityId} />)}
+                 </FormItem>
+               </TabPane>
+             }
             </Tabs>
 
             {

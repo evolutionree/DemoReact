@@ -719,7 +719,7 @@ export async function querybasefield(entityId) {
     method: 'post',
     body: JSON.stringify({
       entityId,
-      commEntityId : 'ac051b46-7a20-4848-9072-3b108f1de9b0'
+      commEntityId: 'ac051b46-7a20-4848-9072-3b108f1de9b0'
     })
   });
 }
@@ -813,7 +813,7 @@ export async function saveCommonRelField(params) {
 export async function queryreltablist(entityId) {
   return request('api/dynamicentity/queryreltablist', {
     method: 'post',
-    body: JSON.stringify({entityId})
+    body: JSON.stringify({ entityId })
   });
 }
 
@@ -834,7 +834,7 @@ export async function orderbyreltab(RelIds) {
   return request('api/dynamicentity/orderbyreltab', {
     method: 'post',
     body: JSON.stringify({
-       "RelIds": RelIds.toString()
+      RelIds: RelIds.toString()
     })
   });
 }
@@ -884,7 +884,7 @@ export async function getrelconfigfields(relentityid) {
 export async function getrelentityfields(entityId, relEntityId) {
   return request('api/dynamicentity/getrelentityfields', {
     method: 'post',
-    body: JSON.stringify({entityId,relEntityId})
+    body: JSON.stringify({ entityId, relEntityId })
   });
 }
 
@@ -922,7 +922,7 @@ export async function editreltab(params) {
 export async function disabledreltab(RelId) {
   return request('api/dynamicentity/disabledreltab', {
     method: 'post',
-    body: JSON.stringify({RelId})
+    body: JSON.stringify({ RelId })
   });
 }
 
@@ -1159,6 +1159,32 @@ export async function getlistschemebyentity(entityid) {
  */
 export async function getDynamicDetail(params) {
   return request('api/dynamic/dynamicdetailbybizid', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}
+
+
+export async function getucodelist(params) {
+  return request('api/entitypro/getucodelist', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}
+
+export async function getucodedetail(params) {
+  return request('api/entitypro/getucodedetail', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}
+
+// {
+//   "id":"9b170d66-3d16-4ca1-8d08-f3a414a5e272",
+//   "CommitRemark":"12312312"
+// }
+export async function updateglobaljshistoryremark(params) {
+  return request('api/entitypro/updateglobaljshistoryremark', {
     method: 'POST',
     body: JSON.stringify(params)
   });

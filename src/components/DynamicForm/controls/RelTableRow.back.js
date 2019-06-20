@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import DynamicField from '../DynamicField';
 import createJSEngineProxy from '../createJSEngineProxy';
 import styles from './RelTable.less';
-import DynamicFieldView from "../DynamicFieldView";
+import DynamicFieldView from '../DynamicFieldView';
 
 class RelTableControlWrap extends Form.Item {
   render() {
@@ -125,7 +125,7 @@ class _RelTableRow extends Component {
     const { mode, value, form } = this.props;
 
     return fields.map(field => {
-      const fieldConfig = field.fieldconfig;
+      const fieldconfig = field.fieldconfig;
       const validateRules = this.getValidateRules(field);
       const value_name = value[field.fieldname + '_name'];
 
@@ -165,7 +165,7 @@ class _RelTableRow extends Component {
             wrapperCol={{ span: 24 }}
           >
             {form.getFieldDecorator(field.fieldname, {
-              initialValue: fieldConfig.defaultValue,
+              initialValue: (fieldconfig && fieldconfig.defaultValue) ? fieldconfig.defaultValue : fieldconfig.defaultValueNormal,
               trigger: 'onChange',
               validateTrigger: 'onChange',
               rules: validateRules
@@ -176,7 +176,7 @@ class _RelTableRow extends Component {
                 ref={fieldRef => this[`fieldControlInst${field.fieldname}`] = fieldRef}
                 controlType={field.controltype}
                 fieldId={field.fieldid}
-                config={fieldConfig}
+                config={fieldconfig}
                 value_name={value_name}
                 fieldLabel={field.displayname}
                 onFocus={this.onFieldFocus.bind(this, field.fieldname)}

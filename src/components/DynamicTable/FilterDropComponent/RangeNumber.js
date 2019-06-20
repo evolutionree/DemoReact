@@ -48,12 +48,15 @@ class RangeNumber extends Component {
   render() {
     const { width = 160 } = this.props;
     const rangeNumberArr = this.props.value;
+    const minValue = [undefined, null, '', 'isnull'].includes(rangeNumberArr[0]) ? null : rangeNumberArr[0];
+    const maxValue = [undefined, null, '', 'isnull'].includes(rangeNumberArr[1]) ? null : rangeNumberArr[1];
+
     return (
       <div>
         <div>从</div>
-        <InputNumber style={{ width, marginRight: 8 }} onChange={this.onChange.bind(this, 'min')} value={rangeNumberArr[0] || null} />
+        <InputNumber style={{ width, marginRight: 8 }} onChange={this.onChange.bind(this, 'min')} value={minValue} />
         <div>到</div>
-        <InputNumber style={{ width, marginRight: 8 }} onChange={this.onChange.bind(this, 'max')} value={rangeNumberArr[1] || null} />
+        <InputNumber style={{ width, marginRight: 8 }} onChange={this.onChange.bind(this, 'max')} value={maxValue} />
       </div>
     );
   }

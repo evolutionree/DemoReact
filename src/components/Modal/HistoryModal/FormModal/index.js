@@ -1,8 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Modal, Form, Input, message, Spin, Row, Col } from 'antd';
-// import IntlInput from '../../../../components/UKComponent/Form/IntlInput';
-// import { getIntlText } from '../../../../components/UKComponent/Form/IntlText';
 import { dynamicRequest } from '../../../../services/common';
+import styles from './index.less';
 
 const _ = require('lodash');
 
@@ -17,10 +16,6 @@ class FormModal extends PureComponent {
     };
   }
 
-  componentDidMount() {
-
-  }
-
   handleSubmit = () => {
     const { form, onOk, api, spacename, dispatch, visible, selectedRows, fetch } = this.props;
     const isEdit = /^edit$/.test(visible);
@@ -30,8 +25,8 @@ class FormModal extends PureComponent {
       if (onOk) onOk(values);
       if (api || fetch) {
         const url = api || (isEdit ? fetch.edit : fetch.add);
-        const reportrelationid = isEdit ? selectedRows[0].reportrelationid : null;
-        const params = { ...values, reportrelationid };
+        const id = selectedRows[0].id || null;
+        const params = { commitremark: values.commitremark, id };
 
         dynamicRequest(url, params)
           .then(res => {
@@ -52,28 +47,52 @@ class FormModal extends PureComponent {
     if (cancel) cancel();
   }
 
+  beforeNode = () => {
+    const { selectedRows } = this.props;
+    const record = Array.isArray(selectedRows) && selectedRows.length ? selectedRows[0] : {};
+
+    return (
+      <div className={styles.before}>
+        <span>变更人：{record.username || '(空)'}</span>
+        <span>变更时间：{record.commitdate || '(空)'}</span>
+        <span>备注人：{record.commitusername || '(空)'}</span>
+        <span>备注时间：{record.commitremarkdate || '(空)'}</span>
+      </div>
+    );
+  }
+
   formNode = (record) => {
     return {
-      Input: <Input placeholder={record.placeholder || `请输入${record.label}`} />,
-      TextArea: <TextArea placeholder={record.placeholder || `请输入${record.label}`} />
+      TextArea1: <TextArea autosize={record.autosize || false} placeholder={record.placeholder || `请输入${record.label}`} />,
+      TextArea2: <TextArea disabled autosize={record.autosize || false} placeholder={record.placeholder || ''} />
     };
   }
 
   render() {
-    const { form, visible, title, confirmLoading, fetchDataLoading, justify = 'space-between' } = this.props;
+    const { width = 550, mode = 'double', form, visible, title, confirmLoading, fetchDataLoading, justify = 'space-between' } = this.props;
     const { list } = this.state;
     const { getFieldDecorator } = form;
     const isEdit = /^edit$/.test(visible);
+    const isNormal = (mode === 'normal');
+    const double = (mode === 'double');
 
+    const resultTitle = () => {
+      if (isNormal) return title;
+      if (double) return `${isEdit ? '编辑' : '新增'}${title}`;
+    };
+    
     return (
       <Modal
-        title={`${isEdit ? '编辑' : '新增'}${title}`}
-        visible={/edit|add/.test(visible)}
+        title={resultTitle()}
+        width={width}
+        visible={!!(isNormal ? visible : /edit|add/.test(visible))}
+        okText="保存"
         onOk={this.handleSubmit}
         onCancel={this.handleCancel}
         confirmLoading={confirmLoading}
       >
         <Spin spinning={fetchDataLoading}>
+          {this.beforeNode()}
           <Form>
             <Row type="flex" justify={justify}>
               {
@@ -84,7 +103,7 @@ class FormModal extends PureComponent {
                       <FormItem label={item.label} formItemLayout={item.formItemLayout}>
                         {getFieldDecorator(item.fieldname, {
                           initialValue: item.initialValue || '',
-                          rules: item.rules || [{ required: item.required || true, message: item.message || `缺少${item.label}` }]
+                          rules: item.rules || [{ required: item.required || false, message: item.message || `缺少${item.label}` }]
                         })(this.formNode(item)[item.type])}
                       </FormItem>
                     </Col>
@@ -101,10 +120,11 @@ class FormModal extends PureComponent {
 
 export default Form.create({
   onValuesChange: (props, values) => {
-    const { onChange, selectedRows, visible } = props;
+    const { mode, onChange, selectedRows, visible } = props;
     const isEdit = /^edit$/.test(visible);
+    const isNormal = (mode === 'normal');
 
-    if (isEdit) {
+    if (isEdit || isNormal) {
       onChange([{
         ...(selectedRows && selectedRows.length === 1 ? selectedRows[0] : {}),
         ...values

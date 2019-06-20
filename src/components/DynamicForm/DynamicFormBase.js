@@ -176,7 +176,7 @@ class DynamicFormBase extends Component {
     const decorators = {};
     this.processFields(fields).forEach(field => {
       const { fieldname, fieldconfig, controltype } = field;
-      const initialValue = fieldconfig && fieldconfig.defaultValue;
+      const initialValue = (fieldconfig && fieldconfig.defaultValue) ? fieldconfig.defaultValue : fieldconfig.defaultValueNormal;
       const rules = this.generateValidateRules(field);
       decorators[fieldname] = this.props.form.getFieldDecorator(fieldname, {
         initialValue: this.usage === 2 ? undefined : initialValue, // 高级搜索不设置默认值

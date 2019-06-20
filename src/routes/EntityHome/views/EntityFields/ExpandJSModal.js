@@ -1,7 +1,11 @@
 import React, { PropTypes, Component } from 'react';
-import { Modal, Input } from 'antd';
+import { Modal, Button } from 'antd';
 import { connect } from 'dva';
 import CodeEditor from '../../../../components/CodeEditor';
+import DynamicLoadModal from '../../../../components/Modal/DynamicLoadModal';
+import HistoryModal from '../../../../components/Modal/HistoryModal';
+
+const SPACENAME = 'entityFields';
 
 class ExpandJSModal extends Component {
   static propTypes = {};
@@ -33,7 +37,7 @@ class ExpandJSModal extends Component {
       fieldId: this.props.editingRecord.fieldId,
       type: this.props.expandJSType
     };
-    this.props.save(params);
+    this.props.save(params, this.props.onCancel);
   };
 
   onExpandJSChange = val => {
@@ -41,27 +45,56 @@ class ExpandJSModal extends Component {
   };
 
   render() {
+    const { 
+      expandJSType, visible, onCancel, modalPending, editingRecord,
+      initParams, showModals, historyList, toggleHistory, fetchDataLoading
+    } = this.props;
+
+    const { expandJS } = this.state;
+
+    const title = editingRecord ? editingRecord.fieldlabel : '(空)';
+    const origRight = editingRecord ? (expandJSType ? editingRecord.filterJS : editingRecord.expandJS) : '';
+    const allScripts = [];
+
     return (
       <Modal
-        title={this.props.expandJSType ? '配置过滤脚本' : '配置脚本'}
-        visible={this.props.visible}
+        title={expandJSType ? '配置过滤脚本' : '配置脚本'}
+        visible={!!visible}
         onOk={this.handleOk}
-        onCancel={this.props.cancel}
-        confirmLoading={this.props.modalPending}
+        onCancel={onCancel}
+        confirmLoading={modalPending}
         wrapClassName="code-editor-modal"
         width={750}
+        footer={[
+          <Button key="history" onClick={() => toggleHistory('HistoryModal')}>历史纪录</Button>,
+          <Button key="back" onClick={onCancel}>取消</Button>,
+          <Button key="submit" type="primary" onClick={this.handleOk}>确定</Button>
+        ]}
       >
-        {/*<Input*/}
-          {/*type="textarea"*/}
-          {/*value={this.state.expandJS}*/}
-          {/*onChange={e => this.setState({ expandJS: e.target.value })}*/}
-          {/*autosize={{ minRows: 4, maxRows: 25 }}*/}
-          {/*placeholder="请输入js脚本"*/}
-        {/*/>*/}
         <CodeEditor
-          value={this.state.expandJS}
+          value={expandJS}
           onChange={this.onExpandJSChange}
         />
+        {
+          showModals && showModals.HistoryModal ? <DynamicLoadModal
+            width={1120}
+            title={title}
+            value={expandJS}
+            origRight={origRight}
+            rowKey="id"
+            recid={editingRecord.fieldId}
+            keyname={visible === 'filter' ? 'EntityFieldFilter' : 'EntityFieldChange'}
+            spaceName={SPACENAME}
+            historyList={historyList}
+            showModals={showModals}
+            allScripts={allScripts}
+            detailapi="api/entitypro/getucodedetail"
+            initParams={initParams}
+            visible={showModals && showModals.HistoryModal}
+            listLoading={fetchDataLoading && fetchDataLoading.HistoryModal}
+            WrapComponent={HistoryModal}
+          /> : null
+        }
       </Modal>
     );
   }
@@ -69,21 +102,21 @@ class ExpandJSModal extends Component {
 
 export default connect(
   state => {
-    const { showModals, modalPending, editingRecord } = state.entityFields;
+    const { showModals, ...rest } = state[SPACENAME];
     return {
-      modalPending,
-      editingRecord,
-      visible: /expandJS/.test(showModals),
-      expandJSType: /expandJS-filter/.test(showModals) ? 1 : 0
+      ...rest,
+      showModals,
+      visible: showModals.ExpandJSModal,
+      expandJSType: /filter$/.test(showModals.ExpandJSModal) ? 1 : 0
     };
   },
   dispatch => {
     return {
-      cancel() {
-        dispatch({ type: 'entityFields/hideModal' });
+      save(params, callback) {
+        dispatch({ type: `${SPACENAME}/saveExpandJS`, payload: { params, callback } });
       },
-      save(payload) {
-        dispatch({ type: 'entityFields/saveExpandJS', payload });
+      toggleHistory(payload) {
+        dispatch({ type: `${SPACENAME}/showHistoryModal`, payload });
       }
     };
   }

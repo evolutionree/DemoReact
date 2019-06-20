@@ -112,7 +112,7 @@ class DynamicFormBase extends Component {
   }
 
   getRelObjectConfig = (fields) => {
-    let RelObjectConfig = [];
+    const RelObjectConfig = [];
     this.processFields(fields).map(item => {
       if (item.controltype === 31) {  //引用对象 的相关配置先存起来 对相关项进行监听
         RelObjectConfig.push(item);
@@ -120,7 +120,7 @@ class DynamicFormBase extends Component {
     });
 
     //TODO: 整理 共用一个来源对象的引用字段 集合在一起  减少网络请求次数
-    let relObject = {};
+    const relObject = {};
     RelObjectConfig.map(item => {
       const { controlField } = item.fieldconfig;
       if (relObject[controlField]) {
@@ -137,7 +137,7 @@ class DynamicFormBase extends Component {
     const decorators = {};
     this.processFields(fields).forEach(field => {
       const { fieldname, fieldconfig, controltype } = field;
-      const initialValue = fieldconfig && fieldconfig.defaultValue;
+      const initialValue = (fieldconfig && fieldconfig.defaultValue) ? fieldconfig.defaultValue : fieldconfig.defaultValueNormal;
       const rules = this.generateValidateRules(field);
       decorators[fieldname] = this.props.form.getFieldDecorator(fieldname, {
         initialValue: this.usage === 2 ? undefined : initialValue, // 高级搜索不设置默认值

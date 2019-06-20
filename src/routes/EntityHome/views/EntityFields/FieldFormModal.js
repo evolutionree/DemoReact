@@ -39,7 +39,7 @@ function processFormValues(values, editingRecord) {
   fieldlabel_lang = fieldlabel_lang || {};
   displayname_lang = displayname_lang || {};
   //TODO: 显示名称无值得时候  用字段名称的值 覆盖
-  let langlist = JSON.parse(window.localStorage.getItem('langlist')) || [];
+  const langlist = JSON.parse(window.localStorage.getItem('langlist')) || [];
   for (let i = 0; i < langlist.length; i++) {
     if (displayname_lang[langlist[i].key] === undefined) {
       displayname_lang[langlist[i].key] = fieldlabel_lang[langlist[i].key];
@@ -70,7 +70,6 @@ function processFormValues(values, editingRecord) {
 class FieldFormModal extends Component {
   static propTypes = {
     form: PropTypes.object,
-    showModals: PropTypes.string,
     editingRecord: PropTypes.object,
     onOk: PropTypes.func,
     onCancel: PropTypes.func,
@@ -86,17 +85,17 @@ class FieldFormModal extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const thisVisible = /edit|add/.test(this.props.showModals);
-    const nextVisible = /edit|add/.test(nextProps.showModals);
+    const thisVisible = /edit|add/.test(this.props.visible);
+    const nextVisible = /edit|add/.test(nextProps.visible);
     const isOpening = !thisVisible && nextVisible;
     const isClosing = thisVisible && !nextVisible;
     if (isOpening) {
-      const { form, showModals, editingRecord } = nextProps;
+      const { form, visible, editingRecord } = nextProps;
 
-      if (/edit/.test(showModals)) {
+      if (/edit/.test(visible)) {
         const fieldConfig = editingRecord.fieldConfig || {};
-        let newFieldConfig = {};
-        for (let key in fieldConfig) {
+        const newFieldConfig = {};
+        for (const key in fieldConfig) {
           let newKey = key;
           if (key === 'dataSource') {
             newKey = 'dataSource_' + editingRecord.controlType;
@@ -114,8 +113,8 @@ class FieldFormModal extends Component {
   }
 
   handleOk = () => {
-    const { form, editingRecord, showModals } = this.props;
-    const isEdit = /edit/.test(showModals);
+    const { form, editingRecord, visible } = this.props;
+    const isEdit = /edit/.test(visible);
     form.validateFields((err, values) => {
       if (err) return;
       const { encrypted, scanner } = values;
@@ -123,9 +122,9 @@ class FieldFormModal extends Component {
         message.error('加密文本不支持扫描功能，请检查');
         return;
       }
-      let newValues = {};
+      const newValues = {};
       const cloneValues = _.cloneDeep(values);
-      for (let key in cloneValues) { //把dataSource_开头的的key值 替换成【dataSource】(表单中有部分字段是动态切换的 出现了字段名一样的数据 所有加_以区分 不然ant design会报错，说校验规则变为undefined 具体原因不详)
+      for (const key in cloneValues) { //把dataSource_开头的的key值 替换成【dataSource】(表单中有部分字段是动态切换的 出现了字段名一样的数据 所有加_以区分 不然ant design会报错，说校验规则变为undefined 具体原因不详)
         let newKey = key;
         if (/^dataSource_/.test(key)) newKey = 'dataSource';
         newValues[newKey] = cloneValues[key];
@@ -150,14 +149,14 @@ class FieldFormModal extends Component {
   };
 
   render() {
-    const { form, showModals, modalPending, entityFields, entityId } = this.props;
-    const isEdit = /edit/.test(showModals);
+    const { form, visible, modalPending, entityFields, entityId } = this.props;
+    const isEdit = /edit/.test(visible);
     const title = isEdit ? '编辑字段' : '新增字段';
 
     return (
       <Modal
         title={title}
-        visible={/edit|add/.test(showModals)}
+        visible={/edit|add/.test(visible)}
         onOk={this.handleOk}
         confirmLoading={modalPending}
         onCancel={this.handleCancel}

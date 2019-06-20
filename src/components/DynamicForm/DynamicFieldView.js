@@ -2,7 +2,9 @@ import React, { PropTypes } from 'react';
 import { controlMap } from './constants';
 import { connect } from 'dva';
 
-export const DefaultTextView = ({ value, value_name, dataSource, yearWeekData }) => {
+export const DefaultTextView = (props) => {
+  const { value, value_name, dataSource, yearWeekData } = props;
+
   const emptyText = <span style={{ color: '#999999' }}>(空)</span>;
   let text = value_name !== undefined ? value_name : value;
   if (text === null || text === undefined) {
@@ -46,6 +48,7 @@ class DynamicFieldView extends React.Component {
       value: this.props.value,
       value_name: this.props.value_name,
       yearWeekData: this.props.yearWeekData,
+      fieldname: this.props.fieldname,
       ...this.props.config
     };
     const ctrlType = this.props.controlType;
