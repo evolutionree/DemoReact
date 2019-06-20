@@ -39,7 +39,8 @@ class DataGrid extends  React.Component {
         url: nextProps.url,
         slectRows: nextProps.slectRows
       });
-      if (this.state.url !== nextProps.url || (JSON.stringify(nextProps.params) !== JSON.stringify(this.state.params) && nextProps.reload)) {
+
+      if (this.state.url !== nextProps.url || (JSON.stringify(nextProps.params) !== JSON.stringify(this.state.params))) {
         this.reloadReportData(nextProps.url, nextProps.params, 1, 10);
       }
     } else {
@@ -166,10 +167,11 @@ class DataGrid extends  React.Component {
           return item;
         });
       }
+
       this.setState({
-        dataSource: dataSource,
+        dataSource,
         columns: result.data.columns ? result.data.columns : this.state.columns,
-        total: result.data.page[0].total,
+        total: Array.isArray(result.data.page) && result.data.page.length ? result.data.page[0].total : 0,
         loading: false,
         current,
         pageSize
@@ -424,7 +426,7 @@ class DataGrid extends  React.Component {
   }
 
   render() {
-    const { modalInfo: { showModal, title, entityId, recordId, params } } = this.state;
+    const { dataSource, modalInfo: { showModal, title, entityId, recordId, params } } = this.state;
     const key = this.props.rowKey ? this.props.rowKey : rowKey;
 
     const columns = this.getColumns(); //先执行 更新window.tableHasScrollX的值 后面代码设置scroll的值 需要用到
@@ -458,7 +460,7 @@ class DataGrid extends  React.Component {
         <Table
           loading={this.state.loading}
           scroll={this.props.scroll}
-          dataSource={this.state.dataSource}
+          dataSource={dataSource}
           rowKey={key}
           rowSelection={rowSelection}
           pagination={pagination}

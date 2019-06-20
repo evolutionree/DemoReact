@@ -388,8 +388,8 @@ class DynamicFormBase extends Component {
   handleQuote = formData => {
     const { form, setExtraData, setFieldsConfig } = this.props;
     form.setFieldsValue(formData);
-    setExtraData('commonid', formData.recid);
-    setFieldsConfig(formData);
+    if (setExtraData) setExtraData('commonid', formData.recid);
+    if (setFieldsConfig) setFieldsConfig(formData);
   };
 
   processFields = fields => {
