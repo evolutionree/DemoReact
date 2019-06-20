@@ -88,7 +88,7 @@ class TimePicker extends Component {
 
 
   repeatEndSelectChange(fieldname, value, isFromApi = false) {
-    let repeatEndTimeVisible = false
+    let repeatEndTimeVisible = false;
     if (value === 2) {
       repeatEndTimeVisible = true;
     }
@@ -132,11 +132,11 @@ class TimePicker extends Component {
     const repeatEndField = this.getFieldProcol('repeatEnd');
 
 
-    const starttimeValue = starttimeField && value && value[starttimeField.fieldname] || (starttimeField && starttimeField.fieldconfig.defaultValue);
-    const endtimeValue = endtimeField && value && value[endtimeField.fieldname] || (endtimeField && endtimeField.fieldconfig.defaultValue);
-    const alldayValue = alldayField && value && value[alldayField.fieldname] || (alldayField && alldayField.fieldconfig.defaultValue);
-    const repeatTypeValue = repeatTypeField && value && value[repeatTypeField.fieldname] || (repeatTypeField && repeatTypeField.fieldconfig.defaultValue);
-    const repeatEndValue = repeatEndField && value && value[repeatEndField.fieldname] && value[repeatEndField.fieldname].endtype || (repeatEndField && repeatEndField.fieldconfig.defaultValue);
+    const starttimeValue = starttimeField && value && value[starttimeField.fieldname] || (starttimeField && (starttimeField.fieldconfig.defaultValue ? starttimeField.fieldconfig.defaultValue : starttimeField.fieldconfig.defaultValueNormal));
+    const endtimeValue = endtimeField && value && value[endtimeField.fieldname] || (endtimeField && (endtimeField.fieldconfig.defaultValue ? starttimeField.fieldconfig.defaultValue : starttimeField.fieldconfig.defaultValueNormal));
+    const alldayValue = alldayField && value && value[alldayField.fieldname] || (alldayField && (alldayField.fieldconfig.defaultValue ? alldayField.fieldconfig.defaultValue : alldayField.fieldconfig.defaultValueNormal));
+    const repeatTypeValue = repeatTypeField && value && value[repeatTypeField.fieldname] || (repeatTypeField && (repeatTypeField.fieldconfig.defaultValue ? repeatTypeField.fieldconfig.defaultValue : repeatTypeField.fieldconfig.defaultValueNormal));
+    const repeatEndValue = repeatEndField && value && value[repeatEndField.fieldname] && value[repeatEndField.fieldname].endtype || (repeatEndField && (repeatEndField.fieldconfig.defaultValue ? repeatEndField.fieldconfig.defaultValue : repeatEndField.fieldconfig.defaultValueNormal));
     const repeatEnddateValue = value && repeatEndField && value[repeatEndField.fieldname] && value[repeatEndField.fieldname].enddate;
 
     const format = alldayValue === 1 ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm';
@@ -158,7 +158,7 @@ class TimePicker extends Component {
         }
         <Checkbox onChange={this.repeatCheckHandler}>重复</Checkbox>
         <div className={Styles.repertSetWrap} style={{ display: this.state.repeatCheckedVisible ? 'block' : 'none' }}>
-          <div className={Styles.arrow_area_wrap}><div className={Styles.arrow_area_inside}></div></div>
+          <div className={Styles.arrow_area_wrap}><div className={Styles.arrow_area_inside} /></div>
           <div className={Styles.content}>
             <ul>
               {

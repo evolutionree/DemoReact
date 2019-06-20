@@ -5,7 +5,8 @@ export default function generateDefaultFormData(fields, initFormData = {}) {
   fields.forEach(field => {
     let defaultVal;
     if (initFormData[field.fieldname] === undefined) {
-      defaultVal = field.fieldconfig && field.fieldconfig.defaultValue;
+      const fieldconfig = field.fieldconfig;
+      defaultVal = (fieldconfig && fieldconfig.defaultValue) ? fieldconfig.defaultValue : fieldconfig.defaultValueNormal;
     } else {
       defaultVal = initFormData[field.fieldname];
     }
@@ -25,7 +26,7 @@ export default function generateDefaultFormData(fields, initFormData = {}) {
       formData[field.fieldname] = defaultVal;
     }
 
-    for (let key in initFormData) {
+    for (const key in initFormData) {
       if (!formData[key]) {
         formData[key] = initFormData[key];
       }

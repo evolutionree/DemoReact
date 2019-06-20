@@ -2,7 +2,7 @@ export default function generateFieldDecorators(fields, formInstance) {
   const decorators = {};
   fields.forEach(field => {
     const { fieldname, fieldconfig } = field;
-    const initialValue = fieldconfig && fieldconfig.defaultValue;
+    const initialValue = (fieldconfig && fieldconfig.defaultValue) ? fieldconfig.defaultValue : fieldconfig.defaultValueNormal;
     const rules = generateValidateRules(field, formInstance);
     decorators[fieldname] = formInstance.props.form.getFieldDecorator(fieldname, {
       initialValue,
