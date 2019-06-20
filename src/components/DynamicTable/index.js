@@ -201,9 +201,9 @@ class DynamicTable extends Component {
         ...normalStyle,
         width: setWidth - 4
       } : {
-        ...normalStyle,
-        maxWidth: '340px'
-      };
+          ...normalStyle,
+          // maxWidth: '340px'
+        };
 
       const sortFieldAndOrder = this.props.sortFieldAndOrder;
 
