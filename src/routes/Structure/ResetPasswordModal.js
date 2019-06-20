@@ -48,9 +48,11 @@ function ResetPasswordModal ({
     }
   }
   function checkPasswordConfirm (rule, value, callback) {
-    if (value && value !== getFieldValue('accountpwd')) {
+    const accountpwd = getFieldValue('accountpwd')
+    if (value && value !== accountpwd) {
       callback('两次填写的密码不一致')
     } else {
+      setTimeout(setFieldsValue({ accountpwd }), 0)
       callback()
     }
   }
