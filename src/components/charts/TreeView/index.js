@@ -9,19 +9,17 @@ const { TreeNode } = Tree
 
 function transformResultToTree (data) {
   if (!(Array.isArray(data) && data.length)) return []
-  const root = _.find(
-    data,
-    item => item.parentid === '00000000-0000-0000-0000-000000000000'
-  )
+  const root = _.find(data, item => item.parentid === '00000000-0000-0000-0000-000000000000')
   const tree = [root]
-  function loopChildren (nodes, parent) {
+
+  function loopChildren (nodes) {
     nodes.forEach((node, index) => {
       node.key = node.recid
       node.label = node.recname
 
       const children = data.filter(item => item.parentid === node.recid)
       nodes[index].children = children.length ? children : undefined
-      loopChildren(children, node)
+      loopChildren(children)
     })
   }
 
@@ -78,7 +76,7 @@ class TreeView extends Component {
       expandedKeys: [],
       searchValue: ''
     }
-    this.onSearch = _.debounce(this.onSearch, 300)
+    this.onSearch = _.debounce(this.onSearch, 500)
   }
 
   componentDidMount () {
@@ -119,21 +117,17 @@ class TreeView extends Component {
     return value.split(',')
   }
 
-  onSelectChange = value => {
+  onSelectChange = (value, event) => {
     const { onChange } = this.props
 
-    if (onChange) onChange(value.join(','))
+    if (onChange) onChange(value.join(','), event)
   }
 
   renderTreeNodes (data, searchValue) {
     return data.map(item => {
       const title = getTreeTitle(item.label, searchValue)
       return item.children && item.children.length ? (
-        <TreeNode
-          key={item.key}
-          title={title}
-          selectable={this.props.departmentSelectable}
-        >
+        <TreeNode key={item.key} title={title} selectable={this.props.departmentSelectable}>
           {this.renderTreeNodes(item.children, searchValue)}
         </TreeNode>
       ) : (
@@ -144,19 +138,11 @@ class TreeView extends Component {
 
   onChangeSearch = e => {
     const value = e.target.value
-    this.setState(
-      { searchValue: value },
-      _.debounce(this.onSearch, 50).bind(null, value)
-    )
+    this.setState({ searchValue: value }, _.debounce(this.onSearch, 50).bind(null, value))
   }
 
   onSearch = (value, searchType) => {
-    const {
-      onSearch,
-      comboKeyOption,
-      searchFilter,
-      expandedKeys: defaultExpandedKeys
-    } = this.props
+    const { onSearch, comboKeyOption, searchFilter, expandedKeys: defaultExpandedKeys } = this.props
     const { cacheList, originList } = this.state
 
     if (comboKeyOption) {
@@ -164,9 +150,7 @@ class TreeView extends Component {
 
       const expandedKeys = originList
         .map(item => {
-          return item[title].indexOf(value) > -1
-            ? getParentKey(item[key], cacheList, key)
-            : null
+          return item[title].indexOf(value) > -1 ? getParentKey(item[key], cacheList, key) : null
         })
         .filter((o, i, self) => o && self.indexOf(o) === i)
 
@@ -179,16 +163,23 @@ class TreeView extends Component {
       if (onSearch) onSearch(value)
 
       if (searchFilter) {
-        const fun = data => {
+        const filterChildren = data => {
+          let totalMatch = false
           for (let k in data) {
-            const ChildrenItem = data[k].children
-            const isMatch = data[k][title].indexOf(value) > -1
-            if (Array.isArray(ChildrenItem) && ChildrenItem.length) { fun(ChildrenItem) } else if (!isMatch) delete data[k]
+            let isMatch = data[k][title].indexOf(value) > -1
+            if (!isMatch && Array.isArray(data[k].children)) {
+              isMatch = filterChildren(data[k].children)
+            }
+            if (!isMatch) delete data[k]
+            if (isMatch) totalMatch = true
           }
-          return data.filter(item => !!item)
+          return totalMatch
         }
-        const filterList = fun(_.cloneDeep(cacheList))
-        this.setState({ list: filterList })
+
+        const _list = _.cloneDeep(cacheList)
+        filterChildren(_list)
+
+        this.setState({ list: _list })
       }
 
       this.setState({
@@ -203,55 +194,67 @@ class TreeView extends Component {
   render () {
     const {
       width = '100%',
-      checkable,
+      height = '100%',
+      style,
       className,
+      checkable,
       departmentSelectable,
       placeholder
     } = this.props
     const { list, searchValue, expandedKeys } = this.state
     const value = this.parseValue()
 
-    return list.length ? (
+    return (
       <div
+        className={className}
         ref={node => (this.treeNode = node)}
-        style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          width,
+          height,
+          borderRadius: '4px',
+          boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)',
+          ...style
+        }}
       >
-        {
-          <div
-            style={{
-              background: '#f5f5f5',
-              padding: '8px 15px',
-              borderBottom: '1px solid #d9d9d9'
-            }}
-          >
-            <Search
-              width={width}
-              style={{ marginBottom: 8 }}
-              value={searchValue}
-              placeholder={placeholder}
-              onChange={this.onChangeSearch}
-              onSearch={value => this.onSearch(value, 'onSearch')}
-            />
-          </div>
-        }
-        <Tree
-          className={classnames(className, {
-            [styles.parentNotSelectable]: !departmentSelectable
-          })}
-          checkedKeys={value}
-          selectedKeys={value}
-          onCheck={this.onSelectChange}
-          onSelect={this.onSelectChange}
-          checkable={checkable}
-          onExpand={this.onExpand}
-          expandedKeys={expandedKeys}
-          style={{ width: 300 }}
+        <div
+          style={{
+            background: '#f5f5f5',
+            padding: '8px 12px',
+            borderBottom: '1px solid #d9d9d9'
+          }}
         >
-          {this.renderTreeNodes(list, searchValue)}
-        </Tree>
+          <Search
+            width='100%'
+            value={searchValue}
+            placeholder={placeholder}
+            onChange={this.onChangeSearch}
+            onSearch={value => this.onSearch(value, 'onSearch')}
+          />
+        </div>
+        {list.length ? (
+          <div style={{ width, height: height - 56, overflow: 'auto' }}>
+            <Tree
+              className={classnames(className, {
+                [styles.parentNotSelectable]: !departmentSelectable
+              })}
+              checkedKeys={value}
+              selectedKeys={value}
+              onCheck={this.onSelectChange}
+              onSelect={this.onSelectChange}
+              checkable={checkable}
+              onExpand={this.onExpand}
+              expandedKeys={expandedKeys}
+              style={{ width: '100%' }}
+            >
+              {this.renderTreeNodes(list, searchValue)}
+            </Tree>
+          </div>
+        ) : (
+          <div style={{ textAlign: 'center', padding: 10 }}>没有对应数据！</div>
+        )}
       </div>
-    ) : (
-      <div>没有数据！</div>
     )
   }
 }
