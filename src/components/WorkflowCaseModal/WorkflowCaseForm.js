@@ -69,7 +69,7 @@ class WorkflowCaseForm extends Component {
       });
     }
 
-    if (Array.isArray(cpusers) && cpusers.length === 1) {
+    if (Array.isArray(cpusers)) {
       this.props.form.setFieldsValue({
         copyuser: cpusers.map(u => u.userid)
       });
