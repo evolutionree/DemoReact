@@ -18,11 +18,16 @@ class FormModal extends Component {
   }
 
   handleSubmit = () => {
-    const { form, onOk, api, spacename, dispatch, visible, selectedRows, fetch } = this.props
+    const { form, onOk, api, spacename, dispatch, visible, selectedRows, fetch, dataSource } = this.props
     const isEdit = /^edit$/.test(visible)
 
     form.validateFields((err, values) => {
       if (err) return
+      const valueArr = values.reportuser.split(',') || ['']
+      if (dataSource.some(item => valueArr.includes(item.reportuser))) {
+        message.warn('汇报人重复，请检查！')
+        return
+      }
       if (onOk) onOk(values)
       if (api || fetch) {
         const url = api || (isEdit ? fetch.edit : fetch.add)
@@ -59,8 +64,8 @@ class FormModal extends Component {
 
     if (field === 'reportuser') {
       // 过滤列表已有汇报人逻辑
-      const result = [].filter.call(valueArr, val => !dataSource.map(item => item.reportuser).includes(val)).join(',')
-      setTimeout(() => setFieldsValue({ [field]: result }), 0)
+      // const result = [].filter.call(valueArr, val => !dataSource.map(item => item.reportuser).includes(val)).join(',')
+      // setTimeout(() => setFieldsValue({ [field]: result }), 0)
     }
 
     if (value && diffFieldValue) {
