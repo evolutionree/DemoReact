@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
-import { connect } from 'dva';
-import { Button } from 'antd';
-import { Link } from 'dva/router';
-import Page from '../../../components/Page';
-import Toolbar from '../../../components/Toolbar';
-import Search from '../../../components/Search';
-import ConfigTable from '../../../components/ConfigTable';
-import FormModal from './FormModal';
-import FilterModal from '../FilterModal';
-import formConfig from './formConfig';
+import React, { Component } from 'react'
+import { connect } from 'dva'
+import { Button } from 'antd'
+import { Link } from 'dva/router'
+import Page from '../../../components/Page'
+import Toolbar from '../../../components/Toolbar'
+import Search from '../../../components/Search'
+import ConfigTable from '../../../components/ConfigTable'
+import FormModal from './FormModal'
+import FilterModal from '../FilterModal'
+import formConfig from './formConfig'
 
-const SPACENAME = 'reportrelationdetail';
+const SPACENAME = 'reportrelationdetail'
 
 class ReportRelationDetail extends Component {
   state = {
@@ -18,98 +18,106 @@ class ReportRelationDetail extends Component {
     keyWord: ''
   }
 
-  componentDidMount() {
-    const { onInit, initParams } = this.props;
-    const reportrelationid = sessionStorage.getItem('reportrelationid') || null;
-    if (onInit) onInit({ ...initParams, reportrelationid });
+  componentDidMount () {
+    const { onInit, initParams } = this.props
+    const reportrelationid = sessionStorage.getItem('reportrelationid') || null
+    if (onInit) onInit({ ...initParams, reportrelationid })
   }
 
-  fecthFormData = (recid) => {
-    const { dispatch } = this.props;
-    const { OptionList } = this.state;
-    const fields = {};
-    OptionList.forEach(item => (fields[item.fieldname] = ''));
-    new Promise((resolve) => {
-      dispatch({ type: `${SPACENAME}/FecthAllFormData`, payload: { recid, fields, resolve } });
+  fecthFormData = recid => {
+    const { dispatch } = this.props
+    const { OptionList } = this.state
+    const fields = {}
+    OptionList.forEach(item => (fields[item.fieldname] = ''))
+    new Promise(resolve => {
+      dispatch({ type: `${SPACENAME}/FecthAllFormData`, payload: { recid, fields, resolve } })
     }).then(res => {
       // callback behavior
-    });
+    })
   }
 
   clearSelect = () => {
-    const { onSelectRow } = this.props;
-    if (onSelectRow) onSelectRow([]);
+    const { onSelectRow } = this.props
+    if (onSelectRow) onSelectRow([])
   }
 
   add = () => {
-    const { showModals, toggleModal } = this.props;
-    toggleModal(showModals, 'FormModal', 'add');
-    this.fecthFormData();
+    const { showModals, toggleModal } = this.props
+    toggleModal(showModals, 'FormModal', 'add')
+    this.fecthFormData()
   }
 
   edit = () => {
-    const { showModals, toggleModal, selectedRows } = this.props;
-    const { reportreldetailid } = selectedRows[0];
-    toggleModal(showModals, 'FormModal', 'edit');
-    this.fecthFormData(reportreldetailid);
+    const { showModals, toggleModal, selectedRows } = this.props
+    const { reportreldetailid } = selectedRows[0]
+    toggleModal(showModals, 'FormModal', 'edit')
+    this.fecthFormData(reportreldetailid)
   }
 
   del = () => {
-    const { onDel, selectedRows } = this.props;
-    const params = selectedRows.map(item => item.reportreldetailid);
-    this.clearSelect();
-    onDel(params);
-  };
+    const { onDel, selectedRows } = this.props
+    const params = selectedRows.map(item => item.reportreldetailid)
+    this.clearSelect()
+    onDel(params)
+  }
 
-  handleSelectRecords = (selectedRows) => {
-    const { onSelectRow } = this.props;
-    if (onSelectRow) onSelectRow(selectedRows);
+  handleSelectRecords = selectedRows => {
+    const { onSelectRow } = this.props
+    if (onSelectRow) onSelectRow(selectedRows)
   }
 
   handleCancel = (model, e, params) => {
-    const { showModals, toggleModal, selectedRows, onSelectRow } = this.props;
+    const { showModals, toggleModal, selectedRows, onSelectRow } = this.props
 
     if (selectedRows.length) {
       if (params) {
-        const newSelectedRows = [{ ...selectedRows[0], ...params }];
-        onSelectRow(newSelectedRows);
+        const newSelectedRows = [{ ...selectedRows[0], ...params }]
+        onSelectRow(newSelectedRows)
       }
     }
 
-    toggleModal(showModals, model, '');
+    toggleModal(showModals, model, '')
   }
 
   onHandleSearchChange = val => {
-    this.setState({ keyWord: val });
+    this.setState({ keyWord: val })
   }
 
   onHandleSearch = val => {
-    const { onSeach, initParams } = this.props;
+    const { onSeach, initParams } = this.props
     const params = {
       ...initParams,
       columnFilter: {
         ...initParams.columnFilter,
         reportuser: val
       }
-    };
-    onSeach(params);
+    }
+    onSeach(params)
   }
 
   import = () => {
-    const { onImport } = this.props;
-    onImport();
+    const { onImport } = this.props
+    onImport()
   }
 
-  render() {
+  render () {
     const {
-      list, selectedRows, initParams, onSeach,
-      onSelectRow, showModals, dispatch, toggleModal,
-      fetchDataLoading, confirmLoading, checkFunc
-    } = this.props;
+      list,
+      selectedRows,
+      initParams,
+      onSeach,
+      onSelectRow,
+      showModals,
+      dispatch,
+      toggleModal,
+      fetchDataLoading,
+      confirmLoading,
+      checkFunc
+    } = this.props
 
-    const { keyWord } = this.state;
+    const { keyWord } = this.state
 
-    const title = sessionStorage.getItem('reportrelationdetailtitle');
+    const title = sessionStorage.getItem('reportrelationdetailtitle')
     const columns = [
       {
         title: '汇报人',
@@ -119,10 +127,16 @@ class ReportRelationDetail extends Component {
         sorter: true
       },
       { title: '汇报上级', key: 'reportleader', name: 'reportleader_name', width: 300, sorter: true }
-    ];
+    ]
 
     return (
-      <Page title={<div><Link to="/reportrelation">汇报关系</Link> > {title}</div>}>
+      <Page
+        title={
+          <div>
+            <Link to='/reportrelation'>汇报关系</Link> > {title}
+          </div>
+        }
+      >
         <Toolbar
           selectedCount={selectedRows.length}
           actions={[
@@ -132,7 +146,11 @@ class ReportRelationDetail extends Component {
         >
           <div style={{ float: 'left' }}>
             {checkFunc('AddDetail') && <Button onClick={this.add}>新增</Button>}
-            {checkFunc('Import') && <Button onClick={this.import} style={{ marginLeft: 15 }}>导入</Button>}
+            {checkFunc('Import') && (
+              <Button onClick={this.import} style={{ marginLeft: 15 }}>
+                导入
+              </Button>
+            )}
           </div>
           <Toolbar.Right>
             {/* <Search
@@ -146,7 +164,7 @@ class ReportRelationDetail extends Component {
         </Toolbar>
 
         <ConfigTable
-          rowKey="reportreldetailid"
+          rowKey='reportreldetailid'
           rowSelect
           spacename={SPACENAME}
           onSeach={onSeach}
@@ -169,6 +187,7 @@ class ReportRelationDetail extends Component {
           selectedRows={selectedRows}
           visible={showModals.FormModal}
           onChange={this.handleSelectRecords}
+          dataSource={list}
           cancel={() => this.handleCancel('FormModal')}
           fetchDataLoading={fetchDataLoading.FormModal}
           confirmLoading={confirmLoading.FormModal}
@@ -184,35 +203,37 @@ class ReportRelationDetail extends Component {
           WrapComponent={FilterModal}
         />
       </Page>
-    );
+    )
   }
 }
 
 export default connect(
   state => state[SPACENAME],
   dispatch => ({
-    onInit(params) {
-      dispatch({ type: `${SPACENAME}/Init`, payload: params });
+    onInit (params) {
+      dispatch({ type: `${SPACENAME}/Init`, payload: params })
     },
-    toggleModal(showModals, modal, action) {
-      dispatch({ type: `${SPACENAME}/showModals`, payload: { ...showModals, [modal]: (action === undefined ? modal : action) } });
+    toggleModal (showModals, modal, action) {
+      dispatch({
+        type: `${SPACENAME}/showModals`,
+        payload: { ...showModals, [modal]: action === undefined ? modal : action }
+      })
     },
-    onDel(params) {
-      dispatch({ type: `${SPACENAME}/Del`, payload: params });
+    onDel (params) {
+      dispatch({ type: `${SPACENAME}/Del`, payload: params })
     },
-    onSeach(params) {
-      dispatch({ type: `${SPACENAME}/Search`, payload: params });
+    onSeach (params) {
+      dispatch({ type: `${SPACENAME}/Search`, payload: params })
     },
-    onSelectRow(selectedRows) {
-      dispatch({ type: `${SPACENAME}/putState`, payload: { selectedRows } });
+    onSelectRow (selectedRows) {
+      dispatch({ type: `${SPACENAME}/putState`, payload: { selectedRows } })
     },
-    onImport() {
+    onImport () {
       dispatch({
         type: 'task/impModals',
         payload: { templateType: 1, templateKey: '' }
-      });
+      })
     },
     dispatch
   })
-)(ReportRelationDetail);
-
+)(ReportRelationDetail)
