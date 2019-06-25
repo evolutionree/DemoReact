@@ -561,7 +561,7 @@ export default {
             const data = editingFlowStepForm.stepUser.data
             const type = editingFlowStepForm.stepUser.type
             if (data) {
-              const { userid, roleid, deptid, fieldname, entityid, isleader, funcname } = data
+              const { userid, roleid, deptid, fieldname, entityid, isleader, reportrelation, funcname } = data
               if ((type === 5 || type === 6) && !deptid) {
                 message.error('请选择团队')
                 return
@@ -586,8 +586,15 @@ export default {
               } else if ([5, 8, 11, 801, 111, 802, 112, 116].includes(type) && !isleader) {
                 message.error('请选择是否领导')
                 return
-                // } else if ([15].includes(type)) {
-                // 要改分组实体，先不做
+              } else if ([15].includes(type) && reportrelation && reportrelation.type === 3 && !entityid) {
+                message.error('请选择表单字段')
+                return
+              } else if ([15].includes(type) && reportrelation && reportrelation.type === 3 && !fieldname) {
+                message.error('请选择表单用户字段')
+                return
+              } else if ([15].includes(type) && (!reportrelation || !reportrelation.id)) {
+                message.error('请选择汇报关系')
+                return
               } else if ([16].includes(type) && !funcname) {
                 message.error('请填写sql语句')
                 return

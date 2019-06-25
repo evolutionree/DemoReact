@@ -413,18 +413,18 @@ class SelectFlowUser extends Component {
             >
               {['流程发起人', '上一步骤处理人', '表单中的人员'].map((item, index) => <Option key={index} value={(index + 1) + ''}>{item}</Option>)}
             </SelectNumber>
-            {
+            { // 表单中的人员
               _.includes(reportRelation, type) && (reportrelationdata && reportrelationdata.type * 1) === 3 &&
               <SelectField
                 keys="entityid"
-                style={{ width: 160 }}
+                style={{ width: 160 }}  
                 value={(_.includes(reportRelation, type) && reportrelationdata) ? data.entityid : undefined}
                 placeholder="请选择表单"
                 onChange={(entityid, fieldlabel) => this.onDataChange({ entityid, fieldlabel })}
                 fields={formFields}
               />
             }
-            {
+            { // 表单中的人员
               _.includes(reportRelation, type) && (reportrelationdata && reportrelationdata.type * 1) === 3 &&
               <SelectField
                 placeholder="请选择表单用户字段"
