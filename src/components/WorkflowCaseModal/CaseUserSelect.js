@@ -54,7 +54,7 @@ class CaseUserSelect extends React.Component {
   };
 
   render() {
-    const { value, users, limit, disabled } = this.props;
+    const { value, users, allUsers, limit, disabled } = this.props;
     let selectedUsers = [];
     if (value && value.length) {
       selectedUsers = value.map(userId => _.find(users, ['userid', userId])).filter(u => !!u);
@@ -90,7 +90,7 @@ class CaseUserSelect extends React.Component {
         <UserSelectModal
           visible={this.state.modalVisible}
           selectedUsers={value}
-          allUsers={users}
+          allUsers={allUsers}
           filterUsers={this.props.filterUsers}
           limit={limit}
           onOk={this.handleOk}
