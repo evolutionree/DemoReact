@@ -4,10 +4,10 @@ import { Button } from 'antd'
 import { Link } from 'dva/router'
 import Page from '../../../components/Page'
 import Toolbar from '../../../components/Toolbar'
-import Search from '../../../components/Search'
 import ConfigTable from '../../../components/ConfigTable'
 import FormModal from './FormModal'
 import FilterModal from '../FilterModal'
+import ImportButton from './ImportButton'
 import formConfig from './formConfig'
 
 const SPACENAME = 'reportrelationdetail'
@@ -19,6 +19,10 @@ class ReportRelationDetail extends Component {
   }
 
   componentDidMount () {
+    this.init()
+  }
+
+  init = () => {
     const { onInit, initParams } = this.props
     const reportrelationid = sessionStorage.getItem('reportrelationid') || null
     if (onInit) onInit({ ...initParams, reportrelationid })
@@ -95,13 +99,13 @@ class ReportRelationDetail extends Component {
     onSeach(params)
   }
 
-  import = () => {
-    const { onImport } = this.props
-    onImport()
+  ImportDone = () => {
+    this.init()
   }
 
   render () {
     const {
+      token,
       list,
       selectedRows,
       initParams,
@@ -114,8 +118,6 @@ class ReportRelationDetail extends Component {
       confirmLoading,
       checkFunc
     } = this.props
-
-    const { keyWord } = this.state
 
     const title = sessionStorage.getItem('reportrelationdetailtitle')
     const columns = [
@@ -146,21 +148,17 @@ class ReportRelationDetail extends Component {
         >
           <div style={{ float: 'left' }}>
             {checkFunc('AddDetail') && <Button onClick={this.add}>新增</Button>}
-            {checkFunc('Import') && (
-              <Button onClick={this.import} style={{ marginLeft: 15 }}>
-                导入
-              </Button>
+            {!checkFunc('Import') && (
+              <ImportButton
+                title='导入excel数据'
+                trigger='click'
+                placement='rightBottom'
+                token={token}
+                done={this.ImportDone}
+              />
             )}
           </div>
-          <Toolbar.Right>
-            {/* <Search
-              placeholder="请输入汇报人"
-              value={keyWord}
-              onChange={this.onHandleSearchChange}
-              onSearch={this.onHandleSearch}
-            /> */}
-            {<Button onClick={() => toggleModal(showModals, 'FilterModal')}>过滤</Button>}
-          </Toolbar.Right>
+          <Toolbar.Right>{<Button onClick={() => toggleModal(showModals, 'FilterModal')}>过滤</Button>}</Toolbar.Right>
         </Toolbar>
 
         <ConfigTable
@@ -208,7 +206,12 @@ class ReportRelationDetail extends Component {
 }
 
 export default connect(
-  state => state[SPACENAME],
+  state => {
+    return {
+      ...state[SPACENAME],
+      token: state.app.token
+    }
+  },
   dispatch => ({
     onInit (params) {
       dispatch({ type: `${SPACENAME}/Init`, payload: params })
@@ -227,12 +230,6 @@ export default connect(
     },
     onSelectRow (selectedRows) {
       dispatch({ type: `${SPACENAME}/putState`, payload: { selectedRows } })
-    },
-    onImport () {
-      dispatch({
-        type: 'task/impModals',
-        payload: { templateType: 1, templateKey: '' }
-      })
     },
     dispatch
   })
