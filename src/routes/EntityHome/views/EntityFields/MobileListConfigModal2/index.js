@@ -52,12 +52,12 @@ function getFieldCount(styleId) {
 class MobileListConfigModal extends React.Component {
   static propTypes = {
     fields: React.PropTypes.array,
-    modalVisible: React.PropTypes.bool,
+    visible: React.PropTypes.string,
     entityId: React.PropTypes.string
   };
   static defaultProps = {
     fields: [],
-    modalVisible: false
+    visible: false
   };
 
   constructor(props) {
@@ -73,8 +73,8 @@ class MobileListConfigModal extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     // 打开窗口时，查数据
-    const isOpening = !this.props.modalVisible && nextProps.modalVisible;
-    const isClosing = this.props.modalVisible && !nextProps.modalVisible;
+    const isOpening = !this.props.visible && nextProps.visible;
+    const isClosing = this.props.visible && !nextProps.visible;
 
     if (isOpening) {
       this.setState({ loading: true });
@@ -98,7 +98,9 @@ class MobileListConfigModal extends React.Component {
   }
 
   handleOk = () => {
+    const { fields, visible, onCancel } = this.props;
     const { mobVisibleFieldIds, mobViewConfig } = this.state;
+
     const mobVisibleFields = mobVisibleFieldIds.map(id => {
       return _.find(this.props.fields, field => field.fieldid === id);
     });
@@ -122,16 +124,16 @@ class MobileListConfigModal extends React.Component {
         fieldkeys,
         colors,
         fonts,
-        viewtype: 1,
+        viewtype: 1
       };
       editMobFieldVisible(params).then(result => {
         this.setState({ loading: false });
         message.success('保存成功');
-        this.props.cancel();
+        onCancel();
       }).catch(e => {
         this.setState({ loading: false });
         message.error(e.message || '提交数据失败');
-      })
+      });
     } else {
       params = {
         ...mobViewConfig,
@@ -149,19 +151,19 @@ class MobileListConfigModal extends React.Component {
       }).catch(e => {
         this.setState({ loading: false });
         message.error(e.message || '提交数据失败');
-      })
+      });
     }
   };
 
   render() {
-    const { fields, modalVisible } = this.props;
+    const { fields, visible, onCancel } = this.props;
     const { mobVisibleFieldIds, mobViewConfig, loading } = this.state;
     return (
       <Modal
         title="设置手机端列表显示"
-        visible={modalVisible}
+        visible={!!visible}
         onOk={this.handleOk}
-        onCancel={this.props.cancel}
+        onCancel={onCancel}
         confirmLoading={loading}
       >
         <MobileFieldsSelect
@@ -184,16 +186,7 @@ export default connect(
   state => {
     return {
       fields: state.entityFields.list.filter(field => field.recstatus === 1),
-      modalVisible: /mListConfig/.test(state.entityFields.showModals),
       entityId: state.entityFields.entityId
-    };
-  },
-  dispatch => {
-    return {
-      submit: () => {},
-      cancel: () => {
-        dispatch({ type: 'entityFields/showModals', payload: '' });
-      }
     };
   }
 )(MobileListConfigModal);

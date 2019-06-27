@@ -25,8 +25,8 @@ class WebListConfigModal extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     // 打开窗口时，查数据
-    const isOpening = !/customBasicConfig/.test(this.props.showModals) &&
-      /customBasicConfig/.test(nextProps.showModals);
+    const isOpening = !/SetCustomBasicConfigModal$/.test(this.props.visible) &&
+      /SetCustomBasicConfigModal$/.test(nextProps.visible);
     if (isOpening) {
       querybasefield(this.props.entityId)
         .then(result => {
@@ -38,12 +38,12 @@ class WebListConfigModal extends React.Component {
   }
 
   handleOk = () => {
-    this.props.submit(this.state.data);
+    this.props.submit(this.state.data, this.props.onCancel);
   };
 
 
   pickField = (field) => {
-    let newData = _.cloneDeep(this.state.data);
+    const newData = _.cloneDeep(this.state.data);
     newData.fieldnotvisible = newData.fieldnotvisible.filter((item) => {
       return item.fieldid !== field.fieldid;
     });
@@ -54,7 +54,7 @@ class WebListConfigModal extends React.Component {
   };
 
   removeField = (field) => {
-    let newData = _.cloneDeep(this.state.data);
+    const newData = _.cloneDeep(this.state.data);
     newData.fieldvisible = newData.fieldvisible.filter((item) => {
       return item.fieldid !== field.fieldid;
     });
@@ -65,7 +65,7 @@ class WebListConfigModal extends React.Component {
   };
 
   pickAll = () => {
-    let newData = _.cloneDeep(this.state.data);
+    const newData = _.cloneDeep(this.state.data);
     newData.fieldnotvisible.map((field) => {
       newData.fieldvisible.push(field);
     });
@@ -77,7 +77,7 @@ class WebListConfigModal extends React.Component {
   };
 
   removeAll = () => {
-    let newData = _.cloneDeep(this.state.data);
+    const newData = _.cloneDeep(this.state.data);
     newData.fieldvisible.map((field) => {
       newData.fieldnotvisible.push(field);
     });
@@ -91,8 +91,8 @@ class WebListConfigModal extends React.Component {
     return (
       <Modal
         title="设置客户基础资料字段"
-        visible={/customBasicConfig/.test(this.props.showModals)}
-        onCancel={this.props.cancel}
+        visible={/SetCustomBasicConfigModal$/.test(this.props.visible)}
+        onCancel={this.props.onCancel}
         onOk={this.handleOk}
         confirmLoading={this.props.modalPending}
       >
@@ -141,11 +141,8 @@ export default connect(
   state => state.entityFields,
   dispatch => {
     return {
-      submit: (visibleFields) => {
-        dispatch({ type: 'entityFields/setCustomBasicConfig', payload: visibleFields })
-      },
-      cancel: () => {
-        dispatch({ type: 'entityFields/showModals', payload: '' })
+      submit: (visibleFields, callback) => {
+        dispatch({ type: 'entityFields/setCustomBasicConfig', payload: { visibleFields, callback } });
       }
     };
   }

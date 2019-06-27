@@ -1,31 +1,22 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Row, Col, Button, Input, Menu } from 'antd';
+import { Row, Col, Button, Menu, Input } from 'antd';
 import * as _ from 'lodash';
 import CodeEditor from '../../../../components/CodeEditor';
-import HistoryModal from '../../Components/HistoryModal';
+import DynamicLoadModal from '../../../../components/Modal/DynamicLoadModal';
+import HistoryModal from '../../../../components/Modal/HistoryModal';
 import styles from './EntityScripts.less';
 
-// const ScriptItem = ({ title, content, editingContent, editing, onChange, onClear, onEdit, onCancel }) => {
-//   return (
-//     <div className={styles.scriptItem}>
-//       <div className={styles.scriptTitle}>
-//         {title}
-//       </div>
-//       <div className={styles.scriptContent}>
-//         <CodeEditor
-//           value={editing ? editingContent : content}
-//         />
-//       </div>
-//     </div>
-//   );
-// };
+const TextArea = Input.TextArea;
+
+const SPACENAME = 'entityScripts';
 
 function EntityScripts({
-  addScript,
-  editScript,
-  viewScript,
-  copyScript,
+  entityId,
+  EntityAddNew,
+  EntityEdit,
+  EntityView,
+  EntityCopyNew,
   showingScript,
   toggleShowing,
   onChange,
@@ -33,18 +24,29 @@ function EntityScripts({
   onShow,
   onEdit,
   onSave,
-  onClear
+  onClear,
+  showModals,
+  initParams,
+  historyList,
+  fetchDataLoading
 }) {
-  const allScripts = [addScript, editScript, viewScript, copyScript];
+  const allScripts = [EntityAddNew, EntityEdit, EntityView, EntityCopyNew];
   const scriptItem = _.find(allScripts, ['name', showingScript]);
-  const { title, name, content, editingContent, editing } = scriptItem;
+  const { title, name, content, editingContent, remark, editing } = scriptItem;
+
+  function selectSideMenu(e) {
+    toggleShowing(e.key);
+  }
+  
   return (
     <div>
       <Row gutter={10}>
         <Col span={4}>
-          <Menu selectedKeys={[showingScript]}
-                style={{ overflowY: 'auto', overflowX: 'hidden' }}
-                onSelect={event => toggleShowing(event.key)}>
+          <Menu 
+            selectedKeys={[showingScript]}
+            style={{ overflowY: 'auto', overflowX: 'hidden' }}
+            onSelect={selectSideMenu}
+          >
             {allScripts.map(item => (
               <Menu.Item key={item.name}>
                 {item.title}
@@ -54,16 +56,21 @@ function EntityScripts({
           </Menu>
         </Col>
         <Col span={20}>
-          {/*<div style={{ textAlign: 'right' }}>*/}
-          {/*<Button onClick={onSave}>保存</Button>*/}
-          {/*</div>*/}
           <div className={styles.rightCol}>
             <CodeEditor
               value={(editing ? editingContent : content) || ''}
-              onChange={onChange.bind(null, name)}
+              onChange={onChange.bind(null, name, 'editingContent')}
               readOnly={!editing}
               style={{ border: '1px solid #ddd', height: '400px' }}
             />
+            {
+              editing && <TextArea 
+                style={{ marginTop: 8 }} 
+                value={remark} 
+                onChange={(e) => onChange(name, 'remark', e.target.value)} 
+                placeholder="请填写修改备注"
+              />
+            }
             <div className={styles.scriptBtnRow} style={{ textAlign: 'right' }}>
               <Button onClick={onShow.bind(null, name)}>历史记录</Button>
               {!editing && <Button onClick={onEdit.bind(null, name)}>编辑</Button>}
@@ -73,36 +80,57 @@ function EntityScripts({
             </div>
           </div>
         </Col>
-        <HistoryModal keyname={showingScript} width={'90%'} />
+        {
+          showModals && showModals.HistoryModal &&
+          <DynamicLoadModal
+            width={1120}
+            title={title}
+            keyname={showingScript}
+            rowKey="id"
+            recid={entityId}
+            value={editingContent}
+            orig={content}
+            spaceName={SPACENAME}
+            name={showingScript}
+            showModals={showModals}
+            allScripts={allScripts}
+            detailapi="api/entitypro/getucodedetail"
+            onChange={onChange.bind(null, name, 'editingContent')}
+            initParams={initParams}
+            historyList={historyList}
+            WrapComponent={HistoryModal}
+            listLoading={fetchDataLoading && fetchDataLoading.HistoryModal}
+          />
+        }
       </Row>
     </div>
   );
 }
 
 export default connect(
-  state => state.entityScripts,
+  state => state[SPACENAME],
   dispatch => {
     return {
-      onChange(scriptName, value) {
-        dispatch({ type: 'entityScripts/contentChange', payload: { scriptName, value } });
+      onChange(scriptName, key, value) {
+        dispatch({ type: `${SPACENAME}/contentChange`, payload: { scriptName, key, value } });
       },
       onCancel(scriptName) {
-        dispatch({ type: 'entityScripts/cancelEdit', payload: scriptName });
+        dispatch({ type: `${SPACENAME}/cancelEdit`, payload: scriptName });
       },
       onShow(scriptName) {
-        dispatch({ type: 'entityScripts/showHistoryModal', payload: scriptName });
+        dispatch({ type: `${SPACENAME}/showHistoryModal`, payload: scriptName });
       },
       onEdit(scriptName) {
-        dispatch({ type: 'entityScripts/editScript', payload: scriptName });
+        dispatch({ type: `${SPACENAME}/EntityEdit`, payload: scriptName });
       },
       onSave() {
-        dispatch({ type: 'entityScripts/saveScript' });
+        dispatch({ type: `${SPACENAME}/saveScript` });
       },
       onClear(scriptName) {
-        dispatch({ type: 'entityScripts/contentChange', payload: { scriptName, value: '' } });
+        dispatch({ type: `${SPACENAME}/contentChange`, payload: { scriptName, value: '' } });
       },
       toggleShowing(scriptName) {
-        dispatch({ type: 'entityScripts/toggleShowing', payload: scriptName });
+        dispatch({ type: `${SPACENAME}/toggleShowing`, payload: scriptName });
       }
     };
   }

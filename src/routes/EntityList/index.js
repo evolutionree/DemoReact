@@ -29,18 +29,18 @@ function EntityList({
   checkFunc
 }) {
   function handleAction(action) {
-    if ('del' === action) {
+    if (action === 'del') {
       Modal.confirm({
         title: '确认删除该实体吗？',
         onOk() {
           dispatch({ type: 'entityList/del', payload: currItems });
         }
       });
-    } else if ('edit' === action) {
+    } else if (action === 'edit') {
       dispatch({ type: 'entityList/edit', payload: currItems[0] });
-    } else if ('disable' === action) {
+    } else if (action === 'disable') {
       dispatch({ type: 'entityList/disable', payload: currItems });
-    } else if ('publish' === action) {
+    } else if (action === 'publish') {
       dispatch({ type: 'entityList/publish', payload: currItems[0] });
     }
   }
@@ -55,12 +55,12 @@ function EntityList({
           ...query
         }
       }));
-    }
+    };
   }
   function bindAction(actionType, prePayload) {
     return function boundAction(payload) {
       dispatch({ type: `entityList/${actionType}`, payload: prePayload || payload });
-    }
+    };
   }
   function getTypeName(entityType) {
     const match = _.find(entityTypes, ['id', entityType + '']);
@@ -108,7 +108,7 @@ function EntityList({
     { title: '关联实体', key: 'relentityname', width: 180 },
     // { title: '状态', key: 'recstatus', width: 110, render: text => ['停用', '启用'][text] },
     // { title: '发布状态', key: 'pubstatus', width: 110 },
-    { title: '描述', key: 'remark', render: text => tooltipElements(text, 500, '描述') }
+    { title: '描述', key: 'remark', width: 300, render: text => tooltipElements(text, 300, '描述') }
   ];
 
   const tooltipElements = (text, width, title) => {

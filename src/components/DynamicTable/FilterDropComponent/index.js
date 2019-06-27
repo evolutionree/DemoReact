@@ -155,7 +155,7 @@ class FilterDrop extends Component {
       if (filterShowComponent.date.indexOf(field.controltype) > -1) {
         submitValue = [this.state.value[0].format(dateFormat) + ' 00:00:00', this.state.value[1].format(dateFormat) + ' 23:59:59'].join(',');
       } else if (filterShowComponent.multiple.indexOf(field.controltype) > -1 || filterShowComponent.number.indexOf(field.controltype) > -1) {
-        submitValue = submitValue.join(',');
+        submitValue = Array.isArray(submitValue) ? submitValue.join(',') : '';
       }
     }
     this.props.onFilter && this.props.onFilter(field.fieldname, submitValue);

@@ -65,14 +65,14 @@ class WorkflowCaseForm extends Component {
       // 会审，列出所有审批人
       this.props.form.setFieldsValue({
         handleuser: approvers.map(u => u.userid)
-      })
-    } else if (approvers.length === 1) {
+      });
+    } else if (Array.isArray(approvers) && approvers.length === 1) {
       this.props.form.setFieldsValue({
         handleuser: approvers.map(u => u.userid)
       })
     }
 
-    if (cpusers.length) {
+    if (Array.isArray(cpusers)) {
       this.props.form.setFieldsValue({
         copyuser: cpusers.map(u => u.userid)
       })

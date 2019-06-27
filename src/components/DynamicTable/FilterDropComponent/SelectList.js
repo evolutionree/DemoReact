@@ -1,15 +1,15 @@
 /**
  * Created by 0291 on 2018/4/18.
  */
-import React, { PropTypes, Component } from 'react';
-import { Checkbox, Input } from 'antd';
-import connectBasicData from '../../../models/connectBasicData';
-import { getIntlText } from '../../UKComponent/Form/IntlText';
-import { queryTypes } from '../../../services/entity';
-import Styles from './SelectList.less';
+import React, { PropTypes, Component } from 'react'
+import { Checkbox, Input } from 'antd'
+import connectBasicData from '../../../models/connectBasicData'
+import { getIntlText } from '../../UKComponent/Form/IntlText'
+import { queryTypes } from '../../../services/entity'
+import Styles from './SelectList.less'
 
-const CheckboxGroup = Checkbox.Group;
-const Search = Input.Search;
+const CheckboxGroup = Checkbox.Group
+const Search = Input.Search
 
 class SelectList extends Component {
   static propTypes = {
@@ -23,91 +23,131 @@ class SelectList extends Component {
     entityId: PropTypes.string,
     type: PropTypes.number,
     width: PropTypes.number
-  };
-  static defaultProps = {
+  }
+  static defaultProps = {}
 
-  };
-
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super(props)
     this.state = {
       options: [],
       chacheOptions: []
-    };
+    }
   }
 
-  componentDidMount() {
-    this.fetchOptions(this.props);
+  componentDidMount () {
+    this.fetchOptions(this.props)
   }
 
-  componentWillReceiveProps(nextProps) {
-    if ((nextProps.dataSource !== this.props.dataSource)
-      || (this.props.dictionaryData !== nextProps.dictionaryData)) {
-      this.fetchOptions(nextProps);
+  componentWillReceiveProps (nextProps) {
+    if (
+      nextProps.dataSource !== this.props.dataSource ||
+      this.props.dictionaryData !== nextProps.dictionaryData
+    ) {
+      this.fetchOptions(nextProps)
     }
   }
 
   fetchOptions = props => {
-    if (props.type === 1009) { //实体类型控件
+    if (props.type === 1009) {
+      // 实体类型控件
       queryTypes({ entityId: props.entityId }).then(result => {
-        const entityTypes = result.data.entitytypepros;
+        const entityTypes = result.data.entitytypepros
         const options = entityTypes.map(item => ({
           value: item.categoryid,
           label: item.categoryname
-        }));
-        const resultOptions = [...options, { value: 'isnull', label: '空(未填写)' }];
-        this.setState({ options: resultOptions, chacheOptions: resultOptions });
-      });
+        }))
+        const resultOptions = [
+          ...options,
+          { value: 'isnull', label: '空(未填写)' }
+        ]
+        this.setState({ options: resultOptions, chacheOptions: resultOptions })
+      })
     } else {
-      const { dataSource: { sourceId }, dictionaryData } = props;
+      const {
+        dataSource: { sourceId },
+        dictionaryData
+      } = props
       if (dictionaryData[sourceId]) {
         const options = dictionaryData[sourceId].map(dic => {
-          const title = getIntlText('dataval', dic);
+          const title = getIntlText('dataval', dic)
           return {
             value: dic.dataid,
-            label: <span title={title && title.length > 5 ? title : ''}>{title}</span>
-          };
-        });
-        const resultOptions = [...options, { value: 'isnull', label: '空(未填写)' }];
-        this.setState({ options: resultOptions, chacheOptions: resultOptions });
+            label: (
+              <span title={title && title.length > 5 ? title : ''}>
+                {title}
+              </span>
+            )
+          }
+        })
+        const resultOptions = [
+          ...options,
+          { value: 'isnull', label: '空(未填写)' }
+        ]
+        this.setState({ options: resultOptions, chacheOptions: resultOptions })
       }
     }
-  };
-
-  handleChangeValue = (val) => {
-    const { options, chacheOptions } = this.state;
-    if (!val) {
-      this.setState({ options: chacheOptions });
-      return;
-    }
-    const result = options.filter(item => (item.label.props ? item.label.props.children : item.label).includes(val));
-    this.setState({ options: result });
   }
 
+  handleChangeValue = val => {
+    const { options, chacheOptions } = this.state
+    if (!val) {
+      this.setState({ options: chacheOptions })
+      return
+    }
+    const result = options.filter(item =>
+      (item.label.props ? item.label.props.children : item.label).includes(val)
+    )
+    this.setState({ options: result })
+  }
 
   onChange = checkedValues => {
-    this.props.onChange && this.props.onChange(checkedValues);
-  };
+    this.props.onChange && this.props.onChange(checkedValues)
+  }
 
-  render() {
-    const { width = 160, value } = this.props;
-    const { options } = this.state;
-    const classWrap = options.length >= 10 ? Styles.MulSelectListWrap : (width === 160 ? Styles.SelectListWrap : Styles.Wrap);
+  render () {
+    const { width = 160, value, mode = 'normal' } = this.props
+    const { options } = this.state
+    const classWrap =
+      options.length >= 10
+        ? Styles.MulSelectListWrap
+        : width === 160
+          ? Styles.SelectListWrap
+          : Styles.Wrap
 
     return (
-      <div style={{ paddingTop: 32, width: options.length < 10 ? width : (width === 160 ? width : undefined), marginRight: 8 }} className={classWrap}>
-        <div style={{ position: 'absolute', top: 0, left: -4, width: 150 }}>
-          <Search
-            size="default"
-            placeholder="serach"
-            onSearch={this.handleChangeValue}
-          />
-        </div>
-
-        <CheckboxGroup options={options} value={value} onChange={this.onChange} />
+      <div
+        style={{
+          paddingTop: mode === 'modal' ? 2 : 32,
+          width:
+            options.length < 10 ? width : width === 160 ? width : undefined,
+          marginRight: 8
+        }}
+        className={classWrap}
+      >
+        {mode !== 'modal' ? (
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: -4,
+              width: 150
+            }}
+          >
+            <Search
+              size='default'
+              placeholder='serach'
+              onSearch={this.handleChangeValue}
+            />
+          </div>
+        ) : null}
+        <CheckboxGroup
+          options={options}
+          value={value}
+          onChange={this.onChange}
+        />
       </div>
-    );
+    )
   }
 }
 
-export default connectBasicData('dictionaryData', SelectList);
+export default connectBasicData('dictionaryData', SelectList)

@@ -20,8 +20,8 @@ class WebListConfigModal extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     // 打开窗口时，查数据
-    const isOpening = !/wListConfig/.test(this.props.showModals) &&
-      /wListConfig/.test(nextProps.showModals);
+    const isOpening = !/WebListConfigModal$/.test(this.props.visible) &&
+      /WebListConfigModal$/.test(nextProps.visible);
     if (isOpening) {
       queryWebFieldVisible(this.props.entityId)
         .then(result => {
@@ -35,11 +35,13 @@ class WebListConfigModal extends React.Component {
   }
 
   handleOk = () => {
+    const { submit, onCancel } = this.props;
+
     if (this.state.pickedIds.length > 50) {
       message.error('列表显示字段不能超过50个');
       return;
     }
-    this.props.submit(this.state.pickedIds);
+    submit(this.state.pickedIds, onCancel);
   };
 
   onSortEnd = ({ oldIndex, newIndex }) => {
@@ -100,11 +102,12 @@ class WebListConfigModal extends React.Component {
   };
 
   render() {
+    const { onCancel } = this.props;
     return (
       <Modal
         title="设置web端列表显示字段"
-        visible={/wListConfig/.test(this.props.showModals)}
-        onCancel={this.props.cancel}
+        visible={/WebListConfigModal$/.test(this.props.visible)}
+        onCancel={onCancel}
         onOk={this.handleOk}
         confirmLoading={this.props.modalPending}
       >
@@ -137,7 +140,7 @@ class WebListConfigModal extends React.Component {
                 {this.getPickedFields().map((field, index) => (
                   <li className={styles.item} key={field.fieldid}>
                     {/*<DragHandle>*/}
-                      {/*<Icon type="bars" style={{ cursor: 'move', marginRight: '5px' }} />*/}
+                    {/*<Icon type="bars" style={{ cursor: 'move', marginRight: '5px' }} />*/}
                     {/*</DragHandle>*/}
                     <span>{getIntlText('displayname', field)}</span>
                     <Icon type="minus" onClick={() => { this.removeField(field); }} />
@@ -156,11 +159,8 @@ export default connect(
   state => state.entityFields,
   dispatch => {
     return {
-      submit: (visibleFields) => {
-        dispatch({ type: 'entityFields/setWebVisibleFields', payload: visibleFields })
-      },
-      cancel: () => {
-        dispatch({ type: 'entityFields/showModals', payload: '' })
+      submit: (visibleFields, callback) => {
+        dispatch({ type: 'entityFields/setWebVisibleFields', payload: { fieldIds: visibleFields, callback } });
       }
     };
   }

@@ -33,13 +33,13 @@ class ConfigTable extends Component {
     window.removeEventListener('resize', this.onWindowResize, false)
   }
 
-  componentWillReceiveProps (nextProps) {
-    const { selectedRows: oldSelectedRows, rowKey } = this.props
-    const { selectedRows } = nextProps
+  componentWillReceiveProps(nextProps) {
+    const { selectedRows: oldRows, rowKey } = this.props;
+    const { selectedRows: newRows } = nextProps;
 
-    if (selectedRows && rowKey && selectedRows.length !== oldSelectedRows.length) {
-      const selectedRowKeys = selectedRows.map(o => o[rowKey])
-      this.setState({ selectedRowKeys, selectedRows })
+    if (Array.isArray(newRows) && (oldRows !== newRows)) {
+      const selectedRowKeys = newRows.map(o => o[rowKey]);
+      this.setState({ selectedRowKeys, selectedRows: newRows });
     }
   }
 
@@ -48,14 +48,15 @@ class ConfigTable extends Component {
     this.setState({ clientHeight })
   }
 
-  importTableParmas () {
-    const {
-      initParams: { searchOrder, columnFilter }
-    } = this.props
-    const { FilterVisibles } = this.state
-    const toggleFilter = this.toggleFilter
-    const onFilter = this.onFilter
-    return { onFilter, toggleFilter, columnFilter, FilterVisibles, searchOrder }
+  importTableParmas() {
+    const { initParams } = this.props;
+    const searchOrder = initParams ? initParams.searchOrder : '';
+    const columnFilter = initParams ? initParams.columnFilter : null;
+
+    const { FilterVisibles } = this.state;
+    const toggleFilter = this.toggleFilter;
+    const onFilter = this.onFilter;
+    return { onFilter, toggleFilter, columnFilter, FilterVisibles, searchOrder };
   }
 
   // 设置过滤值
@@ -86,8 +87,9 @@ class ConfigTable extends Component {
   }
 
   handleTableChange = (pagination, filters, sorter) => {
-    const { onSeach, initParams } = this.props
-    const searchOrder = sorter.field ? sorter.field + (sorter.order === 'ascend' ? ' asc' : ' desc') : ''
+    const { onSeach, initParams } = this.props;
+    // const searchOrder = sorter.field ? (sorter.field + (sorter.order === 'ascend' ? ' asc' : ' desc')) : '';
+    const searchOrder = (sorter.field && sorter.order !== 'ascend') ? (sorter.field + ' desc') : '';
     const newPramas = {
       ...initParams,
       // pageIndex: pagination.current,
@@ -97,24 +99,31 @@ class ConfigTable extends Component {
     onSeach(newPramas)
   }
 
-  onSelectListChange = async (selectedRowKeys, selectedRows) => {
-    const { CBSelectRow } = this.props
-
-    await this.setStateAsync({ selectedRowKeys, selectedRows })
-    if (CBSelectRow) CBSelectRow(selectedRows)
+  onSelectListChange = (selectedRowKeys, selectedRows) => {
+    const { CBSelectRow } = this.props;
+    if (CBSelectRow) {
+      CBSelectRow(selectedRows);
+      return;
+    }
+    this.setState({ selectedRowKeys, selectedRows });
   }
 
-  onSelectAllListChange = async (selected, selectedRows) => {
-    const { rowKey, CBSelectRow } = this.props
-    const selectedRowKeys = selectedRows.map(o => o[rowKey])
-
-    await this.setStateAsync({ selectedRowKeys, selectedRows })
-    if (CBSelectRow) CBSelectRow(selectedRows)
+  onSelectAllListChange = (selected, selectedRows) => {
+    const { rowKey, CBSelectRow } = this.props;
+    const selectedRowKeys = selectedRows.map(o => o[rowKey]);
+    if (CBSelectRow) {
+      CBSelectRow(selectedRows);
+      return;
+    }
+    this.setState({ selectedRowKeys, selectedRows });
   }
 
-  render () {
-    const { dataSource, rowKey = 'recid', columns: propColumns, rowSelect, rowSelection } = this.props
-    const { selectedRowKeys, clientHeight } = this.state
+  render() {
+    const {
+      dataSource, rowKey = 'recid', columns: propColumns,
+      rowSelect, rowSelection, pwidth = tableDomWdith
+    } = this.props;
+    const { selectedRowKeys, clientHeight } = this.state;
 
     const screenHeight = clientHeight
     const modalHeight = screenHeight * 0.7
@@ -132,7 +141,7 @@ class ConfigTable extends Component {
         dataSource={dataSource}
         onChange={this.handleTableChange}
         scroll={{
-          x: tableDomWdith > this.tableWidth ? '100%' : rowSelect ? this.tableWidth + 62 : this.tableWidth,
+          x: (pwidth > this.tableWidth ? '100%' : (rowSelect ? this.tableWidth + 62 : this.tableWidth)),
           y: Div3Height - 130
         }}
         rowSelection={
