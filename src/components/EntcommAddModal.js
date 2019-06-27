@@ -348,7 +348,7 @@ class EntcommAddModal extends Component {
   }
 
   render() {
-    const { entityTypes, footer, refRecord, entityId } = this.props;
+    const { entityTypes, footer, refRecord, entityId, cacheId } = this.props;
     const {
       showTypeModal,
       showFormModal,
@@ -397,6 +397,7 @@ class EntcommAddModal extends Component {
           >
             <Spin spinning={fetchProtocolLoading}>
               <DynamicFormAdd
+                cacheId={cacheId}
                 entityId={entityId}
                 entityTypeId={selectedEntityType}
                 fields={protocolFields}
