@@ -53,10 +53,8 @@ class PluginAddModal extends Component {
     if (isOpening) {
       const { currPlugin, entityId, recordId } = nextProps
       if (!currPlugin) return
-      if (currPlugin.type === 'normal' || currPlugin.type === 'flow') {
-        this.setState({
-          showAddModal: true
-        })
+      if (['normal', 'flow', 'AddRelEntityData'].includes(currPlugin.type)) {
+        this.setState({ showAddModal: true })
         // 客户基础资料审批，需要填充数据
         if (currPlugin.type === 'flow' && currPlugin.recid) {
           this.fetchInitFormData(currPlugin.entity.entityid, currPlugin.recid).then(detailData => {
