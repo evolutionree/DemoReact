@@ -557,96 +557,91 @@ export default {
         if (editingFlowStepForm.nodeType === 0) {
           const data = editingFlowStepForm.stepUser.data
           const type = editingFlowStepForm.stepUser.type
-          if (editingFlowStepForm.nodeType === 0) {
-            const data = editingFlowStepForm.stepUser.data
-            const type = editingFlowStepForm.stepUser.type
-            if (data) {
-              const { userid, roleid, deptid, fieldname, entityid, isleader, reportrelation, funcname } = data
-              if ((type === 5 || type === 6) && !deptid) {
-                message.error('请选择团队')
-                return
-              } else if (type === 2 && !userid) {
-                message.error('请选择人员')
-                return
-              } else if ([802, 112, 116].includes(type) && !entityid) {
-                message.error('请选择表单字段')
-                return
-              } else if ([902, 102, 106].includes(type) && !entityid) {
-                message.error('请选择表单字段')
-                return
-              } else if ([106, 116].includes(type) && !fieldname) {
-                message.error('请选择表单团队字段')
-                return
-              } else if ([802, 112, 902, 102].includes(type) && !fieldname) {
-                message.error('请选择表单用户字段')
-                return
-              } else if ([4, 6, 9, 901, 902, 10, 101, 102, 106].includes(type) && !roleid) {
-                message.error('请选择角色')
-                return
-              } else if ([5, 8, 11, 801, 111, 802, 112, 116].includes(type) && !isleader) {
-                message.error('请选择是否领导')
-                return
-              } else if ([15].includes(type) && reportrelation && reportrelation.type === 3 && !entityid) {
-                message.error('请选择表单字段')
-                return
-              } else if ([15].includes(type) && reportrelation && reportrelation.type === 3 && !fieldname) {
-                message.error('请选择表单用户字段')
-                return
-              } else if ([15].includes(type) && (!reportrelation || !reportrelation.id)) {
-                message.error('请选择汇报关系')
-                return
-              } else if ([16].includes(type) && !funcname) {
-                message.error('请填写sql语句')
-                return
-              }
+          if (data) {
+            const { userid, roleid, deptid, fieldname, entityid, isleader, reportrelation, funcname } = data
+            if ((type === 5 || type === 6) && !deptid) {
+              message.error('请选择团队')
+              return
+            } else if (type === 2 && !userid) {
+              message.error('请选择人员')
+              return
+            } else if ([802, 112, 116].includes(type) && !entityid) {
+              message.error('请选择表单字段')
+              return
+            } else if ([902, 102, 106].includes(type) && !entityid) {
+              message.error('请选择表单字段')
+              return
+            } else if ([106, 116].includes(type) && !fieldname) {
+              message.error('请选择表单团队字段')
+              return
+            } else if ([802, 112, 902, 102].includes(type) && !fieldname) {
+              message.error('请选择表单用户字段')
+              return
+            } else if ([4, 6, 9, 901, 902, 10, 101, 102, 106].includes(type) && !roleid) {
+              message.error('请选择角色')
+              return
+            } else if ([5, 8, 11, 801, 111, 802, 112, 116].includes(type) && !isleader) {
+              message.error('请选择是否领导')
+              return
+            } else if ([15].includes(type) && reportrelation && reportrelation.type === 3 && !entityid) {
+              message.error('请选择表单字段')
+              return
+            } else if ([15].includes(type) && reportrelation && reportrelation.type === 3 && !fieldname) {
+              message.error('请选择表单用户字段')
+              return
+            } else if ([15].includes(type) && (!reportrelation || !reportrelation.id)) {
+              message.error('请选择汇报关系')
+              return
+            } else if ([16].includes(type) && !funcname) {
+              message.error('请填写sql语句')
+              return
             }
-          }
-
-          const fields = editingFlowStepForm.stepFields
-          const uniqCollect = {}
-          if (fields && fields.length) {
-            for (let i = 0; i < fields.length; i += 1) {
-              const item = fields[i]
-              if (!item.entityId) return message.error('请设置实体')
-              if (!item.fieldId) return message.error('请设置字段')
-              if (uniqCollect[item.entityId + item.fieldId]) return message.error('不可添加相同字段')
-              uniqCollect[item.entityId + item.fieldId] = 1
-            }
-          }
-
-          const reportrelationObj = editingFlowStepForm.stepUser.data.reportrelation || {}
-          if (!(reportrelationObj && reportrelationObj.type)) reportrelationObj.type = 1
-          const reportrelation = reportrelationObj ? JSON.stringify(reportrelationObj) : ''
-
-          flowStep.rawNode = {
-            ...flowStep.rawNode,
-            auditnum:
-              editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.stepUser.data.userid.split(',').length,
-            auditsucc: editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.auditsucc,
-            nodetype: editingFlowStepForm.nodeType,
-            ruleconfig: {
-              ...editingFlowStepForm.stepUser.data,
-              reportrelation,
-              cpuserid: editingFlowStepForm.cpUser.data.cpuserid,
-              cpusername: editingFlowStepForm.cpUser.data.cpusername,
-              cpfuncname: editingFlowStepForm.cpUser.data.cpfuncname
-            },
-            steptypeid: editingFlowStepForm.stepUser.type,
-            stepcptypeid: editingFlowStepForm.cpUser.type,
-            columnconfig: formatFieldsToColumnConfig(fields),
-            notfound: editingFlowStepForm.notfound || 1,
-            funcname: editingFlowStepForm.funcname
           }
         }
-        yield put({
-          type: 'putState',
-          payload: {
-            showModals: '',
-            editingFlowStepForm: null,
-            flowSteps: [...flowSteps]
+
+        const fields = editingFlowStepForm.stepFields
+        const uniqCollect = {}
+        if (fields && fields.length) {
+          for (let i = 0; i < fields.length; i += 1) {
+            const item = fields[i]
+            if (!item.entityId) return message.error('请设置实体')
+            if (!item.fieldId) return message.error('请设置字段')
+            if (uniqCollect[item.entityId + item.fieldId]) return message.error('不可添加相同字段')
+            uniqCollect[item.entityId + item.fieldId] = 1
           }
-        })
+        }
+
+        const reportrelationObj = editingFlowStepForm.stepUser.data.reportrelation || {}
+        if (!(reportrelationObj && reportrelationObj.type)) reportrelationObj.type = 1
+        const reportrelation = reportrelationObj ? JSON.stringify(reportrelationObj) : ''
+
+        flowStep.rawNode = {
+          ...flowStep.rawNode,
+          auditnum: editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.stepUser.data.userid.split(',').length,
+          auditsucc: editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.auditsucc,
+          nodetype: editingFlowStepForm.nodeType,
+          ruleconfig: {
+            ...editingFlowStepForm.stepUser.data,
+            reportrelation,
+            cpuserid: editingFlowStepForm.cpUser.data.cpuserid,
+            cpusername: editingFlowStepForm.cpUser.data.cpusername,
+            cpfuncname: editingFlowStepForm.cpUser.data.cpfuncname
+          },
+          steptypeid: editingFlowStepForm.stepUser.type,
+          stepcptypeid: editingFlowStepForm.cpUser.type,
+          columnconfig: formatFieldsToColumnConfig(fields),
+          notfound: editingFlowStepForm.notfound || 1,
+          funcname: editingFlowStepForm.funcname
+        }
       }
+      yield put({
+        type: 'putState',
+        payload: {
+          showModals: '',
+          editingFlowStepForm: null,
+          flowSteps: [...flowSteps]
+        }
+      })
     },
     * saveFlowDesign ({ payload: flowNodePosition }, { select, put, call }) {
       const { flowId, flowSteps, flowPaths } = yield select(state => state.workflowDesign)
