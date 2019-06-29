@@ -52,7 +52,7 @@ class InputTextarea extends Component {
           onBlur={this.onInputBlur}
           disabled={isReadOnly === 1}
           maxLength={maxLength}
-          autosize={isTable ? { minRows: 2, maxRows: 5 } : { minRows: 4, maxRows: 20 }}
+          autosize={isTable ? { minRows: 1, maxRows: 5 } : { minRows: 4, maxRows: 20 }}
         />
       </div>
     );
