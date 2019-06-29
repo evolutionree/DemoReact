@@ -59,10 +59,11 @@ class InputTextarea extends Component {
   }
 }
 
-InputTextarea.View = ({ value, value_name, textType }) => {
-  if (textType === 1) {
-    return <InputRichText.View value={value} />;
-  }
+InputTextarea.View = (props) => {
+  const { value, value_name, textType, width } = props;
+
+  if (textType === 1) return <InputRichText.View value={value} />;
+
 
   const emptyText = <span style={{ color: '#999999' }}>(空)</span>;
   let text = value_name !== undefined ? value_name : value;
@@ -81,7 +82,16 @@ InputTextarea.View = ({ value, value_name, textType }) => {
     }, []);
     text.pop();
   }
-  return <div style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}>{text}</div>;
+
+  return (
+    <div
+      style={width ? { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width } : null}
+      title={text && text.toString() && text.toString().replace(/\[object Object\],/g, '')}
+    >
+      {text}
+    </div>
+  );
+
 };
 
 export default InputTextarea;

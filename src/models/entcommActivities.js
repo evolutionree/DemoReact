@@ -21,10 +21,10 @@ const delay = timeout => {
 const confirmModal = (title, callback) => {
   Modal.confirm({
     title,
-    onOk () {
+    onOk() {
       callback(null, true)
     },
-    onCancel () {
+    onCancel() {
       callback(null, false)
     }
   })
@@ -45,7 +45,7 @@ export default {
     showModals: ''
   },
   subscriptions: {
-    setup ({ dispatch, history }) {
+    setup({ dispatch, history }) {
       return history.listen(location => {
         const pathReg = /^\/entcomm\/([^/]+)\/([^/]+)\/activities/
         const match = location.pathname.match(pathReg)
@@ -61,7 +61,7 @@ export default {
     }
   },
   effects: {
-    * init (
+    * init(
       {
         payload: { entityId, recordId }
       },
@@ -80,7 +80,7 @@ export default {
       yield put({ type: 'fetchPlugins' })
       yield put({ type: 'loadMore__', payload: { isReload: true } })
     },
-    * fetchPlugins (action, { select, put, call }) {
+    * fetchPlugins(action, { select, put, call }) {
       const { entityId, recordId } = yield select(state => state.entcommActivities)
       try {
         const result = yield call(queryPlugins, {
@@ -97,7 +97,7 @@ export default {
         message.error(e.message || '获取动态实体失败')
       }
     },
-    * loadMore__ ({ payload: isReload }, { select, put, call }) {
+    * loadMore__({ payload: isReload }, { select, put, call }) {
       const { entityId, recordId, pageIndex, pageSize } = yield select(state => state.entcommActivities)
       const queryPage = isReload ? 1 : pageIndex + 1
       try {
@@ -119,7 +119,7 @@ export default {
         message.error(e.message || '获取数据失败')
       }
     },
-    * comment (
+    * comment(
       {
         payload: { id, content }
       },
@@ -137,7 +137,7 @@ export default {
         message.error(e.message || '评论失败')
       }
     },
-    * updateActivity ({ payload: id }, { select, put, call }) {
+    * updateActivity({ payload: id }, { select, put, call }) {
       try {
         const { data } = yield call(getActivityDetail, id)
         yield put({
@@ -148,7 +148,7 @@ export default {
         message.error(e.message || '更新数据失败')
       }
     },
-    * like ({ payload: id }, { put, call }) {
+    * like({ payload: id }, { put, call }) {
       try {
         yield call(likeEntcommActivity, id)
         yield put({ type: 'updateActivity', payload: id })
@@ -156,7 +156,7 @@ export default {
         message.error(e.message || '点赞失败')
       }
     },
-    * pluginAdd ({ payload: pluginIndex }, { select, put, call, cps }) {
+    * pluginAdd({ payload: pluginIndex }, { select, put, call, cps }) {
       const { plugins, recordId, entityId } = yield select(state => state.entcommActivities)
       const currPlugin = plugins[pluginIndex]
       switch (currPlugin.type) {
@@ -246,7 +246,7 @@ export default {
         default:
       }
     },
-    * pluginAddDone (action, { select, put, call }) {
+    * pluginAddDone(action, { select, put, call }) {
       yield put({ type: 'pluginAddCancel' })
       const { entityId, recordId, pageSize } = yield select(state => state.entcommActivities)
       const pageIndex = 1
@@ -282,7 +282,7 @@ export default {
         message.error(e.message || '获取数据失败')
       }
     },
-    * showDynamicDetail ({ payload: item }, { select, put, call }) {
+    * showDynamicDetail({ payload: item }, { select, put, call }) {
       yield put({
         type: 'putState',
         payload: {
@@ -292,13 +292,13 @@ export default {
     }
   },
   reducers: {
-    putState (state, { payload: stateAssignment }) {
+    putState(state, { payload: stateAssignment }) {
       return {
         ...state,
         ...stateAssignment
       }
     },
-    loadMoreSuccess (
+    loadMoreSuccess(
       state,
       {
         payload: { list, queryPage, total }
@@ -316,13 +316,13 @@ export default {
         total
       }
     },
-    entityTypes (state, { payload: entityTypes }) {
+    entityTypes(state, { payload: entityTypes }) {
       return {
         ...state,
         entityTypes
       }
     },
-    updateActivitySuccess (
+    updateActivitySuccess(
       state,
       {
         payload: { id, data }
@@ -338,7 +338,7 @@ export default {
         return state
       }
     },
-    pluginAdd (state, { payload: pluginIndex }) {
+    pluginAdd(state, { payload: pluginIndex }) {
       if (state.plugins[pluginIndex].type === 'EntityDataOpenH5') {
         return state
       } else {
@@ -349,14 +349,14 @@ export default {
         }
       }
     },
-    pluginAddCancel (state) {
+    pluginAddCancel(state) {
       return {
         ...state,
         currPlugin: null,
         showModals: ''
       }
     },
-    resetState () {
+    resetState() {
       return {
         entityId: '',
         recordId: '',

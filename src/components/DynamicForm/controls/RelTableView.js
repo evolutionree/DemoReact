@@ -124,11 +124,7 @@ class RelTableView extends Component {
         title: item.displayname, width: cellWidth, dataIndex: item.fieldname, key: item.fieldname, render: (text, record, rowIndex) => {
           // 先取 _name
           const text_name = record[item.fieldname + '_name'];
-          // let cellText = text_name !== undefined ? text_name : text instanceof Object ? text.name : text;
-          // // 格式化日期
-          // if ((item.controltype === 8 || item.controltype === 9) && item.formatstr) {
-          //   cellText = this.formatDate(text, item.formatstr);
-          // }
+
           return (
             <span style={{ ...normalStyle, width: isLessField ? undefined : cellWidth - 26 }} className={styles.tableCell}>
               <DynamicFieldView width={isLessField ? undefined : cellWidth - 21} value={text} value_name={text_name} controlType={item.controltype} />

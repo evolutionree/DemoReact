@@ -179,12 +179,12 @@ class Picture extends Component {
   }
 }
 
-Picture.View = ({ value, dispatch }) => {
+Picture.View = ({ width, value, tableInnerView, dispatch }) => {
   const fileIds = value ? value.split(',') : [];
   const urls = fileIds.map(id => `/api/fileservice/read?fileid=${id}&filetype=1`);
   const originUrls = fileIds.map(id => `/api/fileservice/read?fileid=${id}`);
   return (
-    <div>
+    <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width }}>
       {urls.map(url => (
         <span className={styles.holder} key={url}>
           <img

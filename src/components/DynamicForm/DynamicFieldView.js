@@ -28,6 +28,7 @@ class DynamicFieldView extends React.Component {
     isCommonForm: PropTypes.bool,
     entityTypeId: PropTypes.string,
     isTable: PropTypes.bool,
+    width: PropTypes.number,
     value: PropTypes.any,
     value_name: PropTypes.oneOfType([
       PropTypes.string,
@@ -42,6 +43,7 @@ class DynamicFieldView extends React.Component {
   render() {
     const props = {
       isCommonForm: this.props.isCommonForm,
+      width: this.props.width,
       mainEntityId: this.props.entityId, //嵌套表格的实体定义属性名 跟 独立实体 简单实体 重名了，重新加一个  （嵌套实体 导入用到）
       entityTypeId: this.props.entityTypeId,
       isTable: this.props.isTable,

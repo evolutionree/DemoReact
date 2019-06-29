@@ -50,11 +50,12 @@ class DateTime extends Component {
 }
 
 DateTime.View = (props) => {
-  const { value, format } = props;
+  const { value, format, width } = props
+
   if (value) {
     const mFormat = toMomentFormat(format);
     const text = moment(value, 'YYYY-MM-DD HH:mm:ss').format(mFormat);
-    return <div style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}>{text}</div>;
+    return <div style={{ width }}>{text}</div>
   } else {
     return <DefaultTextView {...props} />;
   }
