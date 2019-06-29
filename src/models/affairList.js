@@ -74,7 +74,7 @@ export default {
           return;
         }
       }
-      
+
       const queries = {
         entityId,
         pageIndex: 1,
