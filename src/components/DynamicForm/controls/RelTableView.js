@@ -116,24 +116,30 @@ class RelTableView extends Component {
   render() {
     const cellWidth = 125;
     const showFields = this.getShowFields();
+    const tableWidth = showFields.reduce((sum, currentItem) => sum + cellWidth, 0)
+    const isLessField = tableWidth < 1200
+
     let columns = showFields.map((item, index) => {
-      return { title: item.displayname, width: cellWidth, dataIndex: item.fieldname, key: item.fieldname, render: (text, record, rowIndex) => {
-        // 先取 _name
-        const text_name = record[item.fieldname + '_name'];
-        // let cellText = text_name !== undefined ? text_name : text instanceof Object ? text.name : text;
-        // // 格式化日期
-        // if ((item.controltype === 8 || item.controltype === 9) && item.formatstr) {
-        //   cellText = this.formatDate(text, item.formatstr);
-        // }
-        return (
-          <span style={{ ...normalStyle, width: cellWidth - 26 }} className={styles.tableCell}>
-            <DynamicFieldView value={text} value_name={text_name} controlType={item.controltype} />
-          </span>
-        );
-      }, fixed: showFields.length >= 6 ? (index < 1 ? 'left' : null) : null };
+      return {
+        title: item.displayname, width: cellWidth, dataIndex: item.fieldname, key: item.fieldname, render: (text, record, rowIndex) => {
+          // 先取 _name
+          const text_name = record[item.fieldname + '_name'];
+          // let cellText = text_name !== undefined ? text_name : text instanceof Object ? text.name : text;
+          // // 格式化日期
+          // if ((item.controltype === 8 || item.controltype === 9) && item.formatstr) {
+          //   cellText = this.formatDate(text, item.formatstr);
+          // }
+          return (
+            <span style={{ ...normalStyle, width: isLessField ? undefined : cellWidth - 26 }} className={styles.tableCell}>
+              <DynamicFieldView width={isLessField ? undefined : cellWidth - 21} value={text} value_name={text_name} controlType={item.controltype} />
+            </span>
+          );
+        }, fixed: showFields.length >= 6 ? (index < 1 ? 'left' : null) : null
+      };
     })
 
-    const scroll = showFields.length >= 6 ? { x: showFields.length * cellWidth, y: 400 } : { x: '100%' };
+    const scroll = { x: isLessField ? undefined : showFields.length * cellWidth, y: 400 }
+    const otherObj = isLessField ? null : { scroll }
 
     let width = this.state.width - (this.props.siderFold ? 61 : 200); //系统左侧 200px显示菜单(未折叠  折叠61)
     width = width < 1080 ? 1080 : width; // 系统设置了最小宽度
@@ -145,7 +151,15 @@ class RelTableView extends Component {
     }
 
     return (
-      <Table rowKey="key" columns={columns} dataSource={this.parseValue()} pagination={false} scroll={{ ...scroll }} />
+      <div>
+        <Table
+          rowKey="key"
+          columns={columns}
+          dataSource={this.parseValue()}
+          pagination={false}
+          {...otherObj}
+        />
+      </div>
     );
   }
 }
