@@ -1,13 +1,12 @@
 import React from 'react';
 import { Carousel, Icon } from 'antd';
 import classnames from 'classnames';
-// import SlickCarousel from 'react-slick';
 import { connect } from 'dva';
 import _ from 'lodash';
 import styles from './ImageGallery.less';
 
 const initImgStyle = {
-  scale: 1,
+  scale: 0.75,
   rotate: 0,
   top: 0,
   left: 0,
@@ -98,15 +97,15 @@ class ImageGallery extends React.Component {
   }
 
   changeScale = (type) => {
-    let scaleNum = 0.5;
+    let scaleNum = 0.15;
     if (type === 'del') {
-      scaleNum = -0.5;
+      scaleNum = -0.15;
     }
     const newScale = this.state.imgStyle.scale + scaleNum;
     this.setState({
       imgStyle: {
         ...this.state.imgStyle,
-        scale: newScale < 0 ? 0.1 : newScale
+        scale: newScale < 0.25 ? 0.25 : newScale
       }
     });
   }
@@ -127,12 +126,11 @@ class ImageGallery extends React.Component {
     });
   }
 
-  renderArrow = (dir) => {
-    return <span><Icon type={dir} /></span>;
-  }
+  renderArrow = (dir) => <div>箭头</div>
 
   getInitialSlide = () => {
     const { images } = this.props;
+
     if (images && images.length > 1) {
       const activeIndex = _.findIndex(images, ['active', true]);
       if (activeIndex !== -1) {
@@ -161,7 +159,7 @@ class ImageGallery extends React.Component {
           {
             imagesLength ? <Carousel
               adaptiveHeight
-              dots={false}
+              // dots={false}
               arrows={images.length > 1}
               prevArrow={this.renderArrow('left')}
               nextArrow={this.renderArrow('right')}
@@ -172,13 +170,14 @@ class ImageGallery extends React.Component {
               {Array.isArray(images) && images.map((img, imgIndex) => (
                 <div className={styles.imgholder} key={img.src}>
                   <img src={img.src} alt=""
-                       ref={ref => this.imgRef[imgIndex] = ref}
-                       style={{ margin: mouseX !== 0 ? 0 : 'auto',
-                         top: top + 'px',
-                         left: left + 'px',
-                         transform: `scale(${scale}) rotate(${(rotate) % 360}deg)`
-                       }}
-                       onMouseDown={this.handleMouseDown.bind(this, imgIndex)}
+                    ref={ref => this.imgRef[imgIndex] = ref}
+                    style={{
+                      margin: mouseX !== 0 ? 0 : 'auto',
+                      top: top + 'px',
+                      left: left + 'px',
+                      transform: `scale(${scale}) rotate(${(rotate) % 360}deg)`
+                    }}
+                    onMouseDown={this.handleMouseDown.bind(this, imgIndex)}
                   />
                 </div>
               ))}

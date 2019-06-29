@@ -78,7 +78,7 @@ class DynamicTable extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if(this.props.entityId !== nextProps.entityId) { //不同的实体之间切换页面了  需再次请求最新的表头自定义设置数据
+    if (this.props.entityId !== nextProps.entityId) { //不同的实体之间切换页面了  需再次请求最新的表头自定义设置数据
       this.fetchCustomHeaderData(nextProps.entityId);
     }
     this.setState({
@@ -291,7 +291,7 @@ class DynamicTable extends Component {
   }
 
   fetchCustomHeaderData = (entityId = this.props.entityId) => { //放在这个组件里去请求数据 主要是考虑 一次代码多次复用 不然交给上一层组件去请求，那么独立实体 简单实体 动态实体列表都得写一遍
-    if(this.props.fetchCustomHeader) {
+    if (this.props.fetchCustomHeader) {
       getCustomHeaders({
         EntityId: entityId
       }).then((result) => {
@@ -348,7 +348,7 @@ class DynamicTable extends Component {
 
     // 格式化日期
     if ((field.controltype === 8 || field.controltype === 9)
-        && field.fieldconfig && field.fieldconfig.format) {
+      && field.fieldconfig && field.fieldconfig.format) {
       cellText = formatDate(text, field.fieldconfig.format);
     }
 
@@ -386,10 +386,10 @@ class DynamicTable extends Component {
         return this.renderTable(cellText, field, record);
       case 1:
         return this.renderInputText(cellText, field, record);
-        //手机
+      //手机
       case 10:
         return this.renderTelePhone(cellText);
-        //关联业务
+      //关联业务
       case 32:
         return this.renderRelBusiness(cellText);
       // 普通文本，日期
@@ -429,49 +429,54 @@ class DynamicTable extends Component {
 
   renderRelBusiness = (text) => {
     const relBusinessData = text && text.dataSourceValue;
-   if (relBusinessData && relBusinessData instanceof Object) {
-     const relId = relBusinessData.id.split(',');
-     const relName = relBusinessData.name.split(',');
+    if (relBusinessData && relBusinessData instanceof Object) {
+      const relId = relBusinessData.id.split(',');
+      const relName = relBusinessData.name.split(',');
 
-     let arr = [];
-     for (let i = 0; i < relId.length; i++) {
-       arr.push({
-         id: relId[i],
-         name: relName[i]
-       });
-     }
+      let arr = [];
+      for (let i = 0; i < relId.length; i++) {
+        arr.push({
+          id: relId[i],
+          name: relName[i]
+        });
+      }
 
-     return arr.map((item, index) => {
-       return <a key={index} title={item.name} className={styles.relbusinessLink} onClick={(e) => {
-         e.nativeEvent.stopImmediatePropagation();
-         this.setState({
-           dSourceDetailVisible: true,
-           DataSourceRelEntityId: text.entityId,
-           DataSourceRelRecId: item.id,
-           DataSourceDetailModalTitle: ''
-         });
-       }}>{item.name}{index === arr.length - 1 ? '' : ','}</a>;
-     });
-   }
+      return arr.map((item, index) => {
+        return <a key={index} title={item.name} className={styles.relbusinessLink} onClick={(e) => {
+          e.nativeEvent.stopImmediatePropagation();
+          this.setState({
+            dSourceDetailVisible: true,
+            DataSourceRelEntityId: text.entityId,
+            DataSourceRelRecId: item.id,
+            DataSourceDetailModalTitle: ''
+          });
+        }}>{item.name}{index === arr.length - 1 ? '' : ','}</a>;
+      });
+    }
     return '';
   }
 
   renderdSourceDetail = (text, field, record) => {
+    const text_name = record[field.fieldname + '_name'];
+    const cellText = text_name !== undefined ? text_name : text;
     const cellData = record[field.fieldname];
     let DataSourceRelEntityId = '';
+
     if (field.fieldconfig) {
       if (field.fieldconfig.dataSource) DataSourceRelEntityId = field.fieldconfig.dataSource.EntityId;
       if (field.fieldconfig.DataSource) DataSourceRelEntityId = field.fieldconfig.DataSource.EntityId;
     }
+
     const DataSourceDetailModalTitle = field.displayname;
     if (cellData && cellData instanceof Object) {
-      const relIds = cellData.id && cellData.id.split(',');
-      const relNames = cellData.name && cellData.name.split(',');
+      const relIds = cellData.id && cellData.id.split(',') || [];
+      const relNames = (cellData.name && cellData.name.split(',')) || (cellText && cellText.split(','));
       let dataArray = [];
-      relIds instanceof Array && relIds.map((item, index) => {
+
+      relIds instanceof Array && relIds.forEach((item, index) => {
         dataArray.push({
           id: item,
-          name: relNames && relNames[index]
+          name: relNames[index]
         });
       });
 
@@ -569,13 +574,14 @@ class DynamicTable extends Component {
     if (!strFileIds) return '';
     const urls = strFileIds.split(',').map(id => `/api/fileservice/read?fileid=${id}&filetype=1`);
     const originUrls = strFileIds.split(',').map(id => `/api/fileservice/read?fileid=${id}`);
+
     return urls.map((url, index) => (
       <img
         key={index}
         src={url}
         alt=""
         onClick={() => {
-          this.props.dispatch({ type: 'app/viewImages', payload: originUrls.map(src => ({ src, active: src === url })) });
+          this.props.dispatch({ type: 'app/viewImages', payload: originUrls.map(src => ({ src, active: src === url.replace(/&filetype=1/, '') })) });
         }}
         style={{
           width: '32px',
@@ -608,12 +614,14 @@ class DynamicTable extends Component {
       return /jpeg|jpg|png|gif|bmp/.test(item.filename);
     });
     return <span title={text}
-                 onClick={() => {
-                   this.props.dispatch({ type: 'app/viewImages', payload: pictureFiles.map(pictureItem => {
-                     const src = `/api/fileservice/read?fileid=${pictureItem.fileid}`;
-                     return { src };
-                   }) });
-                 }}>{text}</span>;
+      onClick={() => {
+        this.props.dispatch({
+          type: 'app/viewImages', payload: pictureFiles.map(pictureItem => {
+            const src = `/api/fileservice/read?fileid=${pictureItem.fileid}`;
+            return { src };
+          })
+        });
+      }}>{text}</span>;
   };
   render() {
     const { protocol, ignoreRecName, fixedHeader, ...restProps } = this.props;
@@ -666,11 +674,11 @@ class DynamicTable extends Component {
           ) : 'loading..'}
         </Modal>
         <CustomHeaderModal visible={this.state.setCustomHeadersVisible}
-                           dataSource={this.getcombineCustomProtocol()}
-                           defaultDataSource={this.getDefaultProtocol()}
-                           fixedColumnCount={this.state.fixedColumnCount}
-                           onCancel={this.hideSetCustomHeaders}
-                           saveCustomHeaders={this.saveCustomHeaders} />
+          dataSource={this.getcombineCustomProtocol()}
+          defaultDataSource={this.getDefaultProtocol()}
+          fixedColumnCount={this.state.fixedColumnCount}
+          onCancel={this.hideSetCustomHeaders}
+          saveCustomHeaders={this.saveCustomHeaders} />
         {
           this.state.dSourceDetailVisible ? <DSourceDetail visible={this.state.dSourceDetailVisible} entityId={this.state.DataSourceRelEntityId} recordId={this.state.DataSourceRelRecId} title={this.state.DataSourceDetailModalTitle} /> : null
         }
