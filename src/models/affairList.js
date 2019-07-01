@@ -51,10 +51,6 @@ export default {
 
       if (!menus.length) {
         try {
-          // 获取下拉菜单
-          const { data: { rulemenu } } = yield call(queryMenus, entityId);
-          menus = rulemenu.filter(o => o.menuid !== '72e9b119-20e8-4b68-867c-643ae024afc1').sort((a, b) => a.recorder - b.recorder)
-            .map(item => ({ menuName: item.menuname, menuId: item.menuid }));
           // 获取权限数据后再往下走
           const { permissionFuncs } = yield select(state => state.permission);
           let funcs = permissionFuncs[entityId];
@@ -65,6 +61,12 @@ export default {
               if (funcs) break;
             }
           }
+
+          // 获取下拉菜单
+          const { data: { rulemenu } } = yield call(queryMenus, entityId);
+          menus = rulemenu.filter(o => o.menuid !== '72e9b119-20e8-4b68-867c-643ae024afc1').sort((a, b) => a.recorder - b.recorder)
+            .map(item => ({ menuName: item.menuname, menuId: item.menuid }));
+
           menus = menus.filter(menu => {
             return funcs.some(fun => fun.relationvalue === menu.menuId);
           });
@@ -74,7 +76,7 @@ export default {
           return;
         }
       }
-      
+
       const queries = {
         entityId,
         pageIndex: 1,

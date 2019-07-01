@@ -126,7 +126,7 @@ class AffairDetail extends Component {
   shouldShowUserForm = () => {
     const { selectedNextNode: node, selectedOperate } = this.props;
     return node && node.nodeinfo.nodestate !== 2 && (selectedOperate === 1 || selectedOperate === 4)
-              && !(node.nodeinfo.nodetype === 1 && node.nodeinfo.needsuccauditcount > 1);
+      && !(node.nodeinfo.nodetype === 1 && node.nodeinfo.needsuccauditcount > 1);
   };
 
   excutingJSStatusChange = (status) => {
@@ -184,16 +184,16 @@ class AffairDetail extends Component {
         <div className={styles.title}>
           <span>{`${flowDetail.flowname}【${flowDetail.reccode}】`}</span>
           {/*{shouldSelectNextAuditUser &&*/}
-            {/*<a*/}
-              {/*href="javascript:;"*/}
-              {/*onClick={showFlowCaseModal}*/}
-              {/*style={{*/}
-                {/*color: 'red',*/}
-                {/*fontWeight: 'normal',*/}
-                {/*fontSize: '14px',*/}
-                {/*textDecoration: 'underline'*/}
-              {/*}}*/}
-            {/*>未选择审批人</a>}*/}
+          {/*<a*/}
+          {/*href="javascript:;"*/}
+          {/*onClick={showFlowCaseModal}*/}
+          {/*style={{*/}
+          {/*color: 'red',*/}
+          {/*fontWeight: 'normal',*/}
+          {/*fontSize: '14px',*/}
+          {/*textDecoration: 'underline'*/}
+          {/*}}*/}
+          {/*>未选择审批人</a>}*/}
         </div>
         <div className={styles.metas}>
           <span>申请人：</span>
@@ -216,7 +216,7 @@ class AffairDetail extends Component {
             </div>
 
             {/*columnconfig 审批可改字段*/}
-            {this.props.selectedOperate === 1 && <div style={{ width: '600px' }}>
+            {this.props.selectedOperate === 1 && <div>
               {columnConfigFormsArray.map(item => (
                 <DynamicFormAdd
                   horizontal
@@ -284,13 +284,13 @@ class AffairDetail extends Component {
                   ref={editFormRef}
                 />
               ) : (
-                <DynamicFormView
-                  entityId={flowDetail.entityid}
-                  entityTypeId={entityDetail.rectype || flowDetail.entityid}
-                  fields={entityDetailProtocol}
-                  value={entityDetail}
-                />
-              )}
+                  <DynamicFormView
+                    entityId={flowDetail.entityid}
+                    entityTypeId={entityDetail.rectype || flowDetail.entityid}
+                    fields={entityDetailProtocol}
+                    value={entityDetail}
+                  />
+                )}
             </div>
           </div>
         </div>

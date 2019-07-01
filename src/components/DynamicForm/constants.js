@@ -64,7 +64,7 @@ export const controlMap = {
   2: TipText,
   3: SelectSingle,
   4: SelectMultiple,
-  5: InputTextarea,
+  5: InputTextarea, // 大文本
   6: InputInteger,
   7: InputDecimal,
   8: Date,

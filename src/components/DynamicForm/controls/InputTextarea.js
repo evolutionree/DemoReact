@@ -52,17 +52,18 @@ class InputTextarea extends Component {
           onBlur={this.onInputBlur}
           disabled={isReadOnly === 1}
           maxLength={maxLength}
-          autosize={isTable ? { minRows: 2, maxRows: 5 } : { minRows: 4, maxRows: 20 }}
+          autosize={isTable ? { minRows: 1, maxRows: 5 } : { minRows: 4, maxRows: 20 }}
         />
       </div>
     );
   }
 }
 
-InputTextarea.View = ({ value, value_name, textType }) => {
-  if (textType === 1) {
-    return <InputRichText.View value={value} />;
-  }
+InputTextarea.View = (props) => {
+  const { value, value_name, textType, width } = props;
+
+  if (textType === 1) return <InputRichText.View value={value} />;
+
 
   const emptyText = <span style={{ color: '#999999' }}>(空)</span>;
   let text = value_name !== undefined ? value_name : value;
@@ -81,7 +82,16 @@ InputTextarea.View = ({ value, value_name, textType }) => {
     }, []);
     text.pop();
   }
-  return <div style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}>{text}</div>;
+
+  return (
+    <div
+      style={width ? { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width } : null}
+      title={text && text.toString() && text.toString().replace(/\[object Object\],/g, '')}
+    >
+      {text}
+    </div>
+  );
+
 };
 
 export default InputTextarea;

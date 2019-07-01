@@ -20,7 +20,7 @@ const entityInfo = {
 }
 
 class InputCustomerRecName extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       inputValue: props.value,
@@ -32,13 +32,13 @@ class InputCustomerRecName extends Component {
     this.querycustomerrepeat = _.debounce(this.querycustomerrepeat, 500)
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (nextProps.value !== this.props.value) {
       this.setState({ inputValue: nextProps.value })
     }
   }
 
-  shouldComponentUpdate (nextProps, nextState) {
+  shouldComponentUpdate(nextProps, nextState) {
     const thisProps = this.props || {}
     const thisState = this.state || {}
 
@@ -69,12 +69,12 @@ class InputCustomerRecName extends Component {
     return false
   }
 
-  componentDidMount () {
+  componentDidMount() {
     document.body.addEventListener('click', this.clickOutsideClose, false)
     this.getEntityDetail()
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     document.body.removeEventListener('click', this.clickOutsideClose)
   }
 
@@ -119,7 +119,7 @@ class InputCustomerRecName extends Component {
     })
   }
 
-  onInputBlur = () => {}
+  onInputBlur = () => { }
 
   querycustomerrepeat = val => {
     const { mode, onChange } = this.props
@@ -154,25 +154,27 @@ class InputCustomerRecName extends Component {
     // return entityInfo[this.props.fieldId] || {};
   }
 
-  quoteCustomer (formData) {
+  quoteCustomer(formData) {
     const _this = this
     Modal.confirm({
       title: `是否引用${this.getEntityInfo().entityName}:${formData.recname}?`,
       content: '',
-      onOk () {
+      onOk() {
         _this.props.quoteHandler && _this.props.quoteHandler(formData)
         _this.setState({
           listHide: true
         })
       },
-      onCancel () {}
+      onCancel() { }
     })
   }
 
-  setInput = text => {}
+  setInput = text => { }
 
-  render () {
+  render() {
+    const { mode } = this.props
     const { setreference } = this.state
+
     const listHide =
       this.state.listHide || this.state.repeatCustomData.length === 0
     return (
@@ -198,8 +200,8 @@ class InputCustomerRecName extends Component {
             {this.state.repeatCustomData.length > 0 ? (
               <div>系统已有相似{this.getEntityInfo().entityName}:</div>
             ) : (
-              ''
-            )}
+                ''
+              )}
             {this.state.repeatCustomData.map((item, index) => {
               return (
                 <ul key={item.recid}>

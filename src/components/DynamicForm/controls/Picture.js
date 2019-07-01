@@ -130,9 +130,9 @@ class Picture extends Component {
           {fileIds.map(fileId => (
             <span className={styles.holder} key={fileId}>
               <img src={`/api/fileservice/read?fileid=${fileId}&filetype=1`}
-                   alt=""
-                   onLoad={this.handleImageLoaded.bind(this, fileId)}
-                   onError={this.handleImageErrored.bind(this, fileId)} />
+                alt=""
+                onLoad={this.handleImageLoaded.bind(this, fileId)}
+                onError={this.handleImageErrored.bind(this, fileId)} />
               <span className={styles.imgLoading} style={{ display: this.state[fileId + 'imageLoading'] === false ? 'none' : 'block' }}>
                 <Icon type="loading" style={{ fontSize: 24 }} />
               </span>
@@ -179,12 +179,12 @@ class Picture extends Component {
   }
 }
 
-Picture.View = ({ value, dispatch }) => {
+Picture.View = ({ width, value, tableInnerView, dispatch }) => {
   const fileIds = value ? value.split(',') : [];
   const urls = fileIds.map(id => `/api/fileservice/read?fileid=${id}&filetype=1`);
   const originUrls = fileIds.map(id => `/api/fileservice/read?fileid=${id}`);
   return (
-    <div>
+    <div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width }}>
       {urls.map(url => (
         <span className={styles.holder} key={url}>
           <img
