@@ -6,7 +6,7 @@ import EntcommDetailModal from '../../../../components/EntcommDetailModal'
 import EntcommCopyModal from '../../../../components/EntcommCopyModal'
 import EntcommTransferModal from '../../../../components/EntcommTransferModal'
 import { WorkflowCaseForAddModal } from '../../../../components/WorkflowCaseModal'
-import { getEntcommDetail } from '../../../../services/entcomm'
+import { getEntcommDetail, queryvaluefornewdata } from '../../../../services/entcomm'
 
 class PluginAddModal extends Component {
   static propTypes = {
@@ -29,7 +29,7 @@ class PluginAddModal extends Component {
   }
   static defaultProps = {}
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       caseId: '',
@@ -47,7 +47,7 @@ class PluginAddModal extends Component {
     }
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     const isOpening = !this.props.visible && nextProps.visible
     const isClosing = this.props.visible && !nextProps.visible
     if (isOpening) {
@@ -55,6 +55,7 @@ class PluginAddModal extends Component {
       if (!currPlugin) return
       if (['normal', 'flow', 'AddRelEntityData'].includes(currPlugin.type)) {
         this.setState({ showAddModal: true })
+
         // 客户基础资料审批，需要填充数据
         if (currPlugin.type === 'flow' && currPlugin.recid) {
           this.fetchInitFormData(currPlugin.entity.entityid, currPlugin.recid).then(detailData => {
@@ -63,6 +64,18 @@ class PluginAddModal extends Component {
             })
           })
         }
+
+        // AddRelEntityData 逻辑
+        if (currPlugin.type === 'AddRelEntityData') {
+          const relid = currPlugin.entity && currPlugin.entity.relid
+          if (!relid) {
+            message.error('缺少recid，请检查配置')
+            return
+          }
+          this.fetchRelEntityFromInitData(relid)
+        }
+
+
       } else if (currPlugin.type === 'transform') {
         let dstEntityId = ''
         if (currPlugin.entity.extradata) dstEntityId = currPlugin.entity.extradata.dstentityid
@@ -124,18 +137,38 @@ class PluginAddModal extends Component {
     }).then(result => result.data.detail)
   }
 
+  fetchRelEntityFromInitData = (relid) => {
+    const { relTabs, entityId, recordId } = this.props
+
+    if (!(Array.isArray(relTabs) && relTabs.length)) {
+      message.error('页签数据异常')
+      return
+    }
+
+    const relTabInfo = relTabs.find(item => item.relid === relid);
+    const params = {
+      EntityId: entityId,
+      RecId: recordId,
+      FieldId: relTabInfo && relTabInfo.fieldid
+    }
+
+    this.setState({ relTabInfo })
+
+    queryvaluefornewdata(params).then(res => {
+      const { data } = res
+      this.setState({ initAddFormData: { [relTabInfo && relTabInfo.fieldname]: data } })
+    }).catch(e => {
+      message.error(e.message)
+      console.error(e.message)
+    })
+  }
+
   onAddDone = result => {
     const { entityId, recordId } = this.props
     if (this.props.currPlugin.type === 'normal') {
       this.props.auditDone(entityId, recordId)
       this.props.done()
     } else if (this.props.currPlugin.type === 'flow') {
-      // const caseId = result.data;
-      // this.setState({
-      //   caseId,
-      //   showAddModal: false,
-      //   showFlowCaseModal: true
-      // });
       this.props.auditDone(entityId, recordId)
       this.props.done()
     } else {
@@ -145,24 +178,6 @@ class PluginAddModal extends Component {
   }
 
   onDetailConfirm = () => {
-    // const params = {
-    //   flowId: this.props.currPlugin.flowid,
-    //   entityId: this.props.entityId,
-    //   recId: this.props.recordId
-    // };
-    // addCase(params).then(result => {
-    //   const caseId = result.data;
-    //   this.setState({
-    //     caseId,
-    //     showDetailModal: false,
-    //     showFlowCaseModal: true
-    //   });
-    //   const { entityId,recordId } = this.props;
-    //   this.props.auditDone(entityId,recordId);
-    // }, err => {
-    //   message.error(err.message || '提交审批失败');
-    // });
-
     this.setState({
       dataModel: {
         flowId: this.props.currPlugin.flowid,
@@ -178,7 +193,7 @@ class PluginAddModal extends Component {
     this.props.cancel()
   }
 
-  render () {
+  render() {
     const self = this
     const { currPlugin, cancel, done, recordId, entityTypes } = this.props
     const {
@@ -191,15 +206,19 @@ class PluginAddModal extends Component {
       caseId,
       dstEntityId,
       routePath,
-      copyData
+      copyData,
+      relTabInfo,
+      initAddFormData
     } = this.state
-    const entityId = currPlugin && currPlugin.entity && currPlugin.entity.entityid
+
+    let entityId = currPlugin && currPlugin.entity && currPlugin.entity.entityid
     const entityName = currPlugin && currPlugin.entity && currPlugin.entity.entityname
     const flowId = currPlugin && currPlugin.flowid
     let modalTitle
-    if (currPlugin && currPlugin.name === '客户资料审批') {
-      modalTitle = '客户资料审批'
-    }
+
+    if (currPlugin && currPlugin.name === '客户资料审批') modalTitle = '客户资料审批'
+    if (currPlugin && currPlugin.type === 'AddRelEntityData') entityId = relTabInfo && relTabInfo.relentityid
+
     return (
       <div>
         <EntcommAddModal
@@ -210,7 +229,7 @@ class PluginAddModal extends Component {
           entityName={entityName}
           refRecord={recordId}
           refEntity={this.props.entityId}
-          initFormData={this.state.initAddFormData}
+          initFormData={initAddFormData}
           flow={flowId ? { flowid: flowId } : undefined}
           cancel={() => {
             self.props.cancel()
@@ -278,8 +297,11 @@ class PluginAddModal extends Component {
 
 export default connect(
   state => {
+    const { relTabs } = state.entcommHome
     const { showModals, currPlugin, entityId, entityName, recordId, entityTypes } = state.entcommActivities
+
     return {
+      relTabs,
       visible: /pluginAdd$/.test(showModals),
       currPlugin,
       entityTypes,
@@ -291,23 +313,23 @@ export default connect(
   },
   dispatch => {
     return {
-      cancel () {
+      cancel() {
         dispatch({ type: 'entcommActivities/pluginAddCancel', payload: '' })
       },
-      done () {
+      done() {
         dispatch({ type: 'entcommActivities/pluginAddDone' })
       },
-      auditDone (entityId, recordId) {
+      auditDone(entityId, recordId) {
         dispatch({ type: 'entcommActivities/init', payload: { entityId, recordId } })
         dispatch({ type: 'entcommHome/fetchRecordDetail' })
       },
-      refreshPlugins () {
+      refreshPlugins() {
         dispatch({ type: 'entcommActivities/fetchPlugins' })
       },
-      refreshRecordDetail () {
+      refreshRecordDetail() {
         dispatch({ type: 'entcommHome/fetchRecordDetail' })
       },
-      refreshActivities () {
+      refreshActivities() {
         dispatch({ type: 'entcommActivities/loadMore__', payload: true })
       }
     }
