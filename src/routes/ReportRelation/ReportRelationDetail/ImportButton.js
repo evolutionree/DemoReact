@@ -6,7 +6,7 @@ import styles from './ImportButton.less'
 const { Dragger } = Upload
 
 class ImportButton extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       isconvertimport: true,
@@ -58,12 +58,12 @@ class ImportButton extends Component {
     const { done } = this.props
     const { isconvertimport, fileList } = this.state
 
-    this.setState({ uploading: true })
-
     if (fileList instanceof Array && fileList.length === 0) {
       message.error('请先选择文件，再执行导入操作')
       return
     }
+
+    this.setState({ uploading: true })
 
     const formData = new FormData()
     formData.append('isconvertimport', isconvertimport)
@@ -127,7 +127,7 @@ class ImportButton extends Component {
       <div style={{ width: 300 }} className={styles.wrap}>
         <Radio.Group style={{ marginBottom: 8 }} onChange={this.onChangeRadio} value={isconvertimport ? 1 : 2}>
           <Radio value={1}>全量导入</Radio>
-          <Radio value={2}>覆盖导入</Radio>
+          <Radio value={2}>追加导入</Radio>
         </Radio.Group>
 
         <Dragger {...DraggerProps} style={{ marginBottom: 8 }}>
@@ -147,7 +147,7 @@ class ImportButton extends Component {
 
   handleVisibleChange = visible => this.setState({ visible })
 
-  render () {
+  render() {
     const { title = '导入', trigger = 'hover', placement = 'top', content } = this.props
     const { visible } = this.state
 
