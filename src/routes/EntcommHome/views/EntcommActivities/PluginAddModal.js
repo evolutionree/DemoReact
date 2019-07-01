@@ -53,7 +53,7 @@ class PluginAddModal extends Component {
     if (isOpening) {
       const { currPlugin, entityId, recordId } = nextProps
       if (!currPlugin) return
-      if (['normal', 'flow', 'AddRelEntityData'].includes(currPlugin.type)) {
+      if (['normal', 'flow'].includes(currPlugin.type)) {
         this.setState({ showAddModal: true })
 
         // 客户基础资料审批，需要填充数据
@@ -64,18 +64,13 @@ class PluginAddModal extends Component {
             })
           })
         }
-
-        // AddRelEntityData 逻辑
-        if (currPlugin.type === 'AddRelEntityData') {
-          const relid = currPlugin.entity && currPlugin.entity.relid
-          if (!relid) {
-            message.error('缺少recid，请检查配置')
-            return
-          }
-          this.fetchRelEntityFromInitData(relid)
+      } else if (['AddRelEntityData'].includes(currPlugin.type)) {
+        const relid = currPlugin.entity && currPlugin.entity.relid
+        if (!relid) {
+          message.error('缺少recid，请检查配置')
+          return
         }
-
-
+        this.fetchRelEntityFromInitData(relid)
       } else if (currPlugin.type === 'transform') {
         let dstEntityId = ''
         if (currPlugin.entity.extradata) dstEntityId = currPlugin.entity.extradata.dstentityid
@@ -138,7 +133,7 @@ class PluginAddModal extends Component {
   }
 
   fetchRelEntityFromInitData = (relid) => {
-    const { relTabs, entityId, recordId } = this.props
+    const { relTabs, entityId, recordId, cancel } = this.props
 
     if (!(Array.isArray(relTabs) && relTabs.length)) {
       message.error('页签数据异常')
@@ -156,7 +151,12 @@ class PluginAddModal extends Component {
 
     queryvaluefornewdata(params).then(res => {
       const { data } = res
-      this.setState({ initAddFormData: { [relTabInfo && relTabInfo.fieldname]: data } })
+      if (data) {
+        this.setState({ showAddModal: true, initAddFormData: { [relTabInfo && relTabInfo.fieldname]: data } })
+      } else {
+        cancel()
+        message.error('您没有数据权限或不能进行操作')
+      }
     }).catch(e => {
       message.error(e.message)
       console.error(e.message)
@@ -238,6 +238,7 @@ class PluginAddModal extends Component {
           isAddCase={!!(currPlugin && currPlugin.recid)}
           recId={currPlugin && currPlugin.recid}
         />
+
         <EntcommDetailModal
           visible={showDetailModal}
           entityId={this.props.entityId}
