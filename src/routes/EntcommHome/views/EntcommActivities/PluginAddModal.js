@@ -193,6 +193,26 @@ class PluginAddModal extends Component {
     this.props.cancel()
   }
 
+  processProtocol = fields => {
+    let fields_ = fields;
+    const readOnlyFieldKeys = Object.keys(this.state.initAddFormData);
+    if (readOnlyFieldKeys.length) {
+      fields_ = fields.map(field => {
+        if (_.includes(readOnlyFieldKeys, field.fieldname)) {
+          return {
+            ...field,
+            fieldconfig: {
+              ...field.fieldconfig,
+              isReadOnly: 1
+            }
+          };
+        }
+        return field;
+      });
+    }
+    return fields_;
+  };
+
   render() {
     const self = this
     const { currPlugin, cancel, done, recordId, entityTypes } = this.props
@@ -215,9 +235,10 @@ class PluginAddModal extends Component {
     const entityName = currPlugin && currPlugin.entity && currPlugin.entity.entityname
     const flowId = currPlugin && currPlugin.flowid
     let modalTitle
+    const isAddRelEntityData = currPlugin && currPlugin.type === 'AddRelEntityData'
 
     if (currPlugin && currPlugin.name === '客户资料审批') modalTitle = '客户资料审批'
-    if (currPlugin && currPlugin.type === 'AddRelEntityData') entityId = relTabInfo && relTabInfo.relentityid
+    if (isAddRelEntityData) entityId = relTabInfo && relTabInfo.relentityid
 
     return (
       <div>
@@ -237,6 +258,7 @@ class PluginAddModal extends Component {
           done={this.onAddDone}
           isAddCase={!!(currPlugin && currPlugin.recid)}
           recId={currPlugin && currPlugin.recid}
+          processProtocol={isAddRelEntityData ? this.processProtocol : () => { }}
         />
 
         <EntcommDetailModal
