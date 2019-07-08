@@ -10,10 +10,20 @@ const _ = require('lodash')
 const FormItem = Form.Item
 
 class FormModal extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
-      list: props.list || {}
+      list: props.list || {},
+      confirmLoading: props.confirmLoading
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { confirmLoading: oldLoading } = this.props
+    const { confirmLoading: newLoading } = nextProps
+
+    if (oldLoading !== newLoading) {
+      this.setState({ confirmLoading: newLoading })
     }
   }
 
@@ -24,12 +34,13 @@ class FormModal extends Component {
     form.validateFields((err, values) => {
       if (err) return
       const valueArr = values.reportuser.split(',') || ['']
-      if (dataSource.some(item => valueArr.includes(item.reportuser))) {
+      if (!isEdit && dataSource.some(item => valueArr.includes(item.reportuser))) {
         message.warn('汇报人重复，请检查！')
         return
       }
-      if (onOk) onOk(values)
-      if (api || fetch) {
+      if (onOk) {
+        onOk(values)
+      } else if (api || fetch) {
         const url = api || (isEdit ? fetch.edit : fetch.add)
         const reportrelationId = sessionStorage.getItem('reportrelationid')
         if (!reportrelationId) {
@@ -40,6 +51,8 @@ class FormModal extends Component {
         const reportreldetailid = isEdit ? selectedRows[0].reportreldetailid : null
         const params = { ...values, reportrelationid, reportreldetailid }
 
+        this.setState({ confirmLoading: true })
+
         dynamicRequest(url, params)
           .then(res => {
             if (res) {
@@ -47,9 +60,13 @@ class FormModal extends Component {
               this.handleCancel()
               if (dispatch) dispatch({ type: `${spacename}/QueryList` })
               message.success(error_msg || '操作成功')
+              this.setState({ confirmLoading: false })
             }
           })
-          .catch(e => message.error(e.message))
+          .catch(e => {
+            this.setState({ confirmLoading: false })
+            message.error(e.message)
+          })
       }
     })
   }
@@ -88,10 +105,10 @@ class FormModal extends Component {
     }
   }
 
-  render () {
-    const { form, visible, title, confirmLoading, fetchDataLoading, justify = 'space-between' } = this.props
+  render() {
+    const { form, visible, title, fetchDataLoading, justify = 'space-between' } = this.props
     const { getFieldDecorator } = form
-    const { list } = this.state
+    const { list, confirmLoading } = this.state
 
     const isEdit = /^edit$/.test(visible)
 

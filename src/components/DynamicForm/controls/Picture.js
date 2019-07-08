@@ -191,7 +191,7 @@ Picture.View = ({ width, value, tableInnerView, dispatch }) => {
             src={url}
             alt=""
             onClick={() => {
-              dispatch({ type: 'app/viewImages', payload: originUrls.map(src => ({ src, active: src === url })) });
+              dispatch({ type: 'app/viewImages', payload: originUrls.map(src => ({ src, active: src === url.replace(/&filetype=1/, '') })) });
             }}
           />
         </span>
