@@ -11,7 +11,7 @@ function isSupportedEngine(engine) {
   // Gecko, WebKit
   const name = engine.name;
   console.log('enginename' + name);
-  return /gecko|webkit|edgehtml/.test(name.toLowerCase());
+  return /gecko|webkit|edgehtml|blink/.test(name.toLowerCase());
 }
 
 function showTips() {
