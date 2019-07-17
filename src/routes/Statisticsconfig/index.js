@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Select, message, Popconfirm, Form, Button } from 'antd';
+import { Select, message, Popconfirm, Form, Button, Icon } from 'antd';
 import Page from '../../components/Page';
 import EditList from './EditList';
 import MobilePreview from './MobilePreview';
@@ -130,6 +130,42 @@ class Statisticsconfig extends Component {
     dispatch({ type: `${NAMESPACE}/putState`, payload: { groupList: cacheGroupList } });
   }
 
+  goUp = (index) => {
+    const { form: { getFieldValue, setFieldsValue } } = this.props
+    const fieldname = index + ''
+    const lastFieldname = (index - 1) + ''
+
+    const currentValue = getFieldValue(fieldname)
+    const lastValue = getFieldValue(lastFieldname)
+
+    if (lastValue && currentValue) {
+      setFieldsValue({
+        [fieldname]: lastValue,
+        [lastFieldname]: currentValue
+      })
+    } else {
+      message.warn(currentValue ? `序号${index}未选择` : `序号${index + 1}未选择`)
+    }
+  }
+
+  goDown = (index) => {
+    const { form: { getFieldValue, setFieldsValue } } = this.props
+    const fieldname = index + ''
+    const nextFieldname = (index + 1) + ''
+
+    const currentValue = getFieldValue(fieldname)
+    const nextValue = getFieldValue(nextFieldname)
+
+    if (nextValue && currentValue) {
+      setFieldsValue({
+        [fieldname]: nextValue,
+        [nextFieldname]: currentValue
+      })
+    } else {
+      message.warn(currentValue ? `序号${index + 2}未选择` : `序号${index + 1}未选择`)
+    }
+  }
+
   render() {
     const {
       groupList, selectList, resList, checkFunc, record,
@@ -163,20 +199,21 @@ class Statisticsconfig extends Component {
                 </div>
                 {
                   Array.isArray(resList) && resList.map((item, index) => {
+                    const fieldname = index + ''
+
                     return (
                       <div key={index} className={styles.row}>
                         <div className={styles.child}>{index + 1}</div>
                         <div className={styles.child}>
                           <Form.Item>
                             {
-                              getFieldDecorator(index + '', {
+                              getFieldDecorator(fieldname, {
                                 initialValue: ''
                               })(
                                 <Select
                                   showSearch
                                   disabled={!checkFunc('EditCountRow') || !!isReadOnlys[index]}
                                   style={{ width: 300 }}
-                                  placeholder="Select a person"
                                   optionFilterProp="children"
                                   onChange={(val) => this.handleSelectChange(val, index)}
                                   filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
@@ -190,6 +227,14 @@ class Statisticsconfig extends Component {
                             }
                           </Form.Item>
                         </div>
+                        <div className={styles.lastChild}>
+                          {
+                            index !== 0 && <Icon type="arrow-up" className={styles.Icon} onClick={this.goUp.bind(this, index)} />
+                          }
+                          {
+                            index !== 2 && <Icon type="arrow-down" className={styles.Icon} onClick={this.goDown.bind(this, index)} />
+                          }
+                        </div>
                       </div>
                     );
                   })
@@ -198,10 +243,10 @@ class Statisticsconfig extends Component {
               <Popconfirm title="确认提交?" onConfirm={!isAcitve ? this.onSubmit : () => { }}>
                 <Button disabled={isAcitve} title="点击提交" type="dashed" className={styles.footer}>
                   提交
-              </Button>
+                </Button>
               </Popconfirm>
             </Form>
-         
+
             {/* <MobilePreview /> */}
           </div>
         </div>
