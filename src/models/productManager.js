@@ -22,7 +22,9 @@ export default {
     currentItems: [],
     showModals: '',
     modalPending: false,
-    showDisabledSeries: false
+    showDisabledSeries: false,
+    ColumnFilter: null, //字段查询
+    sortFieldAndOrder: null //当前排序的字段及排序顺序
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -42,6 +44,13 @@ export default {
       const keys = { ...payload };
       const { recStatus, productSeriesId } = keys;
       if (recStatus || productSeriesId) keys.searchKey = '';
+
+      if (payload.hasOwnProperty('ColumnFilter')) {
+        const ColumnFilter = JSON.stringify(payload.ColumnFilter);
+        keys.ColumnFilter = ColumnFilter;
+        sessionStorage.setItem('seachQuery', ColumnFilter);
+      }
+
       yield put(routerRedux.push({
         pathname,
         query: {
@@ -51,8 +60,13 @@ export default {
         }
       }));
     },
+    *cancelFilter({ payload }, { put }) {
+      yield put({ type: 'search', payload: { ColumnFilter: payload } });
+      yield put({ type: 'putState', payload: { ColumnFilter: payload } });
+    },
     *queryList(action, { select, put, call }) {
-      let { series, listProtocol } = yield select(state => state.productManager);
+      let { series } = yield select(state => state.productManager);
+      const { listProtocol, ColumnFilter } = yield select(state => state.productManager);
       if (!series.length) {
         try {
           const result = yield call(getSeries, {
@@ -70,7 +84,19 @@ export default {
         yield put({ type: 'queryListProtocol' });
       }
 
-      const { query } = yield select(state => state.routing.locationBeforeTransitions);
+      let { query } = yield select(state => state.routing.locationBeforeTransitions);
+
+      const seachQuery = sessionStorage.getItem('seachQuery');
+      if (!ColumnFilter && query.ColumnFilter) {
+        let filterParams = null;
+        if (seachQuery && seachQuery !== '{}') {
+          filterParams = JSON.parse(seachQuery);
+        } else {
+          filterParams = JSON.parse(query.ColumnFilter);
+        }
+        query = { ...query, ColumnFilter: filterParams };
+        yield put({ type: 'putState', payload: { ColumnFilter: query.ColumnFilter } });
+      }
       const params = {
         productSeriesId: getRootSeriesId(series),
         recStatus: 1,
@@ -81,7 +107,8 @@ export default {
         recVersion: 0,
         ...query
       };
-      yield put({ type: 'putState', payload: { queries: params } });
+      if (ColumnFilter) params.ColumnFilter = ColumnFilter;
+      yield put({ type: 'putState', payload: { queries: params, sortFieldAndOrder: params.searchOrder } }); //其他查询条件 发生改变  排序保持不变
       try {
         const { data } = yield call(getProducts, params);
         yield put({
@@ -267,7 +294,9 @@ export default {
         currentItems: [],
         showModals: '',
         modalPending: false,
-        showDisabledSeries: false
+        showDisabledSeries: false,
+        ColumnFilter: null, //字段查询
+        sortFieldAndOrder: null //当前排序的字段及排序顺序
       };
     }
   }

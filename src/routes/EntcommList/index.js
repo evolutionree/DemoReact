@@ -254,14 +254,12 @@ function EntcommList({
       </Toolbar>
       <DynamicTable
         ref={(ref) => dynamicTableRef = ref}
-        sorter={true}
-        sortFieldAndOrder={sortFieldAndOrder}
         entityId={entityId}
         protocol={protocol}
         rowKey="recid"
         dataSource={list}
         total={total}
-        fixedHeader={true}
+        fixedHeader
         otherHeight={186} //页面表格元素除外的元素的总高度
         pagination={{
           total,
@@ -270,6 +268,8 @@ function EntcommList({
           // onChange: val => search({ pageIndex: val }),  改用table提供的onChange事件
           // onShowSizeChange: (curr, size) => search({ pageSize: size })
         }}
+        sorter
+        sortFieldAndOrder={sortFieldAndOrder}
         onChange={handleTableChange}
         ColumnFilter={ColumnFilter || {}}
         onFilter={filterChange}

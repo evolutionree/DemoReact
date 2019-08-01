@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Select, Button, message, Modal, Breadcrumb } from 'antd';
+import { Select, Button, Modal, Breadcrumb, Icon } from 'antd';
 import * as _ from 'lodash';
 import DynamicTable from '../../components/DynamicTable';
 import Toolbar from '../../components/Toolbar';
@@ -9,6 +9,7 @@ import styles from './styles.less';
 import TransferProductModal from './TransferProductModal';
 import ProductFormModal from './ProductFormModal';
 import EntcommDetailModal from '../../components/EntcommDetailModal';
+import DynamicLoadFilterModal from '../../components/DynamicLoadFilterModal';
 import { downloadFile } from '../../utils/ukUtil';
 
 const Option = Select.Option;
@@ -33,6 +34,7 @@ function getSeriesPath(current, allSeries) {
 }
 
 function ProductList({
+  dispatch,
   series,
   queries,
   total,
@@ -52,7 +54,9 @@ function ProductList({
   showDetail,
   showDetailId,
   showModals,
-  closeModal
+  closeModal,
+  ColumnFilter,
+  sortFieldAndOrder
 }) {
   function exportData() {
     const params = JSON.stringify(_.mapValues({
@@ -67,6 +71,30 @@ function ProductList({
     if (seriesId === currentSeries.productsetid) return;
     selectSeries(seriesId);
   }
+  function cancelFilter() {
+    dispatch({ type: 'productManager/showModals', payload: 'cancelFilter' });
+  }
+  function filterChange(filterData) {
+    dispatch({
+      type: 'productManager/putState',
+      payload: { ColumnFilter: filterData }
+    });
+    dispatch({ type: 'productManager/search', payload: { ColumnFilter: filterData } });
+  }
+  function handleTableChange(pagination, filters, sorter) {
+    const searchOrder = sorter.field ? (sorter.field + (sorter.order === 'ascend' ? ' asc' : ' desc')) : '';
+    dispatch({ type: 'productManager/search', payload: {
+      pageIndex: pagination.current,
+      pageSize: pagination.pageSize,
+      searchOrder: searchOrder
+    } });
+  }
+
+  let dynamicTableRef;
+  function openSetHeader() {
+    dynamicTableRef.getWrappedInstance().openSetCustomHeaders();
+  }
+
   const currentSeries = _.find(series, ['productsetid', queries.productSeriesId]);
   const seriesPath = getSeriesPath(currentSeries, series);
   const isDisabledSeries = currentSeries && currentSeries.recstatus === 0;
@@ -109,13 +137,16 @@ function ProductList({
             width="260px"
             placeholder="请输入产品名称"
           />
+          <Button onClick={cancelFilter} style={{ marginLeft: '10px', height: '31px' }}>筛选</Button>
+          <Icon type="setting" onClick={openSetHeader} style={{ fontSize: '20px', marginLeft: '10px', cursor: 'pointer', color: '#9ba1ad', position: 'relative', top: '2px' }} />
         </Toolbar.Right>
       </Toolbar>
 
       <DynamicTable
-        rowKey="recid"
-        protocol={listProtocol}
+        ref={(ref) => dynamicTableRef = ref}
         entityId="59cf141c-4d74-44da-bca8-3ccf8582a1f2"
+        protocol={listProtocol}
+        rowKey="recid"
         dataSource={list}
         rowSelection={{
           selectedRowKeys: currentItems.map(item => item.recid),
@@ -128,19 +159,31 @@ function ProductList({
           onChange: search.bind(null, 'pageIndex'),
           onShowSizeChange: (page, size) => { search('pageSize', size); }
         }}
+        sorter
+        sortFieldAndOrder={sortFieldAndOrder}
+        onChange={handleTableChange}
+        ColumnFilter={ColumnFilter || {}}
+        onFilter={filterChange}
         fixedHeader={false}
         renderLinkField={(text, field, record, props) => (
           <a href="javascript:;" style={titleStyle} title={text} onClick={showDetail.bind(this, record)}>{text}</a>
         )}
       />
+      <DynamicLoadFilterModal
+        keyName="productManager"
+        title="筛选条件"
+        protocol={listProtocol}
+        ColumnFilter={ColumnFilter}
+      />
       <TransferProductModal />
       <ProductFormModal />
       <EntcommDetailModal visible={showModals === 'viewDetail'}
-                          title="产品详情"
-                          entityId={productEntityId}
-                          recordId={showDetailId}
-                          onOk={closeModal}
-                          onCancel={closeModal} />
+        title="产品详情"
+        entityId={productEntityId}
+        recordId={showDetailId}
+        onOk={closeModal}
+        onCancel={closeModal}
+      />
     </div>
   );
 }
@@ -153,6 +196,7 @@ function mapStateToProps(state) {
 }
 function mapDispatchToProps(dispatch) {
   return {
+    dispatch,
     search: (key, value) => {
       dispatch({ type: 'productManager/search', payload: { [key]: value } });
     },
