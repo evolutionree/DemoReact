@@ -135,3 +135,11 @@ export async function updateDocumentDownloadCount(documentid) {
     body: JSON.stringify({ documentid })
   });
 }
+
+export async function addDocumentCase(params) {
+  return request('/api/documents/addcase', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}
+

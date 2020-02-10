@@ -14,10 +14,11 @@ class SelectFlowUserMultiple extends Component {
     const { type, data } = this.props.value;
     return (
       <SelectUser
+        dataRange={1}
         placeholder="请选择审批人"
         value={data.userid}
         value_name={data.username}
-        onChange={() => {}}
+        onChange={() => { }}
         onChangeWithName={({ value, value_name }) => {
           this.props.onChange({ type: 2, data: { userid: value, username: value_name } });
         }}

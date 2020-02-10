@@ -32,7 +32,7 @@ class CodeMerge extends Component {
   static defaultProps = {
     style: {},
     // value: '',
-    onChange: () => {},
+    onChange: () => { },
     readOnly: false
   };
 
@@ -71,7 +71,7 @@ class CodeMerge extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (
-      this.codeMirror && 
+      this.codeMirror &&
       this.codeMirror.editor() &&
       nextProps.options.value !== this.props.options.value &&
       normalizeLineEndings(this.codeMirror.editor().getValue()) !== normalizeLineEndings(nextProps.options.value)

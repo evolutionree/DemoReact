@@ -179,9 +179,11 @@ export default {
               EntityId: entityId,
               ...plugins[pluginIndex].extradata
             }
-            yield call(extraToolbarClickSendData, plugins[pluginIndex].routepath, params)
-            yield put({ type: 'init', payload: { entityId, recordId } })
-            message.success('提交成功')
+            const { error_msg } = yield call(extraToolbarClickSendData, plugins[pluginIndex].routepath, params);
+            yield put({ type: 'init', payload: { entityId, recordId } });
+            setTimeout(() => {
+              message.success(error_msg || '提交成功', 2);
+            }, 2000)
             yield call(delay, 1000)
             yield put({ type: 'init', payload: { entityId, recordId } })
             yield put({ type: 'entcommHome/fetchRecordDetail' })
@@ -216,11 +218,13 @@ export default {
             const { entityId, recordId } = yield select(state => state.entcommActivities)
             if (plugins[pluginIndex].entity && plugins[pluginIndex].entity.extradata) {
               const { routepath } = plugins[pluginIndex].entity
-              yield call(dynamicRequest, '/' + routepath, {
+              const { error_msg } = yield call(dynamicRequest, '/' + routepath, {
                 RecId: recordId,
                 Status: plugins[pluginIndex].entity.extradata.status
-              })
-              message.success('提交成功')
+              });
+              setTimeout(() => {
+                message.success(error_msg || '提交成功', 2);
+              }, 2000)
               yield call(delay, 1000)
               yield put({ type: 'init', payload: { entityId, recordId } })
               yield put({ type: 'entcommHome/fetchRecordDetail' })

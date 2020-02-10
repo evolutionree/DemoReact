@@ -1,6 +1,49 @@
 import _ from 'lodash';
 import FilterConfigBoard from './FilterConfigBoard';
 
+const workflowFields = [
+  {
+    isWorkflow: true,
+    controlType: 2001,
+    fieldId: '00000000-0000-0000-0000-000000000000',
+    fieldLabel: '发起人',
+    fieldConfig: {},
+    recStatus: 1
+  },
+  {
+    isWorkflow: true,
+    controlType: 2002,
+    fieldId: '00000000-0000-0000-0000-000000000001',
+    fieldLabel: '发起人部门',
+    fieldConfig: {},
+    recStatus: 1
+  },
+  {
+    isWorkflow: true,
+    controlType: 2003,
+    fieldId: '00000000-0000-0000-0000-000000000002',
+    fieldLabel: '发起人上级部门',
+    fieldConfig: {},
+    recStatus: 1
+  },
+  {
+    isWorkflow: true,
+    controlType: 2004,
+    fieldId: '00000000-0000-0000-0000-000000000003',
+    fieldLabel: '发起人角色',
+    fieldConfig: {},
+    recStatus: 1
+  },
+  {
+    isWorkflow: true,
+    controlType: 2005,
+    fieldId: '00000000-0000-0000-0000-000000000004',
+    fieldLabel: '发起人是否是领导',
+    fieldConfig: {},
+    recStatus: 1
+  }
+];
+
 export const parseRuleDetail = ruleDetail => {
   if (!ruleDetail || !ruleDetail.ruleset) {
     return {
@@ -61,6 +104,22 @@ export const ruleListToItems = (ruleList, fields, entityId) => {
     }
   });
 };
+
+
+export const getAllFields = (flowEntities) => {
+  const oldFields = _.flatMap(flowEntities, item => item.fields)
+    .map(field => ({
+      controlType: field.controltype,
+      fieldId: field.fieldid,
+      fieldLabel: field.fieldlabel,
+      fieldConfig: field.fieldconfig,
+      recStatus: field.recstatus,
+      entityId: field.entityid
+    }));
+  const allFields = [...oldFields, ...workflowFields]
+
+  return allFields
+}
 
 
 export default FilterConfigBoard;

@@ -15,20 +15,20 @@ const Option = Select.Option;
 const Column = Table.Column;
 
 function WorkflowList({
-    queries,
-    list,
-    total,
-    currentItems,
-    search,
-    add,
-    edit,
-    toggleStatus,
-    unDeleteWorkFlow,
-    selectItems,
-    openFlowEvent,
-    openFlowVisibleRule,
-    setTitleConfig
-  }) {
+  queries,
+  list,
+  total,
+  currentItems,
+  search,
+  add,
+  edit,
+  toggleStatus,
+  unDeleteWorkFlow,
+  selectItems,
+  openFlowEvent,
+  openFlowVisibleRule,
+  setTitleConfig
+}) {
   const { flowStatus, pageIndex, pageSize, searchName } = queries;
   return (
     <Page title="审批设置">
@@ -38,14 +38,22 @@ function WorkflowList({
           { label: '编辑', handler: edit, single: true },
           // { label: '启用', handler: toggleStatus, single: true,
           //   show: () => currentItems[0].recstatus === 0 },
-          { label: '停用', handler: toggleStatus, single: true,
-            show: () => currentItems[0].recstatus === 1 },
-          { label: '启用', handler: unDeleteWorkFlow, single: true,
-            show: () => currentItems[0].recstatus === 0 },
-          { label: '设置流程函数', handler: openFlowEvent, single: true,
-            show: () => currentItems[0].flowtype === 0 },
-          { label: '设置可见规则', handler: openFlowVisibleRule, single: true,
-            show: () => currentItems[0].entitymodeltype === 0 },
+          {
+            label: '停用', handler: toggleStatus, single: true,
+            show: () => currentItems[0].recstatus === 1
+          },
+          {
+            label: '启用', handler: unDeleteWorkFlow, single: true,
+            show: () => currentItems[0].recstatus === 0
+          },
+          {
+            label: '设置流程函数', handler: openFlowEvent, single: true,
+            show: () => currentItems[0].flowtype === 0
+          },
+          {
+            label: '设置可见规则', handler: openFlowVisibleRule, single: true,
+            show: () => currentItems[0].entitymodeltype === 0
+          },
           { label: '设置审批主题', handler: setTitleConfig, single: true }
         ]}
       >

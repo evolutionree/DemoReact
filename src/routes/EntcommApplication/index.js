@@ -312,7 +312,11 @@ function EntcommList({
         done={onAddModalDone}
       />
       <TransferModal />
-      <RecordDetailModal onExtraToolbarClick={extraToolbarClickHandler} onExtraBtnClick={extraButtonClickHandler} />
+      <RecordDetailModal
+        currItems={currItems}
+        onExtraToolbarClick={extraToolbarClickHandler}
+        onExtraBtnClick={extraButtonClickHandler}
+      />
       <RecordEditModal />
       <DynamicLoadFilterModal
         keyName="entcommApplication"

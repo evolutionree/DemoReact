@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { routerRedux } from 'dva/router';
 import { Modal, Button, Spin } from 'antd';
 import * as _ from 'lodash';
 import Toolbar from '../../Toolbar';
@@ -16,7 +15,8 @@ const _info = {
   EntityView: 'EntityView',
   EntityCopyNew: 'EntityCopyNew',
   EntityFieldChange: 'EntityFieldChange',
-  EntityFieldFilter: 'EntityFieldFilter'
+  EntityFieldFilter: 'EntityFieldFilter',
+  WorkFlowJS: 'WorkFlowJS'
 };
 
 class HistoryModal extends Component {
@@ -37,18 +37,18 @@ class HistoryModal extends Component {
       columns: [
         {
           title: '变更流水号', key: 'reccode', width: 140, filterType: 1, sorter: true,
-          render: (text, record) => <a href="javascript:;" onClick={() => this.showDetail(record)}>{text || '(空)'}</a> 
+          render: (text, record) => <a href="javascript:;" onClick={() => this.showDetail(record)}>{text || '(空)'}</a>
         },
         { title: '变更人', key: 'username', width: 120, filterType: 1, sorter: true },
         { title: '变更日期', key: 'commitdate', width: 150, filterType: 8, sorter: true },
-        { title: '变更前后长度对比', key: 'lenoldcode', width: 170, filterType: 6, render: (text, record) => (`${text} : ${record.lennewcode}`) },
+        { title: '变更前后长度对比', key: 'lenoldcode', width: 170, filterType: 6, render: (text, record) => (`${text || 0} : ${record.lennewcode || 0}`) },
         { title: '备注人', key: 'commitusername', width: 120, filterType: 1, sorter: true },
         { title: '备注日期', key: 'commitremarkdate', width: 150, filterType: 8, sorter: true },
         { title: '变更备注', key: 'commitremark', width: 150, filterType: 1, sorter: true }
       ]
     };
   }
- 
+
 
   componentDidMount() {
     this.fetchList(this.props);
@@ -58,9 +58,11 @@ class HistoryModal extends Component {
     const { selectedRows: oldRows, keyname: oldname, value: oldValue } = this.props;
     const { selectedRows: newRows, keyname: newname, value: newValue } = nextProps;
 
-    if (newname && (oldname !== newname)) this.fetchList(nextProps);
-    if (oldRows !== newRows) this.setState({ selectedRows: newRows });
-    if (oldValue !== newValue) this.setState({ value: newValue });
+    if (nextProps.showModals && nextProps.showModals.HistoryModal) {
+      if (newname && (oldname !== newname)) this.fetchList(nextProps);
+      if (oldRows !== newRows) this.setState({ selectedRows: newRows });
+      if (oldValue !== newValue) this.setState({ value: newValue });
+    }
   }
 
   fetchList = (props) => {
@@ -78,6 +80,7 @@ class HistoryModal extends Component {
   fecthFormData = (recid) => {
     const { dispatch, spaceName } = this.props;
     const { OptionList } = this.state;
+
     const fields = {};
     OptionList.forEach(item => (fields[item.fieldname] = ''));
     new Promise((resolve) => {
@@ -145,10 +148,12 @@ class HistoryModal extends Component {
     const { initParams } = this.props;
     this.toggleModal('HistoryModal', '');
     this.clearSelect();
-    const params = { ...initParams, columnFilter: null, searchOrder: '' };
-    this.onSeach(params);
+    if (initParams.columnFilter || initParams.searchOrder) {
+      const params = { ...initParams, columnFilter: null, searchOrder: '' };
+      this.onSeach(params);
+    }
   }
-  
+
   diffCurrent = () => {
     const { visibleCodeMerge } = this.state;
     this.setState({ visibleCodeMerge: !visibleCodeMerge });
@@ -173,7 +178,7 @@ class HistoryModal extends Component {
     this.toggleModal('FormModal');
     dynamicRequest(detailapi, { id: record.id }).then(res => {
       const { data } = res;
-      this.setState({ 
+      this.setState({
         detailData: Array.isArray(data) ? data : [],
         fetchDataLoading: { ...fetchDataLoading, FormModal: false }
       });
@@ -181,7 +186,7 @@ class HistoryModal extends Component {
   }
 
   render() {
-    const { 
+    const {
       width = 550, initParams, onSelectRow, spaceName,
       title, historyList, listLoading, keyname,
       showModals, dispatch, rowKey = 'recid'

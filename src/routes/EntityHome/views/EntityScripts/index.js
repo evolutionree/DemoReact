@@ -7,6 +7,65 @@ import DynamicLoadModal from '../../../../components/Modal/DynamicLoadModal';
 import HistoryModal from '../../../../components/Modal/HistoryModal';
 import styles from './EntityScripts.less';
 
+/**
+ * 能够运行字符串类型的JS代码并且可以接收返回值
+ * @param {*} appData 注入jsCode当前执行环境的app数据源
+ * @param {*} jsCode 需要执行的js代码
+ */
+
+export function runStringJsCodeWithReturn(appData, jsCode) {
+  try {
+    const fun = new Function(`
+      return function(app) {
+        try {
+          ${jsCode}
+        } catch (e) {
+          console.error('--run EntityFilterTypeJs error inner--', e);
+        }
+      }
+    `)();
+    const returnData = fun(appData);
+    // console.log('--returnData--', returnData);
+    if (!returnData) throw new Error('无返回值; Tips: 实体类型过滤的JS必须要有返回值');
+    else if (Object.prototype.toString.call(returnData) !== '[object Array]') {
+      throw new Error('返回类型错误; Tips: 实体类型过滤的JS返回值必须是【数组】');
+    } else if (returnData.length > 0 && returnData.some(r => Object.prototype.toString.call(r) !== '[object String]')) {
+      throw new Error('返回数组结构错误; Tips: 返回数组的每一项必须都是字符串');
+    }
+    return returnData;
+  } catch (e) {
+    console.error('--run EntityFilterTypeJs error--', e);
+  }
+}
+
+/**
+ * 执行过滤JS的方法
+ * @param {*} targetTypeIds  [[key]: object]
+ * @param {*} originData  null || { entityid: string, recid: string, rectype: string, originDetail: object }
+ * @param {*} filterTypeJsCode string
+ * @returns array [categoryid: string] 
+ */
+export function getAfterFilterEntityTypes(defaultEntityTypes, originData, filterTypeJsCode) {
+  const entityTypes = defaultEntityTypes;
+  let afterFilterEntityTypes = entityTypes;
+  // 是否执行JS过滤实体类型
+  if (filterTypeJsCode) {
+    // entityTypes.length > 1 执行过滤
+    if (entityTypes && entityTypes.length && entityTypes.length > 1) {
+      const typeIds = entityTypes.map(t => t.categoryid);
+      // 构建注入执行js代码环境的app数据
+      const appData = { originData, targetTypeIds: typeIds, request: syncRequest }; 
+      const returnTypes = runStringJsCodeWithReturn(appData, filterTypeJsCode);
+      // 返回数组有值并且长度与原来不相等的情况下才会执行过滤
+      if (returnTypes && returnTypes.length && returnTypes.length !== entityTypes.length) {
+        const showTypes = entityTypes.filter(t => returnTypes.includes(t.categoryid));
+        if (showTypes.length) afterFilterEntityTypes = showTypes;
+      }
+    }
+  }
+  return afterFilterEntityTypes;
+}
+
 const TextArea = Input.TextArea;
 
 const SPACENAME = 'entityScripts';

@@ -2,52 +2,10 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { message, Modal } from 'antd';
 import * as _ from 'lodash';
-import FilterConfigBoard, { parseRuleDetail, ruleListToItems } from '../../../../components/FilterConfigBoard';
+import FilterConfigBoard, { parseRuleDetail, ruleListToItems, getAllFields } from '../../../../components/FilterConfigBoard';
 import { queryFields, saveEntityQueryRule } from '../../../../services/entity';
+import { dynamicRequest } from '../../../../services/common';
 import { queryBranchRule } from '../../../../services/workflow';
-
-const workflowFields = [
-  {
-    isWorkflow: true,
-    controlType: 2001,
-    fieldId: '00000000-0000-0000-0000-000000000000',
-    fieldLabel: '发起人',
-    fieldConfig: {},
-    recStatus: 1
-  },
-  {
-    isWorkflow: true,
-    controlType: 2002,
-    fieldId: '00000000-0000-0000-0000-000000000001',
-    fieldLabel: '发起人部门',
-    fieldConfig: {},
-    recStatus: 1
-  },
-  {
-    isWorkflow: true,
-    controlType: 2003,
-    fieldId: '00000000-0000-0000-0000-000000000002',
-    fieldLabel: '发起人上级部门',
-    fieldConfig: {},
-    recStatus: 1
-  },
-  {
-    isWorkflow: true,
-    controlType: 2004,
-    fieldId: '00000000-0000-0000-0000-000000000003',
-    fieldLabel: '发起人角色',
-    fieldConfig: {},
-    recStatus: 1
-  },
-  {
-    isWorkflow: true,
-    controlType: 2005,
-    fieldId: '00000000-0000-0000-0000-000000000004',
-    fieldLabel: '发起人是否是领导',
-    fieldConfig: {},
-    recStatus: 1
-  }
-];
 
 class FlowBranchConditionModal extends Component {
   static propTypes = {};
@@ -68,21 +26,16 @@ class FlowBranchConditionModal extends Component {
     const isOpening = !this.props.visible && nextProps.visible;
     const isClosing = this.props.visible && !nextProps.visible;
     if (isOpening) {
-      const { flowEntities } = nextProps;
-      const allFields = _.flatMap(flowEntities, item => item.fields)
-        .map(field => ({
-          controlType: field.controltype,
-          fieldId: field.fieldid,
-          fieldLabel: field.fieldlabel,
-          fieldConfig: field.fieldconfig,
-          recStatus: field.recstatus,
-          entityId: field.entityid
-        }));
-      this.setState({ allFields: [...allFields, ...workflowFields] });
+      const { flowEntities, isNotify, record } = nextProps;
+      const allFields = getAllFields(flowEntities)
+      this.setState({ allFields });
 
       const ruleId = nextProps.editingPath.ruleid;
       if (ruleId && ruleId !== '00000000-0000-0000-0000-000000000000') {
         this.fetchRuleDetail(ruleId);
+      } else if (isNotify && record) {
+        const { ruleList, ruleSet } = parseRuleDetail(record.rules && record.rules[0]);
+        this.setState({ ruleList, ruleSet });
       }
     } else if (isClosing) {
       this.setState({
@@ -112,14 +65,15 @@ class FlowBranchConditionModal extends Component {
   handleOk = () => {
     if (!this.filterConfigBoard.validate()) return;
 
+    const { flowEntities, ruleDetail, flowId, record, isNotify, save } = this.props;
     const { ruleList, ruleSet, allFields } = this.state;
-    const { editingPath, flowEntities, ruleDetail, flowId } = this.props;
+    const rulename = isNotify ? record.rulename.value : ''
+
     const params = {
       typeid: 3,
       entityid: flowEntities[0].entityid,
       relentityid: flowEntities[1] && flowEntities[1].entityid,
-      rulename: '',
-      // ruleitems: ruleList.map(ruleToItem),
+      rulename,
       ruleitems: ruleListToItems(ruleList, allFields, flowEntities[0].entityid),
       ruleset: {
         ruleset: ruleSet,
@@ -128,6 +82,9 @@ class FlowBranchConditionModal extends Component {
       },
       flowid: flowId
     };
+
+    if (isNotify && save) return save(params) // 知会人设置调用
+
     this.setState({ modalPending: true });
     saveEntityQueryRule(params).then(result => {
       this.setState({ modalPending: false });
@@ -139,17 +96,78 @@ class FlowBranchConditionModal extends Component {
     });
   };
 
+  // handleNotifyOk = () => {
+  //   if (!this.filterConfigBoard.validate()) return;
+
+  //   const { flowEntities, ruleDetail, flowId, record } = this.props;
+  //   const { ruleList, ruleSet, allFields } = this.state;
+
+  //   const endnodeconfig = {}
+  //   const rulename = record.rulename.value
+  //   const type = record.type.value
+  //   const mapList = new Map([
+  //     [0, 'allpass'],
+  //     [1, 'approve'],
+  //     [2, 'failed'],
+  //   ])
+
+  //   for (const [key, value] of mapList) {
+  //     endnodeconfig[value] = (key === record.informertype.value) ? {
+  //       type,
+  //       userids: type === 1 ? record.user.value.userids : '',
+  //       spfuncname: type === 2 ? record.spfuncname.value : '',
+  //       reportrelation: type === 3 ? record.reportrelation.value : '',
+  //       entityid: type === 3 && record.reportrelation.value.type === 3 ? record.entityid.value : '',
+  //       fieldname: type === 3 && record.reportrelation.value.type === 3 ? record.fieldname.value : ''
+  //     } : null
+  //   }
+
+  //   const params = {
+  //     informerrules: [
+  //       {
+  //         flowid: flowId,
+  //         rule: {
+  //           typeid: 3,
+  //           entityid: flowEntities[0].entityid,
+  //           relentityid: flowEntities[1] && flowEntities[1].entityid,
+  //           rulename,
+  //           ruleitems: ruleListToItems(ruleList, allFields, flowEntities[0].entityid),
+  //           ruleset: {
+  //             ruleset: ruleSet,
+  //             userid: 0,
+  //             ruleformat: ''
+  //           },
+  //           flowid: flowId
+  //         },
+  //         ruleconfig: JSON.stringify({ endnodeconfig })
+  //       }
+  //     ]
+  //   };
+  //   this.setState({ modalPending: true });
+  //   dynamicRequest('/api/workflow/saveinformer', params).then(result => {
+  //     this.setState({ modalPending: false });
+  //     message.success(result.error_msg || '保存成功');
+  //     this.props.save(result.data);
+  //   }, err => {
+  //     this.setState({ modalPending: false });
+  //     message.error(err.message || '保存失败');
+  //   });
+  // };
+
   render() {
-    const flowEnities = this.props.flowEntities.map(item => ({ entityId: item.entityid, entityName: item.entityname }));
+    const { title = '设置分支条件', isNotify } = this.props
+
+    const flowEnities = Array.isArray(this.props.flowEntities) ? this.props.flowEntities.map(item => ({ entityId: item.entityid, entityName: item.entityname })) : [];
     let entityId;
     if (flowEnities.length === 1) {
       entityId = flowEnities[0].entityId;
     } else if (flowEnities.length > 1) {
       entityId = flowEnities[1].entityId;
     }
+
     return (
       <Modal
-        title="设置分支条件"
+        title={title}
         visible={this.props.visible}
         onOk={this.handleOk}
         onCancel={this.props.cancel}
@@ -176,25 +194,5 @@ class FlowBranchConditionModal extends Component {
   }
 }
 
-export default connect(
-  state => {
-    const { showModals, editingPath, flowEntities, flowId } = state.workflowDesign;
-    return {
-      visible: /branch/.test(showModals),
-      editingPath,
-      flowEntities,
-      flowId
-    };
-  },
-  dispatch => {
-    return {
-      save(ruleId) {
-        dispatch({ type: 'workflowDesign/saveBranchRule', payload: ruleId });
-      },
-      cancel() {
-        dispatch({ type: 'workflowDesign/cancelBranchRule' });
-      }
-    };
-  }
-)(FlowBranchConditionModal);
+export default FlowBranchConditionModal;
 

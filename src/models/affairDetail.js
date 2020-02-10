@@ -3,7 +3,8 @@ import * as _ from 'lodash';
 import { routerRedux } from 'dva/router';
 import { getEntcommDetail, getGeneralProtocol, editEntcomm } from '../services/entcomm';
 import { queryFields } from '../services/entity';
-import { queryCaseItem, queryNextNodeData, queryCaseDetail, submitCaseItem, submitPreCaseItem } from '../services/workflow';
+import { queryCaseItem, queryNextNodeData, queryCaseDetail, submitCaseItem, submitPreCaseItem, withdraw, canwithdraw } from '../services/workflow';
+import { getEditData } from '../utils'
 
 export default {
   namespace: 'affairDetail',
@@ -27,11 +28,11 @@ export default {
     columnConfigFormInstance: {},
     suggest: '',
     selectedOperate: undefined,
-
+    jointUsers: [],
     nextNodesData: [],
     selectedNextNode: null,
-
-    submitBtnLoading: false
+    submitBtnLoading: false,
+    showWithDrawBtn: false
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -49,7 +50,7 @@ export default {
     }
   },
   effects: {
-    *init(action, { select, put, call }) {
+    *init({ payload }, { select, put, call }) {
       const {
         entityId,
         caseId,
@@ -64,6 +65,7 @@ export default {
       const entityDetail = data.entitydetail;
       const flowOperates = _.mapKeys(data.caseitem, (value, key) => key.replace('iscan', ''));
       const relentityDetail = data.relatedetail || {};
+      const nodetype = flowOperates.nodetype;
 
       // 处理“审批可改字段”
       if (data.caseitem.columnconfig && data.caseitem.columnconfig.config && data.caseitem.columnconfig.config.length) {
@@ -72,68 +74,120 @@ export default {
         yield put({ type: 'putState', payload: { columnConfigForms: {}, columnConfigFormProtocols: {} } });
       }
 
-      yield put({
-        type: 'putState',
-        payload: {
-          flowDetail,
-          entityDetail,
-          flowOperates,
-          relentityDetail
-        }
-      });
-
-      // 17/12/11 改为用预提交的方式，不获取nextdata了
-      // 获取下一步节点
-      if (flowDetail.nodenum !== -1 && false) {
-        try {
-          const { data: nextNodesData } = yield call(queryNextNodeData, caseId);
-          yield put({
-            type: 'putState',
-            payload: {
-              nextNodesData,
-              selectedNextNode: nextNodesData[0]
-            }
-          });
-        } catch (e) {
-          message.error(e.message || '获取下一步节点数据失败');
-        }
+      const updateObj = {
+        flowDetail,
+        entityDetail,
+        flowOperates,
+        relentityDetail
       }
 
+      if (nodetype === 2) updateObj.selectedOperate = -1
+
+      yield put({
+        type: 'putState',
+        payload: updateObj
+      });
+
+      const typeid = (entityDetail && entityDetail.rectype) || (flowDetail && flowDetail.entityid);
       // 获取实体查看协议
-      if (!entityDetailProtocol.length) {
+      if (!entityDetailProtocol.length && typeid) {
         try {
           const result = yield call(getGeneralProtocol, {
-            typeid: entityDetail.rectype || flowDetail.entityid,
+            typeid,
             operatetype: 2
           });
           yield put({ type: 'putState', payload: { entityDetailProtocol: result.data } });
         } catch (e) {
           console.error(e);
-          message.error(e.message || '获取协议失败');
+          // message.error(e.message || '获取协议失败');
         }
       }
 
-      if (data.relatedetail && !relentityDetailProtocol.length) {
+      const relTypeid = relentityDetail.rectype || flowDetail.relentityid;
+      if (relTypeid && !relentityDetailProtocol.length) {
         // 获取相关实体查看协议
         try {
           const result = yield call(getGeneralProtocol, {
-            typeid: relentityDetail.rectype || flowDetail.relentityid,
+            typeid: relTypeid,
             operatetype: 2
           });
           yield put({ type: 'putState', payload: { relentityDetailProtocol: result.data } });
         } catch (e) {
           console.error(e);
-          message.error(e.message || '获取协议失败');
+          // message.error(e.message || '获取协议失败');
         }
       }
 
       // 获取审批明细
       try {
-        const { data: flowItemList } = yield call(queryCaseItem, caseId);
-        yield put({ type: 'putState', payload: { flowItemList } });
+        const { data: { result, result_ext } } = yield call(queryCaseItem, caseId);
+        let count = 0;
+        let flowItemList = [];
+        const handleList = Array.isArray(result) && result.length ? result : [];
+        const connectList = Array.isArray(result_ext) && result_ext.length ? result_ext : [];
+
+        for (const item of handleList) {
+          const preItem = flowItemList[flowItemList.length - 1];
+          count = (
+            preItem &&
+            [1, 2].includes(preItem.nodetype) &&
+            [1, 2].includes(item.nodetype) &&
+            preItem.nodeid === item.nodeid
+          ) ? count : count + 1;
+
+          const itemInfo = { ...item, files: item.filejson, count };
+
+          if ([1, 2].includes(item.nodetype) || item.isallowtransfer === 1 || item.isallowsign === 1) {
+            const matchList = connectList.filter(o => (o.nodeid === item.nodeid && o.caseitemid === item.caseitemid)).map(o => {
+              return {
+                nodeid: item.nodeid,
+                nodetype: item.nodetype,
+                nodename: item.nodename,
+                isallowtransfer: item.isallowtransfer,
+                isallowsign: item.isallowsign,
+                caseitemid: o.caseitemid,
+                username: o.username,
+                casestatus: o.flowstatus,
+                suggest: o.comment,
+                files: o.filejson,
+                recupdated: o.reccreated,
+                operatetype: o.operatetype,
+                originaluserid: o.originaluserid,
+                count
+              };
+            });
+            if (matchList.length) {
+              flowItemList = flowItemList.concat(...matchList);
+              // if (item.nodetype === 2) {
+              //   flowItemList = flowItemList.concat(...matchList)
+              // } else if (item.isallowtransfer === 1) {
+              //   matchList.push(itemInfo)
+              //   flowItemList = flowItemList.concat(...matchList)
+              // }
+            } else {
+              flowItemList.push(itemInfo);
+            }
+          } else {
+            flowItemList.push(itemInfo);
+          }
+        }
+
+        const jointUsers = handleList.filter(o => o.nodetype === 1).map(o => o.handleuser);
+
+        yield put({ type: 'putState', payload: { flowItemList, jointUsers } });
       } catch (e) {
         console.error(e);
         message.error(e.message || '获取审批明细失败');
+      }
+
+
+      // 获取撤回按钮权限
+      try {
+        const params = { caseid: flowDetail.caseid }
+        const { data } = yield call(canwithdraw, params);
+        yield put({ type: 'putState', payload: { showWithDrawBtn: !!(data && data.canwithdraw) } });
+      } catch (e) {
+        console.error(e);
       }
     },
     *handleColumnConfig({ payload: columnConfig }, { select, call, put }) {
@@ -173,22 +227,6 @@ export default {
           }
         });
 
-        function getEditData(recordDetail, protocol) { //表格数据 需要再套一层
-          const retData = { ...recordDetail };
-          protocol.forEach(field => {
-            const { controltype, fieldname, fieldconfig } = field;
-            if (controltype === 24 && retData[fieldname]) {
-              retData[fieldname] = retData[fieldname].map(item => {
-                return {
-                  TypeId: fieldconfig.entityId,
-                  FieldData: item
-                };
-              });
-            }
-          });
-          return retData;
-        }
-
         yield put({ type: 'putState', payload: { columnConfigForms: dynamicForms, columnConfigFormProtocols: dynamicFormProtocols } });
       } catch (e) {
         message.error('获取动态表单字段出错');
@@ -208,22 +246,6 @@ export default {
       }
     },
     *startEdit(action, { select, put, call }) {
-      // fix 表格控件，加typeid
-      function genEditData(recordDetail, protocol) {
-        const retData = { ...recordDetail };
-        protocol.forEach(field => {
-          const { controltype, fieldname, fieldconfig } = field;
-          if (controltype === 24 && retData[fieldname]) {
-            retData[fieldname] = retData[fieldname].map(item => {
-              return {
-                TypeId: fieldconfig.entityId,
-                FieldData: item
-              };
-            });
-          }
-        });
-        return retData;
-      }
       let { entityEditProtocol } = yield select(state => state.affairDetail);
       const { entityDetail } = yield select(state => state.affairDetail);
       if (!entityEditProtocol.length) {
@@ -236,6 +258,7 @@ export default {
             operatetype: 1
           });
           entityEditProtocol = result.data;
+
           yield put({ type: 'putState', payload: { entityEditProtocol } });
         } catch (e) {
           message.error(e.message || '获取协议失败');
@@ -245,7 +268,7 @@ export default {
         type: 'putState',
         payload: {
           editing: true,
-          editData: genEditData(_.cloneDeep(entityDetail), entityEditProtocol)
+          editData: getEditData(_.cloneDeep(entityDetail), entityEditProtocol)
         }
       });
     },
@@ -456,6 +479,18 @@ export default {
           pathname: 'affair-list'
         }));
       }
+    },
+    *WithDraw(_, { put, call, select }) {
+      const { flowDetail, flowOperates } = yield select(state => state.affairDetail)
+      try {
+        const params = { caseid: flowDetail.caseid }
+        const res = yield call(withdraw, params)
+        message.success(res.error_msg || '撤回成功')
+        yield put({ type: 'onCaseModalDone' })
+      } catch (e) {
+        console.error(e.message)
+        message.error(e.message)
+      }
     }
   },
   reducers: {
@@ -492,6 +527,7 @@ export default {
         columnConfigFormInstance: {},
         suggest: '',
         selectedOperate: undefined,
+        showWithDrawBtn: false,
         submitBtnLoading: false
       };
     }

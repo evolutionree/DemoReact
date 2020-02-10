@@ -13,7 +13,7 @@ import { getIntlText } from '../components/UKComponent/Form/IntlText'
  * @param data { lines, nodes }
  * @returns {{flowSteps: Array, flowPaths: Array, flowStepsByIdCollection: Object}}
  */
-function parseFlowJSON (data) {
+function parseFlowJSON(data) {
   if (!data.nodes || !data.nodes.length) {
     return { flowSteps: [], flowPaths: [], flowStepsByIdCollection: {} }
   }
@@ -82,7 +82,7 @@ function parseFlowJSON (data) {
     }
   })
 
-  function loopRestLines (lines) {
+  function loopRestLines(lines) {
     const nextRest = [...lines]
     let removecount = 0
     lines.forEach((line, index) => {
@@ -118,7 +118,7 @@ function parseFlowJSON (data) {
   }, {})
   return { flowSteps, flowPaths, flowStepsByIdCollection }
 }
-function getInitialFlowJSON () {
+function getInitialFlowJSON() {
   const startNodeId = uuid.v4()
   const endNodeId = uuid.v4()
   const nextNodeId = uuid.v4()
@@ -173,14 +173,14 @@ function getInitialFlowJSON () {
   }
 }
 
-function parseColumnConfig (columnConfig) {
+function parseColumnConfig(columnConfig) {
   if (columnConfig && columnConfig.config && columnConfig.config.length) {
     return _.flatMap(columnConfig.config, item => item.fields.map(field => ({ ...field, entityId: item.entityId })))
   }
   return []
 }
 
-function formatFieldsToColumnConfig (fields) {
+function formatFieldsToColumnConfig(fields) {
   const config = []
   const collect = {}
   fields.forEach(field => {
@@ -201,7 +201,7 @@ function formatFieldsToColumnConfig (fields) {
   return { config }
 }
 
-function markBranch (path, index, allPaths) {
+function markBranch(path, index, allPaths) {
   const isBranch = allPaths.some(p => p.from === path.from && p.to !== path.to)
   return {
     ...path,
@@ -210,7 +210,7 @@ function markBranch (path, index, allPaths) {
 }
 
 // 针对 { node1, node2 ... } => { node3, node4 ... } 添加分支辅助节点
-function addBranchHelpers ({ flowSteps, flowPaths }) {
+function addBranchHelpers({ flowSteps, flowPaths }) {
   let retFlowSteps = [...flowSteps]
   let retFlowPaths = [...flowPaths]
   const nextSteps = {}
@@ -250,12 +250,12 @@ function addBranchHelpers ({ flowSteps, flowPaths }) {
   })
   return { flowSteps: retFlowSteps, flowPaths: retFlowPaths }
 }
-function getNextSteps (stepId, flowSteps, flowPaths) {
+function getNextSteps(stepId, flowSteps, flowPaths) {
   const paths = flowPaths.filter(item => item.from === stepId)
   const nextStepsId = paths.map(item => item.to)
   return nextStepsId.map(id => _.find(flowSteps, ['id', id])).filter(item => !!item)
 }
-function getAfterSteps (stepId, flowSteps, flowPaths) {
+function getAfterSteps(stepId, flowSteps, flowPaths) {
   let allNexts = []
   let nextSteps = getNextSteps(stepId, flowSteps, flowPaths)
   while (nextSteps.length) {
@@ -266,7 +266,7 @@ function getAfterSteps (stepId, flowSteps, flowPaths) {
   return _.uniqBy(allNexts, 'id')
 }
 
-function validateFlowSteps (flowSteps, flowPaths) {
+function validateFlowSteps(flowSteps, flowPaths) {
   let valid = true
   flowSteps.forEach(step => {
     const { id, rawNode } = step
@@ -302,7 +302,7 @@ export default {
     editingPath: null
   },
   subscriptions: {
-    setup ({ dispatch, history }) {
+    setup({ dispatch, history }) {
       return history.listen(location => {
         const pathReg = /^\/workflow\/([^/]+)\/design/
         const match = location.pathname.match(pathReg)
@@ -317,7 +317,7 @@ export default {
     }
   },
   effects: {
-    * queryFlowJSON (action, { select, put, call }) {
+    * queryFlowJSON(action, { select, put, call }) {
       const { flowId } = yield select(state => state.workflowHome)
       try {
         const { data } = yield call(queryFlowJSONv2, flowId)
@@ -330,7 +330,7 @@ export default {
         message.error(e.message || '获取流程数据失败')
       }
     },
-    * queryFlowEntity ({ payload: flowInfo }, { select, put, call }) {
+    * queryFlowEntity({ payload: flowInfo }, { select, put, call }) {
       try {
         const { entityid, entityname, relentityid, relentityname } = flowInfo
         const { data } = yield call(queryFields, entityid)
@@ -380,11 +380,11 @@ export default {
         message.error(e.message || '获取流程实体数据失败')
       }
     },
-    * generateFlowJSON (action, { select, put, call }) {
+    * generateFlowJSON(action, { select, put, call }) {
       const { flowSteps, flowPaths } = parseFlowJSON(getInitialFlowJSON())
       yield put({ type: 'putState', payload: { flowSteps, flowPaths } })
     },
-    * changeStepName (
+    * changeStepName(
       {
         payload: { stepId, name }
       },
@@ -398,33 +398,63 @@ export default {
         payload: { flowSteps: [...flowSteps] }
       })
     },
-    * openStepModal ({ payload: stepId }, { select, put }) {
+    * openStepModal({ payload: stepId }, { select, put }) {
       const { flowSteps } = yield select(state => state.workflowDesign)
       const flowStep = _.find(flowSteps, ['id', stepId])
       const rawNodeData = flowStep.rawNode || {}
+
+      const endnodeconfig = rawNodeData.ruleconfig && rawNodeData.ruleconfig.endnodeconfig ? (
+        typeof rawNodeData.ruleconfig.endnodeconfig === 'string' ? JSON.parse(rawNodeData.ruleconfig.endnodeconfig) : rawNodeData.ruleconfig.endnodeconfig
+      ) : {}
+
       const editingFlowStepForm = {
         stepId: flowStep.id,
         nodeType: rawNodeData.nodetype || 0,
         stepUser: {
           type: rawNodeData.steptypeid !== undefined ? rawNodeData.steptypeid : 1,
-          data:
-            {
-              ...rawNodeData.ruleconfig,
-              reportrelation: rawNodeData.ruleconfig
-                ? typeof rawNodeData.ruleconfig.reportrelation === 'string'
-                  ? JSON.parse(rawNodeData.ruleconfig.reportrelation)
-                  : rawNodeData.ruleconfig.reportrelation
-                : {}
-            } || {}
+          data: {
+            ...rawNodeData.ruleconfig,
+            reportrelation: rawNodeData.ruleconfig
+              ? typeof rawNodeData.ruleconfig.reportrelation === 'string' // 兼容旧数据
+                ? JSON.parse(rawNodeData.ruleconfig.reportrelation)
+                : rawNodeData.ruleconfig.reportrelation
+              : {},
+            userid: rawNodeData.ruleconfig ? rawNodeData.ruleconfig.userid : '',
+            username: rawNodeData.ruleconfig ? rawNodeData.ruleconfig.username : ''
+          }
         },
         cpUser: {
           type: rawNodeData.stepcptypeid !== undefined ? rawNodeData.stepcptypeid : 17,
           data: rawNodeData.ruleconfig || {}
         },
         auditsucc: rawNodeData.auditsucc || 1,
-        stepFields: parseColumnConfig(rawNodeData.columnconfig),
+        stepFields: {
+          type: rawNodeData.columnconfig ? rawNodeData.columnconfig.stepfieldtype : 1,
+          data: {
+            stepFields: parseColumnConfig(rawNodeData.columnconfig),
+            globaljs: rawNodeData.columnconfig ? rawNodeData.columnconfig.globaljs : ''
+          }
+        },
         notfound: rawNodeData.notfound || 1,
-        funcname: rawNodeData.funcname || ''
+        funcname: rawNodeData.funcname || '',
+        failed: {
+          type: (endnodeconfig.failed && endnodeconfig.failed.type) !== undefined ? endnodeconfig.failed.type : 1,
+          userids: (endnodeconfig.failed && endnodeconfig.failed.userids) || '',
+          spfuncname: (endnodeconfig.failed && endnodeconfig.failed.spfuncname) || '',
+          reportrelation: (endnodeconfig.failed && endnodeconfig.failed.reportrelation) || { type: 1 },
+          entityid: (endnodeconfig.failed && endnodeconfig.failed.entityid) || '',
+          fieldname: (endnodeconfig.failed && endnodeconfig.failed.fieldname) || '',
+        },
+        approve: {
+          type: (endnodeconfig.approve && endnodeconfig.approve.type) !== undefined ? endnodeconfig.approve.type : 1,
+          userids: (endnodeconfig.approve && endnodeconfig.approve.userids) || '',
+          spfuncname: (endnodeconfig.approve && endnodeconfig.approve.spfuncname) || '',
+          reportrelation: (endnodeconfig.approve && endnodeconfig.approve.reportrelation) || { type: 1 },
+          entityid: (endnodeconfig.approve && endnodeconfig.approve.entityid) || '',
+          fieldname: (endnodeconfig.approve && endnodeconfig.approve.fieldname) || '',
+        },
+        isscheduled: rawNodeData.isscheduled || 0,
+        deadline: rawNodeData.deadline || 0
       }
       yield put({
         type: 'putState',
@@ -434,7 +464,7 @@ export default {
         }
       })
     },
-    * addNextStep ({ payload: stepId }, { select, put }) {
+    * addNextStep({ payload: stepId }, { select, put }) {
       const { flowSteps, flowPaths } = yield select(state => state.workflowDesign)
       const flowStep = _.find(flowSteps, ['id', stepId])
       // const allPathsToThisFlowStep = flowPaths.filter(path => path.to === stepId);
@@ -461,7 +491,7 @@ export default {
         }
       })
     },
-    * addBranchStep ({ payload: stepId }, { select, put }) {
+    * addBranchStep({ payload: stepId }, { select, put }) {
       const { flowSteps, flowPaths } = yield select(state => state.workflowDesign)
       const flowStep = _.find(flowSteps, ['id', stepId])
       const allPathsToThisFlowStep = flowPaths.filter(path => path.to === stepId)
@@ -484,7 +514,7 @@ export default {
         }
       })
     },
-    * delStep ({ payload: stepId }, { select, put }) {
+    * delStep({ payload: stepId }, { select, put }) {
       const { flowSteps, flowPaths } = yield select(state => state.workflowDesign)
       const flowStep = _.find(flowSteps, ['id', stepId])
       const allPathsFromThisFlowStep = flowPaths.filter(path => path.from === stepId)
@@ -518,7 +548,7 @@ export default {
         })
       }
     },
-    * confirmEditingFlowStepForm (action, { select, put }) {
+    * confirmEditingFlowStepForm(action, { select, put }) {
       const { flowSteps, editingFlowStepForm } = yield select(state => state.workflowDesign)
       const flowStep = _.find(flowSteps, ['id', editingFlowStepForm.stepId])
 
@@ -538,21 +568,52 @@ export default {
        10	当前审批人所在团队的上级团队及角色(非下级)	0
        11	当前审批人所在团队的上级团队(非下级)	0
        */
-      if (editingFlowStepForm.stepUser.steptypeid === -1) {
+      if (editingFlowStepForm.stepUser.type === -1) {
+        if (editingFlowStepForm.failed.type === 3) {
+          const { entityid, fieldname, reportrelation } = editingFlowStepForm.failed
+          if (!entityid && reportrelation && reportrelation.type === 3) return message.error('请选择表单字段')
+          if (!fieldname && reportrelation && reportrelation.type === 3) return message.error('请选择表单用户字段')
+          if (!(reportrelation && reportrelation.id)) return message.error('请选择汇报关系')
+        }
+        if (editingFlowStepForm.approve.type === 3) {
+          const { entityid, fieldname, reportrelation } = editingFlowStepForm.approve
+          if (!entityid && reportrelation && reportrelation.type === 3) return message.error('请选择表单字段')
+          if (!fieldname && reportrelation && reportrelation.type === 3) return message.error('请选择表单用户字段')
+          if (!(reportrelation && reportrelation.id)) return message.error('请选择汇报关系')
+        }
+        if (editingFlowStepForm.failed.type === 2) {
+          const { spfuncname } = editingFlowStepForm.failed
+          if (!spfuncname) return message.error('输入需要执行的sql语句')
+        }
+        if (editingFlowStepForm.approve.type === 2) {
+          const { spfuncname } = editingFlowStepForm.approve
+          if (!spfuncname) return message.error('输入需要执行的sql语句')
+        }
+        // if (editingFlowStepForm.failed.type === 1) {
+        //   const { userids } = editingFlowStepForm.failed
+        //   if (!userids) return message.error('请选择传阅人')
+        // }
+
         flowStep.rawNode = {
           ...flowStep.rawNode,
+          ruleconfig: {
+            ...flowStep.rawNode.ruleconfig,
+            endnodeconfig: JSON.stringify({
+              failed: editingFlowStepForm.failed,
+              approve: editingFlowStepForm.approve
+            }),
+          },
           funcname: editingFlowStepForm.funcname
         }
       } else {
-        if (editingFlowStepForm.nodeType === 1) {
+        if ([1, 2].includes(editingFlowStepForm.nodeType)) {
           const users = editingFlowStepForm.stepUser.data.username.split(',')
-          if (users.length < 2) {
-            message.error('请设置多名人员参与会审')
-            return
+          if (users.length < 2) return message.error('请设置多名人员参与会审')
+          if (editingFlowStepForm.nodeType === 1) {
+            const { auditsucc } = editingFlowStepForm
+            if (!auditsucc) return message.error('请设置会审通过人数')
+            if (auditsucc > users.length) return message.error('会审通过人数不得超过总人数')
           }
-          const { auditsucc } = editingFlowStepForm
-          if (!auditsucc) return message.error('请设置会审通过人数')
-          if (auditsucc > users.length) return message.error('会审通过人数不得超过总人数')
         }
         if (editingFlowStepForm.nodeType === 0) {
           const data = editingFlowStepForm.stepUser.data
@@ -599,9 +660,13 @@ export default {
           }
         }
 
-        const fields = editingFlowStepForm.stepFields
+        const fieldInfo = editingFlowStepForm.stepFields
+        const stepfieldtype = fieldInfo ? fieldInfo.type : 1
+        const fields = fieldInfo ? (fieldInfo.data.stepFields ? fieldInfo.data.stepFields : []) : []
+        const globaljs = stepfieldtype === 3 ? (fieldInfo.data.globaljs ? fieldInfo.data.globaljs : '') : ''
         const uniqCollect = {}
-        if (fields && fields.length) {
+
+        if (stepfieldtype === 2 && fields && fields.length) {
           for (let i = 0; i < fields.length; i += 1) {
             const item = fields[i]
             if (!item.entityId) return message.error('请设置实体')
@@ -617,8 +682,8 @@ export default {
 
         flowStep.rawNode = {
           ...flowStep.rawNode,
-          auditnum: editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.stepUser.data.userid.split(',').length,
-          auditsucc: editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.auditsucc,
+          auditnum: editingFlowStepForm.nodeType === 0 ? 1 : (editingFlowStepForm.stepUser.data.userid && editingFlowStepForm.stepUser.data.userid.split(',').length),
+          auditsucc: editingFlowStepForm.nodeType === 0 ? 1 : editingFlowStepForm.nodeType === 2 ? (editingFlowStepForm.stepUser.data.userid && editingFlowStepForm.stepUser.data.userid.split(',').length) : editingFlowStepForm.auditsucc,
           nodetype: editingFlowStepForm.nodeType,
           ruleconfig: {
             ...editingFlowStepForm.stepUser.data,
@@ -629,9 +694,15 @@ export default {
           },
           steptypeid: editingFlowStepForm.stepUser.type,
           stepcptypeid: editingFlowStepForm.cpUser.type,
-          columnconfig: formatFieldsToColumnConfig(fields),
+          columnconfig: {
+            stepfieldtype: editingFlowStepForm.nodeType === 2 ? 1 : stepfieldtype,
+            globaljs,
+            ...formatFieldsToColumnConfig(fields)
+          },
           notfound: editingFlowStepForm.notfound || 1,
-          funcname: editingFlowStepForm.funcname
+          funcname: editingFlowStepForm.funcname,
+          isscheduled: editingFlowStepForm.isscheduled || 0,
+          deadline: editingFlowStepForm.deadline || 0
         }
       }
       yield put({
@@ -643,7 +714,7 @@ export default {
         }
       })
     },
-    * saveFlowDesign ({ payload: flowNodePosition }, { select, put, call }) {
+    * saveFlowDesign({ payload: flowNodePosition }, { select, put, call }) {
       const { flowId, flowSteps, flowPaths } = yield select(state => state.workflowDesign)
       if (flowSteps.some(step => !step.rawNode)) {
         message.error('请配置节点审批人')
@@ -665,7 +736,10 @@ export default {
             columnconfig,
             auditnum,
             auditsucc,
-            funcname
+            funcname,
+            endnodeconfig,
+            isscheduled,
+            deadline
           } = rawNode
           const newNodeId = (nodeIdCollect[id] = uuid.v4())
           return {
@@ -680,7 +754,10 @@ export default {
             columnconfig,
             auditsucc,
             nodeevent: funcname,
-            nodeconfig: flowNodePosition[id]
+            nodeconfig: flowNodePosition[id],
+            endnodeconfig,
+            isscheduled: isscheduled || 0,
+            deadline: deadline || 0
           }
         })
         const lines = flowPaths.map(path => ({
@@ -695,7 +772,7 @@ export default {
         message.error(e.message || '保存失败')
       }
     },
-    * editBranchRule ({ payload: flowPath }, { put }) {
+    * editBranchRule({ payload: flowPath }, { put }) {
       yield put({
         type: 'putState',
         payload: {
@@ -704,7 +781,7 @@ export default {
         }
       })
     },
-    * cancelBranchRule ({ payload: flowPath }, { put }) {
+    * cancelBranchRule({ payload: flowPath }, { put }) {
       yield put({
         type: 'putState',
         payload: {
@@ -713,7 +790,7 @@ export default {
         }
       })
     },
-    * saveBranchRule ({ payload: ruleId }, { select, put }) {
+    * saveBranchRule({ payload: ruleId }, { select, put }) {
       const { editingPath, flowPaths } = yield select(state => state.workflowDesign)
       editingPath.ruleid = ruleId
       yield put({
@@ -725,7 +802,7 @@ export default {
         }
       })
     },
-    * userConnectNode ({ payload: connInfo }, { select, put }) {
+    * userConnectNode({ payload: connInfo }, { select, put }) {
       const { flowPaths } = yield select(state => state.workflowDesign)
       const { source, target } = connInfo
       const getNodeId = elem => {
@@ -746,7 +823,7 @@ export default {
         }
       })
     },
-    * userDisConnectNode ({ payload: connInfo }, { select, put }) {
+    * userDisConnectNode({ payload: connInfo }, { select, put }) {
       const { flowPaths } = yield select(state => state.workflowDesign)
       const { source, target } = connInfo
       const getNodeId = elem => {
@@ -761,7 +838,7 @@ export default {
         }
       })
     },
-    * createNode (action, { select, put }) {
+    * createNode(action, { select, put }) {
       const { flowSteps } = yield select(state => state.workflowDesign)
       const newFlowStep = {
         id: uuid.v4(),
@@ -769,6 +846,21 @@ export default {
         x: 30,
         y: 30
       }
+
+      newFlowStep.rawNode = {
+        auditnum: 1,
+        auditsucc: 1,
+        nodetype: 0,
+        ruleconfig: { reportrelation: JSON.stringify({ type: 1 }) },
+        steptypeid: 1,
+        stepcptypeid: 17,
+        columnconfig: {},
+        notfound: 1,
+        funcname: '',
+        isscheduled: 0,
+        deadline: 0
+      }
+
       yield put({
         type: 'putState',
         payload: {
@@ -778,13 +870,13 @@ export default {
     }
   },
   reducers: {
-    putState (state, { payload }) {
+    putState(state, { payload }) {
       return {
         ...state,
         ...payload
       }
     },
-    resetState () {
+    resetState() {
       return {
         rawData: null,
         flowId: '',

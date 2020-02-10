@@ -571,3 +571,23 @@ export function heighLightKeyWord(text, keyword) {
     </span>
   ) : <span>{text}</span>;
 }
+
+//表格数据再套一层,增加typeid
+export function getEditData(recordDetail, protocol) {
+  const retData = { ...recordDetail };
+  protocol.forEach(field => {
+    const { controltype, fieldname, fieldconfig } = field;
+    if (controltype === 24 && recordDetail[fieldname]) {
+      retData[fieldname] = recordDetail[fieldname].map(item => {
+        return {
+          TypeId: fieldconfig.entityId,
+          FieldData: item
+        };
+      });
+      // } else if ((recordDetail[fieldname] || recordDetail[fieldname] === 0) && controltype !== 30) {
+    } else if (controltype !== 30) {
+      retData[fieldname] = recordDetail[fieldname];
+    }
+  });
+  return retData;
+}

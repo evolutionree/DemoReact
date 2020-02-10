@@ -421,3 +421,34 @@ export async function saveWorkflowVisibleRule(params) {
     body: JSON.stringify(params)
   });
 }
+
+/**
+ * 撤回流程
+ * @param params
+ * @returns {Promise.<Object>}
+ * {
+  "CaseId":"cf456214-f8c3-4c8b-b876-bb702a04cff5"
+  }
+ */
+export async function withdraw(params) {
+  return request('/api/workflow/withdraw', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}
+
+
+/**
+ * 撤回流程btn control
+ * @param params
+ * @returns {Promise.<Object>}
+ * {
+  "CaseId":"cf456214-f8c3-4c8b-b876-bb702a04cff5"
+  }
+ */
+export async function canwithdraw(params) {
+  return request('/api/workflow/canwithdraw', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}

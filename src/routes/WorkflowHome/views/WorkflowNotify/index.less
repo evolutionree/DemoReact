@@ -1,0 +1,60 @@
+.headers {
+  border-bottom: 1px solid #e5e5e5;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  button {
+    margin-right: 16px;
+  }
+}
+.genTitle {
+  display: flex;
+  align-items: center;
+  .title {
+    flex-basis: 300px;
+    line-height: 30px;
+  }
+  .extra {
+    flex: 1;
+    text-align: right;
+    padding-right: 16px;
+    i {
+      margin: 8px;
+      &:hover {
+        color: #3398db;
+      }
+    }
+  }
+}
+
+.genChildren {
+  .row {
+    display: flex;
+    .radio {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+.tips {
+  padding: 16px;
+  text-align: center;
+  color: #ccc;
+  border-bottom: 1px solid #ccc;
+}
+
+.Panel {
+  :global {
+    .ant-collapse-header {
+      padding: 4px 0 4px 32px !important;
+    }
+  }
+}
+
+.title {
+  :global {
+    .ant-form-item {
+      margin-bottom: 0 !important;
+    }
+  }
+}

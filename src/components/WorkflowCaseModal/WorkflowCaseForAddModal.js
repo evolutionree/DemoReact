@@ -1,12 +1,14 @@
 import React, { PropTypes, Component } from 'react';
-import { Modal, Form, message, Button } from 'antd';
+import { Modal, message, Button } from 'antd';
 import { preAddCase, addCase } from '../../services/workflow';
+import { addDocumentCase } from '../../services/document';
 import WorkflowCaseForm from './WorkflowCaseForm';
+import FlowChartViewer from '../../components/FlowChartViewer';
 
 // 1. 预提交审批 => 提交审批(不用选审批人) => resolve
 // 2. 预提交审批 => 弹出审批选人界面(需要选审批人) => resolve
 // nodestate // -1已结束 0下一步审批 1会审等待 2到达结束(将直接提交审批，然后返回提交成功200/失败201)
-export function autoAddCaseItem (isAddCase, dataModel) {
+export function autoAddCaseItem(isAddCase, dataModel) {
   const params = isAddCase ? {
     datatype: 1,
     casemodel: dataModel
@@ -93,14 +95,15 @@ class WorkflowCaseForAddModal extends Component {
   };
 
   onOk = () => {
+    if (this.state.modalPending) return;
     this.form.validateFields((err, values) => {
       if (err) return;
 
-      const { isAddCase, dataModel } = this.props;
+      const { isAddCase, dataModel, isAddDocumentCase } = this.props;
       const params = {
         nodeid: this.state.nodeData.nodeinfo.nodeid || '00000000-0000-0000-0000-000000000000',
-        handleuser: values.handleuser.join(','),
-        copyuser: values.copyuser.join(',')
+        handleuser: [...new Set(values.handleuser)].join(','),
+        copyuser: [...new Set(values.copyuser)].join(',')
       };
       if (isAddCase) {
         params.datatype = 1;
@@ -112,7 +115,8 @@ class WorkflowCaseForAddModal extends Component {
       this.setState({ modalPending: true });
       // TODO addCaseItemMultiple
       // const execFn = typeof this.props.caseId === 'string' ? addCaseItem : addCaseItemMultiple;
-      addCase(params).then(result => {
+      const fun = isAddDocumentCase ? addDocumentCase : addCase;
+      fun(params).then(result => {
         this.setState({ modalPending: false });
         message.success('提交成功');
         this.props.onDone(result);
@@ -124,11 +128,12 @@ class WorkflowCaseForAddModal extends Component {
   };
 
   render() {
-    const { zIndex = 1000 } = this.props;
+    const { zIndex = 1000, dataModel = {} } = this.props;
     const { nodeinfo = {} } = this.state.nodeData || {};
     const footer = [
+      <FlowChartViewer key={dataModel.flowid} flowId={dataModel.flowid} />,
       <Button key="cancel" onClick={this.props.onCancel}>取消</Button>,
-      <Button key="ok" onClick={this.onOk}>确定</Button>
+      <Button key="ok" onClick={this.onOk} loading={this.state.modalPending}>确定</Button>
     ];
     return (
       <Modal
@@ -143,6 +148,7 @@ class WorkflowCaseForAddModal extends Component {
           ref={ref => this.form = ref}
           caseNodes={this.state.nodeData ? [this.state.nodeData] : []}
           selectedNode={this.state.nodeData}
+          dataRange={1} // 获取全部人员
         />
       </Modal>
     );

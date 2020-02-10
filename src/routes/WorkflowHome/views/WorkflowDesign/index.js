@@ -279,7 +279,7 @@ class WorkflowDesign extends Component {
   }
 
   render() {
-    const { flowSteps, flowPaths } = this.props;
+    const { flowSteps, flowPaths, showModals, flowId, editingPath, flowEntities, saveBranchCondition, cancelBranchCondition } = this.props;
     const { jspInstance } = this.state;
     return (
       <div id="flowPanel" style={{ position: 'relative' }} onClick={this.onClickContainer}>
@@ -317,15 +317,22 @@ class WorkflowDesign extends Component {
             </div>
           ) : 'loading...'}
           <FlowStepModal />
-          <FlowBranchConditionModal />
+          <FlowBranchConditionModal
+            visible={/branch/.test(showModals)}
+            editingPath={editingPath}
+            flowEntities={flowEntities}
+            flowId={flowId}
+            save={saveBranchCondition}
+            cancel={cancelBranchCondition}
+          />
         </FlowContainer>
         {!flowSteps.length &&
-        <Button onClick={this.props.newFlow} style={{ position: 'absolute', right: '130px', top: '30px', zIndex: 1 }}>
-          生成
+          <Button onClick={this.props.newFlow} style={{ position: 'absolute', right: '130px', top: '30px', zIndex: 1 }}>
+            生成
         </Button>}
         {!!flowSteps.length &&
-        <Button onClick={this.props.createNode} style={{ position: 'absolute', right: '130px', top: '30px', zIndex: 1 }}>
-          添加节点
+          <Button onClick={this.props.createNode} style={{ position: 'absolute', right: '130px', top: '30px', zIndex: 1 }}>
+            添加节点
         </Button>}
         <Button onClick={this.submit} style={{ position: 'absolute', right: '50px', top: '30px', zIndex: 1 }}>保存</Button>
       </div>
@@ -354,6 +361,12 @@ export default connect(
       },
       userDisConnectNode(connInfo) {
         dispatch({ type: 'workflowDesign/userDisConnectNode', payload: connInfo });
+      },
+      saveBranchCondition(ruleId) {
+        dispatch({ type: 'workflowDesign/saveBranchRule', payload: ruleId });
+      },
+      cancelBranchCondition() {
+        dispatch({ type: 'workflowDesign/cancelBranchRule' });
       }
     };
   }

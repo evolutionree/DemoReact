@@ -34,13 +34,15 @@ class WorkflowFormModal extends Component {
       this.fetchRelEntities();
 
       if (editingRecord) {
-        const { config, ...values } = editingRecord;
+        const { config, isallowtransfer, isallowsign, ...values } = editingRecord;
 
         this.setState({ controlEntranceFlow: true }, () => {
           form.setFieldsValue({
             ...values,
             ...config,
-            expireflag: editingRecord.expireday > 0
+            expireflag: editingRecord.expireday > 0,
+            isallowtransfer,
+            isallowsign
           });
         });
       } else {
@@ -98,12 +100,21 @@ class WorkflowFormModal extends Component {
   //   }
   //   callback();
   // };
-  
+
   onCancel = () => {
     const { form: { resetFields }, cancel } = this.props;
     resetFields();
     cancel();
   }
+
+  // onHandleChange = (key, e) => { // 互斥操作
+  //   const { form: { setFieldsValue } } = this.props
+  //   if (key === 'isallowtransfer' && e.target.value === 1) {
+  //     setFieldsValue({ isallowsign: 0 })
+  //   } else if (key === 'isallowsign' && e.target.value === 1) {
+  //     setFieldsValue({ isallowtransfer: 0 })
+  //   }
+  // }
 
   onOk = () => {
     const { form, editingRecord } = this.props;
@@ -187,6 +198,45 @@ class WorkflowFormModal extends Component {
               </Radio.Group>
             )}
           </FormItem>
+
+          <FormItem label="允许转办">
+            {getFieldDecorator('isallowtransfer', {
+              initialValue: 0,
+              normalize: (value) => (value || 0),
+              rules: [{ required: true, message: '请设置是否允许转办' }]
+            })(
+              <Radio.Group>
+                <Radio value={1}>是</Radio>
+                <Radio value={0}>否</Radio>
+              </Radio.Group>
+            )}
+          </FormItem>
+
+          <FormItem label="允许加签">
+            {getFieldDecorator('isallowsign', {
+              initialValue: 0,
+              rules: [{ required: true, message: '请设置是否允许加签' }]
+            })(
+              <Radio.Group>
+                <Radio value={1}>是</Radio>
+                <Radio value={0}>否</Radio>
+              </Radio.Group>
+            )}
+          </FormItem>
+
+          <FormItem label="允许重新发起审批后跳过上次已通过的节点">
+            {getFieldDecorator('isneedtorepeatapprove', {
+              initialValue: 0,
+              normalize: (value) => (value || 0),
+              rules: [{ required: true, message: '请设置是否允许重新发起审批后跳过上次已通过的节点' }]
+            })(
+              <Radio.Group>
+                <Radio value={1}>是</Radio>
+                <Radio value={0}>否</Radio>
+              </Radio.Group>
+            )}
+          </FormItem>
+
           {
             controlEntranceFlow ?
               <FormItem label="是否入口工作流">

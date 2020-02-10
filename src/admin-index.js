@@ -1,12 +1,12 @@
 import dva from 'dva';
 import { routerRedux } from 'dva/router';
-import { message, Table, Pagination, Button, Select, TreeSelect, DatePicker, Modal, Input, Cascader} from 'antd';
+import { message, Table, Pagination, Button, Select, TreeSelect, DatePicker, Modal, Input, Cascader } from 'antd';
 
 function getPopupContainer(elem) {
-  if (!elem) return document.body;
-  const parentModal = $(elem).parents('.ant-modal-body')[0];
-  const entcomminfoBody = $(elem).parents('.entcomminfoBody')[0];
-  return parentModal && parentModal.offsetHeight > 500 && parentModal || entcomminfoBody || document.body;
+    if (!elem) return document.body;
+    const parentModal = $(elem).parents('.ant-modal-body')[0];
+    const entcomminfoBody = $(elem).parents('.entcomminfoBody')[0];
+    return parentModal && parentModal.offsetHeight > 500 && parentModal || entcomminfoBody || document.body;
 }
 function setDefaultProps(Component, defaultProps) {
     Component.defaultProps = {
@@ -56,28 +56,28 @@ const app = dva({
     initialState: {
 
     },
-    onStateChange() {},
+    onStateChange() { },
     onError(error, dispatch) {
         console.error(error);
         if (error.response && error.response.status === 401) {
             if (error.error_code === -25012) {
-              message.error(error.message, 10);
+                message.error(error.message, 10);
             }
             dispatch({
-              type: 'app/logout'
+                type: 'app/logout'
             });
         } else if (error.errorCode && error.message) {
             message.error(error.message);
         }
     },
-    onEffect(effect, {put}, model, actionType) {
+    onEffect(effect, { put }, model, actionType) {
         // actionType以后缀__结尾的，不装载loading
         if (/__$/.test(actionType)) {
-          return function*(...args) {
-            yield effect(...args);
-          };
+            return function* (...args) {
+                yield effect(...args);
+            };
         }
-        return function*(...args) {
+        return function* (...args) {
             yield put({
                 type: '@@loading/PUSH'
             });
@@ -97,31 +97,31 @@ const app = dva({
             return state;
         },
         modalManage(state = {
-                inRequestModal: '', // 请求显示modal
-                currModal: '' // modalName
-            }, action) {
+            inRequestModal: '', // 请求显示modal
+            currModal: '' // modalName
+        }, action) {
             switch (action.type) {
-            case 'modalManage/hideModal':
-                return {
-                    ...state,
-                    currModal: ''
-                };
-            case 'modalManage/requestModal':
-                return {
-                    ...state,
-                    currModal: action.payload
-                };
-            case 'modalManage/rejectModal':
-                if (state.currModal === action.payload) {
+                case 'modalManage/hideModal':
                     return {
                         ...state,
                         currModal: ''
                     };
-                } else {
+                case 'modalManage/requestModal':
+                    return {
+                        ...state,
+                        currModal: action.payload
+                    };
+                case 'modalManage/rejectModal':
+                    if (state.currModal === action.payload) {
+                        return {
+                            ...state,
+                            currModal: ''
+                        };
+                    } else {
+                        return state;
+                    }
+                default:
                     return state;
-                }
-            default:
-                return state;
             }
         }
     }
@@ -138,6 +138,7 @@ app.model(require('./models/permission'));
 app.model(require('./models/navHistory'));
 app.model(require('./models/powerEdit'));
 app.model(require('./models/printEntity'));
+app.model(require('./models/jshistory'));
 app.model(require('./models/webIM'));
 
 // 4. Router

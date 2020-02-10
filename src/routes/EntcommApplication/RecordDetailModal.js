@@ -3,7 +3,9 @@ import { connect } from 'dva';
 import { Button } from 'antd';
 import EntcommDetailModal from '../../components/EntcommDetailModal';
 import { getFunctionbutton } from '../../services/entcomm';
+
 const style = { display: 'inline-block', marginLeft: '6px' };
+
 const RecordDetailModal = WrappedComponent => {
   class RecordDetail extends Component {
     componentWillReceiveProps(nextProps) {
@@ -53,6 +55,7 @@ const RecordDetailModal = WrappedComponent => {
   return connect(
     state => {
       const { showModals, entityName, extraToolbarData, extraButtonData } = state.entcommApplication;
+
       const match = showModals && showModals.match(/recordDetail\?([^:]+):(.+)$/);
       return {
         visible: !!match,

@@ -1,0 +1,92 @@
+.warpViewer {
+    display: inline-block;
+}
+.warpViewerModal {
+    :global(.ant-modal-body) {
+        padding: 0 !important;
+    }
+    .flowcontainer {
+        position: relative;
+        width: 80vw;
+        height: 70vh;
+        transform: translateZ(0);
+        overflow: auto;
+        user-select: none;
+        z-index: 1;
+        .flownodeWrap {
+            position: absolute;
+            cursor: pointer;
+            color: #666;
+            .END {
+                &.isPassed {
+                    background-color: #52c41a;
+                    border-color: #52c41a;
+                    color: #fff
+                }
+                width: 100px;
+                height: 36px;
+                line-height: 36px;
+                text-align: center;
+                border-radius: 5px;
+                background-color: #f2f2f2;
+                border: 1px solid #bcbcbc;
+            }
+            .REVIEW {
+                width: 180px;
+                .title {
+                    &.isPassed {
+                        background-color: #52c41a;
+                        border-color: #52c41a;
+                        color: #fff
+                    }
+                    position: relative;
+                    padding: 10px 50px 10px 12px;
+                    border-top-left-radius: 5px;
+                    border-top-right-radius: 5px;
+                    background-color: #f2f2f2;
+                    border: 1px solid #bcbcbc;
+                    .content {
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+                }
+                .body {
+                    &.isPassed {
+                        border-color: #52c41a;
+                    }
+                    padding: 10px 12px;
+                    background-color: #fff;
+                    border: 1px solid #bcbcbc;
+                    border-top: none;
+                    cursor: pointer;
+                }
+            }
+        }
+       
+        :global {
+            .jtk-connector {
+              z-index: 110;
+            }
+            .jtk-connector.connector-active path {
+              stroke: #3398db;
+            }
+            .jtk-connector.connector-active {
+              z-index: 210;
+            }
+            .jtk-connector:hover path {
+              stroke: #3398db;
+              cursor: pointer;
+            }
+            .jtk-connector:hover {
+              z-index: 210;
+            }
+          
+            .jtk-endpoint {
+              z-index: 120;
+              border: 1px solid transparent;
+              display: none;
+            }
+        }
+    }
+}

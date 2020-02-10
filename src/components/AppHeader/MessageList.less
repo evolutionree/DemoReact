@@ -9,6 +9,34 @@
   box-shadow: rgba(0, 0, 0, 0.176) 0px 6px 12px;
   border-radius: 5px;
   overflow: hidden;
+  .approveWrap {
+    position: relative;
+    .RadioTab {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      display: flex;
+      text-align: center;
+      z-index: 1;
+      :global(.ant-radio-button-wrapper) {
+        flex: 1;
+      }
+    }
+    .approveUl {
+      position: relative;
+      .approveFlag {
+        margin-right: 8px;
+        float: right;
+      }
+      .approveImg {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 100px;
+        width: 50px;
+      }
+    }
+  }
   .ulWrap {
     overflow-x: hidden;
     overflow-y: auto;
@@ -53,7 +81,6 @@
           height: 22px;
           line-height: 22px;
           border: none;
-
           white-space: nowrap;
           text-overflow: ellipsis;
           overflow: hidden;

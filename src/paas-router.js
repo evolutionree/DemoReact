@@ -31,6 +31,7 @@ import DicTypePage from './routes/DicType';
 import WorkflowList from './routes/WorkflowList';
 import WorkflowHome from './routes/WorkflowHome';
 import WorkflowDesign from './routes/WorkflowHome/views/WorkflowDesign';
+import WorkflowNotify from './routes/WorkflowHome/views/WorkflowNotify';
 
 import SystemNotifications from './routes/SystemNotifications';
 
@@ -113,7 +114,8 @@ const appRoutes = [
     comp: WorkflowHome,
     model: require('./models/workflowHome'),
     children: [
-      { path: 'design', comp: WorkflowDesign, model: require('./models/workflowDesign') }
+      { path: 'design', comp: WorkflowDesign, model: require('./models/workflowDesign') },
+      { path: 'notify', comp: WorkflowNotify, model: require('./models/workflowNotify') }
     ]
   },
   { path: 'systemnotifications', comp: SystemNotifications, model: require('./models/systemNotifications') },

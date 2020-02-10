@@ -197,6 +197,7 @@ class SelectFlowUser extends Component {
           </Radio>
           <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 10 }}>
             <SelectUser
+              dataRange={1}
               placeholder="请选择审批人"
               style={{ width: '260px', height: 'inherit' }}
               value={_.includes(special, type) ? data.userid : ''}
@@ -417,7 +418,7 @@ class SelectFlowUser extends Component {
               _.includes(reportRelation, type) && (reportrelationdata && reportrelationdata.type * 1) === 3 &&
               <SelectField
                 keys="entityid"
-                style={{ width: 160 }}  
+                style={{ width: 160 }}
                 value={(_.includes(reportRelation, type) && reportrelationdata) ? data.entityid : undefined}
                 placeholder="请选择表单"
                 onChange={(entityid, fieldlabel) => this.onDataChange({ entityid, fieldlabel })}
