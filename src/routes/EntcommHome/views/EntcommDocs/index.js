@@ -10,17 +10,18 @@ import { formatFileSize } from '../../../../utils';
 const Column = Table.Column;
 
 function EntcommDocs({
-  checkFunc,
-  docTypes,
-  currentDocType,
-  list,
-  currentItems,
-  selectItems,
-  selectDocType,
-  onUpload,
-  download,
-  delDoc
-}) {
+    checkFunc,
+    docTypes,
+    currentDocType,
+    list,
+    currentItems,
+    selectItems,
+    selectDocType,
+    onUpload,
+    download,
+    delDoc,
+    onViewer
+  }) {
   const getLabel = folderId => {
     const match = _.find(docTypes, ['value', folderId]);
     return match ? match.label : '';
@@ -72,7 +73,13 @@ function EntcommDocs({
           render={(text, record) => (
             <div className={styles.item}>
               <div className={styles.rowone}>
-                <span className={styles.title}>{record.filename}</span>
+                <span className={styles.title}>
+                  {
+                    /pdf/.test(record.filename)
+                    ? <a onClick={() => onViewer(record)} title="点击预览">{record.filename}</a>
+                    : record.filename
+                  }
+                </span>
                 <Tag className={styles.tag} onClick={() => { selectDocType(record.folderid); }}>{getLabel(record.folderid)}</Tag>
               </div>
               <div className={styles.rowtwo}>
@@ -109,6 +116,9 @@ export default connect(
       download() {
         dispatch({ type: 'entcommDocs/download' });
       },
+      onViewer: (record) => {
+        dispatch({ type: 'app/viewPdf', payload: record });
+      },
       delDoc() {
         Modal.confirm({
           title: '确定删除选中的文档吗？',
@@ -117,6 +127,6 @@ export default connect(
           }
         });
       }
-    }
+    };
   }
 )(EntcommDocs);

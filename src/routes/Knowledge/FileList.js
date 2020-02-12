@@ -23,7 +23,8 @@ function UserList({
   onDownload,
   del,
   selectItems,
-  checkFunc
+  checkFunc,
+  onViewer
 }) {
   const currentFolder = _.find(folder, ['folderid', queries.folderId]);
   return (
@@ -78,9 +79,9 @@ function UserList({
         }}
       >
         <Column title="文档名称" dataIndex="filename" key="filename" render={(val, record) => (
-          checkFunc('FileDownload')
-            ? <a onClick={onDownload.bind(null, record.documentid, record.fileid)}>{val}</a>
-            : <span>{val}</span>
+          /pdf/.test(record.filename)
+          ? <a onClick={() => onViewer(record)} title="点击预览">{val}</a>
+          : <span>{val}</span>
         )} />
         <Column title="目录" dataIndex="foldername" key="foldername" />
 
@@ -124,6 +125,9 @@ function mapDispatchToProps(dispatch, { location }) {
     onDownload: (documentId, fileid) => {
       dispatch({ type: 'knowledge/onDownload', payload: documentId });
       downloadFile(`/api/fileservice/download?fileid=${fileid}`);
+    },
+    onViewer: (record) => {
+      dispatch({ type: 'app/viewPdf', payload: record });
     },
     del: () => {
       Modal.confirm({

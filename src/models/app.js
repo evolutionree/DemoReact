@@ -33,7 +33,9 @@ export default {
     noMinWidth: false,
     redirectPath: '/',
     langlist: [],
-    currentLocale: '' //系统设置默认语言【简体中文】
+    currentLocale: '', //系统设置默认语言【简体中文】
+    showPdfViewer: false, // pdf预览相关
+    pdfFile: {} // pdf预览相关
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -235,6 +237,13 @@ export default {
       return {
         ...state,
         imageGallery: { images: payload }
+      };
+    },
+    viewPdf(state, { payload }) {
+      return {
+        ...state,
+        showPdfViewer: true,
+        pdfFile: payload
       };
     },
     viewMapLocation(state, { payload }) {

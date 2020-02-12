@@ -214,8 +214,10 @@ Attachment.View = ({ value, dispatch }) => {
                     const src = `/api/fileservice/read?fileid=${pictureItem.fileid}`;
                     return { src, active: src === currentImgSrc };
                   }) });
+                } else if (/pdf/.test(file.filename)) {
+                  dispatch({ type: 'app/viewPdf', payload: file });
                 }
-              }} title={/jpeg|jpg|png|gif|bmp/.test(file.filename) ? '点击可预览图片' : null}><a>{file.filename}</a></span>
+              }} title={/jpeg|jpg|png|gif|bmp|pdf/.test(file.filename) ? '点击预览' : null}><a>{file.filename}</a></span>
           </li>
         ))}
       </ul> : <span style={{ color: '#999999' }}>(空)</span> }

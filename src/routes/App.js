@@ -15,8 +15,9 @@ import ImageGallery from '../components/ImageGallery';
 import MapModal from '../components/MapModal';
 import JsonEditModal from '../components/JsonEditModal';
 import IntlWrap from './IntlWrap'; //国际版(多语言)容器
+import PdfView from '../components/PdfViewer';
 
-const App = ({ children, location, siderFold, loading, dispatch, user, noMinWidth, redirectPath }) => {
+const App = ({ children, location, siderFold, loading, dispatch, user, noMinWidth, redirectPath, showPdfViewer, pdfFile }) => {
   const cls = classnames({ [styles.app]: true, [styles.fold]: siderFold, [styles.noMinWidth]: noMinWidth });
   return (
     <div className={cls}>
@@ -30,6 +31,11 @@ const App = ({ children, location, siderFold, loading, dispatch, user, noMinWidt
       <ModifyPwdModal />
       <ModifyAvatarModal />
       <ImageGallery />
+      <PdfView
+        file={pdfFile}
+        visible={showPdfViewer}
+        onCancel={() => dispatch({ type: 'app/putState', payload: { showPdfViewer: false } })}
+      />
       <MapModal />
       <UserFeedBackModal />
       <ImportModal />
