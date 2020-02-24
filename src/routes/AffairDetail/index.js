@@ -431,7 +431,7 @@ class AffairDetail extends Component {
     const nodeid = flowOperates.nodeid || '';
     const operatetype = flowOperates.operatetype || 0;
     const originaluserid = flowOperates.originaluserid || '';
-    const showNextSign = flowOperates.signcount === 0 && [6, 8].includes(selectedOperate)
+    const showNextSign = nodetype !== 2 && flowOperates.signcount === 0
     const signstatus = flowOperates.signstatus;
 
     const hasOperatetype = signstatus === 1; // 加签过来的数据
@@ -457,8 +457,8 @@ class AffairDetail extends Component {
 
     const isFirstUser = flowDetail.reccreator === currentUser.userid;
 
-    const showTransfer = nodetype !== 2 && isallowtransfer === 1 && (!(isFirstUser && flowOperates.allow === 0));
-    const showSign = nodetype !== 2 && isallowsign === 1 && (!(isFirstUser && flowOperates.allow === 0));
+    const showTransfer = isallowtransfer === 1 && (!(isFirstUser && flowOperates.allow === 0));
+    const showSign = isallowsign === 1 && (!(isFirstUser && flowOperates.allow === 0));
 
     const isFlowFinish = flowDetail.auditstatus === 1;
     const modeltype = flowDetail.modeltype;
@@ -513,138 +513,157 @@ class AffairDetail extends Component {
     if (rejectRadio && nodetype !== 2) showRadioList.push(rejectRadio);
 
     return (
-      <Page title="审批详情" showGoBack goBackPath="/affair-list">
-        <div className={styles.title}>
-          <span>{`${flowDetail.flowname}【${flowDetail.reccode}】`}</span>
-          {showWithDrawBtn && <Button style={{ float: 'right', margin: '10px 130px 0 0' }} onClick={this.onWithDraw}>撤回</Button>}
+      <Page
+        title="审批详情"
+        showGoBack
+        goBackPath="/affair-list"
+        contentStyle={{ height: document.body.offsetHeight - 128, overflow: 'hidden', overflowY: 'auto' }}
+      >
+        <div style={{
+          position: 'sticky',
+          top: -8,
+          paddingTop: 8,
+          zIndex: 1,
+          backgroundColor: '#ffffff',
+          maxHeight: (document.body.offsetHeight - 128) * 0.45,
+          overflowY: 'auto',
+          marginRight: -18,
+          paddingRight: 18,
+          borderBottom: '1px solid #cccccc'
+        }}>
+          <div className={styles.title}>
+            <span>{`${flowDetail.flowname}【${flowDetail.reccode}】`}</span>
+            {showWithDrawBtn && <Button style={{ float: 'right', margin: '10px 130px 0 0' }} onClick={this.onWithDraw}>撤回</Button>}
 
-          <div className={styles.viewerBtn}>
-            <FlowChartViewer
-              key={flowId}
-              flowId={flowId}
-              caseId={caseId}
-              versionnum={flowDetail.vernum}
-            />
+            <div className={styles.viewerBtn}>
+              <FlowChartViewer
+                key={flowId}
+                flowId={flowId}
+                caseId={caseId}
+                versionnum={flowDetail.vernum}
+              />
+            </div>
           </div>
-        </div>
-        <div className={styles.metas}>
-          <span>申请人：</span>
-          <span>{flowDetail.reccreator_name}</span>
-          <span className={styles.lebal}>提交时间：</span>
-          <span>{flowDetail.reccreated}</span>
-          <span>{flowDetail.recname}</span>
-        </div>
+          <div className={styles.metas}>
+            <span>申请人：</span>
+            <span>{flowDetail.reccreator_name}</span>
+            <span className={styles.lebal}>提交时间：</span>
+            <span>{flowDetail.reccreated}</span>
+            <span>{flowDetail.recname}</span>
+          </div>
 
-        {
-          showSelectRadio && (
-            <div>
-              {
-                <div className={styles.operats}>
-                  <Radio.Group value={selectedOperate} onChange={e => {
-                    this.setState({ files: [], selectLunchValue: 1 });
-                    putState({ selectedOperate: e.target.value, suggest: configSelect[configSelect.findIndex(o => o.id === e.target.value)].label });
-                  }}>
-                    {showRadioList}
-                  </Radio.Group>
-                </div>
-              }
+          {
+            showSelectRadio && (
+              <div>
+                {
+                  <div className={styles.operats}>
+                    <Radio.Group value={selectedOperate} onChange={e => {
+                      this.setState({ files: [], selectLunchValue: 1 });
+                      putState({ selectedOperate: e.target.value, suggest: configSelect[configSelect.findIndex(o => o.id === e.target.value)].label });
+                    }}>
+                      {showRadioList}
+                    </Radio.Group>
+                  </div>
+                }
 
-              {/*columnconfig 审批可改字段*/
-                selectedOperate === 1 && flowOperates.edit === 0 && nodetype !== 2 &&
-                <div>
-                  {columnConfigFormsArray.map(item => (
-                    Array.isArray(item.protocols) && item.protocols.length ? (
-                      <DynamicFormAdd
-                        horizontal={false}
-                        key={item.entityId}
-                        entityId={item.entityId}
-                        entityTypeId={item.entityId}
-                        fields={item.protocols}
-                        value={columnConfigForms[item.entityId] || {}}
-                        onChange={value => putState({ columnConfigForms: { ...columnConfigForms, [item.entityId]: value } })}
-                        ref={inst => this.columnConfigFormInstance[item.entityId] = inst}
-                        formOrigin="affair"
-                        mode="EDIT"
-                        excutingJSStatusChange={this.excutingJSStatusChange}
-                      />
-                    ) : null
-                  ))}
-                </div>
-              }
+                {/*columnconfig 审批可改字段*/
+                  selectedOperate === 1 && flowOperates.edit === 0 && nodetype !== 2 &&
+                  <div>
+                    {columnConfigFormsArray.map(item => (
+                      Array.isArray(item.protocols) && item.protocols.length ? (
+                        <DynamicFormAdd
+                          horizontal={false}
+                          key={item.entityId}
+                          entityId={item.entityId}
+                          entityTypeId={item.entityId}
+                          fields={item.protocols}
+                          value={columnConfigForms[item.entityId] || {}}
+                          onChange={value => putState({ columnConfigForms: { ...columnConfigForms, [item.entityId]: value } })}
+                          ref={inst => this.columnConfigFormInstance[item.entityId] = inst}
+                          formOrigin="affair"
+                          mode="EDIT"
+                          excutingJSStatusChange={this.excutingJSStatusChange}
+                        />
+                      ) : null
+                    ))}
+                  </div>
+                }
 
-              {
-                (
-                  selectedOperate === 4 ||
-                  (selectedOperate === 1 && flowOperates.edit === 1 && nodetype !== 2)
-                ) &&
-                Array.isArray(entityEditProtocol) && entityEditProtocol.length &&
-                <DynamicFormEdit
-                  entityId={flowDetail.entityid}
-                  entityTypeId={(entityDetail && entityDetail.rectype) || flowDetail.entityid}
-                  fields={entityEditProtocol}
-                  value={editData}
-                  onChange={onEditDataChange}
-                  ref={node => this.editFormRef = node}
-                  formGlobalJS={formGlobalJS}
-                />
-              }
-
-              {this.shouldShowUserForm() && (
-                <WorkflowCaseForm
-                  ref={ref => this.workflowCaseFormRef = ref}
-                  caseNodes={nextNodesData}
-                  selectedNode={selectedNextNode}
-                  onSelectedNodeChange={val => putState({ selectedNextNode: val })}
-                  dataRange={1} // 获取全部人员
-                />
-              )}
-              <div className={styles.comment}>
-                <div className={styles.commentinput}>
-                  <Input.TextArea
-                    value={suggest}
-                    onChange={e => putState({ suggest: e.target.value })}
-                    placeholder="请输入审批意见"
-                    autosize={{ minRows: 2, maxRows: 6 }}
+                {
+                  (
+                    selectedOperate === 4 ||
+                    (selectedOperate === 1 && flowOperates.edit === 1 && nodetype !== 2)
+                  ) &&
+                  Array.isArray(entityEditProtocol) && entityEditProtocol.length &&
+                  <DynamicFormEdit
+                    entityId={flowDetail.entityid}
+                    entityTypeId={(entityDetail && entityDetail.rectype) || flowDetail.entityid}
+                    fields={entityEditProtocol}
+                    value={editData}
+                    onChange={onEditDataChange}
+                    ref={node => this.editFormRef = node}
+                    formGlobalJS={formGlobalJS}
                   />
-                </div>
-                <div className={styles.commentfooter}>
-                  <div className={styles.upload}>
-                    <Attachment
-                      limit={6}
-                      value={files}
-                      onChange={fs => this.setState({ files: fs })}
-                      beforeUpload={() => this.setState({ upLoading: true })}
-                      afterUpload={() => this.setState({ upLoading: false })}
+                }
+
+                {this.shouldShowUserForm() && (
+                  <WorkflowCaseForm
+                    ref={ref => this.workflowCaseFormRef = ref}
+                    caseNodes={nextNodesData}
+                    selectedNode={selectedNextNode}
+                    onSelectedNodeChange={val => putState({ selectedNextNode: val })}
+                    dataRange={1} // 获取全部人员
+                  />
+                )}
+                <div className={styles.comment}>
+                  <div className={styles.commentinput}>
+                    <Input.TextArea
+                      value={suggest}
+                      onChange={e => putState({ suggest: e.target.value })}
+                      placeholder="请输入审批意见"
+                      autosize={{ minRows: 2, maxRows: 6 }}
                     />
                   </div>
+                  <div className={styles.commentfooter}>
+                    <div className={styles.upload}>
+                      <Attachment
+                        limit={6}
+                        value={files}
+                        onChange={fs => this.setState({ files: fs })}
+                        beforeUpload={() => this.setState({ upLoading: true })}
+                        afterUpload={() => this.setState({ upLoading: false })}
+                      />
+                    </div>
 
-                  <div className={styles.submit}>
-                    {selectedNextNode && selectedNextNode.nodeinfo.flowtype === 0 && (
-                      <Button onClick={this.props.closeFlow}>关闭流程</Button>
-                    )}
-                    {
-                      <Button
-                        onClick={() => {
-                          if (hasOperatetype) {
-                            this.onSubmithasOperatetype({ originaluserid, nodeid });
-                          } else if ([0, 2, 4].includes(selectedOperate)) {
-                            this.onConfirmModal(selectedOperate);
-                          } else {
-                            this.onSubmitPreAudit();
-                          }
-                        }}
-                        disabled={this.state.upLoading}
-                        loading={this.props.submitBtnLoading || this.state.excutingJSLoading || this.state.upLoading}
-                      >
-                        提交
+                    <div className={styles.submit}>
+                      {selectedNextNode && selectedNextNode.nodeinfo.flowtype === 0 && (
+                        <Button onClick={this.props.closeFlow}>关闭流程</Button>
+                      )}
+                      {
+                        <Button
+                          onClick={() => {
+                            if (hasOperatetype) {
+                              this.onSubmithasOperatetype({ originaluserid, nodeid });
+                            } else if ([0, 2, 4].includes(selectedOperate)) {
+                              this.onConfirmModal(selectedOperate);
+                            } else {
+                              this.onSubmitPreAudit();
+                            }
+                          }}
+                          disabled={this.state.upLoading}
+                          loading={this.props.submitBtnLoading || this.state.excutingJSLoading || this.state.upLoading}
+                        >
+                          提交
                       </Button>
-                    }
+                      }
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )
-        }
+            )
+          }
+        </div>
+
 
         <Collapse bordered={false} defaultActiveKey={['1', '2', '3', '4']}>
           {
@@ -711,7 +730,7 @@ class AffairDetail extends Component {
           currentUser={currentUser}
           suggest={suggest}
           files={files}
-          showNextSign={showNextSign}
+          showNextSign={showNextSign && [6, 8].includes(selectedOperate)}
           checkedSign={selectedOperate === 8 ? 1 : 2}
           choiceStatus={selectedOperate === 8 ? 6 : selectedOperate}
           nodenum={nodenum}

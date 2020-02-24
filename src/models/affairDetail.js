@@ -31,8 +31,8 @@ export default {
     jointUsers: [],
     nextNodesData: [],
     selectedNextNode: null,
-    submitBtnLoading: false,
-    showWithDrawBtn: false
+    showWithDrawBtn: false,
+    submitBtnLoading: false
   },
   subscriptions: {
     setup({ dispatch, history }) {
