@@ -356,7 +356,7 @@ class EntcommAddModal extends Component {
   };
 
   onWorkflowCaseCancel = () => {
-    this.setState({ showWorkflowCaseModal: false, showFormModal: true });
+    this.setState({ showWorkflowCaseModal: false, confirmLoading: false, showFormModal: true });
   };
 
   onWorkflowCaseDone = (result) => {
