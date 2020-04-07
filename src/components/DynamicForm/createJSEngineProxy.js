@@ -735,7 +735,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       // }
     };
 
-    handleFieldControlFocus = (fieldName) => {
+    handleFieldControlFocus = (fieldName, callback) => {
       this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(true);
       setTimeout(() => {
         const filterJS = this.fieldExpandFilterJS[fieldName];
@@ -748,6 +748,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
           this.excuteJS(filterJS, `field focused__${fieldName}`);
         }
         this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(false);
+        if (callback) callback();
       }, 0);
     };
 

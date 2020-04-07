@@ -56,7 +56,7 @@ class DynamicFormBase extends Component {
     horizontal: false,
     fields: [],
     value: {},
-    onFieldControlFocus: () => {}
+    onFieldControlFocus: () => { }
   };
 
   usage = 0; // 0新增，1编辑，2高级搜索
@@ -279,10 +279,10 @@ class DynamicFormBase extends Component {
     this[`fieldControlInst${fieldname}`] = ref;
   };
 
-  onFieldFocus = fieldName => {
+  onFieldFocus = (fieldName, callback) => {
     const { jsEngine } = this.props;
     if (jsEngine) {
-      jsEngine.handleFieldControlFocus(fieldName);
+      jsEngine.handleFieldControlFocus(fieldName, callback);
     }
   };
 

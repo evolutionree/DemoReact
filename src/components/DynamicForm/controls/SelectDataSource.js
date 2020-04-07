@@ -90,9 +90,10 @@ class SelectDataSource extends React.Component {
   showModal = () => {
     if (this.props.isReadOnly === 1) return;
     if (this.props.onFocus) {
-      this.props.onFocus();
+      this.props.onFocus(() => {
+        this.setState({ modalVisible: true });
+      });
     }
-    this.setState({ modalVisible: true });
   };
 
   hideModal = () => {

@@ -318,10 +318,10 @@ class DynamicFormBase extends Component {
     this[`fieldControlInst${fieldname}`] = ref;
   };
 
-  onFieldFocus = fieldName => {
+  onFieldFocus = (fieldName, callback) => {
     const { jsEngine } = this.props;
     if (jsEngine) {
-      jsEngine.handleFieldControlFocus(fieldName);
+      jsEngine.handleFieldControlFocus(fieldName, callback);
     }
   };
 

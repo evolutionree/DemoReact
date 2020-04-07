@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { is } from 'immutable';
 import SelectProductModal from './SelectProductModal';
 import styles from './SelectUser.less';
-import { Icon, Select } from "antd";
+import { Icon, Select } from 'antd';
 import { getProductdetail, searchproductformobile } from '../../../services/products';
 
 const Option = Select.Option;
@@ -25,7 +25,7 @@ class SelectProductBigData extends React.Component {
 
   constructor(props) {
     super(props);
-    let valMap = {};
+    const valMap = {};
     if (props.value_name) {
       const arrVal = props.value && props.value.split(',');
       const arrName = props.value_name && props.value_name.split(',');
@@ -47,7 +47,7 @@ class SelectProductBigData extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    let valMap = { ...this.state.valMap };
+    const valMap = { ...this.state.valMap };
     if (this.props.value_name !== nextProps.value_name) {
       const arrVal = nextProps.value && nextProps.value.split(',');
       const arrName = nextProps.value_name && nextProps.value_name.split(',');
@@ -94,7 +94,7 @@ class SelectProductBigData extends React.Component {
       this.props.onChange('', true);
       return;
     }
-    let valMap = { ...this.state.valMap };
+    const valMap = { ...this.state.valMap };
     val.forEach(item => {
       valMap[item.id] = item.name;
     });
@@ -116,18 +116,19 @@ class SelectProductBigData extends React.Component {
   parseTextValue = () => {
     const { value } = this.props;
     const { valMap } = this.state;
-    let arrVal = value ? value.split(',') : [];
-    let array = arrVal.map(val => ({ productid: val, productname: valMap[val] }));
-    let text = array.map(item => item.productname).join(',');
+    const arrVal = value ? value.split(',') : [];
+    const array = arrVal.map(val => ({ productid: val, productname: valMap[val] }));
+    const text = array.map(item => item.productname).join(',');
     return { text, array };
   };
 
   showModal = () => {
     if (this.props.isReadOnly === 1) return;
     if (this.props.onFocus) {
-      this.props.onFocus();
+      this.props.onFocus(() => {
+        this.setState({ modalVisible: true });
+      });
     }
-    this.setState({ modalVisible: true });
   };
 
   hideModal = () => {
@@ -136,7 +137,7 @@ class SelectProductBigData extends React.Component {
 
   handleOk = array => {
     this.hideModal();
-    let valMap = { ...this.state.valMap };
+    const valMap = { ...this.state.valMap };
     array.forEach(item => {
       valMap[item.productid] = item.productname;
     });
@@ -161,7 +162,7 @@ class SelectProductBigData extends React.Component {
 
   selectChange = (options, value) => {
     const selectData = options instanceof Array && options.filter(item => value && value.indexOf(item.productid) > -1);
-    let valMap = { ...this.state.valMap };
+    const valMap = { ...this.state.valMap };
     selectData.forEach(item => {
       valMap[item.productid] = item.productname;
     });
@@ -228,7 +229,7 @@ class SelectProductBigData extends React.Component {
         recids: productId
       }).then(result => {
         const data = result.data;
-        let valMap = { ...this.state.valMap };
+        const valMap = { ...this.state.valMap };
         data instanceof Array && data.map(item => {
           valMap[item.recid] = item.productname;
         });
@@ -277,13 +278,13 @@ class SelectProductBigData extends React.Component {
       <div className={cls} style={{ ...this.props.style }}>
         <div className={styles.inputSelectWrap}>
           <Select onChange={this.selectChange.bind(this, options)}
-                  onSearch={this.queryOptions}
-                  placeholder={this.props.placeholder}
-                  disabled={isReadOnly}
-                  mode={this.props.multiple === 1 ? 'multiple' : null}
-                  value={value}
-                  onFocus={this.selectFocus}
-                  allowClear
+            onSearch={this.queryOptions}
+            placeholder={this.props.placeholder}
+            disabled={isReadOnly}
+            mode={this.props.multiple === 1 ? 'multiple' : null}
+            value={value}
+            onFocus={this.selectFocus}
+            allowClear
           >
             {
               options instanceof Array && options.map(item => {
