@@ -43,7 +43,7 @@ class QrtzFormModal extends Component {
         triggertime: values.triggertime,
         actiontype: values.actiontype,
         actioncmd: values.actioncmd,
-        actionparameters: values.actionparameters,
+        actionparameters: Object().toString.call(values.actionparameters) === '[object Object]' ? JSON.stringify(values.actionparameters) : values.actionparameters,
         remark: values.remark
       };
       if (isEdit) {
