@@ -76,20 +76,17 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     }
 
     componentWillReceiveProps(nextProps) {
-      if (this.props.value !== nextProps.value) {
-        //console.log('valueChange', this.props.value, nextProps.value);
-      }
+      const { fields: oldFields } = this.props;
+      const { fields: newFields } = nextProps;
 
-      this.setState({ fields: nextProps.fields }, () => {
-        if (this.globalJS && !this.globalJSExecuted && nextProps.fields.length) {
-          if (!this.props.cacheId) { //暂存表单 不走全局JS
-            setTimeout(() => {
-              this.excuteJS(this.globalJS, 'global');
-            }, 0);
-          }
-          this.globalJSExecuted = true;
+      if (!_.isEqual(oldFields, newFields)) this.setState({ fields: newFields });
+
+      if (this.globalJS && !this.globalJSExecuted && newFields.length) {
+        if (!this.props.cacheId) { //暂存表单 不走全局JS
+          setTimeout(() => this.excuteJS(this.globalJS, 'global'), 0);
         }
-      });
+        this.globalJSExecuted = true;
+      }
 
       if (nextProps.origin === 'RelTableRow') { //来源于表格 为了不多次请求 全局JS 由父组件传（不然  表格多行会引起多次请求 ）
         const nextPropGlobalJS = nextProps.globalJS || {};
@@ -113,7 +110,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       //   if (nextVal !== lastVal) {
       //     // this.handleFieldValueChange(key);
       //   }
-      // });
+      // }); 
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -307,18 +304,9 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     setValue = (fieldName, value, decimalLength) => {
       try {
         const val = this.handleNumberValue(fieldName, value, decimalLength);
-        if (fieldName && typeof fieldName === 'object') {
-          Object.keys(fieldName).forEach(keyName => {
-            const currentValue = this.handleNumberValue(keyName, fieldName[keyName], decimalLength);
-            this.getFieldComponentInstance(keyName) && this.getFieldComponentInstance(keyName).setValue(currentValue, decimalLength, keyName);
-          });
-        } else {
-          this.getFieldComponentInstance(fieldName) && this.getFieldComponentInstance(fieldName).setValue(val, decimalLength, fieldName);
-        }
+        this.getFieldComponentInstance(fieldName) && this.getFieldComponentInstance(fieldName).setValue(val, decimalLength, fieldName);
       } catch (e) {
         console.error(e);
-        // this.props.form.setFields({ [fieldName]: { value } });
-        // this.props.form.setFieldsValue({ [fieldName]: value });
       }
     };
 
@@ -478,30 +466,21 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
 
     setVisible = (fieldName, isVisible) => {
       const { form, origin } = this.props;
-      if (origin === 'RelTableRow') { //TODO: 表格里的表单执行js 则setVisible 替换为 setReadOnly
-        this.setFieldConfig(fieldName, { isReadOnlyJS: isVisible ? 0 : 1 });
+
+      const configObj = {};
+      if (origin === 'RelTableRow') {
+        configObj.isReadOnlyJS = isVisible ? 0 : 1;
       } else {
-        this.setFieldConfig(fieldName, { isVisibleJS: isVisible ? 1 : 0 });
+        configObj.isVisibleJS = isVisible ? 1 : 0;
       }
+      this.setFieldConfig(fieldName, configObj);
 
       if (!isVisible && form) {
         const { getFieldsValue } = form;
         const obj = {};
         const keys = getFieldsValue();
-        // this.setValue(fieldName, undefined);
 
-        if (Array.isArray(fieldName)) {
-          fieldName.forEach(field => {
-            if (field in keys) obj[field] = '';
-          });
-        } else if (fieldName && typeof fieldName === 'object') {
-          Object.keys(fieldName).forEach(field => {
-            if (field in keys) obj[field] = '';
-          });
-        } else if (fieldName in keys) {
-          form.setFieldsValue({ [fieldName]: '' });
-        }
-
+        if (fieldName in keys) form.setFieldsValue({ [fieldName]: '' });
         if (Object.keys(obj).length) form.setFieldsValue(obj);
       }
     };
@@ -625,41 +604,23 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
 
     setFieldConfig = (fieldName, config) => {
       const { fields: fieldArr } = this.state;
-      const fields = [...fieldArr];
+      if (Array.isArray(fieldArr) && fieldArr.length) {
+        const fields = JSON.parse(JSON.stringify(fieldArr));
 
-      if ((fieldName && typeof fieldName === 'object') || Array.isArray(fieldName)) {
-        fields.forEach(item => {
-          const field = item;
-          if (Array.isArray(fieldName) && fieldName.includes(field.fieldname)) {
-            field.fieldconfig = {
-              ...field.fieldconfig,
-              ...config
-            };
-          } else {
-            Object.keys(fieldName).forEach(keyName => {
-              if (field.fieldname === keyName) {
-                field.fieldconfig = {
-                  ...field.fieldconfig,
-                  ...config
-                };
-              }
-            });
-          }
-        });
-      } else {
-        const field = fields.find(item => item.fieldname === fieldName);
-        if (field) {
-          field.fieldconfig = {
-            ...field.fieldconfig,
+        const fieldIdx = fields.findIndex(item => item.fieldname === fieldName);
+        if (fieldIdx > -1) {
+          fields[fieldIdx].fieldconfig = {
+            ...fields[fieldIdx].fieldconfig,
             ...config
           };
         }
-      }
 
-      //TODO： 表格重新渲染
-      this.props.reloadTable && this.props.reloadTable(this.props.rowIndex, uuid());
-      this.setState({ fields });
+        //TODO： 表格重新渲染
+        this.props.reloadTable && this.props.reloadTable(this.props.rowIndex, uuid());
+        this.setState({ fields });
+      }
     };
+
 
     getFieldByName = (fieldName) => {
       return this.state.fields.find(item => item.fieldname === fieldName);
@@ -769,9 +730,9 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
 
     render() {
       const { fields, ...restProps } = this.props;
+
       return (
         <div>
-          {/*<button onClick={this.getTableHeader.bind(this, 'tab')}>test</button>*/}
           <OriginComponent
             ref={componentRef => { this.formComponentInstance = componentRef; }}
             onFieldControlFocus={this.handleFieldControlFocus}
