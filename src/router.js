@@ -13,6 +13,8 @@ import Home from './routes/Home/index';
 
 import AttendanceList from './routes/AttendanceList';
 
+import CommerceQueries from './routes/CommerceQueries';
+
 import NoticeList from './routes/NoticeList';
 import NoticeHome from './routes/NoticeHome';
 import NoticeDetail from './routes/NoticeHome/views/NoticeDetail';
@@ -81,19 +83,27 @@ import BusinessQuery from './routes/BusinessInquire/BusinessQuery';
 const appRoutes = [
   { path: 'home', comp: Home },
   { path: 'attendance', comp: AttendanceList, entid: '969d32b6-d81c-43a3-bc0d-124ffc26855c' },
+  {
+    path: 'commerce-queries',
+    comp: CommerceQueries,
+    model: require('./models/commercequeries')
+  },
   { path: 'notice-list', comp: NoticeList, entid: '00000000-0000-0000-0000-000000000002' },
-  { path: 'notice/:id/:title',
+  {
+    path: 'notice/:id/:title',
     comp: NoticeHome,
     routes: [
       { path: 'detail', comp: NoticeDetail },
       { path: 'records', comp: NoticeRecords }
-    ] },
+    ]
+  },
   { path: 'salestarget', comp: SalesTarget, entid: '8e45e238-df0e-44e0-80d6-14445269f6de', model: require('./models/salesTarget') },
   { path: 'knowledge', comp: Knowledge, entid: 'a3500e78-fe1c-11e6-aee4-005056ae7f49', model: require('./models/knowledge') },
   { path: 'entcomm-list/:id', comp: EntcommList, model: require('./models/entcommList') },
   { path: 'entcomm-application/:id', comp: EntcommApplication, model: require('./models/entcommApplication') },
   { path: 'entcomm-dynamic/:id', comp: EntcommDynamic, model: require('./models/entcommDynamic') },
-  { path: 'entcomm/:entityId/:recordId',
+  {
+    path: 'entcomm/:entityId/:recordId',
     comp: EntcommHome,
     model: require('./models/entcommHome'),
     routes: [
@@ -105,27 +115,32 @@ const appRoutes = [
       { path: 'affairlist', comp: EntcommAffair, model: require('./models/entcommAffair') },
       { path: 'rel/:relId/:relEntityId', comp: EntcommRel, model: require('./models/entcommRel') },
       { path: 'relationschema', comp: RelationSchema, model: require('./models/relationschema') }
-    ] },
+    ]
+  },
   { path: 'products', comp: ProductManager, entid: '33240d14-a543-4357-b696-c8cc77f82f7c', model: require('./models/productManager') },
   { path: 'affair-list', comp: AffairList, entid: '00000000-0000-0000-0000-000000000001', model: require('./models/affairList') },
   { path: 'affair/:id', comp: AffairDetail, model: require('./models/affairDetail') },
   { path: 'reportform/:id', comp: ReportForm, model: require('./models/reportForm') },
   { path: 'dynamicchart/:reportId', comp: DynamicChart },
-  { path: 'weekly', comp: Weekly, entid: '0b81d536-3817-4cbc-b882-bc3e935db845', model: require('./models/weekly'),
+  {
+    path: 'weekly', comp: Weekly, entid: '0b81d536-3817-4cbc-b882-bc3e935db845', model: require('./models/weekly'),
     routes: [
       { path: 'myweekly', comp: MyWeekly, model: require('./models/weekly') },
       { path: 'receiveweekly', comp: ReceiveWeekly, model: require('./models/weekly') },
       { path: 'allweekly', comp: AllWeekly, entid: '0b81d536-3817-4cbc-b882-bc3e935db845', model: require('./models/weekly') },
       { path: 'receiveweekly/:recid', comp: ReceiveWeeklyDetail, model: require('./models/weekly') }
-    ] },
+    ]
+  },
   { path: 'allweekly/detail/:recid', comp: AllWeeklyDetail, model: require('./models/weekly') },
-  { path: 'daily', comp: Daily, entid: '601cb738-a829-4a7b-a3d9-f8914a5d90f2', model: require('./models/daily'),
+  {
+    path: 'daily', comp: Daily, entid: '601cb738-a829-4a7b-a3d9-f8914a5d90f2', model: require('./models/daily'),
     routes: [
       { path: 'mydaily', comp: myDaily, model: require('./models/daily') },
       { path: 'receivedaily', comp: ReceiveDaily, model: require('./models/daily') },
       { path: 'alldaily', comp: AllDaily, entid: '601cb738-a829-4a7b-a3d9-f8914a5d90f2', model: require('./models/daily') },
       { path: 'receivedaily/:recid', comp: ReceiveDailyDetail, model: require('./models/daily') }
-    ] },
+    ]
+  },
   { path: 'alldaily/detail/:recid', comp: AllDailyDetail, model: require('./models/daily') },
   { path: 'mails', comp: Mails, model: require('./models/mails') },
   { path: 'mailrecovery', comp: MailRecovery, model: require('./models/mailRecovery') },
