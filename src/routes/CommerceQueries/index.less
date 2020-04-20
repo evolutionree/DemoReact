@@ -1,0 +1,25 @@
+.listWrap {
+    display: flex;
+    flex-wrap: wrap;
+    border-top: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    .listItem {
+        display: flex;
+        border-bottom: 1px solid #ccc;
+        min-height: 40px;
+        line-height: 40px;
+        .title {
+            border-left: 1px solid #ccc;
+            border-right: 1px solid #ccc;
+            background-color: #f5f5f5;
+            flex-basis: 130px;
+            padding-left: 8px;
+        }
+        .content {
+            flex: 1;
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+    }
+}
+

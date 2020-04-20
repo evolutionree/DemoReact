@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { createNormalInput } from './utils';
 import InputCustomerRecName from './InputCustomerRecName';
+import InputRecManage from './InputRecManage';
 import { queryFields } from '../../../services/entity';
 
 const customerEntityId = 'f9db9d79-e94b-4678-a5cc-aa6e281c1246'; // 客户实体id
