@@ -518,6 +518,7 @@ class DynamicFormBase extends Component {
         ref={this.onFieldControlRef.bind(this, fieldname)}
         controlType={controltype}
         fieldId={fieldid}
+        fieldName={fieldname}
         allowadd={allowadd}
         config={fieldconfig}
         value_name={value_name}

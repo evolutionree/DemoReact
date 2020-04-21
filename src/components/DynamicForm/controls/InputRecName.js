@@ -46,7 +46,10 @@ class InputRecName extends Component {
   render() {
     const { isCustomer } = this.state;
     //客户新增 与 其他模块的新增 有差异   客户新增的时候  客户名称键入后需要请求接口 查询重复引用
-    return (isCustomer || this.props.fieldId === xiansuoNameFieldId) ?
+
+    if (isCustomer) return <InputRecManage {...this.props} />;
+
+    return (this.props.fieldId === xiansuoNameFieldId) ?
       <InputCustomerRecName {...this.props} /> : React.createElement(Text, this.props);
   }
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Select, Input, Radio, Checkbox, message, DatePicker, Button } from 'antd';
+import { Form, Select, Input, Radio, Checkbox, message, DatePicker, Button, Icon } from 'antd';
 import moment from 'moment';
 import RelBusDataSource from './RelBusDataSource';
 import { getIntlText } from '../../../../components/UKComponent/Form/IntlText';
@@ -391,11 +391,9 @@ class OriginEntitySelect extends React.Component {
           this.setState({ options: [] });
           this.props.onChange('');
         }
-      } else {
-        if (this.state.controlField !== controlField) {
-          this.setState({ controlField });
-          this.fetchOptions(controlField);
-        }
+      } else if (this.state.controlField !== controlField) {
+        this.setState({ controlField });
+        this.fetchOptions(controlField);
       }
     }, 50);
     return intervalId;
@@ -463,11 +461,9 @@ class OriginFieldSelect extends React.Component {
           this.setState({ options: [] });
           this.props.onChange('');
         }
-      } else {
-        if (this.state.controlField !== controlField) {
-          this.setState({ controlField });
-          this.fetchOptions(controlField);
-        }
+      } else if (this.state.controlField !== controlField) {
+        this.setState({ controlField });
+        this.fetchOptions(controlField);
       }
     }, 50);
     return intervalId;
@@ -612,11 +608,9 @@ class TitleFieldSelect extends React.Component {
           this.setState({ options: [] });
           this.props.onChange('');
         }
-      } else {
-        if (this.state.originEntity !== originEntity) {
-          this.setState({ originEntity });
-          this.fetchOptions(originEntity);
-        }
+      } else if (this.state.originEntity !== originEntity) {
+        this.setState({ originEntity });
+        this.fetchOptions(originEntity);
       }
     }, 50);
     return intervalId;
@@ -683,11 +677,9 @@ class BatchFieldSelect extends React.Component {
           this.setState({ options: [] });
           this.props.onChange('');
         }
-      } else {
-        if (this.state.originEntity !== originEntity) {
-          this.setState({ originEntity });
-          this.fetchOptions(originEntity);
-        }
+      } else if (this.state.originEntity !== originEntity) {
+        this.setState({ originEntity });
+        this.fetchOptions(originEntity);
       }
     }, 50);
     return intervalId;
@@ -721,6 +713,121 @@ class BatchFieldSelect extends React.Component {
           <Option value={item.id} key={item.id}>{item.label}</Option>
         ))}
       </Select>
+    );
+  }
+}
+
+// 回填组件
+class Backfilled extends React.Component {
+  constructor(props) {
+    super(props);
+
+    const fromfield = [
+      'id:企业id',
+      'name:企业名称',
+      'econKind:企业类型',
+      'econKindCode:企业类型代码',
+      'registCapi:注册资本',
+      'address:企业名称',
+      'regNo:企业注册号',
+      'scope:经营范围',
+      'termStart:营业开始日期',
+      'termEnd:营业结束日期',
+      'belongOrg:所属工商局',
+      'operName:企业法定代表人',
+      'startDate:成立日期',
+      'endDate:注销日期',
+      'checkDate:核准日期',
+      'status:经营状态',
+      'orgNo:组织机构号',
+      'creditNo:统一社会信用代码',
+      'districtCode:地区代码',
+      'domain:四级行业'
+    ];
+    const options = fromfield.map(str => {
+      const arr = str.split(':');
+      return { id: arr[0], name: arr[1], label: str };
+    });
+
+    const options1 = Array.isArray(props.fields) ? props.fields.filter(f => f.controltype === 1).map(o => ({ id: o.fieldname, label: o.fieldlabel || o.displayname })) : [];
+
+    this.state = {
+      options,
+      options1
+    };
+  }
+
+  addItem = () => {
+    const { value, onChange } = this.props;
+    const { options, options1 } = this.state;
+
+    const result = [...value];
+    const _list = result.map(s => s.split(':')[1]);
+
+    const restArr = options1.filter(o => (!_list.includes(o.id)));
+    if (!restArr.length) return message.error('已无可选文本字段');
+
+    const key = options[0].id;
+    const name = restArr[0].id;
+    const newStr = `${key}:${name}`;
+    result.push(newStr);
+
+    if (onChange) onChange(result);
+  }
+
+  delItem = (index) => {
+    const { value, onChange } = this.props;
+
+    const result = [...value];
+    delete result[index];
+
+    if (onChange) onChange(result.filter(o => o));
+  }
+
+  handleCahgne = (index, action, newStr) => {
+    const { value, onChange } = this.props;
+
+    const result = [...value];
+    const itemArr = result[index].split(':');
+    const left = action === 'left' ? newStr : itemArr[0];
+    const right = action === 'right' ? newStr : itemArr[1];
+
+    result[index] = `${left}:${right}`;
+
+    if (onChange) onChange(result);
+  }
+
+  render() {
+    const { value } = this.props;
+    const { options, options1 } = this.state;
+
+    return (
+      <div>
+        {
+          value.map((item, idx) => {
+            const valueArr = item.split(':');
+            const leftValue = valueArr[0];
+            const rightValue = valueArr[1];
+
+            return (
+              <div key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
+                <Select value={leftValue} onChange={this.handleCahgne.bind(this, idx, 'left')}>
+                  {options.map(o => <Option key={o.id} value={o.id}>{o.label}</Option>)}
+                </Select>
+
+                <Icon type="swap" style={{ marginLeft: 5, marginRight: 5 }} />
+
+                <Select value={rightValue} onChange={this.handleCahgne.bind(this, idx, 'right')}>
+                  {options1.map(o => <Option key={o.id} value={o.id}>{o.label}</Option>)}
+                </Select>
+
+                <Icon type="delete" style={{ marginLeft: 5 }} onClick={() => this.delItem(idx)} />
+              </div>
+            );
+          })
+        }
+        <Button onClick={this.addItem}>新增</Button>
+      </div>
     );
   }
 }
@@ -1302,6 +1409,19 @@ export default class FormItemFactory {
             <Radio value={0}>否</Radio>
             <Radio value={1}>是</Radio>
           </RadioGroup>
+        )}
+      </FormItem>
+    );
+  }
+
+  createBackfill() {
+    return (
+      <FormItem label="回填字段映射关系" key="backfill">
+        {this.getFieldDecorator('backfill', {
+          initialValue: []
+          //rules: [{ required: true, message: '请新增回填规则' }]
+        })(
+          <Backfilled fields={this.entityFields} />
         )}
       </FormItem>
     );

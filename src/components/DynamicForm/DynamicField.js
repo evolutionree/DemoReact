@@ -1,6 +1,6 @@
-import React, { PropTypes } from 'react'
-import { is } from 'immutable'
-import { controlMap } from './constants'
+import React, { PropTypes } from 'react';
+import { is } from 'immutable';
+import { controlMap } from './constants';
 
 class DynamicField extends React.Component {
   static propTypes = {
@@ -33,18 +33,18 @@ class DynamicField extends React.Component {
   }
 
   getControlRef = () => {
-    let controlRef = this.instRef
+    let controlRef = this.instRef;
     while (controlRef && controlRef.getWrappedInstance) {
-      controlRef = controlRef.getWrappedInstance()
+      controlRef = controlRef.getWrappedInstance();
     }
-    return controlRef
+    return controlRef;
   }
 
-  shouldComponentUpdate (nextProps, nextState) {
-    const thisProps = this.props || {}
+  shouldComponentUpdate(nextProps, nextState) {
+    const thisProps = this.props || {};
 
     if (Object.keys(thisProps).length !== Object.keys(nextProps).length) {
-      return true
+      return true;
     }
 
     for (const key in nextProps) {
@@ -54,16 +54,16 @@ class DynamicField extends React.Component {
       ) {
         // console.error(this.props.fieldname, key);
         // console.log(nextProps[key])
-        return true
+        return true;
       }
     }
     if (nextProps && nextProps.controlType === 24) {
-      return true
+      return true;
     }
-    return false
+    return false;
   }
 
-  render () {
+  render() {
     const props = {
       key: this.props.fieldId,
       isCommonForm: this.props.isCommonForm,
@@ -75,6 +75,7 @@ class DynamicField extends React.Component {
       value: this.props.value,
       value_name: this.props.value_name,
       fieldId: this.props.fieldId,
+      fieldName: this.props.fieldName,
       allowadd: this.props.allowadd,
       startValue: this.props.startValue,
       onChange: this.props.onChange,
@@ -82,23 +83,23 @@ class DynamicField extends React.Component {
       onFocus: this.props.onFocus,
       quoteHandler: this.props.quoteHandler,
       ref: instRef => {
-        this.instRef = instRef
+        this.instRef = instRef;
       },
       jsEngine: this.props.jsEngine,
       origin: this.props.origin,
       OriginCopyAddForm: this.props.OriginCopyAddForm,
       ...this.props.config
-    }
-    let ControlComponent = controlMap[this.props.controlType]
+    };
+    let ControlComponent = controlMap[this.props.controlType];
     if (!ControlComponent) {
-      console.error(`无法识别控件类型: [controlType]${this.props.controlType}`)
-      return null
+      console.error(`无法识别控件类型: [controlType]${this.props.controlType}`);
+      return null;
     }
     if (this.props.usage === 2) {
-      ControlComponent = ControlComponent.AdvanceSearch || ControlComponent
+      ControlComponent = ControlComponent.AdvanceSearch || ControlComponent;
     }
-    return React.createElement(ControlComponent, props)
+    return React.createElement(ControlComponent, props);
   }
 }
 
-export default DynamicField
+export default DynamicField;

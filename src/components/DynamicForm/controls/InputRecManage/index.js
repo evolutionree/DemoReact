@@ -1,27 +1,27 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
-import { AutoComplete, message, Modal, Spin, Button } from 'antd';
+import { AutoComplete, message, Modal, Icon, Button } from 'antd';
 import { dynamicRequest } from '../../../../services/common';
 import BusinessInfo from '../../../../routes/CommerceQueries/BusinessInfo';
 import styles from './index.less';
 
 const list = [
-  { title: '统一社会信用代码', content: '', span: 14 },
-  { title: '组织机构代码', content: '', span: 10 },
-  { title: '注册号', content: '', span: 14 },
-  { title: '经营状态', content: '', span: 10 },
-  { title: '公司类型', content: '', span: 14 },
-  { title: '成立日期', content: '', span: 10 },
-  { title: '法定代表人', content: '', span: 14 },
-  { title: '营业期限', content: '', span: 10 },
-  { title: '注册资本', content: '', span: 14 },
-  { title: '发照日期', content: '', span: 10 },
-  { title: '挂牌日期', content: '', span: 14 },
-  { title: '董秘电话', content: '', span: 10 },
-  { title: '登记机关', content: '', span: 24 },
-  { title: '注册地址', content: '', span: 24 },
-  { title: '办公地址', content: '', span: 24 },
-  { title: '经营范围', content: '', span: 24 }
+  { key: '', title: '统一社会信用代码', content: '', span: 14 },
+  { key: '', title: '组织机构代码', content: '', span: 10 },
+  { key: '', title: '注册号', content: '', span: 14 },
+  { key: '', title: '经营状态', content: '', span: 10 },
+  { key: '', title: '公司类型', content: '', span: 14 },
+  { key: 'startdate', title: '成立日期', content: '', span: 10 },
+  { key: 'opername', title: '法定代表人', content: '', span: 14 },
+  { key: '', title: '营业期限', content: '', span: 10 },
+  { key: 'registcapi', title: '注册资本', content: '', span: 14 },
+  { key: '', title: '发照日期', content: '', span: 10 },
+  { key: '', title: '挂牌日期', content: '', span: 14 },
+  { key: 'telephone', title: '董秘电话', content: '', span: 10 },
+  { key: '', title: '登记机关', content: '', span: 24 },
+  { key: '', title: '注册地址', content: '', span: 24 },
+  { key: 'address', title: '办公地址', content: '', span: 24 },
+  { key: '', title: '经营范围', content: '', span: 24 }
 ];
 
 export default class InputRecManage extends Component {
@@ -29,9 +29,9 @@ export default class InputRecManage extends Component {
     super(props);
     this.state = {
       dataSource: [],
+      selectInfo: null,
       visible: false,
-      modalLoading: false,
-      modalVisible: false
+      loading: false
     };
     this.handleSearch = _.debounce(this.handleSearch, 500);
   }
@@ -40,59 +40,117 @@ export default class InputRecManage extends Component {
     this.props.onChange(val, true);
   };
 
-  onSelect = (value) => {
-    console.log('onSelect', value);
+  handleChange = (value) => {
+    const { dataSource } = this.state;
+
     this.props.onChange(value);
+    const match = dataSource.find(o => o.recname === value);
+    this.setState({ selectInfo: match });
   }
 
   handleSearch = (value) => {
-    console.log('handleSearch', value);
-    this.props.onChange(value);
+    const { dataSource } = this.state;
+
+    if (dataSource.some(o => o.recname === value)) return;
+    // if (value && value.length > 1)
     this.fetchList(value);
   }
 
-  fetchList = async (companyname) => {
-    const { data: { items } } = await dynamicRequest('/api/dockingapi/getbusinesslist', { skipnum: 15, companyname }).catch(e => {
-      console.error(e.message);
-      message.error(e.message);
+  fetchList = (value) => {
+    this.setState({ loading: true }, () => {
+      // dynamicRequest('/api/dockingapi/getbusinesslist', { skipnum: 0, companyname: value })
+      dynamicRequest('/api/dynamicentity/searchrepeat', {
+        EntityId: this.props.entityId, // 客户资料实体ID
+        CheckName: value,
+        Exact: 0,
+        SearchData: {}
+      })
+        .then(res => {
+          // const { data: { items } } = res;
+          const items = res.data;
+          if (Array.isArray(items) && items.length) {
+            this.setState({ dataSource: items, selectInfo: items.find(o => o.recname === value), loading: false });
+          } else {
+            this.setState({ dataSource: [], selectInfo: null, loading: false });
+          }
+        })
+        .catch(e => {
+          console.error(e.message);
+          message.error(e.message);
+          this.setState({ loading: false });
+        });
     });
-    if (Array.isArray(items) && items.length) {
-      this.setState({ dataSource: items.map(o => o) });
+  }
+
+  showModal = () => {
+    const { value } = this.props;
+    const { dataSource } = this.state;
+
+    if (!value) return message.error('客户全称不能为空');
+
+    const match = dataSource.find(o => o.recname === value);
+    if (!match) return message.error('请确定公司名称是否正确');
+
+    this.setState({ visible: true, selectInfo: match });
+  }
+
+  handleCancel = () => {
+    this.setState({ visible: false, selectInfo: null });
+  }
+
+  handelOk = () => {
+    const { backfill, jsEngine } = this.props;
+    const { selectInfo } = this.state;
+
+    if (Array.isArray(backfill) && backfill.length) {
+      backfill.forEach(str => {
+        const arr = str.split(':');
+
+        jsEngine.setValue(arr[1], selectInfo[arr[0]]);
+      });
+    } else {
+      message.error('实体未配置映射规则');
     }
   }
 
   render() {
     const { placeholder, value } = this.props;
-    const { dataSource, modalVisible, modalLoading } = this.state;
+    const { dataSource, selectInfo, visible, loading } = this.state;
+    console.log('selectInfo', selectInfo);
+
+    const businessList = list.map(item => ({
+      ...item,
+      content: selectInfo[item.key]
+    }));
 
     return (
       <div className={styles.wrap}>
         <AutoComplete
           value={value}
           className={styles.input}
-          dataSource={dataSource}
+          dataSource={dataSource.map(o => o.recname)}
           onSelect={this.onSelect}
+          onChange={this.handleChange}
           onSearch={this.handleSearch}
           placeholder={placeholder}
         />
-        <div onClick={() => this.setState({ modalVisible: true })} className={styles.icon} />
+
+        {loading ? <Icon type="loading" style={{ marginLeft: 5 }} /> : <div onClick={this.showModal} className={styles.icon} />}
 
         <Modal
           title="工商信息查询"
           width={'80%'}
-          visible={modalVisible}
+          visible={visible}
           footer={[
-            <Button key="cancel" type="primary" size="large" onClick={() => this.setState({ modalVisible: false })}>关闭</Button>,
-            <Button key="submit" type="primary" size="large" onClick={this.ok}>回填</Button>
+            <Button key="cancel" type="default" size="large" onClick={this.handleCancel}>关闭</Button>,
+            <Button key="submit" type="primary" size="large" onClick={this.handelOk}>回填</Button>
           ]}
         >
-          <Spin spinning={modalLoading}>
-            <div className={styles.title}>
-              <h3>达瑞生物技术股份有限公司</h3>
-              <span>在营(开业)企业</span>
-            </div>
-            <BusinessInfo list={list} />
-          </Spin>
+          <div className={styles.title}>
+            <h3>{selectInfo.name}</h3>
+            <span>在营(开业)企业</span>
+          </div>
+          <BusinessInfo list={businessList} />
         </Modal>
       </div>
     );
