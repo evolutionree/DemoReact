@@ -42,5 +42,5 @@ export const fieldModels = [
   { name: '引用对象', value: 31, requires: ['controlField', 'originEntity', 'originField'] },
   { name: '关联业务', value: 32, requires: ['multipleDataSource', 'multiple'] },
   { name: '开关', value: 33, requires: ['switch', 'defaultValue'] },
-  { name: '字段映射关系', value: 1012, requires: ['backfill'] }
+  { name: '系统字段:1012', value: 1012, requires: ['backfill'] }
 ];

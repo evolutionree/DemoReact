@@ -11,14 +11,16 @@ import { getRandomLetters } from '../../../../utils';
 const FormItem = Form.Item;
 const Option = Select.Option;
 
-const controlTypeOptions = fieldModels.map(model => {
+const controlTypeOptions = fieldModels.filter(o => o.value !== 1012).map(model => {
   return (
     <Option key={model.value} disabled={model.disabled}>{model.name}</Option>
   );
 });
 
 function getDynamicFormItems(ctrlType, form, entityFields, entityId, isEdit) {
-  const model = _.find(fieldModels, item => {
+  const isCustomer = entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246';
+  const models = isCustomer ? fieldModels : fieldModels.filter(o => o.value !== 1012);
+  const model = _.find(models, item => {
     return `${item.value}` === ctrlType;
   });
   const requires = (model && model.requires) || [];

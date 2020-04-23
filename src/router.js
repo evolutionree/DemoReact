@@ -13,8 +13,6 @@ import Home from './routes/Home/index';
 
 import AttendanceList from './routes/AttendanceList';
 
-import CommerceQueries from './routes/CommerceQueries';
-
 import NoticeList from './routes/NoticeList';
 import NoticeHome from './routes/NoticeHome';
 import NoticeDetail from './routes/NoticeHome/views/NoticeDetail';
@@ -33,6 +31,7 @@ import EntcommDocs from './routes/EntcommHome/views/EntcommDocs';
 import EntcommRel from './routes/EntcommHome/views/EntcommRel';
 import EntcommAffair from './routes/EntcommHome/views/EntcommAffair';
 import RelationSchema from './routes/EntcommHome/views/RelationSchema';
+import CommerceQueries from './routes/EntcommHome/views/CommerceQueries';
 
 import ContractReceivePay from './routes/ContractHome/ReceivePay';
 
@@ -83,11 +82,6 @@ import BusinessQuery from './routes/BusinessInquire/BusinessQuery';
 const appRoutes = [
   { path: 'home', comp: Home },
   { path: 'attendance', comp: AttendanceList, entid: '969d32b6-d81c-43a3-bc0d-124ffc26855c' },
-  {
-    path: 'commerce-queries',
-    comp: CommerceQueries,
-    model: require('./models/commercequeries')
-  },
   { path: 'notice-list', comp: NoticeList, entid: '00000000-0000-0000-0000-000000000002' },
   {
     path: 'notice/:id/:title',
@@ -114,7 +108,8 @@ const appRoutes = [
       { path: 'relationtree', comp: CustomerRelationTree, model: require('./models/customerRelationTree') },
       { path: 'affairlist', comp: EntcommAffair, model: require('./models/entcommAffair') },
       { path: 'rel/:relId/:relEntityId', comp: EntcommRel, model: require('./models/entcommRel') },
-      { path: 'relationschema', comp: RelationSchema, model: require('./models/relationschema') }
+      { path: 'relationschema', comp: RelationSchema, model: require('./models/relationschema') },
+      { path: 'message', comp: CommerceQueries }
     ]
   },
   { path: 'products', comp: ProductManager, entid: '33240d14-a543-4357-b696-c8cc77f82f7c', model: require('./models/productManager') },

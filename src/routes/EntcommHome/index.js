@@ -5,7 +5,7 @@ import LinkTab from '../../components/LinkTab';
 import { HomePageMainFieldsView } from '../../components/DynamicForm';
 import StageBar from './StageBar2';
 import connectPermission from '../../models/connectPermission';
-import { Icon } from "antd";
+import { Icon } from 'antd';
 import IntlText from '../../components/UKComponent/Form/IntlText';
 import { hashHistory } from 'react-router';
 
@@ -24,6 +24,8 @@ function EntcommHome({
 }) {
   const entityId = params.entityId;
   const recordId = params.recordId;
+  const isCustomer = entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' && relTabs.length;
+
   const tabbar = (
     <LinkTab.Group>
       {/*   <LinkTab to={`/entcomm/${entityId}/${recordId}/activities`}>动态</LinkTab>
@@ -36,7 +38,8 @@ function EntcommHome({
           <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/${t.entitytaburl}`}><IntlText name="relname" value={t} /></LinkTab> :
           <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/rel/${t.relid}/${t.relentityid}`}><IntlText name="relname" value={t} /></LinkTab>
       ))]}
-      {'9834d2bc-084a-49de-bbbf-02f35c191b64' === entityId && <LinkTab to={`/entcomm/${entityId}/${recordId}/relationschema`}>关系图</LinkTab>}
+      {entityId === '9834d2bc-084a-49de-bbbf-02f35c191b64' && <LinkTab to={`/entcomm/${entityId}/${recordId}/relationschema`}>关系图</LinkTab>}
+      {isCustomer && <LinkTab to={`/entcomm/${entityId}/${recordId}/message`}>司法信息</LinkTab>}
     </LinkTab.Group>
   );
 
