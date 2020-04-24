@@ -92,7 +92,7 @@ function EntcommHome({
       goBackPath={`/entcomm-list/${entityId}`}
       contentStyleFree={/(activities|info)$/.test(location.pathname)}
     >
-      {React.cloneElement(children, { checkFunc })}
+      {React.cloneElement(children, { checkFunc, titleText })}
     </Page>
   );
 }

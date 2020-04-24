@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from 'dva';
-import { Collapse, Spin, Button, message } from 'antd';
+import { Collapse, Spin, Button, message, Popconfirm } from 'antd';
 import { dynamicRequest } from '../../../../services/common';
 import { __list, columns1, columns2, columns3, columns4, columns5 } from './common';
 import BusinessInfo from './BusinessInfo';
@@ -8,11 +7,10 @@ import ConfigTable from '../../../../components/ConfigTable';
 import styles from './index.less';
 
 const { Panel } = Collapse;
-const COMMERCEQUERIES = 'commercequeries';
 
 // key 对应接口方法名称
 const _collapseList = [
-  { key: 'getbusinesslist', title: '工商照面信息', type: 'list', params: { skipnum: 0 }, data: [] },
+  { key: 'getbusinessdetail', title: '工商照面信息', type: 'list', params: {}, data: [] },
   { key: 'getyearreport', title: '企业工商年报', type: 'table', columns: columns1, data: [] },
   { key: 'getlawsuit', title: '企业裁判文书列表', type: 'table', columns: columns2, data: [] },
   { key: 'getcasedetail', title: '企业立案信息', type: 'table', columns: columns3, data: [] },
@@ -36,6 +34,7 @@ class CommerceQueries extends Component {
   }
 
   init = async () => {
+    const { titleText } = this.props;
     const { collapseList } = this.state;
     const params = { companyname: '小米科技有限责任公司' };
     const apiList = collapseList.map(o => ({ api: `/api/dockingapi/${o.key}`, params: { ...o.params, ...params } }));
@@ -44,15 +43,20 @@ class CommerceQueries extends Component {
     this.setState({ loading: true });
 
     const dataArr = await Promise.all(apiList.map(async (o) => {
-      return dynamicRequest(o.api, o.params).then(res => res.data).catch(e => console.error(`fetch ${o.api} throw：${e.message}`));
+      return dynamicRequest(o.api, o.params).then(res => res.data).catch(e => {
+        console.error(`fetch ${o.api} throw：${e.message}`);
+        this.setState({ loading: false });
+      });
     }));
 
-    console.log(dataArr);
+    // console.log(dataArr);
     dataArr.forEach((data, index) => {
-      if (Array.isArray(data.items) && data.items.length) {
+      if (index === 0) {
+        newList[index].data = data;
+      } else if (Array.isArray(data.items) && data.items.length) {
         newList[index].data = data.items;
       } else {
-        // (index !== 0 && !data.items) && (newList[index].type = '');
+        (index !== 0 && !data.items) && (newList[index].type = '');
       }
     });
     this.setState({ collapseList: newList, loading: false });
@@ -71,11 +75,13 @@ class CommerceQueries extends Component {
   }
 
   renderChildren = (record) => {
+    const { titleText } = this.props;
+
     switch (record.type) {
       case 'list':
         const businessList = __list.map(item => ({
           ...item,
-          content: (record.data[0] && record.data[0][item.key]) || '(空)'
+          content: (record.data && record.data[item.key]) || '(空)'
         }));
         return <BusinessInfo list={businessList} />;
       case 'table':
@@ -89,35 +95,33 @@ class CommerceQueries extends Component {
     const { collapseList, defaultActiveKey, loading, updateLoading } = this.state;
 
     return (
-      <Spin spinning={loading}>
-        <Collapse defaultActiveKey={defaultActiveKey} bordered={false}>
-          <div>
-            <a onClick={this.init}>reload</a>
-            当前数据更新于： 2050年xxxxxx
-            <Button type="primary" loading={updateLoading} onClick={this.updateData}>更新数据</Button>
-          </div>
-          {
-            collapseList.map(item => {
-              return (
-                <Panel key={item.key} header={item.title}>
-                  {this.renderChildren(item)}
-                </Panel>
-              );
-            })
-          }
-        </Collapse>
-      </Spin>
+      <div>
+        <div>
+          <span style={{ marginRight: 10 }}>当前数据更新于： 2050年xxxxxx</span>
+          <Popconfirm
+            title="确定更新数据?"
+            onConfirm={this.updateData}
+          >
+            <Button type="primary" loading={updateLoading}>同步最新数据</Button>
+          </Popconfirm>
+        </div>
+        <Spin spinning={loading}>
+          <Collapse defaultActiveKey={defaultActiveKey} bordered={false} style={{ height: document.body.clientHeight - 246, overflowY: 'auto' }}>
+            {
+              collapseList.map(item => {
+                return (
+                  <Panel key={item.key} header={item.title}>
+                    {this.renderChildren(item)}
+                  </Panel>
+                );
+              })
+            }
+          </Collapse>
+        </Spin>
+      </div>
+
     );
   }
 }
 
-export default connect(
-  state => state[COMMERCEQUERIES],
-  dispatch => {
-    return {
-      // init(callback) {
-      //     dispatch({ type: 'affairDetail/init', payload: { callback } });
-      //   },
-    };
-  }
-)(CommerceQueries);
+export default CommerceQueries;

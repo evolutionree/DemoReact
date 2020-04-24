@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
-import { AutoComplete, message, Modal, Icon, Button } from 'antd';
+import { AutoComplete, message, Modal, Icon, Button, Spin } from 'antd';
 import { dynamicRequest } from '../../../../services/common';
-import { __list } from '../../../../routes/CommerceQueries/common';
-import BusinessInfo from '../../../../routes/CommerceQueries/BusinessInfo';
+import { __list } from '../../../../routes/EntcommHome/views/CommerceQueries/common';
+import BusinessInfo from '../../../../routes/EntcommHome/views/CommerceQueries/BusinessInfo';
 import styles from './index.less';
 
 export default class InputRecManage extends Component {
@@ -42,15 +42,8 @@ export default class InputRecManage extends Component {
   fetchList = (value) => {
     this.setState({ loading: true }, () => { // 业务上不考虑同名公司情况，新增数据要对名称查重
       dynamicRequest('/api/dockingapi/getbusinesslist', { skipnum: 0, companyname: value })
-        // dynamicRequest('/api/dynamicentity/searchrepeat', {
-        //   EntityId: this.props.entityId, // 客户资料实体ID
-        //   CheckName: value,
-        //   Exact: 0,
-        //   SearchData: {}
-        // })
         .then(res => {
-          // const { data: { items } } = res;
-          const items = res.data;
+          const { data: { items } } = res;
           if (Array.isArray(items) && items.length) {
             this.setState({ dataSource: items, selectInfo: items.find(o => o.name === value), loading: false });
           } else {
@@ -74,7 +67,16 @@ export default class InputRecManage extends Component {
     const match = dataSource.find(o => o.name === value);
     if (!match) return message.error('请确定公司名称是否正确');
 
-    this.setState({ visible: true, selectInfo: match });
+    this.setState({ visible: true, modalLoading: true }, async () => {
+      const res = await dynamicRequest('/api/dockingapi/getbusinessdetail', { companyname: value }).catch(e => {
+        console.error(e.message);
+        message.error(e.message);
+        this.setState({ modalLoading: false });
+      });
+      this.setState({ modalLoading: false });
+      const selectInfo = res.data;
+      if (selectInfo) this.setState({ selectInfo });
+    });
   }
 
   handleCancel = () => {
@@ -99,7 +101,7 @@ export default class InputRecManage extends Component {
 
   render() {
     const { placeholder, value } = this.props;
-    const { dataSource, selectInfo, visible, loading } = this.state;
+    const { dataSource, selectInfo, visible, loading, modalLoading } = this.state;
 
     const businessList = __list.map(item => ({
       ...item,
@@ -130,11 +132,13 @@ export default class InputRecManage extends Component {
             <Button key="submit" type="primary" size="large" onClick={this.handelOk}>回填</Button>
           ]}
         >
-          <div className={styles.title}>
-            <h3>{selectInfo && selectInfo.name}</h3>
-            <span>在营(开业)企业</span>
-          </div>
-          <BusinessInfo list={businessList} />
+          <Spin spinning={modalLoading}>
+            <div className={styles.title}>
+              <h3>{selectInfo && selectInfo.name}</h3>
+              <span>在营(开业)企业</span>
+            </div>
+            <BusinessInfo list={businessList} />
+          </Spin>
         </Modal>
       </div>
     );

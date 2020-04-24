@@ -723,7 +723,7 @@ class Backfilled extends React.Component {
     super(props);
 
     const fromfield = [
-      'id:企业id',
+      // 'id:企业id',
       'name:企业名称',
       'econKind:企业类型',
       'econKindCode:企业类型代码',
@@ -746,7 +746,7 @@ class Backfilled extends React.Component {
     ];
     const options = fromfield.map(str => {
       const arr = str.split(':');
-      return { id: arr[0], name: arr[1], label: str };
+      return { id: arr[0], name: arr[1], label: arr[1] };
     });
 
     const options1 = Array.isArray(props.fields) ? props.fields.filter(f => f.controltype === 1).map(o => ({ id: o.fieldname, label: o.fieldlabel || o.displayname })) : [];
@@ -958,9 +958,9 @@ export default class FormItemFactory {
       <FormItem label="文案配置" key="switchinfo">
         {this.getFieldDecorator('switchinfo', {
           rules: [{ required: true, message: '请完成文案配置' },
-          {
-            validator: this.switchValueRequire
-          }]
+            {
+              validator: this.switchValueRequire
+            }]
         })(<SwitchSet />)}
       </FormItem>
     );
