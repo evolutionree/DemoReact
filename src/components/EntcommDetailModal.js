@@ -2,7 +2,7 @@ import React, { PropTypes, Component } from 'react';
 import { Modal, Spin, message, Table } from 'antd';
 import { DynamicFormView } from './DynamicForm';
 import { getGeneralProtocol, getEntcommDetail } from '../services/entcomm';
-import { dynamicRequest } from '../services/common'
+import { dynamicRequest } from '../services/common';
 import Attachment from './DynamicForm/controls/Attachment';
 import { columns, comboTableRow } from '../routes/AffairDetail';
 
@@ -38,7 +38,7 @@ class EntcommDetailModal extends Component {
     if (isOpening) {
       const { entityId, recordId, flowId, caseId } = nextProps;
       this.fetchDetailAndProtocol(entityId, recordId, flowId);
-      this.fetchApproveList(nextProps.currItems)
+      this.fetchApproveList(nextProps.currItems);
     } else if (isClosing) {
       this.resetState();
     }
@@ -64,25 +64,25 @@ class EntcommDetailModal extends Component {
       });
     }).then(result => {
       this.setState({ protocol: result.data, loading: false });
-      const { data } = this.state
+      const { data } = this.state;
 
       const entitymodel = {
         typeid: data.rectype,
         relentityid: entityId,
         relrecid: recordId
-      }
+      };
 
       const params = {
         entityid: entityId,
         flowid: flowId,
         entitymodel
-      }
+      };
       return dynamicRequest('/api/workflow/checkrepeatapprove', params).then(res => {
-        const { data } = res
-        this.setState({ hasAudit: !!data, entitymodel })
-      })
+        const { data } = res;
+        this.setState({ hasAudit: !!data, entitymodel });
+      });
     }).catch(e => {
-      console.error(e.message)
+      console.error(e.message);
       this.setState({
         loading: false
       });
@@ -91,11 +91,11 @@ class EntcommDetailModal extends Component {
 
   fetchApproveList = async (currItems) => {
     if (Array.isArray(currItems) && currItems[0] && currItems[0].caseid) {
-      const params = { caseId: currItems[0].caseid }
+      const params = { caseId: currItems[0].caseid };
       const { data: { result, result_ext } } = await dynamicRequest('/api/workflow/caseitemlist', params).catch(e => {
-        console.error(e.message)
-        message.error(e.message)
-      })
+        console.error(e.message);
+        message.error(e.message);
+      });
 
       // 引用自审批详情页
       let count = 0;
@@ -148,7 +148,7 @@ class EntcommDetailModal extends Component {
           flowItemList.push(itemInfo);
         }
       }
-      this.setState({ approveList: comboTableRow(flowItemList) })
+      this.setState({ approveList: comboTableRow(flowItemList) });
     }
   }
 
@@ -161,12 +161,12 @@ class EntcommDetailModal extends Component {
   };
 
   onSubmit = () => {
-    const { onOk, isneedtorepeatapprove } = this.props
-    const { hasAudit, entitymodel } = this.state
+    const { onOk, isneedtorepeatapprove } = this.props;
+    const { hasAudit, entitymodel } = this.state;
 
     if (onOk) {
-      if (!hasAudit) return onOk()
-      onOk(isneedtorepeatapprove, entitymodel)
+      if (!hasAudit) return onOk();
+      onOk(isneedtorepeatapprove, entitymodel);
     }
   }
 
@@ -174,12 +174,12 @@ class EntcommDetailModal extends Component {
     const { title, entityName, visible, entityId, onCancel, footer } = this.props;
     const { key, loading, protocol, data, approveList: dataSource } = this.state;
 
-    const otherProps = {}
+    const otherProps = {};
 
     if (footer) {
-      otherProps.footer = footer
+      otherProps.footer = footer;
     } else {
-      otherProps.okText = "下一步"
+      otherProps.okText = '下一步';
     }
 
     return (
@@ -205,16 +205,6 @@ class EntcommDetailModal extends Component {
               />
             ) : null
           }
-
-          <div>
-            <div style={{ padding: '0 10px', marginBottom: 10, fontSize: 12, color: '#9b9b9b' }}>审批状态</div>
-            <Table
-              rowKey="entityid"
-              dataSource={dataSource}
-              columns={columns}
-              pagination={false}
-            />
-          </div>
         </Spin>
       </Modal>
     );
