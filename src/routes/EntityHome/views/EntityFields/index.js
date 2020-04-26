@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'dva';
 import _ from 'lodash';
-import { Button, Table, Icon, Popconfirm, Tooltip } from 'antd';
+import { Button, Table, Icon, Popconfirm, Tooltip, message } from 'antd';
 import { copyNode } from '../../../../utils';
 import Toolbar from '../../../../components/Toolbar';
 import IntlEdittableCell from '../../../../components/UKComponent/Form/IntlEdittableCell';
@@ -72,7 +72,10 @@ function EntityFields({
     dispatch({ type: `${NAMESPACE}/putState`, payload: { editingRecord: null } });
     toggleModal(showModals, 'FieldFormModal', 'add');
   }
-  function editField(record) {
+  function editField(record, triggerBtn) {
+    console.log(triggerBtn);
+    record.triggerBtn = !!triggerBtn;
+
     dispatch({ type: 'entityFields/edit', payload: record });
     toggleModal(showModals, 'FieldFormModal', 'edit');
   }
@@ -98,6 +101,15 @@ function EntityFields({
   }
   function callback(node) {
     dispatch({ type: 'entityFields/nodeCell', payload: node });
+  }
+
+  function setBreakfill() {
+    const match = list.find(o => o.fieldname === 'recname');
+    if (match) {
+      editField(match, true);
+    } else {
+      message.error('数据错误');
+    }
   }
 
   const flag = <span>[<Icon type="check" />]</span>;
@@ -195,7 +207,7 @@ function EntityFields({
       render: (val, record) => {
         return (
           <div>
-            <a href="javascript:;" onClick={editField.bind(this, record)}>编辑</a>
+            <a href="javascript:;" onClick={editField.bind(this, record, false)}>编辑</a>
             {
               record.fieldtype === 2 &&
               <span>
@@ -228,6 +240,7 @@ function EntityFields({
         {btns.dynamic && <Button onClick={() => toggleModal(showModals, 'SetDynamicFieldsModal')}>动态摘要配置</Button>}
         {btns.checkrepeat && <Button onClick={() => toggleModal(showModals, 'SetCheckRepeatConfigModal')}>设置查重条件</Button>}
         {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={() => toggleModal(showModals, 'SetCustomBasicConfigModal')}>设置客户基础资料字段</Button> : null}
+        {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={setBreakfill}>设置回填映射字段</Button> : null}
         {/* {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={() => toggleModal(showModals, 'SetCustomMailConfigModal')}>设置邮件客户信息字段</Button> : null} */}
       </Toolbar>
       <Table
@@ -303,4 +316,4 @@ export default connect(
     },
     dispatch
   })
-  )(EntityFields);
+)(EntityFields);

@@ -909,9 +909,10 @@ class Backfilled extends React.Component {
 
 export default class FormItemFactory {
 
-  constructor(form, entityFields, entityId, isEdit, onChange) {
+  constructor(form, entityFields, editingRecord, entityId, isEdit, onChange) {
     this.form = form;
     this.entityFields = entityFields;
+    this.editingRecord = editingRecord;
     this.entityId = entityId;
     this.getFieldDecorator = form.getFieldDecorator;
     this.isEdit = isEdit;
@@ -1560,8 +1561,9 @@ export default class FormItemFactory {
   }
 
   createBackfill() {
+    const isTriggerBtn = this.editingRecord.triggerBtn;
     return (
-      <FormItem label="回填字段映射关系" key="backfill">
+      <FormItem label="回填字段映射关系" key="backfill" style={!isTriggerBtn ? { display: 'none' } : {}}>
         {this.getFieldDecorator('backfill', {
           initialValue: []
           //rules: [{ required: true, message: '请新增回填规则' }]

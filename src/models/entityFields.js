@@ -237,9 +237,9 @@ export default {
       const { initParams, fetchDataLoading } = yield select(state => state[NAMESPACE]);
       const params = { ...(payload || initParams) };
 
-      yield put({ 
-        type: 'putState', 
-        payload: { fetchDataLoading: { ...fetchDataLoading, HistoryModal: true } } 
+      yield put({
+        type: 'putState',
+        payload: { fetchDataLoading: { ...fetchDataLoading, HistoryModal: true } }
       });
 
       try {
@@ -306,7 +306,8 @@ export default {
         fieldType: record.fieldtype,
         expandJS: record.expandjs,
         filterJS: record.filterjs,
-        fieldlabel: record.fieldlabel
+        fieldlabel: record.fieldlabel,
+        triggerBtn: record.triggerBtn
       };
 
       return {
