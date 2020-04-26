@@ -72,8 +72,8 @@ class SelectDataSource extends React.Component {
       this.props.onChange('', true);
       return;
     }
-    const name = val.map(item => item.name).join(',');
-    const id = val.map(item => item.id).join(',');
+    const name = val.filter(v => v).map(item => item.name).join(',');
+    const id = val.filter(v => v).map(item => item.id).join(',');
     const _val = id ? JSON.stringify({ name, id }) : '';
     this.props.onChange(_val, true);
   };

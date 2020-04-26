@@ -146,7 +146,7 @@ class DynamicFormBase extends Component {
   componentDidMount() { //表格批量新增的时候  需要执行配置JS  base2文件才有效 只是为了统一文件内容
     const { batchAddInfo_type, batchAddInfo_fieldname, batchAddInfo_fieldid } = this.props;
     if (batchAddInfo_type === 'add') {
-      this.onFieldValueChange(batchAddInfo_fieldname, batchAddInfo_fieldid);
+      this.onFieldValueChange({ fieldname: batchAddInfo_fieldname, fieldid: batchAddInfo_fieldid });
     }
   }
 
@@ -309,8 +309,8 @@ class DynamicFormBase extends Component {
     return groups;
   };
 
-  getFieldControlInstance = fieldName => {
-    const fieldControl = this[`fieldControlInst${fieldName}`];
+  getFieldControlInstance = fieldname => {
+    const fieldControl = this[`fieldControlInst${fieldname}`];
     return (fieldControl && fieldControl.getControlRef()) || null;
   };
 
@@ -318,34 +318,44 @@ class DynamicFormBase extends Component {
     this[`fieldControlInst${fieldname}`] = ref;
   };
 
-  onFieldFocus = (fieldName, callback) => {
+  onFieldFocus = (fieldname, callback) => {
     const { jsEngine } = this.props;
     if (jsEngine) {
-      jsEngine.handleFieldControlFocus(fieldName, callback);
+      jsEngine.handleFieldControlFocus(fieldname, callback);
     }
   };
 
-  onFieldValueChange = (fieldName, fieldid, newValue, isFromApi) => {
+  onFieldValueChange = (field, newValue, isFromApi) => {
+    const { fieldid, fieldname, fieldconfig } = field;
     const relObjectSetFields = this.state.RelObjectConfig[fieldid];
     if (relObjectSetFields) {  //存在引用对象控件 引用的是当前控件的值
+      const dataSourceData = typeof newValue === 'string' ? (newValue === '' ? false : JSON.parse(newValue)) : newValue;
       if (newValue instanceof Array) {
         console.info('引用对象不允许数据源多选的情况下setValue()');
-      } else {
-        const dataSourceData = typeof newValue === 'string' ? (newValue === '' ? false : JSON.parse(newValue)) : newValue;
-        if (dataSourceData) {
-          this.fetchEntcommDetail(dataSourceData.id, relObjectSetFields); //数据源关联的实体id  记录recid  记录详情下要取得字段id
-        } else { //可能用户在做清除操作
-          relObjectSetFields.map(item => {
-            this.getFieldControlInstance(item.fieldname).setTitle('');
-          });
-        }
+      } else if (dataSourceData) {
+        this.fetchEntcommDetail(dataSourceData.id, relObjectSetFields); //数据源关联的实体id  记录recid  记录详情下要取得字段id
+      } else { //可能用户在做清除操作
+        relObjectSetFields.map(item => {
+          this.getFieldControlInstance(item.fieldname).setTitle('');
+        });
+      }
+    }
+    // 数据源对象控件
+    if (fieldconfig && fieldconfig.dataSource && fieldconfig.dataSource.EntityId) {
+      const dataSourceData = typeof newValue === 'string' ? (newValue === '' ? false : JSON.parse(newValue)) : newValue;
+      if (newValue instanceof Array) {
+        console.info('数据源对象不允许数据源多选的情况下setValue()');
+      } else if (dataSourceData) {
+        this.fetchOriginEntcommDetail(dataSourceData.id, fieldconfig.dataSource.EntityId, fieldid);
+      } else { //可能用户在做清除操作
+        this.clearByOriginEmpty(fieldid);
       }
     }
 
     if (isFromApi) return;
     const { jsEngine } = this.props;
     if (jsEngine) {
-      jsEngine.handleFieldValueChange(fieldName);
+      jsEngine.handleFieldValueChange(fieldname);
     }
   };
 
@@ -357,7 +367,9 @@ class DynamicFormBase extends Component {
       setRelObjectFields.map(item => { //引用同一个字段的 引用对象  共用一个接口  减少性能消耗
         const { originFieldname } = item.fieldconfig;
         const value_name = hasEntCommDetailData[originFieldname + '_name'] || hasEntCommDetailData[originFieldname];
-        this.getFieldControlInstance(item.fieldname).setTitle(value_name);
+        if (!this.getFieldControlInstance(item.fieldname)) {
+          console.log('---get instance err---', item.fieldname);
+        } else this.getFieldControlInstance(item.fieldname).setTitle(value_name);
       });
       return;
     }
@@ -371,7 +383,10 @@ class DynamicFormBase extends Component {
       setRelObjectFields.map(item => { //引用同一个字段的 引用对象  共用一个接口  减少性能消耗
         const { originFieldname } = item.fieldconfig;
         const value_name = detailData[originFieldname + '_name'] || detailData[originFieldname];
-        this.getFieldControlInstance(item.fieldname).setTitle(typeof value_name === 'object' ? '' : value_name);
+        if (!this.getFieldControlInstance(item.fieldname)) {
+          console.log('---get instance err---', item.fieldname);
+        } else this.getFieldControlInstance(item.fieldname).setTitle(typeof value_name === 'object' ? '' : value_name);
+
         this.setState({
           entcommDetail: {
             ...entcommDetail,
@@ -383,6 +398,58 @@ class DynamicFormBase extends Component {
       console.error(err.message);
     });
   }
+
+  fetchOriginEntcommDetail = (recId, entityId, fieldid) => {
+    getEntcommDetail({ entityId, recId, needPower: 1 }).then(result => {
+      const { fields } = this.props;
+      const detailData = result.data.detail;
+      // 筛选controlField为当前fieldid和ifcontrolfield为true和isautoset为true的字段，来自动写入
+      const needControlFiles = fields.filter(f => (
+        f.fieldconfig && f.fieldconfig.ifcontrolfield && f.fieldconfig.isautoset &&
+        f.fieldconfig.controlField === fieldid && f.fieldid !== fieldid
+      ));
+      console.log('---needControl set Files---', needControlFiles);
+      if (!needControlFiles.length) return;
+      needControlFiles.forEach(item => {
+        setTimeout(() => {
+          const { fieldconfig: { originFieldname }, controltype, fieldname } = item;
+          let value_name = detailData[originFieldname + '_name'] || detailData[originFieldname] || '';
+          if (controltype === 4 || controltype === 17) value_name = detailData[originFieldname];
+          if (controltype === 18 || controltype === 25) value_name = [detailData[originFieldname]]; // 数组源setValue只支持数组对象
+          this.setInstanceValue(controltype, fieldname, value_name);
+        }, 0);
+      });
+    }, err => {
+      console.error(err.message);
+    });
+  }
+
+  clearByOriginEmpty = (fieldid) => {
+    const { fields } = this.props;
+    // 筛选controlField为当前fieldid和ifcontrolfield为true和isautoclear为false的字段
+    const needControlFiles = fields.filter(f => (
+      f.fieldconfig && f.fieldconfig.ifcontrolfield && f.fieldconfig.isautoclear &&
+      f.fieldconfig.controlField === fieldid && f.fieldid !== fieldid
+    ));
+    console.log('---needControl clear Files---', needControlFiles);
+    if (!needControlFiles.length) return;
+    needControlFiles.forEach(item => {
+      setTimeout(() => {
+        const { controltype, fieldname } = item;
+        this.setInstanceValue(controltype, fieldname, '');
+      }, 0);
+    });
+  }
+
+  setInstanceValue = (controltype, fieldname, value) => {
+    let setFun;
+    if ([3, 16, 17].includes(controltype)) setFun = 'setValueByName';
+    else setFun = 'setValue';
+    if (!this.getFieldControlInstance(fieldname)) {
+      console.log('---get instance err---', fieldname);
+    } else this.getFieldControlInstance(fieldname)[setFun](value);
+  }
+
 
   // 用于客户引用
   handleQuote = formData => {
@@ -495,8 +562,9 @@ class DynamicFormBase extends Component {
   };
 
   renderFieldControl = field => {
-    const { entityTypeId, entityId, value } = this.props;
-    let { fieldconfig, fieldid, fieldname, displayname, dateStartValue, controltype, allowadd = false } = field;
+    const { entityTypeId, entityId, value, cacheId } = this.props;
+    const { fieldid, fieldname, displayname, dateStartValue, controltype, allowadd = false } = field;
+    let fieldconfig = field.fieldconfig;
 
     const value_name = value[fieldname + '_name'] && value[fieldname + '_name'].value;
     if (fieldconfig && fieldconfig.isReadOnly !== 1 && (fieldconfig.isReadOnlyJS === 0 || fieldconfig.isReadOnlyJS === 1)) {
@@ -509,8 +577,9 @@ class DynamicFormBase extends Component {
     const fieldDecorator = this.state.fieldsDecorator[fieldname];
     return fieldDecorator(
       <DynamicField
+        cacheId={cacheId}
         isCommonForm
-        onChange={this.onFieldValueChange.bind(this, fieldname, fieldid)}
+        onChange={this.onFieldValueChange.bind(this, field)}
         entityId={entityId}
         entityTypeId={entityTypeId}
         usage={this.usage}

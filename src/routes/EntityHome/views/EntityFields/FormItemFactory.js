@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Select, Input, Radio, Checkbox, message, DatePicker, Button, Icon } from 'antd';
+import { Form, Select, Input, Radio, Checkbox, message, DatePicker, Button, Icon, Row, Col } from 'antd';
 import moment from 'moment';
 import RelBusDataSource from './RelBusDataSource';
 import { getIntlText } from '../../../../components/UKComponent/Form/IntlText';
@@ -10,6 +10,11 @@ import { query as queryEntity, queryFields, getreffieldsbyfield } from '../../..
 const FormItem = Form.Item;
 const Option = Select.Option;
 const RadioGroup = Radio.Group;
+
+const formItemLayout = {
+  labelCol: { span: 5 },
+  wrapperCol: { span: 19 }
+};
 
 function toMomentFormat(format) {
   const defaultFormat = 'YYYY-MM-DD HH:mm:ss';
@@ -455,7 +460,7 @@ class OriginFieldSelect extends React.Component {
     let flag = true;
     const intervalId = setInterval(() => {
       if (flag) return flag = false; // 跳出第一次执行
-      const controlField = this.props.form.getFieldValue('controlField');
+      const { controlType, controlField } = this.props.form.getFieldsValue(['controlType', 'controlField']);
       if (!controlField) {
         if (this.state.options.length) {
           this.setState({ options: [] });
@@ -465,21 +470,91 @@ class OriginFieldSelect extends React.Component {
         this.setState({ controlField });
         this.fetchOptions(controlField);
       }
+
+      // 监听变更
+      if (Number(controlType) !== 31 && controlField) {
+        const values = this.props.form.getFieldsValue(['multiple', 'originEntity']);
+        const { multiple, originEntity } = values;
+        if (this.multiple !== multiple) { // 判读单双选的改变
+          this.multiple = multiple;
+          this.fetchOptions(controlField);
+        }
+        const sourceId = values[`dataSource_${Number(controlType)}`] && values[`dataSource_${Number(controlType)}`].sourceId;
+        if (sourceId && this.sourceId !== sourceId) {  // 判读数据源的改变
+          this.sourceId = sourceId;
+          this.fetchOptions(controlField);
+        }
+        if (originEntity && this.originEntity !== originEntity) {  // 判读来源实体的改变
+          this.originEntity = originEntity;
+          this.fetchOptions(controlField);
+        }
+      }
     }, 50);
     return intervalId;
   };
 
   fetchOptions = (controlField) => {
     getreffieldsbyfield(controlField).then(result => {
-      const options = result.data.fields.map(item => ({
-        id: item.fieldid,
-        fieldname: item.fieldname,
-        label: item.fieldlabel
-      }));
+      const { getFieldsValue } = this.props.form;
+      const values = getFieldsValue();
+      const {
+        controlType,
+        multiple,
+        originEntity,
+        ifcontrolfield
+      } = values;
+
+      // console.log('---values---', values);
+      const options = [];
+      const testFields = [];
+      result.data.fields.forEach(item => {
+        const opt = {
+          id: item.fieldid,
+          fieldname: item.fieldname,
+          label: item.displayname || item.fieldlabel
+        };
+        if (!ifcontrolfield) { // 处理引用对象
+          options.push(opt);
+          testFields.push(item);
+        } else { // 其它支持设定数据源的字段
+          const type = Number(controlType);
+          const fieldconfig = item.fieldconfig || {};
+          // 1、来源字段的列表的可选的字段只能是与当前字段类型一致的字段
+          const firstCondition = type === item.controltype;
+
+          // 2、团队组织控件、数据源控件、选人控件、产品控件、产品系列控件，这些控件需要匹配单选或者多选；
+          const forSecond = [17, 18, 25, 28, 29].includes(type);
+          const secondCondition = forSecond && multiple === fieldconfig.multiple;
+
+          // 3、单选、多选控件要匹配字典类型（数据源）
+          const forThree = [3, 4].includes(type);
+          const curSourceId = values[`dataSource_${type}`] && values[`dataSource_${type}`].sourceId;
+          const fieldSourceId = fieldconfig.dataSource && fieldconfig.dataSource.sourceId;
+          const threeCondition = forThree && curSourceId === fieldSourceId;
+
+          // 4、数据源控件必须匹配对应的实体（而非数据源）
+          const forFourth = [18].includes(type);
+          const fourthCondition = forFourth && originEntity === item.entityid;
+
+          if (firstCondition) {
+            if (secondCondition || threeCondition || fourthCondition) {
+              options.push(opt);
+              testFields.push(item);
+            } else if (!forSecond && !forThree && !forFourth) {
+              options.push(opt);
+              testFields.push(item);
+            }
+          }
+        }
+      });
+      // console.log('--optionstestFieldsoptions--', options, testFields);
       this.setState({ options });
       const flag = options.some(item => item.fieldname === this.props.value);
       if (options.length && !flag) {
         this.props.onChange(options[0].fieldname);
+      }
+      if (!options.length) {
+        this.props.onChange('');
       }
     });
   };
@@ -519,7 +594,7 @@ class ControlFieldSelect extends React.Component {
     return (
       <Select value={this.props.value} onChange={this.props.onChange}>
         {this.props.fields.filter(isDataSourceField).map(item => (
-          <Option value={item.fieldid} key={item.fieldid}>{item.fieldlabel}</Option>
+          <Option value={item.fieldid} key={item.fieldid}>{item.displayname || item.fieldlabel}</Option>
         ))}
       </Select>
     );
@@ -623,7 +698,7 @@ class TitleFieldSelect extends React.Component {
         .filter(item => [1, 3, 4, 8, 9, 18, 25, 28, 29, 31].indexOf(item.controltype) !== -1)
         .map(item => ({
           id: item.fieldname + '',
-          label: item.fieldlabel
+          label: item.displayname || item.fieldlabel
         }));
       this.setState({ options });
       const flag = options.some(item => item.id === this.props.value);
@@ -696,7 +771,7 @@ class BatchFieldSelect extends React.Component {
         })
         .map(item => ({
           id: item.fieldname + '',
-          label: item.fieldlabel
+          label: item.displayname || item.fieldlabel
         }));
       this.setState({ options });
       const flag = options.some(item => item.id === this.props.value);
@@ -834,12 +909,13 @@ class Backfilled extends React.Component {
 
 export default class FormItemFactory {
 
-  constructor(form, entityFields, entityId, isEdit) {
+  constructor(form, entityFields, entityId, isEdit, onChange) {
     this.form = form;
     this.entityFields = entityFields;
     this.entityId = entityId;
     this.getFieldDecorator = form.getFieldDecorator;
     this.isEdit = isEdit;
+    this.onChange = onChange;
   }
 
   create(type, ctrlType) {
@@ -1231,6 +1307,7 @@ export default class FormItemFactory {
           rules: [{ required: true, message: '请选择限制个数' }]
         })(
           <SelectNumber>
+            <Option value="999999">无限制</Option>
             <Option value="1">1</Option>
             <Option value="2">2</Option>
             <Option value="3">3</Option>
@@ -1321,31 +1398,99 @@ export default class FormItemFactory {
   }
 
   createOriginEntity() {
+    const { controlType, ifcontrolfield } = this.form.getFieldsValue();
+    const required = ifcontrolfield || Number(controlType) === 31;
     return (
       <FormItem label="来源对象" key="originEntity">
         {this.getFieldDecorator('originEntity', {
-          rules: [{ required: true, message: '请选择来源对象' }]
+          rules: [{ required, message: '请选择来源对象' }]
         })(<OriginEntitySelect form={this.form} />)}
       </FormItem>
     );
   }
 
   createOriginField() {
+    const { controlType, ifcontrolfield } = this.form.getFieldsValue();
+    const required = ifcontrolfield || Number(controlType) === 31;
     return (
       <FormItem label="来源字段" key="originFieldname">
         {this.getFieldDecorator('originFieldname', {
-          rules: [{ required: true, message: '请选择来源字段' }]
+          rules: [{ required, message: '请选择来源字段' }]
         })(<OriginFieldSelect form={this.form} />)}
       </FormItem>
     );
   }
 
   createControlField() {
+    const { controlType, ifcontrolfield } = this.form.getFieldsValue();
+    const required = ifcontrolfield || Number(controlType) === 31;
     return (
       <FormItem label="控制字段" key="controlField">
         {this.getFieldDecorator('controlField', {
-          rules: [{ required: true, message: '请选择控制字段' }]
+          rules: [{ required, message: '请选择控制字段' }]
         })(<ControlFieldSelect fields={this.entityFields} />)}
+      </FormItem>
+    );
+  }
+
+  createIfcontrolfield() {
+    return (
+      <FormItem label="是否控制字段" key="ifcontrolfield" {...formItemLayout}>
+        {this.getFieldDecorator('ifcontrolfield', {
+          valuePropName: 'checked',
+          initialValue: false
+        })(
+          <Checkbox />
+        )}
+      </FormItem>
+    );
+  }
+
+  createControlMethod() {
+    return (
+      <FormItem key="controlMethod">
+        <Row>
+          <Col span={12}>
+            <FormItem>
+              {this.getFieldDecorator('isautoset', {
+                valuePropName: 'checked',
+                initialValue: false
+              })(
+                <Checkbox>值引入</Checkbox>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem>
+              {this.getFieldDecorator('isautoclear', {
+                valuePropName: 'checked',
+                initialValue: false
+              })(
+                <Checkbox>跟随清除</Checkbox>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem>
+              {this.getFieldDecorator('issaveautoset', {
+                valuePropName: 'checked',
+                initialValue: false
+              })(
+                <Checkbox>新增保存自动反写</Checkbox>
+              )}
+            </FormItem>
+          </Col>
+          <Col span={12}>
+            <FormItem>
+              {this.getFieldDecorator('iseditautoset', {
+                valuePropName: 'checked',
+                initialValue: false
+              })(
+                <Checkbox>编辑保存自动反写</Checkbox>
+              )}
+            </FormItem>
+          </Col>
+        </Row>
       </FormItem>
     );
   }
