@@ -36,7 +36,7 @@ class CommerceQueries extends Component {
   init = async () => {
     const { titleText } = this.props;
     const { collapseList } = this.state;
-    const params = { companyname: '小米科技有限责任公司' };
+    const params = { companyname: titleText };
     const apiList = collapseList.map(o => ({ api: `/api/dockingapi/${o.key}`, params: { ...o.params, ...params } }));
     const newList = [...collapseList];
 
