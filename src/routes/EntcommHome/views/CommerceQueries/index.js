@@ -10,7 +10,7 @@ const { Panel } = Collapse;
 
 // key 对应接口方法名称
 const _collapseList = [
-  { key: 'getbusinessdetail', title: '工商照面信息', type: 'list', params: {}, data: [] },
+  { key: 'getbusinessdetail', title: '工商照面信息', type: 'list', params: {}, data: {} },
   { key: 'getyearreport', title: '企业工商年报', type: 'table', columns: columns1, data: [] },
   { key: 'getlawsuit', title: '企业裁判文书列表', type: 'table', columns: columns2, data: [] },
   { key: 'getcasedetail', title: '企业立案信息', type: 'table', columns: columns3, data: [] },
@@ -65,7 +65,7 @@ class CommerceQueries extends Component {
   updateData = async () => {
     this.setState({ updateLoading: true });
 
-    const res = await dynamicRequest('', {}).catch(e => {
+    const res = await dynamicRequest('/api/dockingapi/updatebusiinfo', {}).catch(e => {
       console.error(e.message);
       message.error(e.message);
       this.setState({ updateLoading: false });
@@ -85,7 +85,7 @@ class CommerceQueries extends Component {
         }));
         return <BusinessInfo list={businessList} />;
       case 'table':
-        return <ConfigTable rowKey="key" dataSource={record.data} columns={record.columns} />;
+        return <ConfigTable rowKey="key" dataSource={record.data} tableHeight={300} columns={record.columns} />;
       default:
         return <div>接口又没钱啦</div>;
     }
@@ -96,8 +96,8 @@ class CommerceQueries extends Component {
 
     return (
       <div>
-        <div>
-          <span style={{ marginRight: 10 }}>当前数据更新于： 2050年xxxxxx</span>
+        <div style={{ padding: 8, borderBottom: '1px solid #ccc' }}>
+          <span style={{ marginRight: 10 }}>当前数据更新于： {collapseList[0].data.recupdated || '庆历四年春，滕子京谪守巴陵郡'}</span>
           <Popconfirm
             title="确定更新数据?"
             onConfirm={this.updateData}

@@ -1,16 +1,17 @@
-import React, { Component } from 'react'
-import { Table } from 'antd'
-import { getColumns } from './columns'
-import { Option } from './formData'
-import { LoopList } from './columns/columns'
+import React, { Component } from 'react';
+import { Table } from 'antd';
+import { getColumns } from './columns';
+import { Option } from './formData';
+import { LoopList } from './columns/columns';
+import styles from './index.less';
 
-const initClientHeight = document.body.offsetHeight && document.documentElement.clientHeight
-const tableDomWdith = document.body.offsetWidth && document.documentElement.clientWidth - 300
+const initClientHeight = document.body.offsetHeight && document.documentElement.clientHeight;
+const tableDomWdith = document.body.offsetWidth && document.documentElement.clientWidth - 300;
 
 class ConfigTable extends Component {
-  constructor (props) {
-    super(props)
-    const selectedRowKeys = props.selectedRows && props.rowKey ? props.selectedRows.map(o => o[props.rowKey]) : []
+  constructor(props) {
+    super(props);
+    const selectedRowKeys = props.selectedRows && props.rowKey ? props.selectedRows.map(o => o[props.rowKey]) : [];
 
     this.state = {
       clientHeight: initClientHeight,
@@ -18,19 +19,20 @@ class ConfigTable extends Component {
       selectedRowKeys,
       selectedRows: props.selectedRows || [],
       OptionList: Option
-    }
-    this.tableWidth = 1080
-    this.onWindowResize = this.onWindowResize.bind(this)
+    };
+    this.tableWidth = 1080;
+    this.onWindowResize = this.onWindowResize.bind(this);
+    this.wrapTable = null;
   }
 
   setStateAsync = state => new Promise(resolve => this.setState(state, resolve))
 
-  componentDidMount () {
-    window.addEventListener('resize', this.onWindowResize, false)
+  componentDidMount() {
+    window.addEventListener('resize', this.onWindowResize, false);
   }
 
-  componentWillUnmount () {
-    window.removeEventListener('resize', this.onWindowResize, false)
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onWindowResize, false);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -43,9 +45,9 @@ class ConfigTable extends Component {
     }
   }
 
-  onWindowResize () {
-    const clientHeight = document.body.offsetHeight && document.documentElement.clientHeight
-    this.setState({ clientHeight })
+  onWindowResize() {
+    const clientHeight = document.body.offsetHeight && document.documentElement.clientHeight;
+    this.setState({ clientHeight });
   }
 
   importTableParmas() {
@@ -61,29 +63,29 @@ class ConfigTable extends Component {
 
   // 设置过滤值
   onFilter = async (fieldname, value) => {
-    const { onSeach, initParams } = this.props
-    const { FilterVisibles } = this.state
+    const { onSeach, initParams } = this.props;
+    const { FilterVisibles } = this.state;
 
     const newFilterVisibles = {
       ...FilterVisibles,
       [fieldname]: false
-    }
-    await this.setStateAsync({ FilterVisibles: newFilterVisibles })
+    };
+    await this.setStateAsync({ FilterVisibles: newFilterVisibles });
 
     const newcolumnFilter = {
       ...initParams.columnFilter,
       [fieldname]: value
-    }
-    onSeach({ ...initParams, columnFilter: newcolumnFilter })
+    };
+    onSeach({ ...initParams, columnFilter: newcolumnFilter });
   }
 
   // 控制过滤组件
   toggleFilter = (fieldname, value) => {
-    const { FilterVisibles } = this.state
-    const newFilters = { ...FilterVisibles }
-    Object.keys(newFilters).forEach(info => (newFilters[info] = false))
-    newFilters[fieldname] = value
-    this.setState({ FilterVisibles: newFilters })
+    const { FilterVisibles } = this.state;
+    const newFilters = { ...FilterVisibles };
+    Object.keys(newFilters).forEach(info => (newFilters[info] = false));
+    newFilters[fieldname] = value;
+    this.setState({ FilterVisibles: newFilters });
   }
 
   handleTableChange = (pagination, filters, sorter) => {
@@ -95,8 +97,8 @@ class ConfigTable extends Component {
       // pageIndex: pagination.current,
       // pageSize: pagination.pageSize,
       searchOrder
-    }
-    onSeach(newPramas)
+    };
+    onSeach(newPramas);
   }
 
   onSelectListChange = (selectedRowKeys, selectedRows) => {
@@ -120,43 +122,44 @@ class ConfigTable extends Component {
 
   render() {
     const {
-      dataSource, rowKey = 'recid', columns: propColumns,
-      rowSelect, rowSelection, pwidth = tableDomWdith
+      dataSource, rowKey = 'recid', columns: propColumns, tableHeight,
+      rowSelect, rowSelection, pwidth = (this.wrapTable ? this.wrapTable.getBoundingClientRect().width : tableDomWdith)
     } = this.props;
     const { selectedRowKeys, clientHeight } = this.state;
+    const screenHeight = clientHeight;
+    const modalHeight = screenHeight * 0.7;
+    const Div1Height = 15;
+    const Div2Height = 50;
+    const Div3Height = modalHeight - Div1Height - Div2Height;
 
-    const screenHeight = clientHeight
-    const modalHeight = screenHeight * 0.7
-    const Div1Height = 15
-    const Div2Height = 50
-    const Div3Height = modalHeight - Div1Height - Div2Height
-
-    const columnParams = this.importTableParmas()
-    const columns = getColumns(columnParams, propColumns || LoopList, width => (this.tableWidth = width))
+    const columnParams = this.importTableParmas();
+    const columns = getColumns(columnParams, propColumns || LoopList, width => (this.tableWidth = width));
 
     return (
-      <Table
-        rowKey={rowKey}
-        columns={columns}
-        dataSource={dataSource}
-        onChange={this.handleTableChange}
-        scroll={{
-          x: (pwidth > this.tableWidth ? '100%' : (rowSelect ? this.tableWidth + 62 : this.tableWidth)),
-          y: Div3Height - 130
-        }}
-        rowSelection={
-          rowSelect
-            ? {
-              selectedRowKeys,
-              onChange: this.onSelectListChange,
-              onSelectAll: this.onSelectAllListChange,
-              ...rowSelection
-            }
-            : null
-        }
-      />
-    )
+      <div className={styles.wrapTable} ref={node => this.wrapTable = node}>
+        <Table
+          rowKey={rowKey}
+          columns={columns}
+          dataSource={dataSource}
+          onChange={this.handleTableChange}
+          scroll={{
+            x: (pwidth > this.tableWidth ? '100%' : (rowSelect ? this.tableWidth + 62 : this.tableWidth)),
+            y: tableHeight || (Div3Height - 130)
+          }}
+          rowSelection={
+            rowSelect
+              ? {
+                selectedRowKeys,
+                onChange: this.onSelectListChange,
+                onSelectAll: this.onSelectAllListChange,
+                ...rowSelection
+              }
+              : null
+          }
+        />
+      </div>
+    );
   }
 }
 
-export default ConfigTable
+export default ConfigTable;
