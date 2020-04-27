@@ -35,6 +35,11 @@ class ConfigTable extends Component {
     window.removeEventListener('resize', this.onWindowResize, false);
   }
 
+  onWindowResize() {
+    const clientHeight = document.body.offsetHeight && document.documentElement.clientHeight;
+    this.setState({ clientHeight });
+  }
+
   componentWillReceiveProps(nextProps) {
     const { selectedRows: oldRows, rowKey } = this.props;
     const { selectedRows: newRows } = nextProps;
@@ -43,11 +48,6 @@ class ConfigTable extends Component {
       const selectedRowKeys = newRows.map(o => o[rowKey]);
       this.setState({ selectedRowKeys, selectedRows: newRows });
     }
-  }
-
-  onWindowResize() {
-    const clientHeight = document.body.offsetHeight && document.documentElement.clientHeight;
-    this.setState({ clientHeight });
   }
 
   importTableParmas() {
@@ -123,9 +123,11 @@ class ConfigTable extends Component {
   render() {
     const {
       dataSource, rowKey = 'recid', columns: propColumns, tableHeight,
-      rowSelect, rowSelection, pwidth = (this.wrapTable ? this.wrapTable.getBoundingClientRect().width : tableDomWdith)
+      rowSelect, rowSelection, pwidth: parentWidth
     } = this.props;
     const { selectedRowKeys, clientHeight } = this.state;
+
+    const pwidth = parentWidth || (this.wrapTable ? this.wrapTable.getBoundingClientRect().width : tableDomWdith);
     const screenHeight = clientHeight;
     const modalHeight = screenHeight * 0.7;
     const Div1Height = 15;

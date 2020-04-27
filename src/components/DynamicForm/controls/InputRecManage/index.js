@@ -90,9 +90,10 @@ export default class InputRecManage extends Component {
     if (Array.isArray(backfill) && backfill.length) {
       backfill.forEach(str => {
         const arr = str.split(':');
-        console.log(arr[1], selectInfo[arr[0]]);
+        console.log(arr[1], selectInfo, arr[0], selectInfo[arr[0]]);
         jsEngine.setValue(arr[1], selectInfo[arr[0]]);
       });
+      jsEngine.excuteJS('var aaa = 1;');
       this.setState({ visible: false });
     } else {
       message.error('实体未配置映射规则');

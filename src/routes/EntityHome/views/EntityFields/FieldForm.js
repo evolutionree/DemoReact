@@ -35,7 +35,7 @@ function getDynamicFormItems(ctrlType, form, entityFields, editingRecord, entity
 }
 
 function FieldForm({ form, isEdit, entityFields, editingRecord, entityId }) {
-  const isTriggerBtn = editingRecord.triggerBtn;
+  const isTriggerBtn = editingRecord && editingRecord.triggerBtn;
 
   function _resetFields() {
     resetFields();

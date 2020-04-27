@@ -1,29 +1,20 @@
 import React, { Component } from 'react';
-import { Collapse, Spin, Button, message, Popconfirm } from 'antd';
+import { Collapse, Spin, Button, Icon, message, Popconfirm } from 'antd';
 import { dynamicRequest } from '../../../../services/common';
-import { __list, columns1, columns2, columns3, columns4, columns5 } from './common';
+import { __collapseList, __list } from './common';
 import BusinessInfo from './BusinessInfo';
 import ConfigTable from '../../../../components/ConfigTable';
 import styles from './index.less';
 
 const { Panel } = Collapse;
-
-// key 对应接口方法名称
-const _collapseList = [
-  { key: 'getbusinessdetail', title: '工商照面信息', type: 'list', params: {}, data: {} },
-  { key: 'getyearreport', title: '企业工商年报', type: 'table', columns: columns1, data: [] },
-  { key: 'getlawsuit', title: '企业裁判文书列表', type: 'table', columns: columns2, data: [] },
-  { key: 'getcasedetail', title: '企业立案信息', type: 'table', columns: columns3, data: [] },
-  { key: 'getcourtnotice', title: '企业法院公告信息', type: 'table', columns: columns4, data: [] },
-  { key: 'getbreakpromise', title: '企业失信信息', type: 'table', columns: columns5, data: [] }
-];
+const PREAPI = '/api/dockingapi';
 
 class CommerceQueries extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      collapseList: _collapseList,
-      defaultActiveKey: _collapseList.map(o => o.key),
+      collapseList: __collapseList,
+      activeKey: __collapseList.map(o => o.key),
       loading: false,
       updateLoading: false
     };
@@ -36,8 +27,9 @@ class CommerceQueries extends Component {
   init = async () => {
     const { titleText } = this.props;
     const { collapseList } = this.state;
+
     const params = { companyname: titleText };
-    const apiList = collapseList.map(o => ({ api: `/api/dockingapi/${o.key}`, params: { ...o.params, ...params } }));
+    const apiList = collapseList.map(o => ({ api: `${PREAPI}/${o.key}`, params: { ...o.params, ...params } }));
     const newList = [...collapseList];
 
     this.setState({ loading: true });
@@ -45,27 +37,29 @@ class CommerceQueries extends Component {
     const dataArr = await Promise.all(apiList.map(async (o) => {
       return dynamicRequest(o.api, o.params).then(res => res.data).catch(e => {
         console.error(`fetch ${o.api} throw：${e.message}`);
-        this.setState({ loading: false });
+        if (this.state.loading) this.setState({ loading: false });
       });
     }));
 
-    // console.log(dataArr);
     dataArr.forEach((data, index) => {
-      if (index === 0) {
-        newList[index].data = data;
-      } else if (Array.isArray(data.items) && data.items.length) {
+      if (data && ('items' in data)) {
+        newList[index].type = 'table';
         newList[index].data = data.items;
+      } else if (Object().toString.call(data) === '[object Object]') {
+        newList[index].type = 'list';
+        newList[index].data = data;
       } else {
-        (index !== 0 && !data.items) && (newList[index].type = '');
+        newList[index].type = '';
       }
     });
+    // console.log(newList);
     this.setState({ collapseList: newList, loading: false });
   }
 
   updateData = async () => {
     this.setState({ updateLoading: true });
 
-    const res = await dynamicRequest('/api/dockingapi/updatebusiinfo', {}).catch(e => {
+    const res = await dynamicRequest(`${PREAPI}/updatebusiinfo`, {}).catch(e => {
       console.error(e.message);
       message.error(e.message);
       this.setState({ updateLoading: false });
@@ -75,29 +69,28 @@ class CommerceQueries extends Component {
   }
 
   renderChildren = (record) => {
-    const { titleText } = this.props;
-
     switch (record.type) {
       case 'list':
-        const businessList = __list.map(item => ({
-          ...item,
-          content: (record.data && record.data[item.key]) || '(空)'
-        }));
+        const businessList = __list.map(item => {
+          const text = record.data && record.data[item.key] || '(空)';
+          return { ...item, content: item.render ? item.render(text) : text };
+        });
         return <BusinessInfo list={businessList} />;
       case 'table':
-        return <ConfigTable rowKey="key" dataSource={record.data} tableHeight={300} columns={record.columns} />;
+        return <ConfigTable rowKey={record.rowKey} dataSource={record.data} tableHeight={300} columns={record.columns} />;
       default:
-        return <div>接口又没钱啦</div>;
+        return <div style={{ textAlign: 'center' }}><Icon type="frown-o" /> 暂无数据</div>;
     }
   }
 
   render() {
-    const { collapseList, defaultActiveKey, loading, updateLoading } = this.state;
+    const { collapseList, activeKey, loading, updateLoading } = this.state;
+    const updatetime = (collapseList[0].data.recupdated && collapseList[0].data.recupdated.slice(0, 19)) || '庆历四年春，滕子京谪守巴陵郡';
 
     return (
       <div>
         <div style={{ padding: 8, borderBottom: '1px solid #ccc' }}>
-          <span style={{ marginRight: 10 }}>当前数据更新于： {collapseList[0].data.recupdated || '庆历四年春，滕子京谪守巴陵郡'}</span>
+          <span style={{ marginRight: 10 }}>当前数据更新于： {updatetime}</span>
           <Popconfirm
             title="确定更新数据?"
             onConfirm={this.updateData}
@@ -106,7 +99,7 @@ class CommerceQueries extends Component {
           </Popconfirm>
         </div>
         <Spin spinning={loading}>
-          <Collapse defaultActiveKey={defaultActiveKey} bordered={false} style={{ height: document.body.clientHeight - 246, overflowY: 'auto' }}>
+          <Collapse defaultActiveKey={activeKey} bordered={false} style={{ height: document.body.clientHeight - 246, overflowY: 'auto' }}>
             {
               collapseList.map(item => {
                 return (
