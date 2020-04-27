@@ -37,6 +37,7 @@ class RelTable extends Component {
 
   arrFormInstance = [];
   arrFixedFormInstance = [];
+  scrollbarwidth = -1;
 
   constructor(props) {
     super(props);
@@ -47,7 +48,8 @@ class RelTable extends Component {
       importVisible: false,
       showModals: '',
       tableRowFields: [],
-      globalJS: {}
+      globalJS: {},
+      tableRowConfigs: [] // 表格行有业务逻辑的相关配置可以存在这里
     };
   }
 
@@ -87,10 +89,18 @@ class RelTable extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.entityId !== nextProps.entityId) {
-      this.queryFields(nextProps.entityId, nextProps);
+    const thisProps = this.props;
+
+    if (thisProps.entityId !== nextProps.entityId) this.queryFields(nextProps.entityId, nextProps);
+    if (nextProps.isEmitFlag && thisProps.value !== nextProps.value) { // 用于通过js带值时，初始化协议配置
+      const newValue = this.parseValue(nextProps);
+      const tableFields = _.cloneDeep(this.state.tableFields);
+      const tableRowFields = newValue.map(() => tableFields);
+      const tableRowConfigs = newValue.map(() => ({ isNotCopyJs: true }));
+      this.setState({ tableRowFields, tableRowConfigs });
     }
-    this.setAlignTableWidthAndHeight();
+
+    setTimeout(() => this.setAlignTableWidthAndHeight(), 0);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -152,14 +162,14 @@ class RelTable extends Component {
     function doWhileGet() {
       setTimeout(() => {
         if (!_this.state.loading) {
-          let tableRowFields_ = tableRowFields instanceof Array && tableRowFields.map((tableRowFieldItem, index) => {
+          const tableRowFields_ = tableRowFields instanceof Array && tableRowFields.map((tableRowFieldItem, index) => {
             let tableRowFieldItem_ = tableRowFieldItem;
             const currentRowSheetField = sheetfield[index];
             if (currentRowSheetField) {
               tableRowFieldItem_ = _this.mergeStorageAndLocal(tableRowFieldItem, currentRowSheetField, 'row');
             }
             return tableRowFieldItem_;
-          })
+          });
           _this.setState({ tableRowFields: tableRowFields_ });
         } else {
           doWhileGet();
@@ -170,23 +180,18 @@ class RelTable extends Component {
 
   mergeStorageAndLocal = (tableField, storageSheetField, type) => {
     return tableField.map(item => {
-      let newItem = item;
+      const newItem = item;
       if (storageSheetField[item.fieldid]) {
-        let fieldJson_config = getBackEndField_TO_FrontEnd(storageSheetField[item.fieldid], item);
+        const fieldJson_config = getBackEndField_TO_FrontEnd(storageSheetField[item.fieldid], item);
         if (type === 'row') {
           newItem.fieldconfig = {
             ...item.fieldconfig,
-            ...fieldJson_config,
-            isRequiredJS: fieldJson_config.isRequired,
-            isReadOnlyJS: fieldJson_config.isReadOnly || fieldJson_config.isHidden === 0 ? 0 : 1  //表格某行单元格不可见转成可读
+            ...fieldJson_config
           };
         } else {
           newItem.fieldconfig = {
             ...item.fieldconfig,
-            ...fieldJson_config,
-            isRequiredJS: fieldJson_config.isRequired,
-            isReadOnlyJS: fieldJson_config.isReadOnly,
-            isVisibleJS: fieldJson_config.isHidden === 0 ? 1 : 0
+            ...fieldJson_config
           };
         }
       }
@@ -194,8 +199,8 @@ class RelTable extends Component {
     });
   }
 
-  parseValue = () => {
-    const { value } = this.props;
+  parseValue = (props) => {
+    const { value } = props || this.props;
     if (!value) return [];
     if (!Array.isArray(value)) return [];
     return value;
@@ -231,15 +236,14 @@ class RelTable extends Component {
       OperateType,  // 0新增 1编辑 2查看
       typeId: this.props.entityTypeId // 主表单typeid
     };
-    this.setState({
-      loading: true
-    })
+    this.setState({ loading: true });
     getGeneralProtocolForGrid(params).then(result => {
       this.setState({
         tableFields: result.data,
         selectedRows: [],
         loading: false,
-        tableRowFields: this.getInitTableRowFields(result.data)
+        tableRowFields: this.getInitTableRowFields(result.data),
+        tableRowConfigs: this.getInitTableRowConfigs()
       });
       if (props.sheetfieldglobal) { //暂存数据需要做处理
         this.setInitFieldConfig(result.data, props.sheetfieldglobal);
@@ -256,10 +260,12 @@ class RelTable extends Component {
     });
   };
 
+  getInitTableRowConfigs = () => { // 初始化表格行业务逻辑的相关配置
+    return this.parseValue().map(item => ({}));
+  }
+
   getInitTableRowFields = (fields) => {
-    const tableRowFields = this.parseValue().map(item => {
-      return _.cloneDeep(fields);
-    });
+    const tableRowFields = this.parseValue().map(item => _.cloneDeep(fields));
     return tableRowFields;
   }
 
@@ -293,17 +299,28 @@ class RelTable extends Component {
 
   addRow = () => {
     const { entityId, onChange } = this.props;
+
     const newRow = {
       TypeId: entityId,
-      FieldData: { ...generateDefaultFormData(this.state.tableFields), isNotCopyJs: true }
+      FieldData: { ...generateDefaultFormData(this.state.tableFields) }
     };
     onChange([...this.parseValue(), newRow]);
-    this.setState({
-      tableRowFields: [
-        ...this.state.tableRowFields,
-        _.cloneDeep(this.state.tableFields)
-      ]
-    });
+
+    const tableRowFields = [
+      ...this.state.tableRowFields,
+      _.cloneDeep(this.state.tableFields)
+    ];
+
+    const tableRowConfig = {
+      isNotCopyJs: true
+    };
+
+    const tableRowConfigs = [
+      ...this.state.tableRowConfigs,
+      tableRowConfig
+    ];
+
+    this.setState({ tableRowFields, tableRowConfigs });
   };
 
   batchAdd = (data) => {
@@ -324,12 +341,18 @@ class RelTable extends Component {
     const batchAddTableRowFields = data instanceof Array && data.map(item => {
       return _.cloneDeep(this.state.tableFields);
     });
-    this.setState({
-      tableRowFields: [
-        ...this.state.tableRowFields,
-        ...batchAddTableRowFields
-      ]
-    });
+
+    const tableRowFields = [
+      ...this.state.tableRowFields,
+      ...batchAddTableRowFields
+    ];
+
+    const tableRowConfigs = [
+      ...this.state.tableRowConfigs,
+      ...newAddData.map(item => ({ isNotCopyJs: true }))
+    ];
+
+    this.setState({ tableRowFields, tableRowConfigs });
   }
 
   addImportData = (data, operateType) => { //operateType== 1  追加导入 覆盖导入
@@ -373,7 +396,8 @@ class RelTable extends Component {
     const newValue = this.parseValue().filter((item, index) => !_.includes(this.state.selectedRows, index));
     onChange(newValue);
     this.setState({
-      tableRowFields: this.state.tableRowFields.filter((item, index) => !_.includes(this.state.selectedRows, index))
+      tableRowFields: this.state.tableRowFields.filter((item, index) => !_.includes(this.state.selectedRows, index)),
+      tableRowConfigs: this.state.tableRowConfigs.filter((item, index) => !_.includes(this.state.selectedRows, index))
     });
     this.arrFormInstance = this.arrFormInstance.filter((item, index) => !_.includes(this.state.selectedRows, index));
     this.arrFixedFormInstance = this.arrFixedFormInstance.filter((item, index) => !_.includes(this.state.selectedRows, index));
@@ -612,6 +636,7 @@ class RelTable extends Component {
           rowIndex={index}
           fixedColumn={fixedColumn}
           origin="RelTableRow"
+          cacheId={this.props.cacheId}
           globalJS={this.state.globalJS}
           mode={this.props.mode}
           selected={_.includes(this.state.selectedRows, index)}
@@ -622,12 +647,13 @@ class RelTable extends Component {
           onSelect={this.onRowSelect}
           ref={formInst => fixed ? this.arrFixedFormInstance[index] = formInst : this.arrFormInstance[index] = formInst}
           onFieldControlFocus={this.onRowFieldFocus}
+          fieldName={this.props.fieldName}
           parentJsEngine={this.props.jsEngine}
           batchAddInfo_type={batchAddInfo.type}
           batchAddInfo_fieldname={batchAddInfo.field && batchAddInfo.field.fieldname}
           batchAddInfo_fieldid={batchAddInfo.field && batchAddInfo.field.fieldid}
           reloadTable={this.reloadTableRow}
-          OriginCopyAddForm={!item.FieldData.isNotCopyJs}
+          OriginCopyAddForm={!(this.state.tableRowConfigs[index] && this.state.tableRowConfigs[index].isNotCopyJs)}
         />
       );
     });
@@ -642,6 +668,7 @@ class RelTable extends Component {
 
   setAlignTableWidthAndHeight = () => {
     try {
+      if (!this.relTableRef || this.relTableRef.children) return;
       //列表的原始表头的列
       const realHeader = this.relTableRef.children[0].children[0].children;
       //列表的固定表头的列
@@ -652,8 +679,8 @@ class RelTable extends Component {
       //列表的左固定表的行
       const fixedLeftBody = this.fixLeftTableRef.children;
       for (let i = 0; i < realBody.length; i++) {
-        let realBody_trHeight = realBody[i].getBoundingClientRect().height;
-        let fixedLeftBody_trHeight = fixedLeftBody[i].getBoundingClientRect().height;
+        const realBody_trHeight = realBody[i].getBoundingClientRect().height;
+        const fixedLeftBody_trHeight = fixedLeftBody[i].getBoundingClientRect().height;
 
         if (realBody_trHeight !== fixedLeftBody_trHeight) {
           fixedLeftBody[i].children[0].style.height = realBody_trHeight + 'px';
@@ -669,11 +696,9 @@ class RelTable extends Component {
       }
 
       //列表的左固定的表格
-      let fixedWidth = 0
+      let fixedWidth = 0;
       for (let i = 0; i < realHeader.length; i++) {
-        if (i < 2) {
-          fixedWidth += realHeader[i].getBoundingClientRect().width;
-        }
+        if (i < 2) fixedWidth += realHeader[i].getBoundingClientRect().width;
       }
       this.fixLeftWrapRef.style.width = fixedWidth + 'px';
 
@@ -682,14 +707,11 @@ class RelTable extends Component {
       const horizontal = this.hasScrolled(this.relTableWrapRef, 'horizontal');
 
       let scrollWidth = 0;
-      if (vertical) {
-        scrollWidth = this.getScrollWidth();
-      }
+      if (vertical) scrollWidth = this.getScrollWidth();
 
       let scrollHeight = 0;
-      if (horizontal) {
-        scrollHeight = this.getScrollWidth();
-      }
+      if (horizontal) scrollHeight = this.getScrollWidth();
+
       this.fixLeftWrapRef.style.height = this.relTableWrapRef.getBoundingClientRect().height - scrollHeight + 'px';
       this.fixLeftWrapRef.style.maxHeight = TableMaxHeight - scrollHeight + 'px';
 
@@ -700,10 +722,10 @@ class RelTable extends Component {
 
       //顶部固定表格的列宽 需与真实表格保持一致
       for (let i = 0; i < realHeader.length; i++) {
-        let realHeader_thWidth = realHeader[i].getBoundingClientRect().width;
-        let fixedTopHeader_thWidth = fixedTopHeader[i].getBoundingClientRect().width;
-        let realHeader_thHeight = realHeader[i].getBoundingClientRect().height;
-        let fixedTopHeader_thHeight = fixedTopHeader[i].getBoundingClientRect().height;
+        const realHeader_thWidth = realHeader[i].getBoundingClientRect().width;
+        const fixedTopHeader_thWidth = fixedTopHeader[i].getBoundingClientRect().width;
+        const realHeader_thHeight = realHeader[i].getBoundingClientRect().height;
+        const fixedTopHeader_thHeight = fixedTopHeader[i].getBoundingClientRect().height;
         if (realHeader_thWidth !== fixedTopHeader_thWidth || realHeader_thHeight !== fixedTopHeader_thHeight) {
           fixedTopHeader[i].style.maxWidth = realHeader_thWidth + 'px';
           fixedTopHeader[i].style.width = realHeader_thWidth + 'px';
@@ -727,15 +749,17 @@ class RelTable extends Component {
   }
 
   getScrollWidth() {
+    if (this.scrollbarwidth > 0) return this.scrollbarwidth;
     let noScroll = document.createElement('DIV');
     let scroll = document.createElement('DIV');
-    let oDiv = document.createElement('DIV');
+    const oDiv = document.createElement('DIV');
     oDiv.style.cssText = 'position:absolute; top:-1000px; width:100px; height:100px; overflow:hidden;';
     noScroll = document.body.appendChild(oDiv).clientWidth;
     oDiv.style.overflowY = 'scroll';
     scroll = oDiv.clientWidth;
     document.body.removeChild(oDiv);
-    return noScroll - scroll;
+    this.scrollbarwidth = noScroll - scroll;
+    return this.scrollbarwidth;
   }
 
   hasScrolled(el, direction = 'vertical') {

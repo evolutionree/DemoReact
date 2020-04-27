@@ -15,8 +15,16 @@ export default function createFormErrorsStore(WrappedFormComponent, isTable) {
     constructor(props) {
       super(props);
       this.state = {
-        innerFormValue: this.getInnerFormValue({}, props.value || {})
+        innerFormValue: this.getInnerFormValue({}, props.value || {}),
+        isEmitFlag: false,
+        currentEventName: `jsEngineUpdateValues${new Date().getTime()}`
       };
+    }
+
+    componentDidMount() {
+      const { currentEventName } = this.state;
+      if (isTable) return;
+      document.addEventListener(currentEventName, this.updateValues);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -37,6 +45,21 @@ export default function createFormErrorsStore(WrappedFormComponent, isTable) {
       if (Object.keys(stateValue).length !== Object.keys(innerFormValue).length) isChanged = true;
       if (isChanged === false) return;
       this.setState({ innerFormValue });
+    }
+
+    componentWillUnmount() {
+      const { currentEventName } = this.state;
+      document.removeEventListener(currentEventName, this.updateValues);
+    }
+
+    updateValues = (e) => {
+      const values = typeof e.detail === 'object' ? e.detail : null;
+
+      if (values) {
+        this.handleFormValueChange(values, true);
+      } else if (e.detail === 'isEmitFlag') {
+        this.setState({ isEmitFlag: false });
+      }
     }
 
     getInnerFormValue = (value, nextValue) => {
@@ -113,7 +136,7 @@ export default function createFormErrorsStore(WrappedFormComponent, isTable) {
       // }
     }
 
-    handleFormValueChange = formValue => {
+    handleFormValueChange = (formValue, isEmitFlag) => {
       const removeUndefinedProps = obj => {
         if (!obj) return obj;
         const _obj = _.cloneDeep(obj);
@@ -123,7 +146,8 @@ export default function createFormErrorsStore(WrappedFormComponent, isTable) {
         return _obj;
       };
       this.setState({
-        innerFormValue: formValue
+        innerFormValue: formValue,
+        isEmitFlag: !!isEmitFlag
       }, () => {
         const values = _.mapValues(formValue, val => val.value);
         if (!_.isEqual(removeUndefinedProps(values), removeUndefinedProps(this.props.value))) {
@@ -134,14 +158,18 @@ export default function createFormErrorsStore(WrappedFormComponent, isTable) {
 
     render() {
       const { value, onChange, excutingJSStatusChange, ...restProps } = this.props;
+      const { isEmitFlag, currentEventName } = this.state;
+
       return (
         <WrappedFormComponent
           {...restProps}
           ref={formInst => this.formInst = formInst}
           wrappedComponentRef={(inst) => this.formRef = inst}
           value={this.state.innerFormValue}
-          onChange={this.handleFormValueChange}
+          onChange={(val) => this.handleFormValueChange(val)}
           excutingJSStatusChange={excutingJSStatusChange}
+          isEmitFlag={isEmitFlag}
+          currentEventName={currentEventName}
         />
       );
     }

@@ -23,6 +23,7 @@ class DynamicField extends React.Component {
     fieldLabel: PropTypes.string,
     startValue: PropTypes.string,
     fieldId: PropTypes.string,
+    fieldName: PropTypes.string,
     allowadd: PropTypes.bool,
     jsEngine: PropTypes.object
   }
@@ -67,6 +68,7 @@ class DynamicField extends React.Component {
     const props = {
       key: this.props.fieldId,
       isCommonForm: this.props.isCommonForm,
+      cacheId: this.props.cacheId,
       entityId: this.props.entityId,
       mainEntityId: this.props.entityId, // 嵌套表格的实体定义属性名 跟 独立实体 简单实体 重名了，重新加一个  （嵌套实体 导入用到）
       entityTypeId: this.props.entityTypeId,
@@ -88,6 +90,7 @@ class DynamicField extends React.Component {
       jsEngine: this.props.jsEngine,
       origin: this.props.origin,
       OriginCopyAddForm: this.props.OriginCopyAddForm,
+      isEmitFlag: this.props.isEmitFlag,
       ...this.props.config
     };
     let ControlComponent = controlMap[this.props.controlType];
