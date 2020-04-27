@@ -63,10 +63,10 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       super(props);
       this.state = {
         fields: props.fields,
-        comboFieldValues: {},
         lastValue: null
       };
       this.comboFieldConfigs = {};
+      this.comboFieldValues = {};
       this.setJS(props);
     }
 
@@ -721,7 +721,6 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     comboFieldValue = (fieldName, value, decimalLength) => {
       let newValue = value;
       const { origin, parentJsEngine, rowIndex, fieldName: tableFieldName } = this.props;
-      const { comboFieldValues } = this.state;
       const controlType = this.getFieldControlType(fieldName);
       const fieldInstance = this.getFieldComponentInstance(fieldName);
 
@@ -736,12 +735,10 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
             const tableValue = oldTableValue && typeof oldTableValue === 'object' ? { ...oldTableValue } : {};
             if (tableValue) {
               tableValue.value[rowIndex].FieldData = { ...tableValue.value[rowIndex].FieldData, [fieldName]: value };
-              parentJsEngine.setState({
-                comboFieldValues: {
-                  ...parentJsEngine.state.comboFieldValues,
-                  [tableFieldName]: { ...tableValue }
-                }
-              });
+              parentJsEngine.comboFieldValues = {
+                ...parentJsEngine.state.comboFieldValues,
+                [tableFieldName]: { ...tableValue }
+              };
             }
           }
           return;
@@ -750,8 +747,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
           const TypeId = fieldInstance.props.entityId;
           newValue = value.map(FieldData => ({ TypeId, FieldData }));
         }
-        const result = { ...comboFieldValues, [fieldName]: { value: newValue } };
-        this.setState({ comboFieldValues: result });
+        this.comboFieldValues = { ...this.comboFieldValues, [fieldName]: { value: newValue } };
       }
     }
 
@@ -821,10 +817,10 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       const _this = origin === 'RelTableRow' ? parentJsEngine : this;  // 嵌套表单设值走主表单逻辑
       let newFields = fields;
       if (Array.isArray(fields) && fields.length) {
-        const { comboFieldValues } = _this.state;
+        const { comboFieldValues } = _this;
         if (Object.keys(comboFieldValues).length) { // 修改value
           _this.emitValues(comboFieldValues);
-          _this.setState({ comboFieldValues: {} });
+          _this.comboFieldValues = {};
         }
 
         if (Object.keys(this.comboFieldConfigs).length) { // 修改协议
