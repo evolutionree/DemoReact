@@ -123,7 +123,7 @@ class ConfigTable extends Component {
   render() {
     const {
       dataSource, rowKey = 'recid', columns: propColumns, tableHeight,
-      rowSelect, rowSelection, pwidth: parentWidth
+      rowSelect, rowSelection, pwidth: parentWidth, defaultColwidth = 121
     } = this.props;
     const { selectedRowKeys, clientHeight } = this.state;
 
@@ -135,7 +135,7 @@ class ConfigTable extends Component {
     const Div3Height = modalHeight - Div1Height - Div2Height;
 
     const columnParams = this.importTableParmas();
-    const columns = getColumns(columnParams, propColumns || LoopList, width => (this.tableWidth = width));
+    const columns = getColumns(columnParams, propColumns || LoopList, defaultColwidth, width => (this.tableWidth = width));
 
     return (
       <div className={styles.wrapTable} ref={node => this.wrapTable = node}>

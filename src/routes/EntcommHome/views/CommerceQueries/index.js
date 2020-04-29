@@ -7,7 +7,7 @@ import ConfigTable from '../../../../components/ConfigTable';
 import styles from './index.less';
 
 const { Panel } = Collapse;
-const PREAPI = '/api/dockingapi';
+const PREFIXAPI = '/api/dockingapi';
 
 class CommerceQueries extends Component {
   constructor(props) {
@@ -29,7 +29,7 @@ class CommerceQueries extends Component {
     const { collapseList } = this.state;
 
     const params = { companyname: titleText };
-    const apiList = collapseList.map(o => ({ api: `${PREAPI}/${o.key}`, params: { ...o.params, ...params } }));
+    const apiList = collapseList.map(o => ({ api: `${PREFIXAPI}/${o.key}`, params: { ...o.params, ...params } }));
     const newList = [...collapseList];
 
     this.setState({ loading: true });
@@ -59,7 +59,7 @@ class CommerceQueries extends Component {
   updateData = async () => {
     this.setState({ updateLoading: true });
 
-    const res = await dynamicRequest(`${PREAPI}/updatebusiinfo`, {}).catch(e => {
+    const res = await dynamicRequest(`${PREFIXAPI}/updatebusiinfo`, {}).catch(e => {
       console.error(e.message);
       message.error(e.message);
       this.setState({ updateLoading: false });
@@ -77,7 +77,7 @@ class CommerceQueries extends Component {
         });
         return <BusinessInfo list={businessList} />;
       case 'table':
-        return <ConfigTable rowKey={record.rowKey} dataSource={record.data} tableHeight={300} columns={record.columns} />;
+        return <ConfigTable rowKey={record.rowKey} dataSource={record.data} tableHeight={300} defaultColwidth={121} columns={record.columns} />;
       default:
         return <div style={{ textAlign: 'center' }}><Icon type="frown-o" /> 暂无数据</div>;
     }

@@ -804,7 +804,6 @@ class Backfilled extends React.Component {
       'econkindcode:企业类型代码',
       'registcapi:注册资本',
       'address:地址',
-      'address:企业名称',
       'regno:企业注册号',
       'scope:经营范围',
       'termstart:营业开始日期',
@@ -1036,9 +1035,9 @@ export default class FormItemFactory {
       <FormItem label="文案配置" key="switchinfo">
         {this.getFieldDecorator('switchinfo', {
           rules: [{ required: true, message: '请完成文案配置' },
-            {
-              validator: this.switchValueRequire
-            }]
+          {
+            validator: this.switchValueRequire
+          }]
         })(<SwitchSet />)}
       </FormItem>
     );

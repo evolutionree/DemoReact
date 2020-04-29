@@ -8,12 +8,15 @@ const BusinessInfo = (props) => {
 
   return (
     <Row className={styles.listWrap}>
-      {list.map((item, index) => (
-        <Col key={index + ''} span={item.span} className={styles.listItem}>
-          <div className={styles.title}>{item.title}</div>
-          <div className={styles.content}>{item.content}</div>
-        </Col>
-      ))}
+      {list.map((item, index) => {
+        const span = item.span;
+        return (
+          <Col key={index + ''} span={span} className={styles.listItem}>
+            <div className={styles.title}>{item.title}</div>
+            <div className={styles.content}>{item.content}</div>
+          </Col>
+        );
+      })}
     </Row>
   );
 };

@@ -3,7 +3,7 @@ import { Icon } from 'antd';
 import FilterDrop from '../../DynamicTable/FilterDropComponent';
 import { tooltipElements, GetFilterValue, CheckHasFilter, GetFilterVisible } from '../utils';
 
-export const getColumns = (params, LoopList, callback) => {
+export const getColumns = (params, LoopList, defaultColwidth, callback) => {
   const { onFilter, toggleFilter, columnFilter, FilterVisibles, searchOrder } = params;
 
   const filterDropdown = (
@@ -49,10 +49,10 @@ export const getColumns = (params, LoopList, callback) => {
       return {
         ...item,
         dataIndex: item.key,
-        width: item.width || 121,
+        width: item.width || defaultColwidth,
         fixed: item.fixed || false,
         dataType: item.dataType || 'text',
-        render: item.render ? item.render : ((text, record) => tooltipElements((item.name ? record[item.name] : text), item.dataType || 'text', item.width || 121)),
+        render: item.render || ((text, record) => tooltipElements((item.name ? record[item.name] : text), item.dataType || 'text', item.width || defaultColwidth)),
         children: item.children ? renderList(item.children) : false,
         ...filterObj
       };

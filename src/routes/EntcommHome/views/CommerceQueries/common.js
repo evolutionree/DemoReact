@@ -3,7 +3,6 @@
 function getTargetField(text, record) {
   const _arr = text.split('.');
   const result = _arr.reduce((r, c) => (Array.isArray(r) ? r.map(o => o[c]).join(',') : r && r[c] ? r[c] : r), record);
-
   return result;
 }
 
@@ -49,9 +48,9 @@ const columns1 = _a.map(s => {
 // 企业裁判文书列表
 const columns2 = [
   { title: '类型', dataIndex: 'type', key: 'type' },
-  { title: '标题', dataIndex: 'title', key: 'title' },
+  { title: '标题', dataIndex: 'title', key: 'title', width: 420, render: v => v },
   { title: '提交日期', dataIndex: 'date', key: 'date' },
-  { title: '案号', dataIndex: 'case_no', key: 'case_no' },
+  { title: '案号', dataIndex: 'case_no', key: 'case_no', width: 240, render: v => v },
   { title: '案由', dataIndex: 'case_cause', key: 'case_cause' },
   { title: '公示信息', dataIndex: 'disabled', key: 'disabled', render: v => _b[v] }
 ];
@@ -69,7 +68,7 @@ const columns3 = [
   { title: '当事人角色', dataIndex: 'related_items.role', key: 'related_items.role', render: (v, c) => getTargetField('related_items.role', c) },
   { title: '当事人企业id', dataIndex: 'related_items.eid', key: 'related_items.eid', render: (v, c) => getTargetField('related_items.eid', c) },
   { title: '当事人企业名称', dataIndex: 'related_items.name', key: 'related_items.name', render: (v, c) => getTargetField('related_items.name', c) },
-  { title: '当事人类型', dataIndex: 'related_items.entity_type', key: 'related_items.entity_type', render: v => _c[v] }
+  { title: '当事人类型', dataIndex: 'related_items.entity_type', key: 'related_items.entity_type', render: (v, c) => _c[getTargetField('related_items.entity_type', c)] }
 ];
 
 // 法院公告信息
