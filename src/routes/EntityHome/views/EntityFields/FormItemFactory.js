@@ -800,23 +800,23 @@ class Backfilled extends React.Component {
     const fromfield = [
       // 'id:企业id',
       'name:企业名称',
-      'econKind:企业类型',
-      'econKindCode:企业类型代码',
-      'registCapi:注册资本',
-      'address:企业名称',
-      'regNo:企业注册号',
+      'econkind:企业类型',
+      'econkindcode:企业类型代码',
+      'registcapi:注册资本',
+      'address:地址',
+      'regno:企业注册号',
       'scope:经营范围',
-      'termStart:营业开始日期',
-      'termEnd:营业结束日期',
-      'belongOrg:所属工商局',
-      'operName:企业法定代表人',
-      'startDate:成立日期',
-      'endDate:注销日期',
-      'checkDate:核准日期',
+      'termstart:营业开始日期',
+      'termend:营业结束日期',
+      'belongorg:所属工商局',
+      'opername:企业法定代表人',
+      'startdate:成立日期',
+      'enddate:注销日期',
+      'checkdate:核准日期',
       'status:经营状态',
-      'orgNo:组织机构号',
-      'creditNo:统一社会信用代码',
-      'districtCode:地区代码',
+      'orgno:组织机构号',
+      'creditno:统一社会信用代码',
+      'districtcode:地区代码',
       'domain:四级行业'
     ];
     const options = fromfield.map(str => {
@@ -909,9 +909,10 @@ class Backfilled extends React.Component {
 
 export default class FormItemFactory {
 
-  constructor(form, entityFields, entityId, isEdit, onChange) {
+  constructor(form, entityFields, editingRecord, entityId, isEdit, onChange) {
     this.form = form;
     this.entityFields = entityFields;
+    this.editingRecord = editingRecord;
     this.entityId = entityId;
     this.getFieldDecorator = form.getFieldDecorator;
     this.isEdit = isEdit;
@@ -1034,9 +1035,9 @@ export default class FormItemFactory {
       <FormItem label="文案配置" key="switchinfo">
         {this.getFieldDecorator('switchinfo', {
           rules: [{ required: true, message: '请完成文案配置' },
-            {
-              validator: this.switchValueRequire
-            }]
+          {
+            validator: this.switchValueRequire
+          }]
         })(<SwitchSet />)}
       </FormItem>
     );
@@ -1560,8 +1561,9 @@ export default class FormItemFactory {
   }
 
   createBackfill() {
+    const isTriggerBtn = this.editingRecord && this.editingRecord.triggerBtn;
     return (
-      <FormItem label="回填字段映射关系" key="backfill">
+      <FormItem label="回填字段映射关系" key="backfill" style={!isTriggerBtn ? { display: 'none' } : {}}>
         {this.getFieldDecorator('backfill', {
           initialValue: []
           //rules: [{ required: true, message: '请新增回填规则' }]

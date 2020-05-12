@@ -597,6 +597,7 @@ class DynamicFormBase extends Component {
         quoteHandler={this.handleQuote}
         jsEngine={this.props.jsEngine}
         OriginCopyAddForm={this.props.origin === 'EntcommCopyModal'}
+        isEmitFlag={this.props.isEmitFlag}
       />
     );
   };

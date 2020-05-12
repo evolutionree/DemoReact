@@ -17,14 +17,14 @@ const controlTypeOptions = fieldModels.filter(o => o.value !== 1012).map(model =
   );
 });
 
-function getDynamicFormItems(ctrlType, form, entityFields, entityId, isEdit, onChange) {
+function getDynamicFormItems(ctrlType, form, entityFields, editingRecord, entityId, isEdit, onChange) {
   const isCustomer = entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246';
   const models = isCustomer ? fieldModels : fieldModels.filter(o => o.value !== 1012);
   const model = _.find(models, item => {
     return `${item.value}` === ctrlType;
   });
   const requires = (model && model.requires) || [];
-  const formItemFactory = new FormItemFactory(form, entityFields, entityId, isEdit, onChange);
+  const formItemFactory = new FormItemFactory(form, entityFields, editingRecord, entityId, isEdit, onChange);
   try {
     return requires.map(itemType => formItemFactory.create(itemType, ctrlType));
   } catch (execption) {
@@ -34,14 +34,16 @@ function getDynamicFormItems(ctrlType, form, entityFields, entityId, isEdit, onC
   }
 }
 
-function FieldForm({ form, isEdit, entityFields, entityId }) {
+function FieldForm({ form, isEdit, entityFields, editingRecord, entityId }) {
+  const isTriggerBtn = editingRecord && editingRecord.triggerBtn;
+
   function _resetFields() {
     resetFields();
     // setFieldsValue({ fieldName: getRandomLetters(6) });
   }
   const { getFieldDecorator, getFieldsValue, resetFields } = form;
   const { controlType = '1', relentityid, ifcontrolfield } = getFieldsValue(['controlType', 'relentityid', 'ifcontrolfield']);
-  let dynamicFormItems = getDynamicFormItems(controlType, form, entityFields, entityId, isEdit);
+  let dynamicFormItems = getDynamicFormItems(controlType, form, entityFields, editingRecord, entityId, isEdit);
   const isSystemControl = (controlType * 1 >= 1000 || controlType * 1 === 30);
 
   // 控制字段的显示和隐藏 引用对象对象的默认显示不能控制
@@ -53,7 +55,7 @@ function FieldForm({ form, isEdit, entityFields, entityId }) {
 
   return (
     <Form layout="horizontal">
-      <FormItem label="选择字段格式" style={isSystemControl ? { display: 'none' } : {}}>
+      <FormItem label="选择字段格式" style={isSystemControl || isTriggerBtn ? { display: 'none' } : {}}>
         {getFieldDecorator('controlType', {
           initialValue: '1',
           rules: [{ required: true, message: '请选择字段格式' }]
@@ -63,7 +65,7 @@ function FieldForm({ form, isEdit, entityFields, entityId }) {
           </Select>
         )}
       </FormItem>
-      <FormItem label="显示名称" key="displayName">
+      <FormItem label="显示名称" key="displayName" style={isTriggerBtn ? { display: 'none' } : {}}>
         {getFieldDecorator('displayname_lang', {
           rules: [{ required: true, message: '请输入显示名称' }]
         })(<IntlInput placeholder="显示名称" maxLength="20" />)}
@@ -74,7 +76,7 @@ function FieldForm({ form, isEdit, entityFields, entityId }) {
         })(<Input type="hidden" />) : null
       }
       {
-        Number(controlType) === 30 ? <FormItem label="关联对象显示字段" key="relfieldid">
+        Number(controlType) === 30 ? <FormItem label="关联对象显示字段" key="relfieldid" style={isTriggerBtn ? { display: 'none' } : {}}>
           {getFieldDecorator('relfieldid', {
             initialValue: '',
             rules: [{ required: true, message: '关联对象显示字段' }]
@@ -83,7 +85,7 @@ function FieldForm({ form, isEdit, entityFields, entityId }) {
           )}
         </FormItem> : null
       }
-      <FormItem label="状态" key="recStatus">
+      <FormItem label="状态" key="recStatus" style={isTriggerBtn ? { display: 'none' } : {}}>
         {getFieldDecorator('recStatus', {
           initialValue: '1',
           rules: [{ required: true, message: '请选择状态' }]
@@ -97,7 +99,7 @@ function FieldForm({ form, isEdit, entityFields, entityId }) {
 
       {dynamicFormItems}
 
-      <FormItem label="字段表列名">
+      <FormItem label="字段表列名" style={isTriggerBtn ? { display: 'none' } : {}}>
         {getFieldDecorator('fieldName', {
           normalize: (value) => (value ? value.trim() : value),
           rules: [

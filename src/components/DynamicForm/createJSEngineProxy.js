@@ -62,8 +62,11 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     constructor(props) {
       super(props);
       this.state = {
-        fields: props.fields
+        fields: props.fields,
+        lastValue: null
       };
+      this.comboFieldConfigs = {};
+      this.comboFieldValues = {};
       this.setJS(props);
     }
 
@@ -77,7 +80,16 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
 
     componentWillReceiveProps(nextProps) {
       const { fields: oldFields } = this.props;
-      const { fields: newFields } = nextProps;
+      const { fields: newFields, currentEventName } = nextProps;
+
+      // if (nextProps.isEmitFlag && this.state.lastValue) { //用于等待值变更后执行另外逻辑，暂时用不到，注释掉
+      //   const event = new CustomEvent(currentEventName, {
+      //     detail: 'isEmitFlag',
+      //     bubbles: true,
+      //     cancelable: false
+      //   });
+      //   document.dispatchEvent(event);
+      // }
 
       if (!_.isEqual(oldFields, newFields)) this.setState({ fields: newFields });
 
@@ -110,7 +122,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       //   if (nextVal !== lastVal) {
       //     // this.handleFieldValueChange(key);
       //   }
-      // }); 
+      // });
     }
 
     shouldComponentUpdate(nextProps, nextState) {
@@ -138,10 +150,6 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       return false;
     }
 
-    validateFields = (opts, callback) => {
-
-    };
-
     setJS = props => {
       const fieldExpandJS = {};
       const fieldExpandFilterJS = {};
@@ -158,14 +166,14 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     setGlobalJS = (JS) => {
-      const { mode, origin, OriginCopyAddForm, fields } = this.props;
-      if (this.props.cacheId) { //暂存表单 不走全局JS
-        return;
-      }
+      const { mode, origin, OriginCopyAddForm, fields, formGlobalJS, cacheId } = this.props;
+      if (cacheId) return;//暂存表单 不走全局JS
+
       let globalJS = '';
       const data = JS;
       if (data && Object.keys(data).length) {
         const ftype = mode || formType;
+        data.editload = (data.editload || '') + (formGlobalJS || '');
         switch (ftype) {
           case FormTypes.ADD:
             //复制新增的时候  取copyload 全局JS
@@ -304,7 +312,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     setValue = (fieldName, value, decimalLength) => {
       try {
         const val = this.handleNumberValue(fieldName, value, decimalLength);
-        this.getFieldComponentInstance(fieldName) && this.getFieldComponentInstance(fieldName).setValue(val, decimalLength, fieldName);
+        this.comboFieldValue(fieldName, val, decimalLength);
       } catch (e) {
         console.error(e);
       }
@@ -376,14 +384,14 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
 
     designateDataSource = (fieldName, ids) => {
       if (ids === undefined || ids === null) ids = '';
-      this.setFieldConfig(fieldName, {
+      this.comboFieldConfig(fieldName, {
         designateDataSource: typeof ids === 'object' ? ids : (ids + ''),
         designateDataSourceByName: ''
       });
     };
 
     designateDataSourceByName = (fieldName, names) => {
-      this.setFieldConfig(fieldName, {
+      this.comboFieldConfig(fieldName, {
         designateDataSource: '',
         designateDataSourceByName: names || ''
       });
@@ -395,7 +403,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       if (!conf) return;
       const { designateFilterDataSource: oldVal, excuteId } = conf;
       const newVal = (oldVal && excuteId === this.excuteId) ? (oldVal + ',' + ids) : ids;
-      this.setFieldConfig(fieldName, {
+      this.comboFieldConfig(fieldName, {
         designateFilterDataSource: newVal + '',
         designateFilterDataSourceByName: '',
         excuteId: this.excuteId
@@ -408,7 +416,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       if (!conf) return;
       const { designateFilterDataSourceByName: oldVal, excuteId } = conf;
       const newVal = (oldVal && excuteId === this.excuteId) ? (oldVal + ',' + names) : names;
-      this.setFieldConfig(fieldName, {
+      this.comboFieldConfig(fieldName, {
         designateFilterDataSource: '',
         designateFilterDataSourceByName: newVal,
         excuteId: this.excuteId
@@ -419,7 +427,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       const designateNodes = (nodePath || '').split(',').map(nodePathItem => {
         return { path: nodePathItem, includeSubNode };
       });
-      this.setFieldConfig(fieldName, {
+      this.comboFieldConfig(fieldName, {
         designateNodes: designateNodes
       });
     };
@@ -434,7 +442,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
         return item.path === nodePath && item.includeSubNode === includeSubNode;
       });
       if (hasExist) return;
-      this.setFieldConfig(fieldName, {
+      this.comboFieldConfig(fieldName, {
         designateNodes: [...designateNodes, { path: nodePath, includeSubNode }]
       });
     };
@@ -445,16 +453,16 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       if (!conf) return;
       const { designateFilterNodes = [] } = conf;
       const hasExist = designateFilterNodes.some(item => {
-        return item.path === nodePath;
+        return item.path === nodePath || item === nodePath;
       });
       if (hasExist) return;
-      this.setFieldConfig(fieldName, {
+      this.comboFieldConfig(fieldName, {
         designateFilterNodes: [...designateFilterNodes, nodePath]
       });
     };
 
     clearFilter = fieldName => {
-      this.setFieldConfig(fieldName, {
+      this.comboFieldConfig(fieldName, {
         designateDataSource: '',
         designateDataSourceByName: '',
         designateFilterDataSource: '',
@@ -473,7 +481,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       } else {
         configObj.isVisibleJS = isVisible ? 1 : 0;
       }
-      this.setFieldConfig(fieldName, configObj);
+      this.comboFieldConfig(fieldName, configObj);
 
       if (!isVisible && form) {
         const { getFieldsValue } = form;
@@ -486,11 +494,11 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     setRequired = (fieldName, isRequired) => {
-      this.setFieldConfig(fieldName, { isRequiredJS: isRequired ? 1 : 0 });
+      this.comboFieldConfig(fieldName, { isRequiredJS: isRequired ? 1 : 0 });
     };
 
     setReadOnly = (fieldName, isReadOnly) => {
-      this.setFieldConfig(fieldName, { isReadOnlyJS: isReadOnly ? 1 : 0 });
+      this.comboFieldConfig(fieldName, { isReadOnlyJS: isReadOnly ? 1 : 0 });
     };
 
     request = (url, method, body, headers) => {
@@ -542,13 +550,13 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       if (type === 1) {
         let ids = values;
         if (ids === undefined || ids === null) ids = '';
-        instance.setFieldConfig(columnFieldName, {
+        instance.comboFieldConfig(columnFieldName, {
           designateDataSource: typeof ids === 'object' ? ids : (ids + ''),
           designateDataSourceByName: ''
         });
       } else if (type === 0) {
         const names = values || '';
-        instance.setFieldConfig(columnFieldName, {
+        instance.comboFieldConfig(columnFieldName, {
           designateDataSource: '',
           designateDataSourceByName: names
         });
@@ -562,7 +570,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       const designateNodes = (nodePath || '').split(',').map(nodePathItem => {
         return { path: nodePathItem, includeSubNode };
       });
-      instance.setFieldConfig(columnFieldName, {
+      instance.comboFieldConfig(columnFieldName, {
         designateNodes: designateNodes
       });
     };
@@ -578,7 +586,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
         if (!conf) return;
         const { designateFilterDataSource: oldVal, excuteId } = conf;
         const newVal = (oldVal && excuteId === this.excuteId) ? (oldVal + ',' + ids) : ids;
-        instance.setFieldConfig(columnFieldName, {
+        instance.comboFieldConfig(columnFieldName, {
           designateFilterDataSource: newVal + '',
           designateFilterDataSourceByName: '',
           excuteId: this.excuteId
@@ -589,7 +597,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
         if (!conf) return;
         const { designateFilterDataSourceByName: oldVal, excuteId } = conf;
         const newVal = (oldVal && excuteId === this.excuteId) ? (oldVal + ',' + names) : names;
-        instance.setFieldConfig(columnFieldName, {
+        instance.comboFieldConfig(columnFieldName, {
           designateFilterDataSource: '',
           designateFilterDataSourceByName: newVal,
           excuteId: this.excuteId
@@ -602,25 +610,22 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       return field && field.fieldconfig;
     };
 
-    setFieldConfig = (fieldName, config) => {
+    setFieldConfig = (fieldName, config) => { // 保留着，以备不时之需
       const { fields: fieldArr } = this.state;
-      if (Array.isArray(fieldArr) && fieldArr.length) {
-        const fields = JSON.parse(JSON.stringify(fieldArr));
+      const fields = [...fieldArr];
 
-        const fieldIdx = fields.findIndex(item => item.fieldname === fieldName);
-        if (fieldIdx > -1) {
-          fields[fieldIdx].fieldconfig = {
-            ...fields[fieldIdx].fieldconfig,
-            ...config
-          };
-        }
-
-        //TODO： 表格重新渲染
-        this.props.reloadTable && this.props.reloadTable(this.props.rowIndex, uuid());
-        this.setState({ fields });
+      const field = fields.find(item => item.fieldname === fieldName);
+      if (field) {
+        field.fieldconfig = {
+          ...field.fieldconfig,
+          ...config
+        };
       }
-    };
 
+      //TODO： 表格重新渲染
+      this.props.reloadTable && this.props.reloadTable(this.props.rowIndex, uuid());
+      this.setState({ fields });
+    };
 
     getFieldByName = (fieldName) => {
       return this.state.fields.find(item => item.fieldname === fieldName);
@@ -713,20 +718,118 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       }, 0);
     };
 
+    comboFieldValue = (fieldName, value, decimalLength) => {
+      let newValue = value;
+      const { origin, parentJsEngine, rowIndex, fieldName: tableFieldName } = this.props;
+      const controlType = this.getFieldControlType(fieldName);
+      const fieldInstance = this.getFieldComponentInstance(fieldName);
+
+      // 走回原来逻辑，涉及到字段带入逻辑
+      if ((controlType === 18 || controlType === 31) && fieldInstance) {
+        fieldInstance.setValue(value, decimalLength, fieldName);
+      } else { // 收集JS的setValue后的逻辑
+        if (origin === 'RelTableRow') { // 嵌套表单设值走主表单逻辑
+          const tableInstance = parentJsEngine.getFieldComponentInstance(tableFieldName);
+          if (tableInstance) {
+            const oldTableValue = parentJsEngine.props.value[tableFieldName];
+            const tableValue = oldTableValue && typeof oldTableValue === 'object' ? { ...oldTableValue } : {};
+            if (tableValue) {
+              tableValue.value[rowIndex].FieldData = { ...tableValue.value[rowIndex].FieldData, [fieldName]: value };
+              parentJsEngine.comboFieldValues = {
+                ...parentJsEngine.state.comboFieldValues,
+                [tableFieldName]: { ...tableValue }
+              };
+            }
+          }
+          return;
+        }
+        if (controlType === 24) {
+          const TypeId = fieldInstance.props.entityId;
+          newValue = value.map(FieldData => ({ TypeId, FieldData }));
+        }
+        this.comboFieldValues = { ...this.comboFieldValues, [fieldName]: { value: newValue } };
+      }
+    }
+
+    emitValues = (comboFieldValues) => {
+      const { value, currentEventName } = this.props;
+      if (Object.keys(comboFieldValues).every(key => (JSON.stringify(comboFieldValues[key]) === JSON.stringify(value[key])))) return;
+
+      const result = { ...value, ...comboFieldValues };
+
+      // this.setState({ lastValue: result }, () => { //用于等待值变更后执行另外逻辑，暂时用不到，注释掉
+      const event = new CustomEvent(currentEventName, {
+        detail: result,
+        bubbles: true,
+        cancelable: false
+      });
+      document.dispatchEvent(event);
+      // });
+    }
+
+    comboFieldConfig = (fieldName, config) => {
+      const currentField = (fieldName in this.comboFieldConfigs) ? this.comboFieldConfigs[fieldName] : {};
+      const result = { ...this.comboFieldConfigs, [fieldName]: { ...currentField, ...config } };
+      this.comboFieldConfigs = result;
+    }
+
+    comboProtocol = (fields, comboFieldConfigs) => {
+      const newFields = fields.map(item => {
+        Object.keys(comboFieldConfigs).forEach(keyName => {
+          if (item.fieldname === keyName) {
+            item.fieldconfig = {
+              ...item.fieldconfig,
+              ...comboFieldConfigs[keyName]
+            };
+          }
+        });
+        return item;
+      });
+
+      //TODO： 表格重新渲染
+      this.props.reloadTable && this.props.reloadTable(this.props.rowIndex, uuid());
+      return newFields;
+    }
+
+    beforeExcuteJS = () => { }
+
     excuteJS = (js, logTitle) => {
       if (!js) return;
+      const { origin, parentJsEngine } = this.props;
+      const _this = origin === 'RelTableRow' ? parentJsEngine : this;  // 嵌套表单js执行前后走主表单方法
+
       try {
         this.excuteId += 1;
-        console.info(
-          `[${logTitle}]excuteJS: ${js && js.replace('/n', '').slice(1, 40)}...`
-        );
+        console.info(`[${logTitle}]excuteJS: ${js && js.replace('/n', '').slice(1, 40)}...`);
         // eval(this.getDefCode() + filterJS);
-        eval('var app = this;' + js);
+        this.beforeExcuteJS();
+        eval(`var app = this;${js}`);
+        this.afterExcuteJS();
       } catch (e) {
         this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(false);
         console.error(e);
       }
     };
+
+    afterExcuteJS = () => {
+      const { origin, parentJsEngine } = this.props;
+      const { fields } = this.state;
+      const _this = origin === 'RelTableRow' ? parentJsEngine : this;  // 嵌套表单设值走主表单逻辑
+      let newFields = fields;
+      if (Array.isArray(fields) && fields.length) {
+        const { comboFieldValues } = _this;
+        if (Object.keys(comboFieldValues).length) { // 修改value
+          _this.emitValues(comboFieldValues);
+          _this.comboFieldValues = {};
+        }
+
+        if (Object.keys(this.comboFieldConfigs).length) { // 修改协议
+          newFields = this.comboProtocol(JSON.parse(JSON.stringify(fields)), this.comboFieldConfigs);
+          this.comboFieldConfigs = {};
+          this.setState({ fields: newFields });
+        }
+      }
+    }
 
     render() {
       const { fields, ...restProps } = this.props;

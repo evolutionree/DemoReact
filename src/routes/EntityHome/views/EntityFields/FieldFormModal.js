@@ -149,9 +149,9 @@ class FieldFormModal extends Component {
   };
 
   render() {
-    const { form, visible, modalPending, entityFields, entityId } = this.props;
+    const { form, visible, modalPending, entityFields, editingRecord, entityId } = this.props;
     const isEdit = /edit/.test(visible);
-    const title = isEdit ? '编辑字段' : '新增字段';
+    const title = isEdit ? (editingRecord.triggerBtn ? '设置回填映射字段' : '编辑字段') : '新增字段';
 
     return (
       <Modal
@@ -161,7 +161,7 @@ class FieldFormModal extends Component {
         confirmLoading={modalPending}
         onCancel={this.handleCancel}
       >
-        <FieldForm form={form} isEdit={isEdit} entityFields={entityFields} entityId={entityId} />
+        <FieldForm form={form} isEdit={isEdit} entityFields={entityFields} editingRecord={editingRecord} entityId={entityId} />
       </Modal>
     );
   }
