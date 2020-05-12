@@ -30,7 +30,7 @@ export const fieldModels = [
   { name: '定位', value: 14 },
   { name: '头像', value: 15, requires: ['headShape'] },
   { name: '行政区域', value: 16, requires: [...ifControlConfig] },
-  { name: '团队组织', value: 17, requires: ['dataRange', 'listType', 'multiple', ...ifControlConfig] },
+  { name: '团队组织', value: 17, requires: ['dataRange', 'multiple', ...ifControlConfig] },
   { name: '数据源', value: 18, requires: ['dataSource', 'multiple', 'allowAdd', ...ifControlConfig] },
   { name: '分组', value: 20, requires: ['foldable'] },
   // { name: '树形控件', value: 21, disabled: true },
