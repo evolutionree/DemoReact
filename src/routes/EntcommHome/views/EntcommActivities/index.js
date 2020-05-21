@@ -7,6 +7,7 @@ import ImgCard from '../../../../components/ImgCard';
 import IntlText from '../../../../components/UKComponent/Form/IntlText';
 import PluginAddModal from './PluginAddModal';
 import DynamicDetailModal from './DynamicDetailModal';
+import QRcodeListTable from './QRcodeListTable';
 import styles from './styles.less';
 
 function getItemDay(item) {
@@ -16,15 +17,17 @@ function getItemDay(item) {
 }
 
 function EntcommActivities({
-    list,
-    total,
-    comment,
-    like,
-    showDynamicDetail,
-    plugins,
-    pluginAdd,
-    loadMoreHandler
-  }) {
+  list,
+  total,
+  comment,
+  like,
+  showDynamicDetail,
+  plugins,
+  pluginAdd,
+  loadMoreHandler,
+  showQRcodeListTableData,
+  hideQRcodeListTable
+}) {
   return (
     <div className={styles.container}>
       <PluginAddModal />
@@ -108,6 +111,10 @@ function EntcommActivities({
             : <div className={styles.loadMore} onClick={loadMoreHandler}>点击加载更多...</div>
       }
       <DynamicDetailModal />
+      <QRcodeListTable
+        data={showQRcodeListTableData}
+        onCancel={hideQRcodeListTable}
+      />
     </div>
   );
 }
@@ -130,6 +137,9 @@ export default connect(
       },
       loadMoreHandler() {
         dispatch({ type: 'entcommActivities/loadMore__' });
+      },
+      hideQRcodeListTable() {
+        dispatch({ type: 'entcommActivities/putState', payload: { showQRcodeListTableData: undefined } });
       }
     };
   }
