@@ -34,9 +34,12 @@ function EntcommHome({
       {'239a7c69-8238-413d-b1d9-a0d51651abfa' === entityId && <LinkTab to={`/entcomm/${entityId}/${recordId}/receivepay`}>回款</LinkTab>}
       {'f9db9d79-e94b-4678-a5cc-aa6e281c1246' === entityId && <LinkTab to={`/entcomm/${entityId}/${recordId}/relationtree`}>客户关系</LinkTab>}*/}
       {[...relTabs.map(t => (
-        t.entitytaburl ?
-          <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/${t.entitytaburl}`}><IntlText name="relname" value={t} /></LinkTab> :
-          <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/rel/${t.relid}/${t.relentityid}`}><IntlText name="relname" value={t} /></LinkTab>
+        t.entitytaburl === 'wjxcallback' ? 
+          <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/wjxcallback/${recordDetail.custcode}`}><IntlText name="relname" value={t} /></LinkTab> :
+          (t.entitytaburl ?
+            <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/${t.entitytaburl}`}><IntlText name="relname" value={t} /></LinkTab> :
+            <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/rel/${t.relid}/${t.relentityid}`}><IntlText name="relname" value={t} /></LinkTab>
+          )
       ))]}
       {entityId === '9834d2bc-084a-49de-bbbf-02f35c191b64' && <LinkTab to={`/entcomm/${entityId}/${recordId}/relationschema`}>关系图</LinkTab>}
       {isCustomer && <LinkTab to={`/entcomm/${entityId}/${recordId}/message`}>司法信息</LinkTab>}

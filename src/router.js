@@ -32,6 +32,7 @@ import EntcommRel from './routes/EntcommHome/views/EntcommRel';
 import EntcommAffair from './routes/EntcommHome/views/EntcommAffair';
 import RelationSchema from './routes/EntcommHome/views/RelationSchema';
 import CommerceQueries from './routes/EntcommHome/views/CommerceQueries';
+import Wjxcallback from './routes/EntcommHome/views/Wjxcallback';
 
 import ContractReceivePay from './routes/ContractHome/ReceivePay';
 
@@ -109,7 +110,8 @@ const appRoutes = [
       { path: 'affairlist', comp: EntcommAffair, model: require('./models/entcommAffair') },
       { path: 'rel/:relId/:relEntityId', comp: EntcommRel, model: require('./models/entcommRel') },
       { path: 'relationschema', comp: RelationSchema, model: require('./models/relationschema') },
-      { path: 'message', comp: CommerceQueries }
+      { path: 'message', comp: CommerceQueries },
+      { path: 'wjxcallback/:custcode', comp: Wjxcallback }
     ]
   },
   { path: 'products', comp: ProductManager, entid: '33240d14-a543-4357-b696-c8cc77f82f7c', model: require('./models/productManager') },
