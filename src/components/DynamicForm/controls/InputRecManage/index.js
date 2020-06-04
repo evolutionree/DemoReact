@@ -5,6 +5,7 @@ import { dynamicRequest } from '../../../../services/common';
 import { __list } from '../../../../routes/EntcommHome/views/CommerceQueries/common';
 import BusinessInfo from '../../../../routes/EntcommHome/views/CommerceQueries/BusinessInfo';
 import styles from './index.less';
+import gong from './gong.png';
 
 export default class InputRecManage extends Component {
   constructor(props) {
@@ -121,7 +122,7 @@ export default class InputRecManage extends Component {
           placeholder={placeholder}
         />
 
-        {loading ? <Icon type="loading" style={{ marginLeft: 5 }} /> : <div onClick={this.showModal} className={styles.icon} />}
+        {loading ? <Icon type="loading" style={{ marginLeft: 5 }} /> : <img src={gong} alt="gong" onClick={this.showModal} className={styles.icon} />}
 
         <Modal
           title="工商信息查询"
