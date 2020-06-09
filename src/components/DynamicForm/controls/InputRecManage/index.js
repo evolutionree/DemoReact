@@ -41,8 +41,10 @@ export default class InputRecManage extends Component {
   }
 
   fetchList = (value) => {
+    const { getFieldConfig, getValue } = this.props.jsEngine;
+    const Country = `${getFieldConfig('country').dataSource.sourceId},${getValue('country')}`;
     this.setState({ loading: true }, () => { // 业务上不考虑同名公司情况，新增数据要对名称查重
-      dynamicRequest('/api/dockingapi/getbusinesslist', { skipnum: 0, companyname: value })
+      dynamicRequest('/api/dockingapi/getbusinesslist', { skipnum: 0, companyname: value, Country })
         .then(res => {
           const { data: { items } } = res;
           if (Array.isArray(items) && items.length) {
