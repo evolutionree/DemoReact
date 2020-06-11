@@ -23,12 +23,27 @@ export default class InputRecManage extends Component {
     this.props.onChange(val, true);
   };
 
-  handleChange = (value) => {
+  onSelect = (value) => {
     const { dataSource } = this.state;
-
-    this.props.onChange(value);
     const match = dataSource.find(o => o.name === value);
-    this.setState({ selectInfo: match });
+    if (match) {
+      this.setState({ loading: true });
+      const { getFieldConfig, getValue } = this.props.jsEngine;
+      const Country = `${getFieldConfig('country').dataSource.sourceId},${getValue('country')}`;
+      dynamicRequest('/api/dockingapi/saveforebusidetail', { id: match.id, companyname: match.name, Country })
+        .then(() => {
+          this.setState({ loading: false, selectInfo: match });
+          this.props.onChange(value);
+        })
+        .catch(e => {
+          message.error(e.message);
+          this.setState({ loading: false });
+        });
+    }
+  }
+
+  handleChange = (value) => {
+    this.props.onChange(value);
   }
 
   handleSearch = (value) => {
@@ -117,7 +132,7 @@ export default class InputRecManage extends Component {
         <AutoComplete
           value={value}
           className={styles.input}
-          dataSource={dataSource.map(o => o.name)}
+          dataSource={dataSource.length ? [...new Set(dataSource.map(o => o.name))] : []}
           onSelect={this.onSelect}
           onChange={this.handleChange}
           onSearch={this.handleSearch}

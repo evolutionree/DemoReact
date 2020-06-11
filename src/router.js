@@ -32,6 +32,7 @@ import EntcommRel from './routes/EntcommHome/views/EntcommRel';
 import EntcommAffair from './routes/EntcommHome/views/EntcommAffair';
 import RelationSchema from './routes/EntcommHome/views/RelationSchema';
 import CommerceQueries from './routes/EntcommHome/views/CommerceQueries';
+import OutCommerceQueries from './routes/EntcommHome/views/CommerceQueries/out.js';
 import Wjxcallback from './routes/EntcommHome/views/Wjxcallback';
 
 import ContractReceivePay from './routes/ContractHome/ReceivePay';
@@ -110,7 +111,8 @@ const appRoutes = [
       { path: 'affairlist', comp: EntcommAffair, model: require('./models/entcommAffair') },
       { path: 'rel/:relId/:relEntityId', comp: EntcommRel, model: require('./models/entcommRel') },
       { path: 'relationschema', comp: RelationSchema, model: require('./models/relationschema') },
-      { path: 'message', comp: CommerceQueries },
+      { path: 'foreignlaw/:country', comp: OutCommerceQueries },
+      { path: 'lawcallback', comp: CommerceQueries },
       { path: 'wjxcallback/:custcode', comp: Wjxcallback }
     ]
   },

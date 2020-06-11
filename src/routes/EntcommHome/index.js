@@ -24,7 +24,6 @@ function EntcommHome({
 }) {
   const entityId = params.entityId;
   const recordId = params.recordId;
-  const isCustomer = entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' && relTabs.length;
 
   const tabbar = (
     <LinkTab.Group>
@@ -33,16 +32,20 @@ function EntcommHome({
       <LinkTab to={`/entcomm/${entityId}/${recordId}/docs`}>文档</LinkTab>
       {'239a7c69-8238-413d-b1d9-a0d51651abfa' === entityId && <LinkTab to={`/entcomm/${entityId}/${recordId}/receivepay`}>回款</LinkTab>}
       {'f9db9d79-e94b-4678-a5cc-aa6e281c1246' === entityId && <LinkTab to={`/entcomm/${entityId}/${recordId}/relationtree`}>客户关系</LinkTab>}*/}
-      {[...relTabs.map(t => (
-        t.entitytaburl === 'wjxcallback' ? 
-          <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/wjxcallback/${recordDetail.custcode}`}><IntlText name="relname" value={t} /></LinkTab> :
-          (t.entitytaburl ?
-            <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/${t.entitytaburl}`}><IntlText name="relname" value={t} /></LinkTab> :
-            <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/rel/${t.relid}/${t.relentityid}`}><IntlText name="relname" value={t} /></LinkTab>
-          )
-      ))]}
+      {[...relTabs.map(t => {
+        if (t.entitytaburl === 'wjxcallback') {
+          return <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/wjxcallback/${recordDetail.custcode}`}><IntlText name="relname" value={t} /></LinkTab>;
+        } else if (t.entitytaburl === 'lawcallback') {
+          return <LinkTab to={`/entcomm/${entityId}/${recordId}/lawcallback`}><IntlText name="relname" value={t} /></LinkTab>;
+        } else if (t.entitytaburl === 'foreignlaw') {
+          return <LinkTab to={`/entcomm/${entityId}/${recordId}/foreignlaw/${recordDetail.country}`}><IntlText name="relname" value={t} /></LinkTab>;
+        }
+        return (t.entitytaburl ?
+          <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/${t.entitytaburl}`}><IntlText name="relname" value={t} /></LinkTab> :
+          <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/rel/${t.relid}/${t.relentityid}`}><IntlText name="relname" value={t} /></LinkTab>
+        );
+      })]}
       {entityId === '9834d2bc-084a-49de-bbbf-02f35c191b64' && <LinkTab to={`/entcomm/${entityId}/${recordId}/relationschema`}>关系图</LinkTab>}
-      {isCustomer && <LinkTab to={`/entcomm/${entityId}/${recordId}/message`}>司法信息</LinkTab>}
     </LinkTab.Group>
   );
 
