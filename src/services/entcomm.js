@@ -389,7 +389,7 @@ export async function queryPlugins({ entityid, recid }) {
       .filter(item => !!item);
 
     relflow.forEach(item => {
-      plugins.push({
+      plugins.unshift({
         type: 'flow',
         flowid: item.flowid,
         name: item.flowname,
@@ -403,7 +403,7 @@ export async function queryPlugins({ entityid, recid }) {
     });
 
     entityaudit.forEach(item => {
-      plugins.push({
+      plugins.unshift({
         type: 'audit',
         flowid: item.flowid,
         name: item.flowname,
@@ -414,7 +414,7 @@ export async function queryPlugins({ entityid, recid }) {
 
     buttons.forEach(item => {
       if (item.buttoncode === 'CallService') {
-        plugins.push({
+        plugins.unshift({
           type: 'CallService',
           name: item.title,
           name_lang: item.title_lang,
@@ -423,7 +423,7 @@ export async function queryPlugins({ entityid, recid }) {
           entity: item
         });
       } else if (item.buttoncode === 'PrintEntity') {
-        plugins.push({
+        plugins.unshift({
           type: 'FunctionButton',
           code: 'PrintEntity',
           name: item.title,
@@ -432,7 +432,7 @@ export async function queryPlugins({ entityid, recid }) {
           entity: item
         });
       } else if (item.buttoncode === 'EntityDataOpenH5') {
-        plugins.push({
+        plugins.unshift({
           type: 'EntityDataOpenH5',
           name: item.title,
           name_lang: item.title_lang,
@@ -442,7 +442,7 @@ export async function queryPlugins({ entityid, recid }) {
         });
       } else if (item.buttoncode === 'AddRelEntityData') {
         const entity = item.extradata && typeof item.extradata === 'object' ? { ...item, ...item.extradata } : item;
-        plugins.push({
+        plugins.unshift({
           type: 'AddRelEntityData',
           name: item.title,
           name_lang: item.title_lang,
@@ -452,7 +452,7 @@ export async function queryPlugins({ entityid, recid }) {
         });
       } else if (item.buttoncode === 'ShowQRcode') {
         const entity = item.extradata && typeof item.extradata === 'object' ? { ...item, ...item.extradata } : item;
-        plugins.push({
+        plugins.unshift({
           type: 'ShowQRcode',
           name: item.title,
           name_lang: item.title_lang,
@@ -462,7 +462,7 @@ export async function queryPlugins({ entityid, recid }) {
         });
       } else if (item.extradata) {
         if (item.extradata.type === 'transform') {
-          plugins.push({
+          plugins.unshift({
             type: 'transform',
             name: item.title,
             name_lang: item.title_lang,
@@ -470,7 +470,7 @@ export async function queryPlugins({ entityid, recid }) {
             entity: item
           });
         } else if (item.extradata.type === 'upatebutton') {
-          plugins.push({
+          plugins.unshift({
             type: 'upatebutton',
             name: item.title,
             name_lang: item.title_lang,
@@ -478,7 +478,7 @@ export async function queryPlugins({ entityid, recid }) {
             entity: item
           });
         } else if (item.extradata.type === 'copybutton') {
-          plugins.push({
+          plugins.unshift({
             type: 'copybutton',
             name: item.title,
             name_lang: item.title_lang,
