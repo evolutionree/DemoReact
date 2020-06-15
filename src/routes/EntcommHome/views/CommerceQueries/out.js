@@ -4,7 +4,7 @@ import { dynamicRequest } from '../../../../services/common';
 import BusinessInfo from './BusinessInfo';
 
 // 工商照面信息
-const keyArrs = [
+export const keyArrs = [
   { key: 'id3a', title: '3A编码', content: '', span: 12 },
   { key: 'companyName', title: '企业名称', content: '', span: 12 },
   { key: 'tradingName', title: '贸易名称', content: '', span: 12 },

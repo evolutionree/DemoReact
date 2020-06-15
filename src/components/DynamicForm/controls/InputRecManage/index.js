@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { AutoComplete, message, Modal, Icon, Button, Spin } from 'antd';
 import { dynamicRequest } from '../../../../services/common';
 import { __list } from '../../../../routes/EntcommHome/views/CommerceQueries/common';
+import { keyArrs } from '../../../../routes/EntcommHome/views/CommerceQueries/out';
 import BusinessInfo from '../../../../routes/EntcommHome/views/CommerceQueries/BusinessInfo';
 import styles from './index.less';
 import gong from './gong.png';
@@ -85,8 +86,13 @@ export default class InputRecManage extends Component {
     const match = dataSource.find(o => o.name === value);
     if (!match) return message.error('请确定公司名称是否正确');
 
+    const { getValue } = this.props.jsEngine;
+    const country = getValue('country');
+    const isChina = country - '7' === 0;
+    const url = isChina ? '/api/dockingapi/getbusinessdetail' : '/api/dockingapi/getforebusinessdetail';
+    const params = isChina ? { companyname: value } : { companyname: value, Country: country };
     this.setState({ visible: true, modalLoading: true }, async () => {
-      const res = await dynamicRequest('/api/dockingapi/getbusinessdetail', { companyname: value }).catch(e => {
+      const res = await dynamicRequest(url, params).catch(e => {
         console.error(e.message);
         message.error(e.message);
         this.setState({ modalLoading: false });
@@ -119,12 +125,13 @@ export default class InputRecManage extends Component {
   }
 
   render() {
-    const { placeholder, value } = this.props;
+    const { placeholder, value, jsEngine } = this.props;
     const { dataSource, selectInfo, visible, loading, modalLoading } = this.state;
+    const isChina = jsEngine.getValue('country') - '7' === 0;
 
-    const businessList = __list.map(item => ({
+    const businessList = (isChina ? __list : keyArrs).map(item => ({
       ...item,
-      content: selectInfo ? selectInfo[item.key] : '(空)'
+      content: selectInfo ? selectInfo[item.key] : '-'
     }));
 
     return (
@@ -148,7 +155,7 @@ export default class InputRecManage extends Component {
           onCancel={this.handleCancel}
           footer={[
             <Button key="cancel" type="default" size="large" onClick={this.handleCancel}>关闭</Button>,
-            <Button key="submit" type="primary" size="large" onClick={this.handelOk}>回填</Button>
+            isChina ? <Button key="submit" type="primary" size="large" onClick={this.handelOk}>回填</Button> : null
           ]}
         >
           <Spin spinning={modalLoading}>
