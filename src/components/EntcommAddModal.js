@@ -149,7 +149,7 @@ class EntcommAddModal extends Component {
     confirm({
       title: '是否暂存本表单?',
       onOk: this.onFormModalStorage,
-      onCancel: this.onFormModalCancel,
+      onCancel: this.onFormModalCancel
     });
   }
 
@@ -165,7 +165,7 @@ class EntcommAddModal extends Component {
         formData: this.props.initFormData || {}
       });
     }
-    if (isDataSource) this.props.cancel()
+    if (isDataSource) this.props.cancel();
   };
 
   getRelObjectConfig = (fields) => { //TODO: 获取到所有引用对象的字段
@@ -184,8 +184,8 @@ class EntcommAddModal extends Component {
 
     const relObjectFields = this.getRelObjectConfig(this.form.props.fields);
     relObjectFields.map(item => { //TODO: 引用对象 新增的时候  表单不会传值给后端  但是暂存的时候 需要传
-      const { isCodeing } = item.fieldconfig // 用于显示其他字段名称，根据实际需要改动
-      const fieldname = item.fieldname
+      const { isCodeing } = item.fieldconfig; // 用于显示其他字段名称，根据实际需要改动
+      const fieldname = item.fieldname;
       const relObjectRef = this.form.formRef.getFieldComponentInstance(fieldname);
       if (relObjectRef && relObjectRef.getValue) {
         formValue[`${fieldname}_${isCodeing ? 'code' : 'name'}`] = relObjectRef.getValue();
@@ -301,11 +301,11 @@ class EntcommAddModal extends Component {
             recid: result.data,
             title: values.title || '',
             userinfos: values.person ? values.person.split(',').map(userid => (userid * 1)) : []
-          }
-          dynamicRequest('/api/notice/sendoa', sendoaParams)
+          };
+          dynamicRequest('/api/notice/sendoa', sendoaParams);
         }
 
-        const flag = isDataSource && 'isDataSource'
+        const flag = isDataSource && 'isDataSource';
         if (this.state.entityModelType === 0 && this.state.entityFormDoneLink) {
           this.props.done(result, flag);
           const addRecid = result.data;
@@ -351,7 +351,7 @@ class EntcommAddModal extends Component {
           extradata: this.props.extraData
         };
       }
-      this.setState({ dataModel, showWorkflowCaseModal: true, confirmLoading: true, showFormModal: true });
+      this.setState({ dataModel, showWorkflowCaseModal: true, showFormModal: true });
     });
   };
 
@@ -362,7 +362,7 @@ class EntcommAddModal extends Component {
   onWorkflowCaseDone = (result) => {
     const { isDataSource } = this.props;
 
-    const flag = isDataSource && 'isDataSource'
+    const flag = isDataSource && 'isDataSource';
     this.props.done(result, flag);
   };
 

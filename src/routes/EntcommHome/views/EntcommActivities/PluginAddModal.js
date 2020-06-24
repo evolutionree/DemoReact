@@ -61,12 +61,12 @@ class PluginAddModal extends Component {
       if (!currPlugin) return;
 
       if (['normal', 'flow'].includes(currPlugin.type)) {
-        this.setState({ showAddModal: true });
-
         // 客户基础资料审批，需要填充数据
         if (currPlugin.type === 'flow' && currPlugin.recid) {
           const res = await getEntcommDetail({ entityId, recId: recordId, needPower: 1 });
-          this.setState({ initAddFormData: res.data.detail });
+          this.setState({ initAddFormData: res.data.detail, showAddModal: true });
+        } else {
+          this.setState({ showAddModal: true, relEntityTypes: undefined });
         }
       } else if (['AddRelEntityData'].includes(currPlugin.type)) {
         const relid = currPlugin.entity && currPlugin.entity.relid;

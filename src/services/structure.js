@@ -85,6 +85,14 @@ export async function setLeader(params) {
   });
 }
 
+export async function setUser(params) {
+  return request('/api/account/setiscrm', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+
 /**
  * 注册用户
  * @param params

@@ -188,8 +188,8 @@ export default {
             typeId: ProductEntityId
           });
           yield put({ type: 'showModals', payload: '' });
-          message.success('保存成功');
-          yield put({ type: 'search' });
+          message.success('编辑成功');
+          yield put({ type: 'queryList' });
         } else {
           yield call(addProduct, {
             fieldData,

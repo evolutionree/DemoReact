@@ -7,8 +7,11 @@ import { resolveTreeByPathSearch } from '../../utils';
 
 const TreeNode = Tree.TreeNode;
 
-const screenHeight = document.body.offsetHeight && document.documentElement.clientHeight;
-const modalHeight = screenHeight * 0.6;
+function getModalHeight() {
+  const screenHeight = document.body.offsetHeight && document.documentElement.clientHeight;
+  const modalHeight = screenHeight * 0.6;
+  return modalHeight;
+}
 
 function transformData(data) {
   if (!data || !data.length) return;
@@ -122,7 +125,7 @@ class DepartmentTree extends React.Component {
           placeholder="请输入部门名称"
           value={keyword}
           onSearch={this.searchDept}
-          style={{ marginTop: '10px', width: '100%', maxHeight: `${modalHeight + 10}px` }}
+          style={{ marginTop: '10px', width: '100%', maxHeight: `${getModalHeight() + 10}px` }}
         >
           搜索
         </Search>

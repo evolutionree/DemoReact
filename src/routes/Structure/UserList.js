@@ -14,8 +14,11 @@ import { downloadFile } from '../../utils/ukUtil';
 
 const Option = Select.Option;
 
-const screenHeight = document.body.offsetHeight && document.documentElement.clientHeight;
-const modalHeight = screenHeight * 0.6;
+function getModalHeight() {
+  const screenHeight = document.body.offsetHeight && document.documentElement.clientHeight;
+  const modalHeight = screenHeight * 0.6;
+  return modalHeight;
+}
 
 
 function UserList({
@@ -34,6 +37,7 @@ function UserList({
   selectItems,
   revertPassword,
   toggleSetLeader,
+  toggleSetUser,
   importData,
   currentUser,
   bindAttence,
@@ -69,6 +73,7 @@ function UserList({
     { title: '角色', key: 'rolename', width: 110 },
     { title: '职能', key: 'vocationname' },
     { title: '是否领导', key: 'isleader', width: 80, render: text => tooltipElements(text ? '是' : '否', 80) },
+    { title: '是否CRM用户', key: 'iscrmtip', width: 110 },
     { title: '状态', key: 'recstatus', width: 50, render: text => tooltipElements(['停用', '启用'][text], 50) },
     { title: '最后更新人', key: 'updator' },
     { title: '最后更新时间', key: 'recupdated', width: 150 }
@@ -92,7 +97,7 @@ function UserList({
   return (
     <div className={styles.rightContent}>
       <div className={styles.subtitle}>{currentDept && currentDept.deptname}</div>
-      <Toolbar 
+      <Toolbar
         selectedCount={isDisabledDept ? 0 : currentItems.length}
         actions={[
           { label: '编辑', handler: edit, single: true, show: checkFunc('UserEdit') },
@@ -115,6 +120,14 @@ function UserList({
             label: '设为领导', handler: toggleSetLeader, single: true,
             show: () => checkFunc('SetLeader') && !currentItems[0].isleader
           },
+          {
+            label: '转为Hr用户', handler: toggleSetUser, single: true,
+            show: () => !!currentItems[0].iscrmuser
+          },
+          {
+            label: '转为CRM用户', handler: toggleSetUser, single: true,
+            show: () => !currentItems[0].iscrmuser
+          }
           // {
           //   label: '绑定考勤组', handler: bindAttence, single: false,
           //   show: () => checkFunc('SetLeader')
@@ -143,7 +156,7 @@ function UserList({
       </Toolbar>
 
       <Table
-        scroll={{ x: `${tableWidth}px`, y: `${modalHeight}px` }}
+        scroll={{ x: `${tableWidth}px`, y: `${getModalHeight()}px` }}
         className={styles.table}
         rowKey="accountid"
         dataSource={list}
@@ -210,6 +223,9 @@ export default connect(
       },
       toggleSetLeader: () => {
         dispatch({ type: 'structure/toggleSetLeader' });
+      },
+      toggleSetUser: () => {
+        dispatch({ type: 'structure/toggleSetUser' });
       },
       bindAttence: () => {
         dispatch({ type: 'structure/showModals', payload: 'bindAttence' });

@@ -30,9 +30,10 @@ import TreeView from '../../components/charts/TreeView';
 
 import styles from './index.less';
 
-import chinaJson from '../../../public/mapJson/china.json'; //china Map Data
-echarts.registerMap('china', chinaJson);  //初始中国地图
+import chinaJson from '../../../public/mapJson/china.json';  //初始中国地图
 import html2canvas from './component/Chart/html2canvas';
+//china Map Data
+echarts.registerMap('china', chinaJson);
 
 class ReportForm extends React.Component {
   static propTypes = {
@@ -57,6 +58,7 @@ class ReportForm extends React.Component {
     };
     this.reloadReportData = this.reloadReportData.bind(this);
     this.echartsInstance = echarts;
+    this.height = document.body.offsetHeight - 140;
   }
 
   componentWillMount() {
@@ -70,7 +72,7 @@ class ReportForm extends React.Component {
     if (url.indexOf('?') !== -1) {
       const str = url.substr(1);
       // 截取所有请求的参数，以数组方式保存
-      let strs = str.split('&');
+      const strs = str.split('&');
       for (let i = 0; i < strs.length; i++) {
         thisParam[strs[i].split('=')[0]] = decodeURIComponent(strs[i].split('=')[1]);
       }
@@ -82,10 +84,28 @@ class ReportForm extends React.Component {
   queryReportDefine(reportId) {
     this.echartsInstance.registerMap('china', chinaJson);  //初始中国地图
     request('/api/ReportEngine/queryReportDefine', {
-      method: 'post', body: JSON.stringify({ 'id': reportId })
+      method: 'post', body: JSON.stringify({ id: reportId })
     }).then((result) => {
-      const components = result.data.components;
-      let dataGridDatasouces = [];
+      const { referreporturl, components, reporttype, name } = result.data;
+      this.setState({ reporttype });
+      if (reporttype === 2) { // fr报表
+        const { fruserid = 'CRMTEST1', frpwd = '123456' } = this.props.user;
+        $.ajax({ //axios不支持JSONP  so 用jquery 也可以安装jsonp
+          url: `http://fr.ceepcb.com:8082/webroot/decision/login/cross/domain?fine_username=${fruserid}&fine_password=${frpwd}&validity=-1`,
+          type: 'get',
+          dataType: 'jsonp',
+          success: (res) => {
+            if (res.errorCode) {
+              message.error(res.errorMsg);
+              this.setState({ fetchLoading: false });
+              return;
+            }
+            this.setState({ fetchLoading: false, frTitle: name, frUrl: referreporturl });
+          }
+        });
+        return;
+      }
+      const dataGridDatasouces = [];
       components && components instanceof Array && components.map((item) => {
         if (item.ctrltype === 2) {
           dataGridDatasouces.push(item.datasourcename);
@@ -99,7 +119,7 @@ class ReportForm extends React.Component {
       });
 
       result.data.datasources.map((item, index) => {
-        const defaultParams = this.getDefaultParameters(item, result.data.components)
+        const defaultParams = this.getDefaultParameters(item, result.data.components);
         if (_.indexOf(dataGridDatasouces, item.instid) === -1) { //不请求 表格对应的数据源 交给组件DataGrid去处理
           this.setState({
             [item.instid + 'loading']: true,
@@ -118,8 +138,8 @@ class ReportForm extends React.Component {
   }
 
   getDefaultParameters(datasource, components) { //本地localstorage是否存有params  不然则取服务端给的默认params
-    let defaultSerchValue = {};
-    let filterComponent = _.find(components, function(item) { return item.ctrltype === 3; });
+    const defaultSerchValue = {};
+    const filterComponent = _.find(components, function (item) { return item.ctrltype === 3; });
     filterComponent && filterComponent.filterextinfo.ctrls.map((item) => {
       // ctrltype === 3 表示用户/团队 选择项
       if (item.ctrltype === 3) {
@@ -142,13 +162,13 @@ class ReportForm extends React.Component {
 
     const extraParams = this.GetUrlParam();
     if (extraParams && JSON.stringify(extraParams) !== '{}') {
-      for (let key in extraParams) {
+      for (const key in extraParams) {
         defaultSerchValue[key] = extraParams[key];
       }
     }
-    
-    let params = {};
-    for (let key in defaultSerchValue) { //可能参数里包含多个子参数  需拆分
+
+    const params = {};
+    for (const key in defaultSerchValue) { //可能参数里包含多个子参数  需拆分
       if (key.indexOf(',') > -1) {
         key.split(',').map((item) => {
           params[item] = defaultSerchValue[key];
@@ -159,12 +179,12 @@ class ReportForm extends React.Component {
     }
 
     function getParameters(dSource, oldPrams) { //請求參數 前端字段转换成后端接口请求参数字段(前端定义的跟后端要求的请求参数不一样)
-      let returnParams = {};
+      const returnParams = {};
       dSource.parameters.map((item) => {
-        _.forIn(item, function(value, key) {
+        _.forIn(item, function (value, key) {
           returnParams[key] = oldPrams[value];
         });
-      })
+      });
 
       return returnParams;
     }
@@ -218,14 +238,14 @@ class ReportForm extends React.Component {
 
   getEvents(component, componentIndex, chartIndex) { //图表的 事件获取
     const events = component.events;
-    let event = {};
+    const event = {};
     events && events.map((item) => {
       event[item.eventname] = (params) => {
         item.actionlist.map((list) => {
           if (list.actiontype === 1) {
 
           } else if (list.actiontype === 2) { //改变参数
-            let changeParams = {};
+            const changeParams = {};
             list.changeparam.map((paramsObj) => {
               if (component.ctrltype === 1) {
                 if (component.commonextinfo.charttype === 3) { //仪表盘
@@ -241,19 +261,19 @@ class ReportForm extends React.Component {
             });
 
 
-            let cloneDatasources = _.cloneDeep(this.state.datasources);
+            const cloneDatasources = _.cloneDeep(this.state.datasources);
             cloneDatasources.map((item) => {
               item.parameArray = [];
               item.parameters.map((item1) => {
-                _.forIn(item1, function(value, key) {
+                _.forIn(item1, function (value, key) {
                   item.parameArray.push(value);  //value：前端查詢字段 key ：請求Url的參數名
                 });
-              })
+              });
             });
 
 
             cloneDatasources.map((item) => {
-              for (let key in changeParams) {
+              for (const key in changeParams) {
                 if (item.parameArray.indexOf(key) > -1) { //事件发生后 查询参数发生改变  判断数据源中是否存在该请求参数
                   this.setState({
                     serchValue: { ...this.state.serchValue, ...changeParams },
@@ -277,10 +297,10 @@ class ReportForm extends React.Component {
   }
 
   breadCrumbClickHandler(mapName) {
-    let breadcrumbData = this.state.breadcrumbData;
-    let newBreadcrumbData = [];
+    const breadcrumbData = this.state.breadcrumbData;
+    const newBreadcrumbData = [];
 
-    if (mapName === '全国') {//根节点
+    if (mapName === '全国') { //根节点
 
     } else {
       for (let i = 0; i < breadcrumbData.length; i++) {
@@ -294,7 +314,7 @@ class ReportForm extends React.Component {
   }
 
 
-  changeMapShow (mapName, newBreadcrumbData) {
+  changeMapShow(mapName, newBreadcrumbData) {
     this.setState({
       serchValue: {
         ...this.state.serchValue,
@@ -315,8 +335,8 @@ class ReportForm extends React.Component {
       }).catch(e => message.error(e.message));
     } else { //县级以下
       const myGeo = new BMap.Geocoder();
-      myGeo.getPoint(newBreadcrumbData.join()+','+mapName, (point) => {
-        if(point){
+      myGeo.getPoint(newBreadcrumbData.join() + ',' + mapName, (point) => {
+        if (point) {
           this.setState({
             mapSeriesType: 'lines',
             bmapCenter: [point.lng, point.lat]
@@ -334,7 +354,7 @@ class ReportForm extends React.Component {
     return {
       click: (params) => {
         if (!loading && params.name && (chinaMap[params.name] || this.state.breadcrumbData.join().indexOf('台湾') === -1)) { //百度详情地图 显示台湾的位置不准确，所以，不显示台湾各县的详情地图
-          let breadcrumbData = this.state.breadcrumbData;
+          const breadcrumbData = this.state.breadcrumbData;
           breadcrumbData.push(params.name);
           this.changeMapShow(params.name, breadcrumbData);
         }
@@ -343,9 +363,9 @@ class ReportForm extends React.Component {
   }
 
 
-  collapseClickMapShow (loading, name) {
+  collapseClickMapShow(loading, name) {
     if (!loading) {
-      let breadcrumbData = this.state.breadcrumbData;
+      const breadcrumbData = this.state.breadcrumbData;
       breadcrumbData.push(name);
       this.changeMapShow(name, breadcrumbData);
     } else {
@@ -378,7 +398,7 @@ class ReportForm extends React.Component {
         this.setState({
           components: newComponents
         });
-      };
+      }
 
       let chartData = getData.data.data;
       if (currentComponent && currentComponent.ctrltype === 1 && currentComponent.commonextinfo.charttype === 4) { //饼图  过滤掉为0 的数据
@@ -405,15 +425,15 @@ class ReportForm extends React.Component {
   }
 
   reportSearch(serchValue) { // 页面查询参数发生新改变 查找含有当前参数的API并发起请求，更新页面数据
-    const { serchValue: oldSerchValue } = this.state
+    const { serchValue: oldSerchValue } = this.state;
 
-    const newSerchValue = { ...oldSerchValue, ...serchValue }
+    const newSerchValue = { ...oldSerchValue, ...serchValue };
     this.setState({
       serchValue: newSerchValue,
       reload: false
     }, this.reloadReportData(newSerchValue));
 
-    for (let key in this) { //表格交给表格组件 处理
+    for (const key in this) { //表格交给表格组件 处理
       if (key.indexOf('dataGridRef') > -1) {
         this[key] && this[key].reload && this[key].reload(newSerchValue);
       }
@@ -421,8 +441,8 @@ class ReportForm extends React.Component {
   }
 
   reloadReportData(paramsChange, serchValue = this.state.serchValue) {
-    let params = {};
-    for (let key in paramsChange) { //可能参数里包含多个子参数  需拆分
+    const params = {};
+    for (const key in paramsChange) { //可能参数里包含多个子参数  需拆分
       if (key.indexOf(',') > -1) {
         key.split(',').map((item) => {
           params[item] = paramsChange[key];
@@ -433,18 +453,18 @@ class ReportForm extends React.Component {
     }
 
 
-    let cloneDatasources = _.cloneDeep(this.state.datasources);
+    const cloneDatasources = _.cloneDeep(this.state.datasources);
     cloneDatasources.map((item) => {
       item.parameArray = [];
       item.parameters.map((item1) => {
-        _.forIn(item1, function(value, key) {
+        _.forIn(item1, function (value, key) {
           item.parameArray.push(value);  //value：前端查詢字段 key ：請求Url的參數名
         });
-      })
+      });
     });
 
     cloneDatasources.map((item, index) => {
-      for (let key in params) {
+      for (const key in params) {
         if (item.parameArray.indexOf(key) > -1 && _.indexOf(this.state.dataGridDatasouces, item.instid) === -1) { //不请求 表格对应的数据源 交给组件DataGrid去处理
           this.setState({
             [item.instid + 'loading']: true
@@ -460,12 +480,12 @@ class ReportForm extends React.Component {
     });
 
     function getParameters(index, params, searchValue) { //請求參數 前端字段转换成后端接口请求参数字段
-      let returnParams = {};
+      const returnParams = {};
       cloneDatasources[index].parameters.map((item) => {
-        _.forIn(item, function(value, key) {
+        _.forIn(item, function (value, key) {
           returnParams[key] = params[value] ? params[value] || '' : searchValue[value] || '';
         });
-      })
+      });
 
       return returnParams;
     }
@@ -488,7 +508,7 @@ class ReportForm extends React.Component {
     }
 
 
-    let newSerchValue = {};
+    const newSerchValue = {};
     if (JSON.stringify(this.state.serchValue) === '{}' && data instanceof Array && data.length) { //初始化页面时，查询条件全部满足
       for (let i = 0; i < mapFilterItems.length; i++) {
         newSerchValue[mapFilterItems[i].paramname] = currentParamsValue(mapFilterItems[i].data).join();
@@ -501,8 +521,8 @@ class ReportForm extends React.Component {
 
     function currentParamsValue(data) {
       const returnData = data && data.map((item) => {
-          return item.dkey;
-        });
+        return item.dkey;
+      });
 
       return returnData || [];
     }
@@ -542,9 +562,9 @@ class ReportForm extends React.Component {
   }
   getForSummaryValue(keys, title, data) {
     let returnTitle = title;
-    if(data && data instanceof Array && data.length>0){
-      for(let i=0;i<keys.length;i++){
-        returnTitle = returnTitle.replace('#'+keys[i]+'#', data[0][keys[i]]);
+    if (data && data instanceof Array && data.length > 0) {
+      for (let i = 0; i < keys.length; i++) {
+        returnTitle = returnTitle.replace('#' + keys[i] + '#', data[0][keys[i]]);
       }
     }
 
@@ -556,8 +576,8 @@ class ReportForm extends React.Component {
     html2canvas(this.refs.mapRef, {
       allowTaint: true,
       taintTest: false,
-      onrendered: function(canvas) {
-        canvas.id = "mycanvas";
+      onrendered: function (canvas) {
+        canvas.id = 'mycanvas';
         //document.body.appendChild(canvas);
         //生成base64图片数据
         const dataUrl = canvas.toDataURL();
@@ -569,7 +589,7 @@ class ReportForm extends React.Component {
           $a.setAttribute('download', '客户分布图');
 
           const evObj = document.createEvent('MouseEvents');
-          evObj.initMouseEvent( 'click', true, true, window, 0, 0, 0, 0, 0, false, false, true, false, 0, null);
+          evObj.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, true, false, 0, null);
           $a.dispatchEvent(evObj);
         }
       }
@@ -578,9 +598,9 @@ class ReportForm extends React.Component {
 
 
   renderComponent(item, index, height, width) {
-    const { reload } = this.state
+    const { reload } = this.state;
     const { orgcomponentinfo } = item;
-    const outparametername = (orgcomponentinfo && orgcomponentinfo.outparametername) ? orgcomponentinfo.outparametername : `${item.datasourcename}Select`
+    const outparametername = (orgcomponentinfo && orgcomponentinfo.outparametername) ? orgcomponentinfo.outparametername : `${item.datasourcename}Select`;
 
     switch (item.ctrltype) {
       //一般图表（柱状图、折线图,仪表盘，散点图）
@@ -597,12 +617,12 @@ class ReportForm extends React.Component {
             }
             <div style={{ width: '100%', height: item.datasourceforsummary ? 'calc(100% - 45px)' : '100%', padding: '2px', background: '#3a3c4f', borderRadius: item.datasourceforsummary ? '0 0 6px 6px' : '6px' }}>
               <ShowChart loading={this.state[item.datasourcename + 'loading']}
-                         component={item}
-                         axisDataSource={this.state[item.datasourceforsummary]} //坐标轴 Lable可能存在变量  需替换
-                         dataSource={this.state[item.datasourcename]}
-                         xseries={this.state[item.datasourcename + 'xseries']} //散点图 X轴坐标数据
-                         onEvents={this.getEvents(item, index)}
-                         legend={this.state.selectedLegend} />
+                component={item}
+                axisDataSource={this.state[item.datasourceforsummary]} //坐标轴 Lable可能存在变量  需替换
+                dataSource={this.state[item.datasourcename]}
+                xseries={this.state[item.datasourcename + 'xseries']} //散点图 X轴坐标数据
+                onEvents={this.getEvents(item, index)}
+                legend={this.state.selectedLegend} />
             </div>
           </div>
         );
@@ -613,19 +633,19 @@ class ReportForm extends React.Component {
         return (
           <div className={styles.reportDataGridWrap}>
             <DataGrid columns={item.tableextinfo.columns}
-                      titleinfo={item.titleinfo}
-                      showExport={item.tableextinfo.showexport}
-                      pagination={true}
-                      rowSelection={false}
-                      params={this.state.serchValue}
-                      reload={this.state.reload}
-                      url="/api/ReportEngine/queryData"
-                      tableDefined={item}
-                      width={width}
-                      height={height}
-                      ref={(ref) => { this[item.datasourcename + 'dataGridRef'] = ref }}
-                      datasources={_.find(this.state.datasources, ['instid', item.datasourcename])}
-                      reportDataInjectedParams={this.props.injectedParams}
+              titleinfo={item.titleinfo}
+              showExport={item.tableextinfo.showexport}
+              pagination
+              rowSelection={false}
+              params={this.state.serchValue}
+              reload={this.state.reload}
+              url="/api/ReportEngine/queryData"
+              tableDefined={item}
+              width={width}
+              height={height}
+              ref={(ref) => { this[item.datasourcename + 'dataGridRef'] = ref; }}
+              datasources={_.find(this.state.datasources, ['instid', item.datasourcename])}
+              reportDataInjectedParams={this.props.injectedParams}
             />
           </div>
         );
@@ -633,14 +653,14 @@ class ReportForm extends React.Component {
       case 3:
         return item.visible === false ? null : <div className={styles.searchbarWrap}>
           <SearchBar model={item.filterextinfo.ctrls}
-                     onSearch={this.reportSearch.bind(this)}
-                     onChange={(serchValue) => { this.setState({ serchValue, reload: false }); }}
-                     value={this.state.serchValue} />
-        </div>
+            onSearch={this.reportSearch.bind(this)}
+            onChange={(serchValue) => { this.setState({ serchValue, reload: false }); }}
+            value={this.state.serchValue} />
+        </div>;
       //漏斗图
       case 4:
-        let chartData = this.state[item.datasourcename] || [];
-        let chartWrapWidth = width - 17 - 80;
+        const chartData = this.state[item.datasourcename] || [];
+        const chartWrapWidth = width - 17 - 80;
         return (
           <div style={{ width: chartData.length > 1 ? ((chartWrapWidth / 2) * chartData.length) : chartWrapWidth, height: '100%' }}>
             {
@@ -648,9 +668,9 @@ class ReportForm extends React.Component {
                 return (
                   <div key={chartIndex} style={{ width: (chartData.length > 1 ? ((chartWrapWidth / 2) - 10) : chartWrapWidth), float: 'left', height: '100%', padding: '20px', margin: '0 5px', borderRadius: '4px', boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)' }}>
                     <ShowFunnelChart loading={this.state[item.datasourcename + 'loading']}
-                                     component={item}
-                                     dataSource={chartItem}
-                                     onEvents={this.getEvents(item, index, chartIndex)} />
+                      component={item}
+                      dataSource={chartItem}
+                      onEvents={this.getEvents(item, index, chartIndex)} />
                   </div>
                 );
               })
@@ -672,17 +692,17 @@ class ReportForm extends React.Component {
               <div style={{ width: '100%', height: '100%' }} ref="mapRef">
                 {
                   this.state.mapSeriesType === 'map' ? <ShowMapChart echarts={this.echartsInstance}
-                                                                     loading={this.state[item.datasourcename + 'loading']}
-                                                                     onEvents={this.getMapChartEvents(this.state[item.datasourcename + 'loading'])}
-                                                                     title={item.titleinfo.title}
-                                                                     exporttitle={item.titleinfo.exporttitle}
-                                                                     dataSource={this.getMapChartDataSource(item)}
-                                                                     mapType={this.state.mapType} /> :
-                    <ShowBMapChart echarts={this.echartsInstance}
-                                   component={item}
-                                   loading={this.state[item.datasourcename + 'loading']}
-                                   geoCoorddata={this.getCollapseData(item)}
-                                   bmapCenter={this.state.bmapCenter} />
+                    loading={this.state[item.datasourcename + 'loading']}
+                    onEvents={this.getMapChartEvents(this.state[item.datasourcename + 'loading'])}
+                    title={item.titleinfo.title}
+                    exporttitle={item.titleinfo.exporttitle}
+                    dataSource={this.getMapChartDataSource(item)}
+                    mapType={this.state.mapType} /> :
+                  <ShowBMapChart echarts={this.echartsInstance}
+                      component={item}
+                      loading={this.state[item.datasourcename + 'loading']}
+                      geoCoorddata={this.getCollapseData(item)}
+                      bmapCenter={this.state.bmapCenter} />
                 }
               </div>
             </div>
@@ -690,14 +710,14 @@ class ReportForm extends React.Component {
         );
       case 10:
         return (
-          <div style={{ height: '100%', width: '100%', borderRadius: '4px', boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)', overflow: 'hidden' }}>  
-          <LinesMap
-            width={width}
-            height={height}
-            itemoption={item}
-            loading={reload}
-            dataSource={this.state[item.datasourcename] ? [...this.state[item.datasourcename]] : [] }
-          />
+          <div style={{ height: '100%', width: '100%', borderRadius: '4px', boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)', overflow: 'hidden' }}>
+            <LinesMap
+              width={width}
+              height={height}
+              itemoption={item}
+              loading={reload}
+              dataSource={this.state[item.datasourcename] ? [...this.state[item.datasourcename]] : []}
+            />
           </div>
         );
       case 11:
@@ -718,15 +738,15 @@ class ReportForm extends React.Component {
               value={this.state[outparametername]}
               list={list}
               placeholder="搜索人员或部门"
-              comboKeyOption={{ key: 'recid', parentKey: 'parentid', title: 'label', searchKey: "recname" }}
+              comboKeyOption={{ key: 'recid', parentKey: 'parentid', title: 'label', searchKey: 'recname' }}
               onChange={this.oneSelectTree.bind(this, { item, list, max, checkable, selectmode, outparametername })}
             /> : null
-      );
+        );
     }
   }
 
   oneSelectTree = (record, checkedKeys, event) => {
-    const { serchValue: oldSerchValue } = this.state
+    const { serchValue: oldSerchValue } = this.state;
     const { list, max, checkable, selectmode, outparametername } = record;
 
     if (!checkedKeys) checkedKeys = event.node.props.eventKey;
@@ -742,7 +762,7 @@ class ReportForm extends React.Component {
       if (selectmode === 2) result = result.filter(key => list.find(o => (o.recid + '') === key).rectype === 1);
     }
 
-    const newSerchValue = { ...oldSerchValue, [outparametername]: result.join(',') }
+    const newSerchValue = { ...oldSerchValue, [outparametername]: result.join(',') };
 
     this.setState({
       serchValue: newSerchValue,
@@ -755,23 +775,41 @@ class ReportForm extends React.Component {
     let width = this.state.width - (this.props.siderFold ? 61 : 200); //系统左侧 200px显示菜单(未折叠  折叠61)
     width = width < 1080 ? 1080 : width; // 系统设置了最小宽度
     let components = this.state.components;
-    let maxWidth = _.max(components.map(item => item.width));
+    const maxWidth = _.max(components.map(item => item.width));
     if (maxWidth <= 2) {
       components = this.state.components.map(item => {
-        item.width = item.width * 12;
+        item.width *= 12;
         return item;
       });
     }
+
+    const { reporttype, frTitle, frUrl } = this.state;
+    if (reporttype === 2) {
+      return (
+        <Page contentStyle={{ background: '#ffffff', height: this.height }} title={frTitle}>
+          <iframe
+            title="framepage"
+            src={frUrl}
+            frameBorder={0}
+            style={{
+              height: '100%',
+              width: '100%'
+            }}
+          />
+        </Page>
+      );
+    }
+
     return (
       <Page contentStyle={{ background: '#ffffff' }} title={this.state.pageName || ''}>
         <Row>
           {
             components.map((item, index) => {
-              let widthActually = item.width * width / 24;
-              let height = (item.height > 0 ? item.height : widthActually * Math.abs(item.height));
+              const widthActually = item.width * width / 24;
+              const height = (item.height > 0 ? item.height : widthActually * Math.abs(item.height));
               let style;
               if (item.ctrltype === 2) {
-                style = { padding: '10px 10px' } //表格不给固定高  通过scroll.y去设置
+                style = { padding: '10px 10px' }; //表格不给固定高  通过scroll.y去设置
               } else if (item.ctrltype === 3) {
                 style = {};
               } else {
@@ -789,7 +827,7 @@ class ReportForm extends React.Component {
           }
         </Row>
       </Page>
-    )
+    );
   }
 }
 

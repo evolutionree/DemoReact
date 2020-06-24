@@ -12,6 +12,7 @@ import {
   updateUserDept,
   batchhRevertPassword,
   setLeader,
+  setUser,
   updateDeptStatus,
   passwordvalid,
   forcelogout,
@@ -279,6 +280,26 @@ export default {
         yield call(setLeader, {
           userid: user.userid,
           isleader: isLeader ? 0 : 1
+        });
+        message.success('设置成功');
+        yield put({ type: 'queryList' });
+      } catch (e) {
+        message.error(e.message || '设置失败');
+      }
+    },
+    *toggleSetUser(action, { select, call, put, cps }) {
+      const { currentItems } = yield select(state => state.structure);
+      const user = currentItems[0];
+      const isCrmUser = user.iscrmuser;
+      const confirmed = yield cps(
+        confirmModal,
+        isCrmUser ? '确定将所选人员转为Hr用户？' : '确定将所选人员转为CRM用户？'
+      );
+      if (!confirmed) return;
+      try {
+        yield call(setUser, {
+          userid: user.userid,
+          iscrmuser: isCrmUser ? 0 : 1
         });
         message.success('设置成功');
         yield put({ type: 'queryList' });

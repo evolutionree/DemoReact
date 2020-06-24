@@ -7,7 +7,7 @@ import ReportForm from './ReportForm';
 const NAMESPACE = 'reportForm';
 
 export default connect(
-  state => ({ ...state.reportForm, siderFold: state.app.siderFold }),
+  state => ({ ...state.reportForm, siderFold: state.app.siderFold, user: state.app.user }),
   dispatch => ({
     handleSelectTree(checkedKeys) {
       dispatch({ type: `${NAMESPACE}/handleSelectTree`, payload: checkedKeys });

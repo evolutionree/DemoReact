@@ -824,7 +824,7 @@ class Backfilled extends React.Component {
       return { id: arr[0], name: arr[1], label: arr[1] };
     });
 
-    const options1 = Array.isArray(props.fields) ? props.fields.filter(f => f.controltype === 1).map(o => ({ id: o.fieldname, label: o.fieldlabel || o.displayname })) : [];
+    const options1 = Array.isArray(props.fields) ? props.fields.filter(f => f.controltype === 1 || f.controltype === 5).map(o => ({ id: o.fieldname, label: o.fieldlabel || o.displayname })) : [];
 
     this.state = {
       options,
@@ -1035,9 +1035,9 @@ export default class FormItemFactory {
       <FormItem label="文案配置" key="switchinfo">
         {this.getFieldDecorator('switchinfo', {
           rules: [{ required: true, message: '请完成文案配置' },
-          {
-            validator: this.switchValueRequire
-          }]
+            {
+              validator: this.switchValueRequire
+            }]
         })(<SwitchSet />)}
       </FormItem>
     );
