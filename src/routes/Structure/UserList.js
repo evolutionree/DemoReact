@@ -146,7 +146,7 @@ function UserList({
         <Select value={queries.iscrmuser} onChange={search.bind(null, 'iscrmuser')}>
           <Option value="-1">全部用户</Option>
           <Option value="1">CRM用户</Option>
-          <Option value="0">HR用户</Option>
+          <Option value="2">HR用户</Option>
         </Select>
         {!isDisabledDept && checkFunc('UserAdd') && <Button onClick={add}>新增</Button>}
         {checkFunc('UserImport') && <Button onClick={importData}>导入</Button>}
