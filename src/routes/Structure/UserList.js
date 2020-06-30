@@ -143,6 +143,11 @@ function UserList({
           <Option value="1">启用</Option>
           <Option value="0">停用</Option>
         </Select>
+        <Select value={queries.iscrmuser} onChange={search.bind(null, 'iscrmuser')}>
+          <Option value="-1">全部用户</Option>
+          <Option value="1">CRM用户</Option>
+          <Option value="0">HR用户</Option>
+        </Select>
         {!isDisabledDept && checkFunc('UserAdd') && <Button onClick={add}>新增</Button>}
         {checkFunc('UserImport') && <Button onClick={importData}>导入</Button>}
         {checkFunc('UserExport') && <Button onClick={exportData}>导出</Button>}

@@ -112,6 +112,7 @@ export default {
         recStatus: '1',
         userName: '',
         userPhone: '',
+        iscrmuser: '-1',
         ...query
       };
       yield put({ type: 'putState', payload: { queries: params } });
