@@ -259,7 +259,8 @@ export async function getAllUsersInCached() {
       userPhone: '',
       pageSize: 9999,
       pageIndex: 1,
-      recStatus: 1
+      recStatus: 1,
+      iscrmuser: -1
     };
     return queryUsers(params);
   }

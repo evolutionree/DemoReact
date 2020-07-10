@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { queryDepartmentData, queryUsers } from '../services/structure';
 import { queryRegionData, queryDictionaries, queryProductTree, queryProductRaw } from '../services/basicdata';
 import { queryRoles } from '../services/role';
-import { getSeries } from "../services/products";
+import { getSeries } from '../services/products';
 
 const PENDING = -1;
 const EXPIRED_DURING = 3000; // 数据过期时间
@@ -49,7 +49,8 @@ export default {
         userPhone: '',
         pageSize: 99999,
         pageIndex: 1,
-        recStatus: 2
+        recStatus: 1,
+        iscrmuser: -1
       };
       const { data: { pagedata } } = yield call(queryUsers, params);
       yield put({

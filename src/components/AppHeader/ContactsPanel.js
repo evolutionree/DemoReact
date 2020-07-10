@@ -1,10 +1,10 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
-import { Icon, Tabs, message, Spin } from "antd";
+import { Icon, Tabs, message, Spin } from 'antd';
 import classnames from 'classnames';
-import Avatar from "../Avatar";
-import Search from "../Search";
-import DepartmentSelect from "../DepartmentSelect";
+import Avatar from '../Avatar';
+import Search from '../Search';
+import DepartmentSelect from '../DepartmentSelect';
 import { queryContacts, queryUsers, flagContact } from '../../services/structure';
 import BadgeIcon from './BadgeIcon';
 import styles from './ContactsPanel.less';
@@ -46,7 +46,7 @@ const ContactList = ({ children }) => {
 
 const MetaValue = ({ children }) => {
   if (!children) {
-    return <span style={{ color: '#999' }}>未填写</span>
+    return <span style={{ color: '#999' }}>未填写</span>;
   }
   return <span>{children}</span>;
 };
@@ -150,7 +150,8 @@ class ContactsPanel extends Component {
         pageSize: -1,
         recStatus: 1,
         userName: currentTab === '3' ? (searchKey || '') : '',
-        userPhone: ''
+        userPhone: '',
+        iscrmuser: -1
       };
       this.setState({ loading: true });
       queryUsers(params).then(result => {
@@ -254,7 +255,7 @@ class ContactsPanel extends Component {
         />
         <div id="contacts-panel" className={classnames(styles.panelWrap, { [styles.panelVisible]: this.state.panelVisible })}>
           <div className={styles.panelHeader}>
-            <Icon type='contacts' />
+            <Icon type="contacts" />
             <span>通讯录</span>
             <Icon type="close" onClick={this.hidePanel} />
           </div>
@@ -272,7 +273,7 @@ class ContactsPanel extends Component {
                     style={{ width: '100%' }}
                   />
                 ) : (
-                    <Search
+                  <Search
                       mode="icon"
                       placeholder="按姓名搜索"
                       value={this.state.searchKey}

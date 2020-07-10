@@ -54,7 +54,8 @@ class UserSelectModal extends React.Component {
       userPhone: '',
       pageSize: 9999,
       pageIndex: 1,
-      recStatus: 1
+      recStatus: 1,
+      iscrmuser: -1
     };
     queryUsers(params).then(result => {
       const userList = result.data.pagedata;
@@ -86,11 +87,10 @@ class UserSelectModal extends React.Component {
       this.setState({ searchName: keyword, userList: retList });
     } else {
       this.setState({
-        searchName: keyword,
+        searchName: keyword
         // currentSelected: []
       }, this.fetchUserList);
     }
-
   };
 
   selectAll = () => {

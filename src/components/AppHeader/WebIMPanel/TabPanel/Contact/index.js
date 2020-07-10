@@ -30,7 +30,7 @@ const ContactItem = ({ dispatch, data, onStar, showStar = false }) => {
         }
       }
     });
-  }
+  };
 
   const openPersonalDetail = () => {
     dispatch({
@@ -44,7 +44,7 @@ const ContactItem = ({ dispatch, data, onStar, showStar = false }) => {
         }
       }
     });
-  }
+  };
 
   return (
     <li className={styles.contactItem} onDoubleClick={openIMPanel}>
@@ -139,7 +139,8 @@ class ContactPanel extends Component {
         pageSize: -1,
         recStatus: 1,
         userName: currentTab === '2' ? (searchKey || '') : '',
-        userPhone: ''
+        userPhone: '',
+        iscrmuser: -1
       };
       this.setState({ loading: true });
       queryUsers(params).then(result => {
