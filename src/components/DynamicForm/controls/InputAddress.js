@@ -100,15 +100,13 @@ class InputAddress extends Component {
     const mapOptions = { enableMapClick: false };
     const map = false || (this.map = new BMap.Map(this.mapContainer, mapOptions));
 
-    let centerPoint;
+    let centerPoint = new BMap.Point(116.404, 39.915); // 默认地址;
     let markerPoint;
     if (address && lat && lon) {
       centerPoint = new BMap.Point(lon, lat);
       markerPoint = centerPoint;
     } else if (address) {
       this.handleSearch(address);
-    } else {
-      centerPoint = new BMap.Point(116.404, 39.915); // 默认地址
     }
 
     map.centerAndZoom(centerPoint, 16); // 初始化地图，设置中心点和地图级别
@@ -150,7 +148,8 @@ class InputAddress extends Component {
       onSearchComplete: result => {
         const poi = result && result.getPoi(0);
         if (!poi) {
-          message.error('找不到相关地址');
+          message.warn('找不到相关地址');
+          return;
         }
         const point = poi.point;
         this.setCurrentPoint(point, poi.address, true);
@@ -212,7 +211,7 @@ class InputAddress extends Component {
 
   confirmModal = () => {
     const { currentPoint } = this.state;
-    if (!currentPoint.lat) return message.error('请选择地址');
+    if (!currentPoint.lat) return message.warn('请选择地址');
     this.props.onChange({
       lat: currentPoint.lat,
       lon: currentPoint.lon,

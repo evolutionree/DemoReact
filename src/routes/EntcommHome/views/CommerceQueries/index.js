@@ -85,12 +85,12 @@ class CommerceQueries extends Component {
 
   render() {
     const { collapseList, activeKey, loading, updateLoading } = this.state;
-    const updatetime = (collapseList[0].data.recupdated && collapseList[0].data.recupdated.slice(0, 19)) || '庆历四年春，滕子京谪守巴陵郡';
+    const updatetime = (collapseList[0].data.recupdated && collapseList[0].data.recupdated.slice(0, 19));
 
     return (
       <div>
         <div style={{ padding: 8, borderBottom: '1px solid #ccc' }}>
-          <span style={{ marginRight: 10 }}>当前数据更新于： {updatetime}</span>
+          {!!updatetime && <span style={{ marginRight: 10 }}>当前数据更新于： {updatetime}</span>}
           <Popconfirm
             title="确定更新数据?"
             onConfirm={this.updateData}
