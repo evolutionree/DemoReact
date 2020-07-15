@@ -98,6 +98,7 @@ class DynamicFormView extends React.Component {
             <FormItem key={fieldname} colon={false} label={displayname} {...layout}>
               <DynamicFieldView
                 isCommonForm
+                fieldname={field.fieldname}
                 entityId={entityId}
                 entityTypeId={entityTypeId}
                 value={value[fieldname]}

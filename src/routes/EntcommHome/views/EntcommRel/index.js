@@ -236,7 +236,7 @@ function EntcommRel({
         }
         {checkFunc('EntityDataAdd') && <Button onClick={addRelEntity}>{`新增${tabInfo.entityname || ''}`}</Button>}
         {checkFunc('EntityDataMerge') && <Button onClick={merageCustom}>客户合并</Button>}
-        {/*{shouldShowImport() && <Button onClick={importData}>导入</Button>}*/}
+        {shouldShowImport() && <Button onClick={importData}>导入</Button>}
         {shouldShowExport() && <Button onClick={exportData}>导出</Button>}
         {
           extraButtonData && extraButtonData instanceof Array && extraButtonData.map((item, index) => {
@@ -259,14 +259,14 @@ function EntcommRel({
       {
         relEntityId === deptEntityId ? <DeptTree /> : <DynamicTable
           ref={(ref) => dynamicTableRef = ref}
-          sorter={true}
+          sorter
           sortFieldAndOrder={sortFieldAndOrder}
           entityId={tabInfo.relentityid}
           protocol={protocol}
           rowKey="recid"
           dataSource={list}
           total={total}
-          fixedHeader={true}
+          fixedHeader
           otherHeight={tabInfo.confitems > 0 ? 190 + 66 + 94 : 190 + 66} //页面表格元素除外的元素的总高度
           pagination={{
             total,
@@ -280,7 +280,7 @@ function EntcommRel({
           }}
           onCall={callHandler}
           renderLinkField={(text, field, record, props) => (
-            <a href="javascript:;" style={titleStyle} title={text} onClick={() => { showDetail(record) }}>{text}</a>
+            <a href="javascript:;" style={titleStyle} title={text} onClick={() => { showDetail(record); }}>{text || '(查看详情)'}</a>
           )}
         />
       }

@@ -16,7 +16,7 @@
       ],
       "proxy": {
         "/api": {
-          "target": "http://ltcwx.mos400.cn:12600",
+          "target": "http://crmtest.ceepcb.com:8880",
           //"target": "http://172.16.0.185:1610",
           "changeOrigin": true
         }

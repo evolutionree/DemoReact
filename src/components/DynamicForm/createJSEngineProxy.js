@@ -714,7 +714,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
           this.excuteJS(filterJS, `field focused__${fieldName}`);
         }
         this.props.excutingJSStatusChange && this.props.excutingJSStatusChange(false);
-        if (callback) callback();
+        if (callback && Object.prototype.toString.call(callback) === '[object Function]') callback();
       }, 0);
     };
 

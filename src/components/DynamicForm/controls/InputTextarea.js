@@ -28,12 +28,12 @@ class InputTextarea extends Component {
   };
 
   onInputChange = event => {
-    let val = event.target.value;
+    const val = event.target.value;
     this.setState({ innerVal: val });
   };
 
   onInputBlur = event => {
-    let val = event.target.value;
+    const val = event.target.value;
     this.props.onChange(val);
   };
 
@@ -59,11 +59,16 @@ class InputTextarea extends Component {
   }
 }
 
+function onLinkClick(url) {
+  const openUrl = url.indexOf('http') !== 0 ? `http://${url}` : url;
+  // 打开新页面
+  window.open(openUrl);
+}
+
 InputTextarea.View = (props) => {
-  const { value, value_name, textType, width } = props;
+  const { value, value_name, textType, width, fieldname } = props;
 
   if (textType === 1) return <InputRichText.View value={value} />;
-
 
   const emptyText = <span style={{ color: '#999999' }}>(空)</span>;
   let text = value_name !== undefined ? value_name : value;
@@ -83,15 +88,21 @@ InputTextarea.View = (props) => {
     text.pop();
   }
 
+  const title = text && text.toString() && text.toString().replace(/\[object Object\],/g, '');
+  const isLink = fieldname === 'effect' && title && (title.indexOf('http') === 0 || title.indexOf('www') === 0);
+  const style = {};
+  if (width) Object.assign(style, { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width });
+  if (isLink) Object.assign(style, { color: '#3398db', cursor: 'pointer' });
+  
   return (
     <div
-      style={width ? { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width } : null}
-      title={text && text.toString() && text.toString().replace(/\[object Object\],/g, '')}
+      style={style}
+      title={title}
+      onClick={isLink ? () => onLinkClick(title) : undefined}
     >
       {text}
     </div>
   );
-
 };
 
 export default InputTextarea;
