@@ -50,7 +50,8 @@ export default {
         pageSize: 99999,
         pageIndex: 1,
         recStatus: 1,
-        iscrmuser: -1
+        iscrmuser: -1,
+        iscontrol: 1
       };
       const { data: { pagedata } } = yield call(queryUsers, params);
       yield put({

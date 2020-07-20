@@ -41,7 +41,8 @@ class WorkflowCaseForm extends Component {
       pageSize: 99999,
       pageIndex: 1,
       recStatus: 1,
-      iscrmuser: -1
+      iscrmuser: -1,
+      iscontrol: 1
     };
     return queryUsers(params).then(result => {
       this.setState({ allUsers: result.data.pagedata });

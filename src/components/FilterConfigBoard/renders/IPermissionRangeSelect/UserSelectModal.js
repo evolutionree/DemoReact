@@ -59,7 +59,8 @@ class DeptSelectModal extends React.Component {
       pageSize: 9999,
       pageIndex: 1,
       recStatus: 1,
-      iscrmuser: -1
+      iscrmuser: -1,
+      iscontrol: 1
     };
     queryUsers(params).then(result => {
       const userList = result.data.pagedata;

@@ -236,7 +236,8 @@ class UserSelect extends React.Component {
       pageSize: 10,
       pageIndex: 1,
       recStatus: 1,
-      iscrmuser: -1
+      iscrmuser: -1,
+      iscontrol: 1
     };
     queryUsers(params).then(result => {
       let options = result.data.pagedata;
