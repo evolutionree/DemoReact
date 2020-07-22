@@ -356,14 +356,16 @@ class UserSelect extends React.Component {
               </div>
             </div>
         }
-        <UserSelectModal
-          {...this.props}
-          visible={this.state.modalVisible}
-          selectedUsers={users}
-          onOk={this.handleOk}
-          onCancel={this.hideModal}
-          multiple={this.props.multiple === 1}
-        />
+        {this.state.modalVisible ? (
+          <UserSelectModal
+            {...this.props}
+            visible={this.state.modalVisible}
+            selectedUsers={users}
+            onOk={this.handleOk}
+            onCancel={this.hideModal}
+            multiple={this.props.multiple === 1}
+          />
+        ) : null}
       </div>
     );
   }

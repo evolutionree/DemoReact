@@ -29,7 +29,7 @@ class MapModal extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!!nextProps.mapLocation) {
+    if (nextProps.mapLocation) {
       this.setState({
         modalVisible: true
       }, this.initMap);
@@ -51,19 +51,34 @@ class MapModal extends React.Component {
     };
   };
 
+  handleSearch = value => {
+    if (!value) return;
+    const local = new BMap.LocalSearch(this.map, {
+      onSearchComplete: result => {
+        const poi = result && result.getPoi(0);
+        if (!poi) {
+          message.warn('找不到相关地址');
+          return;
+        }
+        const point = poi.point;
+        this.renderMarker(point, poi.address, true);
+      }
+    });
+    local.search(value);
+  };
+
   initMap = () => {
     const { address, lat, lng } = this.parseValue();
     const mapOptions = { enableMapClick: false };
     const map = false || (this.map = new BMap.Map(this.mapContainer, mapOptions));
 
-    let centerPoint;
+    let centerPoint = new BMap.Point(116.404, 39.915); // 默认地址;
     let markerPoint;
-    if (lat && lng) {
+    if (address && lat && lng) {
       centerPoint = new BMap.Point(lng, lat);
       markerPoint = centerPoint;
-    } else {
-      message.error('无法定位当前地址');
-      centerPoint = new BMap.Point(116.404, 39.915); // 默认地址
+    } else if (address) {
+      this.handleSearch(address);
     }
 
     map.centerAndZoom(centerPoint, 16); // 初始化地图，设置中心点和地图级别
@@ -74,22 +89,15 @@ class MapModal extends React.Component {
     map.addEventListener('mousedown', this.onMapClick);
 
     if (markerPoint) {
-      this.setCurrentPoint(markerPoint, address);
+      this.renderMarker(markerPoint, address, true);
     }
   };
 
-  setCurrentPoint = (point, address) => {
-    this.setState({
-      currentPoint: {
-        address,
-        lat: point.lat,
-        lng: point.lng
-      }
-    }, () => { this.renderMarker(point, address); });
-  };
-
-  renderMarker = (mapPoint, addressText) => {
+  renderMarker = (mapPoint, addressText, shouldCenter) => {
     if (!this.map) return;
+    if (shouldCenter) {
+      this.map.centerAndZoom(mapPoint, 16);
+    }
     const marker = new BMap.Marker(mapPoint);
     const label = new BMap.Label(addressText, {
       position: mapPoint,

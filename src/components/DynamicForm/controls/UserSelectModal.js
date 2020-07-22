@@ -1,6 +1,6 @@
 import React from 'react';
-import { Modal, Col, Row, Icon, message } from 'antd';
-import { is } from 'immutable';
+import { Modal, Col, Row, Icon, message, Spin } from 'antd';
+import { FixedSizeList as List } from 'react-window';
 import _ from 'lodash';
 import Search from '../../../components/Search';
 import Toolbar from '../../../components/Toolbar';
@@ -37,51 +37,18 @@ class UserSelectModal extends React.Component {
       searchName: '',
       deptId: '7f74192d-b937-403f-ac2a-8be34714278b',
       currentSelected: props.selectedUsers,
-      userList: []
+      userList: [],
+      userIdObj: {}
     };
   }
 
   componentWillMount() {
     this.setState({
+      loading: true,
       searchName: '',
       deptId: '7f74192d-b937-403f-ac2a-8be34714278b',
       currentSelected: this.props.selectedUsers
     }, this.fetchUserList);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (!this.props.visible && nextProps.visible) {
-      this.setState({
-        searchName: '',
-        deptId: '7f74192d-b937-403f-ac2a-8be34714278b',
-        currentSelected: nextProps.selectedUsers
-      }, this.fetchUserList);
-    }
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    const thisProps = this.props || {};
-    const thisState = this.state || {};
-
-    if (Object.keys(thisProps).length !== Object.keys(nextProps).length || Object.keys(thisState).length !== Object.keys(nextState).length) {
-      return true;
-    }
-
-    for (const key in nextProps) {
-      if (!is(thisProps[key], nextProps[key])) {
-        //console.log('createJSEngineProxy_props:' + key);
-        return true;
-      }
-    }
-
-    for (const key in nextState) {
-      if (thisState[key] !== nextState[key] || !is(thisState[key], nextState[key])) {
-        //console.log('state:' + key);
-        return true;
-      }
-    }
-
-    return false;
   }
 
   // onChange = (ids, nodes) => {
@@ -105,19 +72,33 @@ class UserSelectModal extends React.Component {
       iscontrol: 1
     };
     queryUsers(params).then(result => {
-      const userList = result.data.pagedata;
+      const list = result.data.pagedata || [];
+      // 遍历去重合并部门名称处理
+      const userList = [];
+      const userIdObj = Object.create(null);
+      list.forEach(u => {
+        if (!userIdObj[u.userid]) {
+          userList.push(u);
+          userIdObj[u.userid] = u.deptname;
+        } else {
+          const pre = userIdObj[u.userid];
+          userIdObj[u.userid] = `${pre}/${u.deptname || '未知部门'}`;
+        }
+      }); 
+      let currentSelected = this.state.currentSelected;
+      if (this.props.multiple) {
+        currentSelected = currentSelected.concat().map(c => {
+          if (userIdObj[c.id]) return { ...c, deptname: userIdObj[c.id] };
+          else return c;
+        });
+      }
       this.setState({
+        loading: false,
         userList,
-        currentSelected: this.props.multiple ? addDeptName(this.state.currentSelected, userList) : []
+        userIdObj,
+        currentSelected
       });
     });
-    function addDeptName(currSelected, userList) {
-      return currSelected.map(item => {
-        const matched = userList.filter(user => user.userid === item.id)[0];
-        if (matched) return { ...item, deptname: matched.deptname };
-        return item;
-      });
-    }
   };
 
   handleOk = () => {
@@ -226,7 +207,8 @@ class UserSelectModal extends React.Component {
 
   render() {
     const { visible, onCancel, multiple, title, modalPending } = this.props;
-    let { currentSelected, deptId, searchName, userList } = this.state;
+    const { currentSelected, deptId, searchName, loading, userIdObj } = this.state;
+    let userList = this.state.userList;
     userList = userList.filter(opt => {
       return this.filterOption(opt.userid);
     });
@@ -281,17 +263,33 @@ class UserSelectModal extends React.Component {
             </Col>
           </Row>
         ) : (
-          <ul className={styles.userlist}>
-            {userList.map(user => {
-              const cls = (currentSelected[0] && (currentSelected[0].id === user.userid)) ? styles.highlight : '';
-              return (
-                <li key={user.userid} onClick={this.selectSingle.bind(this, user)} className={cls}>
-                  <span title={user.username}>{user.username}</span>
-                  <span title={user.deptname}>{user.deptname}</span>
-                </li>
-              );
-            })}
-          </ul>
+          <Spin spinning={loading}>
+            <List
+              height={400}
+              width={500}
+              itemSize={40}
+              itemCount={userList.length}
+              className={styles.wrapList}
+            >
+              {
+                ({ index, style }) => {
+                  const user = userList[index];
+                  const cls = (currentSelected[0] && (currentSelected[0].id === user.userid)) ? styles.highlight : '';
+                  return (
+                    <div 
+                      style={style} 
+                      key={user.userid} 
+                      onClick={this.selectSingle.bind(this, user)} 
+                      className={`${styles.uItem} ${cls}`}
+                    >
+                      <span title={user.username}>{user.username}</span>
+                      <span title={userIdObj[user.userid]}>{userIdObj[user.userid]}</span>
+                    </div>
+                  );
+                }
+              }
+            </List>
+          </Spin>
         )}
       </Modal>
     );

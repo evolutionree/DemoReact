@@ -72,6 +72,37 @@
     }
   }
 }
+
+.wrapList {
+  margin-top: 14px;
+  border: 1px solid #d9d9d9;
+  .uItem {
+    border-top: 1px solid rgb(233, 233, 233);
+    position: relative;
+    cursor: pointer;
+    padding-right: 26px;
+    &.highlight{
+      background-color: @primary-color;
+      color: #ffffff;
+    }
+    span {
+      display: inline-block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      padding: 0 10px;
+      vertical-align: middle;
+      line-height: 40px;
+      &:first-of-type {
+        width: 40%;
+      }
+      &:last-of-type {
+        width: 60%;
+      }
+    }
+  }
+}
+
 .midcontrol {
   i {
     font-size: 54px;

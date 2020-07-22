@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { DatePicker } from 'antd';
 import moment from 'moment';
-import DateTimeRange from "./DateTimeRange";
+import DateTimeRange from './DateTimeRange';
 import { DefaultTextView } from '../DynamicFieldView';
 
 function toMomentFormat(format) {
@@ -16,12 +16,11 @@ class Date extends Component {
     this.props.onChange(val, true);
   };
 
-  disabledEndDate = (endValue) => {
-    const { startValue, format } = this.props;
+  disabledDate = (date) => {
+    const { limitDate, format } = this.props;
     const mFormat = toMomentFormat(format);
-    const start = startValue ? moment(moment(startValue, 'YYYY-MM-DD').format(mFormat), mFormat) : undefined;
-    if (!endValue || !start) return false;
-    return endValue.valueOf() <= start.valueOf();
+    const limit = limitDate === 'now' ? moment().format(mFormat) : limitDate;
+    return moment(moment(date).format(mFormat)).isBefore(moment(limit));
   }
 
 
@@ -31,14 +30,14 @@ class Date extends Component {
   };
 
   render() {
-    const { value, isReadOnly, format } = this.props;
+    const { value, isReadOnly, format, limitDate } = this.props;
 
     const mFormat = toMomentFormat(format);
     const date = value ? moment(moment(value, 'YYYY-MM-DD').format(mFormat), mFormat) : undefined;
 
     return (
       <DatePicker
-        disabledDate={this.disabledEndDate}
+        disabledDate={limitDate ? this.disabledDate : undefined}
         style={{ width: '100%', height: '32px' }}
         value={date}
         onChange={this.onDateChange}
@@ -50,11 +49,11 @@ class Date extends Component {
 }
 
 Date.View = (props) => {
-  const { value, format, width } = props
+  const { value, format, width } = props;
   if (value) {
     const mFormat = toMomentFormat(format);
     const text = moment(value, 'YYYY-MM-DD').format(mFormat);
-    return <div style={{ width }}>{text}</div>
+    return <div style={{ width }}>{text}</div>;
   } else {
     return <DefaultTextView {...props} />;
   }

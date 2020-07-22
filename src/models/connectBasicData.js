@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'dva';
 import _ from 'lodash';
 
+const unNeedClone = ['allUsers', 'dictionaryData'];
 /**
  * 用于基础数据懒加载
  * @param key
@@ -17,9 +18,9 @@ export default function connectBasicData(key, WrappedComponent) {
     static defaultProps = {};
     constructor(props) {
       super(props);
-      this.state = {
-        data: _.cloneDeep(props[key]) // 保存基础数据的深拷贝
-      };
+
+      const data = unNeedClone.includes(key) ? props[key] : _.cloneDeep(props[key]); // 保存基础数据的深拷贝
+      this.state = { data };
     }
     componentDidMount() {
       this.props.dispatch({
