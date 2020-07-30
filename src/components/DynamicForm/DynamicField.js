@@ -78,7 +78,6 @@ class DynamicField extends React.Component {
       value_name: this.props.value_name,
       fieldId: this.props.fieldId,
       fieldName: this.props.fieldName,
-      allowadd: this.props.allowadd,
       startValue: this.props.startValue,
       onChange: this.props.onChange,
       onChangeWithName: this.props.onChangeWithName,

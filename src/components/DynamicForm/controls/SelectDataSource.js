@@ -9,6 +9,7 @@ import { checkHasPermission } from '../../../services/entcomm';
 import { queryDataSourceData } from '../../../services/datasource';
 import _ from 'lodash';
 import { getIntlText } from '../../UKComponent/Form/IntlText';
+import DSourceDetail from '../../DynamicTable/DSourceDetail';
 
 const Option = Select.Option;
 
@@ -212,7 +213,8 @@ class SelectDataSource extends React.Component {
     return (
       <div className={cls} style={{ ...this.props.style }}>
         <div className={styles.inputSelectWrap}>
-          <Select onChange={this.selectChange.bind(this, options)}
+          <Select
+            onChange={this.selectChange.bind(this, options)}
             onSearch={this.queryOptions}
             placeholder={this.props.placeholder}
             disabled={isReadOnly}
@@ -247,40 +249,86 @@ class SelectDataSource extends React.Component {
   }
 }
 
-SelectDataSource.View = ({ value, value_name, dataSource }) => {
-  const dataSourceRelEntityId = dataSource && dataSource.entityId;
-  const emptyText = <span style={{ color: '#999999' }}>(空)</span>;
-  if (!dataSourceRelEntityId) { // 没有数据源关联实体id entityid，以普通文本显示
-    const text = value_name !== undefined ? value_name : value;
-    return <div className={styles.dataSourceViewWrap}>{text ? (text + '') : emptyText}</div>;
+class SelectDataSourceView extends React.Component {
+  static propTypes = {
+
+  };
+  static defaultProps = {
+
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      dSourceDetailVisible: false,
+      DataSourceRelEntityId: '',
+      DataSourceRelRecId: '',
+      DataSourceDetailModalTitle: ''
+    };
   }
 
-  if (!value || !value_name) return <div className={styles.dataSourceViewWrap}>{emptyText}</div>;
-  const linkUrl = `#/entcomm/${dataSourceRelEntityId}/${value.id}`;
+  componentDidMount() {
+    document.addEventListener('click', this.hideList, false);
+  }
 
-  function redirect() {
-    checkHasPermission({
-      entityid: dataSourceRelEntityId,
-      recid: value.id
-    }).then(result => {
-      if (result.data === '0') {
-        message.error('您没有权限查看该数据');
-      } else if (result.data === '2') {
-        message.error('该数据已删除，无法查看');
-      } else {
-        window.open(linkUrl, '_blank');
-        // hashHistory.push(linkUrl);
-      }
-    }, err => {
-      message.error('获取超时，请检查网络!');
+  componentWillUnmount() {
+    document.removeEventListener('click', this.hideList, false);
+  }
+
+  hideList = (e) => {
+    this.setState({
+      dSourceDetailVisible: false
     });
   }
 
-  return (
-    <div className={styles.dataSourceViewWrap}>
-      <a href="javascript:;" onClick={redirect}>{value_name}</a>
-    </div>
-  );
-};
+  showDSourceDetail = (e, dataSourceRelEntityId, DataSourceRelRecId, DataSourceDetailModalTitle) => {
+    e.nativeEvent.stopImmediatePropagation();
+    this.setState({
+      dSourceDetailVisible: true,
+      DataSourceRelEntityId: dataSourceRelEntityId,
+      DataSourceRelRecId,
+      DataSourceDetailModalTitle
+    });
+  }
+
+  render() {
+    const { value, value_name, dataSource, unNeedPower } = this.props;
+    const dataSourceRelEntityId = dataSource && dataSource[dataSource.entityId ? 'entityId' : 'EntityId'];
+    const emptyText = <span style={{ color: '#999999' }}>(空)</span>;
+
+    if (!value || !value_name) return <div className={styles.dataSourceViewWrap}>{emptyText}</div>;
+
+    if (!dataSourceRelEntityId && !value.url) { // 没有数据源关联实体id entityid，以普通文本显示
+      const text = value_name !== undefined ? value_name : value;
+      return <div className={styles.dataSourceViewWrap}>{text ? (text + '') : emptyText}</div>;
+    }
+
+    const valueArr = value.id.split(',');
+    const valueNameArr = value_name.split(',');
+    const urlArr = value.url ? value.url.split(',') : [];
+    const arr = valueArr.map((v, i) => ({ value_name: valueNameArr[i], value: v, url: urlArr[i] }));
+
+    return (
+      <div className={styles.dataSourceViewWrap}>
+        {arr.map((a, i) => {
+          return (
+            <a
+              key={a.value}
+              onClick={(e) => this.showDSourceDetail(e, dataSourceRelEntityId, a.value, a.value_name)}
+            >
+              {a.value_name}
+              {i === (arr.length - 1) ? '' : ', '}
+            </a>
+          );
+        })}
+        {
+          this.state.dSourceDetailVisible ? <DSourceDetail unNeedPower={unNeedPower} visible={this.state.dSourceDetailVisible} entityId={this.state.DataSourceRelEntityId} recordId={this.state.DataSourceRelRecId} title={this.state.DataSourceDetailModalTitle} /> : null
+        }
+      </div>
+    );
+  }
+}
+
+SelectDataSource.View = SelectDataSourceView;
 
 export default SelectDataSource;

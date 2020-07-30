@@ -50,7 +50,7 @@ class DSourceDetail extends PureComponent {
     }
 
     if (this.state.errData.indexOf(entityId + 'and' + recordId) > -1) {
-      message.error('数据已删除，无法查看详情');
+      message.error('无权限查看或者数据已删');
       this.setState({
         visible: false,
         data: {}
@@ -66,19 +66,21 @@ class DSourceDetail extends PureComponent {
     queryEntityDetail(entityId).then(result => {
       const { data: { entityproinfo } } = result;
       this.setState({
-        pemissonLink: entityproinfo[0].modeltype === 0  //关联独立实体的数据源 详情 允许跳转到 页签页
+        pemissonLink: entityproinfo[0].modeltype === 0,  //关联独立实体的数据源 详情 允许跳转到 页签页
+        entityname: entityproinfo[0].entityname
       });
     });
   }
 
   fetchDetailAndProtocol = (entityId, recordId) => {
+    const { unNeedPower } = this.props;
     this.setState({
       loading: true
     });
     getEntcommDetail({
       entityId,
       recId: recordId,
-      needPower: 0 // TODO 跑权限
+      needPower: unNeedPower ? 0 : 1 // TODO 跑权限
     }).then(result => {
       let { detail } = result.data;
       if (detail instanceof Array) {
@@ -91,14 +93,14 @@ class DSourceDetail extends PureComponent {
       });
     }, (e) => {
       console.error(e.message);
-      message.error('数据已删除，无法查看详情');
+      message.error('无权限查看或者数据已删');
       this.setState({
         errData: [...this.state.errData, entityId + 'and' + recordId],
         visible: false
       });
     }).then(result => {
       this.setState({
-        protocol: result.data,
+        protocol: result && result.data || [],
         loading: false
       });
     }, (e) => {
@@ -113,30 +115,34 @@ class DSourceDetail extends PureComponent {
 
   render() {
     const { entityId, recordId } = this.props;
-    const { protocol, data, visible } = this.state;
+    const { protocol, data, visible, entityname } = this.state;
 
     const hasTable = protocol.some(field => {
       return field.controltype === 24 && (field.fieldconfig.isVisible === 1);
     });
     //width={hasTable ? 900 : 550}
-    let linkUrl = `/entcomm/${entityId}/${recordId}`;
+    const linkUrl = `/entcomm/${entityId}/${recordId}`;
     return (
       <div className={classnames(Styles.Wrap, { [Styles.panelVisible]: visible })} onClick={e => e.nativeEvent.stopImmediatePropagation()} style={{ width: visible ? '550px' : '0px' }}>
         <Spin spinning={this.state.loading}>
           <div className={Styles.header}>
-            <label>{this.props.title}</label>
+            <label>{entityname ? `${entityname}详情` : this.props.title}</label>
             {
               this.state.pemissonLink ? <Link to={linkUrl}>进入主页</Link> : null
             }
           </div>
           <div className={Styles.formViewWrap}>
-            <DynamicFormView
-              entityId={entityId}
-              entityTypeId={data.rectype || entityId}
-              fields={protocol}
-              value={data}
-              cols={24}
-            />
+            {
+              Array.isArray(protocol) && protocol.length ? (
+                <DynamicFormView
+                  entityId={entityId}
+                  entityTypeId={data.rectype || entityId}
+                  fields={protocol}
+                  value={data}
+                  cols={24}
+                />
+              ) : null
+            }
           </div>
         </Spin>
       </div>

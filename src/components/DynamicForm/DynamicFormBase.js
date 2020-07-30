@@ -565,7 +565,7 @@ class DynamicFormBase extends Component {
 
   renderFieldControl = field => {
     const { entityTypeId, entityId, value, cacheId } = this.props;
-    const { fieldid, fieldname, displayname, dateStartValue, controltype, allowadd = false } = field;
+    const { fieldid, fieldname, displayname, dateStartValue, controltype } = field;
     let fieldconfig = field.fieldconfig;
 
     const value_name = value[fieldname + '_name'] && value[fieldname + '_name'].value;
@@ -590,7 +590,6 @@ class DynamicFormBase extends Component {
         controlType={controltype}
         fieldId={fieldid}
         fieldName={fieldname}
-        allowadd={allowadd}
         config={fieldconfig}
         value_name={value_name}
         fieldLabel={displayname}

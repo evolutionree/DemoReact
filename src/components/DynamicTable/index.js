@@ -1,5 +1,5 @@
-import React, { Component, PropTypes } from 'react';
-import { Table, Modal, Button, message, Icon, Input, Menu, Dropdown } from 'antd';
+import React, { Component } from 'react';
+import { Table, Modal, Button, message, Icon, Menu, Dropdown } from 'antd';
 import { Link } from 'dva/router';
 import { connect } from 'dva';
 import _ from 'lodash';
@@ -210,7 +210,15 @@ class DynamicTable extends Component {
       let filterObj = {};
       if (this.props.onFilter) {
         filterObj = {
-          filterDropdown: has_No_Filter_Field.indexOf(field.controltype) > -1 ? null : <FilterDrop visible={!!this.state.filterVisible[field.fieldname]} field={field} value={this.props.ColumnFilter[field.fieldname]} onFilter={this.onFilter} hideFilter={this.hideFilter} />,
+          filterDropdown: has_No_Filter_Field.indexOf(field.controltype) > -1 ? null : (
+            <FilterDrop
+              visible={!!this.state.filterVisible[field.fieldname]}
+              field={field}
+              value={this.props.ColumnFilter[field.fieldname]}
+              onFilter={this.onFilter}
+              hideFilter={this.hideFilter}
+            />
+          ),
           filterIcon: <Icon type="filter" style={{ color: this.props.ColumnFilter[field.fieldname] ? '#108ee9' : '#aaa' }} onClick={this.toggleShowFilter.bind(this, field.fieldname)} />,
           filterDropdownVisible: !!this.state.filterVisible[field.fieldname], //字段搜索框是否显示
           onFilterDropdownVisibleChange: () => {
@@ -241,6 +249,7 @@ class DynamicTable extends Component {
       };
     });
   };
+
   getColumnsTotalWidth(columns) { //获取列表的总宽度
     let columnsTotalWidth = 0;
     columns.map((item) => {
@@ -248,12 +257,14 @@ class DynamicTable extends Component {
     });
     return columnsTotalWidth;
   }
+
   showInnerTable = (record, field) => {
     this.setState({
       innerTableVisible: true,
       innerTableTitle: field.displayname || '查看明细'
     }, () => this.fetchInnerTableData(record, field));
   };
+
   hideInnerTable = () => {
     this.setState({
       innerTableVisible: false,
@@ -302,7 +313,6 @@ class DynamicTable extends Component {
       });
     }
   };
-
 
   fetchInnerTableData = (record, field) => {
     const entityId = field.fieldconfig && field.fieldconfig.entityId;
@@ -416,6 +426,7 @@ class DynamicTable extends Component {
         return this.renderText(cellText, field, record);
     }
   };
+
   renderDetailLink = (text, field, record) => {
     const textView = text;
     let linkUrl = `/entcomm/${field.typeid}/${record.recid}`;
@@ -425,7 +436,6 @@ class DynamicTable extends Component {
 
     return <Link to={linkUrl} title={textView}>{textView || '(查看详情)'}</Link>;
   };
-
 
   renderRelBusiness = (text) => {
     const relBusinessData = text && text.dataSourceValue;
@@ -581,6 +591,7 @@ class DynamicTable extends Component {
       />
     );
   };
+
   renderPictures = (strFileIds, field) => {
     if (!strFileIds) return '';
     const urls = strFileIds.split(',').map(id => `/api/fileservice/read?fileid=${id}&filetype=1`);
@@ -602,11 +613,13 @@ class DynamicTable extends Component {
       />
     ));
   };
+
   // TODO 显示表格
   renderTable = (cellText, field, record) => {
     if (!cellText) return null;
     return <a onClick={() => this.showInnerTable(record, field)}>{field.displayname}</a>;
   };
+
   renderInputText = (cellText, field, record) => {
     const { fieldconfig } = field;
     if (fieldconfig && fieldconfig.encrypted) {
@@ -614,6 +627,7 @@ class DynamicTable extends Component {
     }
     return this.renderText(cellText, field, record);
   };
+
   renderAttachment = (filesJSON) => {
     let files = [];
     if (filesJSON) {
