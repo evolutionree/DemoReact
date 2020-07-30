@@ -14,11 +14,11 @@
 const ifControlConfig = ['ifcontrolfield', 'controlField', 'originEntity', 'originField', 'controlMethod'];
 
 export const fieldModels = [
-  { name: '文本', value: 1, requires: ['maxLength', 'defaultValue', 'encrypted', 'scanner', ...ifControlConfig] }, // TODO 加defaultValue
+  { name: '文本', value: 1, requires: ['maxLength', 'defaultValue', 'encrypted', 'scanner', 'iflinkfield', 'linkfieldname', ...ifControlConfig] }, // TODO 加defaultValue
   { name: '提示文本', value: 2, requires: ['tipContent', 'tipColor'] },
   { name: '单选', value: 3, requires: ['dataSource', 'choicemode', 'defaultValue', ...ifControlConfig] },
   { name: '多选', value: 4, requires: ['dataSource', ...ifControlConfig] },
-  { name: '大文本', value: 5, requires: ['defaultValue', ...ifControlConfig] },
+  { name: '大文本', value: 5, requires: ['defaultValue', 'iflinkfield', 'linkfieldname', ...ifControlConfig] },
   { name: '整数文本', value: 6, requires: ['maxLength', 'defaultValue', 'separator', ...ifControlConfig] },
   { name: '小数文本', value: 7, requires: ['maxLength', 'decimalsLength', 'defaultValue', 'separator', ...ifControlConfig] },
   { name: '日期', value: 8, requires: ['format', 'defaultValue', 'limitDate', ...ifControlConfig] },

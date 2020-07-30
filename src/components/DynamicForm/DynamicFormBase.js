@@ -295,13 +295,15 @@ class DynamicFormBase extends Component {
         }
       }
       if (newField.controltype === 20) {
-        lastGroup = {
-          title: newField.displayname,
-          foldable: newField.fieldconfig.foldable === 1,
-          fields: [],
-          isVisible: newField.fieldconfig.isVisible === 1
-        };
-        groups.push(lastGroup);
+        if (newField.fieldconfig.isVisible === 1 && newField.fieldconfig.isVisibleJS !== 0) {
+          lastGroup = {
+            title: newField.displayname,
+            foldable: newField.fieldconfig.foldable === 1,
+            fields: [],
+            isVisible: 1
+          };
+          groups.push(lastGroup);
+        }
         return;
       }
       lastGroup.fields.push(newField);

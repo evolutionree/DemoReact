@@ -567,7 +567,7 @@ class OriginFieldSelect extends React.Component {
 
   render() {
     return (
-      <Select value={this.props.value} onChange={this.props.onChange} onFocus={this.controlFieldFocus}>
+      <Select value={this.props.value} onChange={this.props.onChange} onFocus={this.controlFieldFocus} placeholder="请选择来源字段">
         {this.state.options.map(item => (
           <Option value={item.fieldname} key={item.id}>{item.label}</Option>
         ))}
@@ -592,7 +592,7 @@ class ControlFieldSelect extends React.Component {
       return field.controltype === 18;
     }
     return (
-      <Select value={this.props.value} onChange={this.props.onChange}>
+      <Select value={this.props.value} onChange={this.props.onChange} placeholder="请选择控制字段">
         {this.props.fields.filter(isDataSourceField).map(item => (
           <Option value={item.fieldid} key={item.fieldid}>{item.displayname || item.fieldlabel}</Option>
         ))}
@@ -907,6 +907,31 @@ class Backfilled extends React.Component {
   }
 }
 
+// 控制链接字段
+class LinkFieldSelect extends React.Component {
+  static propTypes = {
+    fields: React.PropTypes.array,
+    value: React.PropTypes.string,
+    onChange: React.PropTypes.func
+  };
+  static defaultProps = {
+    fields: []
+  };
+
+  render() {
+    function isTextField(field) {
+      return field.controltype === 1 || field.controltype === 5;
+    }
+    return (
+      <Select value={this.props.value} onChange={this.props.onChange} placeholder="请选择跳转链接字段">
+        {this.props.fields.filter(isTextField).map(item => (
+          <Option value={item.fieldname} key={item.fieldid}>{item.displayname || item.fieldlabel}</Option>
+        ))}
+      </Select>
+    );
+  }
+}
+
 export default class FormItemFactory {
 
   constructor(form, entityFields, editingRecord, entityId, isEdit, onChange) {
@@ -965,7 +990,7 @@ export default class FormItemFactory {
       <FormItem label="提示内容" key="tipContent">
         {this.getFieldDecorator('tipContent', {
           rules: [{ required: true, message: '请输入提示内容' }]
-        })(<Input placeholder="提示内容" type="textarea" maxLength={200} />)}
+        })(<Input placeholder="提示内容" type="textarea" maxLength={9999} />)}
       </FormItem>
     );
   }
@@ -1492,6 +1517,34 @@ export default class FormItemFactory {
             </FormItem>
           </Col>
         </Row>
+      </FormItem>
+    );
+  }
+
+  createIflinkfield() {
+    return (
+      <FormItem label="是否支持跳转" key="iflinkfield">
+        {this.getFieldDecorator('iflinkfield', {
+          initialValue: 0,
+          rules: [{ required: true, message: '请选择是否支持跳转' }]
+        })(
+          <RadioGroup>
+            <Radio value={0}>普通文本</Radio>
+            <Radio value={1}>可跳转文本</Radio>
+          </RadioGroup>
+        )}
+      </FormItem>
+    );
+  }
+
+  createLinkfieldname() {
+    const { iflinkfield } = this.form.getFieldsValue();
+    const required = !!iflinkfield;
+    return (
+      <FormItem label="跳转链接字段" key="linkfieldname">
+        {this.getFieldDecorator('linkfieldname', {
+          rules: [{ required, message: '请选择跳转链接字段' }]
+        })(<LinkFieldSelect fields={this.entityFields} />)}
       </FormItem>
     );
   }

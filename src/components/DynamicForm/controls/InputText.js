@@ -1,14 +1,16 @@
-import React, { PropTypes, Component } from 'react';
+import React from 'react';
+import { Icon, Popover } from 'antd';
 import QRCode from '../../QRCode';
 import { createNormalInput } from './utils';
 import { DefaultTextView } from '../DynamicFieldView';
-import { Icon, Popover } from 'antd'
 
 const InputText = createNormalInput('text');
 
 InputText.View = (props) => {
-  const { value, encrypted, scanner } = props;
-  if (value && encrypted) {
+  const { value, encrypted, scanner, linkfieldUrl } = props;
+  if (value && linkfieldUrl) {
+    return <a style={{ wordWrap: 'break-word', whiteSpace: 'normal' }} href={linkfieldUrl} target="_blank">{value}</a>;
+  } else if (value && encrypted) {
     return <div style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}>********</div>;
   } else if (value && scanner) {
     return (

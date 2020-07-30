@@ -59,16 +59,18 @@ class InputTextarea extends Component {
   }
 }
 
-function onLinkClick(url) {
-  const openUrl = url.indexOf('http') !== 0 ? `http://${url}` : url;
-  // 打开新页面
-  window.open(openUrl);
-}
-
 InputTextarea.View = (props) => {
-  const { value, value_name, textType, width, fieldname } = props;
+  const { value, value_name, textType, width, linkfieldUrl } = props;
+
+  if (linkfieldUrl) {
+    return <a style={{ wordWrap: 'break-word', whiteSpace: 'normal' }} href={linkfieldUrl} target="_blank">{value || '(查看连接)'}</a>;
+  } else if (value && typeof value === 'string' && (value.indexOf('http') === 0 || value.indexOf('www') === 0)) {
+    const linkUrl = value.indexOf('http') === 0 ? value : `http://${value}`;
+    return <a title={value} href={linkUrl} target="_blank">{value}</a>;
+  }
 
   if (textType === 1) return <InputRichText.View value={value} />;
+
 
   const emptyText = <span style={{ color: '#999999' }}>(空)</span>;
   let text = value_name !== undefined ? value_name : value;
@@ -88,17 +90,10 @@ InputTextarea.View = (props) => {
     text.pop();
   }
 
-  const title = text && text.toString() && text.toString().replace(/\[object Object\],/g, '');
-  const isLink = fieldname === 'effect' && title && (title.indexOf('http') === 0 || title.indexOf('www') === 0);
-  const style = {};
-  if (width) Object.assign(style, { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width });
-  if (isLink) Object.assign(style, { color: '#3398db', cursor: 'pointer' });
-  
   return (
     <div
-      style={style}
-      title={title}
-      onClick={isLink ? () => onLinkClick(title) : undefined}
+      style={width ? { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', width } : null}
+      title={text && text.toString() && text.toString().replace(/\[object Object\],/g, '')}
     >
       {text}
     </div>

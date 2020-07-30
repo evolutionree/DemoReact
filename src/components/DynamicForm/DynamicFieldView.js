@@ -3,7 +3,13 @@ import { controlMap } from './constants';
 import { connect } from 'dva';
 
 export const DefaultTextView = (props) => {
-  const { value, value_name, dataSource, yearWeekData } = props;
+  const { value, value_name, dataSource, yearWeekData, linkfieldUrl } = props;
+  if (linkfieldUrl) {
+    return <a style={{ wordWrap: 'break-word', whiteSpace: 'normal' }} href={linkfieldUrl} target="_blank">{value || '(查看连接)'}</a>;
+  } else if (value && typeof value === 'string' && (value.indexOf('http') === 0 || value.indexOf('www') === 0)) {
+    const linkUrl = value.indexOf('http') === 0 ? value : `http://${value}`;
+    return <a title={value} href={linkUrl} target="_blank">{value}</a>;
+  }
 
   const emptyText = <span style={{ color: '#999999' }}>(空)</span>;
   let text = value_name !== undefined ? value_name : value;
@@ -42,6 +48,7 @@ class DynamicFieldView extends React.Component {
   };
   render() {
     const props = {
+      linkfieldUrl: this.props.linkfieldUrl,
       isCommonForm: this.props.isCommonForm,
       width: this.props.width,
       mainEntityId: this.props.entityId, //嵌套表格的实体定义属性名 跟 独立实体 简单实体 重名了，重新加一个  （嵌套实体 导入用到）

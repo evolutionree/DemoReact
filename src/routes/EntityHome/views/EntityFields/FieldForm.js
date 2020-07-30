@@ -42,7 +42,7 @@ function FieldForm({ form, isEdit, entityFields, editingRecord, entityId }) {
     // setFieldsValue({ fieldName: getRandomLetters(6) });
   }
   const { getFieldDecorator, getFieldsValue, resetFields } = form;
-  const { controlType = '1', relentityid, ifcontrolfield } = getFieldsValue(['controlType', 'relentityid', 'ifcontrolfield']);
+  const { controlType = '1', relentityid, ifcontrolfield, iflinkfield } = getFieldsValue(['controlType', 'relentityid', 'ifcontrolfield', 'iflinkfield']);
   let dynamicFormItems = getDynamicFormItems(controlType, form, entityFields, editingRecord, entityId, isEdit);
   const isSystemControl = (controlType * 1 >= 1000 || controlType * 1 === 30);
 
@@ -50,6 +50,12 @@ function FieldForm({ form, isEdit, entityFields, editingRecord, entityId }) {
   if (!ifcontrolfield && Number(controlType) !== 31) {
     dynamicFormItems = dynamicFormItems.filter(v => {
       return v.key !== 'controlField' && v.key !== 'originEntity' && v.key !== 'originFieldname' && v.key !== 'controlMethod';
+    });
+  }
+  // 控制链接字段
+  if (!iflinkfield && (Number(controlType) === 1 || Number(controlType) === 5)) {
+    dynamicFormItems = dynamicFormItems.filter(v => {
+      return v.key !== 'linkfieldname';
     });
   }
 

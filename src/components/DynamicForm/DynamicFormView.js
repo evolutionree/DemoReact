@@ -92,19 +92,26 @@ class DynamicFormView extends React.Component {
             className = 'height79Col_onlylineFormItem ' + className;
           }
         }
+        const { iflinkfield, linkfieldname } = fieldconfig;
+        let linkfieldUrl;
+        if (iflinkfield && linkfieldname && value[linkfieldname]) {
+          linkfieldUrl = value[linkfieldname];
+          if (linkfieldUrl.indexOf('http') !== 0) linkfieldUrl = `http://${linkfieldUrl}`;
+        }
 
         return (
           <Col span={colNum} key={field.fieldname} className={className} style={{ padding: '0 10px' }}>
             <FormItem key={fieldname} colon={false} label={displayname} {...layout}>
               <DynamicFieldView
+                linkfieldUrl={linkfieldUrl}
                 isCommonForm
-                fieldname={field.fieldname}
                 entityId={entityId}
                 entityTypeId={entityTypeId}
-                value={value[fieldname]}
+                value={value && value[fieldname]}
                 controlType={controltype}
                 config={fieldconfig}
-                value_name={value[fieldname + '_name']}
+                value_name={value && value[fieldname + '_name']}
+                unNeedPower={this.props.unNeedPower}
               />
             </FormItem>
           </Col>
@@ -129,13 +136,15 @@ class DynamicFormView extends React.Component {
     Array.isArray(allFields) &&
       allFields.forEach((field, index) => {
         if (field.controltype === 20) {
-          lastGroup = {
-            title: field.displayname,
-            foldable: field.fieldconfig.foldable === 1,
-            fields: [],
-            isVisible: field.fieldconfig.isVisible === 1
-          };
-          groups.push(lastGroup);
+          if (field.fieldconfig.isVisible === 1 && field.fieldconfig.isVisibleJS !== 0) {
+            lastGroup = {
+              title: field.displayname,
+              foldable: field.fieldconfig.foldable === 1,
+              fields: [],
+              isVisible: field.fieldconfig.isVisible === 1
+            };
+            groups.push(lastGroup);
+          }
           return;
         }
         if (lastGroup) {
@@ -147,20 +156,24 @@ class DynamicFormView extends React.Component {
 
     return (
       <Form className={styles.dyformview}>
-        <Row gutter={24} style={{ margin: 0 }}>
-          {this.renderFields(noGroupFields)}
-          {groups.map(group => (
-            <FoldableGroup
-              key={group.title}
-              title={group.title}
-              isVisible={group.isVisible}
-              foldable={group.foldable}
-              theme="light"
-            >
-              {this.renderFields(group.fields)}
-            </FoldableGroup>
-          ))}
-        </Row>
+        {
+          Array.isArray(allFields) && allFields.length ? (
+            <Row gutter={24} style={{ margin: 0 }}>
+              {this.renderFields(noGroupFields)}
+              {groups.map(group => (
+                <FoldableGroup
+                  key={group.title}
+                  title={group.title}
+                  isVisible={group.isVisible}
+                  foldable={group.foldable}
+                  theme="light"
+                >
+                  {this.renderFields(group.fields)}
+                </FoldableGroup>
+              ))}
+            </Row>
+          ) : null
+        }
       </Form>
     );
   }

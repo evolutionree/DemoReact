@@ -97,39 +97,39 @@ class DynamicTable extends Component {
   getDefaultProtocol() { //默认的协议
     const { protocol } = this.props;
 
-    let cloneProtocol = _.cloneDeep(protocol);
+    const cloneProtocol = _.cloneDeep(protocol);
     // 过滤掉分组
-    let filterField = cloneProtocol.filter(field => {
+    const filterField = cloneProtocol.filter(field => {
       return field.controltype !== 20;
     });
 
-    let defaultProtocol = filterField.map(item => {
+    const defaultProtocol = filterField.map(item => {
       item.columnConfig = { //整合成 设置表头Modal需要的UI数据
         fieldid: item.fieldid,
         isdisplay: 1,
         width: item.defaultwidth < 100 ? 100 : item.defaultwidth //后端会给定默认列宽，没给则默认设置为100
       };
       return item;
-    })
+    });
 
     return defaultProtocol;
   }
 
   getcombineCustomProtocol() { //web列表返回的字段协议 与 个人列定义的协议 做交集处理
-    let defaultProtocol = this.getDefaultProtocol();
-    let customProtocol = this.state.customProtocol;
+    const defaultProtocol = this.getDefaultProtocol();
+    const customProtocol = this.state.customProtocol;
 
     //个人定义的列表数据 可能和 web列表定义的数据 不一致（web列表定义的字段可以在配置做修改） 先优先处理个人定义的数据（在web列表定义中存在）,再添加在个人定义不存在但在web定义存在的数据
-    let newProtocol = [];
+    const newProtocol = [];
     for (let i = 0; i < customProtocol.length; i++) {
       const findFilterFieldIndex = _.findIndex(defaultProtocol, item => item.fieldid === customProtocol[i].fieldid);
       if (findFilterFieldIndex > -1) {
-        let column = defaultProtocol[findFilterFieldIndex];
+        const column = defaultProtocol[findFilterFieldIndex];
         column.columnConfig = {
           fieldid: customProtocol[i].fieldid,
           isdisplay: customProtocol[i].isdisplay,
           width: customProtocol[i].width
-        }
+        };
         newProtocol.push(column);
       }
     }
@@ -152,7 +152,7 @@ class DynamicTable extends Component {
 
   hideFilter = (fieldname, visible) => {
     const newFilterVisible = { ...this.state.filterVisible };
-    newFilterVisible[fieldname] = visible ? newFilterVisible[fieldname] ? true : false : visible;
+    newFilterVisible[fieldname] = visible ? !!newFilterVisible[fieldname] : visible;
     this.setState({
       filterVisible: newFilterVisible
     });
@@ -161,7 +161,7 @@ class DynamicTable extends Component {
   toggleShowFilter = (fieldname, e) => { //点击icon[filter]显示/隐藏 搜索框
     e.nativeEvent.stopImmediatePropagation();
     const newFilterVisible = { ...this.state.filterVisible };
-    for (let key in newFilterVisible) {
+    for (const key in newFilterVisible) {
       newFilterVisible[key] = false;
     }
     newFilterVisible[fieldname] = !newFilterVisible[fieldname];
@@ -201,9 +201,9 @@ class DynamicTable extends Component {
         ...normalStyle,
         width: setWidth - 4
       } : {
-          ...normalStyle,
+        ...normalStyle
           // maxWidth: '340px'
-        };
+      };
 
       const sortFieldAndOrder = this.props.sortFieldAndOrder;
 
@@ -413,11 +413,11 @@ class DynamicTable extends Component {
       case 29:
       case 31:
       default:
-        return this.renderText(cellText);
+        return this.renderText(cellText, field, record);
     }
   };
   renderDetailLink = (text, field, record) => {
-    let textView = text;
+    const textView = text;
     let linkUrl = `/entcomm/${field.typeid}/${record.recid}`;
     if (this.props.linkUrl) {
       linkUrl = this.props.linkUrl(textView, field, record);
@@ -433,7 +433,7 @@ class DynamicTable extends Component {
       const relId = relBusinessData.id.split(',');
       const relName = relBusinessData.name.split(',');
 
-      let arr = [];
+      const arr = [];
       for (let i = 0; i < relId.length; i++) {
         arr.push({
           id: relId[i],
@@ -442,7 +442,7 @@ class DynamicTable extends Component {
       }
 
       return arr.map((item, index) => {
-        return <a key={index} title={item.name} className={styles.relbusinessLink} onClick={(e) => {
+        return (<a key={index} title={item.name} className={styles.relbusinessLink} onClick={(e) => {
           e.nativeEvent.stopImmediatePropagation();
           this.setState({
             dSourceDetailVisible: true,
@@ -450,7 +450,7 @@ class DynamicTable extends Component {
             DataSourceRelRecId: item.id,
             DataSourceDetailModalTitle: ''
           });
-        }}>{item.name}{index === arr.length - 1 ? '' : ','}</a>;
+        }}>{item.name}{index === arr.length - 1 ? '' : ','}</a>);
       });
     }
     return '';
@@ -471,7 +471,7 @@ class DynamicTable extends Component {
     if (cellData && cellData instanceof Object) {
       const relIds = cellData.id && cellData.id.split(',') || [];
       const relNames = (cellData.name && cellData.name.split(',')) || (cellText && cellText.split(','));
-      let dataArray = [];
+      const dataArray = [];
 
       relIds instanceof Array && relIds.forEach((item, index) => {
         dataArray.push({
@@ -514,7 +514,7 @@ class DynamicTable extends Component {
       ) : null;
 
       return (
-        <div className={styles.dataSoureceCellWrap} key='dataSoureceCellWrap'>
+        <div className={styles.dataSoureceCellWrap} key="dataSoureceCellWrap">
           <div key="dataArray" style={{ maxWidth: dataLengthOverOne ? 'calc(100% - 20px)' : '100%' }}>
             {
               dataArray.map(getDataSourceItem)
@@ -532,11 +532,22 @@ class DynamicTable extends Component {
     }
   };
 
-  renderText = (text) => {
+  renderText = (text, field, record) => {
     let text_ = text;
     if (typeof text_ === 'object' && text_ !== null) {
       text_ = JSON.stringify(text_);
     }
+
+    const { iflinkfield, linkfieldname } = (field || {}).fieldconfig || {};
+    if (iflinkfield && linkfieldname && record[linkfieldname]) {
+      const rtxt = record[linkfieldname];
+      const linkUrl = rtxt.indexOf('http') === 0 ? rtxt : `http://${rtxt}`;
+      return <a title={text_} href={linkUrl} target="_blank">{text_ || '(查看连接)'}</a>;
+    } else if (text_ && typeof text_ === 'string' && (text_.indexOf('http') === 0 || text_.indexOf('www') === 0)) {
+      const linkUrl = text_.indexOf('http') === 0 ? text_ : `http://${text_}`;
+      return <a title={text_} href={linkUrl} target="_blank">{text_}</a>;
+    }
+
     return <span title={text_}>{text_}</span>;
   };
 
@@ -601,7 +612,7 @@ class DynamicTable extends Component {
     if (fieldconfig && fieldconfig.encrypted) {
       return cellText ? '********' : '';
     }
-    return this.renderText(cellText);
+    return this.renderText(cellText, field, record);
   };
   renderAttachment = (filesJSON) => {
     let files = [];
@@ -613,7 +624,7 @@ class DynamicTable extends Component {
     const pictureFiles = files.filter(item => {
       return /jpeg|jpg|png|gif|bmp/.test(item.filename);
     });
-    return <span title={text}
+    return (<span title={text}
       onClick={() => {
         this.props.dispatch({
           type: 'app/viewImages', payload: pictureFiles.map(pictureItem => {
@@ -621,7 +632,7 @@ class DynamicTable extends Component {
             return { src };
           })
         });
-      }}>{text}</span>;
+      }}>{text}</span>);
   };
   render() {
     const { protocol, ignoreRecName, fixedHeader, ...restProps } = this.props;
@@ -637,7 +648,7 @@ class DynamicTable extends Component {
       });
     }
 
-    const style = fixedHeader ? { height: this.state.height - this.props.otherHeight } : {}
+    const style = fixedHeader ? { height: this.state.height - this.props.otherHeight } : {};
     return (
       <div>
         <Table
