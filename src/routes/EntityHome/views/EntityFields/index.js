@@ -6,6 +6,7 @@ import { copyNode } from '../../../../utils';
 import Toolbar from '../../../../components/Toolbar';
 import IntlEdittableCell from '../../../../components/UKComponent/Form/IntlEdittableCell';
 import FieldFormModal from './FieldFormModal';
+import OverSeaModal from './OverSeaModal';
 import { fieldModels } from '../../controlTypes';
 import FieldSortModal from './FieldSortModal';
 import MobileListConfigModal from './MobileListConfigModal2';
@@ -66,17 +67,18 @@ function EntityFields({
   editingRecord,
   modalPending,
   formValues,
-  toggleModal
+  toggleModal,
+  showOverseaModal
 }) {
   function handleAdd() {
     dispatch({ type: `${NAMESPACE}/putState`, payload: { editingRecord: null } });
     toggleModal(showModals, 'FieldFormModal', 'add');
   }
   function editField(record, triggerBtn) {
-    console.log(triggerBtn);
-    record.triggerBtn = !!triggerBtn;
-
-    dispatch({ type: 'entityFields/edit', payload: record });
+    dispatch({
+      type: 'entityFields/edit',
+      payload: { ...record, triggerBtn: !!triggerBtn }
+    });
     toggleModal(showModals, 'FieldFormModal', 'edit');
   }
   function handleFormSubmit(data, cb) {
@@ -107,6 +109,18 @@ function EntityFields({
     const match = list.find(o => o.fieldname === 'recname');
     if (match) {
       editField(match, true);
+    } else {
+      message.error('数据错误');
+    }
+  }
+
+  function setOverseaBreakfill() {
+    const match = list.find(o => o.fieldname === 'recname');
+    if (match) {
+      dispatch({
+        type: 'entityFields/putState',
+        payload: { showOverseaModal: true }
+      });
     } else {
       message.error('数据错误');
     }
@@ -241,6 +255,7 @@ function EntityFields({
         {btns.checkrepeat && <Button onClick={() => toggleModal(showModals, 'SetCheckRepeatConfigModal')}>设置查重条件</Button>}
         {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={() => toggleModal(showModals, 'SetCustomBasicConfigModal')}>设置客户基础资料字段</Button> : null}
         {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={setBreakfill}>设置回填映射字段</Button> : null}
+        {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={setOverseaBreakfill}>设置国外回填映射字段</Button> : null}
         {/* {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={() => toggleModal(showModals, 'SetCustomMailConfigModal')}>设置邮件客户信息字段</Button> : null} */}
       </Toolbar>
       <Table
@@ -303,6 +318,14 @@ function EntityFields({
       <ExpandJSModal
         onCancel={() => toggleModal(showModals, 'ExpandJSModal', '')}
       />
+      {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? (
+        <OverSeaModal
+          visible={showOverseaModal}
+          fields={list || []}
+          onOk={handleFormSubmit}
+          onCancel={() => dispatch({ type: 'entityFields/putState', payload: { showOverseaModal: false } })}
+        />
+      ) : null}
     </div>
   );
 }

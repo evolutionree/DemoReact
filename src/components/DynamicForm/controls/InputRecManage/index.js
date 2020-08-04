@@ -108,13 +108,13 @@ export default class InputRecManage extends Component {
   }
 
   handelOk = () => {
-    const { backfill, jsEngine } = this.props;
+    const { backfill, overseaBackfill, jsEngine } = this.props;
+    const isChina = jsEngine.getValue('country') - '7' === 0;
     const { selectInfo } = this.state;
-
-    if (Array.isArray(backfill) && backfill.length) {
-      backfill.forEach(str => {
+    const backArr = isChina ? backfill : overseaBackfill;
+    if (Array.isArray(backArr) && backArr.length) {
+      backArr.forEach(str => {
         const arr = str.split(':');
-        console.log(arr[1], selectInfo, arr[0], selectInfo[arr[0]]);
         jsEngine.setValue(arr[1], selectInfo[arr[0]]);
       });
       jsEngine.excuteJS('var aaa = 1;');
@@ -155,7 +155,7 @@ export default class InputRecManage extends Component {
           onCancel={this.handleCancel}
           footer={[
             <Button key="cancel" type="default" size="large" onClick={this.handleCancel}>关闭</Button>,
-            isChina ? <Button key="submit" type="primary" size="large" onClick={this.handelOk}>回填</Button> : null
+            <Button key="submit" type="primary" size="large" onClick={this.handelOk}>回填</Button>
           ]}
         >
           <Spin spinning={modalLoading}>
