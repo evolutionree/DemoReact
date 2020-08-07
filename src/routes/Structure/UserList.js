@@ -122,11 +122,11 @@ function UserList({
           },
           {
             label: '转为Hr用户', handler: toggleSetUser, single: true,
-            show: () => !!currentItems[0].iscrmuser
+            show: () => currentItems[0].iscrmuser === 1
           },
           {
             label: '转为CRM用户', handler: toggleSetUser, single: true,
-            show: () => !currentItems[0].iscrmuser
+            show: () => currentItems[0].iscrmuser === 2
           }
           // {
           //   label: '绑定考勤组', handler: bindAttence, single: false,

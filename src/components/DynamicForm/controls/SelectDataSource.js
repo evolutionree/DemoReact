@@ -94,6 +94,8 @@ class SelectDataSource extends React.Component {
       this.props.onFocus(() => {
         this.setState({ modalVisible: true });
       });
+    } else {
+      this.setState({ modalVisible: true });
     }
   };
 

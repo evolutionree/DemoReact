@@ -34,9 +34,8 @@ class RelTableBatchModal extends Component {
     const isOpening = !this.props.visible && nextProps.visible;
     const isClosing = this.props.visible && !nextProps.visible;
     if (isOpening) {
+      this.setState({ valueObj: null });
       if (this.props.protocl) this.props.form.resetFields();
-    } else if (isClosing) {
-      this.resetState();
     }
   }
 
@@ -60,7 +59,8 @@ class RelTableBatchModal extends Component {
           value_name: valueNameArray[index]
         };
       }
-    })
+    });
+    // onConfirm后面的逻辑里面有同步ajax请求，会阻塞UI线程，无法做loading效果。让用户体验吃屎去吧
     this.props.onConfirm && this.props.onConfirm(data);
   };
 
@@ -69,12 +69,6 @@ class RelTableBatchModal extends Component {
       valueObj: valueObj
     });
   }
-
-  resetState = () => {
-    this.setState({
-
-    });
-  };
 
   render() {
     const { form, protocl } = this.props;
@@ -89,7 +83,8 @@ class RelTableBatchModal extends Component {
           width={589}
           visible={this.props.visible}
           onCancel={this.onCancel}
-          onOk={this.onConfirm} >
+          onOk={this.onConfirm} 
+        >
           <FormItem
             {...formItemLayout}
             label={displayname}
