@@ -30,6 +30,11 @@ function getRootId(tree) {
 
 const _ = require('lodash');
 
+const toggleUserMap = {
+  1: { tips: '确定将所选人员转为Hr用户？', key: 2 },
+  2: { tips: '确定将所选人员转为CRM用户？', key: 1 }
+};
+
 const confirmModal = (title, callback) => {
   Modal.confirm({
     title,
@@ -294,13 +299,13 @@ export default {
       const isCrmUser = user.iscrmuser;
       const confirmed = yield cps(
         confirmModal,
-        isCrmUser ? '确定将所选人员转为Hr用户？' : '确定将所选人员转为CRM用户？'
+        toggleUserMap[isCrmUser].tips
       );
       if (!confirmed) return;
       try {
         yield call(setUser, {
           userid: user.userid,
-          iscrmuser: isCrmUser ? 0 : 1
+          iscrmuser: toggleUserMap[isCrmUser].key
         });
         message.success('设置成功');
         yield put({ type: 'queryList' });
@@ -384,7 +389,7 @@ export default {
     *forceDeviceLogout({ payload }, { call, put }) {
       try {
         const data = yield call(forceDeviceLogout, payload);
-        
+
         //刷新列表
         yield put({ type: 'getLoginInfoList', payload: payload[0].UserId, msg: data.data });
       } catch (e) {
