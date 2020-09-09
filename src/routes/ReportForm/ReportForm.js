@@ -87,22 +87,22 @@ class ReportForm extends React.Component {
       method: 'post', body: JSON.stringify({ id: reportId })
     }).then((result) => {
       const { referreporturl, components, reporttype, name } = result.data;
-      this.setState({ reporttype });
+      this.setState({ reporttype, fetchLoading: false, frTitle: name, frUrl: referreporturl });
       if (reporttype === 2) { // fr报表
-        const { fruserid = 'CRMTEST1', frpwd = '123456' } = this.props.user;
-        $.ajax({ //axios不支持JSONP  so 用jquery 也可以安装jsonp
-          url: `http://fr.ceepcb.com:8082/webroot/decision/login/cross/domain?fine_username=${fruserid}&fine_password=${frpwd}&validity=-1`,
-          type: 'get',
-          dataType: 'jsonp',
-          success: (res) => {
-            if (res.errorCode) {
-              message.error(res.errorMsg);
-              this.setState({ fetchLoading: false });
-              return;
-            }
-            this.setState({ fetchLoading: false, frTitle: name, frUrl: referreporturl });
-          }
-        });
+        // const { fruserid = 'CRMTEST1', frpwd = '123456' } = this.props.user;
+        // $.ajax({ //axios不支持JSONP  so 用jquery 也可以安装jsonp
+        //   url: `http://fr.ceepcb.com:8082/webroot/decision/login/cross/domain?fine_username=${fruserid}&fine_password=${frpwd}&validity=-1`,
+        //   type: 'get',
+        //   dataType: 'jsonp',
+        //   success: (res) => {
+        //     if (res.errorCode) {
+        //       message.error(res.errorMsg);
+        //       this.setState({ fetchLoading: false });
+        //       return;
+        //     }
+        //     this.setState({ fetchLoading: false, frTitle: name, frUrl: referreporturl });
+        //   }
+        // });
         return;
       }
       const dataGridDatasouces = [];
