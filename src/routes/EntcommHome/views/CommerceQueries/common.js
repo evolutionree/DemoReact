@@ -24,7 +24,7 @@ const __list = [
   { key: 'status', title: '经营状态', content: '', span: 12 },
   { key: 'orgno', title: '组织机构号', content: '', span: 12 },
   { key: 'creditno', title: '统一社会信用代码', content: '', span: 12 },
-  { key: 'districtCode', title: '地区代码', content: '', span: 12 },
+  { key: 'districtcode', title: '地区代码', content: '', span: 12 },
   { key: 'domain', title: '四级行业', content: '', span: 12 },
   { key: 'scope', title: '经营范围', content: '', span: 24 },
   { key: 'address', title: '地址', content: '', span: 24 }
