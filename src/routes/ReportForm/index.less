@@ -104,11 +104,27 @@
 }
 
 
-.searchbarWrap{
-  :global(.ant-form-item-control-wrapper) {
-    min-height: 32px;
+.layout {
+  height: 100%;
+  background-color: unset;
+  .header {
+    height: unset;
+    padding: 0 .2em;
+    background-color: unset;
+    line-height: 48px !important;
+    .searchbarWrap{
+      :global(.ant-row) {
+        margin-bottom: 0 !important;
+      }
+      :global(.ant-form-item-control-wrapper) {
+        min-height: 32px;
+      }
+      :global(.ant-form-item) {
+        margin-bottom: 0px;
+      }
+    }
   }
-  :global(.ant-form-item) {
-    margin-bottom: 0px;
+  .content {
+    overflow-y: auto;
   }
 }

@@ -3,7 +3,8 @@
  * 抽离出成组件
  */
 import React from 'react';
-import { Row, Col, message, Button, Icon } from 'antd';
+import { Row, Col, message, Layout, Button, Icon, DatePicker } from 'antd';
+import moment from 'moment';
 import _ from 'lodash';
 import { Link } from 'dva/router';
 import { connect } from 'dva';
@@ -32,8 +33,11 @@ import styles from './index.less';
 
 import chinaJson from '../../../public/mapJson/china.json';  //初始中国地图
 import html2canvas from './component/Chart/html2canvas';
+import { getCurrentMonthFirstDay, getCurrentDay, getCurrentYearFirstDay } from '../../utils';
 //china Map Data
 echarts.registerMap('china', chinaJson);
+
+const { Header, Content } = Layout;
 
 class ReportForm extends React.Component {
   static propTypes = {
@@ -49,16 +53,20 @@ class ReportForm extends React.Component {
       datasources: [],
       serchValue: {},
       reload: true, //serchValue 改变时 是否让DataGrid组件重新请求数据（如果用户在点击搜索按钮之前只是修改查询参数，不请求）
+      clientHeight: document.body.clientHeight,
       width: document.body.clientWidth,
       mapType: 'china',
       mapSeriesType: 'map',
       bmapCenter: [],
       breadcrumbData: [],
-      selectedLegend: null
+      selectedLegend: null,
+      //startDate: null,
+      //endDate: null
+      startDate: getCurrentYearFirstDay(),
+      endDate: getCurrentDay()
     };
     this.reloadReportData = this.reloadReportData.bind(this);
     this.echartsInstance = echarts;
-    this.height = document.body.offsetHeight - 140;
   }
 
   componentWillMount() {
@@ -183,6 +191,11 @@ class ReportForm extends React.Component {
       dSource.parameters.map((item) => {
         _.forIn(item, function (value, key) {
           returnParams[key] = oldPrams[value];
+        });
+        _.forIn(item, function (value, key) { //兼容参数固定值
+          if (value.indexOf('@')) {
+            returnParams[key] = value;
+          }
         });
       });
 
@@ -315,6 +328,10 @@ class ReportForm extends React.Component {
 
 
   changeMapShow(mapName, newBreadcrumbData) {
+    if (!chinaMap[mapName]) { //不显示详细地图层
+      return;
+    }
+
     this.setState({
       serchValue: {
         ...this.state.serchValue,
@@ -409,8 +426,7 @@ class ReportForm extends React.Component {
         [item.instid]: chartData,
         [item.instid + 'columns']: getData.data.columns,
         [item.instid + 'xseries']: getData.data.xseries, //散点图 的X轴坐标
-        [item.instid + 'loading']: false,
-        reload: false
+        [item.instid + 'loading']: false
       });
     }).catch((e) => {
       message.error(e.message);
@@ -418,24 +434,29 @@ class ReportForm extends React.Component {
         [item.instid]: [],
         [item.instid + 'columns']: [],
         [item.instid + 'xseries']: [],
-        [item.instid + 'loading']: false,
-        reload: false
+        [item.instid + 'loading']: false
       });
     });
   }
 
   reportSearch(serchValue) { // 页面查询参数发生新改变 查找含有当前参数的API并发起请求，更新页面数据
-    const { serchValue: oldSerchValue } = this.state;
-
-    const newSerchValue = { ...oldSerchValue, ...serchValue };
+    // let reportLocalParams = JSON.parse(storage.getLocalItem('reportLocalParams'));
+    // if (reportLocalParams) {
+    //   reportLocalParams[this.props.reportId] = serchValue;
+    // } else {
+    //   reportLocalParams = {};
+    //   reportLocalParams[this.props.reportId] = serchValue;
+    // }
+    // storage.setLocalItem('reportLocalParams', JSON.stringify(reportLocalParams));
+    //storage.removeLocalItem('reportLocalParams');
     this.setState({
-      serchValue: newSerchValue,
+      serchValue: serchValue,
       reload: false
-    }, this.reloadReportData(newSerchValue));
+    }, this.reloadReportData(serchValue));
 
     for (const key in this) { //表格交给表格组件 处理
       if (key.indexOf('dataGridRef') > -1) {
-        this[key] && this[key].reload && this[key].reload(newSerchValue);
+        this[key] && this[key].reload && this[key].reload(serchValue);
       }
     }
   }
@@ -485,8 +506,12 @@ class ReportForm extends React.Component {
         _.forIn(item, function (value, key) {
           returnParams[key] = params[value] ? params[value] || '' : searchValue[value] || '';
         });
+        _.forIn(item, function (value, key) { //兼容参数固定值
+          if (value.indexOf('@')) {
+            returnParams[key] = value;
+          }
+        });
       });
-
       return returnParams;
     }
   }
@@ -540,7 +565,8 @@ class ReportForm extends React.Component {
           mapDataSource = data[i].data.map((item) => {
             return {
               name: item.regionname,
-              value: item.count
+              value: item.currentmonthsell,
+              ...item
             };
           });
           break;
@@ -598,7 +624,6 @@ class ReportForm extends React.Component {
 
 
   renderComponent(item, index, height, width) {
-    const { reload } = this.state;
     const { orgcomponentinfo } = item;
     const outparametername = (orgcomponentinfo && orgcomponentinfo.outparametername) ? orgcomponentinfo.outparametername : `${item.datasourcename}Select`;
 
@@ -654,7 +679,7 @@ class ReportForm extends React.Component {
         return item.visible === false ? null : <div className={styles.searchbarWrap}>
           <SearchBar model={item.filterextinfo.ctrls}
             onSearch={this.reportSearch.bind(this)}
-            onChange={(serchValue) => { this.setState({ serchValue, reload: false }); }}
+            onChange={(serchValue) => { this.setState({ serchValue: serchValue, reload: false }); }}
             value={this.state.serchValue} />
         </div>;
       //漏斗图
@@ -681,10 +706,47 @@ class ReportForm extends React.Component {
       case 6:
         return (
           <div style={{ height: '100%', width: '100%', borderRadius: '4px', padding: '20px', boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)' }}>
-            <div style={{ width: '260px', height: '100%', border: '1px solid rgb(212, 208, 208)', float: 'left', overflow: 'auto' }}>
+            <span style={{ marginLeft: '10px' }}>起始年月</span>
+            <DatePicker.MonthPicker
+              style={{ marginLeft: '5px' }}
+              placeholder="起始年月"
+              value={this.state.startDate ? moment(this.state.startDate, 'YYYY-MM') : undefined}
+              onChange={(date, dateStr) => {
+                this.search('startDate', date ? moment(date).format('YYYY-MM') : '');
+              }}
+            />
+            <span style={{ marginLeft: '10px' }}>截至年月</span>
+            <DatePicker.MonthPicker
+              style={{ marginLeft: '5px' }}
+              placeholder="截至年月"
+              value={this.state.endDate ? moment(this.state.endDate, 'YYYY-MM') : undefined}
+              onChange={(date, dateStr) => {
+                this.search('endDate', date ? moment(date).format('YYYY-MM') : '');
+              }}
+            />
+            {/* <span style={{ marginLeft: '5px' }}>起始日期</span>
+            <DatePicker
+              style={{ marginLeft: '10px' }}
+              placeholder="起始日期"
+              value={this.state.startDate ? moment(this.state.startDate, 'YYYY-MM-DD') : undefined}
+              onChange={(date, dateStr) => {
+                this.search('startDate', date ? moment(date).format('YYYY-MM-DD') : '');
+              }}
+            />
+            <span style={{ marginLeft: '10px' }}>截止日期</span>
+            <DatePicker
+              style={{ marginLeft: '5px' }}
+              placeholder="截止日期"
+              value={this.state.endDate ? moment(this.state.endDate, 'YYYY-MM-DD') : undefined}
+              onChange={(date, dateStr) => {
+                this.search('endDate', date ? moment(date).format('YYYY-MM-DD') : '');
+              }}
+            /> */}
+            {/* <div style={{ width: '260px', height: '100%', border: '1px solid rgb(212, 208, 208)', float: 'left', overflow: 'auto' }}>
               <CollapseWrap mapSeriesType={this.state.mapSeriesType} changeMap={this.collapseClickMapShow.bind(this, this.state[item.datasourcename + 'loading'])} onChange={this.collapseValueChange.bind(this)} dataSource={this.getCollapseData(item)} value={this.state.serchValue} />
-            </div>
-            <div style={{ width: 'calc(100% - 260px)', height: '100%', float: 'left', paddingLeft: '10px', overflow: 'hidden' }}>
+            </div> */}
+            {/* <div style={{ width: 'calc(100% - 260px)', height: '100%', float: 'left', paddingLeft: '10px', overflow: 'hidden' }}> */}
+            <div style={{ width: '100%', height: '100%', float: 'left', paddingLeft: '10px', overflow: 'hidden' }}>
               <BreadCrumb data={this.state.breadcrumbData} onClick={this.breadCrumbClickHandler.bind(this)} />
               <div className={styles.iconDownload} style={{ display: this.state.mapSeriesType === 'map' ? 'none' : 'block' }}>
                 <Icon type="download" onClick={this.screenCapture.bind(this)} />
@@ -710,12 +772,8 @@ class ReportForm extends React.Component {
         );
       case 10:
         return (
-          <div style={{ height: '100%', width: '100%', borderRadius: '4px', boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)', overflow: 'hidden' }}>
+          <div style={{ height: '100%', width: '100%', borderRadius: '4px', padding: '20px', boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)' }}>
             <LinesMap
-              width={width}
-              height={height}
-              itemoption={item}
-              loading={reload}
               dataSource={this.state[item.datasourcename] ? [...this.state[item.datasourcename]] : []}
             />
           </div>
@@ -727,54 +785,70 @@ class ReportForm extends React.Component {
         const selectmode = orgcomponentinfo ? orgcomponentinfo.selectmode : 1; // 1 只选人  2 只选部门 3 选人&部门
 
         return (
-          Array.isArray(this.state[item.datasourcename]) && this.state[item.datasourcename].length ?
-            <TreeView
-              width={width - 30}
-              height={height}
-              searchFilter
-              trigger="onChange"
-              expandedKeys={list.filter(o => o.parentid === '00000000-0000-0000-0000-000000000000').map(item => item.recid) || []}
-              checkable={checkable}
-              value={this.state[outparametername]}
-              list={list}
-              placeholder="搜索人员或部门"
-              comboKeyOption={{ key: 'recid', parentKey: 'parentid', title: 'label', searchKey: 'recname' }}
-              onChange={this.oneSelectTree.bind(this, { item, list, max, checkable, selectmode, outparametername })}
-            /> : null
+          <div style={{ height: '100%', width: '100%', overflowY: 'auto', borderRadius: '4px', padding: '20px', boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)' }}>
+            {
+              Array.isArray(this.state[item.datasourcename]) && this.state[item.datasourcename].length ?
+                <TreeView
+                  searchFilter
+                  trigger="onChange"
+                  expandedKeys={list.filter(o => o.parentid === '00000000-0000-0000-0000-000000000000').map(item => item.recid) || []}
+                  checkable={checkable}
+                  value={this.state[outparametername]}
+                  list={list}
+                  placeholder="搜索人员或部门"
+                  comboKeyOption={{ key: 'recid', parentKey: 'parentid', title: 'label', searchKey: 'recname' }}
+                  onChange={this.oneSelectTree.bind(this, { item, list, max, checkable, selectmode, outparametername })}
+                /> : null
+            }
+          </div>
         );
     }
   }
 
-  oneSelectTree = (record, checkedKeys, event) => {
-    const { serchValue: oldSerchValue } = this.state;
+  oneSelectTree = (record, checkedKeys, e) => {
     const { list, max, checkable, selectmode, outparametername } = record;
 
-    if (!checkedKeys) checkedKeys = event.node.props.eventKey;
     let result = checkedKeys.split(',');
 
     if (checkable && max && result.length > max) return;
 
     if (checkedKeys && list.length) {
       // 只选人
-      if (selectmode === 1) result = result.filter(key => list.find(o => (o.recid + '') === key).rectype === 2);
+      if (selectmode === 1) result = result.filter(key => list.find(o => o.recid === key).rectype === 2);
 
       // 只选部门
-      if (selectmode === 2) result = result.filter(key => list.find(o => (o.recid + '') === key).rectype === 1);
+      if (selectmode === 2) result = result.filter(key => list.find(o => o.recid === key).rectype === 1);
     }
 
-    const newSerchValue = { ...oldSerchValue, [outparametername]: result.join(',') };
-
     this.setState({
-      serchValue: newSerchValue,
       [outparametername]: result.join(','),
       reload: true
-    }, this.reloadReportData(newSerchValue));
+    }, this.reloadReportData(
+      { ...this.state.serchValue, [outparametername]: result.join(',') }
+    ));
   }
 
+  search = (key, value) => {
+    this.setState({
+      [key]: value
+    }, () => {
+      if (key === 'startDate') {
+        this.setState({
+          serchValue: { ...this.state.serchValue, '@startDate': value }
+        }, () => { this.changeMapShow(this.state.breadcrumbData.length > 0 ? this.state.breadcrumbData[this.state.breadcrumbData.length - 1] : '全国', this.state.breadcrumbData); });
+      } else if (key === 'endDate') {
+        this.setState({
+          serchValue: { ...this.state.serchValue, '@endDate': value }
+        }, () => { this.changeMapShow(this.state.breadcrumbData.length > 0 ? this.state.breadcrumbData[this.state.breadcrumbData.length - 1] : '全国', this.state.breadcrumbData); });
+      }
+    });
+  };
+
   render() {
+    const { clientHeight } = this.state;
     let width = this.state.width - (this.props.siderFold ? 61 : 200); //系统左侧 200px显示菜单(未折叠  折叠61)
     width = width < 1080 ? 1080 : width; // 系统设置了最小宽度
-    let components = this.state.components;
+    let components = this.state.components ? this.state.components.concat() : [];
     const maxWidth = _.max(components.map(item => item.width));
     if (maxWidth <= 2) {
       components = this.state.components.map(item => {
@@ -782,50 +856,42 @@ class ReportForm extends React.Component {
         return item;
       });
     }
-
-    const { reporttype, frTitle, frUrl } = this.state;
-    if (reporttype === 2) {
-      return (
-        <Page contentStyle={{ background: '#ffffff', height: this.height }} title={frTitle}>
-          <iframe
-            title="framepage"
-            src={frUrl}
-            frameBorder={0}
-            style={{
-              height: '100%',
-              width: '100%'
-            }}
-          />
-        </Page>
-      );
+    // 拆分过滤控件
+    let filterCol;
+    if (components[0] && components[0].ctrltype === 3) {
+      filterCol = components.shift();
     }
-
     return (
-      <Page contentStyle={{ background: '#ffffff' }} title={this.state.pageName || ''}>
-        <Row>
-          {
-            components.map((item, index) => {
-              const widthActually = item.width * width / 24;
-              const height = (item.height > 0 ? item.height : widthActually * Math.abs(item.height));
-              let style;
-              if (item.ctrltype === 2) {
-                style = { padding: '10px 10px' }; //表格不给固定高  通过scroll.y去设置
-              } else if (item.ctrltype === 3) {
-                style = {};
-              } else {
-                style = { height, padding: '10px 10px' };
-              }
-              item.ctrltype === 4 ? style.overflowX = 'auto' : style;
-              return (
-                <Col key={index} span={item.width} style={style} className={styles.scroll}>
-                  {
-                    this.renderComponent(item, index, height, widthActually)
+      <Page contentStyle={{ background: '#ffffff', height: clientHeight - 130, overflowY: 'auto' }} title={this.state.pageName || ''}>
+        <Layout className={styles.layout}>
+          {filterCol ? <Header className={styles.header}>{this.renderComponent(filterCol)}</Header> : null}
+          <Content className={styles.content}>
+            <Row>
+              {
+                components.map((item, index) => {
+                  const widthActually = item.width * width / 24;
+                  const height = (item.height > 0 ? item.height : widthActually * Math.abs(item.height));
+                  let style;
+                  if (item.ctrltype === 2) {
+                    style = { padding: '10px 10px' }; //表格不给固定高  通过scroll.y去设置
+                  } else if (item.ctrltype === 3) {
+                    style = {};
+                  } else {
+                    style = { height, padding: '10px 10px' };
                   }
-                </Col>
-              );
-            })
-          }
-        </Row>
+                  item.ctrltype === 4 ? style.overflowX = 'auto' : style;
+                  return (
+                    <Col key={index} span={item.width} style={style} className={styles.scroll}>
+                      {
+                        this.renderComponent(item, index, height, widthActually)
+                      }
+                    </Col>
+                  );
+                })
+              }
+            </Row>
+          </Content>
+        </Layout>
       </Page>
     );
   }

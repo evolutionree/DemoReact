@@ -11,8 +11,8 @@ import { photoCompress } from './photoCompress';
 
 const confirm = Modal.confirm;
 export function checkIsDev() {
-  let uke_dev = window.uke_dev;
-  let uke_dev_local = localStorage.getItem('uke_dev');
+  const uke_dev = window.uke_dev;
+  const uke_dev_local = localStorage.getItem('uke_dev');
   if (uke_dev && !uke_dev_local) {
     localStorage.setItem('uke_dev', uke_dev);
   }
@@ -116,6 +116,9 @@ export function getCurrentDay() {
 }
 export function getDateStr(num, format = 'YYYY-MM-DD') { //获取当前日期前后N天
   return moment().subtract(num, 'days').format(format);
+}
+export function getCurrentYearFirstDay() {
+  return moment().startOf('year').format('YYYY-MM-DD');
 }
 
 /*
@@ -243,23 +246,22 @@ export function customertransformArrayToTree(array, idKey = 'id') {
  * @returns string
  */
 export function GetArgsFromHref(sArgName) {
-  let sHref = window.location;
-  let args = sHref.toString().split("?");
+  const sHref = window.location;
+  let args = sHref.toString().split('?');
   let retval = '';
   if (args[0] == sHref) /*参数为空*/ {
     return retval;
   }
   let str = args[1];
-  args = str.toString().split("&");
+  args = str.toString().split('&');
   for (let i = 0; i < args.length; i++) {
     str = args[i];
-    let arg = str.toString().split("=");
+    const arg = str.toString().split('=');
     if (arg.length <= 1) continue;
     if (arg[0] == sArgName) retval = arg[1];
   }
   return retval;
 }
-
 
 
 /**
@@ -289,7 +291,7 @@ function filterTreeByPathSearch(treeData, pathSearches) {
       let showChildren = true;
       let forceShowChildren = presetShow || false;
       let selectable = presetSelectable || false;
-      let childrenConPaths = [];
+      const childrenConPaths = [];
 
       // if (node.recstatus !== 0) {
       conPaths.forEach(item => {
@@ -445,17 +447,17 @@ export function addSeparator(val) {
     flag = 0;
     val = -val;
   }
-  let str = val.toString();
+  const str = val.toString();
 
   //n为小数部分
-  let n = str.slice(str.lastIndexOf('.'))
+  let n = str.slice(str.lastIndexOf('.'));
   if (n.indexOf('.') === -1) {
     n = '';
   }
 
   //str为整数部分
-  let interStr = parseInt(val).toString();
-  let list = interStr.split('').reverse();
+  const interStr = parseInt(val).toString();
+  const list = interStr.split('').reverse();
   for (let i = 0; i < list.length; i++) {
     if (i % 4 === 3) {
       list.splice(i, 0, ',');
@@ -496,10 +498,10 @@ export function uploadImg(uploadObj, onSuccess, isProvideCompress = true) { //is
   }
 
   function AjaxFileData(imgData) {
-    let form = new FormData(); // FormData 对象
+    const form = new FormData(); // FormData 对象
     form.append('data', imgData); // 文件对象
     form.append('filename', uploadObj.file.name); // 文件对象
-    let xhr = new XMLHttpRequest();  // XMLHttpRequest 对象
+    const xhr = new XMLHttpRequest();  // XMLHttpRequest 对象
     xhr.open('post', uploadObj.action, true); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
     xhr.onload = ({ currentTarget }) => {
       const response = JSON.parse(currentTarget.response);
@@ -513,7 +515,7 @@ export function uploadImg(uploadObj, onSuccess, isProvideCompress = true) { //is
     }; //请求完成
     xhr.onerror = uploadObj.onError; //请求失败
     const headers = uploadObj.headers;
-    for (let item in headers) {
+    for (const item in headers) {
       xhr.setRequestHeader(item, headers[item]);
     }
     xhr.send(form); //开始上传，发送form数据
@@ -521,8 +523,8 @@ export function uploadImg(uploadObj, onSuccess, isProvideCompress = true) { //is
 }
 
 export function uuid() { //生成uuid
-  let s = [];
-  let hexDigits = '0123456789abcdef';
+  const s = [];
+  const hexDigits = '0123456789abcdef';
   for (let i = 0; i < 36; i++) {
     s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
   }
@@ -530,7 +532,7 @@ export function uuid() { //生成uuid
   s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);  // bits 6-7 of the clock_seq_hi_and_reserved to 01
   s[8] = s[13] = s[18] = s[23] = '-';
 
-  let uuid = s.join('');
+  const uuid = s.join('');
   return uuid;
 }
 
@@ -538,7 +540,7 @@ export function getDefaultPath(data) {
   let defaultPath = '';
   let findFirstPath = true;
 
-  let menuData = data;
+  const menuData = data;
   function loop(menus) {
     for (let i = 0; i < menus.length; i++) {
       if (menus[i].children && menus[i].children.length > 0) {
@@ -590,4 +592,77 @@ export function getEditData(recordDetail, protocol) {
     }
   });
   return retData;
+}
+
+export function randomStr(num = 16) {
+  const str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  let randomstr = '';
+  for (let i = 0; i < num; i++) {
+    randomstr += str[_.random(0, 51)];
+  }
+  return randomstr;
+}
+
+// 自定义对比相等函数，非严格相等，为了支持'0.00' == 0的情况
+// String、Number、Boolean、Null、Undefined、Object、Array
+// 特殊处理 ''(String)
+export function isCustomEqual(val, other) {
+  const vType = Object.prototype.toString.call(val).replace('[object ', '').replace(']', '');
+  const oType = Object.prototype.toString.call(other).replace('[object ', '').replace(']', '');
+  if (val === '' || other === '') { // '' == 0 为 true
+    return val === other;
+  } else if (vType === 'Null' || oType === 'Null') {
+    return val === other;
+  } else if (vType === 'Undefined' || oType === 'Undefined') {
+    return val === other;
+  } else if (vType === 'Object' && oType === 'Object') {
+    const k = Object.keys(val);
+    const ok = Object.keys(other);
+    if (k.length !== ok.length) {
+      return false;
+    } else {
+      return k.every(i => isCustomEqual(val[i], other[i]));
+    }
+  } else if (vType === 'Array' && oType === 'Array') {
+    if (val.length !== other.length) {
+      return false;
+    } else {
+      return val.every((v, i) => isCustomEqual(v, other[i]));
+    }
+  }
+  return val == other; // 0.00' == 0
+}
+
+// 计算文本在特定fontSize和width的情况下渲染在页面上的高度
+export function getMoreHeight(result, baseHeight = 12) {
+  let moreHeight = 0;
+  if (result && result.length) {
+    const namesText = result.map(r => r.name);
+    const namesHeight = namesText.map(t => getTextRenderHeight(t));
+    const biggerNamesheight = namesHeight.filter(h => h > baseHeight);
+    if (biggerNamesheight.length) {
+      const max = biggerNamesheight.concat().sort((a, b) => b - a)[0];
+      moreHeight = max - baseHeight;
+    }
+  }
+  return moreHeight;
+}
+
+export function getTextRenderHeight(text, width = 72) {
+  const span = document.createElement('span');
+  span.innerHTML = text;
+  span.style.cssText = `
+    display: block;
+    font-size: 12px;
+    line-height: 1;
+    width: ${width}px;
+    overflow-wrap: break-word;
+    white-space: normal;
+    position: absolute;
+    top: -9999px;
+  `;
+  document.body.appendChild(span);
+  const height = span.offsetHeight;
+  span.remove();
+  return height;
 }

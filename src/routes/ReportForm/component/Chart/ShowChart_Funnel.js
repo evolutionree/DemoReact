@@ -10,12 +10,12 @@ import _ from 'lodash';
 
 
 function ShowFunnelChart({
-                     loading,
-                     dataSource,
-                     onEvents,
-                     deviceType,
-                     component
-                   }) {
+  loading,
+  dataSource,
+  onEvents,
+  deviceType,
+  component
+}) {
   const colors = ['#60ab5e', '#24b3c1', '#ffc742', '#fb7844', '#fb5654', '#50ade3'];
 
 
@@ -23,23 +23,25 @@ function ShowFunnelChart({
     return dataSource.data.filter((item) => {
       return item.stagename !== '输单';
     }).map((item) => {
-      return  { value: item.totalamount, name: item.stagename };
+      return { value: item.oppcount, name: item.stagename };
     });
   }
 
 
   function getMinValue() {
-    let min = 0
-    if (dataSource.data[dataSource.data.length - 1].winrate === 1) {
-      min = dataSource.data[dataSource.data.length - 1].totalamount;
-    }
+    let min = 0;
+    dataSource.data.map((item) => {
+      if (item.oppcount < min) {
+        min = item.oppcount;
+      }
+    });
     return min;
   }
 
 
   function getMaxValue() {
-    let arr = dataSource.data.map((item) => {
-      return item.totalamount;
+    const arr = dataSource.data.map((item) => {
+      return item.oppcount;
     });
 
     return _.max(arr);
@@ -66,7 +68,7 @@ function ShowFunnelChart({
       formatter: component.commonextinfo.detailformat ? function (obj) {
         let formatstr = component.commonextinfo.detailformat;
         const keys = formatstr && formatstr.match(/#.*?#/g, '');
-        let data = dataSource.data;
+        const data = dataSource.data;
         if (data && data instanceof Array && data.length > 0) {
           if (keys && keys instanceof Array) {
             for (let i = 0; i < keys.length; i++) {
@@ -87,7 +89,7 @@ function ShowFunnelChart({
         }
       }
     },
-    legend:  deviceType === 'mobile' ? {} : {
+    legend: deviceType === 'mobile' ? {} : {
       type: 'scroll',
       orient: 'vertical',
       right: 0,
@@ -108,8 +110,8 @@ function ShowFunnelChart({
         // height: {totalHeight} - y - y2,
         min: getMinValue(),
         max: getMaxValue(),
-        minSize: '20%',
-        maxSize: '100%',
+        // minSize: '20%',
+        // maxSize: '100%',
         sort: 'none',
         gap: 2,
         label: {
@@ -152,8 +154,8 @@ function ShowFunnelChart({
       showLoading={loading}
       style={{ width: '100%', height: '100%' }}
       option={option}
-      notMerge={true}
-      lazyUpdate={true} />
+      notMerge
+      lazyUpdate />
   );
 }
 
