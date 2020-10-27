@@ -16,7 +16,7 @@
       ],
       "proxy": {
         "/api": {
-          "target": "http://crm.ceepcb.com:8883",
+          "target": "http://10.0.0.136",
           //"target": "http://172.16.0.185:1610",
           "changeOrigin": true
         }
