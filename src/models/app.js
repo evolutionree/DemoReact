@@ -182,19 +182,6 @@ export default {
       const result = yield call(queryUserInfo);
       const { user, role } = result.data;
       user[0].role = role;
-      if (user && user[0]) {
-        const { fruserid = 'CRMTEST1', frpwd = '123456' } = user[0];
-        $.ajax({ //axios不支持JSONP  so 用jquery 也可以安装jsonp
-          url: `http://fr.ceepcb.com:8082/webroot/decision/login/cross/domain?fine_username=${fruserid}&fine_password=${frpwd}&validity=-1`,
-          type: 'get',
-          dataType: 'jsonp',
-          success: (res) => {
-            if (res.errorCode) {
-              message.error(res.errorMsg);
-            }
-          }
-        });
-      }
       yield put({ type: 'putState', payload: { user: user[0] } });
     },
     *clearServerCache(action, { call }) {
