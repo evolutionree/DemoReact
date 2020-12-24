@@ -34,22 +34,26 @@ export async function queryProductData() {
   });
 }
 
+// 全局缓存有关/api/metaData/getincrementdata的数据请求
+const cacheIncrementdata = {
+  queryProductTree: null,
+  queryProductRaw: null,
+  queryDictionaries: null
+};
+
 /**
  * 获取产品树（产品系列 + 产品）
  * @returns {Promise.<Object>}
  */
 export async function queryProductTree() {
-  // const params = {
-  //   VersionKey: {
-  //     productsync: 0,
-  //     productserialsync: 0
-  //   }
-  // };
+  let promise = cacheIncrementdata.queryProductTree;
+  if (promise) return promise;
+
   const params = [
     { VersionType: 3, VersionKey: 'productsync', RecVersion: -1 },
     { VersionType: 3, VersionKey: 'productserialsync', RecVersion: -1 }
   ];
-  return request('/api/metaData/getincrementdata', {
+  promise = request('/api/metaData/getincrementdata', {
     method: 'post',
     body: JSON.stringify(params)
   }).then(result => {
@@ -74,23 +78,32 @@ export async function queryProductTree() {
     });
     return { data: retTree };
   });
+
+  cacheIncrementdata.queryProductTree = promise;
+  return promise;
 }
 /**
  * 获取产品树（产品系列 + 产品）
  * @returns {Promise.<Object>}
  */
 export async function queryProductRaw() {
+  let promise = cacheIncrementdata.queryProductRaw;
+  if (promise) return promise;
+
   const params = [
     { VersionType: 3, VersionKey: 'productsync', RecVersion: -1 },
     { VersionType: 3, VersionKey: 'productserialsync', RecVersion: -1 }
   ];
-  return request('/api/metaData/getincrementdata', {
+  promise = request('/api/metaData/getincrementdata', {
     method: 'post',
     body: JSON.stringify(params)
   }).then(result => {
     const { data: { data: { productserialsync: productserial, productsync: product } } } = result;
     return { data: { productserial, products: product } };
   });
+
+  cacheIncrementdata.queryProductRaw = promise;
+  return promise;
 }
 
 /**
@@ -115,10 +128,13 @@ export async function queryProductSerialData() {
  * @returns {Promise.<Object>}
  */
 export async function queryDictionaries(dickeys) {
+  let promise = cacheIncrementdata.queryDictionaries;
+  if (promise) return promise;
+
   const params = [
     { VersionType: 2, VersionKey: 'datadicsync', RecVersion: -1 }
   ];
-  return request('/api/metaData/getincrementdata', {
+  promise = request('/api/metaData/getincrementdata', {
     method: 'post',
     body: JSON.stringify(params)
   }).then(result => {
@@ -132,7 +148,11 @@ export async function queryDictionaries(dickeys) {
     });
     return { data: { dicdata: dicGrouped } };
   });
+
+  cacheIncrementdata.queryDictionaries = promise;
+  return promise;
 }
+
 // export async function queryDictionaries(dickeys) {
 //   let count = 100;
 //   let keys = [];
