@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { createNormalInput } from './utils';
 import InputCustomerRecName from './InputCustomerRecName';
-import InputRecManage from './InputRecManage';
 import { queryFields } from '../../../services/entity';
 
 const customerEntityId = 'f9db9d79-e94b-4678-a5cc-aa6e281c1246'; // 客户实体id
@@ -44,13 +43,15 @@ class InputRecName extends Component {
   }
 
   render() {
+    const { fieldId, fieldname } = this.props
     const { isCustomer } = this.state;
+
+    const isXianSuo = fieldId === xiansuoNameFieldId
+    const isOriginal = isCustomer || isXianSuo
+
     //客户新增 与 其他模块的新增 有差异   客户新增的时候  客户名称键入后需要请求接口 查询重复引用
-
-    if (isCustomer) return <InputRecManage {...this.props} />;
-
-    return (this.props.fieldId === xiansuoNameFieldId) ?
-      <InputCustomerRecName {...this.props} /> : React.createElement(Text, this.props);
+    return (isOriginal || fieldname === 'recname') ?
+      <InputCustomerRecName {...this.props} isOriginal={isOriginal} /> : React.createElement(Text, this.props);
   }
 }
 

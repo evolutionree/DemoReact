@@ -1,0 +1,102 @@
+html {
+  width: 100%;
+  height: 100%;
+}
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+}
+body #root {
+  width: 100%;
+  height: 100%;
+  background: #4e5a6c;
+}
+.app___2kukg {
+  position: relative;
+}
+.debugLog___1uY6d {
+  background-color: #f0f0f0;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 280px;
+  overflow: auto;
+  border-top: 1px solid #999;
+}
+.debugLog___1uY6d .debugLogTitle___3qvqU {
+  border-bottom: 1px solid #999;
+  padding: 5px 8px;
+}
+.debugLog___1uY6d ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.debugLog___1uY6d ul li {
+  line-height: 1.25;
+  padding: 3px 8px;
+  font-size: 14px;
+}
+.debugLog___1uY6d.collapsed___3rbCZ {
+  height: 32px;
+}
+.debugLog___1uY6d.collapsed___3rbCZ ul {
+  display: none;
+}
+.loading___2z75r {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  background-color: #f5eff4;
+  opacity: 0.5;
+  filter: alpha(opacity=50);
+  /* IE8 以及更早的浏览器 */
+}
+.loading___2z75r .ant-spin {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  margin-left: -23px;
+}
+.reportIndexWrap___6SfTW {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+.reportIndexWrap___6SfTW .modalMask___2eE36 {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0px;
+  top: 0px;
+  background: black;
+  opacity: 0.4;
+}
+.reportIndexWrap___6SfTW .modalMask___2eE36 .ant-spin {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+}
+.CardWrap___3LUri,
+.ListWrap___3T9sD,
+.CarouselWrap___3JJ4k {
+  min-height: 300px;
+  position: relative;
+}
+.CardWrap___3LUri .ant-spin,
+.ListWrap___3T9sD .ant-spin,
+.CarouselWrap___3JJ4k .ant-spin {
+  position: absolute;
+  left: 50%;
+  top: 4rem;
+  -webkit-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+}
