@@ -6,6 +6,7 @@ import SelectAppIcon from '../../components/SelectAppIcon';
 import AjaxSelect from './AjaxRelObjSelect';
 import IntlInput from '../../components/UKComponent/Form/IntlInput';
 import { getIntlText } from '../../components/UKComponent/Form/IntlText';
+import { queryFields } from '../../services/entity';
 
 const Option = Select.Option;
 const FormItem = Form.Item;
@@ -15,15 +16,15 @@ let RelateEntitySelect = (props) => {
   const filter = entity => {
     if (props.showSimpleEntity) {
       // return entity.modeltype === 0 || (entity.modeltype === 2 && entity.relaudit === 0);
-      return entity.modeltype === 0 || entity.modeltype === 2;
+      return entity.modeltype === 0 || entity.modeltype === 2 || entity.modeltype === 3;
     } else {
-      return entity.modeltype === 0;
+      return entity.modeltype === 0 || entity.modeltype === 2 || entity.modeltype === 3;
     }
   };
 
   const handleSelectChange = (value) => {
     props.onChange && props.onChange(value);
-  }
+  };
 
   return (
     <Select {...props} onChange={handleSelectChange}>
@@ -50,10 +51,9 @@ class EntityFormModal extends Component {
 
   constructor(props) {
     super(props);
-    this.state = {};
   }
 
-  componentWillReceiveProps(nextProps) {
+  async componentWillReceiveProps(nextProps) {
     const isOpening = !/edit|add/.test(this.props.showModals)
       && /edit|add/.test(nextProps.showModals);
 
@@ -117,7 +117,7 @@ class EntityFormModal extends Component {
   }
 
   entitynameRequireValidator = (rule, value, callback) => {
-    let langlist = JSON.parse(window.localStorage.getItem('langlist'));
+    const langlist = JSON.parse(window.localStorage.getItem('langlist'));
     langlist instanceof Array && langlist.map(item => {
       if (!(value && value[item.key])) {
         callback(item.dispaly + '必填');
