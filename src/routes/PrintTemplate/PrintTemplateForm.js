@@ -96,14 +96,14 @@ class PrintTemplateForm extends Component {
     // if (Array.isArray(event)) {
     //   return event;
     // }
-    let _fileList = fileList.filter(file => file && file.status && file.status !== 'removed').slice(-1);
+    const _fileList = fileList.filter(file => file && file.status && file.status !== 'removed').slice(-1);
     if (file.response && file.response.error_code === 0) {
       return [{
         uid: file.uid,
         fileid: file.response.data,
         name: file.name,
         size: file.size,
-        status: 'done',
+        status: 'done'
         // url: `/api/fileservice/download?fileid=${file.response.data}`
       }];
     } else if (file.response && file.response.error_code) {
@@ -133,7 +133,7 @@ class PrintTemplateForm extends Component {
         recid: isEdit ? editingRecord.recid : undefined,
         entityid: entityId
       });
-    })
+    });
   };
 
   openJsEdit = () => {
@@ -166,7 +166,7 @@ class PrintTemplateForm extends Component {
     const { isEdit, form, visible, modalPending } = this.props;
     const { getFieldDecorator, getFieldValue } = form;
     const srctype = getFieldValue('datasourcetype');
-    const formItemLayout = { labelCol: { span: 5 }, wrapperCol: { span: 19 } }
+    const formItemLayout = { labelCol: { span: 5 }, wrapperCol: { span: 19 } };
     return (
       <Modal
         visible={visible}
@@ -224,7 +224,7 @@ class PrintTemplateForm extends Component {
             })(
               <Select placeholder="请选择模板类型">
                 <Option value="0">Excel模板</Option>
-                {/*<Option value="1">Word模板</Option>*/}
+                <Option value="1">Word模板</Option>
               </Select>
             )}
           </FormItem>
@@ -235,7 +235,7 @@ class PrintTemplateForm extends Component {
                 { validator: this.validateFile }
               ],
               valuePropName: 'fileList',
-              getValueFromEvent: this.handleUploadChange,
+              getValueFromEvent: this.handleUploadChange
             })(
               <Upload
                 name="data"
@@ -295,7 +295,7 @@ export default connect(
       isEdit: isEdit,
       modalPending: modalPending,
       editingRecord: isEdit ? currentItems[0] : undefined
-    }
+    };
   },
   dispatch => {
     return {

@@ -2,7 +2,16 @@ import React, { PropTypes, Component } from 'react';
 import { connect } from 'dva';
 import { Form, Modal, Radio, message, Spin } from 'antd';
 import { printEntity } from '../../../services/printTemplate';
-import {downloadFile} from "../../../utils/ukUtil";
+import { downloadFile } from '../../../utils/ukUtil';
+
+const tmpTypeConfig = {
+  0: {
+    name: 'Excel'
+  },
+  1: {
+    name: 'Word'
+  }
+};
 
 class PrintEntityModal extends Component {
   static propTypes = {
@@ -18,6 +27,7 @@ class PrintEntityModal extends Component {
     super(props);
     this.state = {
       selectedTemplate: props.templateList.length ? props.templateList[0].recid : null,
+      selectedTemplateType: props.templateList.length ? props.templateList[0].templatetype : 0,
       selectedOutput: props.outputTypes.length ? props.outputTypes[0].type : null,
       lodingPrint: false
     };
@@ -29,6 +39,7 @@ class PrintEntityModal extends Component {
     if (isOpening) {
       this.setState({
         selectedTemplate: nextProps.templateList[0].recid,
+        selectedTemplateType: nextProps.templateList[0].templatetype,
         selectedOutput: nextProps.outputTypes[0].type
       });
     }
@@ -52,7 +63,8 @@ class PrintEntityModal extends Component {
     const params = {
       entityid: this.props.entityId,
       recid: this.props.recordId,
-      templateid: this.state.selectedTemplate
+      templateid: this.state.selectedTemplate,
+      templatetype: this.state.selectedTemplateType
     };
     this.setState({
       lodingPrint: true
@@ -72,25 +84,31 @@ class PrintEntityModal extends Component {
   };
 
   render() {
+    const { lodingPrint, selectedTemplate, selectedTemplateType, selectedOutput } = this.state;
     return (
       <Modal
-        key={new Date().getTime()}
+        key={this.props.currentStep === 1 ? 'print' : new Date().getTime()}
         title="打印确认"
         visible={this.props.currentStep === 1}
         onCancel={this.handleCancel}
         onOk={this.handleOk}
       >
-        <Spin spinning={this.state.lodingPrint}>
+        <Spin spinning={lodingPrint}>
           <Form>
             <Form.Item label="可用模板">
-              <Radio.Group value={this.state.selectedTemplate} onChange={e => this.setState({ selectedTemplate: e.target.value })}>
+              <Radio.Group value={selectedTemplate} onChange={e => this.setState({ selectedTemplate: e.target.value })}>
                 {this.props.templateList.map(item => (
                   <Radio value={item.recid} key={item.recid}>{item.templatename}</Radio>
                 ))}
               </Radio.Group>
             </Form.Item>
+            <Form.Item label="输出格式">
+              <Radio.Group value={selectedTemplateType} onChange={e => this.setState({ selectedTemplateType: e.target.value })}>
+                <Radio value={selectedTemplateType}>{tmpTypeConfig[selectedTemplateType].name}</Radio>
+              </Radio.Group>
+            </Form.Item>
             <Form.Item label="输出方式">
-              <Radio.Group value={this.state.selectedOutput} onChange={e => this.setState({ selectedOutput: e.target.value })}>
+              <Radio.Group value={selectedOutput} onChange={e => this.setState({ selectedOutput: e.target.value })}>
                 {this.props.outputTypes.map(item => (
                   <Radio value={item.type} key={item.type}>{item.label}</Radio>
                 ))}
