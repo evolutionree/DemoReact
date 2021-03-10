@@ -15,6 +15,12 @@ import IntlText from '../../components/UKComponent/Form/IntlText';
 const Option = Select.Option;
 const Column = Table.Column;
 
+function getModalHeight() {
+  const screenHeight = document.body.offsetHeight && document.documentElement.clientHeight;
+  const modalHeight = screenHeight * 0.6;
+  return modalHeight;
+}
+
 function EntityList({
   dispatch,
   location: { pathname },
@@ -142,8 +148,6 @@ function EntityList({
   const { pageIndex: current, pageSize, typeId, status, entityName } = queries;
   const columns = renderList(LoopList);
   const tableWidth = columns.reduce((sum, item) => sum + item.width, 0) + 62;
-  const screenHeight = document.body.offsetHeight && document.documentElement.clientHeight;
-  const modalHeight = screenHeight * 0.8;
 
   return (
     <Page title="实体配置">
@@ -189,7 +193,7 @@ function EntityList({
         rowKey="entityid"
         dataSource={list}
         columns={columns}
-        scroll={{ x: `${tableWidth}px`, y: `${modalHeight}px` }}
+        scroll={{ x: `${tableWidth}px`, y: `${getModalHeight()}px` }}
         pagination={{
           total,
           pageSize,

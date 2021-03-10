@@ -5,7 +5,9 @@
   },
   "scripts": {
     "start": "roadhog server",
+    "prebuild": "node scripts/pre-build.js",
     "build": "roadhog build",
+    "postbuild": "node scripts/end-build.js",
     "lint": "eslint --ext .js src test",
     "publish": "roadhog build&&node ./scripts/publish.js -d -t",
     "publish:dev": "roadhog build&&node ./scripts/publish.js -d",
