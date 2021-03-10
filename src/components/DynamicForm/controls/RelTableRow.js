@@ -22,7 +22,7 @@ class RelTableRow extends DynamicFormBase {
       fieldType = 'textForm';
     }
 
-    const visible = this.props.fixedColumn ? this.props.fixedColumn === field.fieldid ? true : false : true;
+    const visible = this.props.fixedColumn ? this.props.fixedColumn === field.fieldid : true;
     return children => (
       <div
         key={field.fieldname}
@@ -57,6 +57,7 @@ class RelTableRow extends DynamicFormBase {
               controlType={field.controltype}
               config={field.fieldconfig}
               value_name={value_name}
+              fieldname={field.fieldname}
             />
           </div>
         </div>
@@ -71,7 +72,7 @@ class RelTableRow extends DynamicFormBase {
 
   render() {
     const { fields: allFields, selected, mode, fixedColumn } = this.props;
-    let fields = allFields.filter(item => item.controltype !== 20);
+    const fields = allFields.filter(item => item.controltype !== 20);
 
     // if (fixedColumn) { //左侧固定表格的
     //   fields = fields.filter(item => item.fieldid === fixedColumn);

@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { Button, Checkbox } from 'antd';
+import { Button, Checkbox, message } from 'antd';
 import classnames from 'classnames';
 import { is } from 'immutable';
 import * as _ from 'lodash';
@@ -13,6 +13,7 @@ import { getIntlText } from '../../UKComponent/Form/IntlText';
 import RelTableBatchModal from '../RelTableBatchModal';
 import { getBackEndField_TO_FrontEnd } from '../../AppHeader/TemporaryStorage/formStorageUtils';
 import { queryEntityDetail } from '../../../services/entity';
+import RelTablePickerModal from './RelTablePickerModal';
 
 const TableMaxHeight = 500;
 
@@ -772,7 +773,29 @@ class RelTable extends Component {
     }
   }
 
+  onPickClick = (item) => {
+    const { jsEngine } = this.props;
+    const target = jsEngine.getValue(item.sourcefieldname);
+    if (!target || !target.id) {
+      message.warn(`请先选择${item.sourcedisplayname}`);
+      return;
+    }
+    const targetIds = target.id.split(',');
+    const targetNames = target.name.split(',');
+    const targets = targetIds.map((t, i) => ({ id: t, name: targetNames[i] }));
+    this.setState({ pickerSource: { ...item, targets } });
+  }
+
   render() {
+    const { nested, jsEngine } = this.props;
+    const { pickerSource } = this.state;
+    const values = this.parseValue();
+    // 判断选单按钮显示
+    let showPickerBtn = [];
+    if (nested && nested.length) {
+      showPickerBtn = nested.filter(n => !!jsEngine.getFieldVisible(n.sourcefieldname) && (!n.visible || (n.visible && n.visible.visible)));
+    }
+
     return (
       <div>
         <div className={styles.relTable}>
@@ -784,10 +807,20 @@ class RelTable extends Component {
             {
               this.props.batch ? <Button onClick={this.batchAddData} style={{ marginRight: '15px' }}>批量</Button> : null
             }
-            <Button key={new Date().getTime()} onClick={this.delRow} type="danger">删除</Button>
+            <Button onClick={this.delRow} type="danger" className={styles.btnGap}>删除</Button>
+            {
+              showPickerBtn.length ? showPickerBtn.map((n, ni) => (
+                <Button
+                  key={ni}
+                  onClick={() => this.onPickClick(n)}
+                  className={styles.btnGap}
+                >{n.btn}</Button>
+              )) : null
+            }
+
           </div>}
           <div className={styles.tableContent} ref={ref => this.tabWrapRef = ref}>
-            <div className={classnames(styles.fixTopWrap, { [styles.fixTopWrapHidden]: this.parseValue().length === 0 })} ref={ref => this.fixTopWrapRef = ref}>
+            <div className={classnames(styles.fixTopWrap, { [styles.fixTopWrapHidden]: values.length === 0 })} ref={ref => this.fixTopWrapRef = ref}>
               <div className={classnames([styles.table, styles.fixTopTable])} ref={ref => this.fixTopTableRef = ref}>
                 {this.renderTableHeader()}
               </div>
@@ -824,7 +857,25 @@ class RelTable extends Component {
           visible={/^batchAdd$/.test(this.state.showModals)}
           protocl={_.find(this.state.tableFields, item => item.fieldname === this.props.batchAddField)}
           onCancel={() => { this.setState({ showModals: false }); }}
-          onConfirm={this.batchAdd} />
+          onConfirm={this.batchAdd}
+        />
+        {
+          pickerSource && (
+            <RelTablePickerModal
+              visible={!!pickerSource}
+              originValues={values}
+              originVcbomConfig={{}}
+              pickerSource={pickerSource}
+              fieldId={this.props.fieldId}
+              entityId={this.props.entityId}
+              entityTypeId={this.props.entityTypeId}
+              mainEntityId={this.props.mainEntityId}
+              jsEngine={this.props.jsEngine}
+              onCancel={() => this.setState({ pickerSource: undefined })}
+            />
+          )
+        }
+
       </div>
     );
   }

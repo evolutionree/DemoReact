@@ -352,7 +352,8 @@ export default {
         showModals: '',
         editingRecord: null,
         modalPending: false,
-        nodeCell: null
+        nodeCell: null,
+        openPickItem: undefined
       };
     }
   }

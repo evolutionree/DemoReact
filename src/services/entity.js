@@ -1189,3 +1189,24 @@ export async function updateglobaljshistoryremark(params) {
     body: JSON.stringify(params)
   });
 }
+
+export async function savenestedtablesentity(params) {
+  return request('api/entitypro/savenestedtablesentity', {
+    method: 'POST',
+    body: JSON.stringify(params)
+  });
+}
+
+export async function detailrellist(params) {
+  return request('api/dynamicentity/detailrellist', {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}
+
+export async function makeDetailrellist(url, params = {}) {
+  return request(url, {
+    method: 'post',
+    body: JSON.stringify(params)
+  });
+}

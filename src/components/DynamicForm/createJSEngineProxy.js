@@ -2,16 +2,35 @@ import React, { Component, PropTypes } from 'react';
 import * as _ from 'lodash';
 import { is } from 'immutable';
 import { Modal } from 'antd';
-import { getAuthedHeaders } from '../../utils/request';
+import { getAuthedHeaders, getDeviceHeaders } from '../../utils/request';
 import { queryEntityDetail } from '../../services/entity';
 import { getLocalAuthentication } from '../../services/authentication';
 import { uuid } from '../../utils';
 
+export function syncRequest(url, method, body, headers) {
+  let headers_ = getAuthedHeaders();
+  if (headers) {
+    headers_ = { ...headers_, ...headers, ...getDeviceHeaders() };
+  }
+  const result = $.ajax({
+    url,
+    type: method,
+    data: body && JSON.stringify(body),
+    dataType: 'json',
+    contentType: 'application/json',
+    async: false,
+    headers: headers_
+  }).responseJSON;
+  console.log('ajax result: ', result);
+  return result;
+}
+
 function debugMsg(type, msg) {
-  Modal.info({
+  window.modalInfoRef = Modal.info({
     title: type,
     content: msg,
-    okText: 'OK'
+    okText: 'OK',
+    onOk: () => window.modalInfoRef = undefined
   });
 }
 
@@ -502,21 +521,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     request = (url, method, body, headers) => {
-      let headers_ = getAuthedHeaders();
-      if (headers) {
-        headers_ = { ...headers_, ...headers };
-      }
-      const result = $.ajax({
-        url,
-        type: method,
-        data: body && JSON.stringify(body),
-        dataType: 'json',
-        contentType: 'application/json',
-        async: false,
-        headers: headers_
-      }).responseJSON;
-      console.log('ajax result: ', result);
-      return result;
+      return syncRequest(url, method, body, headers);
     };
 
     setRowFieldVisible = (tableFieldName, rowIndex, columnFieldName, isVisible) => {
@@ -699,6 +704,11 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       //     clearInterval(this.expandJstimer);
       //   }, 100);
       // }
+    };
+
+    getFieldVisible = (fieldName) => {
+      const field = this.getFieldByName(fieldName);
+      return field && field.fieldconfig.isVisible;
     };
 
     handleFieldControlFocus = (fieldName, callback) => {

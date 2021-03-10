@@ -60,7 +60,7 @@ class RelTableView extends Component {
   }
 
   parseValue = () => {
-    let { value } = this.props;
+    const { value } = this.props;
     if (!value) return [];
     if (!Array.isArray(value)) return [];
     return value.map((item, index) => {
@@ -77,7 +77,7 @@ class RelTableView extends Component {
     };
     this.setState({
       loading: true
-    })
+    });
     getGeneralProtocolForGrid(params).then(result => {
       this.setState({
         fields: result.data,
@@ -97,6 +97,11 @@ class RelTableView extends Component {
       if ((field.controltype > 1000 && field.controltype !== 1012 && field.controltype !== 1006)) { //(field.controltype === 31) ||
         return false;
       }
+
+      if (field.fieldname === 'sourcerecid' || field.fieldname === 'sourcerecitemid') {
+        return false;
+      }
+
       if (field.fieldconfig.isVisible !== 1) {
         return false;
       } else if (field.fieldconfig.isVisibleJS === 0) {
@@ -116,8 +121,8 @@ class RelTableView extends Component {
   render() {
     const cellWidth = 125;
     const showFields = this.getShowFields();
-    const tableWidth = showFields.reduce((sum, currentItem) => sum + cellWidth, 0)
-    const isLessField = tableWidth < 1200
+    const tableWidth = showFields.reduce((sum, currentItem) => sum + cellWidth, 0);
+    const isLessField = tableWidth < 1200;
 
     let columns = showFields.map((item, index) => {
       return {
@@ -127,15 +132,22 @@ class RelTableView extends Component {
 
           return (
             <span style={{ ...normalStyle, width: isLessField ? undefined : cellWidth - 26 }} className={styles.tableCell}>
-              <DynamicFieldView width={isLessField ? undefined : cellWidth - 21} value={text} value_name={text_name} controlType={item.controltype} />
+              <DynamicFieldView
+                width={isLessField ? undefined : cellWidth - 21}
+                value={text}
+                value_name={text_name}
+                controlType={item.controltype}
+                config={item.fieldconfig}
+                fieldname={item.fieldname}
+              />
             </span>
           );
         }, fixed: showFields.length >= 6 ? (index < 1 ? 'left' : null) : null
       };
-    })
+    });
 
-    const scroll = { x: isLessField ? undefined : showFields.length * cellWidth, y: 400 }
-    const otherObj = isLessField ? null : { scroll }
+    const scroll = { x: isLessField ? undefined : showFields.length * cellWidth, y: 400 };
+    const otherObj = isLessField ? null : { scroll };
 
     let width = this.state.width - (this.props.siderFold ? 61 : 200); //系统左侧 200px显示菜单(未折叠  折叠61)
     width = width < 1080 ? 1080 : width; // 系统设置了最小宽度

@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import { Form, Row, Col } from 'antd';
+import { Form, Input, Row, Col } from 'antd';
 import classnames from 'classnames';
 import { is } from 'immutable';
 import FoldableGroup from './FoldableGroup';
@@ -70,6 +70,13 @@ class DynamicFormBase extends Component {
     };
   }
 
+  componentDidMount() { //表格批量新增的时候  需要执行配置JS  base2文件才有效 只是为了统一文件内容
+    const { batchAddInfo_type, batchAddInfo_fieldname, batchAddInfo_fieldid } = this.props;
+    if (batchAddInfo_type === 'add') {
+      this.onFieldValueChange(batchAddInfo_fieldname, batchAddInfo_fieldid);
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     if (this.props.fields !== nextProps.fields) {
       this.setState({
@@ -88,8 +95,8 @@ class DynamicFormBase extends Component {
     }
 
     for (const key in nextProps) {
-      if (['form', 'wrappedComponentRef'].indexOf(key) === -1 && !is(thisProps[key], nextProps[key])) {
-        //console.log('DynamicFormBase_props:' + key);
+      if (['form', 'wrappedComponentRef', 'fixedColumn'].indexOf(key) === -1 && !is(thisProps[key], nextProps[key])) {
+        // console.log('---change key---', key, nextProps[key]);
         return true;
       }
     }
@@ -102,13 +109,6 @@ class DynamicFormBase extends Component {
     }
 
     return false;
-  }
-
-  componentDidMount() { //表格批量新增的时候  需要执行配置JS  base2文件才有效 只是为了统一文件内容
-    const { batchAddInfo_type, batchAddInfo_fieldname, batchAddInfo_fieldid } = this.props;
-    if (batchAddInfo_type === 'add') {
-      this.onFieldValueChange(batchAddInfo_fieldname, batchAddInfo_fieldid);
-    }
   }
 
   getRelObjectConfig = (fields) => {
@@ -388,6 +388,22 @@ class DynamicFormBase extends Component {
           })(<div>{this.props.refRecord}</div>)}
         </FormItem>
       );
+    } else if (field.fieldname === 'sourcerecid') {
+      return (
+        <FormItem key={field.fieldname} style={{ display: 'none' }}>
+          {this.props.form.getFieldDecorator(field.fieldname, {
+            initialValue: ''
+          })(<Input />)}
+        </FormItem>
+      );
+    } else if (field.fieldname === 'sourcerecitemid') {
+      return (
+        <FormItem key={field.fieldname} style={{ display: 'none' }}>
+          {this.props.form.getFieldDecorator(field.fieldname, {
+            initialValue: ''
+          })(<Input />)}
+        </FormItem>
+      );
     }
 
     const fieldControl = this.renderFieldControl(field);
@@ -416,8 +432,9 @@ class DynamicFormBase extends Component {
   };
 
   renderFieldControl = field => {
-    const { entityTypeId, entityId, value } = this.props;
-    let { fieldconfig, fieldid, fieldname, displayname, dateStartValue, controltype } = field;
+    const { entityTypeId, entityId, value, cacheId } = this.props;
+    let { fieldconfig } = field;
+    const { fieldid, fieldname, displayname, dateStartValue, controltype, allowadd = false } = field;
     const value_name = value[fieldname + '_name'] && value[fieldname + '_name'].value;
     if (fieldconfig && fieldconfig.isReadOnly !== 1 && (fieldconfig.isReadOnlyJS === 0 || fieldconfig.isReadOnlyJS === 1)) {
       fieldconfig = {
@@ -429,6 +446,7 @@ class DynamicFormBase extends Component {
     const fieldDecorator = this.state.fieldsDecorator[fieldname];
     return fieldDecorator(
       <DynamicField
+        cacheId={cacheId}
         isCommonForm
         onChange={this.onFieldValueChange.bind(this, fieldname, fieldid)}
         entityId={entityId}
@@ -438,7 +456,8 @@ class DynamicFormBase extends Component {
         ref={this.onFieldControlRef.bind(this, fieldname)}
         controlType={controltype}
         fieldId={fieldid}
-        fieldName={fieldname}
+        fieldname={fieldname}
+        allowadd={allowadd}
         config={fieldconfig}
         value_name={value_name}
         fieldLabel={displayname}
@@ -446,6 +465,10 @@ class DynamicFormBase extends Component {
         onFocus={this.onFieldFocus.bind(this, fieldname)}
         quoteHandler={this.handleQuote}
         jsEngine={this.props.jsEngine}
+        rowIndex={this.props.rowIndex}
+        ifFixed={this.props.ifFixed}
+        fixedColumn={this.props.fixedColumn}
+        batchAddInfo_type={this.props.batchAddInfo_type}
       />
     );
   };

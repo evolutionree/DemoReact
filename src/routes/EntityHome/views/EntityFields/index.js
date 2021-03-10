@@ -18,6 +18,7 @@ import SetCustomBasicConfigModal from './SetCustomBasicConfigModal';
 import SetCustomMailConfigModal from './SetCustomMailConfigModal';
 import SetCheckRepeatConfigModal from './SetCheckRepeatConfigModal';
 import ExpandJSModal from './ExpandJSModal';
+import PickerModal from './PickerModal';
 import styles from './EntityFields.less';
 
 const NAMESPACE = 'entityFields';
@@ -68,7 +69,8 @@ function EntityFields({
   modalPending,
   formValues,
   toggleModal,
-  showOverseaModal
+  showOverseaModal,
+  openPickItem
 }) {
   function handleAdd() {
     dispatch({ type: `${NAMESPACE}/putState`, payload: { editingRecord: null } });
@@ -124,6 +126,10 @@ function EntityFields({
     } else {
       message.error('数据错误');
     }
+  }
+
+  function openPickModal(record) {
+    dispatch({ type: 'entityFields/putState', payload: { openPickItem: record } });
   }
 
   const flag = <span>[<Icon type="check" />]</span>;
@@ -217,11 +223,18 @@ function EntityFields({
     {
       title: '操作',
       key: 'operation',
-      width: 90,
+      width: 130,
       render: (val, record) => {
         return (
           <div>
-            <a href="javascript:;" onClick={editField.bind(this, record, false)}>编辑</a>
+            {
+              record.controltype === 24 &&
+              <span>
+                <a href="javascript:;" onClick={openPickModal.bind(this, record)}>选单</a>
+                &nbsp;<span style={{ opacity: 0.4 }}>|</span>&nbsp;
+              </span>
+            }
+            <a href="javascript:;" onClick={editField.bind(this, record)}>编辑</a>
             {
               record.fieldtype === 2 &&
               <span>
@@ -326,6 +339,15 @@ function EntityFields({
           onCancel={() => dispatch({ type: 'entityFields/putState', payload: { showOverseaModal: false } })}
         />
       ) : null}
+      <PickerModal
+        visible={!!openPickItem}
+        fieldList={list}
+        flag={flag}
+        openPickItem={openPickItem}
+        dispatch={dispatch}
+        onOk={handleFormSubmit}
+        onCancel={() => openPickModal()}
+      />
     </div>
   );
 }
