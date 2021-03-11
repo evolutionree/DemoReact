@@ -115,8 +115,8 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       if (this.globalJS && !this.globalJSExecuted && newFields.length) {
         if (!this.props.cacheId) { //暂存表单 不走全局JS
           setTimeout(() => this.excuteJS(this.globalJS, 'global'), 0);
+          this.globalJSExecuted = true;
         }
-        this.globalJSExecuted = true;
       }
 
       if (nextProps.origin === 'RelTableRow') { //来源于表格 为了不多次请求 全局JS 由父组件传（不然  表格多行会引起多次请求 ）

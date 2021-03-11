@@ -262,7 +262,7 @@ class RelTable extends Component {
   };
 
   getInitTableRowConfigs = () => { // 初始化表格行业务逻辑的相关配置
-    return this.parseValue().map(item => ({}));
+    return this.parseValue().map(item => ({ isNotCopyJs: true }));
   }
 
   getInitTableRowFields = (fields) => {
