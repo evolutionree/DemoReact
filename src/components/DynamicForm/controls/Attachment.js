@@ -189,7 +189,7 @@ class Attachment_ extends Component {
   }
 }
 
-const Attachment = connect(state => ({ token: state.app.token }))(Attachment_);
+const Attachment = connect(state => ({ token: state.app.token }), undefined, undefined, { withRef: true })(Attachment_);
 
 Attachment.View = ({ value, dispatch }) => {
   const files = parseValue(value);
@@ -202,25 +202,27 @@ Attachment.View = ({ value, dispatch }) => {
       {files.length ? <ul>
         {files.map(file => (
           <li key={file.fileid}>
-              <a onClick={() => {
-                downloadFile(`/api/fileservice/download?fileid=${file.fileid}`);
-              }}>
-                <Icon type="download" className={styles.icon} />
-              </a>
-              <span onClick={() => {
-                if (/jpeg|jpg|png|gif|bmp/.test(file.filename)) {
-                  const currentImgSrc = `/api/fileservice/read?fileid=${file.fileid}`;
-                  dispatch({ type: 'app/viewImages', payload: pictureFiles.map(pictureItem => {
+            <a onClick={() => {
+              downloadFile(`/api/fileservice/download?fileid=${file.fileid}`);
+            }}>
+              <Icon type="download" className={styles.icon} />
+            </a>
+            <span onClick={() => {
+              if (/jpeg|jpg|png|gif|bmp/.test(file.filename)) {
+                const currentImgSrc = `/api/fileservice/read?fileid=${file.fileid}`;
+                dispatch({
+                  type: 'app/viewImages', payload: pictureFiles.map(pictureItem => {
                     const src = `/api/fileservice/read?fileid=${pictureItem.fileid}`;
                     return { src, active: src === currentImgSrc };
-                  }) });
-                } else if (/pdf/.test(file.filename)) {
-                  dispatch({ type: 'app/viewPdf', payload: file });
-                }
-              }} title={/jpeg|jpg|png|gif|bmp|pdf/.test(file.filename) ? '点击预览' : null}><a>{file.filename}</a></span>
+                  })
+                });
+              } else if (/pdf/.test(file.filename)) {
+                dispatch({ type: 'app/viewPdf', payload: file });
+              }
+            }} title={/jpeg|jpg|png|gif|bmp|pdf/.test(file.filename) ? '点击预览' : null}><a>{file.filename}</a></span>
           </li>
         ))}
-      </ul> : <span style={{ color: '#999999' }}>(空)</span> }
+      </ul> : <span style={{ color: '#999999' }}>(空)</span>}
     </div>
   );
 };
