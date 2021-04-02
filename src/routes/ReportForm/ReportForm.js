@@ -565,7 +565,7 @@ class ReportForm extends React.Component {
           mapDataSource = data[i].data.map((item) => {
             return {
               name: item.regionname,
-              value: item.currentmonthsell,
+              value: item.count,
               ...item
             };
           });
