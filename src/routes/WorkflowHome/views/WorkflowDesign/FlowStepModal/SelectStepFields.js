@@ -92,7 +92,7 @@ class SelectStepFields extends Component {
       return fields.filter(field => {
         const { controltype: type } = field;
         if (type > 1000 && type !== 1006 && type !== 1012) return false;
-        if (type === 2 || type === 20 || type === 24 || type === 31 || type === 30) return false;
+        if (type === 2 || type === 20 || type === 31 || type === 30) return false;
         return true;
       });
     }
