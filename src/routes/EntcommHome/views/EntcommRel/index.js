@@ -234,7 +234,7 @@ function EntcommRel({
             ))}
           </Select>
         }
-        {checkFunc('EntityDataAdd') && <Button onClick={addRelEntity}>{`新增${tabInfo.entityname || ''}`}</Button>}
+        {checkFunc('EntityDataAdd') && <Button onClick={addRelEntity}>新增</Button>}
         {checkFunc('EntityDataMerge') && <Button onClick={merageCustom}>客户合并</Button>}
         {shouldShowImport() && <Button onClick={importData}>导入</Button>}
         {shouldShowExport() && <Button onClick={exportData}>导出</Button>}

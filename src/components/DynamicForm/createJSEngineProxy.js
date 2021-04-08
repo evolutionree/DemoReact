@@ -525,6 +525,10 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
     };
 
     setRowFieldVisible = (tableFieldName, rowIndex, columnFieldName, isVisible) => {
+      if (formType === FormTypes.DETAIL) {
+        this.formComponentInstance.setRowFieldVisible(tableFieldName, rowIndex, columnFieldName, isVisible);
+        return;
+      }
       if (this.getFieldControlType(tableFieldName) !== 24) return [];
       const instance = this.getFieldComponentInstance(tableFieldName);
       if (instance && instance.setRowFieldVisible) {

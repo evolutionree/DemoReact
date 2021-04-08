@@ -93,6 +93,7 @@ class RelTableView extends Component {
   };
 
   getShowFields = () => {
+    const { fieldname, hiddenRowField } = this.props;
     // return this.state.fields.filter(item => !!(item.fieldconfig && item.fieldconfig.isVisible && (item.fieldconfig.isVisibleJS !== 0)));
     return this.state.fields.filter(field => {
       if ((field.controltype > 1000 && field.controltype !== 1012 && field.controltype !== 1006)) { //(field.controltype === 31) ||
@@ -108,6 +109,13 @@ class RelTableView extends Component {
       } else if (field.fieldconfig.isVisibleJS === 0) {
         return false;
       }
+
+      // 支持查看setRowFieldVisible方法的兼容
+      const hiddenArr = hiddenRowField[fieldname];
+      if (hiddenArr && hiddenArr.length && hiddenArr.includes(field.fieldname)) {
+        return false;
+      }
+
       return true;
     });
   };

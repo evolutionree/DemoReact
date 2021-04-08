@@ -31,6 +31,24 @@ class DynamicFormView extends React.Component {
     horizontal: false
   }
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      hiddenRowField: {} // 需要隐藏的列
+    };
+  }
+
+  setRowFieldVisible = (tableFieldName, rowIndex, columnFieldName, isVisible) => {
+    const { hiddenRowField } = this.state;
+    let fieldArr = hiddenRowField[tableFieldName] || [];
+    if (isVisible) {
+      fieldArr = fieldArr.filter(n => n !== columnFieldName);
+    } else if (!fieldArr.includes(columnFieldName)) {
+      fieldArr.push(columnFieldName);
+    }
+    this.setState({ hiddenRowField: { ...hiddenRowField, [tableFieldName]: fieldArr } });
+  };
+
   getFormLayout = () => {
     if (this.props.horizontal) return 'horizontal';
     const { fields } = this.props;
@@ -105,6 +123,7 @@ class DynamicFormView extends React.Component {
               <DynamicFieldView
                 linkfieldUrl={linkfieldUrl}
                 isCommonForm
+                fieldname={fieldname}
                 entityId={entityId}
                 entityTypeId={entityTypeId}
                 value={value && value[fieldname]}
@@ -112,6 +131,7 @@ class DynamicFormView extends React.Component {
                 config={fieldconfig}
                 value_name={value && value[fieldname + '_name']}
                 unNeedPower={this.props.unNeedPower}
+                hiddenRowField={this.state.hiddenRowField}
               />
             </FormItem>
           </Col>

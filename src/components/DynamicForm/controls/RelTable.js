@@ -919,9 +919,17 @@ class RelTable extends Component {
   }
 }
 
-RelTable.View = ({ value, entityId, entityTypeId, mainEntityId }) => {
+RelTable.View = ({ value, entityId, entityTypeId, mainEntityId, fieldname, hiddenRowField }) => {
   return (
-    <RelTableView mode="DETAIL" value={value} entityId={entityId} entityTypeId={entityTypeId} mainEntityId={mainEntityId} />
+    <RelTableView
+      mode="DETAIL"
+      value={value}
+      entityId={entityId}
+      entityTypeId={entityTypeId}
+      mainEntityId={mainEntityId}
+      fieldname={fieldname}
+      hiddenRowField={hiddenRowField}
+    />
   );
 };
 

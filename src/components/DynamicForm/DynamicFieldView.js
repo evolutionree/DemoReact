@@ -65,6 +65,7 @@ class DynamicFieldView extends React.Component {
       yearWeekData: this.props.yearWeekData,
       fieldname: this.props.fieldname,
       onViewStock: this.props.onViewStock,
+      hiddenRowField: this.props.hiddenRowField,
       ...this.props.config
     };
     const ctrlType = this.props.controlType;

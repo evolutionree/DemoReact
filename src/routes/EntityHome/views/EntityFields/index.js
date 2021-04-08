@@ -234,7 +234,7 @@ function EntityFields({
                 &nbsp;<span style={{ opacity: 0.4 }}>|</span>&nbsp;
               </span>
             }
-            <a href="javascript:;" onClick={editField.bind(this, record)}>编辑</a>
+            <a href="javascript:;" onClick={() => editField(record)}>编辑</a>
             {
               record.fieldtype === 2 &&
               <span>
@@ -266,9 +266,9 @@ function EntityFields({
         {btns.setfilter && <Button onClick={() => toggleModal(showModals, 'SelListFilterModal')}>设置筛选条件</Button>}
         {btns.dynamic && <Button onClick={() => toggleModal(showModals, 'SetDynamicFieldsModal')}>动态摘要配置</Button>}
         {btns.checkrepeat && <Button onClick={() => toggleModal(showModals, 'SetCheckRepeatConfigModal')}>设置查重条件</Button>}
-        {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={() => toggleModal(showModals, 'SetCustomBasicConfigModal')}>设置客户基础资料字段</Button> : null}
-        {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={setBreakfill}>设置回填映射字段</Button> : null}
-        {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={setOverseaBreakfill}>设置国外回填映射字段</Button> : null}
+        {/* {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={() => toggleModal(showModals, 'SetCustomBasicConfigModal')}>设置客户基础资料字段</Button> : null} */}
+        {/* {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={setBreakfill}>设置回填映射字段</Button> : null} */}
+        {/* {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={setOverseaBreakfill}>设置国外回填映射字段</Button> : null} */}
         {/* {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' ? <Button onClick={() => toggleModal(showModals, 'SetCustomMailConfigModal')}>设置邮件客户信息字段</Button> : null} */}
       </Toolbar>
       <Table
