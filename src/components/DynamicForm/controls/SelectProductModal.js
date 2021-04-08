@@ -8,6 +8,7 @@ import styles from './SelectProductModal.less';
 import { queryMobFieldVisible } from '../../../services/entity';
 import { searchproductformobile, getProductdetail } from '../../../services/products';
 import ProductSerialSelect from '../../ProductSerialSelect';
+import ProductStockModal from '../../../routes/ProductManager/ProductStockModal';
 
 const TabPane = Tabs.TabPane;
 
@@ -235,9 +236,21 @@ class SelectProductModal extends Component {
 
   render() {
     const { visible, onCancel, multiple, designateNodes, designateFilterNodes } = this.props;
-    const { currentSelected, list } = this.state;
+    const { currentSelected, list, ProductStockVisible, productids } = this.state;
     const filterSelectedItems = currentSelected.filter(item => item.productname.indexOf(this.state.filterKeyWord) > -1);
 
+    const mainColums = [
+      ...this.state.columns,
+      {
+        key: 'operate',
+        dataIndex: 'operate',
+        title: '操作',
+        with: 110,
+        render: (text, record) => {
+          return <a onClick={() => this.setState({ ProductStockVisible: true, productids: [record.productid] })}>查询可用库存</a>;
+        }
+      }
+    ];
     const alreadyColumns = [
       ...this.state.columns,
       {
@@ -245,7 +258,7 @@ class SelectProductModal extends Component {
         dataIndex: 'operate',
         title: '操作',
         render: (text, record) => {
-          return <a onClick={this.removeCurentItems.bind(this, record)}>删除</a>
+          return <a onClick={this.removeCurentItems.bind(this, record)}>删除</a>;
         }
       }
     ];
@@ -254,7 +267,7 @@ class SelectProductModal extends Component {
       <Modal
         title="选择产品"
         visible={visible}
-        width={700}
+        width={800}
         onOk={this.handleOk}
         onCancel={onCancel}
         wrapClassName={multiple ? 'selectProductModal ant-modal-custom-large' : 'selectProductModal'}
@@ -282,7 +295,7 @@ class SelectProductModal extends Component {
         <Tabs defaultActiveKey="1" onChange={this.tabsKeyChange}>
           <TabPane tab="可选" key="1">
             <Spin spinning={this.state.loading}>
-              <Table columns={this.state.columns}
+              <Table columns={mainColums}
                      dataSource={list}
                      onRowDoubleClick={this.tableRowDoubleClick}
                      pagination={{
@@ -307,6 +320,15 @@ class SelectProductModal extends Component {
                    rowKey="productid" />
           </TabPane>
         </Tabs>
+        {
+          ProductStockVisible ? (
+            <ProductStockModal
+              visible={ProductStockVisible}
+              productids={productids}
+              onCancel={() => this.setState({ ProductStockVisible: false })}
+            />
+          ) : null
+        }
       </Modal>
     );
   }

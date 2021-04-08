@@ -7,6 +7,7 @@ import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import styles from './styles.less';
 import TransferProductModal from './TransferProductModal';
+import ProductStockModal from './ProductStockModal';
 import ProductFormModal from './ProductFormModal';
 import EntcommDetailModal from '../../components/EntcommDetailModal';
 import DynamicLoadFilterModal from '../../components/DynamicLoadFilterModal';
@@ -56,7 +57,9 @@ function ProductList({
   showModals,
   closeModal,
   ColumnFilter,
-  sortFieldAndOrder
+  sortFieldAndOrder,
+  showStockModal,
+  ProductStockVisible
 }) {
   function exportData() {
     const params = JSON.stringify(_.mapValues({
@@ -120,7 +123,8 @@ function ProductList({
           { label: '编辑', handler: edit, single: true, show: checkFunc('ProductEdit') },
           { label: '启用', handler: () => enable(1), show: checkFunc('ProductDelete') && currentItems.some(i => !i.recstatus) },
           { label: '停用', handler: () => enable(0), show: checkFunc('ProductDelete') && currentItems.some(i => !!i.recstatus) },
-          { label: '转换产品系列', handler: transfer, single: true }
+          { label: '转换产品系列', handler: transfer, single: true },
+          { label: '查询可用库存', handler: () => showStockModal(true), show: !!currentItems.length }
         ]}
       >
         <Select value={queries.recStatus + ''} onChange={search.bind(null, 'recStatus')}>
@@ -184,6 +188,15 @@ function ProductList({
         onOk={closeModal}
         onCancel={closeModal}
       />
+      {
+          ProductStockVisible ? (
+            <ProductStockModal
+              visible={ProductStockVisible}
+              productids={currentItems.map(c => c.recid)}
+              onCancel={() => showStockModal(false)}
+            />
+          ) : null
+        }
     </div>
   );
 }
@@ -242,6 +255,9 @@ function mapDispatchToProps(dispatch) {
     },
     transfer() {
       dispatch({ type: 'productManager/showModals', payload: 'transfer' });
+    },
+    showStockModal(ProductStockVisible) {
+      dispatch({ type: 'productManager/putState', payload: { ProductStockVisible } });
     }
   };
 }

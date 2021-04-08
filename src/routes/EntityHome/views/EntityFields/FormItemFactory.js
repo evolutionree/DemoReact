@@ -1283,6 +1283,22 @@ export default class FormItemFactory {
     );
   }
 
+  createIfstock() {
+    return (
+      <FormItem label="是否查可以查询库存" key="ifstock">
+        {this.getFieldDecorator('ifstock', {
+          initialValue: 0,
+          rules: [{ required: true }]
+        })(
+          <RadioGroup>
+            <Radio value={0}>否</Radio>
+            <Radio value={1}>是</Radio>
+          </RadioGroup>
+        )}
+      </FormItem>
+    );
+  }
+
   createChoicemode() {
     return (
       <FormItem label="模式选择" key="choicemode">

@@ -8,6 +8,7 @@ import moment from 'moment';
 import { getGeneralProtocolForGrid } from '../../../services/entcomm';
 import DynamicFieldView from '../DynamicFieldView';
 import styles from './RelTable.less';
+import ProductStockModal from '../../../routes/ProductManager/ProductStockModal';
 
 const normalStyle = {
   whiteSpace: 'nowrap',
@@ -118,7 +119,14 @@ class RelTableView extends Component {
     return moment(text, 'YYYY-MM-DD HH:mm:ss').format(fmt.replace(/y/g, 'Y').replace(/d/g, 'D'));
   }
 
+  onViewStock = (record) => {
+    this.setState({ ProductStockVisible: true, productids: [record.productname] });
+  }
+
+  onCancelProductStockModal = () => this.setState({ ProductStockVisible: false });
+
   render() {
+    const { ProductStockVisible, productids } = this.state;
     const cellWidth = 125;
     const showFields = this.getShowFields();
     const tableWidth = showFields.reduce((sum, currentItem) => sum + cellWidth, 0);
@@ -139,6 +147,7 @@ class RelTableView extends Component {
                 controlType={item.controltype}
                 config={item.fieldconfig}
                 fieldname={item.fieldname}
+                onViewStock={() => this.onViewStock(record)}
               />
             </span>
           );
@@ -167,6 +176,16 @@ class RelTableView extends Component {
           pagination={false}
           {...otherObj}
         />
+        {
+          ProductStockVisible ? (
+            <ProductStockModal
+              visible={ProductStockVisible}
+              productids={productids}
+              entityid={this.props.mainEntityId}
+              onCancel={this.onCancelProductStockModal}
+            />
+          ) : null
+        }
       </div>
     );
   }

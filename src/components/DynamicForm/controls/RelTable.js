@@ -14,6 +14,7 @@ import RelTableBatchModal from '../RelTableBatchModal';
 import { getBackEndField_TO_FrontEnd } from '../../AppHeader/TemporaryStorage/formStorageUtils';
 import { queryEntityDetail } from '../../../services/entity';
 import RelTablePickerModal from './RelTablePickerModal';
+import ProductStockModal from '../../../routes/ProductManager/ProductStockModal';
 
 const TableMaxHeight = 500;
 
@@ -50,7 +51,9 @@ class RelTable extends Component {
       showModals: '',
       tableRowFields: [],
       globalJS: {},
-      tableRowConfigs: [] // 表格行有业务逻辑的相关配置可以存在这里
+      tableRowConfigs: [], // 表格行有业务逻辑的相关配置可以存在这里
+      ProductStockVisible: false,
+      productids: []
     };
   }
 
@@ -786,15 +789,38 @@ class RelTable extends Component {
     this.setState({ pickerSource: { ...item, targets } });
   }
 
+  inventoryChecked = () => {
+    const { tableFields, selectedRows } = this.state;
+    if (Array.isArray(tableFields)) {
+      const productObj = tableFields.find(item => !!item.fieldconfig.ifstock);
+      if (productObj) {
+        const fieldname = productObj.fieldname;
+        const fieldlabel = productObj.fieldlabel;
+        const productids = this.parseValue().filter((o, i) => selectedRows.includes(i) && !!o.FieldData[fieldname]).map(item => {
+          const iv = item.FieldData[fieldname];
+          return iv[0] === '{' ? JSON.parse(iv).id : iv;
+        });
+        if (productids.length) {
+          this.setState({ productids: [...new Set(productids)], ProductStockVisible: true });
+        } else {
+          message.info(`请先选择${fieldlabel}`);
+        }
+      }
+    }
+  }
+
+  onCancelProductStockModal = () => this.setState({ ProductStockVisible: false });
+
   render() {
     const { nested, jsEngine } = this.props;
-    const { pickerSource } = this.state;
+    const { pickerSource, selectedRows, ProductStockVisible, productids = [], tableFields } = this.state;
     const values = this.parseValue();
     // 判断选单按钮显示
     let showPickerBtn = [];
     if (nested && nested.length) {
       showPickerBtn = nested.filter(n => !!jsEngine.getFieldVisible(n.sourcefieldname) && (!n.visible || (n.visible && n.visible.visible)));
     }
+    const showInventoryCheckedBtn = tableFields && tableFields.length && tableFields.some(f => !!f.fieldconfig.ifstock) && !!selectedRows.length; //查询可用库存
 
     return (
       <div>
@@ -808,6 +834,9 @@ class RelTable extends Component {
               this.props.batch ? <Button onClick={this.batchAddData} style={{ marginRight: '15px' }}>批量</Button> : null
             }
             <Button onClick={this.delRow} type="danger" className={styles.btnGap}>删除</Button>
+            {
+              showInventoryCheckedBtn ? <Button onClick={this.inventoryChecked} className={styles.btnGap}>查询可用库存</Button> : null
+            }
             {
               showPickerBtn.length ? showPickerBtn.map((n, ni) => (
                 <Button
@@ -875,15 +904,24 @@ class RelTable extends Component {
             />
           )
         }
-
+        {
+          ProductStockVisible ? (
+            <ProductStockModal
+              visible={ProductStockVisible}
+              entityid={this.props.mainEntityId}
+              productids={productids}
+              onCancel={this.onCancelProductStockModal}
+            />
+          ) : null
+        }
       </div>
     );
   }
 }
 
-RelTable.View = ({ value, entityId, entityTypeId }) => {
+RelTable.View = ({ value, entityId, entityTypeId, mainEntityId }) => {
   return (
-    <RelTableView mode="DETAIL" value={value} entityId={entityId} entityTypeId={entityTypeId} />
+    <RelTableView mode="DETAIL" value={value} entityId={entityId} entityTypeId={entityTypeId} mainEntityId={mainEntityId} />
   );
 };
 

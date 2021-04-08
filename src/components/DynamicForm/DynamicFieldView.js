@@ -1,9 +1,10 @@
 import React, { PropTypes } from 'react';
+import { Icon } from 'antd';
 import { controlMap } from './constants';
 import { connect } from 'dva';
 
 export const DefaultTextView = (props) => {
-  const { value, value_name, dataSource, yearWeekData, linkfieldUrl } = props;
+  const { value, value_name, dataSource, yearWeekData, linkfieldUrl, ifstock, onViewStock } = props;
   if (linkfieldUrl) {
     return <a style={{ wordWrap: 'break-word', whiteSpace: 'normal' }} href={linkfieldUrl} target="_blank">{value || '(查看连接)'}</a>;
   } else if (value && typeof value === 'string' && (value.indexOf('http') === 0 || value.indexOf('www') === 0)) {
@@ -26,7 +27,12 @@ export const DefaultTextView = (props) => {
       }
     }
   }
-  return <div style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}>{text || emptyText}</div>;
+  return (
+    <div style={{ wordWrap: 'break-word', whiteSpace: 'normal' }}>
+      {text || emptyText}
+      {ifstock ? <Icon type="database" style={{ marginLeft: '1em', color: '#3398db', cursor: 'pointer' }} title="查看库存" onClick={onViewStock} /> : null}
+    </div>
+  );
 };
 
 class DynamicFieldView extends React.Component {
@@ -58,6 +64,7 @@ class DynamicFieldView extends React.Component {
       value_name: this.props.value_name,
       yearWeekData: this.props.yearWeekData,
       fieldname: this.props.fieldname,
+      onViewStock: this.props.onViewStock,
       ...this.props.config
     };
     const ctrlType = this.props.controlType;
