@@ -104,8 +104,11 @@ class TemplateRuleModal extends Component {
     };
     this.setState({ confirmLoading: true });
     saveWorkflowVisibleRule(params).then(result => {
+      const currentItems = this.props.currentItem;
+      const exportconfig = currentItems.exportconfig;
       return updatePrintTemplates({
-        ...this.props.currentItem,
+        ...currentItems,
+        exportconfig: JSON.stringify(exportconfig),
         ruleid: result.data
       });
     }).then(result => {
