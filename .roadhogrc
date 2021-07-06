@@ -19,7 +19,7 @@
       "proxy": {
         "/api": {
           "target": "http://crmdemo.xwwxkj.com:8084",
-          //"target": "http://172.16.0.185:1610",
+          //"target": "http://127.0.0.1:8880",
           "changeOrigin": true
         }
       },

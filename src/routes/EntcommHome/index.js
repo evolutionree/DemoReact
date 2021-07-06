@@ -45,7 +45,7 @@ function EntcommHome({
           <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/rel/${t.relid}/${t.relentityid}`}><IntlText name="relname" value={t} /></LinkTab>
         );
       })]}
-      {entityId === '9834d2bc-084a-49de-bbbf-02f35c191b64' && <LinkTab to={`/entcomm/${entityId}/${recordId}/relationschema`}>关系图</LinkTab>}
+      {entityId === 'f9db9d79-e94b-4678-a5cc-aa6e281c1246' && <LinkTab to={`/entcomm/${entityId}/${recordId}/contactRelate`}>联系人决策树</LinkTab>}
     </LinkTab.Group>
   );
 

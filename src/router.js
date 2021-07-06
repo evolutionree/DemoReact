@@ -34,6 +34,7 @@ import RelationSchema from './routes/EntcommHome/views/RelationSchema';
 import CommerceQueries from './routes/EntcommHome/views/CommerceQueries';
 import OutCommerceQueries from './routes/EntcommHome/views/CommerceQueries/out.js';
 import Wjxcallback from './routes/EntcommHome/views/Wjxcallback';
+import ContactRelate from './routes/EntcommHome/views/ContactRelate';
 
 import ContractReceivePay from './routes/ContractHome/ReceivePay';
 
@@ -113,7 +114,8 @@ const appRoutes = [
       { path: 'relationschema', comp: RelationSchema, model: require('./models/relationschema') },
       { path: 'foreignlaw/:country', comp: OutCommerceQueries },
       { path: 'lawcallback', comp: CommerceQueries },
-      { path: 'wjxcallback/:custcode', comp: Wjxcallback }
+      { path: 'wjxcallback/:custcode', comp: Wjxcallback },
+      { path: 'contactrelate', comp: ContactRelate, model: require('./models/contactRelate') }
     ]
   },
   { path: 'products', comp: ProductManager, entid: '33240d14-a543-4357-b696-c8cc77f82f7c', model: require('./models/productManager') },
