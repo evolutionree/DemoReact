@@ -114,7 +114,11 @@ export default class InputRecManage extends Component {
     //const isChina = jsEngine.getValue('country') - '7' === 0;
     const { selectInfo } = self.state;
     //const backArr = isChina ? backfill : overseaBackfill;
-    const backArr = backfill ;
+    //const backArr = backfill ;
+    const backArr =["name:recname", "originalnamestr:beforename", "creditcode:ucode", "no:businesscode", "orgno:organizationcode"
+    , "econkind:qccenterprisenature", "enttype:qccenterprisetype", "status:enterprisestatus", "registcapi:registeredcapital"
+    , "reccap:paidcapital", "belongorg:registrationauthority", "startdate:establishmentdate", "opername:corporatename"
+    , "address:qcclocation", "scope:businessscope", "isonstock:isiop"]
     if (Array.isArray(backArr) && backArr.length) {
       backArr.forEach(str => {
         const arr = str.split(':');
