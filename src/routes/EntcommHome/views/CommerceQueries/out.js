@@ -5,26 +5,22 @@ import BusinessInfo from './BusinessInfo';
 
 // 工商照面信息
 export const keyArrs = [
-  { key: 'id3a', title: '3A编码', content: '', span: 12 },
-  { key: 'companyname', title: '企业名称', content: '', span: 12 },
-  { key: 'tradingname', title: '贸易名称', content: '', span: 12 },
-  { key: 'aliasname', title: '别名', content: '', span: 12 },
-  { key: 'countrycode', title: '国家代码', content: '', span: 12 },
-  { key: 'country', title: '国家', content: '', span: 12 },
-  { key: 'stateprovince', title: '省或州', content: '', span: 12 },
-  { key: 'city', title: '城市', content: '', span: 12 },
-  { key: 'region', title: '区域', content: '', span: 12 },
-  { key: 'street', title: '街道', content: '', span: 12 },
-  { key: 'postcode', title: '邮政编码', content: '', span: 12 },
-  { key: 'website', title: '网站', content: '', span: 12 },
-  { key: 'email', title: '邮箱', content: '', span: 12 },
-  { key: 'telephone', title: '电话', content: '', span: 12 },
-  { key: 'status', title: '状态', content: '', span: 12 },
-  { key: 'listed', title: '是否上市', content: '', span: 12 },
-  { key: 'typeofentity', title: '企业类型', content: '', span: 12 },
-  { key: 'dateofincorporation', title: '公司成立日期', content: '', span: 12 },
-  { key: 'saleslastyear', title: '销售年度', content: '', span: 12 },
-  { key: 'lastyear', title: '最后一年', content: '', span: 12 }
+  { key: 'name', title: '公司名称', content: '', span: 12 },
+  { key: 'originalnamestr', title: '曾用名', content: '', span: 12 },
+  { key: 'creditcode', title: '社会统一信用代码', content: '', span: 12 },
+  { key: 'no', title: '工商注册号', content: '', span: 12 },
+  { key: 'orgno', title: '组织机构代码', content: '', span: 12 },
+  { key: 'econkind', title: '企业性质', content: '', span: 12 },
+  { key: 'enttype', title: '企业类型', content: '', span: 12 },
+  { key: 'status', title: '企业状态', content: '', span: 12 },
+  { key: 'registcapi', title: '注册资本', content: '', span: 12 },
+  { key: 'reccap', title: '实缴资本', content: '', span: 12 },
+  { key: 'belongorg', title: '登记机关', content: '', span: 12 },
+  { key: 'startdate', title: '成立日期', content: '', span: 12 },
+  { key: 'opername', title: '法人名字', content: '', span: 12 },
+  { key: 'isonstock', title: '是否IOP上市', content: '', span: 12 },
+  { key: 'address', title: '地址', content: '', span: 24 },
+  { key: 'scope', title: '经营范围', content: '', span: 24 },
 ];
 
 class CommerceQueries extends Component {
@@ -38,7 +34,7 @@ class CommerceQueries extends Component {
 
   componentDidMount() {
     const { titleText, params: { country } } = this.props;
-    dynamicRequest('/api/dockingapi/getforebusinessdetail', { companyname: titleText, Country: country })
+    dynamicRequest('/api/dockingapi/getbusinessdetail', { companyname: titleText, Country: country })
       .then((res) => {
         const businessList = keyArrs.map(item => ({
           ...item,

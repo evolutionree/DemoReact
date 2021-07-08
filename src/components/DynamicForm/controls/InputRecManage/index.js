@@ -30,7 +30,7 @@ export default class InputRecManage extends Component {
     if (match) {
       this.setState({ loading: true });
       const { getFieldConfig, getValue } = this.props.jsEngine;
-      const Country = `${getFieldConfig('country').dataSource.sourceId},${getValue('country')}`;
+      const Country  = '53,7'; //TODO 先写死国内`${getFieldConfig('country').dataSource.sourceId},${getValue('country')}`;
       dynamicRequest('/api/dockingapi/saveforebusidetail', { id: match.id, companyname: match.name, Country })
         .then(() => {
           this.setState({ loading: false, selectInfo: match });
@@ -58,7 +58,8 @@ export default class InputRecManage extends Component {
 
   fetchList = (value) => {
     const { getFieldConfig, getValue } = this.props.jsEngine;
-    const Country = `${getFieldConfig('country').dataSource.sourceId},${getValue('country')}`;
+    console.log(this.props.jsEngine);
+    const Country = '53,7'; //TODO 先写死国内 `${getFieldConfig('country').dataSource.sourceId},${getValue('country')}`;
     this.setState({ loading: true }, () => { // 业务上不考虑同名公司情况，新增数据要对名称查重
       dynamicRequest('/api/dockingapi/getbusinesslist', { skipnum: 0, companyname: value, Country })
         .then(res => {
@@ -87,8 +88,8 @@ export default class InputRecManage extends Component {
     if (!match) return message.error('请确定公司名称是否正确');
 
     const { getValue } = this.props.jsEngine;
-    const country = getValue('country');
-    const isChina = country - '7' === 0;
+    const country = getValue('country');  //TODO getValue('country'); 国家暂时没有数据源，先写死 by hzj 20210706
+    const isChina = true; //TODO country - '7' === 0; 国家暂时没有数据源，先写死 by hzj 20210706
     const url = isChina ? '/api/dockingapi/getbusinessdetail' : '/api/dockingapi/getforebusinessdetail';
     const params = isChina ? { companyname: value } : { companyname: value, Country: country };
     this.setState({ visible: true, modalLoading: true }, async () => {
@@ -108,17 +109,19 @@ export default class InputRecManage extends Component {
   }
 
   handelOk = () => {
-    const { backfill, overseaBackfill, jsEngine } = this.props;
-    const isChina = jsEngine.getValue('country') - '7' === 0;
-    const { selectInfo } = this.state;
-    const backArr = isChina ? backfill : overseaBackfill;
+    var self=this;
+    const { backfill, overseaBackfill, jsEngine } = self.props;
+    //const isChina = jsEngine.getValue('country') - '7' === 0;
+    const { selectInfo } = self.state;
+    //const backArr = isChina ? backfill : overseaBackfill;
+    const backArr = backfill ;
     if (Array.isArray(backArr) && backArr.length) {
       backArr.forEach(str => {
         const arr = str.split(':');
         jsEngine.setValue(arr[1], selectInfo[arr[0]]);
       });
       jsEngine.excuteJS('var aaa = 1;');
-      this.setState({ visible: false });
+      self.setState({ visible: false });
     } else {
       message.error('实体未配置映射规则');
     }
