@@ -39,6 +39,8 @@ function EntcommHome({
           return <LinkTab to={`/entcomm/${entityId}/${recordId}/lawcallback`}><IntlText name="relname" value={t} /></LinkTab>;
         } else if (t.entitytaburl === 'foreignlaw') {
           return <LinkTab to={`/entcomm/${entityId}/${recordId}/foreignlaw/${recordDetail.country}`}><IntlText name="relname" value={t} /></LinkTab>;
+        } else if (t.entitytaburl === 'contactrelate') {
+          return<LinkTab to={`/entcomm/${entityId}/${recordId}/contactRelate`}>联系人决策树</LinkTab>;
         }
         return (t.entitytaburl ?
           <LinkTab key={t.relid} to={`/entcomm/${entityId}/${recordId}/${t.entitytaburl}`}><IntlText name="relname" value={t} /></LinkTab> :
