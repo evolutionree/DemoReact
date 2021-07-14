@@ -146,6 +146,8 @@ class EntcommAddModal extends Component {
   };
 
   showHintCacheMsg = () => {
+    this.onFormModalCancel();
+    return;
     confirm({
       title: '是否暂存本表单?',
       onOk: this.onFormModalStorage,

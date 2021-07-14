@@ -175,11 +175,11 @@ class EntcommDetailModal extends Component {
     const { key, loading, protocol, data, approveList: dataSource } = this.state;
 
     const otherProps = {};
-
+    console.log('footer');
     if (footer) {
       otherProps.footer = footer;
     } else {
-      otherProps.okText = '下一步';
+      //otherProps.okText = '下一步';
     }
 
     return (
