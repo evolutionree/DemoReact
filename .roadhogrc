@@ -1,0 +1,48 @@
+{
+  "entry": [
+    "src/index.js",
+    "src/admin.js",
+    "src/paas.js",
+    "src/login.js",
+    "src/mobile-apps/mobile-report/mobile-app-report.js",
+    "src/mobile-apps/mobile-report/reportIndex.js"
+  ],
+  "publicPath": "./",
+  "hash": true,
+  "env": {
+    "development": {
+      "extraBabelPlugins": [
+        "dva-hmr",
+        "transform-runtime",
+        ["import", { "libraryName": "antd", "style": true }]
+      ],
+      "proxy": {
+        "/api": {
+          "target": "http://crmdemo.xwwxkj.com:8084",
+          //"target": "http://127.0.0.1:8880",
+          "changeOrigin": true
+        }
+      },
+      "theme": {
+        "@primary-color": "#3398db",
+        "@font-size-base": "14px",
+        "@border-radius-base": "3px",
+        "@input-height-base": "31px",
+        "@input-padding-horizontal": "10px"
+      }
+    },
+    "production": {
+      "extraBabelPlugins": [
+        "transform-runtime",
+        ["import", { "libraryName": "antd", "style": true }]
+      ],
+      "theme": {
+        "@primary-color": "#3398db",
+        "@font-size-base": "14px",
+        "@border-radius-base": "3px",
+        "@input-height-base": "31px",
+        "@input-padding-horizontal": "10px"
+      }
+    }
+  }
+}
