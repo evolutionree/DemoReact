@@ -423,7 +423,7 @@ export default function createJSEngineProxy(OriginComponent, options = {}) {
       const { designateFilterDataSource: oldVal, excuteId } = conf;
       const newVal = (oldVal && excuteId === this.excuteId) ? (oldVal + ',' + ids) : ids;
       this.comboFieldConfig(fieldName, {
-        designateFilterDataSource: newVal + '',
+        designateFilterDataSource: typeof newVal === 'object' ? newVal : (newVal + ''),
         designateFilterDataSourceByName: '',
         excuteId: this.excuteId
       });

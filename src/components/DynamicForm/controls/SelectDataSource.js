@@ -24,6 +24,7 @@ class SelectDataSource extends React.Component {
       type: PropTypes.string
     }),
     designateDataSource: PropTypes.object,
+    designateFilterDataSource: PropTypes.object,
     multiple: PropTypes.oneOf([0, 1]),
     isReadOnly: PropTypes.oneOf([0, 1]),
     placeholder: PropTypes.string
@@ -164,12 +165,20 @@ class SelectDataSource extends React.Component {
       pageIndex: 1,
       queryData: []
     };
-    const { designateDataSource } = this.props;
+    const { designateDataSource, designateFilterDataSource } = this.props;
     if (designateDataSource && typeof designateDataSource === 'object') {
       Object.keys(designateDataSource).forEach(key => {
         params.queryData.push({
           [key]: designateDataSource[key],
           islike: 0
+        });
+      });
+    }
+    if (designateFilterDataSource && typeof designateFilterDataSource === 'object') {
+      Object.keys(designateFilterDataSource).forEach(key => {
+        params.queryData.push({
+          [key]: designateFilterDataSource[key],
+          islike: 1
         });
       });
     }
@@ -239,6 +248,7 @@ class SelectDataSource extends React.Component {
         <DataSourceSelectModal
           visible={this.state.modalVisible}
           designateDataSource={this.props.designateDataSource}
+          designateFilterDataSource={this.props.designateFilterDataSource}
           selected={array}
           allowadd={this.props.allowadd}
           sourceId={this.props.dataSource && this.props.dataSource.sourceId}

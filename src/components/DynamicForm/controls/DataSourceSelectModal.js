@@ -21,6 +21,7 @@ class DataSourceSelectModal extends Component {
       id: PropTypes.string
     })),
     designateDataSource: PropTypes.object,
+    designateFilterDataSource: PropTypes.object,
     onOk: PropTypes.func,
     onCancel: PropTypes.func,
     multiple: PropTypes.bool
@@ -133,12 +134,21 @@ class DataSourceSelectModal extends Component {
       pageIndex: this.state.pageIndex,
       queryData: []
     };
-    const { designateDataSource } = props;
+    const { designateDataSource, designateFilterDataSource } = props;
     if (designateDataSource && typeof designateDataSource === 'object') {
       Object.keys(designateDataSource).forEach(key => {
         params.queryData.push({
           [key]: designateDataSource[key],
           islike: 0
+        });
+      });
+    }
+
+    if (designateFilterDataSource && typeof designateFilterDataSource === 'object') {
+      Object.keys(designateFilterDataSource).forEach(key => {
+        params.queryData.push({
+          [key]: designateFilterDataSource[key],
+          islike: 1
         });
       });
     }
