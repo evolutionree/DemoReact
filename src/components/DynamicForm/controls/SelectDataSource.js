@@ -308,7 +308,7 @@ class SelectDataSourceView extends React.Component {
     const dataSourceRelEntityId = dataSource && dataSource[dataSource.entityId ? 'entityId' : 'EntityId'];
     const emptyText = <span style={{ color: '#999999' }}>(空)</span>;
 
-    if (!value || !value_name) return <div className={styles.dataSourceViewWrap}>{emptyText}</div>;
+    if (!value && !value_name) return <div className={styles.dataSourceViewWrap}>{emptyText}</div>;
 
     if (!dataSourceRelEntityId && !value.url) { // 没有数据源关联实体id entityid，以普通文本显示
       const text = value_name !== undefined ? value_name : value;

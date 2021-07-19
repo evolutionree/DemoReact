@@ -49,7 +49,6 @@ class InputRecName extends Component {
 
     const isXianSuo = fieldId === xiansuoNameFieldId
     const isOriginal = isCustomer || isXianSuo
-    console.log('test1111');
     if (isCustomer) return <InputRecManage {...this.props} />;
 
     //客户新增 与 其他模块的新增 有差异   客户新增的时候  客户名称键入后需要请求接口 查询重复引用
