@@ -177,7 +177,7 @@ export default {
             params = {
               Recids: [recordId],
               EntityId: entityId,
-              ...plugins[pluginIndex].extradata
+              ...plugins[pluginIndex].entity.extradata
             };
             const { error_msg } = yield call(extraToolbarClickSendData, plugins[pluginIndex].routepath, params);
             yield put({ type: 'init', payload: { entityId, recordId } });
