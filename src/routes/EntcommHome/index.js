@@ -63,11 +63,11 @@ function EntcommHome({
     <span style={{ wordBreak: 'break-all' }}>
       <span>{entityName || ''} : </span>
       {titleText}
-      <Icon
+      {/* <Icon
         type={(recordDetail && recordDetail.isfollowed) ? 'star' : 'star-o'}
         onClick={toggleFollow}
         style={{ marginLeft: '10px', color: '#f5a623', cursor: 'pointer', wordBreak: 'break-all' }}
-      />
+      /> */}
     </span>
   );
 
