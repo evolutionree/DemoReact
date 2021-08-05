@@ -41,7 +41,7 @@ function renderLink({ name, name_lang, icon, path }) {
   const iconEl = icon ? <Icon type={icon} /> : '';
   const textEl = <IntlText value={name} value_lang={name_lang} />;
   return !path ? <span>{iconEl} {textEl}</span>
-    : <Link to={path}>{textEl}</Link>;
+    : <Link to={path}><span>{iconEl}</span>{textEl}</Link>;
 }
 function mapLocationToMenuKeys(location, menus) {
   let locationNew = location.pathname;
