@@ -19,8 +19,8 @@ const AppHeader = ({ redirectPath }) => {
       <Header.Right>
         <ImportTask />
         <ProgressModal />
-        <LocaleSelect />
-        <WebIMPanel />
+        {/* <LocaleSelect /> */}
+        {/* <WebIMPanel /> */}
         <MessageList />
         <TemporaryStorage />
         <UserDropdown />
