@@ -17,7 +17,7 @@ function LoginPage({ login, pending, authCompany, rememberedPwd, loginError, mod
   return (
     <div className={styles.login}>
       <div className={styles.bg} />
-      <div className={styles.box} style={{ width: modifyPwdVisible ? '480px' : '680px' }} >
+      <div className={styles.box} style={{ width: modifyPwdVisible ? '480px' : '480px' }} >
         <div className={styles.logo}>
           <img src="/img_login_logo.png" alt="" width={180} height={70} />
         </div>
@@ -33,20 +33,19 @@ function LoginPage({ login, pending, authCompany, rememberedPwd, loginError, mod
             </Row>
           ) : (
             <Row>
-              <Col span={15}>
+              <Col span={24}>
                 <div className={styles.form}>
                   <LoginForm onSubmit={handleSubmit} submitBtnLoading={pending} rememberedPwd={rememberedPwd} />
                 </div>
                 {loginError && <Alert message={`登录出错：${loginError}`} type="error" style={{ margin: '-10px 30px 10px' }} />}
               </Col>
-              <Col span={9}>
-                <div className={styles.qrcode}>
-                  <p>打开手机，扫描二维码下载</p>
-                  {/* /!*<img src="/qrcode.png" alt="二维码" />*!/ */}
-                  <QRCodeUk size={160} fgColor="#666" />
-                </div>
+              {/* <Col span={9}> */}
+                {/* <div className={styles.qrcode}> */}
+                  {/* <p>打开手机，扫描二维码下载</p> */}
+                  {/* <QRCodeUk size={160} fgColor="#666" /> */}
+                {/* </div> */}
                 {/* <div className={styles.qrcode} id="login_container"></div> */}
-              </Col>
+              {/* </Col> */}
             </Row>
           )
         }
