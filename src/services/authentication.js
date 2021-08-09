@@ -67,6 +67,7 @@ export async function login(params, type) {
     return _login({
       accountname,
       sendcode,
+      uniqueid:sessionStorage.getItem('uke_DeviceId'),
       accountpwd: encryptedPwd,
       encrypttype: 1
     });
@@ -205,7 +206,7 @@ export function getSendCode() {
     // }).then(result=>{
     //   return result;
     // });
-    return '/api/account/getverificationcode?time='+Math.random(1000);
+    return '/api/account/getverificationcode?time='+Math.random(1000)+'&uniqueid='+sessionStorage.getItem('uke_DeviceId');
 }
 
 /**

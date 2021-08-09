@@ -7,7 +7,6 @@ function LoginForm({
   onSubmit,
   submitBtnLoading,
   rememberedPwd,
-  showError,
   suffix,
   changeCode,
   form: {
