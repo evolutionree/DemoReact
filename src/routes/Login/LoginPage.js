@@ -5,7 +5,7 @@ import ModifyPwdForm from './ModifyPwdForm';
 import styles from './Login.less';
 import QRCodeUk from '../../components/QRCodeUk';
 
-function LoginPage({ login, pending, authCompany, rememberedPwd, loginError, modifyPwdVisible, onModifyPwd }) {
+function LoginPage({ login, pending, authCompany, rememberedPwd, loginError, modifyPwdVisible, onModifyPwd,changeCode,suffix,showError }) {
   function handleSubmit(data) {
     login(data);
   }
@@ -35,7 +35,7 @@ function LoginPage({ login, pending, authCompany, rememberedPwd, loginError, mod
             <Row>
               <Col span={15}>
                 <div className={styles.form}>
-                  <LoginForm onSubmit={handleSubmit} submitBtnLoading={pending} rememberedPwd={rememberedPwd} />
+                  <LoginForm onSubmit={handleSubmit} submitBtnLoading={pending} rememberedPwd={rememberedPwd} changeCode={changeCode} suffix={suffix} showError={showError}  />
                 </div>
                 {loginError && <Alert message={`登录出错：${loginError}`} type="error" style={{ margin: '-10px 30px 10px' }} />}
               </Col>

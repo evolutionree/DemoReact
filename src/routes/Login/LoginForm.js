@@ -7,6 +7,9 @@ function LoginForm({
   onSubmit,
   submitBtnLoading,
   rememberedPwd,
+  showError,
+  suffix,
+  changeCode,
   form: {
     getFieldDecorator,
     validateFields
@@ -19,6 +22,7 @@ function LoginForm({
       onSubmit(values);
     });
   }
+
   return (
     <Form layout="horizontal" onSubmit={handleSubmit}>
       <FormItem>
@@ -50,6 +54,19 @@ function LoginForm({
           )
         }
       </FormItem>
+      <Form.Item>
+          {getFieldDecorator('sendcode', {
+          rules: [{ required: true, message: '请输入校验码!' },],
+          })(
+          <Input
+          size="large"
+          prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+          suffix={suffix}
+          onChange={changeCode}
+          placeholder="请输入校验码"
+          />,
+          )}
+      </Form.Item>
       <FormItem>
         {
           getFieldDecorator('rememberpwd', {

@@ -1,8 +1,8 @@
-import React, { PropTypes, Component } from 'react';
+import React, { PropTypes, Component,createRef } from 'react';
 import { render } from 'react-dom';
 import { Button, Modal, message } from 'antd';
 import LoginPage from './routes/Login/LoginPage';
-import { getRememberedPwd, login, setLogin, modifyPassword } from './services/authentication';
+import { getRememberedPwd, login, setLogin, modifyPassword,getSendCode } from './services/authentication';
 import { authCompany, ssologinwithdingtalk, apploginwithdingtalk } from './services/license';
 import './styles/main.less';
 import { GetArgsFromHref } from '../src/utils/index';
@@ -28,18 +28,22 @@ class LoginPageContainer extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      code:'',
+      showError:false,
       loginPending: false,
       loginError: null,
       rememberedPwd: getRememberedPwd(),
       authCompany: '',
       loginInfo: null,
-      modifyPwdVisible: false //登录页 是否 显示 修改密码  表单
+      modifyPwdVisible: false, //登录页 是否 显示 修改密码  表单
+      getSendCode:getSendCode()
     };
   }
 
   componentDidMount() {
     localStorage.removeItem('defaultPathType');
     this.fetchAuthCompany();
+    this.drawPic();
     if (backendOrigin && dingdingUrlCode) {
       apploginwithdingtalk({ code: dingdingUrlCode }).then(result => { //考虑是否需要走权限
         const loginInfo = {
@@ -146,8 +150,58 @@ class LoginPageContainer extends Component {
     });
   };
 
+  setShowError=e=>{
+    this.setState({showError:e})
+  }
+
+  drawPic = () => {
+    this.setState({code:sessionStorage.getItem('VerificationCode')});
+  // var canvas=document.getElementById('mycanvas');
+  // let ctx = canvas.getContext('2d')
+  // var img = new Image()
+  // img.src = getSendCode();
+  // img.onload=function(){
+  //     //剪切位置(0,0),剪切尺寸(600,600),
+  //     //放置位置(0,0),放置尺寸(100,100);
+  //     ctx.drawImage(img,0,0,50,22,0,0,100,100);
+  // }
+
+  var img=document.getElementById('img');
+  img.src = getSendCode();
+  console.log(img.src);
+}
+
+reloadPic = () => {
+  this.drawPic()
+  // this.props.form.setFieldsValue({
+  // sendcode: '',
+  // });
+}
+// 输入验证码
+  changeCode = (e) => {
+    console.log(e.target.value,':',this.state.code);
+    if (e.target.value.toLowerCase() !== '') {// && e.target.value.toLowerCase() !== this.state.code.toLowerCase()
+      this.setState({showError:true});
+    } else if (e.target.value.toLowerCase() === '') {
+      this.setState({showError:false});
+    } else if (e.target.value.toLowerCase() === this.state.code.toLowerCase()) {
+      this.setState({showError:false});
+    }
+  }
 
   render() {
+    const suffix =<div>
+          {/* <canvas 
+              id='mycanvas'
+              onClick={this.reloadPic}
+              ref={this.canvas}
+              width='100'
+              height='40'
+      >
+        
+      </canvas> */}
+      <img id='img' onClick={this.reloadPic}/>
+      </div>
     return (
       <LoginPage
         pending={this.state.loginPending}
@@ -157,6 +211,9 @@ class LoginPageContainer extends Component {
         login={this.login}
         modifyPwdVisible={this.state.modifyPwdVisible}
         onModifyPwd={this.modifyPwd}
+        changeCode={this.changeCode}
+        suffix={suffix}
+        showError={this.state.showError}
       />
     );
   }

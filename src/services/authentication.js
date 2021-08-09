@@ -62,10 +62,11 @@ export async function registerUser(params) {
  * @returns {Promise.<Object>}
  */
 export async function login(params, type) {
-  const { accountname, accountpwd, rememberpwd } = params;
+  const { accountname, accountpwd, rememberpwd,sendcode } = params;
   return encryptPassword(accountpwd, true).then(encryptedPwd => {
     return _login({
       accountname,
+      sendcode,
       accountpwd: encryptedPwd,
       encrypttype: 1
     });
@@ -196,6 +197,15 @@ export async function modifyPassword(params, headers = {}) {
       headers
     });
   });
+}
+
+export function getSendCode() {
+    // return request('/api/account/getverificationcode', {
+    //   method: 'get'
+    // }).then(result=>{
+    //   return result;
+    // });
+    return '/api/account/getverificationcode?time='+Math.random(1000);
 }
 
 /**
