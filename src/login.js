@@ -200,7 +200,7 @@ reloadPic = () => {
       >
         
       </canvas> */}
-      <img id='img' onClick={this.reloadPic}/>
+      <img style={{position:'relative',left:'8%'}} id='img' onClick={this.reloadPic}/>
       </div>
     return (
       <LoginPage

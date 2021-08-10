@@ -118,11 +118,16 @@ export default class InputRecManage extends Component {
     const backArr =["name:recname", "originalnamestr:beforename", "creditcode:ucode", "no:businesscode", "orgno:organizationcode"
     , "econkind:qccenterprisenature", "enttype:qccenterprisetype", "status:enterprisestatus", "registcapi:registeredcapital"
     , "reccap:paidcapital", "belongorg:registrationauthority", "startdate:establishmentdate", "opername:corporatename"
-    , "address:qcclocation", "scope:businessscope", "isonstock:isiop"]
+    , "address:qcclocation", "scope:businessscope", "isonstock:isiop" , "address:customercompanyaddress",]
     if (Array.isArray(backArr) && backArr.length) {
       backArr.forEach(str => {
         const arr = str.split(':');
-        jsEngine.setValue(arr[1], selectInfo[arr[0]]);
+        if(arr[1]=='customercompanyaddress'){
+          jsEngine.setValue(arr[1],{address:selectInfo[arr[0]]} );
+        }else{
+          jsEngine.setValue(arr[1], selectInfo[arr[0]]);
+        }
+        
       });
       jsEngine.excuteJS('var aaa = 1;');
       self.setState({ visible: false });
