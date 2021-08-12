@@ -25,6 +25,8 @@ export default {
     copyData: {},
     extraButtonData: [], //页面动态 按钮数据源
     extraToolbarData: [], //页面toolbar 动态按钮数据源
+    addEntityButtonData:[],
+    addEntityButtonIdx:{},
     dynamicModalData: {},
     sortFieldAndOrder: null, //当前排序的字段及排序顺序
     ColumnFilter: null, //字段查询
@@ -122,6 +124,14 @@ export default {
       } catch (e) {
         message.error(e.message || '获取协议失败');
       }
+    },
+    *addEntity({ payload: {showModals,addEntityButtonIdx }}, { call, put }, ) {
+      const { data: { entitytypepros: entityTypes } } = yield call(queryTypes, { entityId:addEntityButtonIdx.entityid });
+      addEntityButtonIdx.entityTypes=entityTypes;
+      yield put ({type:'putState',payload:{
+        showModals,
+        addEntityButtonIdx,
+      }}) ;
     },
     *search({ payload }, { select, put }) {
       const location = yield select(({ routing }) => routing.locationBeforeTransitions);
@@ -223,8 +233,9 @@ export default {
         functionbutton = Array.isArray(functionbutton) && functionbutton.filter(item => _.indexOf(item.displayposition, 0) > -1);
         const extraButtonData = functionbutton && Array.isArray(functionbutton) && functionbutton.filter(item => item.buttoncode === 'ShowModals');
         const buttoncode = ['DataTransfer', 'CallService', 'CallService_showModal', 'PrintEntity', 'EntityDataOpenH5'];
+        const addEntityButtonData = functionbutton && Array.isArray(functionbutton) && functionbutton.filter(item =>item.buttoncode=='AddEntityData');
         const extraToolbarData = functionbutton && Array.isArray(functionbutton) && functionbutton.filter(item => buttoncode.indexOf(item.buttoncode) > -1);
-        yield put({ type: 'putState', payload: { extraButtonData, extraToolbarData } });
+        yield put({ type: 'putState', payload: { extraButtonData, extraToolbarData ,addEntityButtonData} });
       } catch (e) {
         message.error(e.message);
       }
@@ -424,6 +435,8 @@ export default {
         copyData: {},
         extraButtonData: [], //页面动态 按钮数据源
         extraToolbarData: [], //页面toolbar 动态按钮数据源
+        addEntityButtonData:[],
+        addEntityButtonIdx:'',
         dynamicModalData: {},
         sortFieldAndOrder: null, //当前排序的字段及排序顺序
         ColumnFilter: null, //字段查询

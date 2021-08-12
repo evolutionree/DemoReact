@@ -37,6 +37,8 @@ function EntcommList({
   simpleSearchKey,
   searchTips,
   extraButtonData,
+  addEntityButtonData,
+  addEntityButtonIdx,
   extraToolbarData,
   sortFieldAndOrder,  //当前排序的字段及排序顺序
   ColumnFilter,
@@ -70,6 +72,16 @@ function EntcommList({
     dispatch({
       type: 'entcommList/showModals',
       payload: 'repeatview'
+    });
+  }
+
+  function addEntityData(e) {
+    dispatch({
+      type: 'entcommList/addEntity',
+      payload: {
+        showModals: 'addEntity',
+        addEntityButtonIdx: {entityid:e.extradata.entityid,entityName:e.name}
+      }
     });
   }
 
@@ -235,6 +247,7 @@ function EntcommList({
         {checkFunc('EntityDataSearch') && <Button onClick={queryRepeat}>查重</Button>}
         {shouldShowImport() && <Button onClick={importData}>导入</Button>}
         {shouldShowExport() && <Button onClick={exportData}>导出</Button>}
+        {addEntityButtonData&&addEntityButtonData instanceof Array && addEntityButtonData.map((item, index)=>(<Button key={index} onClick={addEntityData.bind(this, item)}>{ item.name}</Button>)) }
         {
           extraButtonData && extraButtonData instanceof Array && extraButtonData.map((item, index) => {
             return <Button onClick={extraButtonClickHandler.bind(this, item)} key={index}>{getIntlText('title', item)}</Button>;
@@ -279,10 +292,10 @@ function EntcommList({
         }}
       />
       <EntcommAddModal
-        visible={/add/.test(showModals)}
-        entityId={entityId}
-        entityName={entityName}
-        entityTypes={entityTypes}
+        visible={/add/.test(showModals)||/addEntity/.test(showModals)}//addEntityButtonIdx
+        entityId={/addEntity/.test(showModals)?addEntityButtonIdx.entityId:entityId}
+        entityName={/addEntity/.test(showModals)?addEntityButtonIdx.entityName:entityName}
+        entityTypes={/addEntity/.test(showModals)?addEntityButtonIdx.entityTypes:entityTypes}
         // flow={selectedFlowObj}
         cancel={onAddModalCanel}
         done={onAddModalDone}
