@@ -10,7 +10,7 @@ export default {
     entityId: '00000000-0000-0000-0000-000000000001',
     menus: [],
     queries: {
-      searchBegin: moment().format('YYYY-MM-DD'),
+      searchBegin: moment().add(-6,'d').format('YYYY-MM-DD'),
       searchEnd: moment().add(1, 'd').format('YYYY-MM-DD')
     },
     list: [],

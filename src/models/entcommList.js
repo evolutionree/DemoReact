@@ -126,7 +126,7 @@ export default {
       }
     },
     *addEntity({ payload: {showModals,addEntityButtonIdx }}, { call, put }, ) {
-      const { data: { entitytypepros: entityTypes } } = yield call(queryTypes, { entityId:addEntityButtonIdx.entityid });
+      const { data: { entitytypepros: entityTypes } } = yield call(queryTypes, { entityId:addEntityButtonIdx.entityId });
       addEntityButtonIdx.entityTypes=entityTypes;
       yield put ({type:'putState',payload:{
         showModals,

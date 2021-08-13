@@ -80,7 +80,7 @@ function EntcommList({
       type: 'entcommList/addEntity',
       payload: {
         showModals: 'addEntity',
-        addEntityButtonIdx: {entityid:e.extradata.entityid,entityName:e.name}
+        addEntityButtonIdx: {entityId:e.extradata.entityId,entityName:e.name}
       }
     });
   }
