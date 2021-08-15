@@ -60,10 +60,8 @@ class ReportForm extends React.Component {
       bmapCenter: [],
       breadcrumbData: [],
       selectedLegend: null,
-      //startDate: null,
-      //endDate: null
-      startDate: getCurrentYearFirstDay(),
-      endDate: getCurrentDay()
+      startdate: getCurrentYearFirstDay(),
+      enddate: getCurrentDay()
     };
     this.reloadReportData = this.reloadReportData.bind(this);
     this.echartsInstance = echarts;
@@ -128,6 +126,11 @@ class ReportForm extends React.Component {
 
       result.data.datasources.map((item, index) => {
         const defaultParams = this.getDefaultParameters(item, result.data.components);
+        //客户分布图
+        if(item.instid === 'custdist'){
+          defaultParams["startdate"]  = this.state.startdate;
+          defaultParams["enddate"]  = this.state.enddate;
+        }
         if (_.indexOf(dataGridDatasouces, item.instid) === -1) { //不请求 表格对应的数据源 交给组件DataGrid去处理
           this.setState({
             [item.instid + 'loading']: true,
@@ -391,6 +394,7 @@ class ReportForm extends React.Component {
   }
 
   queryData(item, params, components = this.state.components) {
+    console.log('querydata');
     let _params = params;
     if (this.props.injectedParams) {
       _params = {
@@ -704,49 +708,31 @@ class ReportForm extends React.Component {
         );
       //map
       case 6:
+
         return (
           <div style={{ height: '100%', width: '100%', borderRadius: '4px', padding: '20px', boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)' }}>
-            <span style={{ marginLeft: '10px' }}>起始年月</span>
-            <DatePicker.MonthPicker
-              style={{ marginLeft: '5px' }}
-              placeholder="起始年月"
-              value={this.state.startDate ? moment(this.state.startDate, 'YYYY-MM') : undefined}
-              onChange={(date, dateStr) => {
-                this.search('startDate', date ? moment(date).format('YYYY-MM') : '');
-              }}
-            />
-            <span style={{ marginLeft: '10px' }}>截至年月</span>
-            <DatePicker.MonthPicker
-              style={{ marginLeft: '5px' }}
-              placeholder="截至年月"
-              value={this.state.endDate ? moment(this.state.endDate, 'YYYY-MM') : undefined}
-              onChange={(date, dateStr) => {
-                this.search('endDate', date ? moment(date).format('YYYY-MM') : '');
-              }}
-            />
-            {/* <span style={{ marginLeft: '5px' }}>起始日期</span>
-            <DatePicker
-              style={{ marginLeft: '10px' }}
-              placeholder="起始日期"
-              value={this.state.startDate ? moment(this.state.startDate, 'YYYY-MM-DD') : undefined}
-              onChange={(date, dateStr) => {
-                this.search('startDate', date ? moment(date).format('YYYY-MM-DD') : '');
-              }}
-            />
-            <span style={{ marginLeft: '10px' }}>截止日期</span>
+            <span style={{ marginLeft: '10px' }}>起始</span>
             <DatePicker
               style={{ marginLeft: '5px' }}
-              placeholder="截止日期"
-              value={this.state.endDate ? moment(this.state.endDate, 'YYYY-MM-DD') : undefined}
+              placeholder="起始"
+              value={this.state.startdate ? moment(this.state.startdate, 'YYYY-MM-DD') : undefined}
               onChange={(date, dateStr) => {
-                this.search('endDate', date ? moment(date).format('YYYY-MM-DD') : '');
+                this.search('startdate', date ? moment(date).format('YYYY-MM-DD') : '');
               }}
-            /> */}
-            {/* <div style={{ width: '260px', height: '100%', border: '1px solid rgb(212, 208, 208)', float: 'left', overflow: 'auto' }}>
+            />
+            <span style={{ marginLeft: '10px' }}>截至</span>
+            <DatePicker
+              style={{ marginLeft: '5px' }}
+              placeholder="截至"
+              value={this.state.enddate ? moment(this.state.enddate, 'YYYY-MM-DD') : undefined}
+              onChange={(date, dateStr) => {
+                this.search('enddate', date ? moment(date).format('YYYY-MM-DD') : '');
+              }}
+            />
+            { <div style={{ width: '15%', height: '100%', border: '1px solid rgb(212, 208, 208)', float: 'left', overflow: 'auto' }}>
               <CollapseWrap mapSeriesType={this.state.mapSeriesType} changeMap={this.collapseClickMapShow.bind(this, this.state[item.datasourcename + 'loading'])} onChange={this.collapseValueChange.bind(this)} dataSource={this.getCollapseData(item)} value={this.state.serchValue} />
-            </div> */}
-            {/* <div style={{ width: 'calc(100% - 260px)', height: '100%', float: 'left', paddingLeft: '10px', overflow: 'hidden' }}> */}
-            <div style={{ width: '100%', height: '100%', float: 'left', paddingLeft: '10px', overflow: 'hidden' }}>
+            </div> }
+            <div style={{ width: '85%', height: '100%', float: 'right', paddingLeft: '10px', overflow: 'hidden' }}>
               <BreadCrumb data={this.state.breadcrumbData} onClick={this.breadCrumbClickHandler.bind(this)} />
               <div className={styles.iconDownload} style={{ display: this.state.mapSeriesType === 'map' ? 'none' : 'block' }}>
                 <Icon type="download" onClick={this.screenCapture.bind(this)} />
@@ -829,16 +815,17 @@ class ReportForm extends React.Component {
   }
 
   search = (key, value) => {
+    console.log('search')
     this.setState({
       [key]: value
     }, () => {
-      if (key === 'startDate') {
+      if (key === 'startdate') {
         this.setState({
-          serchValue: { ...this.state.serchValue, '@startDate': value }
+          serchValue: { ...this.state.serchValue, '@startdate': value }
         }, () => { this.changeMapShow(this.state.breadcrumbData.length > 0 ? this.state.breadcrumbData[this.state.breadcrumbData.length - 1] : '全国', this.state.breadcrumbData); });
-      } else if (key === 'endDate') {
+      } else if (key === 'enddate') {
         this.setState({
-          serchValue: { ...this.state.serchValue, '@endDate': value }
+          serchValue: { ...this.state.serchValue, '@enddate': value }
         }, () => { this.changeMapShow(this.state.breadcrumbData.length > 0 ? this.state.breadcrumbData[this.state.breadcrumbData.length - 1] : '全国', this.state.breadcrumbData); });
       }
     });

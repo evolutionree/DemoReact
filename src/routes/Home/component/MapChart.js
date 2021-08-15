@@ -74,6 +74,7 @@ class MapChart extends React.Component {
   }
   changeMapShow (mapName) {
     this.reloadData(mapName);
+    console.log('changeMapShow')
     if (chinaMap[mapName]) {  //全国  省市区
       request(`mapJson/${chinaMap[mapName]}.json`, { //请求当前地图的数据
         method: 'get'
@@ -142,8 +143,8 @@ class MapChart extends React.Component {
     return (
       <div className={Styles.mapWrap}>
         <div className={Styles.titleInfo}>
-          <div>业务发展参数</div>
-          <div>与其他区域数据对比</div>
+          <div>客户分布图</div>
+          {/* <div>与其他区域数据对比</div> */}
         </div>
         <div className={Styles.MapInfo} style={{ height: 'calc(100% - 180px)' }}>
           {
@@ -181,7 +182,7 @@ class MapChart extends React.Component {
             </div>
           }
           <div style={{ width: this.state.mapType === 'china' ? '100%' : 'calc(100% - 172px)', float: 'left', height: '100%' }}>
-            <ShowMapChart title="业务发展参数"
+            <ShowMapChart title="客户分布图"
                           titleShow={false}
                           echarts={this.echartsInstance}
                           loading={this.state.regionsloading}
