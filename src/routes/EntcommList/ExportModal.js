@@ -7,12 +7,13 @@ import ExportModal from '../../components/ExportModal';
 
 export default connect(
   state => {
-    const { showModals, entityId, protocol, queries } = state.entcommList;
+    const { showModals, entityId, protocol, queries, currItems } = state.entcommList;
     return {
       visible: /export/.test(showModals),
       entityId,
       protocol,
-      queries
+      queries,
+      Recids: currItems.map(item => item.recid)
     };
   },
   dispatch => {
