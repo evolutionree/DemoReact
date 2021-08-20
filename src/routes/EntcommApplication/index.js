@@ -217,6 +217,9 @@ function EntcommList({
     { label: '编辑', handler: showEdit, single: true, show: checkFunc('EntityDataEdit') },
     { label: '转移', handler: openTransfer, show: shouldShowTransfer }
   ];
+  defaultToolbarActions.push(
+    { label: '导出', handler: exportData, show: shouldShowExport() }
+  );
 
   let ajaxToolbarActions = extraToolbarData && extraToolbarData instanceof Array && extraToolbarData.map((item) => {
     let single = true;
