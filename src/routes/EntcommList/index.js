@@ -205,6 +205,7 @@ function EntcommList({
   const keyword = (!isAdvanceQuery && searchData && searchData[simpleSearchKey]) || '';
   const defaultToolbarActions = [
     { label: '删除', handler: del, show: checkFunc('EntityDataDelete') },
+    { label: '导出', handler: exportData, show: shouldShowExport() },
     { label: '分配线索', handler: allocate, show: shouldShowAllocate }//db330ae1-b78c-4e39-bbb5-cc3c4a0c2e3b 销售线索批量分配
   ];
   if (entityId === '1ce5e2d5-6cf7-440d-83f4-0d500c4a2cd9') {

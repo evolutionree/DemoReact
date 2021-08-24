@@ -24,12 +24,14 @@ const MSG_GROUP_ID = 1004;
 const APPROVE_GROUP_ID = 1006;
 
 const msgTypes = {
+  EXPORT_RESULT: 98,
   IMPORT_RESULT: 99,
   TASK: 4,
   APPROVE: 5
 };
 
 const menuData = [
+  { key: msgTypes.EXPORT_RESULT, text: '导出结果提醒', type: 'EXPORT_RESULT' },
   { key: msgTypes.IMPORT_RESULT, text: '导入结果提醒', type: 'IMPORT_RESULT' },
   { key: msgTypes.TASK, text: '智能提醒', type: 'TASK' },
   { key: msgTypes.APPROVE, text: '审批提醒', type: 'APPROVE' }
@@ -134,6 +136,8 @@ class MessageList extends React.Component {
     } else if (+msgType === msgTypes.APPROVE) {
       MsgStyleTypes = [msgTypes.APPROVE];
       MsgGroupIds = [APPROVE_GROUP_ID];
+    } else if (+msgType === msgTypes.EXPORT_RESULT) {
+      MsgStyleTypes = [msgTypes.EXPORT_RESULT]
     } else {
       MsgStyleTypes = [msgTypes.IMPORT_RESULT];
     }
@@ -406,6 +410,8 @@ class MessageList extends React.Component {
     if (item.msgstyletype === msgTypes.IMPORT_RESULT) {
       return `共导入数据${item.msgparam.data.DealRowsCount}条,导入成功${item.msgparam.data.DealRowsCount -
         item.msgparam.data.ErrorRowsCount}条,导入失败${item.msgparam.data.ErrorRowsCount}条`;
+    } else if (item.msgstyletype === msgTypes.EXPORT_RESULT) {
+      return `${item.msgcontent}${item.entityname || ''}数据${item.msgparam.data.TotalRowsCount}条`
     } else {
       return null;
     }
@@ -442,7 +448,7 @@ class MessageList extends React.Component {
                         const cls = classnames({
                           [styles.alreadyRead]: item.readstatus === 2
                         });
-                        const { msgid, msgtitle, msgstyletype, msgparam, msgcontent } = item;
+                        const { msgid, msgtitle, msgstyletype, msgparam, msgcontent, entityname } = item;
                         const hasLink = [5, 8].includes(item.msgstyletype); // 为8可以跳转 4 不可以
 
                         return (
@@ -455,7 +461,11 @@ class MessageList extends React.Component {
                             <ul>
                               <li>
                                 <span className={styles.msgtitle} title={msgtitle}>
-                                  {msgstyletype === msgTypes.IMPORT_RESULT ? `${msgparam.data.TaskName}导入完成` : msgtitle}
+                                  {msgstyletype === msgTypes.IMPORT_RESULT
+                                    ? `${msgparam.data.TaskName || ''}导入完成`
+                                    : msgstyletype === msgTypes.EXPORT_RESULT
+                                      ? `${entityname || ''}导出任务完成`
+                                      : msgtitle}
                                 </span>
                                 <span className={styles.timeinfo}>{item.reccreated.toString().split(' ')[0]}</span>
                               </li>
@@ -469,6 +479,18 @@ class MessageList extends React.Component {
                                   >
                                     下载
                               </a>
+                                </li>
+                              )}
+                              {msgstyletype === msgTypes.EXPORT_RESULT && (
+                                <li title={`导出结果：` + this.isRenderMsgProgress(item)}>
+                                  导出结果：
+                                  {this.isRenderMsgProgress(item)}
+                                  <a
+                                    className={styles.download}
+                                    href={`/api/fileservice/download?fileid=${msgparam.data.ResultFileId}`}
+                                  >
+                                    下载
+                                  </a>
                                 </li>
                               )}
                               {[msgTypes.TASK, 5, 8].includes(msgstyletype) && (

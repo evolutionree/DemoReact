@@ -40,7 +40,7 @@ class ExportModal extends React.Component {
   }
 
   handleOk = () => {
-    const { form, queries, userId, entityId } = this.props;
+    const { form, queries, userId, entityId, Recids} = this.props;
     const { resultModalVisible } = this.state;
     if (!resultModalVisible) {
       const params = { ...queries, pageIndex: 1, pageSize: 655535 };
@@ -53,6 +53,7 @@ class ExportModal extends React.Component {
             DynamicQuery: JSON.stringify(params),
             UserId: userId,
             entityId,
+            Recids,
             ...values
           })
         }).then(result => {

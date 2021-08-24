@@ -9,12 +9,13 @@ import { connect } from 'dva';
 
 export default connect(
   state => {
-    const { showModals, entityId, protocol, queries } = state.entcommApplication;
+    const { showModals, entityId, protocol, queries, currItems } = state.entcommApplication;
     return {
       visible: /export/.test(showModals),
       entityId,
       protocol,
-      queries
+      queries,
+      Recids: currItems.map(item => item.recid)
     };
   },
   dispatch => {
