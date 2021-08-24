@@ -40,7 +40,7 @@ function ReceiveWeeklyDetail({ location, receiveWeeklyDetailList,
       {
         listData.map((item, index) => {
           const detailFields = item.weektype === 0 ? receiveWeeklyDetailWeeklyProtocal && receiveWeeklyDetailWeeklyProtocal.filter(field => !!field.fieldname && field.fieldname !== 'reportdate') : receiveWeeklyDetailSummaryProtocal && receiveWeeklyDetailSummaryProtocal.filter(field => !!field.fieldname && field.fieldname !== 'reportdate');
-          return <WeeklyListDetail dropMenu={[]}
+          return <WeeklyListDetail dropMenu={summaryData?['详情', '编辑']:['详情', '编辑', '周总结']}
                                    key={index}
                                    data={item}
                                    detailFields={detailFields}

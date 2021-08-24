@@ -42,7 +42,7 @@ function AllWeeklyDetail({
       {
         listData.map((item, index) => {
           const detailFields = item.weektype === 0 ? allWeeklyDetailWeeklyProtocal && allWeeklyDetailWeeklyProtocal.filter(field => !!field.fieldname && field.fieldname !== 'reportdate') : allWeeklyDetailSummaryProtocal && allWeeklyDetailSummaryProtocal.filter(field => !!field.fieldname && field.fieldname !== 'reportdate');
-          return <WeeklyListDetail dropMenu={[]}
+          return <WeeklyListDetail dropMenu={summaryData?['详情', '编辑']:['详情', '编辑', '周总结']}
                                    key={index}
                                    data={item}
                                    detailFields={detailFields}
