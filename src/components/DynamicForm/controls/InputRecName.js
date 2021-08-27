@@ -4,6 +4,8 @@ import InputCustomerRecName from './InputCustomerRecName';
 import { queryFields } from '../../../services/entity';
 import InputRecManage from './InputRecManage';
 
+
+const custcommonEntityId = 'ac051b46-7a20-4848-9072-3b108f1de9b0'; // 客户基础资料实体id
 const customerEntityId = 'f9db9d79-e94b-4678-a5cc-aa6e281c1246'; // 客户实体id
 const xiansuoNameFieldId = 'e61403f1-4511-49b9-a1c1-52a8cea855d1'; //线索名称的fileldId
 
@@ -24,7 +26,7 @@ class InputRecName extends Component {
 
   componentDidMount() {
     const { entityId, fieldId } = this.props;
-    if (entityId === customerEntityId) {
+    if (entityId === customerEntityId || entityId === custcommonEntityId) {
       try {
         queryFields(entityId)
           .then(res => {
