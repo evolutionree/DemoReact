@@ -131,7 +131,8 @@ const appRoutes = [
       { path: 'myweekly', comp: MyWeekly, model: require('./models/weekly') },
       { path: 'receiveweekly', comp: ReceiveWeekly, model: require('./models/weekly') },
       { path: 'allweekly', comp: AllWeekly, entid: '0b81d536-3817-4cbc-b882-bc3e935db845', model: require('./models/weekly') },
-      { path: 'receiveweekly/:recid', comp: ReceiveWeeklyDetail, model: require('./models/weekly') }
+      { path: 'receiveweekly/:recid', comp: ReceiveWeeklyDetail, model: require('./models/weekly') },
+      { path: 'allweekly/:recid', comp: AllWeeklyDetail, model: require('./models/weekly')},
     ]
   },
   { path: 'allweekly/detail/:recid', comp: AllWeeklyDetail, model: require('./models/weekly') },

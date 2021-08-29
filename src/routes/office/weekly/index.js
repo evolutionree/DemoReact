@@ -101,7 +101,8 @@ function Weekly({ checkFunc, routeChange, location, children, addWeekly, showMod
                           visible={showModals && (showModals === 'viewWeeklyDetail' || showModals === 'viewSummaryDetail') ? true : false}
                           entityId={showModals === 'viewWeeklyDetail' ? '0b81d536-3817-4cbc-b882-bc3e935db845' : 'fcc648ae-8817-48b7-b1d7-49ed4c24316b'}
                           recordId={myWeeklyOrSummaryRecid}
-                          onCancel={addSummaryModalCancel} />
+                          onCancel={addSummaryModalCancel}
+                          onOk={addSummaryModalCancel} />
     </Page>
   );
 }
