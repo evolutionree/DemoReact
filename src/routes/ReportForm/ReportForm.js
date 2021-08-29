@@ -490,7 +490,7 @@ class ReportForm extends React.Component {
 
     cloneDatasources.map((item, index) => {
       for (const key in params) {
-        if (item.parameArray.indexOf(key) > -1 && _.indexOf(this.state.dataGridDatasouces, item.instid) === -1) { //不请求 表格对应的数据源 交给组件DataGrid去处理
+        if (item.parameArray.indexOf(key) > -1 && _.indexOf(this.state.dataGridDatasouces, item.instid) > -1) { //不请求 表格对应的数据源 交给组件DataGrid去处理
           this.setState({
             [item.instid + 'loading']: true
           });
@@ -650,7 +650,7 @@ class ReportForm extends React.Component {
                 axisDataSource={this.state[item.datasourceforsummary]} //坐标轴 Lable可能存在变量  需替换
                 dataSource={this.state[item.datasourcename]}
                 xseries={this.state[item.datasourcename + 'xseries']} //散点图 X轴坐标数据
-                onEvents={this.getEvents(item, index)}
+                onEvents={this.getEvents(item, item.index)}
                 legend={this.state.selectedLegend} />
             </div>
           </div>
