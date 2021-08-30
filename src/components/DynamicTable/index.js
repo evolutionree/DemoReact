@@ -479,8 +479,21 @@ class DynamicTable extends Component {
 
     const DataSourceDetailModalTitle = field.displayname;
     if (cellData && cellData instanceof Object) {
-      const relIds = cellData.id && cellData.id.split(',') || [];
-      const relNames = (cellData.name && cellData.name.split(',')) || (cellText && cellText.split(','));
+      var relIds = [];
+      var relNames = [];
+      if(cellData.id){
+        if(cellData.id.indexOf(',') > -1){
+          relIds = cellData.id && cellData.id.split(',') || [];
+          relNames = (cellText && cellText.split(',')) || (cellData.name && cellData.name.split(','));
+        }else{
+          relIds.push(cellData.id);
+          if(cellText){
+            relNames.push(cellText);
+          }else if(cellData.name){
+            relNames.push(cellData.name);
+          }
+        }
+      }
       const dataArray = [];
 
       relIds instanceof Array && relIds.forEach((item, index) => {

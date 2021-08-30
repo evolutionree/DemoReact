@@ -140,6 +140,7 @@ export default class InputRecManage extends Component {
     const { placeholder, value, jsEngine } = this.props;
     const { dataSource, selectInfo, visible, loading, modalLoading } = this.state;
     const isChina = jsEngine.getValue('country') - '7' === 0;
+    const isReadOnly = this.props.isReadOnly === 1;
 
     const businessList = (isChina ? __list : keyArrs).map(item => ({
       ...item,
@@ -156,9 +157,10 @@ export default class InputRecManage extends Component {
           onChange={this.handleChange}
           onSearch={this.handleSearch}
           placeholder={placeholder}
+          disabled={isReadOnly}
         />
 
-        {loading ? <Icon type="loading" style={{ marginLeft: 5 }} /> : <img src={gong} alt="gong" onClick={this.showModal} className={styles.icon} />}
+        {loading ? <Icon type="loading" style={{ marginLeft: 5 }} /> : isReadOnly? null :<img src={gong} alt="gong" onClick={this.showModal} className={styles.icon} />}
 
         <Modal
           title="工商信息查询"

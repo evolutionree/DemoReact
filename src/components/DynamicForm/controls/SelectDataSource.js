@@ -110,7 +110,7 @@ class SelectDataSource extends React.Component {
     try {
       const { id, name } = typeof value === 'string' ? JSON.parse(value) : value;
       const arrIdName = [];
-      if (id) {
+      if(id.indexOf(',') > -1){
         const arrId = id.split(',');
         const arrName = name.split(',');
         arrId.forEach((item, index) => {
@@ -118,6 +118,11 @@ class SelectDataSource extends React.Component {
             id: item,
             name: arrName[index]
           });
+        });
+      } else{
+        arrIdName.push({
+          id: id,
+          name: name
         });
       }
       return {
@@ -309,16 +314,22 @@ class SelectDataSourceView extends React.Component {
     const emptyText = <span style={{ color: '#999999' }}>(空)</span>;
 
     if (!value && !value_name) return <div className={styles.dataSourceViewWrap}>{emptyText}</div>;
+    if(!value.id) return <div className={styles.dataSourceViewWrap}>{emptyText}</div>;
 
     if (!dataSourceRelEntityId && !value.url) { // 没有数据源关联实体id entityid，以普通文本显示
       const text = value_name !== undefined ? value_name : value;
       return <div className={styles.dataSourceViewWrap}>{text ? (text + '') : emptyText}</div>;
     }
 
-    const valueArr = value.id.split(',');
-    const valueNameArr = value_name.split(',');
-    const urlArr = value.url ? value.url.split(',') : [];
-    const arr = valueArr.map((v, i) => ({ value_name: valueNameArr[i], value: v, url: urlArr[i] }));
+    var arr = [];
+    if(value.id.indexOf(',') > -1){
+      const valueArr = value.id.split(',');
+      const valueNameArr = value_name.split(',');
+      const urlArr = value.url ? value.url.split(',') : [];
+      arr = valueArr.map((v, i) => ({ value_name: valueNameArr[i], value: v, url: urlArr[i] }));
+    }else{
+      arr.push({value_name: value.name, value: value.id, url: value.url});
+    }
 
     return (
       <div className={styles.dataSourceViewWrap}>
