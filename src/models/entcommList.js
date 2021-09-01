@@ -1,8 +1,11 @@
 import { message } from 'antd';
 import _ from 'lodash';
 import { routerRedux } from 'dva/router';
-import { getGeneralListProtocol, getListData, delEntcomm, transferEntcomm, getFunctionbutton, extraToolbarClickSendData, getEntcommDetail, transferdata, queryWorkflow } from '../services/entcomm';
+import { getGeneralListProtocol, getListData, delEntcomm, transferEntcomm, getFunctionbutton, extraToolbarClickSendData, 
+  getEntcommDetail, transferdata, queryTabs, queryvaluefornewdata } from '../services/entcomm';
 import { queryMenus, queryEntityDetail, queryTypes, queryListFilter, getlistschemebyentity } from '../services/entity';
+import { queryInitail, isObject } from '../services/initail';
+import { getAfterFilterEntityTypes } from '../routes/EntityHome/views/EntityScripts';
 
 export default {
   namespace: 'entcommList',
@@ -31,7 +34,13 @@ export default {
     sortFieldAndOrder: null, //当前排序的字段及排序顺序
     ColumnFilter: null, //字段查询
     selectedFlowObj: null, //审批流
-    schemelist: []
+    schemelist: [],
+    AddRelTable: {
+      initAddFormData: null, //
+      EntityId: null,
+      FlowId: null,
+      EntityName: null
+    }
   },
   subscriptions: {
     setup({ dispatch, history }) {
@@ -49,6 +58,7 @@ export default {
   },
   effects: {
     *init({ payload: entityId }, { select, call, put, take }) {
+      const currentUser = yield select(state => state.app.user);
       const lastEntityId = yield select(state => state.entcommList.entityId);
       if (lastEntityId === entityId) {
         yield put({ type: 'queryList' });
@@ -59,8 +69,10 @@ export default {
       sessionStorage.setItem('seachQuery', '');
       try {
         // 获取实体信息
+        var EntityDetail;
         const { data } = yield call(queryEntityDetail, entityId);
         if (Array.isArray(data.entityproinfo) && data.entityproinfo.length) {
+          EntityDetail = data;
           yield put({
             type: 'putState', payload: {
               entityName: data.entityproinfo[0].entityname
@@ -75,6 +87,11 @@ export default {
         // 获取实体类型
         const { data: { entitytypepros: entityTypes } } = yield call(queryTypes, { entityId });
         yield put({ type: 'entityTypes', payload: entityTypes });
+        if (isObject(EntityDetail)) {
+          const filterTypeJsCode = EntityDetail.entityproinfo[0].rectypeload;
+          const afterFilterEntityTypes = getAfterFilterEntityTypes(entityTypes, null, filterTypeJsCode, currentUser);
+          yield put({ type: 'entityTypes', payload: afterFilterEntityTypes });
+        }
 
         // 获取协议
         const { data: protocol } = yield call(getGeneralListProtocol, { typeId: entityId });
@@ -232,7 +249,7 @@ export default {
          */
         functionbutton = Array.isArray(functionbutton) && functionbutton.filter(item => _.indexOf(item.displayposition, 0) > -1);
         const extraButtonData = functionbutton && Array.isArray(functionbutton) && functionbutton.filter(item => item.buttoncode === 'ShowModals');
-        const buttoncode = ['DataTransfer', 'CallService', 'CallService_showModal', 'PrintEntity', 'EntityDataOpenH5'];
+        const buttoncode = ['DataTransfer', 'CallService', 'CallService_showModal', 'PrintEntity', 'EntityDataOpenH5', 'AddRelEntityData', 'EntityDataCopy'];
         const addEntityButtonData = functionbutton && Array.isArray(functionbutton) && functionbutton.filter(item =>item.buttoncode=='AddEntityData');
         const extraToolbarData = functionbutton && Array.isArray(functionbutton) && functionbutton.filter(item => buttoncode.indexOf(item.buttoncode) > -1);
         yield put({ type: 'putState', payload: { extraButtonData, extraToolbarData ,addEntityButtonData} });
@@ -345,7 +362,76 @@ export default {
       } catch (e) {
         message.error(e.message);
       }
+    },
+    //显示页签新增的数据
+    *showRelTabAddModals({ payload }, { select, call, put }) {
+      const { entityId } = yield select(state => state.entcommList);
+      const { relid, recids, relentityid, relfieldid, relfieldname, originDetail } = payload;
+      //请求获取所有的页签
+      const { data: { reltablist: reltabList } } = yield call(queryTabs, { entityId });
+
+      let relTabInfo = {};
+      if (relid) {
+        //判断是否存在页签
+        const tmpreltabinfo = reltabList.filter((item) => { return item.relid === relid; });
+        if (tmpreltabinfo == null || tmpreltabinfo.length == 0) {
+          message.error('页签定义错误');
+          return;
+        }
+        relTabInfo = tmpreltabinfo[0];
+      } else {
+        if (!(relentityid && relfieldid && relfieldname)) {
+          message.error('按钮定义错误');
+          return;
+        }
+        relTabInfo = {
+          relentityid: relentityid,
+          fieldid: relfieldid,
+          fieldname: relfieldname
+        };
+      }
+      if (!(relTabInfo && relTabInfo.relentityid)) {
+        message.error('按钮定义错误2');
+        return;
+      }
+      //获取实体类型
+      const { data: { entitytypepros: entityTypes } } = yield call(queryTypes, { entityId: relTabInfo.relentityid });
+      //获取可以使用的数据
+      const { data: newdata } = yield call(queryvaluefornewdata, {
+        EntityId: relTabInfo.relentityid,
+        FieldId: relTabInfo.fieldid,
+        RecId: recids
+      });
+      if (newdata === undefined || newdata === null || newdata.id === undefined || newdata.id === null || newdata.id === '') {
+        message.error('数据异常，或者无权处理操作');
+        return;
+      }
+      //设置窗口 弹出属性
+      const AddRelTable = {
+        initAddFormData: { [relTabInfo.fieldname]: newdata },
+        EntityId: relTabInfo.relentityid,
+        FlowId: null,
+        EntityName: relTabInfo.entityname
+      };
+      // 过滤实体类型
+      const relRes = yield call(queryEntityDetail, relTabInfo.relentityid);
+      const res = yield call(getEntcommDetail, { entityId, recId: originDetail.recid, needPower: 1 });
+      const resOriginDetail = res.data.detail;
+      const filterTypeJsCode = relRes.data.entityproinfo[0].rectypeload;
+      const originData = {
+        entityid: entityId,
+        recid: originDetail.recid,
+        rectype: resOriginDetail.rectype,
+        originDetail: resOriginDetail
+      };
+      const relEntityProInfo = getAfterFilterEntityTypes(entityTypes, originData, filterTypeJsCode);
+      yield put({ type: 'putState', payload: { showModals: 'AddRelEntityData', AddRelTable, relEntityProInfo } });
+    },
+    *onDoneCopy({ payload }, { put }) {
+      yield put({ type: 'queryList' });
+      yield put({ type: 'putState', payload: { showModals: '', copyData: {} } });
     }
+
   },
   reducers: {
     entityTypes(state, { payload: entityTypes }) {

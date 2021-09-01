@@ -37,6 +37,12 @@ export default {
       name: 'EntityCopyNew',
       remark: ''
     },
+    EntityFilterType: {
+      type: 5,
+      title: '类型过滤',
+      name: 'EntityFilterType',
+      remark: ''
+    },
     fetchDataLoading: {
       HistoryModal: false,
       FilterModal: false
@@ -89,7 +95,8 @@ export default {
             EntityAddNew: entityproinfo[0].newload,
             EntityEdit: entityproinfo[0].editload,
             EntityView: entityproinfo[0].checkload,
-            EntityCopyNew: entityproinfo[0].copyload
+            EntityCopyNew: entityproinfo[0].copyload,
+            EntityFilterType: entityproinfo[0].rectypeload
           }
         });
       } catch (e) {
@@ -97,7 +104,7 @@ export default {
       }
     },
     *saveScript({ payload: scriptName }, { call, select, put }) {
-      const { showingScript, entityId, EntityAddNew, EntityView, EntityEdit, EntityCopyNew } = yield select(state => state[NAMESPACE]);
+      const { showingScript, entityId, EntityAddNew, EntityView, EntityEdit, EntityCopyNew, EntityFilterType } = yield select(state => state[NAMESPACE]);
       // const keyname = scriptName || showingScript;
 
       // const allInfo = { EntityAddNew, EntityView, EntityEdit, EntityCopyNew };
@@ -112,7 +119,8 @@ export default {
             { type: 1, load: EntityAddNew.editingContent || '', remark: EntityAddNew.remark },
             { type: 2, load: EntityView.editingContent || '', remark: EntityView.remark },
             { type: 3, load: EntityEdit.editingContent || '', remark: EntityEdit.remark },
-            { type: 4, load: EntityCopyNew.editingContent || '', remark: EntityCopyNew.remark }
+            { type: 4, load: EntityCopyNew.editingContent || '', remark: EntityCopyNew.remark },
+            { type: 5, load: EntityFilterType.editingContent || '', remark: EntityFilterType.remark }
           ]
         };
         yield call(saveEntityScripts, params);
@@ -247,6 +255,10 @@ export default {
         EntityCopyNew: {
           title: '复制新增装载',
           name: 'EntityCopyNew'
+        },
+        EntityFilterType: {
+          title: '类型过滤',
+          name: 'EntityFilterType'
         },
         showingScript: 'EntityAddNew'
       };

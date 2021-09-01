@@ -79,7 +79,6 @@ class DetailModal extends Component {
   render() {
     const { title, visible, onCancel, entityId } = this.props;
     const { loading, protocol, detailData } = this.state;
-    console.log('ddddd')
     return (
       <Modal
         wrapClassName={styles.modal}

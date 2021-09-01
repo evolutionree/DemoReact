@@ -86,6 +86,22 @@ class CodeEditor extends Component {
   handleAutoComplete = () => {
     this.codeMirror.showHint({ hint: this.getHint });
   };
+  
+  getHintValue = (APIs, match) => {
+    const cm = this.codeMirror;
+    const cursor = cm.getCursor();
+    const start = cursor.ch;
+    const word = match[1].toLowerCase();
+    const matchAPIs = word
+      ? APIs.filter(i => new RegExp('^' + word).test(i.toLowerCase()))
+      : APIs;
+
+    return {
+      list: matchAPIs,
+      from: CodeMirror.Pos(cursor.line, start - word.length),
+      to: CodeMirror.Pos(cursor.line, start)
+    };
+  }
 
   getHint = () => {
     const cm = this.codeMirror;
@@ -99,10 +115,19 @@ class CodeEditor extends Component {
       'designateFilterDataSource', 'designateFilterDataSourceByName', 'designateFilterNodes',
       'designateNode',
       'designateRowFieldDataSource', 'designateRowFieldFilterDataSource', 'designateRowFieldFilterNodes',
-      'getCurrentFormID', 'getMainFormID', 'getRowValue', 'getTableHeader', 'getTableRowCount', 'getValue',
+      'getCurrentFormID', 'getMainFormID', 'getRowValue', 'getTableHeader', 'getTableRowCount', 'getValue', 'getEnvInfo', 'getParentForm',
+      'linkAlert',
       'request',
       'setReadOnly', 'setRequired', 'setRowFieldReadOnly', 'setRowFieldRequired', 'setRowFieldVisible',
       'setRowValue', 'setValue', 'setValueByName', 'setVisible'
+    ];
+
+    const APIsForFilter = [
+      'originData', 'targetTypeIds', 'request()'
+    ];
+
+    const APIsForOriginData = [
+      'recid', 'entityid', 'rectype', 'originDetail'
     ];
 
     // if (start && line.charAt(start - 1) === '.') {
@@ -116,20 +141,18 @@ class CodeEditor extends Component {
         pos -= 1;
         ch = line.charAt(pos);
       }
+      const { showingScript } = this.props;
 
-      const match = matchCase.match(/^app\.(\w*)$/);
-
-      if (match) {
-        const word = match[1].toLowerCase();
-        const matchAPIs = word
-          ? APIs.filter(i => new RegExp('^' + word).test(i.toLowerCase()))
-          : APIs;
-
-        return {
-          list: matchAPIs,
-          from: CodeMirror.Pos(cursor.line, start - word.length),
-          to: CodeMirror.Pos(cursor.line, start)
-        };
+      const matchApp = matchCase.match(/^app\.(\w*)$/);
+      const matchOriginData = matchCase.match(/^originData\.(\w*)$/);
+      const matchAppOriginData = matchCase.match(/^app\.originData\.(\w*)$/);
+      if (matchApp) {
+        const mapAPIs = showingScript !== 'EntityFilterType' ? APIs : APIsForFilter;
+        return this.getHintValue(mapAPIs, matchApp);
+      } else if (matchOriginData && showingScript === 'EntityFilterType') {
+        return this.getHintValue(APIsForOriginData, matchOriginData);
+      } else if (matchAppOriginData && showingScript === 'EntityFilterType') {
+        return this.getHintValue(APIsForOriginData, matchAppOriginData);
       }
     }
 

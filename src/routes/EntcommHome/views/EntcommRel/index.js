@@ -14,7 +14,10 @@ import MerageModal from './MerageModal';
 import AllocateModal from './AllocateModal';
 import DynamicModal from './DynamicModal';
 import ExportModal from './ExportModal';
+import EntcommCopyModal from '../../../../components/EntcommCopyModal';
 import connectPermission from '../../../../models/connectPermission';
+import { getIntlText } from '../../../../components/UKComponent/Form/IntlText';
+import EntcommAddModal from '../../../../components/EntcommAddModal';
 import DeptTree from '../DeptTree';
 
 const deptEntityId = 'd51aca76-a168-48c7-aa14-eb69ca407050';
@@ -38,7 +41,14 @@ function EntcommRel({
   extraButtonData,
   sortFieldAndOrder,
   currentUser,
-  relCountData
+  relCountData,
+  showModals,
+  onAddModalCanel,
+  AddRelTable,
+  relEntityProInfo,
+  processProtocol,
+  showCopyModal,
+  copyData
 }) {
   function onMenuChange(payload) {
     dispatch({ type: 'entcommRel/selectMenu', payload });
@@ -156,6 +166,24 @@ function EntcommRel({
           recordId: currItems && currItems[0] && currItems[0].recid
         }
       });
+    } else if (item.buttoncode === 'AddRelEntityData') {
+      const recids = currItems.map(tmpitem => tmpitem.recid).join(',');
+      dispatch({
+        type: 'entcommRel/showRelTabAddModals',
+        payload: {
+          relid: item.extradata.relid,
+          recids: recids,
+          relentityid: item.extradata.relentityid,
+          relfieldid: item.extradata.relfieldid,
+          relfieldname: item.extradata.relfieldname,
+          originDetail: currItems[0]
+        }
+      });
+    } else if (item.buttoncode === 'EntityDataCopy') {
+      dispatch({
+        type: 'entcommRel/showRelCopyModals',
+        payload: { entityId: relEntityId, recId: currItems[0].recid, needPower: 0 }
+      });
     }
   }
 
@@ -163,6 +191,18 @@ function EntcommRel({
     call(mobilephone);
   };
 
+  function onCancleCopy() {
+    dispatch({ 
+      type: 'entcommRel/putState', 
+      payload: { showCopyModal: false, copyData: {} } 
+    });
+  }
+
+  function onDoneCopy() {
+    dispatch({ 
+      type: 'entcommRel/onDoneCopy' 
+    });
+  }
 
   function shouldShowImport() {
     return checkFunc('EntityDataImport');
@@ -240,7 +280,7 @@ function EntcommRel({
         {shouldShowExport() && <Button onClick={exportData}>导出</Button>}
         {
           extraButtonData && extraButtonData instanceof Array && extraButtonData.map((item, index) => {
-            return <Button onClick={extraButtonClickHandler.bind(this, item)} key={index}>{item.title}</Button>;
+            return <Button onClick={extraButtonClickHandler.bind(this, item)} key={index}>{getIntlText('title', item)}</Button>;
           })
         }
         {
@@ -291,6 +331,26 @@ function EntcommRel({
       <DynamicModal />
       <DetailModal />
       <RelEntityAddModal />
+      <EntcommAddModal
+        visible={/AddRelEntityData/.test(showModals)}
+        entityId={AddRelTable && AddRelTable.EntityId}
+        entityName={AddRelTable && AddRelTable.EntityName}
+        initFormData={AddRelTable && AddRelTable.initAddFormData}
+        flow={AddRelTable && AddRelTable.FlowId ? { flowid: AddRelTable && AddRelTable.FlowId && AddRelTable.FlowId !== '' } : undefined}
+        processProtocol={processProtocol}
+        cancel={onAddModalCanel}
+        done={onAddModalCanel}
+        entityTypes={relEntityProInfo}
+      />
+      <EntcommCopyModal
+        visible={showCopyModal}
+        entityId={relEntityId}
+        entityTypes={relEntityProInfo}
+        copyData={copyData}
+        currentUser={currentUser}
+        onCancel={onCancleCopy}
+        onDone={onDoneCopy}
+      />
     </div>
   );
 }
@@ -299,7 +359,7 @@ export default connect(
   state => {
     const { relTabs } = state.entcommHome;
     const { relId, relEntityId } = state.entcommRel;
-    const currentUser = state.app.user.userid;
+    const currentUser = state.app.user;
     let tabInfo = {};
     if (relTabs.length && relId && relEntityId) {
       tabInfo = _.find(relTabs, item => {
@@ -323,6 +383,9 @@ export default connect(
       },
       call(mobilephone) {
         dispatch({ type: 'entcommRel/call', payload: mobilephone });
+      },
+      onAddModalCanel() {
+        dispatch({ type: 'entcommRel/showModals', payload: '' });
       }
     };
   }

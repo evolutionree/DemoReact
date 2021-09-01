@@ -19,7 +19,6 @@ import DataTransferModal from './DataTransferModal';
 import { getIntlText } from '../../components/UKComponent/Form/IntlText';
 import EntcommRepeatViewModal from '../../components/EntcommRepeatViewModal';
 
-
 const Option = Select.Option;
 
 function EntcommList({
@@ -46,7 +45,11 @@ function EntcommList({
   // selectedFlowObj,
   showModals,
   onAddModalCanel,
-  onAddModalDone
+  onAddModalDone,
+  AddRelTable,
+  relEntityProInfo,
+  processProtocol,
+  copyData
 }) {
   function selectItems(items) {
     dispatch({ type: 'entcommList/currItems', payload: items });
@@ -146,6 +149,21 @@ function EntcommList({
       });
     } else if (item.buttoncode === 'DataTransfer') {
       dispatch({ type: 'entcommList/showModals', payload: 'datatransfer' });
+    } else if (item.buttoncode === 'AddRelEntityData') {
+      const recids = currItems.map(tmpitem => tmpitem.recid).join(',');
+      dispatch({
+        type: 'entcommList/showRelTabAddModals',
+        payload: {
+          relid: item.extradata.relid,
+          recids: recids,
+          relentityid: item.extradata.relentityid,
+          relfieldid: item.extradata.relfieldid,
+          relfieldname: item.extradata.relfieldname,
+          originDetail: currItems[0]
+        }
+      });
+    } else if (item.buttoncode === 'EntityDataCopy') {
+      dispatch({ type: 'entcommList/copy' });
     }
   }
 
@@ -194,6 +212,19 @@ function EntcommList({
       payload: { ColumnFilter: filterData }
     });
     dispatch({ type: 'entcommList/search', payload: { ColumnFilter: filterData } });
+  }
+
+  function onCancleCopy() {
+    dispatch({ 
+      type: 'entcommList/putState', 
+      payload: { showModals: '', copyData: {} } 
+    });
+  }
+
+  function onDoneCopy() {
+    dispatch({ 
+      type: 'entcommList/onDoneCopy' 
+    });
   }
 
   let dynamicTableRef;
@@ -302,7 +333,26 @@ function EntcommList({
         done={onAddModalDone}
         pageType="entcommList"
       />
-      <EntcommCopyModal />
+      <EntcommAddModal
+        visible={/AddRelEntityData/.test(showModals)}
+        entityId={AddRelTable && AddRelTable.EntityId}
+        entityName={AddRelTable && AddRelTable.EntityName}
+        initFormData={AddRelTable && AddRelTable.initAddFormData}
+        flow={AddRelTable && AddRelTable.FlowId ? { flowid: AddRelTable && AddRelTable.FlowId && AddRelTable.FlowId !== '' } : undefined}
+        processProtocol={processProtocol}
+        cancel={onAddModalCanel}
+        done={onAddModalDone}
+        entityTypes={relEntityProInfo}
+      />
+      <EntcommCopyModal
+        visible={/copy/.test(showModals)}
+        entityId={entityId}
+        entityTypes={relEntityProInfo}
+        copyData={copyData}
+        currentUser={currentUser}
+        onCancel={onCancleCopy}
+        onDone={onDoneCopy}
+      />
       <TransferModal />
       <MerageModal />
       <DynamicLoadFilterModal

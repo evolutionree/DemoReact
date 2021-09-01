@@ -6,6 +6,7 @@ import CodeEditor from '../../../../components/CodeEditor';
 import DynamicLoadModal from '../../../../components/Modal/DynamicLoadModal';
 import HistoryModal from '../../../../components/Modal/HistoryModal';
 import styles from './EntityScripts.less';
+import { syncRequest } from '../../../../components/DynamicForm/createJSEngineProxy';
 
 /**
  * 能够运行字符串类型的JS代码并且可以接收返回值
@@ -45,7 +46,7 @@ export function runStringJsCodeWithReturn(appData, jsCode) {
  * @param {*} filterTypeJsCode string
  * @returns array [categoryid: string] 
  */
-export function getAfterFilterEntityTypes(defaultEntityTypes, originData, filterTypeJsCode) {
+export function getAfterFilterEntityTypes(defaultEntityTypes, originData, filterTypeJsCode, currentUser) {
   const entityTypes = defaultEntityTypes;
   let afterFilterEntityTypes = entityTypes;
   // 是否执行JS过滤实体类型
@@ -54,7 +55,7 @@ export function getAfterFilterEntityTypes(defaultEntityTypes, originData, filter
     if (entityTypes && entityTypes.length && entityTypes.length > 1) {
       const typeIds = entityTypes.map(t => t.categoryid);
       // 构建注入执行js代码环境的app数据
-      const appData = { originData, targetTypeIds: typeIds, request: syncRequest }; 
+      const appData = { originData, targetTypeIds: typeIds, request: syncRequest, currentUser }; 
       const returnTypes = runStringJsCodeWithReturn(appData, filterTypeJsCode);
       // 返回数组有值并且长度与原来不相等的情况下才会执行过滤
       if (returnTypes && returnTypes.length && returnTypes.length !== entityTypes.length) {
@@ -76,6 +77,7 @@ function EntityScripts({
   EntityEdit,
   EntityView,
   EntityCopyNew,
+  EntityFilterType,
   showingScript,
   toggleShowing,
   onChange,
@@ -89,7 +91,7 @@ function EntityScripts({
   historyList,
   fetchDataLoading
 }) {
-  const allScripts = [EntityAddNew, EntityEdit, EntityView, EntityCopyNew];
+  const allScripts = [EntityAddNew, EntityEdit, EntityView, EntityCopyNew, EntityFilterType];
   const scriptItem = _.find(allScripts, ['name', showingScript]);
   const { title, name, content, editingContent, remark, editing } = scriptItem;
 
