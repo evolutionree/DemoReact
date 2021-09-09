@@ -1,22 +1,24 @@
 import React from 'react';
 import { connect } from 'dva';
 import moment from 'moment';
-import { Table, Select, DatePicker } from 'antd';
+import { Table, Select, DatePicker, Button } from 'antd';
 import { routerRedux } from 'dva/router';
 import Page from '../../components/Page';
 import Toolbar from '../../components/Toolbar';
 import Search from '../../components/Search';
 import DepartmentSelect from '../../components/DepartmentSelect';
 import { queryRecordList } from '../../services/operateLog';
+import { downloadFile } from '../../utils/ukUtil';
 
 const Option = Select.Option;
 const Column = Table.Column;
 const RangePicker = DatePicker.RangePicker;
 
-class AttendanceList extends React.Component {
+class OperateLog extends React.Component {
   static propTypes = {
     dispatch: React.PropTypes.func,
-    location: React.PropTypes.object
+    location: React.PropTypes.object,
+    currentUser: React.PropTypes.number
   };
   static defaultProps = {};
 
@@ -87,6 +89,16 @@ class AttendanceList extends React.Component {
       });
   };
 
+  exportData = () => {
+    const { queries } = this.state;
+    const params = JSON.stringify(_.mapValues({
+      ...queries,
+      pageIndex: 1,
+      pageSize: 65535
+    }, val => val + ''));
+    downloadFile(`/api/excel/exportdata?TemplateType=0&FuncName=operatelog_export&QueryParameters=${params}&UserId=${this.props.currentUser}`);
+  }
+
   render() {
     const { list, queries, total } = this.state;
     return (
@@ -112,6 +124,7 @@ class AttendanceList extends React.Component {
               this.search('searchEnd', date ? moment(date).format('YYYY-MM-DD') : '');
             }}
           />
+          <Button onClick={this.exportData.bind(this)}>导出</Button>
           <Toolbar.Right>
             <Search
               placeholder="输入用户名称搜索"
@@ -146,4 +159,10 @@ class AttendanceList extends React.Component {
   }
 }
 
-export default connect()(AttendanceList);
+export default connect(
+  state => {
+    return {
+      currentUser: state.app.user.userid
+    };
+}
+)(OperateLog);
