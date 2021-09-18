@@ -140,7 +140,7 @@ class LoginPageContainer extends Component {
       } else {
         this.go();
       }
-
+      this.drawPic();
      //this.go();
     }, err => {
       this.setState({
