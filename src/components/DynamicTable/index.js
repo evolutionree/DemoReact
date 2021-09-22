@@ -431,7 +431,11 @@ class DynamicTable extends Component {
     const textView = text;
     let linkUrl = `/entcomm/${field.typeid}/${record.recid}`;
     if (this.props.linkUrl) {
-      linkUrl = this.props.linkUrl(textView, field, record);
+      if(this.props.allWeek){
+        return <Link onClick={()=>this.props.linkUrl(record.recid, field, textView)} title={textView}>{textView || '(查看详情)'}</Link>;
+      }else{
+        linkUrl = this.props.linkUrl(textView, field, record);
+      }
     }
 
     return <Link to={linkUrl} title={textView}>{textView || '(查看详情)'}</Link>;

@@ -109,6 +109,9 @@ class RelTableView extends Component {
       } else if (field.fieldconfig.isVisibleJS === 0) {
         return false;
       }
+      if(!fieldname){
+        return false;
+      }
 
       // 支持查看setRowFieldVisible方法的兼容
       const hiddenArr = hiddenRowField[fieldname];
