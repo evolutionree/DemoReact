@@ -327,13 +327,22 @@ class DynamicTable extends Component {
         needPower: 0
       })
     ]).then(([res1, res2]) => {
+      console.log('abc111');
       const protocol = this.processFields(res1.data);
       const recordDetail = res2.data.detail;
-      const tableData = (recordDetail && recordDetail[field.fieldname]) || [];
-      this.setState({
-        innerTableProtocol: protocol.filter(item => (item.fieldconfig.isVisible === 1 || item.fieldconfig.IsVisible)),
-        innerTableRecords: tableData
-      });
+      if ((Array.isArray(recordDetail) && recordDetail.length > 0)){
+        const tableData = recordDetail[0][field.fieldname] || [];
+        this.setState({
+          innerTableProtocol: protocol.filter(item => (item.fieldconfig.isVisible === 1 || item.fieldconfig.IsVisible)),
+          innerTableRecords: tableData
+        });
+      }else{
+        const tableData = (recordDetail && recordDetail[field.fieldname]) || [];
+        this.setState({
+          innerTableProtocol: protocol.filter(item => (item.fieldconfig.isVisible === 1 || item.fieldconfig.IsVisible)),
+          innerTableRecords: tableData
+        });
+      }
     });
   };
 
