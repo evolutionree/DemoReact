@@ -490,7 +490,7 @@ class ReportForm extends React.Component {
 
     cloneDatasources.map((item, index) => {
       for (const key in params) {
-        if (item.parameArray.indexOf(key) > -1 && _.indexOf(this.state.dataGridDatasouces, item.instid) > -1) { //不请求 表格对应的数据源 交给组件DataGrid去处理
+        if (item.parameArray.indexOf(key) > -1 && _.indexOf(this.state.dataGridDatasouces, item.instid) === -1) { //不请求 表格对应的数据源 交给组件DataGrid去处理
           this.setState({
             [item.instid + 'loading']: true
           });

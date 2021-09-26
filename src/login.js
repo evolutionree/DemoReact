@@ -140,9 +140,9 @@ class LoginPageContainer extends Component {
       } else {
         this.go();
       }
-      this.drawPic();
      //this.go();
     }, err => {
+      this.drawPic();
       this.setState({
         loginPending: false,
         loginError: err.message || '登录失败'

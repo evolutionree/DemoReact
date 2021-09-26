@@ -11,6 +11,7 @@ import Toolbar from '../../../components/Toolbar';
 import Search from '../../../components/Search';
 import SelectDepartment from '../../../components/DynamicForm/controls/SelectDepartment';
 import ExportModal from './component/ExportModal';
+import { hashHistory } from 'react-router';
 
 const { RangePicker } = DatePicker;
 
@@ -19,7 +20,7 @@ function AllWeekly({
   tableProtocol, allWeeklyList, tableTotal,
   tableCurrentPage, tablePageSize, changePage,
   changePageSize, changeParams, allWeeklySearchData,
-  exportData, currentUser
+  exportData, currentUser,queryAllWeeklyDetail
 }) {
   const onChange = (date, dateString) => {
     changeParams('date', allWeeklySearchData, dateString);
@@ -63,9 +64,9 @@ function AllWeekly({
         entityId="0b81d536-3817-4cbc-b882-bc3e935db845"
         protocol={tableProtocol}
         rowKey="recid"
-        linkUrl={(text, field, record) => {
-          return `/allweekly/detail/${record.recid}?weeklabel=${encodeURI(text)}`;
-        }}
+        allWeek="true"
+        linkUrl={queryAllWeeklyDetail}              
+        
         dataSource={allWeeklyList}
         total={tableTotal}
         pagination={{
@@ -127,7 +128,11 @@ export default connect(
       },
       exportData() {
         dispatch({ type: 'weekly/showModals', payload: 'export' });
-      }
+      },
+      queryAllWeeklyDetail(recid,felds, weekLabel) {
+        hashHistory.push(`/weekly/receiveweekly/${recid}?weeklabel=${encodeURI(weekLabel)}`);
+        dispatch({ type: 'weekly/putState', payload: { route: `/weekly/receiveweekly/${recid}?weeklabel=${encodeURI(weekLabel)}` } });
+      },
     };
   }
 )(AllWeekly);
