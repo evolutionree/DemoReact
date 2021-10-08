@@ -2,7 +2,7 @@
  * Created by 0291 on 2018/7/18.
  */
 import React, { Component, PropTypes } from 'react';
-import { Table } from 'antd';
+import { Table, Pagination, Select } from 'antd';
 import { connect } from 'dva';
 import moment from 'moment';
 import { getGeneralProtocolForGrid } from '../../../services/entcomm';
@@ -16,6 +16,15 @@ const normalStyle = {
   textOverflow: 'ellipsis',
   display: 'inline-block'
 };
+
+const basePageSizeOptions = [
+  { label: '5 条/页', value: '5' },
+  { label: '10 条/页', value: '10' },
+  { label: '20 条/页', value: '20' },
+  { label: '50 条/页', value: '50' },
+  { label: '100 条/页', value: '100' }
+];
+
 
 class RelTableView extends Component {
   static propTypes = {
@@ -34,7 +43,9 @@ class RelTableView extends Component {
     super(props);
     this.state = {
       fields: [],
-      width: document.body.clientWidth
+      width: document.body.clientWidth,
+      showPage: 1,
+      showCount: 10
     };
   }
 
@@ -109,6 +120,9 @@ class RelTableView extends Component {
       } else if (field.fieldconfig.isVisibleJS === 0) {
         return false;
       }
+      if(!fieldname){
+        return false;
+      }
 
       // 支持查看setRowFieldVisible方法的兼容
       const hiddenArr = hiddenRowField[fieldname];
@@ -134,7 +148,8 @@ class RelTableView extends Component {
   onCancelProductStockModal = () => this.setState({ ProductStockVisible: false });
 
   render() {
-    const { ProductStockVisible, productids } = this.state;
+    const { ProductStockVisible, productids,showPage, showCount  } = this.state;
+    const values = this.parseValue();
     const cellWidth = 125;
     const showFields = this.getShowFields();
     const tableWidth = showFields.reduce((sum, currentItem) => sum + cellWidth, 0);
@@ -174,16 +189,53 @@ class RelTableView extends Component {
         return item;
       });
     }
+    
+    const total = values.length;
+    const showPager = total > 10;
+    let pageSizeOptions = [];
+    if (showPager) {
+      pageSizeOptions = basePageSizeOptions.filter(p => p.value <= total);
+      const poLast = pageSizeOptions.pop();
+      if (total - poLast.value === 0) {
+        pageSizeOptions.push({ label: '显示全部', value: String(5000) });
+      } else if (total > poLast.value) {
+        pageSizeOptions.push(poLast);
+        pageSizeOptions.push({ label: '显示全部', value: String(5000) });
+      }
+    }
+    const showValues = values.slice((showPage - 1) * showCount, showPage * showCount);
+
 
     return (
       <div>
         <Table
           rowKey="key"
           columns={columns}
-          dataSource={this.parseValue()}
+          dataSource={showValues}
           pagination={false}
           {...otherObj}
         />
+        {
+          showPager ? (
+            <div className={styles.wrapPage} style={{ position: 'relative'}}>
+              <Pagination 
+                current={showPage}
+                pageSize={showCount}
+                total={total}
+                showQuickJumper={false}
+                showSizeChanger={false}
+                onChange={page => this.setState({ showPage: page })}
+              />
+              <Select
+                value={String(showCount)}
+                className={styles.allSel}
+                onChange={sc => this.setState({ showPage: 1, showCount: Number(sc) })}
+              >
+                {pageSizeOptions.map(p => <Option key={p.value} value={p.value}>{p.label}</Option>)}
+              </Select>
+            </div>
+          ) : null
+        }
         {
           ProductStockVisible ? (
             <ProductStockModal

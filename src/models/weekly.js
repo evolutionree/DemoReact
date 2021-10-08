@@ -39,7 +39,7 @@ export default {
     queries: {
       entityId: '0b81d536-3817-4cbc-b882-bc3e935db845',
       keyword: '',
-      isAdvanceQuery: 0
+      isAdvanceQuery: 1
     }
   },
   subscriptions: {

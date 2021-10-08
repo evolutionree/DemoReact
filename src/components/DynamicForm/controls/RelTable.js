@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { Button, Checkbox, message } from 'antd';
+import { Button, Checkbox, message , Pagination, Select} from 'antd';
 import classnames from 'classnames';
 import { is } from 'immutable';
 import * as _ from 'lodash';
@@ -12,11 +12,19 @@ import RelTableImportModal from '../RelTableImportModal';
 import { getIntlText } from '../../UKComponent/Form/IntlText';
 import RelTableBatchModal from '../RelTableBatchModal';
 import { getBackEndField_TO_FrontEnd } from '../../AppHeader/TemporaryStorage/formStorageUtils';
+import { randomStr } from '../../../utils';
 import { queryEntityDetail } from '../../../services/entity';
 import RelTablePickerModal from './RelTablePickerModal';
 import ProductStockModal from '../../../routes/ProductManager/ProductStockModal';
 
 const TableMaxHeight = 500;
+const basePageSizeOptions = [
+  { label: '5 条/页', value: '5' },
+  { label: '10 条/页', value: '10' },
+  { label: '20 条/页', value: '20' },
+  { label: '50 条/页', value: '50' },
+  { label: '100 条/页', value: '100' }
+];
 
 class RelTable extends Component {
   static propTypes = {
@@ -53,7 +61,9 @@ class RelTable extends Component {
       globalJS: {},
       tableRowConfigs: [], // 表格行有业务逻辑的相关配置可以存在这里
       ProductStockVisible: false,
-      productids: []
+      productids: [],
+      showPage: 1,
+      showCount: 10
     };
   }
 
@@ -214,7 +224,9 @@ class RelTable extends Component {
     if (val === '' || val === undefined || val === null) {
       this.props.onChange([], true);
       this.setState({
-        tableRowFields: []
+        tableRowFields: [],
+        showPage: 1,
+        showCount: 10
       });
       return;
     }
@@ -223,6 +235,8 @@ class RelTable extends Component {
       const newValue = entityId ? val.map(item => ({ TypeId: entityId, FieldData: item })) : val;
       this.props.onChange(newValue, true);
       this.setState({
+        showPage: 1,
+        showCount: 10,
         tableRowFields: val.map(() => _.cloneDeep(this.state.tableFields))
       });
     }
@@ -274,10 +288,35 @@ class RelTable extends Component {
   }
 
   validate = (callback) => {
+    const { showCount } = this.state;
+    if (!value || value.length <= showCount) {
+      this.baseValidate(callback);
+    } else { // 由于做了分页处理，所以验证的时候要跳到特定的页
+      const requireKeys = this.processFields(this.state.tableFields).map(v => v.fieldname);
+      let emptyIndex;
+      for (let i = 0; i < value.length; i++) {
+        const current = value[i].FieldData;
+        const hasEmpty = requireKeys.some(r => !current[r] && String(current[r]) !== '0');
+        if (hasEmpty) {
+          emptyIndex = i + 1;
+          break;
+        }
+      }
+      if (emptyIndex) {
+        const showPage = Math.ceil(emptyIndex / showCount);
+        // 跳转到特定页面再验证
+        this.onPagerChange(showPage, showCount, () => {
+          this.baseValidate(callback);
+        });
+      } else callback();
+    }
+  };
+
+  baseValidate = (callback) => {
     //TODO: why do we need to repeat call function which named validateTableForm, 表格是有多个表格叠加出来的，所有多个表格需要做校验
     this.validateTableForm(this.arrFormInstance, callback);
     this.validateTableForm(this.arrFixedFormInstance, callback);
-  };
+  }
 
   validateTableForm = (formInstance, callback) => {
     const restForms = [...formInstance];
@@ -308,6 +347,9 @@ class RelTable extends Component {
       TypeId: entityId,
       FieldData: { ...generateDefaultFormData(this.state.tableFields) }
     };
+    const commitRows = [...this.parseValue(), newRow];
+    const { showCount } = this.state;
+    const showPage = Math.ceil(commitRows.length / showCount) || 1;
     onChange([...this.parseValue(), newRow]);
 
     const tableRowFields = [
@@ -324,21 +366,19 @@ class RelTable extends Component {
       tableRowConfig
     ];
 
-    this.setState({ tableRowFields, tableRowConfigs });
+    this.setState({ tableRowFields, tableRowConfigs, showPage });
   };
 
   batchAdd = (data) => {
     const addFieldName = this.props.batchAddField;
     const { entityId, onChange } = this.props;
+    const { showCount } = this.state;
     const newAddData = data.map((item, index) => {
       return {
         TypeId: entityId,
         FieldData: generateDefaultFormData(this.state.tableFields, { [addFieldName]: item.value, [`${addFieldName}_name`]: item.value_name }),
         type: 'add' //TODO：渲染组件的时候 判断是否是通过批量新增，则需要走 配置JS
       };
-    });
-    this.setState({
-      showModals: false
     });
     onChange([...this.parseValue(), ...newAddData]);
 
@@ -356,30 +396,35 @@ class RelTable extends Component {
       ...newAddData.map(item => ({ isNotCopyJs: true }))
     ];
 
-    this.setState({ tableRowFields, tableRowConfigs });
+    this.setState({ tableRowFields, tableRowConfigs, showModals: false, showPage: Math.ceil(this.parseValue().length / showCount) || 1 });
   }
 
   addImportData = (data, operateType) => { //operateType== 1  追加导入 覆盖导入
+    const isCoverForImport = operateType === 2;
     const { onChange } = this.props;
-    this.setState({
-      importVisible: false
-    });
-    operateType === 1 ? onChange([...this.parseValue(), ...data]) : onChange(data);
-
+    const { showPage } = this.state;
+    const values = this.parseValue();
     const importTableRowFields = data instanceof Array && data.map(item => {
       return _.cloneDeep(this.state.tableFields);
     });
-    if (operateType === 1) {
-      this.setState({
-        tableRowFields: [
-          ...this.state.tableRowFields,
-          ...importTableRowFields
-        ]
-      });
+    const setData = { importVisible: false };
+    if (isCoverForImport) {
+      onChange(data);
+      if (showPage === 1) {
+        // 重置渲染key值，强制渲染
+        this.renderRelTableKey = randomStr(10);
+      } else {
+        // 恢复默认分页
+        setData.showPage = 1;
+        setData.showCount = 10;
+      }
+      setData.tableRowFields = importTableRowFields;
     } else {
-      this.setState({
-        tableRowFields: importTableRowFields
-      });
+      onChange([...values, ...data]);
+      setData.tableRowFields = [
+        ...this.state.tableRowFields,
+        ...importTableRowFields
+      ];
     }
   }
 
@@ -397,22 +442,39 @@ class RelTable extends Component {
 
   delRow = () => {
     const { onChange } = this.props;
-    const newValue = this.parseValue().filter((item, index) => !_.includes(this.state.selectedRows, index));
+    const { showCount, selectedRows } = this.state;
+    const deleteRows = selectedRows.concat();
+    const newValue = this.parseValue().filter((item, index) => !_.includes(deleteRows, index));
     onChange(newValue);
+    // 检查是否是删除最后的
+    let showPage = this.state.showPage;
+    const values = newValue.slice((showPage - 1) * showCount, showPage * showCount);
+    if (!values.length) showPage -= 1;
     this.setState({
-      tableRowFields: this.state.tableRowFields.filter((item, index) => !_.includes(this.state.selectedRows, index)),
-      tableRowConfigs: this.state.tableRowConfigs.filter((item, index) => !_.includes(this.state.selectedRows, index))
+      showPage: showPage || 1,
+      selectedRows: [],
+      tableRowFields: this.state.tableRowFields.filter((item, index) => !_.includes(deleteRows, index)),
+      tableRowConfigs: this.state.tableRowConfigs.filter((item, index) => !_.includes(deleteRows, index))
+    }, () => {
+      // 删除对应实例，由于做了分页功能，保存实例的数组会是稀疏数组，中间会有空项，使用原来filter的遍历会跳过空项，导致长度差很多
+      // 注意稀疏数组 [...arr]和arr.concat() 的区别
+      const arrFormInstance = this.arrFormInstance.concat();
+      const arrFixedFormInstance = this.arrFixedFormInstance.concat();
+      deleteRows.forEach(idx => {
+        arrFormInstance.splice(idx, 1);
+        arrFixedFormInstance.splice(idx, 1);
+      });
+      this.arrFormInstance = arrFormInstance;
+      this.arrFixedFormInstance = arrFixedFormInstance;
     });
-    this.arrFormInstance = this.arrFormInstance.filter((item, index) => !_.includes(this.state.selectedRows, index));
-    this.arrFixedFormInstance = this.arrFixedFormInstance.filter((item, index) => !_.includes(this.state.selectedRows, index));
-    this.setState({ selectedRows: [] });
   };
 
-  onCheckAllChange = event => {
+  onCheckAllChange = (event, showOptions) => {
     const selectedRows = [];
+    const [values, showPage, showCount] = showOptions;
 
     if (event.target.checked) {
-      this.parseValue().forEach((item, index) => selectedRows.push(index));
+      values.forEach((...arr) => selectedRows.push((showPage - 1) * showCount + arr[1]));
     }
 
     this.setState({ selectedRows });
@@ -587,9 +649,9 @@ class RelTable extends Component {
   }
 
   // 渲染表格列头
-  renderTableHeader = (fixed) => {
-    const value = this.parseValue();
-    const isAllSelected = value.length && value.every((item, index) => _.includes(this.state.selectedRows, index));
+  renderTableHeader = (fixed, showOptions) => {
+    const [values] = showOptions;
+    const isAllSelected = values.length && values.every((item, index) => _.includes(this.state.selectedRows, index));
     const tableFields = this.getShowFields();
 
     return (
@@ -597,7 +659,7 @@ class RelTable extends Component {
         <div className={styles.tr}>
           {this.props.mode !== 'DETAIL' && <div className={classnames([styles.th, styles.selectionCell])}>
             <span>
-              <Checkbox checked={isAllSelected} onChange={this.onCheckAllChange} />
+              <Checkbox checked={isAllSelected} onChange={e => this.onCheckAllChange(e, showOptions)} />
             </span>
           </div>}
           {tableFields.map((field, index) => {
@@ -622,42 +684,44 @@ class RelTable extends Component {
   };
 
   // 渲染表格数据
-  renderTableBody = (fixed) => {
+  renderTableBody = (fixed, showOptions) => {
+    const [values, showPage, showCount] = showOptions;
     const tableFields = this.getShowFields();
     let fixedColumn;
     if (fixed && tableFields.length > 0) {
       fixedColumn = tableFields[0].fieldid;
     }
-    return this.parseValue().map((item, index) => {
+    return values.map((item, index) => {
       const value = this.props.mode === 'ADD' ? generateDefaultFormData(this.state.tableFields, item && item.FieldData || item) : item && { ...item.FieldData } || item;
       const batchAddInfo = {
         type: item && item.type,
         field: _.find(this.state.tableFields, filedItem => filedItem.fieldname === this.props.batchAddField)
       };
+      const rowIndex = (showPage - 1) * showCount + index;
       return (
         <RelTableRow
-          key={index}
-          rowIndex={index}
-          fixedColumn={fixedColumn}
-          origin="RelTableRow"
-          cacheId={this.props.cacheId}
-          globalJS={this.state.globalJS}
-          mode={this.props.mode}
-          selected={_.includes(this.state.selectedRows, index)}
-          fields={this.state.tableRowFields[index] || []}
-          entityId={this.props.entityId}
-          value={value}
-          onChange={this.onRowValueChange.bind(this, index)}
-          onSelect={this.onRowSelect}
-          ref={formInst => fixed ? this.arrFixedFormInstance[index] = formInst : this.arrFormInstance[index] = formInst}
-          onFieldControlFocus={this.onRowFieldFocus}
-          fieldName={this.props.fieldName}
-          parentJsEngine={this.props.jsEngine}
-          batchAddInfo_type={batchAddInfo.type}
-          batchAddInfo_fieldname={batchAddInfo.field && batchAddInfo.field.fieldname}
-          batchAddInfo_fieldid={batchAddInfo.field && batchAddInfo.field.fieldid}
-          reloadTable={this.reloadTableRow}
-          OriginCopyAddForm={!(this.state.tableRowConfigs[index] && this.state.tableRowConfigs[index].isNotCopyJs)}
+        key={`${this.renderRelTableKey}-${rowIndex}`}
+        rowIndex={rowIndex}
+        fixedColumn={fixedColumn}
+        origin="RelTableRow"
+        cacheId={this.props.cacheId}
+        globalJS={this.state.globalJS}
+        mode={this.props.mode}
+        selected={_.includes(this.state.selectedRows, rowIndex)}
+        fields={this.state.tableRowFields[rowIndex] || []}
+        entityId={this.props.entityId}
+        value={value}
+        onChange={this.onRowValueChange.bind(this, rowIndex)}
+        onSelect={this.onRowSelect}
+        ref={formInst => fixed ? this.arrFixedFormInstance[rowIndex] = formInst : this.arrFormInstance[index] = formInst}
+        onFieldControlFocus={this.onRowFieldFocus}
+        fieldName={this.props.fieldName}
+        parentJsEngine={this.props.jsEngine}
+        batchAddInfo_type={batchAddInfo.type}
+        batchAddInfo_fieldname={batchAddInfo.field && batchAddInfo.field.fieldname}
+        batchAddInfo_fieldid={batchAddInfo.field && batchAddInfo.field.fieldid}
+        reloadTable={this.reloadTableRow}
+        OriginCopyAddForm={!(this.state.tableRowConfigs[rowIndex] && this.state.tableRowConfigs[rowIndex].isNotCopyJs)}
         />
       );
     });
@@ -672,7 +736,7 @@ class RelTable extends Component {
 
   setAlignTableWidthAndHeight = () => {
     try {
-      if (!this.relTableRef || this.relTableRef.children) return;
+      if (!(this.relTableRef || this.relTableRef.children)) return;
       //列表的原始表头的列
       const realHeader = this.relTableRef.children[0].children[0].children;
       //列表的固定表头的列
@@ -736,6 +800,14 @@ class RelTable extends Component {
           fixedTopHeader[i].style.height = realHeader_thHeight + 'px';
         }
       }
+
+      // 根据有无滚动条设置padding高度
+      if (this.showPager) {
+        const paddingBottom = horizontal ? 50:40  ;
+        this.relTableWrapRef.style.paddingBottom = `${paddingBottom}px`;
+      } else {
+        this.relTableWrapRef.style.paddingBottom = '0px';
+      }
     } catch (e) {
       console.error(e);
     }
@@ -776,6 +848,12 @@ class RelTable extends Component {
     }
   }
 
+  onPagerChange = (showPage, showCount, callback) => {
+    setTimeout(() => {
+      this.setState({ showPage, showCount, selectedRows: [] }, callback);
+    });
+  }
+
   onPickClick = (item) => {
     const { jsEngine } = this.props;
     const target = jsEngine.getValue(item.sourcefieldname);
@@ -813,8 +891,9 @@ class RelTable extends Component {
 
   render() {
     const { nested, jsEngine } = this.props;
-    const { pickerSource, selectedRows, ProductStockVisible, productids = [], tableFields } = this.state;
+    const { pickerSource, selectedRows, ProductStockVisible, productids = [], tableFields, showCount, showPage } = this.state;
     const values = this.parseValue();
+    const rowLength = values.length;
     // 判断选单按钮显示
     let showPickerBtn = [];
     if (nested && nested.length) {
@@ -822,6 +901,22 @@ class RelTable extends Component {
     }
     const showInventoryCheckedBtn = tableFields && tableFields.length && tableFields.some(f => !!f.fieldconfig.ifstock) && !!selectedRows.length; //查询可用库存
 
+    const showPager = rowLength > 10;
+    this.showPager = showPager; // 用于设置padding高度
+
+    let pageSizeOptions = [];
+    if (showPager) {
+      pageSizeOptions = basePageSizeOptions.filter(p => p.value <= rowLength);
+      const poLast = pageSizeOptions.pop();
+      if (rowLength - poLast.value === 0) {
+        pageSizeOptions.push({ label: '显示全部', value: String(500) });
+      } else if (rowLength > poLast.value) {
+        pageSizeOptions.push(poLast);
+        pageSizeOptions.push({ label: '显示全部', value: String(500) });
+      }
+    }
+    const showValues = values.slice((showPage - 1) * showCount, showPage * showCount);
+    const showOptions = [showValues, showPage, showCount];
     return (
       <div>
         <div className={styles.relTable}>
@@ -851,28 +946,49 @@ class RelTable extends Component {
           <div className={styles.tableContent} ref={ref => this.tabWrapRef = ref}>
             <div className={classnames(styles.fixTopWrap, { [styles.fixTopWrapHidden]: values.length === 0 })} ref={ref => this.fixTopWrapRef = ref}>
               <div className={classnames([styles.table, styles.fixTopTable])} ref={ref => this.fixTopTableRef = ref}>
-                {this.renderTableHeader()}
+                {this.renderTableHeader(false, showOptions)}
               </div>
             </div>
             <div className={styles.tableWrap} style={{ maxHeight: TableMaxHeight }} onScroll={this.tableScroll} ref={ref => this.relTableWrapRef = ref}>
               <div className={styles.table} ref={ref => this.relTableRef = ref}>
-                {this.renderTableHeader()}
-                {this.renderTableBody()}
+                {this.renderTableHeader(false, showOptions)}
+                {this.renderTableBody(false, showOptions)}
               </div>
             </div>
             <div className={styles.fixLeftWrap} ref={ref => this.fixLeftWrapRef = ref}>
               <div className={classnames([styles.table, styles.fixLeftTopTable])}>
-                {this.renderTableHeader('fixed')}
+                {this.renderTableHeader('fixed', showOptions)}
               </div>
               <div className={classnames([styles.table, styles.fixLeftTable])} ref={ref => this.fixLeftTableRef = ref}>
-                {this.renderTableHeader('fixed')}
-                {this.renderTableBody('fixed')}
+                {this.renderTableHeader('fixed', showOptions)}
+                {this.renderTableBody('fixed', showOptions)}
               </div>
             </div>
           </div>
           {/*{this.props.value && <div>*/}
           {/*{JSON.stringify(this.props.value)}*/}
           {/*</div>}*/}
+          {
+              showPager ? (
+                <div className={styles.wrapPage}>
+                  <Pagination
+                    current={showPage}
+                    pageSize={showCount}
+                    total={rowLength}
+                    showQuickJumper={false}
+                    showSizeChanger={false}
+                    onChange={page => this.onPagerChange(page, showCount)}
+                  />
+                  <Select
+                    value={String(showCount)}
+                    className={styles.allSel}
+                    onChange={sc => this.onPagerChange(1, Number(sc))}
+                  >
+                    {pageSizeOptions.map(p => <Option key={p.value} value={p.value}>{p.label}</Option>)}
+                  </Select>
+                </div>
+              ) : null
+            }
         </div>
         <RelTableImportModal visible={this.state.importVisible}
           entityId={this.props.entityId}
