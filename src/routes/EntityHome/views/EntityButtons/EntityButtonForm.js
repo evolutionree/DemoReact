@@ -61,6 +61,7 @@ class EntityButtonForm extends Component {
             rules: [{ required: true, message: '请选择数据选择范围' }]
           })(
             <Select>
+              <Option value="-1">不勾选</Option>
               <Option value="0">全部数据</Option>
               <Option value="1">单选</Option>
               <Option value="2">多选</Option>

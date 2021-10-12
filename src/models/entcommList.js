@@ -28,7 +28,7 @@ export default {
     copyData: {},
     extraButtonData: [], //页面动态 按钮数据源
     extraToolbarData: [], //页面toolbar 动态按钮数据源
-    addEntityButtonData:[],
+    extraListButtonData:[],
     addEntityButtonIdx:{},
     dynamicModalData: {},
     sortFieldAndOrder: null, //当前排序的字段及排序顺序
@@ -250,9 +250,9 @@ export default {
         functionbutton = Array.isArray(functionbutton) && functionbutton.filter(item => _.indexOf(item.displayposition, 0) > -1);
         const extraButtonData = functionbutton && Array.isArray(functionbutton) && functionbutton.filter(item => item.buttoncode === 'ShowModals');
         const buttoncode = ['DataTransfer', 'CallService', 'CallService_showModal', 'PrintEntity', 'EntityDataOpenH5', 'AddRelEntityData', 'EntityDataCopy'];
-        const addEntityButtonData = functionbutton && Array.isArray(functionbutton) && functionbutton.filter(item =>item.buttoncode=='AddEntityData');
-        const extraToolbarData = functionbutton && Array.isArray(functionbutton) && functionbutton.filter(item => buttoncode.indexOf(item.buttoncode) > -1);
-        yield put({ type: 'putState', payload: { extraButtonData, extraToolbarData ,addEntityButtonData} });
+        const extraListButtonData = functionbutton && Array.isArray(functionbutton) && functionbutton.filter(item =>item.selecttype === -1);
+        const extraToolbarData = functionbutton && Array.isArray(functionbutton) && functionbutton.filter(item => buttoncode.indexOf(item.selecttype !== -1 && item.buttoncode) > -1);
+        yield put({ type: 'putState', payload: { extraButtonData, extraToolbarData ,extraListButtonData} });
       } catch (e) {
         message.error(e.message);
       }
@@ -521,7 +521,7 @@ export default {
         copyData: {},
         extraButtonData: [], //页面动态 按钮数据源
         extraToolbarData: [], //页面toolbar 动态按钮数据源
-        addEntityButtonData:[],
+        extraListButtonData:[],
         addEntityButtonIdx:'',
         dynamicModalData: {},
         sortFieldAndOrder: null, //当前排序的字段及排序顺序
