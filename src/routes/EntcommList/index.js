@@ -36,7 +36,7 @@ function EntcommList({
   simpleSearchKey,
   searchTips,
   extraButtonData,
-  addEntityButtonData,
+  extraListButtonData,
   addEntityButtonIdx,
   extraToolbarData,
   sortFieldAndOrder,  //当前排序的字段及排序顺序
@@ -78,14 +78,21 @@ function EntcommList({
     });
   }
 
-  function addEntityData(e) {
-    dispatch({
-      type: 'entcommList/addEntity',
-      payload: {
-        showModals: 'addEntity',
-        addEntityButtonIdx: {entityId:e.extradata.entityId,entityName:e.name}
-      }
-    });
+  function extraListButtonDataClick(item) {
+    if (item.buttoncode === 'AddEntityData') {
+      dispatch({
+        type: 'entcommList/addEntity',
+        payload: {
+          showModals: 'addEntity',
+          addEntityButtonIdx: {entityId:item.extradata.entityId,entityName:item.name}
+        }
+      });
+    } else if (item.buttoncode === 'EntityDataOpenH5') {
+      dispatch({
+        type: 'entcommList/extraToolbarClick',
+        payload: item
+      });
+    }
   }
 
   function modalCancel() {
@@ -279,7 +286,7 @@ function EntcommList({
         {checkFunc('EntityDataSearch') && <Button onClick={queryRepeat}>查重</Button>}
         {shouldShowImport() && <Button onClick={importData}>导入</Button>}
         {shouldShowExport() && <Button onClick={exportData}>导出</Button>}
-        {addEntityButtonData&&addEntityButtonData instanceof Array && addEntityButtonData.map((item, index)=>(<Button key={index} onClick={addEntityData.bind(this, item)}>{ item.name}</Button>)) }
+        {extraListButtonData&&extraListButtonData instanceof Array && extraListButtonData.map((item, index)=>(<Button key={index} onClick={extraListButtonDataClick.bind(this, item)}>{ item.name}</Button>)) }
         {
           extraButtonData && extraButtonData instanceof Array && extraButtonData.map((item, index) => {
             return <Button onClick={extraButtonClickHandler.bind(this, item)} key={index}>{getIntlText('title', item)}</Button>;
