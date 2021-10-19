@@ -287,7 +287,7 @@ class RelTable extends Component {
     return tableRowFields;
   }
 
-  validate = (callback) => {
+  validate = (callback, value) => {
     const { showCount } = this.state;
     if (!value || value.length <= showCount) {
       this.baseValidate(callback);
