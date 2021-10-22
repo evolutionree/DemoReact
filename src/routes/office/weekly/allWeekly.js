@@ -45,7 +45,7 @@ function AllWeekly({
         {shouldShowExport() && <Button onClick={exportData}>导出</Button>}
         <Toolbar.Right>
           <div style={{ display: 'inline-block', width: 220 }}>
-            <RangePicker onChange={onChange} value={getDate()} disabledDate={disabledDate} />
+            <RangePicker onChange={onChange} value={getDate()} />
           </div>
           <div style={{ width: 200, display: 'inline-block', margin: '0 10px' }}>
             <SelectDepartment onChange={changeParams.bind(this, 'dept', allWeeklySearchData)} value={allWeeklySearchData.dept} />
