@@ -200,7 +200,7 @@ class Home extends React.Component {
       case 6:
         const isUnitConversion = component.title === "本年业绩";
         return (
-          <div style={{ ...style, height: 120, background: "transparent" }}>
+          <div style={{ ...style, height: component.title === "本年业绩"?"200px":120, background: "transparent" }}>
             <Card
               component={
                 component.reportiteminfo.commoncomponentinfo.diveleminfo
