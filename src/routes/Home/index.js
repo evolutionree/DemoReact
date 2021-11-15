@@ -119,8 +119,12 @@ class Home extends React.Component {
       component.height > 0
         ? component.height
         : width * Math.abs(component.height);
-    const style = { width: "100%", height: chartHeight, background: "#242935" };
-    
+    const style = {
+      width: "100%",
+      height: chartHeight,
+      background: "rgb(0,66,130)",
+    };
+
     switch (
       component.reportiteminfo.commoncomponentinfo &&
       component.reportiteminfo.commoncomponentinfo.elemtype
@@ -194,7 +198,7 @@ class Home extends React.Component {
           </div>
         );
       case 6:
-        const  isUnitConversion = component.title==="本年业绩";
+        const isUnitConversion = component.title === "本年业绩";
         return (
           <div style={{ ...style, height: 120, background: "transparent" }}>
             <Card
@@ -210,7 +214,7 @@ class Home extends React.Component {
         const isPagination = component.title === "风险客户"; // 分页
         return (
           <div
-            style={{ ...style, height: isPagination ? "auto" : chartHeight }}
+            style={{ ...style, height: chartHeight }}
           >
             <List
               component={
@@ -276,11 +280,9 @@ class Home extends React.Component {
                       const style = { width: "100%", height: chartHeight };
                       return (
                         <div key={componentIndex} className={Styles.chartWrap}>
-                          {component.isdisplaytitle ? (
-                            <div className={Styles.normalChartTitle}>
-                              {component.title}
-                            </div>
-                          ) : null}
+                          <div className={Styles.normalChartTitle}>
+                          客户分布图
+                          </div>
                           <div style={{ ...style, height: 640 }}>
                             <MapChart />
                           </div>

@@ -89,8 +89,7 @@ function ShowMapChart({
       }
     ]
   }
-
-
+  
   return (
     <EchartsReact
       echarts={echarts}

@@ -142,10 +142,10 @@ class MapChart extends React.Component {
     const customData = this.state.customData;
     return (
       <div className={Styles.mapWrap}>
-        <div className={Styles.titleInfo}>
+        {/* <div className={Styles.titleInfo}>
           <div>客户分布图</div>
-          {/* <div>与其他区域数据对比</div> */}
-        </div>
+          <div>与其他区域数据对比</div>
+        </div> */}
         <div className={Styles.MapInfo} style={{ height: 'calc(100% - 180px)' }}>
           {
             this.state.mapType === 'china' ? null : <div className={Styles.miniMapWrap}>
@@ -168,8 +168,8 @@ class MapChart extends React.Component {
                               }}
                               mapItemStyle={{
                                 normal: {
-                                  areaColor: '#9b9b9b',
-                                  borderColor: '#9b9b9b'
+                                  areaColor: '#fff',
+                                  borderColor: '#fff'
                                 },
                                 emphasis: {
                                   areaColor: '#3398db'
@@ -201,7 +201,7 @@ class MapChart extends React.Component {
                             calculable: false,
                             color: ['#1772c6', '#2d81c8', '#408dce', '#5197d2', '#77b2de', '#a3cae7', '#bedbeb', '#d0e6f3'],
                             textStyle: {
-                              color: '#9b9b9b'
+                              color: '#fff'
                             },
                             orient: 'horizontal'
                           }}
@@ -216,8 +216,8 @@ class MapChart extends React.Component {
                           }}
                           mapItemStyle={{
                             normal: {
-                              areaColor: '#9b9b9b',
-                              borderColor: '#9b9b9b'
+                              areaColor: '#fff',
+                              borderColor: '#fff'
                             },
                             emphasis: {
                               areaColor: '#3398db'
