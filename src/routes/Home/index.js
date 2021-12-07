@@ -307,7 +307,7 @@ class Home extends React.Component {
                       return (
                         <div key={componentIndex} className={Styles.chartWrap}>
                           {component.isdisplaytitle ? (
-                            <div className={Styles.normalChartTitle}>
+                            <div title={component.remark} className={Styles.normalChartTitle}>
                               {component.title}
                             </div>
                           ) : null}

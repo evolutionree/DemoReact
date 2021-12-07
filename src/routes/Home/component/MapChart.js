@@ -230,12 +230,12 @@ class MapChart extends React.Component {
           <div style={{ width: 'calc(100% - 390px)' }}>
             <ul>
               <li>全国排名：{customData.length > 0 ? customData[0].rank : null}</li>
-              <li>客户转化率：{customData.length > 0 ? customData[0].changerate : null}</li>
+              {/* <li>客户转化率：{customData.length > 0 ? customData[0].changerate : null}</li> */}
               <li>客户数量：{customData.length > 0 ? customData[0].customercount : null}</li>
-              <li>业绩贡献额： {customData.length > 0 ? customData[0].signamount : null}</li>
+              {/* <li>业绩贡献额： {customData.length > 0 ? customData[0].signamount : null}</li> */}
             </ul>
           </div>
-          <ul>
+          {/* <ul>
             <li>
               <div>{customData.length > 0 ? customData[0].avgamount : null}</div>
               <div>平均客户单价</div>
@@ -248,7 +248,7 @@ class MapChart extends React.Component {
               <div>{customData.length > 0 ? customData[0].signcount : null}</div>
               <div>成单数量</div>
             </li>
-          </ul>
+          </ul> */}
         </div>
       </div>
     )

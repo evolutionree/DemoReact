@@ -34,6 +34,7 @@ import styles from './index.less';
 import chinaJson from '../../../public/mapJson/china.json';  //初始中国地图
 import html2canvas from './component/Chart/html2canvas';
 import { getCurrentMonthFirstDay, getCurrentDay, getCurrentYearFirstDay } from '../../utils';
+import DepartmentSelect from '../../components/DepartmentSelect';
 //china Map Data
 echarts.registerMap('china', chinaJson);
 
@@ -61,7 +62,8 @@ class ReportForm extends React.Component {
       breadcrumbData: [],
       selectedLegend: null,
       startdate: getCurrentYearFirstDay(),
-      enddate: getCurrentDay()
+      enddate: getCurrentDay(),
+      deptId: '7f74192d-b937-403f-ac2a-8be34714278b'
     };
     this.reloadReportData = this.reloadReportData.bind(this);
     this.echartsInstance = echarts;
@@ -130,6 +132,7 @@ class ReportForm extends React.Component {
         if(item.instid === 'custdist'){
           defaultParams["startdate"]  = this.state.startdate;
           defaultParams["enddate"]  = this.state.enddate;
+          defaultParams["detpid"]  = this.state.detpId;
         }
         if (_.indexOf(dataGridDatasouces, item.instid) === -1) { //不请求 表格对应的数据源 交给组件DataGrid去处理
           this.setState({
@@ -626,6 +629,10 @@ class ReportForm extends React.Component {
     });
   }
 
+  onDeptChange = (value) => {
+    this.setState({ deptId: value });
+    this.search('deptid', value);
+  };
 
   renderComponent(item, index, height, width) {
     const { orgcomponentinfo } = item;
@@ -711,6 +718,9 @@ class ReportForm extends React.Component {
 
         return (
           <div style={{ height: '100%', width: '100%', borderRadius: '4px', padding: '20px', boxShadow: '0 0 8px rgba(0, 0, 0, 0.2)' }}>
+            <span style={{ marginLeft: '10px' }}>团队</span>
+            <DepartmentSelect value={this.state.deptId} onChange={this.onDeptChange} width="300px" />
+
             <span style={{ marginLeft: '10px' }}>起始</span>
             <DatePicker
               style={{ marginLeft: '5px' }}
@@ -827,8 +837,12 @@ class ReportForm extends React.Component {
         this.setState({
           serchValue: { ...this.state.serchValue, '@enddate': value }
         }, () => { this.changeMapShow(this.state.breadcrumbData.length > 0 ? this.state.breadcrumbData[this.state.breadcrumbData.length - 1] : '全国', this.state.breadcrumbData); });
+      } else if (key === 'deptid') {
+        this.setState({
+          serchValue: { ...this.state.serchValue, '@deptid': value }
+        }, () => { this.changeMapShow(this.state.breadcrumbData.length > 0 ? this.state.breadcrumbData[this.state.breadcrumbData.length - 1] : '全国', this.state.breadcrumbData); });
       }
-    });
+    }); 
   };
 
   render() {
