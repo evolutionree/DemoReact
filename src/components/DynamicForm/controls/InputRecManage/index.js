@@ -8,6 +8,8 @@ import BusinessInfo from '../../../../routes/EntcommHome/views/CommerceQueries/B
 import styles from './index.less';
 import gong from './gong.png';
 
+import refresh from './refresh.png';
+
 export default class InputRecManage extends Component {
   constructor(props) {
     super(props);
@@ -104,6 +106,26 @@ export default class InputRecManage extends Component {
     });
   }
 
+  updateCompanyInfo=()=>{
+    var self=this;
+    const { value,jsEngine } = self.props;
+
+    const url = '/api/dockingapi/getbusinessdetail';
+    const params = { companyname: value } 
+    this.setState( async () => {
+      const res = await dynamicRequest(url, params).catch(e => {
+
+      });
+      const selectInfo = res.data;
+      jsEngine.setValue('penalty',selectInfo['penalty']);
+      //jsEngine.setValue('penalty','');
+      jsEngine.setValue('exceptions',selectInfo['exceptions']);
+      jsEngine.setValue('shixin',selectInfo['shixin']);
+      jsEngine.excuteJS('var aaa = 1;');
+      message.info('企业风险信息更新成功！点击保存即可生效');
+    });
+  }
+
   handleCancel = () => {
     this.setState({ visible: false, selectInfo: null });
   }
@@ -118,7 +140,7 @@ export default class InputRecManage extends Component {
     const backArr =["name:recname", "originalnamestr:beforename", "creditcode:ucode", "no:businesscode", "orgno:organizationcode"
     , "econkind:qccenterprisenature", "enttype:qccenterprisetype", "status:enterprisestatus", "registcapi:registeredcapital"
     , "reccap:paidcapital", "belongorg:registrationauthority", "startdate:establishmentdate", "opername:corporatename"
-    , "address:qcclocation", "scope:businessscope", "isonstock:isiop" , "address:customercompanyaddress",]
+    , "address:qcclocation", "scope:businessscope", "isonstock:isiop" , "address:customercompanyaddress","penalty:penalty","exceptions:exceptions","shixin:shixin"]
     if (Array.isArray(backArr) && backArr.length) {
       backArr.forEach(str => {
         const arr = str.split(':');
@@ -161,7 +183,7 @@ export default class InputRecManage extends Component {
         />
 
         {loading ? <Icon type="loading" style={{ marginLeft: 5 }} /> : isReadOnly? null :<img src={gong} alt="gong" onClick={this.showModal} className={styles.icon} />}
-
+        {!loading&&isReadOnly? <img src={refresh} alt="refresh" onClick={this.updateCompanyInfo} className={styles.icon} />:null}
         <Modal
           title="工商信息查询"
           width={'80%'}

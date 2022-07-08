@@ -21,6 +21,9 @@ export const keyArrs = [
   { key: 'isonstock', title: '是否IOP上市', content: '', span: 12 },
   { key: 'address', title: '地址', content: '', span: 24 },
   { key: 'scope', title: '经营范围', content: '', span: 24 },
+  { key: 'penalty', title: '行政处罚', content: '', span: 24 },
+  { key: 'exceptions', title: '经营异常', content: '', span: 24 },
+  { key: 'shixin', title: '失信', content: '', span: 24 },
 ];
 
 class CommerceQueries extends Component {
