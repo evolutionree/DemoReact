@@ -479,7 +479,7 @@ class DynamicFormBase extends Component {
       <Form layout={this.getFormLayout()}>
         {this.renderFields(fieldsGroup[0].fields)}
         {fieldsGroup.slice(1).map(group => (
-          <FoldableGroup key={group.title} title={group.title} isVisible={group.isVisible} foldable={group.foldable}>
+          <FoldableGroup key={group.title} title={group.title} isVisible={group.isVisible} foldable={group.foldable} allFields={this.props.fields}>
             {this.renderFields(group.fields)}
           </FoldableGroup>
         ))}

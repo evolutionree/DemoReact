@@ -9,7 +9,8 @@ class FoldableGroup extends Component {
     isVisible: PropTypes.bool,
     foldable: PropTypes.bool,
     children: PropTypes.arrayOf(PropTypes.node),
-    theme: PropTypes.string
+    theme: PropTypes.string,
+    isTitleBold: PropTypes.bool
   };
   static defaultProps = {
     foldable: false,
@@ -31,7 +32,7 @@ class FoldableGroup extends Component {
 
   render() {
     const { isFolded } = this.state;
-    const { title, children, foldable, theme, isVisible } = this.props;
+    const { title, children, foldable, theme, isVisible,allFields } = this.props;
     const wrapCls = classnames(
       styles.wrap,
       styles[theme],
@@ -39,12 +40,23 @@ class FoldableGroup extends Component {
 
       { [styles.folded]: isFolded }
     );
+
+    // 开票信息分组标题加粗   特殊判断
+    const tempArr = allFields.filter(item=>{
+      if(title===item.displayname&&item.fieldid==="26e55bec-03e4-4e74-a3ef-90cf4144371a"&&item.controltype===20){
+          return true
+      }
+    })
+    const isTitleBold = tempArr.length>0;
+
     return (
       <div className={wrapCls}>
         {
           isVisible &&
           <div className={styles.title}>
-            <span className={styles.titleText} title={title}>{title}</span>
+            <span className={styles.titleText} title={title} 
+            style={isTitleBold?{fontWeight:'bold',fontSize: '16px'}:null}
+            >{title}</span>
             {foldable && <Icon
               className={styles.titleControl}
               type={isFolded ? 'plus' : 'minus'}

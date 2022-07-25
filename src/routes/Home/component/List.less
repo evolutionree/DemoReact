@@ -1,20 +1,35 @@
-.List{
+.List {
   padding: 4px 12px;
-  >li{
+  > li {
     height: 56px;
     line-height: 56px;
     position: relative;
     border-bottom: 1px solid #454545;
 
-    >span{
+    > span {
       padding-left: 54px;
-      font-size:14px;
-      color:#ffffff;
+      font-size: 14px;
+      color: #ffffff;
       display: inline-block;
       max-width: 100%;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+  }
+}
+
+.isPagination {
+  :global {
+    .ant-pagination {
+      color: #ffffff;
+      text-align: center;
+      margin-top: 10px;
+    }
+    .ant-pagination-simple-pager{
+      input{
+        color: #333;
+      }
     }
   }
 }

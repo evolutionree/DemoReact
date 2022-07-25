@@ -186,6 +186,7 @@ class DynamicFormView extends React.Component {
                   title={group.title}
                   isVisible={group.isVisible}
                   foldable={group.foldable}
+                  allFields={allFields}
                   theme="light"
                 >
                   {this.renderFields(group.fields)}

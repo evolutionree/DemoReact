@@ -9,13 +9,20 @@
   width: @sider-width;
   transition: width 0.15s ease-out;
   overflow-y: auto;
-  background: #404040;
+  background: rgb(0,39,78);
 
   .siderInner {
     height: 100%;
     :global {
+      .ant-menu{
+        background: rgb(0,39,78);
+      }
       .ant-menu-root {
         min-height: 100%;
+      }
+
+      .ant-menu.ant-menu-dark .ant-menu-item-selected{
+        background:rgb(91,119,0);
       }
     }
     .siderBottom {

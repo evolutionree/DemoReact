@@ -209,7 +209,7 @@ function ShowChart({
       //坐标轴刻度标签
       axisLabel: {
         formatter: component.xformat ? component.xformat : null,
-        color: '#9b9b9b',
+        color: '#fff',
         textStyle: {
           fontSize: 14
         }
@@ -226,7 +226,7 @@ function ShowChart({
       axisLine: {
         show: false,
         lineStyle: {
-          color: '#9b9b9b'
+          color: '#fff'
         }
       },
       //是否显示坐标轴刻度
@@ -239,12 +239,12 @@ function ShowChart({
   switch (chartType) {
     case 'barOrline':
       option = {
-        backgroundColor: 'rgb(36, 41, 53)',
+        backgroundColor: 'rgb(0,66,130)',
         color: colors,
         title: {
           text: component.title,
           textStyle: {
-            color: '#9b9b9b'
+            color: '#fff'
           }
         },
         grid: optionSet.grid,
@@ -264,7 +264,7 @@ function ShowChart({
           nameLocation: 'end',
           nameGap: -40,
           nameTextStyle: {
-            color: '#9b9b9b'
+            color: '#fff'
           },
           axisLine: {
             show: true,
@@ -283,12 +283,12 @@ function ShowChart({
             name: getAxisName(item.name),
             //坐标轴名称的文字样式
             nameTextStyle: {
-              color: '#9b9b9b'
+              color: '#fff'
             },
             //坐标轴刻度标签
             axisLabel: {
               formatter: item.formatstr ? item.formatstr : null,
-              color: '#9b9b9b',
+              color: '#fff',
               textStyle: {
                 fontSize: 14
               }
@@ -298,11 +298,11 @@ function ShowChart({
         }) : {
           //坐标轴名称的文字样式
           nameTextStyle: {
-            color: '#9b9b9b'
+            color: '#fff'
           },
           //坐标轴刻度标签
           axisLabel: {
-            color: '#9b9b9b',
+            color: '#fff',
             textStyle: {
               fontSize: 14
             }
@@ -312,7 +312,7 @@ function ShowChart({
         //图例组件
         legend: {
           textStyle: {
-            color: '#9b9b9b'
+            color: '#fff'
           },
           right: 0,
           top: 0,
@@ -354,7 +354,7 @@ function ShowChart({
                 show: false,
                 position: 'top',
                 textStyle: {
-                  color: '#9b9b9b'
+                  color: '#fff'
                 }
               }
             },
@@ -370,7 +370,7 @@ function ShowChart({
         title: {
           text: component.title,
           textStyle: {
-            color: '#9b9b9b'
+            color: '#fff'
           }
         },
         grid: optionSet.grid,
@@ -408,7 +408,7 @@ function ShowChart({
             }
           },
           nameTextStyle: {
-            color: '#9b9b9b'
+            color: '#fff'
           },
           // axisLine: {
           //   show: true,
@@ -434,12 +434,12 @@ function ShowChart({
             name: getAxisName(item.name),
             //坐标轴名称的文字样式
             nameTextStyle: {
-              color: '#9b9b9b'
+              color: '#fff'
             },
             //坐标轴刻度标签
             axisLabel: {
               formatter: item.formatstr ? item.formatstr : null,
-              color: '#9b9b9b',
+              color: '#fff',
               textStyle: {
                 fontSize: 14
               }
@@ -464,11 +464,11 @@ function ShowChart({
           max: 100,
           //坐标轴名称的文字样式
           nameTextStyle: {
-            color: '#9b9b9b'
+            color: '#fff'
           },
           //坐标轴刻度标签
           axisLabel: {
-            color: '#9b9b9b',
+            color: '#fff',
             textStyle: {
               fontSize: 14
             }
