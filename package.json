@@ -4,7 +4,7 @@
     "app": "./src/index.js"
   },
   "scripts": {
-    "start": "roadhog server",
+    "start": "roadhog server", 
     "prebuild": "node scripts/pre-build.js",
     "build": "roadhog build",
     "postbuild": "node scripts/end-build.js",
